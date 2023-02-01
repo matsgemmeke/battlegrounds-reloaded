@@ -1,0 +1,51 @@
+package com.github.matsgemmeke.battlegounds.game;
+
+import com.github.matsgemmeke.battlegrounds.game.DefaultGameConfiguration;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class DefaultGameConfigurationTest {
+
+    private int lobbyCountdownDuration;
+    private int maxPlayers;
+    private int minPlayers;
+
+    @Before
+    public void setUp() {
+        this.lobbyCountdownDuration = 60;
+        this.maxPlayers = 10;
+        this.minPlayers = 2;
+    }
+
+    @Test
+    public void shouldBeAbleToGetDefaultGameConfigurationInstance() {
+        DefaultGameConfiguration configuration = DefaultGameConfiguration.getNewConfiguration();
+
+        assertTrue(configuration.getLobbyCountdownDuration() > 0);
+        assertTrue(configuration.getMaxPlayers() > 0);
+        assertTrue(configuration.getMinPlayers() > 0);
+    }
+
+    @Test
+    public void shouldBeAbleToGetLobbyCountdownDuration() {
+        DefaultGameConfiguration configuration = new DefaultGameConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+
+        assertEquals(lobbyCountdownDuration, configuration.getLobbyCountdownDuration());
+    }
+
+    @Test
+    public void shouldBeAbleToGetMaxPlayers() {
+        DefaultGameConfiguration configuration = new DefaultGameConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+
+        assertEquals(maxPlayers, configuration.getMaxPlayers());
+    }
+
+    @Test
+    public void shouldBeAbleToGetMinPlayers() {
+        DefaultGameConfiguration configuration = new DefaultGameConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+
+        assertEquals(minPlayers, configuration.getMinPlayers());
+    }
+}

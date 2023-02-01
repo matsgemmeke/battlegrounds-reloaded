@@ -1,0 +1,24 @@
+admin:
+  game-already-exists: "&cA game by the id %bg_game% already exists."
+  game-confirm-removal: "&cAre you sure you want to remove game %bg_game%? Rerun the command to confirm the removal."
+  game-created: "&6You have created a new game by the id &f%bg_game%&6."
+  game-creation-failed: "&cFailed to create game %bg_game%!"
+  game-not-exists: "&cA game by the id %bg_game% doesn't exist."
+  game-removal-failed: "&cFailed to remove game %bg_game%!"
+  game-removed: "&6You have removed game &f%bg_game% &6and its content."
+  main-lobby-set: "&6You have set the main lobby to your current location."
+  reload-failed: "&cFailed to reload configuration files."
+  reload-success: "&6Successfully reloaded all configuration files."
+  weapon-not-exists: "&cA weapon with the id %bg_weapon% doesn't exist."
+
+commands:
+  description-creategame: "Creates a new game with the given id"
+  description-giveweapon: "Gives a weapon for free play"
+  description-reload: "Reloads all configuration files"
+  description-removegame: "Removes a game and all of its arenas"
+  description-setmainlobby: "Sets the main lobby location"
+  freemode-weapon-given: "&6You have been given a %bg_weapon%."
+  help-menu-title: "&6&l Battlegrounds Help Menu"
+
+errors:
+  not-in-freemode: "&cUnable to perform action; you are not in freemode."

@@ -1,0 +1,17 @@
+# Do not touch
+version: 3.0.0
+
+# The language of the plugin messages.
+language: en
+
+# Constant value used for defining the general amount of firearm damage. Edit this value if you want more or less
+# firearm damage. A higher number will lead to more damage, a lower number will lead to less damage.
+item-firearm-damage-amplifier: 1.0
+
+# Constant value used for defining the general amount of firearm recoil. Edit this value if you want more or less
+# firearm recoil. A higher number will lead to more recoil, a lower number will lead to less recoil.
+item-firearm-recoil-amplifier: 10.0
+
+# The sound firearms make when pulling the trigger. This sound effect only gets played when a player attempts to shoot
+# a firearm with an empty magazine.
+item-firearm-trigger-sound: UI_BUTTON_CLICK-0.5-2-0

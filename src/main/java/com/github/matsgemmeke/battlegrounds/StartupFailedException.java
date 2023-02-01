@@ -1,0 +1,8 @@
+package com.github.matsgemmeke.battlegrounds;
+
+public class StartupFailedException extends Exception {
+
+    public StartupFailedException(String message) {
+        super(message);
+    }
+}
