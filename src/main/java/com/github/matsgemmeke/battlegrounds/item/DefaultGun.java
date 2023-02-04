@@ -74,7 +74,7 @@ public class DefaultGun extends AbstractFirearm implements Gun {
 
     private void displayParticle(@NotNull Location location) {
         DustOptions dustOptions = new DustOptions(Color.WHITE, 1);
-        location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0, 0, 0, 0, dustOptions);
+        location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0.0, 0.0, 0.0, 0.0, dustOptions);
     }
 
     private double getDamage(@NotNull Location holderLocation, @NotNull Location targetLocation, @NotNull Location projectileLocation) {
@@ -101,9 +101,12 @@ public class DefaultGun extends AbstractFirearm implements Gun {
     private boolean inflictDamage(@NotNull BattleEntity holder, @NotNull Location projectileLocation) {
         double range = 0.1;
 
-        for (BattleEntity battleEntity : context.getTargets(holder, projectileLocation, range)) {
-            double damage = this.getDamage(holder.getEntity().getLocation(), battleEntity.getEntity().getLocation(), projectileLocation);
-            battleEntity.damage(damage);
+        for (BattleEntity target : context.getTargets(holder, projectileLocation, range)) {
+            Location holderLocation = holder.getEntity().getLocation();
+            Location targetLocation = target.getEntity().getLocation();
+
+            double damage = this.getDamage(holderLocation, targetLocation, projectileLocation);
+            target.damage(damage);
             return true;
         }
 
@@ -148,17 +151,14 @@ public class DefaultGun extends AbstractFirearm implements Gun {
         double distance = 0.5;
         double distanceJump = 0.5;
 
-        BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
-
         do {
             Vector vector = direction.getDirection().multiply(distance);
             direction.add(vector);
 
-            Block block = direction.getBlock();
-
             // Check if the projectile's current location causes a collision
-            if (collisionChecker.isSolid(block, direction)) {
-                block.getWorld().playEffect(direction, Effect.STEP_SOUND, block.getType());
+            if (context.producesCollisionAt(direction)) {
+                Block block = direction.getBlock();
+                block.getWorld().playEffect(direction, Effect.STEP_SOUND, direction.getBlock().getType());
                 return;
             }
 

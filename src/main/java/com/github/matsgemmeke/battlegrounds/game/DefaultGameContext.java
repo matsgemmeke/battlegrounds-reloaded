@@ -5,6 +5,7 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.GameConfiguration;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
@@ -18,11 +19,12 @@ public class DefaultGameContext extends AbstractBattleContext implements GameCon
     private GameConfiguration configuration;
 
     public DefaultGameContext(
+            @NotNull BlockCollisionChecker collisionChecker,
             @NotNull TaskRunner taskRunner,
             int id,
             @NotNull GameConfiguration configuration
     ) {
-        super(taskRunner);
+        super(collisionChecker, taskRunner);
         this.id = id;
         this.configuration = configuration;
     }

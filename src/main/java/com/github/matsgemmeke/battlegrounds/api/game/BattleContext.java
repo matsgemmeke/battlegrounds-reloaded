@@ -74,4 +74,12 @@ public interface BattleContext {
      * @param location the location to play the sound
      */
     void playSounds(@NotNull Iterable<BattleSound> sound,@NotNull Location location);
+
+    /**
+     * Checks if the given location produces a collision with a block.
+     *
+     * @param location the location
+     * @return whether a collision is produced
+     */
+    boolean producesCollisionAt(@NotNull Location location);
 }

@@ -21,6 +21,7 @@ import com.github.matsgemmeke.battlegrounds.event.handler.PlayerJoinEventHandler
 import com.github.matsgemmeke.battlegrounds.event.listener.EventListener;
 import com.github.matsgemmeke.battlegrounds.game.DefaultFreemodeContext;
 import com.github.matsgemmeke.battlegrounds.game.GameContextFactory;
+import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.FiringModeFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.GunFactory;
@@ -142,7 +143,9 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
     }
 
     private void setUpFreemode() {
-        freemodeContext = new DefaultFreemodeContext(taskRunner);
+        BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
+
+        freemodeContext = new DefaultFreemodeContext(collisionChecker, taskRunner);
 
         contextProvider.addFreemodeContext(freemodeContext);
     }

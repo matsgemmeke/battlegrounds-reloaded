@@ -5,18 +5,11 @@ import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.item.DefaultGun;
 import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Tag;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Collections;
 import java.util.List;
@@ -74,36 +67,204 @@ public class DefaultGunTest {
     }
 
     @Test
-    public void a() {
-        Tag tag = Tag.SLABS;
-
-        System.out.println(tag);
-    }
-
-    @Test
-    public void canShootProjectiles() {
-        Block block = mock(Block.class);
+    public void canShootProjectilesAtShortDistanceTarget() {
         List<BattleSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
-        when(world.getBlockAt(any(Location.class))).thenReturn(block);
+        Location holderLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
+        Location targetLocation = new Location(world, 1.0, 1.0, 10.0, 0.0F, 0.0F);
 
-        Location location = new Location(world, 1.0, 2.0, 3.0, 90.0F, 90.0F);
+        LivingEntity holderEntity = mock(LivingEntity.class);
+        when(holderEntity.getEyeLocation()).thenReturn(holderLocation);
+        when(holderEntity.getLocation()).thenReturn(holderLocation);
 
-        LivingEntity entity = mock(LivingEntity.class);
-        when(entity.getEyeLocation()).thenReturn(location);
+        LivingEntity targetEntity = mock(LivingEntity.class);
+        when(targetEntity.getLocation()).thenReturn(targetLocation);
 
-        when(holder.getEntity()).thenReturn(entity);
+        BattleEntity target = mock(BattleEntity.class);
+        when(target.getEntity()).thenReturn(targetEntity);
+
+        List<BattleEntity> targets = Collections.singletonList(target);
+
+        when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
+
+        when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
         DefaultGun gun = new DefaultGun(id, name, description, context);
-        gun.setAccuracy(0.5);
         gun.setHolder(holder);
-        gun.setRecoilAmplifier(10.0);
+        gun.setShortDamage(100.0);
+        gun.setShortRange(10.0);
         gun.setShotSounds(shotSounds);
         gun.shoot();
 
         verify(context).playSounds(eq(shotSounds), any(Location.class));
+        verify(target).damage(100.0);
+    }
+
+    @Test
+    public void canShootProjectilesAtMediumDistanceTarget() {
+        List<BattleSound> shotSounds = Collections.emptyList();
+
+        World world = mock(World.class);
+        Location holderLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
+        Location targetLocation = new Location(world, 1.0, 1.0, 50.0, 0.0F, 0.0F);
+
+        LivingEntity holderEntity = mock(LivingEntity.class);
+        when(holderEntity.getEyeLocation()).thenReturn(holderLocation);
+        when(holderEntity.getLocation()).thenReturn(holderLocation);
+
+        LivingEntity targetEntity = mock(LivingEntity.class);
+        when(targetEntity.getLocation()).thenReturn(targetLocation);
+
+        BattleEntity target = mock(BattleEntity.class);
+        when(target.getEntity()).thenReturn(targetEntity);
+
+        List<BattleEntity> targets = Collections.singletonList(target);
+
+        when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
+
+        when(holder.getEntity()).thenReturn(holderEntity);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+
+        DefaultGun gun = new DefaultGun(id, name, description, context);
+        gun.setHolder(holder);
+        gun.setMediumDamage(50.0);
+        gun.setMediumRange(50.0);
+        gun.setShotSounds(shotSounds);
+        gun.shoot();
+
+        verify(context).playSounds(eq(shotSounds), any(Location.class));
+        verify(target).damage(50.0);
+    }
+
+    @Test
+    public void canShootProjectilesAtLongDistanceTarget() {
+        List<BattleSound> shotSounds = Collections.emptyList();
+
+        World world = mock(World.class);
+        Location holderLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
+        Location targetLocation = new Location(world, 1.0, 1.0, 100.0, 0.0F, 0.0F);
+
+        LivingEntity holderEntity = mock(LivingEntity.class);
+        when(holderEntity.getEyeLocation()).thenReturn(holderLocation);
+        when(holderEntity.getLocation()).thenReturn(holderLocation);
+
+        LivingEntity targetEntity = mock(LivingEntity.class);
+        when(targetEntity.getLocation()).thenReturn(targetLocation);
+
+        BattleEntity target = mock(BattleEntity.class);
+        when(target.getEntity()).thenReturn(targetEntity);
+
+        List<BattleEntity> targets = Collections.singletonList(target);
+
+        when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
+
+        when(holder.getEntity()).thenReturn(holderEntity);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+
+        DefaultGun gun = new DefaultGun(id, name, description, context);
+        gun.setHolder(holder);
+        gun.setLongDamage(10.0);
+        gun.setLongRange(100.0);
+        gun.setShotSounds(shotSounds);
+        gun.shoot();
+
+        verify(context).playSounds(eq(shotSounds), any(Location.class));
+        verify(target).damage(10.0);
+    }
+
+    @Test
+    public void canShootProjectilesAtTargetWithHeadshotDamageMultiplier() {
+        List<BattleSound> shotSounds = Collections.emptyList();
+
+        World world = mock(World.class);
+        Location holderLocation = new Location(world, 1.0, 2.0, 1.0, 0.0F, 0.0F);
+        Location targetLocation = new Location(world, 1.0, 0.0, 1.0, 0.0F, 0.0F);
+
+        LivingEntity holderEntity = mock(LivingEntity.class);
+        when(holderEntity.getEyeLocation()).thenReturn(holderLocation);
+        when(holderEntity.getLocation()).thenReturn(holderLocation);
+
+        LivingEntity targetEntity = mock(LivingEntity.class);
+        when(targetEntity.getLocation()).thenReturn(targetLocation);
+
+        BattleEntity target = mock(BattleEntity.class);
+        when(target.getEntity()).thenReturn(targetEntity);
+
+        List<BattleEntity> targets = Collections.singletonList(target);
+
+        when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
+
+        when(holder.getEntity()).thenReturn(holderEntity);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+
+        DefaultGun gun = new DefaultGun(id, name, description, context);
+        gun.setHeadshotDamageMultiplier(1.5);
+        gun.setHolder(holder);
+        gun.setShortDamage(100.0);
+        gun.setShortRange(10.0);
+        gun.setShotSounds(shotSounds);
+        gun.shoot();
+
+        verify(context).playSounds(eq(shotSounds), any(Location.class));
+        verify(target).damage(150.0);
+    }
+
+    @Test
+    public void canShootProjectilesAtSolidBlock() {
+        List<BattleSound> shotSounds = Collections.emptyList();
+
+        Block block = mock(Block.class);
+        World world = mock(World.class);
+
+        when(block.getWorld()).thenReturn(world);
+        when(block.getType()).thenReturn(Material.STONE);
+        when(world.getBlockAt(any())).thenReturn(block);
+
+        Location holderLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
+
+        LivingEntity holderEntity = mock(LivingEntity.class);
+        when(holderEntity.getEyeLocation()).thenReturn(holderLocation);
+        when(holderEntity.getLocation()).thenReturn(holderLocation);
+
+        when(context.producesCollisionAt(any())).thenReturn(true);
+
+        when(holder.getEntity()).thenReturn(holderEntity);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+
+        DefaultGun gun = new DefaultGun(id, name, description, context);
+        gun.setHolder(holder);
+        gun.setShotSounds(shotSounds);
+        gun.shoot();
+
+        verify(context).playSounds(eq(shotSounds), any(Location.class));
+        verify(world).playEffect(any(), eq(Effect.STEP_SOUND), eq(Material.STONE));
+    }
+
+    @Test
+    public void displaysParticlesAtProjectileTrajectory() {
+        List<BattleSound> shotSounds = Collections.emptyList();
+
+        World world = mock(World.class);
+        Location holderLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
+
+        LivingEntity holderEntity = mock(LivingEntity.class);
+        when(holderEntity.getEyeLocation()).thenReturn(holderLocation);
+        when(holderEntity.getLocation()).thenReturn(holderLocation);
+
+        when(context.getTargets(any(), any(), anyDouble())).thenReturn(Collections.emptyList());
+
+        when(holder.getEntity()).thenReturn(holderEntity);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+
+        DefaultGun gun = new DefaultGun(id, name, description, context);
+        gun.setHolder(holder);
+        gun.setShotSounds(shotSounds);
+        gun.shoot();
+
+        verify(context).playSounds(eq(shotSounds), any(Location.class));
+        verify(world).spawnParticle(eq(Particle.REDSTONE), any(), eq(1), eq(0.0), eq(0.0), eq(0.0), eq(0.0), any());
     }
 
     @Test

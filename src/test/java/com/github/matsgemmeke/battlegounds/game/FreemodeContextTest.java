@@ -4,6 +4,7 @@ import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
 import com.github.matsgemmeke.battlegrounds.game.DefaultFreemodeContext;
+import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.bukkit.Material;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -16,10 +17,12 @@ import static org.mockito.Mockito.*;
 
 public class FreemodeContextTest {
 
+    private BlockCollisionChecker collisionChecker;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
+        this.collisionChecker = mock(BlockCollisionChecker.class);
         this.taskRunner = mock(TaskRunner.class);
     }
 
@@ -32,7 +35,7 @@ public class FreemodeContextTest {
         BattlePlayer battlePlayer = mock(BattlePlayer.class);
         when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(taskRunner);
+        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, taskRunner);
         boolean result = context.onInteract(battlePlayer, event);
 
         verify(battleItem).onLeftClick(battlePlayer);
@@ -50,7 +53,7 @@ public class FreemodeContextTest {
         BattlePlayer battlePlayer = mock(BattlePlayer.class);
         when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(taskRunner);
+        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, taskRunner);
         boolean result = context.onInteract(battlePlayer, event);
 
         verify(battleItem).onRightClick(battlePlayer);
@@ -64,7 +67,7 @@ public class FreemodeContextTest {
         BattlePlayer battlePlayer = mock(BattlePlayer.class);
         PlayerInteractEvent event = new PlayerInteractEvent(null, null, null, null, null);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(taskRunner);
+        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, taskRunner);
         boolean result = context.onInteract(battlePlayer, event);
 
         assertFalse(result);
@@ -76,7 +79,7 @@ public class FreemodeContextTest {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(null, null, itemStack, null, null);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(taskRunner);
+        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, taskRunner);
         boolean result = context.onInteract(battlePlayer, event);
 
         assertFalse(result);

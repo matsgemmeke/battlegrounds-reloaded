@@ -6,6 +6,7 @@ import com.github.matsgemmeke.battlegrounds.command.GiveWeaponCommand;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.WeaponFactory;
+import com.github.matsgemmeke.battlegrounds.locale.TranslationKey;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
@@ -34,6 +35,7 @@ public class GiveWeaponCommandTest {
 
         when(freemodeContext.getBattlePlayer(player)).thenReturn(battlePlayer);
         when(player.getInventory()).thenReturn(inventory);
+        when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn("description");
     }
 
     @Test

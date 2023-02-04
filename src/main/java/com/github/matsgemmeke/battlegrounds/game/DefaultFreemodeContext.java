@@ -5,7 +5,8 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
-import com.github.matsgemmeke.battlegrounds.entity.GeneralBattleEntity;
+import com.github.matsgemmeke.battlegrounds.entity.FreemodeEntity;
+import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -20,8 +21,8 @@ import java.util.List;
 
 public class DefaultFreemodeContext extends AbstractBattleContext implements FreemodeContext {
 
-    public DefaultFreemodeContext(@NotNull TaskRunner taskRunner) {
-        super(taskRunner);
+    public DefaultFreemodeContext(@NotNull BlockCollisionChecker collisionChecker, @NotNull TaskRunner taskRunner) {
+        super(collisionChecker, taskRunner);
     }
 
     @NotNull
@@ -34,7 +35,7 @@ public class DefaultFreemodeContext extends AbstractBattleContext implements Fre
 
         for (Entity entity : location.getWorld().getNearbyEntities(location, range, range, range)) {
             if (entity != battleEntity.getEntity() && entity instanceof LivingEntity) {
-                entities.add(new GeneralBattleEntity((LivingEntity) entity));
+                entities.add(new FreemodeEntity((LivingEntity) entity));
             }
         }
 

@@ -4,6 +4,7 @@ import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.game.GameConfiguration;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.configuration.GameDataConfiguration;
+import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -37,7 +38,9 @@ public class GameContextFactory {
         dataConfig.load();
         dataConfig.saveConfiguration(configuration);
 
-        GameContext context = new DefaultGameContext(taskRunner, id, configuration);
+        BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
+
+        GameContext context = new DefaultGameContext(collisionChecker, taskRunner, id, configuration);
 
         return context;
     }
