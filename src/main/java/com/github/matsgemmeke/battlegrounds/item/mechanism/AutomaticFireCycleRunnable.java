@@ -24,7 +24,6 @@ public class AutomaticFireCycleRunnable extends BukkitRunnable {
         shots++;
 
         firearm.shoot();
-        firearm.update();
 
         if (firearm.getMagazineAmmo() <= 0 || shots >= amountOfShots) {
             onCycleFinish.run();

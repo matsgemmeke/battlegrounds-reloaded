@@ -46,7 +46,8 @@ public class GunFactory implements WeaponFactory<Gun> {
         String name = section.getString("display-name");
         String description = section.getString("description");
 
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
+        gun.setDescription(description);
 
         // ItemStack creation
         Material material = Material.getMaterial(section.getString("item.material"));

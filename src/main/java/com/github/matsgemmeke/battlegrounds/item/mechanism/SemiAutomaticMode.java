@@ -26,7 +26,6 @@ public class SemiAutomaticMode implements FiringMode {
         }
 
         firearm.shoot();
-        firearm.update();
 
         readyToFire = false;
 

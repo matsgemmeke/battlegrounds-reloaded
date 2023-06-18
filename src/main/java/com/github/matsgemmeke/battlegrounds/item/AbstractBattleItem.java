@@ -15,7 +15,7 @@ public abstract class AbstractBattleItem implements BattleItem {
     protected BattleEntity holder;
     @Nullable
     protected ItemStack itemStack;
-    @NotNull
+    @Nullable
     protected String description;
     @NotNull
     protected String id;
@@ -25,12 +25,10 @@ public abstract class AbstractBattleItem implements BattleItem {
     public AbstractBattleItem(
             @NotNull String id,
             @NotNull String name,
-            @NotNull String description,
             @NotNull BattleContext context
     ) {
         this.id = id;
         this.name = name;
-        this.description = description;
         this.context = context;
     }
 
@@ -39,9 +37,13 @@ public abstract class AbstractBattleItem implements BattleItem {
         return context;
     }
 
-    @NotNull
+    @Nullable
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(@Nullable String description) {
+        this.description = description;
     }
 
     @Nullable

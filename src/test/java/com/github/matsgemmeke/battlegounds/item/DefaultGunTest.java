@@ -20,7 +20,6 @@ public class DefaultGunTest {
 
     private BattleContext context;
     private BattleEntity holder;
-    private String description;
     private String id;
     private String name;
 
@@ -28,14 +27,13 @@ public class DefaultGunTest {
     public void setUp() {
         this.context = mock(BattleContext.class);
         this.holder = mock(BattleEntity.class);
-        this.description = "description";
         this.id = "id";
         this.name = "name";
     }
 
     @Test
     public void executesReloadActionWhenLeftClicked() {
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.onLeftClick(holder);
     }
 
@@ -43,7 +41,7 @@ public class DefaultGunTest {
     public void executesShootActionWhenRightClicked() {
         FiringMode firingMode = mock(FiringMode.class);
 
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.setFiringMode(firingMode);
         gun.setMagazineAmmo(10);
         gun.onRightClick(holder);
@@ -58,7 +56,7 @@ public class DefaultGunTest {
 
         when(holder.getEntity()).thenReturn(entity);
 
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.setHolder(holder);
         gun.setTriggerSounds(triggerSounds);
         gun.onRightClick(holder);
@@ -91,7 +89,7 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.setHolder(holder);
         gun.setShortDamage(100.0);
         gun.setShortRange(10.0);
@@ -127,7 +125,7 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.setHolder(holder);
         gun.setMediumDamage(50.0);
         gun.setMediumRange(50.0);
@@ -163,7 +161,7 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.setHolder(holder);
         gun.setLongDamage(10.0);
         gun.setLongRange(100.0);
@@ -199,7 +197,7 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.setHeadshotDamageMultiplier(1.5);
         gun.setHolder(holder);
         gun.setShortDamage(100.0);
@@ -233,7 +231,7 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.setHolder(holder);
         gun.setShotSounds(shotSounds);
         gun.shoot();
@@ -258,7 +256,7 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.setHolder(holder);
         gun.setShotSounds(shotSounds);
         gun.shoot();
@@ -269,7 +267,7 @@ public class DefaultGunTest {
 
     @Test
     public void canNotShootProjectilesWithoutHolder() {
-        DefaultGun gun = new DefaultGun(id, name, description, context);
+        DefaultGun gun = new DefaultGun(id, name, context);
         gun.shoot();
 
         verify(context, never()).playSounds(any(), any());

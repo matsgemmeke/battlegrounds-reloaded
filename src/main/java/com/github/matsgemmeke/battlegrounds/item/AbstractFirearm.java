@@ -23,10 +23,9 @@ public abstract class AbstractFirearm extends AbstractWeapon implements Firearm 
     public AbstractFirearm(
             @NotNull String id,
             @NotNull String name,
-            @NotNull String description,
             @NotNull BattleContext context
     ) {
-        super(id, name, description, context);
+        super(id, name, context);
     }
 
     public double getAccuracy() {

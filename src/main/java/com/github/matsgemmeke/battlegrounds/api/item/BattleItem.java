@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An item used in Battlegrounds game modes.
+ * An item object used in Battlegrounds game modes.
  */
 public interface BattleItem {
 
@@ -24,8 +24,15 @@ public interface BattleItem {
      *
      * @return the item description
      */
-    @NotNull
+    @Nullable
     String getDescription();
+
+    /**
+     * Sets the description of the item.
+     *
+     * @param description the item description
+     */
+    void setDescription(@Nullable String description);
 
     /**
      * Gets the holder of the item. Returns null if the item does not have a holder.

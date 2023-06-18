@@ -9,9 +9,8 @@ public abstract class AbstractWeapon extends AbstractBattleItem implements Weapo
     public AbstractWeapon(
             @NotNull String id,
             @NotNull String name,
-            @NotNull String description,
             @NotNull BattleContext context
     ) {
-        super(id, name, description, context);
+        super(id, name, context);
     }
 }

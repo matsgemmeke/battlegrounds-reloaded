@@ -26,7 +26,6 @@ import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.FiringModeFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.GunFactory;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
-import org.apache.commons.lang.LocaleUtils;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
@@ -180,7 +179,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
 
         File langFile = getDataFolder().toPath().resolve("lang").resolve(fileName).toFile();
         InputStream resource = getResource("lang/" + fileName);
-        Locale locale = LocaleUtils.toLocale(language);
+        Locale locale = Locale.forLanguageTag(language);
 
         LanguageConfiguration languageConfiguration = new LanguageConfiguration(langFile, resource, locale);
         languageConfiguration.load();

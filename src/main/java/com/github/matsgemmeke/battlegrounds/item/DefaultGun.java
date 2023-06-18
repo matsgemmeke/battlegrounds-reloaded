@@ -23,13 +23,8 @@ public class DefaultGun extends AbstractFirearm implements Gun {
     private Iterable<BattleSound> shotSounds;
     private Iterable<BattleSound> triggerSounds;
 
-    public DefaultGun(
-            @NotNull String id,
-            @NotNull String name,
-            @NotNull String description,
-            @NotNull BattleContext context
-    ) {
-        super(id, name, description, context);
+    public DefaultGun(@NotNull String id, @NotNull String name, @NotNull BattleContext context) {
+        super(id, name, context);
     }
 
     public double getHeadshotDamageMultiplier() {
@@ -158,7 +153,7 @@ public class DefaultGun extends AbstractFirearm implements Gun {
             // Check if the projectile's current location causes a collision
             if (context.producesCollisionAt(direction)) {
                 Block block = direction.getBlock();
-                block.getWorld().playEffect(direction, Effect.STEP_SOUND, direction.getBlock().getType());
+                block.getWorld().playEffect(direction, Effect.STEP_SOUND, block.getType());
                 return;
             }
 
@@ -173,9 +168,5 @@ public class DefaultGun extends AbstractFirearm implements Gun {
 
             distance += distanceJump;
         } while (distance < longRange);
-    }
-
-    public boolean update() {
-        return false;
     }
 }
