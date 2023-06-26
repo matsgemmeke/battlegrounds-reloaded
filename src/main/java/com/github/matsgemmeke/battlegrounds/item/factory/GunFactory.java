@@ -49,15 +49,6 @@ public class GunFactory implements WeaponFactory<Gun> {
         DefaultGun gun = new DefaultGun(id, name, context);
         gun.setDescription(description);
 
-        // ItemStack creation
-        Material material = Material.getMaterial(section.getString("item.material"));
-        short durability = section.getShort("item.durability");
-
-        ItemStack itemStack = new ItemStack(material);
-        itemStack.setDurability(durability);
-
-        gun.setItemStack(itemStack);
-
         // Other variables
         double accuracy = section.getDouble("accuracy");
         gun.setAccuracy(accuracy);
@@ -72,7 +63,10 @@ public class GunFactory implements WeaponFactory<Gun> {
         gun.setRecoilAmplifier(recoilAmplifier);
 
         int magazineAmmo = section.getInt("ammo.magazine");
+        int reserveAmmo = section.getInt("ammo.supply") * magazineAmmo;
+
         gun.setMagazineAmmo(magazineAmmo);
+        gun.setReserveAmmo(reserveAmmo);
 
         double shortDamage = section.getDouble("range.short-range.damage");
         gun.setShortDamage(shortDamage);
@@ -100,6 +94,17 @@ public class GunFactory implements WeaponFactory<Gun> {
 
         List<BattleSound> triggerSounds = DefaultBattleSound.parseSounds(config.getFirearmTriggerSound());
         gun.setTriggerSounds(triggerSounds);
+
+        // ItemStack creation
+        Material material = Material.getMaterial(section.getString("item.material"));
+        short durability = section.getShort("item.durability");
+
+        ItemStack itemStack = new ItemStack(material);
+        itemStack.setDurability(durability);
+
+        // Set and update the item stack
+        gun.setItemStack(itemStack);
+        gun.update();
 
         return gun;
     }

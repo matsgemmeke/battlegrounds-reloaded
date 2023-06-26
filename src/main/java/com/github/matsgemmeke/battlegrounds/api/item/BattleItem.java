@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.api.item;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
+import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -40,14 +40,14 @@ public interface BattleItem {
      * @return the item holder or null if it does not have one
      */
     @Nullable
-    BattleEntity getHolder();
+    BattleItemHolder getHolder();
 
     /**
      * Sets the holder of the item.
      *
      * @param holder the item holder
      */
-    void setHolder(@Nullable BattleEntity holder);
+    void setHolder(@Nullable BattleItemHolder holder);
 
     /**
      * Gets the id of the item.
@@ -83,14 +83,14 @@ public interface BattleItem {
     /**
      * Handles a performed left click on the item.
      *
-     * @param battleEntity the entity who left-clicked the item
+     * @param holder the entity who left-clicked the item
      */
-    void onLeftClick(@NotNull BattleEntity battleEntity);
+    void onLeftClick(@NotNull BattleItemHolder holder);
 
     /**
      * Handles a performed right click on the item.
      *
-     * @param battleEntity the entity who right-clicked the item
+     * @param holder the entity who right-clicked the item
      */
-    void onRightClick(@NotNull BattleEntity battleEntity);
+    void onRightClick(@NotNull BattleItemHolder holder);
 }

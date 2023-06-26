@@ -31,6 +31,20 @@ public interface Firearm extends Weapon {
 //    void setMaxAmmo(int maxAmmo);
 
     /**
+     * Gets the amount of reserve ammo the firearm has available.
+     *
+     * @return the amount of reserve ammo
+     */
+    int getReserveAmmo();
+
+    /**
+     * Sets the amount of reserve ammo the firearm has available.
+     *
+     * @param reserveAmmo the amount of reserve ammo
+     */
+    void setReserveAmmo(int reserveAmmo);
+
+    /**
      * Reloads the firearm.
      */
     void reload();

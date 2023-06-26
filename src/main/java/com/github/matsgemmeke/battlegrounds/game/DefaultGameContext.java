@@ -5,10 +5,14 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.GameConfiguration;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Team;
+import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
 import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 
@@ -36,6 +40,16 @@ public class DefaultGameContext extends AbstractBattleContext implements GameCon
 
     public int getId() {
         return id;
+    }
+
+    @NotNull
+    public BattlePlayer addPlayer(@NotNull Player player) {
+        return new DefaultBattlePlayer(player);
+    }
+
+    @NotNull
+    public Iterable<BattlePlayer> getPlayers() {
+        return Collections.emptyList();
     }
 
     @NotNull

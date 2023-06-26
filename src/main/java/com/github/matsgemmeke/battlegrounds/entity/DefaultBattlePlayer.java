@@ -1,6 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.entity;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.game.Team;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +17,8 @@ public class DefaultBattlePlayer implements BattlePlayer {
     private Player player;
     @NotNull
     private Set<BattleItem> items;
+    @Nullable
+    private Team team;
 
     public DefaultBattlePlayer(@NotNull Player player) {
         this.player = player;
@@ -30,6 +33,15 @@ public class DefaultBattlePlayer implements BattlePlayer {
     @NotNull
     public Set<BattleItem> getItems() {
         return items;
+    }
+
+    @Nullable
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(@Nullable Team team) {
+        this.team = team;
     }
 
     public double damage(double damageAmount) {
@@ -54,5 +66,10 @@ public class DefaultBattlePlayer implements BattlePlayer {
             return 0.5;
         }
         return 1.0;
+    }
+
+    public boolean updateItemStack(@NotNull ItemStack itemStack) {
+        player.getInventory().setItemInMainHand(itemStack);
+        return true;
     }
 }

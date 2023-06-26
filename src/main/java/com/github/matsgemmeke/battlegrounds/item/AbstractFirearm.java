@@ -3,6 +3,7 @@ package com.github.matsgemmeke.battlegrounds.item;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import org.bukkit.Location;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,6 +102,9 @@ public abstract class AbstractFirearm extends AbstractWeapon implements Firearm 
     }
 
     @NotNull
+    protected abstract String getItemDisplayName();
+
+    @NotNull
     protected Location getShootingDirection(@NotNull Location targetDirection, double relativeAccuracy) {
         Random random = new Random();
 
@@ -117,5 +121,18 @@ public abstract class AbstractFirearm extends AbstractWeapon implements Firearm 
         shootingDirection.setDirection(new Vector(x, z, y));
 
         return shootingDirection;
+    }
+
+    public boolean update() {
+        if (itemStack == null || itemStack.getItemMeta() == null) {
+            return false;
+        }
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(this.getItemDisplayName());
+
+        itemStack.setItemMeta(itemMeta);
+
+        return holder != null && holder.updateItemStack(itemStack);
     }
 }

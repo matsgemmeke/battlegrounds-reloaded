@@ -17,14 +17,6 @@ public interface BattleEntity {
     LivingEntity getEntity();
 
     /**
-     * Gets the relative accuracy based on the state of the entity. For example, it should return 1.0 if the
-     * shooting accuracy is unaffected, 0.5 if the accuracy is worsened, 2.0 if the accuracy is improved etc.
-     *
-     * @return the relative shooting accuracy
-     */
-    double getRelativeAccuracy();
-
-    /**
      * Applies damage to the entity.
      *
      * @param damageAmount the amount of damage

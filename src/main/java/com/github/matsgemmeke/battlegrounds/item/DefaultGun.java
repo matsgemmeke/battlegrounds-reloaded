@@ -1,15 +1,13 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
+import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.entity.Hitbox;
 import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
-import org.bukkit.Color;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
@@ -20,6 +18,7 @@ public class DefaultGun extends AbstractFirearm implements Gun {
     private double headshotDamageMultiplier;
     private FiringMode firingMode;
     private int magazineAmmo;
+    private int reserveAmmo;
     private Iterable<BattleSound> shotSounds;
     private Iterable<BattleSound> triggerSounds;
 
@@ -49,6 +48,14 @@ public class DefaultGun extends AbstractFirearm implements Gun {
 
     public void setMagazineAmmo(int magazineAmmo) {
         this.magazineAmmo = magazineAmmo;
+    }
+
+    public int getReserveAmmo() {
+        return reserveAmmo;
+    }
+
+    public void setReserveAmmo(int reserveAmmo) {
+        this.reserveAmmo = reserveAmmo;
     }
 
     public Iterable<BattleSound> getShotSounds() {
@@ -93,7 +100,12 @@ public class DefaultGun extends AbstractFirearm implements Gun {
         return damage;
     }
 
-    private boolean inflictDamage(@NotNull BattleEntity holder, @NotNull Location projectileLocation) {
+    @NotNull
+    protected String getItemDisplayName() {
+        return ChatColor.WHITE + name + " " + magazineAmmo + "/" + reserveAmmo;
+    }
+
+    private boolean inflictDamage(@NotNull BattleItemHolder holder, @NotNull Location projectileLocation) {
         double range = 0.1;
 
         for (BattleEntity target : context.getTargets(holder, projectileLocation, range)) {
@@ -108,13 +120,13 @@ public class DefaultGun extends AbstractFirearm implements Gun {
         return false;
     }
 
-    public void onLeftClick(@NotNull BattleEntity battleEntity) {
+    public void onLeftClick(@NotNull BattleItemHolder holder) {
         this.reload();
     }
 
-    public void onRightClick(@NotNull BattleEntity battleEntity) {
+    public void onRightClick(@NotNull BattleItemHolder holder) {
         if (magazineAmmo <= 0) {
-            context.playSounds(triggerSounds, battleEntity.getEntity().getLocation());
+            context.playSounds(triggerSounds, holder.getEntity().getLocation());
             return;
         }
 
@@ -138,7 +150,7 @@ public class DefaultGun extends AbstractFirearm implements Gun {
         this.shootProjectile(holder, shootingDirection);
     }
 
-    private void shootProjectile(@NotNull BattleEntity holder, @NotNull Location direction) {
+    private void shootProjectile(@NotNull BattleItemHolder holder, @NotNull Location direction) {
         magazineAmmo--;
 
         context.playSounds(shotSounds, direction);
@@ -154,12 +166,12 @@ public class DefaultGun extends AbstractFirearm implements Gun {
             if (context.producesCollisionAt(direction)) {
                 Block block = direction.getBlock();
                 block.getWorld().playEffect(direction, Effect.STEP_SOUND, block.getType());
-                return;
+                break;
             }
 
             // Check if the projectile has hit an enemy entity
             if (this.inflictDamage(holder, direction)) {
-                return;
+                break;
             }
 
             this.displayParticle(direction);
@@ -168,5 +180,7 @@ public class DefaultGun extends AbstractFirearm implements Gun {
 
             distance += distanceJump;
         } while (distance < longRange);
+
+        this.update();
     }
 }

@@ -1,6 +1,7 @@
 package com.github.matsgemmeke.battlegounds.item;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
+import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.item.DefaultGun;
@@ -19,14 +20,14 @@ import static org.mockito.Mockito.*;
 public class DefaultGunTest {
 
     private BattleContext context;
-    private BattleEntity holder;
+    private BattleItemHolder holder;
     private String id;
     private String name;
 
     @Before
     public void setUp() {
         this.context = mock(BattleContext.class);
-        this.holder = mock(BattleEntity.class);
+        this.holder = mock(BattleItemHolder.class);
         this.id = "id";
         this.name = "name";
     }

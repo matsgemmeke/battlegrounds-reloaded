@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * A player object which holds information and can perform actions in Battlegrounds.
  */
-public interface BattlePlayer extends BattleEntity {
+public interface BattlePlayer extends BattleEntity, BattleItemHolder {
 
     /**
      * Gets the {@link Player} entity of the object.

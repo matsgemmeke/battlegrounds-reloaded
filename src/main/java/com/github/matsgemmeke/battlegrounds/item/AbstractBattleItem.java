@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
+import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +12,7 @@ public abstract class AbstractBattleItem implements BattleItem {
     @NotNull
     protected BattleContext context;
     @Nullable
-    protected BattleEntity holder;
+    protected BattleItemHolder holder;
     @Nullable
     protected ItemStack itemStack;
     @Nullable
@@ -47,11 +47,11 @@ public abstract class AbstractBattleItem implements BattleItem {
     }
 
     @Nullable
-    public BattleEntity getHolder() {
+    public BattleItemHolder getHolder() {
         return holder;
     }
 
-    public void setHolder(@Nullable BattleEntity holder) {
+    public void setHolder(@Nullable BattleItemHolder holder) {
         this.holder = holder;
     }
 

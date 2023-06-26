@@ -5,11 +5,13 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
+import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
 import com.github.matsgemmeke.battlegrounds.entity.FreemodeEntity;
 import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -21,8 +23,26 @@ import java.util.List;
 
 public class DefaultFreemodeContext extends AbstractBattleContext implements FreemodeContext {
 
+    @NotNull
+    private List<BattlePlayer> players;
+
     public DefaultFreemodeContext(@NotNull BlockCollisionChecker collisionChecker, @NotNull TaskRunner taskRunner) {
         super(collisionChecker, taskRunner);
+        this.players = new ArrayList<>();
+    }
+
+    @NotNull
+    public BattlePlayer addPlayer(@NotNull Player player) {
+        BattlePlayer battlePlayer = new DefaultBattlePlayer(player);
+
+        players.add(battlePlayer);
+
+        return battlePlayer;
+    }
+
+    @NotNull
+    public List<BattlePlayer> getPlayers() {
+        return players;
     }
 
     @NotNull

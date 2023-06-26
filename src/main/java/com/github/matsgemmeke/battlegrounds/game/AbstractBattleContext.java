@@ -4,43 +4,30 @@ import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
-import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
 import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class AbstractBattleContext implements BattleContext {
 
     @NotNull
     private BlockCollisionChecker collisionChecker;
-    @NotNull
-    private List<BattlePlayer> players;
     @NotNull
     private TaskRunner taskRunner;
 
     public AbstractBattleContext(@NotNull BlockCollisionChecker collisionChecker, @NotNull TaskRunner taskRunner) {
         this.collisionChecker = collisionChecker;
         this.taskRunner = taskRunner;
-        this.players = new ArrayList<>();
     }
 
     @NotNull
-    public BattlePlayer addPlayer(@NotNull Player player) {
-        BattlePlayer battlePlayer = new DefaultBattlePlayer(player);
-
-        players.add(battlePlayer);
-
-        return battlePlayer;
-    }
+    public abstract Iterable<BattlePlayer> getPlayers();
 
     @Nullable
     public BattlePlayer getBattlePlayer(@NotNull Player player) {
-        for (BattlePlayer battlePlayer : players) {
+        for (BattlePlayer battlePlayer : this.getPlayers()) {
             if (battlePlayer.getEntity() == player) {
                 return battlePlayer;
             }
@@ -69,7 +56,7 @@ public abstract class AbstractBattleContext implements BattleContext {
     }
 
     private void playSoundToAllPlayers(@NotNull BattleSound sound, @NotNull Location location) {
-        for (BattlePlayer battlePlayer : players) {
+        for (BattlePlayer battlePlayer : this.getPlayers()) {
             Player player = battlePlayer.getEntity();
             player.playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
         }
