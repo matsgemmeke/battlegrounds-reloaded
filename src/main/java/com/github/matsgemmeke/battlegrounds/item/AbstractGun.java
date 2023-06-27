@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
-import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
+import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.bukkit.Location;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public abstract class AbstractFirearm extends AbstractWeapon implements Firearm {
+public abstract class AbstractGun extends AbstractWeapon implements Gun {
 
     protected double accuracy;
     protected double damageAmplifier;
@@ -21,7 +21,7 @@ public abstract class AbstractFirearm extends AbstractWeapon implements Firearm 
     protected double shortDamage;
     protected double shortRange;
 
-    public AbstractFirearm(
+    public AbstractGun(
             @NotNull String id,
             @NotNull String name,
             @NotNull BattleContext context

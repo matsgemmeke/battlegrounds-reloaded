@@ -3,10 +3,10 @@ package com.github.matsgemmeke.battlegrounds.item.factory;
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
-import com.github.matsgemmeke.battlegrounds.api.item.Gun;
+import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.game.DefaultBattleSound;
-import com.github.matsgemmeke.battlegrounds.item.DefaultGun;
+import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Material;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GunFactory implements WeaponFactory<Gun> {
+public class FirearmFactory implements WeaponFactory<Firearm> {
 
     @NotNull
     private BattlegroundsConfig config;
@@ -24,7 +24,7 @@ public class GunFactory implements WeaponFactory<Gun> {
     @NotNull
     private FiringModeFactory firingModeFactory;
 
-    public GunFactory(
+    public FirearmFactory(
             @NotNull BattlegroundsConfig config,
             @NotNull BattleItemConfiguration itemConfiguration,
             @NotNull FiringModeFactory firingModeFactory
@@ -35,7 +35,7 @@ public class GunFactory implements WeaponFactory<Gun> {
     }
 
     @NotNull
-    public Gun make(@NotNull BattleContext context, @NotNull String id) {
+    public Firearm make(@NotNull BattleContext context, @NotNull String id) {
         Section section = itemConfiguration.getSection(id);
 
         if (section == null) {
@@ -46,54 +46,54 @@ public class GunFactory implements WeaponFactory<Gun> {
         String name = section.getString("display-name");
         String description = section.getString("description");
 
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.setDescription(description);
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setDescription(description);
 
         // Other variables
         double accuracy = section.getDouble("accuracy");
-        gun.setAccuracy(accuracy);
+        firearm.setAccuracy(accuracy);
 
         double damageAmplifier = config.getFirearmDamageAmplifier();
-        gun.setDamageAmplifier(damageAmplifier);
+        firearm.setDamageAmplifier(damageAmplifier);
 
         double headshotDamageMultiplier = section.getDouble("headshot-damage-multiplier");
-        gun.setHeadshotDamageMultiplier(headshotDamageMultiplier);
+        firearm.setHeadshotDamageMultiplier(headshotDamageMultiplier);
 
         double recoilAmplifier = config.getFirearmRecoilAmplifier();
-        gun.setRecoilAmplifier(recoilAmplifier);
+        firearm.setRecoilAmplifier(recoilAmplifier);
 
         int magazineAmmo = section.getInt("ammo.magazine");
         int reserveAmmo = section.getInt("ammo.supply") * magazineAmmo;
 
-        gun.setMagazineAmmo(magazineAmmo);
-        gun.setReserveAmmo(reserveAmmo);
+        firearm.setMagazineAmmo(magazineAmmo);
+        firearm.setReserveAmmo(reserveAmmo);
 
         double shortDamage = section.getDouble("range.short-range.damage");
-        gun.setShortDamage(shortDamage);
+        firearm.setShortDamage(shortDamage);
 
         double shortRange = section.getDouble("range.short-range.distance");
-        gun.setShortRange(shortRange);
+        firearm.setShortRange(shortRange);
 
         double mediumDamage = section.getDouble("range.medium-range.damage");
-        gun.setMediumDamage(mediumDamage);
+        firearm.setMediumDamage(mediumDamage);
 
         double mediumRange = section.getDouble("range.medium-range.distance");
-        gun.setMediumRange(mediumRange);
+        firearm.setMediumRange(mediumRange);
 
         double longDamage = section.getDouble("range.long-range.damage");
-        gun.setLongDamage(longDamage);
+        firearm.setLongDamage(longDamage);
 
         double longRange = section.getDouble("range.long-range.distance");
-        gun.setLongRange(longRange);
+        firearm.setLongRange(longRange);
 
-        FiringMode firingMode = firingModeFactory.make(gun, section.getSection("firing-mode"));
-        gun.setFiringMode(firingMode);
+        FiringMode firingMode = firingModeFactory.make(firearm, section.getSection("firing-mode"));
+        firearm.setFiringMode(firingMode);
 
         List<BattleSound> shotSounds = DefaultBattleSound.parseSounds(section.getString("sound.shot-sound"));
-        gun.setShotSounds(shotSounds);
+        firearm.setShotSounds(shotSounds);
 
         List<BattleSound> triggerSounds = DefaultBattleSound.parseSounds(config.getFirearmTriggerSound());
-        gun.setTriggerSounds(triggerSounds);
+        firearm.setTriggerSounds(triggerSounds);
 
         // ItemStack creation
         Material material = Material.getMaterial(section.getString("item.material"));
@@ -103,9 +103,9 @@ public class GunFactory implements WeaponFactory<Gun> {
         itemStack.setDurability(durability);
 
         // Set and update the item stack
-        gun.setItemStack(itemStack);
-        gun.update();
+        firearm.setItemStack(itemStack);
+        firearm.update();
 
-        return gun;
+        return firearm;
     }
 }

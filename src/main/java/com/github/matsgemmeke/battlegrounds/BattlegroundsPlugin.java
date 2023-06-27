@@ -23,8 +23,8 @@ import com.github.matsgemmeke.battlegrounds.game.DefaultFreemodeContext;
 import com.github.matsgemmeke.battlegrounds.game.GameContextFactory;
 import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
+import com.github.matsgemmeke.battlegrounds.item.factory.FirearmFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.FiringModeFactory;
-import com.github.matsgemmeke.battlegrounds.item.factory.GunFactory;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -83,16 +83,16 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
 
         this.setUpTaskRunner();
 
-        File firearmConfigFile = new File(configFolder.getPath() + "/items/firearms.yml");
+        File gunConfigFile = new File(configFolder.getPath() + "/items/guns.yml");
 
-        BattleItemConfiguration firearmsConfiguration = new BattleItemConfiguration(firearmConfigFile, this.getResource("items/firearms.yml"));
-        firearmsConfiguration.load();
+        BattleItemConfiguration gunsConfiguration = new BattleItemConfiguration(gunConfigFile, this.getResource("items/guns.yml"));
+        gunsConfiguration.load();
 
         FiringModeFactory firingModeFactory = new FiringModeFactory(taskRunner);
-        GunFactory gunFactory = new GunFactory(config, firearmsConfiguration, firingModeFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, gunsConfiguration, firingModeFactory);
 
         weaponProvider = new WeaponProvider();
-        weaponProvider.addWeaponFactory(firearmsConfiguration, gunFactory);
+        weaponProvider.addWeaponFactory(gunsConfiguration, firearmFactory);
 
         this.setUpFreemode();
         this.setUpEvents();

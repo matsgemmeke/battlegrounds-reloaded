@@ -4,7 +4,7 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
-import com.github.matsgemmeke.battlegrounds.item.DefaultGun;
+import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class DefaultGunTest {
+public class DefaultFirearmTest {
 
     private BattleContext context;
     private BattleItemHolder holder;
@@ -34,18 +34,18 @@ public class DefaultGunTest {
 
     @Test
     public void executesReloadActionWhenLeftClicked() {
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.onLeftClick(holder);
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.onLeftClick(holder);
     }
 
     @Test
     public void executesShootActionWhenRightClicked() {
         FiringMode firingMode = mock(FiringMode.class);
 
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.setFiringMode(firingMode);
-        gun.setMagazineAmmo(10);
-        gun.onRightClick(holder);
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setFiringMode(firingMode);
+        firearm.setMagazineAmmo(10);
+        firearm.onRightClick(holder);
 
         verify(firingMode).activate();
     }
@@ -57,10 +57,10 @@ public class DefaultGunTest {
 
         when(holder.getEntity()).thenReturn(entity);
 
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.setHolder(holder);
-        gun.setTriggerSounds(triggerSounds);
-        gun.onRightClick(holder);
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setHolder(holder);
+        firearm.setTriggerSounds(triggerSounds);
+        firearm.onRightClick(holder);
 
         verify(context).playSounds(eq(triggerSounds), any(Location.class));
     }
@@ -90,12 +90,12 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.setHolder(holder);
-        gun.setShortDamage(100.0);
-        gun.setShortRange(10.0);
-        gun.setShotSounds(shotSounds);
-        gun.shoot();
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setHolder(holder);
+        firearm.setShortDamage(100.0);
+        firearm.setShortRange(10.0);
+        firearm.setShotSounds(shotSounds);
+        firearm.shoot();
 
         verify(context).playSounds(eq(shotSounds), any(Location.class));
         verify(target).damage(100.0);
@@ -126,12 +126,12 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.setHolder(holder);
-        gun.setMediumDamage(50.0);
-        gun.setMediumRange(50.0);
-        gun.setShotSounds(shotSounds);
-        gun.shoot();
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setHolder(holder);
+        firearm.setMediumDamage(50.0);
+        firearm.setMediumRange(50.0);
+        firearm.setShotSounds(shotSounds);
+        firearm.shoot();
 
         verify(context).playSounds(eq(shotSounds), any(Location.class));
         verify(target).damage(50.0);
@@ -162,12 +162,12 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.setHolder(holder);
-        gun.setLongDamage(10.0);
-        gun.setLongRange(100.0);
-        gun.setShotSounds(shotSounds);
-        gun.shoot();
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setHolder(holder);
+        firearm.setLongDamage(10.0);
+        firearm.setLongRange(100.0);
+        firearm.setShotSounds(shotSounds);
+        firearm.shoot();
 
         verify(context).playSounds(eq(shotSounds), any(Location.class));
         verify(target).damage(10.0);
@@ -198,13 +198,13 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.setHeadshotDamageMultiplier(1.5);
-        gun.setHolder(holder);
-        gun.setShortDamage(100.0);
-        gun.setShortRange(10.0);
-        gun.setShotSounds(shotSounds);
-        gun.shoot();
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setHeadshotDamageMultiplier(1.5);
+        firearm.setHolder(holder);
+        firearm.setShortDamage(100.0);
+        firearm.setShortRange(10.0);
+        firearm.setShotSounds(shotSounds);
+        firearm.shoot();
 
         verify(context).playSounds(eq(shotSounds), any(Location.class));
         verify(target).damage(150.0);
@@ -232,10 +232,10 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.setHolder(holder);
-        gun.setShotSounds(shotSounds);
-        gun.shoot();
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setHolder(holder);
+        firearm.setShotSounds(shotSounds);
+        firearm.shoot();
 
         verify(context).playSounds(eq(shotSounds), any(Location.class));
         verify(world).playEffect(any(), eq(Effect.STEP_SOUND), eq(Material.STONE));
@@ -257,10 +257,10 @@ public class DefaultGunTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.setHolder(holder);
-        gun.setShotSounds(shotSounds);
-        gun.shoot();
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setHolder(holder);
+        firearm.setShotSounds(shotSounds);
+        firearm.shoot();
 
         verify(context).playSounds(eq(shotSounds), any(Location.class));
         verify(world).spawnParticle(eq(Particle.REDSTONE), any(), eq(1), eq(0.0), eq(0.0), eq(0.0), eq(0.0), any());
@@ -268,8 +268,8 @@ public class DefaultGunTest {
 
     @Test
     public void canNotShootProjectilesWithoutHolder() {
-        DefaultGun gun = new DefaultGun(id, name, context);
-        gun.shoot();
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.shoot();
 
         verify(context, never()).playSounds(any(), any());
     }

@@ -1,21 +1,21 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanism;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
+import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.jetbrains.annotations.NotNull;
 
 public class FullyAutomaticMode implements FiringMode {
 
     private boolean readyToFire;
     @NotNull
-    private Firearm firearm;
+    private Gun gun;
     private int rateOfFire;
     @NotNull
     private TaskRunner taskRunner;
 
-    public FullyAutomaticMode(@NotNull TaskRunner taskRunner, @NotNull Firearm firearm, int rateOfFire) {
+    public FullyAutomaticMode(@NotNull TaskRunner taskRunner, @NotNull Gun gun, int rateOfFire) {
         this.taskRunner = taskRunner;
-        this.firearm = firearm;
+        this.gun = gun;
         this.rateOfFire = rateOfFire;
         this.readyToFire = true;
     }
@@ -39,6 +39,6 @@ public class FullyAutomaticMode implements FiringMode {
         long period = interactionsInterval / amountOfRounds;
         long delay = 0;
 
-        taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(firearm, amountOfRounds, () -> readyToFire = true), delay, period);
+        taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(gun, amountOfRounds, () -> readyToFire = true), delay, period);
     }
 }

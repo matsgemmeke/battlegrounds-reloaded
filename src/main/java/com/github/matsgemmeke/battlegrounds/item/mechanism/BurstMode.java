@@ -1,22 +1,22 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanism;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
+import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.jetbrains.annotations.NotNull;
 
 public class BurstMode implements FiringMode {
 
     private boolean readyToFire;
     @NotNull
-    private Firearm firearm;
+    private Gun gun;
     private int rateOfFire;
     private int shotAmount;
     @NotNull
     private TaskRunner taskRunner;
 
-    public BurstMode(@NotNull TaskRunner taskRunner, @NotNull Firearm firearm, int shotAmount, int rateOfFire) {
+    public BurstMode(@NotNull TaskRunner taskRunner, @NotNull Gun gun, int shotAmount, int rateOfFire) {
         this.taskRunner = taskRunner;
-        this.firearm = firearm;
+        this.gun = gun;
         this.shotAmount = shotAmount;
         this.rateOfFire = rateOfFire;
         this.readyToFire = true;
@@ -36,6 +36,6 @@ public class BurstMode implements FiringMode {
         long period = ticksPerSecond / shotsPerSecond;
         long delay = 0;
 
-        taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(firearm, shotAmount, () -> readyToFire = true), delay, period);
+        taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(gun, shotAmount, () -> readyToFire = true), delay, period);
     }
 }

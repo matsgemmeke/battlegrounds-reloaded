@@ -1,4 +1,56 @@
 package com.github.matsgemmeke.battlegrounds.api.item;
 
-public interface Gun extends Firearm {
+public interface Gun extends Weapon {
+
+    /**
+     * Gets the amount of ammo in the magazine of the gun.
+     *
+     * @return the magazine ammo
+     */
+    int getMagazineAmmo();
+
+    /**
+     * Sets the amount of ammo in the magazine of the gun.
+     *
+     * @param magazineAmmo the magazine ammo
+     */
+    void setMagazineAmmo(int magazineAmmo);
+
+//    /**
+//     * Gets the maximum amount of ammo a player can carry along with the gun.
+//     *
+//     * @return the maximum amount of ammo
+//     */
+//    int getMaxAmmo();
+//
+//    /**
+//     * Sets the maximum amount of ammo a player can carry along with the gun.
+//     *
+//     * @param maxAmmo the maximum amount of ammo
+//     */
+//    void setMaxAmmo(int maxAmmo);
+
+    /**
+     * Gets the amount of reserve ammo the gun has available.
+     *
+     * @return the amount of reserve ammo
+     */
+    int getReserveAmmo();
+
+    /**
+     * Sets the amount of reserve ammo the gun has available.
+     *
+     * @param reserveAmmo the amount of reserve ammo
+     */
+    void setReserveAmmo(int reserveAmmo);
+
+    /**
+     * Reloads the gun.
+     */
+    void reload();
+
+    /**
+     * Makes the gun shoot one of its projectiles.
+     */
+    void shoot();
 }

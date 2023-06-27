@@ -23,14 +23,14 @@ public class BattleItemConfigurationTest {
 
     @Before
     public void setUp() throws IOException {
-        this.configFile = folder.newFile("firearms.yml");
+        this.configFile = folder.newFile("guns.yml");
 
         configFile.delete();
     }
 
     @Test
     public void canGetAllItemIds() throws IOException {
-        File resourceFile = new File("src/main/resources/items/firearms.yml");
+        File resourceFile = new File("src/main/resources/items/guns.yml");
         InputStream resource = new FileInputStream(resourceFile);
 
         BattleItemConfiguration configuration = new BattleItemConfiguration(configFile, resource);

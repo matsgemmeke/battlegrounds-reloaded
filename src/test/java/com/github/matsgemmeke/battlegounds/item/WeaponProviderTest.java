@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegounds.item;
 
-import com.github.matsgemmeke.battlegrounds.api.item.Gun;
+import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.WeaponFactory;
@@ -16,13 +16,13 @@ import static org.mockito.Mockito.*;
 public class WeaponProviderTest {
 
     private BattleItemConfiguration configuration;
-    private WeaponFactory<Gun> weaponFactory;
+    private WeaponFactory<Firearm> weaponFactory;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
         this.configuration = mock(BattleItemConfiguration.class);
-        this.weaponFactory = (WeaponFactory<Gun>) mock(WeaponFactory.class);
+        this.weaponFactory = (WeaponFactory<Firearm>) mock(WeaponFactory.class);
     }
 
     @Test

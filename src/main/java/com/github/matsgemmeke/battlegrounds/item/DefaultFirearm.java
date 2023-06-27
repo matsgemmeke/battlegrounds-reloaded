@@ -4,7 +4,7 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
-import com.github.matsgemmeke.battlegrounds.api.item.Gun;
+import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.entity.Hitbox;
 import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
 import org.bukkit.*;
@@ -13,7 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public class DefaultGun extends AbstractFirearm implements Gun {
+public class DefaultFirearm extends AbstractGun implements Firearm {
 
     private double headshotDamageMultiplier;
     private FiringMode firingMode;
@@ -22,7 +22,7 @@ public class DefaultGun extends AbstractFirearm implements Gun {
     private Iterable<BattleSound> shotSounds;
     private Iterable<BattleSound> triggerSounds;
 
-    public DefaultGun(@NotNull String id, @NotNull String name, @NotNull BattleContext context) {
+    public DefaultFirearm(@NotNull String id, @NotNull String name, @NotNull BattleContext context) {
         super(id, name, context);
     }
 

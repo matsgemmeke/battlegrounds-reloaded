@@ -1,20 +1,20 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanism;
 
-import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
+import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 public class AutomaticFireCycleRunnable extends BukkitRunnable {
 
     @NotNull
-    private Firearm firearm;
+    private Gun gun;
     private int amountOfShots;
     private int shots;
     @NotNull
     private Procedure onCycleFinish;
 
-    public AutomaticFireCycleRunnable(@NotNull Firearm firearm, int amountOfShots, @NotNull Procedure onCycleFinish) {
-        this.firearm = firearm;
+    public AutomaticFireCycleRunnable(@NotNull Gun gun, int amountOfShots, @NotNull Procedure onCycleFinish) {
+        this.gun = gun;
         this.amountOfShots = amountOfShots;
         this.onCycleFinish = onCycleFinish;
         this.shots = 0;
@@ -23,9 +23,9 @@ public class AutomaticFireCycleRunnable extends BukkitRunnable {
     public void run() {
         shots++;
 
-        firearm.shoot();
+        gun.shoot();
 
-        if (firearm.getMagazineAmmo() <= 0 || shots >= amountOfShots) {
+        if (gun.getMagazineAmmo() <= 0 || shots >= amountOfShots) {
             onCycleFinish.run();
             this.cancel();
         }

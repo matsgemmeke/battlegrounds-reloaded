@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegounds.command;
 
 import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
-import com.github.matsgemmeke.battlegrounds.api.item.Gun;
+import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.command.GiveWeaponCommand;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
@@ -43,11 +43,11 @@ public class GiveWeaponCommandTest {
     public void givesPlayerTheGivenWeapon() {
         String weaponId = "TEST";
 
-        Gun gun = mock(Gun.class);
-        when(gun.getName()).thenReturn("TEST");
+        Firearm firearm = mock(Firearm.class);
+        when(firearm.getName()).thenReturn("TEST");
 
-        WeaponFactory<Gun> weaponFactory = (WeaponFactory<Gun>) mock(WeaponFactory.class);
-        when(weaponFactory.make(freemodeContext, weaponId)).thenReturn(gun);
+        WeaponFactory<Firearm> weaponFactory = (WeaponFactory<Firearm>) mock(WeaponFactory.class);
+        when(weaponFactory.make(freemodeContext, weaponId)).thenReturn(firearm);
 
         when(weaponProvider.getWeaponFactory(weaponId)).thenAnswer(mock -> weaponFactory);
 

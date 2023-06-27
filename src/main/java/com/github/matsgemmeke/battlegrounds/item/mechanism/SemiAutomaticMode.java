@@ -1,21 +1,21 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanism;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
+import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.jetbrains.annotations.NotNull;
 
 public class SemiAutomaticMode implements FiringMode {
 
     private boolean readyToFire;
     @NotNull
-    private Firearm firearm;
+    private Gun gun;
     private long cooldown;
     @NotNull
     private TaskRunner taskRunner;
 
-    public SemiAutomaticMode(@NotNull TaskRunner taskRunner, @NotNull Firearm firearm, long cooldown) {
+    public SemiAutomaticMode(@NotNull TaskRunner taskRunner, @NotNull Gun gun, long cooldown) {
         this.taskRunner = taskRunner;
-        this.firearm = firearm;
+        this.gun = gun;
         this.cooldown = cooldown;
         this.readyToFire = true;
     }
@@ -25,7 +25,7 @@ public class SemiAutomaticMode implements FiringMode {
             return;
         }
 
-        firearm.shoot();
+        gun.shoot();
 
         readyToFire = false;
 

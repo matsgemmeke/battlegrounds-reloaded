@@ -2,10 +2,10 @@ package com.github.matsgemmeke.battlegounds.item.factory;
 
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
-import com.github.matsgemmeke.battlegrounds.api.item.Gun;
+import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
+import com.github.matsgemmeke.battlegrounds.item.factory.FirearmFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.FiringModeFactory;
-import com.github.matsgemmeke.battlegrounds.item.factory.GunFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.InvalidBattleItemFormatException;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Bukkit;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Bukkit.class)
-public class GunFactoryTest {
+public class FirearmFactoryTest {
 
     private BattleContext context;
     private BattlegroundsConfig config;
@@ -42,27 +42,27 @@ public class GunFactoryTest {
     }
 
     @Test
-    public void canCreateGunFromConfiguration() {
+    public void canCreateFirearmFromConfiguration() {
         Section section = mock(Section.class);
         when(section.getString("description")).thenReturn("test");
         when(section.getString("display-name")).thenReturn("test");
         when(section.getString("item.material")).thenReturn("IRON_HOE");
         when(section.getString("sound.shot-sound")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
 
-        String gunId = "test";
+        String firearmId = "test";
 
         when(config.getFirearmTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
-        when(itemConfiguration.getSection(gunId)).thenReturn(section);
+        when(itemConfiguration.getSection(firearmId)).thenReturn(section);
 
-        GunFactory gunFactory = new GunFactory(config, itemConfiguration, firingModeFactory);
-        Gun gun = gunFactory.make(context, gunId);
+        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, firingModeFactory);
+        Firearm firearm = firearmFactory.make(context, firearmId);
 
-        assertNotNull(gun);
+        assertNotNull(firearm);
     }
 
     @Test(expected = InvalidBattleItemFormatException.class)
     public void returnsErrorWhenConfigurationDoesNotHaveWeaponId() {
-        GunFactory gunFactory = new GunFactory(config, itemConfiguration, firingModeFactory);
-        gunFactory.make(context,"unknown");
+        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, firingModeFactory);
+        firearmFactory.make(context,"unknown");
     }
 }

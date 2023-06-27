@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.item.factory;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
+import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.item.mechanism.*;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.jetbrains.annotations.NotNull;
@@ -21,12 +21,12 @@ public class FiringModeFactory {
     /**
      * Creates a new {@link FiringMode} instance based on configuration values.
      *
-     * @param firearm the associated firearm
+     * @param gun the associated gun
      * @param section the configuration section
      * @return a new {@link FiringMode} instance
      */
     @NotNull
-    public FiringMode make(@NotNull Firearm firearm, @NotNull Section section) {
+    public FiringMode make(@NotNull Gun gun, @NotNull Section section) {
         String type = section.getString("type");
         FiringModeType firingModeType;
 
@@ -41,12 +41,12 @@ public class FiringModeFactory {
         switch (firingModeType) {
             case BURST_MODE:
                 int shotAmount = section.getInt("shots");
-                return new BurstMode(taskRunner, firearm, shotAmount, rateOfFire);
+                return new BurstMode(taskRunner, gun, shotAmount, rateOfFire);
             case FULLY_AUTOMATIC:
-                return new FullyAutomaticMode(taskRunner, firearm, rateOfFire);
+                return new FullyAutomaticMode(taskRunner, gun, rateOfFire);
             case SEMI_AUTOMATIC:
                 long cooldown = section.getLong("cooldown");
-                return new SemiAutomaticMode(taskRunner, firearm, cooldown);
+                return new SemiAutomaticMode(taskRunner, gun, cooldown);
         }
 
         throw new WeaponFactoryCreationException("Invalid firing mode type \"" + type + "\"");
