@@ -3,6 +3,7 @@ package com.github.matsgemmeke.battlegounds.event.listener;
 import com.github.matsgemmeke.battlegrounds.event.EventDispatcher;
 import com.github.matsgemmeke.battlegrounds.event.listener.EventListener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +25,16 @@ public class EventListenerTest {
 
         EventListener eventListener = new EventListener(eventDispatcher);
         eventListener.onPlayerInteract(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
+    }
+
+    @Test
+    public void callsEventDispatcherUponHandlingPlayerItemHeldEvent() {
+        PlayerItemHeldEvent event = mock(PlayerItemHeldEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onPlayerItemHeld(event);
 
         verify(eventDispatcher).dispatchInternalEvent(event);
     }

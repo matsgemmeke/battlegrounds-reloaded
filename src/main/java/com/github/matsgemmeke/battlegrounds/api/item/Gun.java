@@ -16,6 +16,20 @@ public interface Gun extends Weapon {
      */
     void setMagazineAmmo(int magazineAmmo);
 
+    /**
+     * Gets the amount of ammo in the magazines of the gun.
+     *
+     * @return the magazine size
+     */
+    int getMagazineSize();
+
+    /**
+     * Sets the amount of ammo in the magazines of the gun.
+     *
+     * @param magazineSize the magazine size
+     */
+    void setMagazineSize(int magazineSize);
+
 //    /**
 //     * Gets the maximum amount of ammo a player can carry along with the gun.
 //     *
@@ -45,12 +59,30 @@ public interface Gun extends Weapon {
     void setReserveAmmo(int reserveAmmo);
 
     /**
-     * Reloads the gun.
+     * Gets whether the gun is currently being reloaded.
+     *
+     * @return whether the gun is reloading
      */
-    void reload();
+    boolean isReloading();
+
+    /**
+     * Sets whether the gun is currently being reloaded.
+     *
+     * @param reloading whether the gun is reloading
+     */
+    void setReloading(boolean reloading);
+
+    /**
+     * Reloads the gun.
+     *
+     * @return whether the gun was reloaded
+     */
+    boolean reload();
 
     /**
      * Makes the gun shoot one of its projectiles.
+     *
+     * @return whether the gun has shot
      */
-    void shoot();
+    boolean shoot();
 }

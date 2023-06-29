@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +20,11 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onPlayerInteract(@NotNull PlayerInteractEvent event) {
+        this.dispatchEvent(event);
+    }
+
+    @EventHandler
+    public void onPlayerItemHeld(@NotNull PlayerItemHeldEvent event) {
         this.dispatchEvent(event);
     }
 

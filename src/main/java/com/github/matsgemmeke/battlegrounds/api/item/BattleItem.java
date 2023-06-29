@@ -81,6 +81,13 @@ public interface BattleItem {
     String getName();
 
     /**
+     * Handles a performed held item change action on the item.
+     *
+     * @param holder the entity who changed the held item
+     */
+    void onChangeHeldItem(@NotNull BattleItemHolder holder);
+
+    /**
      * Handles a performed left click on the item.
      *
      * @param holder the entity who left-clicked the item

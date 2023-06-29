@@ -2,11 +2,10 @@ package com.github.matsgemmeke.battlegrounds.api.game;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
-import com.github.matsgemmeke.battlegrounds.api.item.Weapon;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,10 +55,19 @@ public interface BattleContext {
      * Executes logic that handles item interactions by players.
      *
      * @param battlePlayer the player
-     * @param event the interaction event
-     * @return whether the context has accepted the interaction
+     * @param event the event
+     * @return whether the context has accepted the event
      */
     boolean onInteract(@NotNull BattlePlayer battlePlayer, @NotNull PlayerInteractEvent event);
+
+    /**
+     * Executes logic that handles switching of held items by players.
+     *
+     * @param battlePlayer the player
+     * @param event the event
+     * @return whether the context has accepted the event
+     */
+    boolean onItemHeld(@NotNull BattlePlayer battlePlayer, @NotNull PlayerItemHeldEvent event);
 
     /**
      * Plays a {@link BattleSound} for all players in the context.

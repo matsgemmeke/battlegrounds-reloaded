@@ -1,6 +1,5 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
-import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.game.GameConfiguration;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.configuration.GameDataConfiguration;
@@ -16,11 +15,8 @@ public class GameContextFactory {
 
     @NotNull
     private File dataDirectory;
-    @NotNull
-    private TaskRunner taskRunner;
 
-    public GameContextFactory(@NotNull TaskRunner taskRunner, @NotNull File dataDirectory) {
-        this.taskRunner = taskRunner;
+    public GameContextFactory(@NotNull File dataDirectory) {
         this.dataDirectory = dataDirectory;
     }
 
@@ -40,7 +36,7 @@ public class GameContextFactory {
 
         BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
 
-        GameContext context = new DefaultGameContext(collisionChecker, taskRunner, id, configuration);
+        GameContext context = new DefaultGameContext(collisionChecker, id, configuration);
 
         return context;
     }

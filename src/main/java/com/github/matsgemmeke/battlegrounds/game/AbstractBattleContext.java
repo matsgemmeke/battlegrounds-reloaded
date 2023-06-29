@@ -1,6 +1,5 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
-import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
@@ -14,12 +13,9 @@ public abstract class AbstractBattleContext implements BattleContext {
 
     @NotNull
     private BlockCollisionChecker collisionChecker;
-    @NotNull
-    private TaskRunner taskRunner;
 
-    public AbstractBattleContext(@NotNull BlockCollisionChecker collisionChecker, @NotNull TaskRunner taskRunner) {
+    public AbstractBattleContext(@NotNull BlockCollisionChecker collisionChecker) {
         this.collisionChecker = collisionChecker;
-        this.taskRunner = taskRunner;
     }
 
     @NotNull
@@ -40,25 +36,15 @@ public abstract class AbstractBattleContext implements BattleContext {
     }
 
     public void playSound(@NotNull BattleSound sound, @NotNull Location location) {
-        long delay = sound.getDelay();
-
-        if (delay > 0) {
-            taskRunner.runTaskLater(() -> this.playSoundToAllPlayers(sound, location), delay);
-        } else {
-            this.playSoundToAllPlayers(sound, location);
+        for (BattlePlayer battlePlayer : this.getPlayers()) {
+            Player player = battlePlayer.getEntity();
+            player.playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
         }
     }
 
     public void playSounds(@NotNull Iterable<BattleSound> sounds, @NotNull Location location) {
         for (BattleSound sound : sounds) {
             this.playSound(sound, location);
-        }
-    }
-
-    private void playSoundToAllPlayers(@NotNull BattleSound sound, @NotNull Location location) {
-        for (BattlePlayer battlePlayer : this.getPlayers()) {
-            Player player = battlePlayer.getEntity();
-            player.playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
         }
     }
 

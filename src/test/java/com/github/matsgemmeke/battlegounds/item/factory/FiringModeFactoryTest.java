@@ -30,7 +30,9 @@ public class FiringModeFactoryTest {
         when(section.getString("type")).thenReturn("BURST_MODE");
 
         FiringModeFactory factory = new FiringModeFactory(taskRunner);
-        factory.make(firearm, section);
+        FiringMode firingMode = factory.make(firearm, section);
+
+        assertNotNull(firingMode);
     }
 
     @Test
@@ -58,8 +60,6 @@ public class FiringModeFactoryTest {
         when(section.getString("type")).thenReturn("error");
 
         FiringModeFactory factory = new FiringModeFactory(taskRunner);
-        FiringMode firingMode = factory.make(firearm, section);
-
-        assertNotNull(firingMode);
+        factory.make(firearm, section);
     }
 }

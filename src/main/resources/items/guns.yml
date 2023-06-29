@@ -1,272 +1,232 @@
-# Gun format
+# Firearm format
 # <ID>:
-#   accuracy: Represents how accurate the firearm fires onto the proposed target
 #   ammo:
+#     default-supply: Default supply of magazines the player gets
 #     magazine: Magazine size
 #     max: Maximum amount of magazines the player can carry
-#     supply: Starting supply of magazines the player gets
 #   description: Description of the firearm
 #   display-name: The name of the firearm
 #   firearm-type: ASSAULT_RIFLE, HANDGUN, LIGHT_MACHINE_GUN, SHOTGUN, SNIPER_RIFLE, SUBMACHINE_GUN
-#   firing-mode:
-#     burst: Amount of rounds fired with a single pull on the trigger. This option only affects firearms using burst fire
-#     cooldown: The amount of ticks the firearm needs to wait to be able to shoot again
-#     rate-of-fire: Amount of rounds fired per minute. Semi-automatic firearms always fire only one projectile at a time
-#     type: BURST_MODE, FULLY_AUTOMATIC, SEMI_AUTOMATIC
 #   headshot-damage-multiplier: Damage multiplier when the projectile hits a player in the head.
 #   item:
 #     durability: The item durability
 #     material: The item material
 #   level-unlocked: The player level at which they will have unlocked the firearm
 #   price: The price of the firearm
-#   range:
-#     long-range:
-#       damage: Long-range damage
-#       distance: Distance where the long range ends and the projectile gets removed
-#     medium-range:
-#       damage: Medium-range damage
-#       distance: Distance where the medium range ends and long range starts
-#     short-range:
-#       damage: Short-range damage
-#       distance: Distance where the short range ends and medium range starts
-#   reload:
+#   reloading:
 #     duration: Reload time in ticks
-#     feed-system: MAGAZINE, PER_ROUND
-#   sound:
-#     reload-sound: Array of sounds which play when adding ammo or replacing the magazine of the firearm
+#     sound: Array of sounds which play when adding ammo or replacing the magazine of the firearm
+#     type: MAGAZINE_RELOAD, MANUAL_RELOAD
+#   shooting:
+#     accuracy: Represents how accurate the firearm fires onto the proposed target
+#     firing-mode:
+#       burst: Amount of rounds fired with a single pull on the trigger. This option only affects firearms using burst fire
+#       cooldown: The amount of ticks the firearm needs to wait to be able to shoot again
+#       rate-of-fire: Amount of rounds fired per minute. Semi-automatic firearms always fire only one projectile at a time
+#       type: BURST_MODE, FULLY_AUTOMATIC, SEMI_AUTOMATIC
+#     range:
+#       long-range:
+#         damage: Long-range damage
+#         distance: Distance where the long range ends and the projectile gets removed
+#       medium-range:
+#         damage: Medium-range damage
+#         distance: Distance where the medium range ends and long range starts
+#       short-range:
+#         damage: Short-range damage
+#         distance: Distance where the short range ends and medium range starts
 #     shot-sound: Array of sounds which play when the firearm shoots
 #     shot-suppressed-sound: Array of sounds which play when the firearm shoots with a suppressor attached
-#
-# Explosive launcher format
-# <ID>:
-#   accuracy: Represents how accurate the firearm fires onto the proposed target
-#   ammo:
-#     magazine: Magazine size
-#     max: Maximum amount of magazines the player can carry
-#     supply: Starting supply of magazines the player gets
-#   description: Description of the firearm
-#   display-name: The name of the firearm
-#   item:
-#     durability: The item durability
-#     material: The item material
-#   level-unlocked: The player level at which they will have unlocked the firearm
-#   price: The price of the firearm
-#   projectile:
-#     material: Launcher projectile material
-#     type: EXPLOSIVE_BOLT, GRENADE, ROCKET
-#     velocity: Launcher projectile travel speed
-#   range:
-#     long-range:
-#       damage: Long-range damage
-#       distance: Distance where the long range ends and the projectile gets removed
-#     medium-range:
-#       damage: Medium-range damage
-#       distance: Distance where the medium range ends and long range starts
-#     short-range:
-#       damage: Short-range damage
-#       distance: Distance where the short range ends and medium range starts
-#   reload:
-#     duration: Reload time in ticks.
-#     feed-system: MAGAZINE, PER_ROUND
-#   sound:
-#     reload-sound: Array of sounds which play when adding ammo or replacing the magazine of the firearm
-#     shot-sound: Array of sounds which play when the firearm shoots
 
 BERETTA_93R:
-  accuracy: 0.6
   ammo:
+    default-supply: 3
     magazine: 15
     max: 8
-    supply: 3
   description: 3 round burst machine pistol. High rate of fire with moderate recoil.
   display-name: Beretta 93R
   firearm-type: HANDGUN
-  firing-mode:
-    type: BURST_MODE
-    cooldown: 2
-    rate-of-fire: 1200
-    shots: 3
-  headshot-damage-multiplier: 1.5
   item:
     durability: 1
     material: IRON_HOE
   level-unlocked: 41
   price: 500
-  range:
-    long-range:
-      damage: 20.0
-      distance: 50.0
-    medium-range:
-      damage: 30.0
-      distance: 30.0
-    short-range:
-      damage: 40.0
-      distance: 10.0
-  reload:
+  reloading:
     duration: 36
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+    sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.6
+    firing-mode:
+      cooldown: 2
+      rate-of-fire: 1200
+      shots: 3
+      type: BURST_MODE
+    headshot-damage-multiplier: 1.5
+    range:
+      long-range:
+        damage: 20.0
+        distance: 50.0
+      medium-range:
+        damage: 30.0
+        distance: 30.0
+      short-range:
+        damage: 40.0
+        distance: 10.0
     shot-sound: ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 FIVE-SEVEN:
-  accuracy: 0.8
   ammo:
+    default-supply: 3
     magazine: 20
     max: 8
-    supply: 3
   description: Semi-automatic pistol. Versatile and strong overall with a large magazine.
   display-name: Five-seven
   firearm-type: HANDGUN
-  firing-mode:
-    cooldown: 2
-    type: SEMI_AUTOMATIC
-  headshot-damage-multiplier: 1.4
   item:
     durability: 2
     material: IRON_HOE
   level-unlocked: 1
   price: 750
-  range:
-    long-range:
-      damage: 22.0
-      distance: 50.0
-    medium-range:
-      damage: 32.0
-      distance: 30.0
-    short-range:
-      damage: 42.0
-      distance: 10.0
-  reload:
+  reloading:
     duration: 36
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+    sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.6
+    firing-mode:
+      cooldown: 2
+      type: SEMI_AUTOMATIC
+    headshot-damage-multiplier: 1.4
+    range:
+      long-range:
+        damage: 22.0
+        distance: 50.0
+      medium-range:
+        damage: 32.0
+        distance: 30.0
+      short-range:
+        damage: 42.0
+        distance: 10.0
     shot-sound: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 GLOCK_17:
-  accuracy: 0.7
   ammo:
+    default-supply: 3
     magazine: 17
     max: 8
-    supply: 3
   description: Semi-automatic pistol. Compatible with select fire to unlock full automatic.
   display-name: Glock 17
   firearm-type: HANDGUN
-  firing-mode:
-    cooldown: 2
-    type: SEMI_AUTOMATIC
-  headshot-damage-multiplier: 1.5
   item:
     durability: 3
     material: IRON_HOE
   level-unlocked: 4
   price: 400
-  range:
-    long-range:
-      damage: 20.0
-      distance: 50.0
-    medium-range:
-      damage: 30.0
-      distance: 30.0
-    short-range:
-      damage: 40.0
-      distance: 10.0
-  reload:
+  reloading:
     duration: 36
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+    sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.7
+    firing-mode:
+      cooldown: 2
+      type: SEMI_AUTOMATIC
+    headshot-damage-multiplier: 1.5
+    range:
+      long-range:
+        damage: 20.0
+        distance: 50.0
+      medium-range:
+        damage: 30.0
+        distance: 30.0
+      short-range:
+        damage: 40.0
+        distance: 10.0
     shot-sound: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 M1911:
-  accuracy: 0.8
   ammo:
+    default-supply: 3
     magazine: 7
     max: 8
-    supply: 3
   description: Semi-automatic with medium capacity and power. Effective at close range.
   display-name: M1911
   firearm-type: HANDGUN
-  firing-mode:
-    cooldown: 4
-    type: SEMI_AUTOMATIC
-  headshot-damage-multiplier: 1.5
   item:
     durability: 4
     material: IRON_HOE
   level-unlocked: 1
   price: 200
-  range:
-    long-range:
-      damage: 25.0
-      distance: 50.0
-    medium-range:
-      damage: 35.0
-      distance: 30.0
-    short-range:
-      damage: 45.0
-      distance: 10.0
-  reload:
+  reloading:
     duration: 36
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+    sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.8
+    firing-mode:
+      cooldown: 4
+      type: SEMI_AUTOMATIC
+    headshot-damage-multiplier: 1.5
+    range:
+      long-range:
+        damage: 25.0
+        distance: 50.0
+      medium-range:
+        damage: 35.0
+        distance: 30.0
+      short-range:
+        damage: 45.0
+        distance: 10.0
     shot-sound: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 PYTHON:
-  accuracy: 0.8
   ammo:
+    default-supply: 3
     magazine: 6
     max: 8
-    supply: 3
   description: Double-action revolver pistol. Uses a 6 round cylinder feed system.
   display-name: Python
   firearm-type: HANDGUN
-  firing-mode:
-    cooldown: 4
-    type: SEMI_AUTOMATIC
-  headshot-damage-multiplier: 1.5
   item:
     durability: 5
     material: IRON_HOE
   level-unlocked: 18
   price: 600
-  range:
-    long-range:
-      damage: 30.0
-      distance: 50.0
-    medium-range:
-      damage: 40.0
-      distance: 30.0
-    short-range:
-      damage: 50.0
-      distance: 10.0
-  reload:
+  reloading:
     duration: 16
-    feed-system: PER_ROUND
-  sound:
-    reload-sound: BLOCK_STONE_BUTTON_CLICK_OFF-1-2-12
+    sound: BLOCK_STONE_BUTTON_CLICK_OFF-1-2-12
+    type: MANUAL_RELOAD
+  shooting:
+    accuracy: 0.8
+    firing-mode:
+      cooldown: 4
+      type: SEMI_AUTOMATIC
+    headshot-damage-multiplier: 1.5
+    range:
+      long-range:
+        damage: 30.0
+        distance: 50.0
+      medium-range:
+        damage: 40.0
+        distance: 30.0
+      short-range:
+        damage: 50.0
+        distance: 10.0
     shot-sound: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 AKS-74U:
-  accuracy: 0.6
   ammo:
+    default-supply: 3
     magazine: 30
     max: 8
-    supply: 3
   description: Fully automatic submachine gun. Increased range and reduced recoil.
   display-name: AKS-74U
   firearm-type: SUBMACHINE_GUN
-  firing-mode:
-    rate-of-fire: 600
-    type: FULLY_AUTOMATIC
-  headshot-damage-multiplier: 1.4
   item:
     durability: 6
     material: IRON_HOE
@@ -282,373 +242,378 @@ AKS-74U:
     short-range:
       damage: 35.0
       distance: 20.0
-  reload:
+  reloading:
     duration: 48
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.6
+    firing-mode:
+      rate-of-fire: 600
+      type: FULLY_AUTOMATIC
+    headshot-damage-multiplier: 1.4
     shot-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ITEM_BREAK-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 MAC-10:
-  accuracy: 0.4
   ammo:
+    default-supply: 3
     magazine: 20
     max: 8
-    supply: 3
   description: Fully automatic with high rate of fire. Effective at close range.
   display-name: MAC-10
   firearm-type: SUBMACHINE_GUN
-  firing-mode:
-    rate-of-fire: 1200
-    type: FULLY_AUTOMATIC
-  headshot-damage-multiplier: 1.4
   item:
     durability: 7
     material: IRON_HOE
   level-unlocked: 6
   price: 1050
-  range:
-    long-range:
-      damage: 20.0
-      distance: 70.0
-    medium-range:
-      damage: 25.0
-      distance: 45.0
-    short-range:
-      damage: 30.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 40
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-18, BLOCK_PISTON_EXTEND-1-2-22, BLOCK_WOODEN_DOOR_CLOSE-1-2-32, BLOCK_WOODEN_DOOR_CLOSE-1-2-36
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-18, BLOCK_PISTON_EXTEND-1-2-22, BLOCK_WOODEN_DOOR_CLOSE-1-2-32, BLOCK_WOODEN_DOOR_CLOSE-1-2-36
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.4
+    firing-mode:
+      rate-of-fire: 1200
+      type: FULLY_AUTOMATIC
+    headshot-damage-multiplier: 1.4
+    range:
+      long-range:
+        damage: 20.0
+        distance: 70.0
+      medium-range:
+        damage: 25.0
+        distance: 45.0
+      short-range:
+        damage: 30.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ITEM_BREAK-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 MP5:
-  accuracy: 0.6
   ammo:
+    default-supply: 3
     magazine: 30
     max: 8
-    supply: 3
   description: Fully automatic with good accuracy. Effective at close to medium range.
   display-name: MP5
   firearm-type: SUBMACHINE_GUN
-  firing-mode:
-    type: FULLY_AUTOMATIC
-    rate-of-fire: 600
-  headshot-damage-multiplier: 1.4
   item:
     durability: 8
     material: IRON_HOE
   level-unlocked: 1
   price: 1200
-  range:
-    long-range:
-      damage: 20.0
-      distance: 70.0
-    medium-range:
-      damage: 28.0
-      distance: 45.0
-    short-range:
-      damage: 35.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 48
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.6
+    firing-mode:
+      rate-of-fire: 600
+      type: FULLY_AUTOMATIC
+    headshot-damage-multiplier: 1.4
+    range:
+      long-range:
+        damage: 20.0
+        distance: 70.0
+      medium-range:
+        damage: 28.0
+        distance: 45.0
+      short-range:
+        damage: 35.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ITEM_BREAK-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 MP7:
-  accuracy: 0.4
   ammo:
+    default-supply: 3
     magazine: 30
     max: 8
-    supply: 3
   description: Fully automatic personal defense weapon. Versatile and strong overall.
   display-name: MP7
   firearm-type: SUBMACHINE_GUN
-  firing-mode:
-    type: FULLY_AUTOMATIC
-    rate-of-fire: 1200
-  headshot-damage-multiplier: 1.4
   item:
     durability: 9
     material: IRON_HOE
   level-unlocked: 35
   price: 1500
-  range:
-    long-range:
-      damage: 20.0
-      distance: 70.0
-    medium-range:
-      damage: 28.0
-      distance: 45.0
-    short-range:
-      damage: 35.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 40
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-18, BLOCK_PISTON_EXTEND-1-2-22, BLOCK_WOODEN_DOOR_CLOSE-1-2-32, BLOCK_WOODEN_DOOR_CLOSE-1-2-36
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-18, BLOCK_PISTON_EXTEND-1-2-22, BLOCK_WOODEN_DOOR_CLOSE-1-2-32, BLOCK_WOODEN_DOOR_CLOSE-1-2-36
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.4
+    firing-mode:
+      rate-of-fire: 1200
+      type: FULLY_AUTOMATIC
+    headshot-damage-multiplier: 1.4
+    range:
+      long-range:
+        damage: 20.0
+        distance: 70.0
+      medium-range:
+        damage: 28.0
+        distance: 45.0
+      short-range:
+        damage: 35.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ITEM_BREAK-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 QCW-05:
-  accuracy: 0.6
   ammo:
+    default-supply: 3
     magazine: 36
     max: 8
-    supply: 3
   description: 3 round burst submachine gun. High cyclic fire rate allows for fast consecutive bursts.
   display-name: QCW-05
   firearm-type: SUBMACHINE_GUN
-  firing-mode:
-    type: BURST_MODE
-    cooldown: 2
-    rate-of-fire: 1200
-    shots: 3
-  headshot-damage-multiplier: 1.4
   item:
     durability: 10
     material: IRON_HOE
   level-unlocked: 11
   price: 1250
-  range:
-    long-range:
-      damage: 18.0
-      distance: 70.0
-    medium-range:
-      damage: 25.0
-      distance: 45.0
-    short-range:
-      damage: 33.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 48
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.6
+    firing-mode:
+      cooldown: 2
+      rate-of-fire: 1200
+      shots: 3
+      type: BURST_MODE
+    headshot-damage-multiplier: 1.4
+    range:
+      long-range:
+        damage: 18.0
+        distance: 70.0
+      medium-range:
+        damage: 25.0
+        distance: 45.0
+      short-range:
+        damage: 33.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ITEM_BREAK-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 UZI:
-  accuracy: 0.5
   ammo:
+    default-supply: 3
     magazine: 25
     max: 8
-    supply: 3
   description: Fully automatic with moderate power. Effective at close to medium range.
   display-name: Uzi
   firearm-type: SUBMACHINE_GUN
-  firing-mode:
-    type: FULLY_AUTOMATIC
-    rate-of-fire: 600
-  headshot-damage-multiplier: 1.4
   item:
     durability: 11
     material: IRON_HOE
   level-unlocked: 23
   price: 1050
-  range:
-    long-range:
-      damage: 20.0
-      distance: 70.0
-    medium-range:
-      damage: 25.0
-      distance: 45.0
-    short-range:
-      damage: 30.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 40
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-18, BLOCK_PISTON_EXTEND-1-2-22, BLOCK_WOODEN_DOOR_CLOSE-1-2-32, BLOCK_WOODEN_DOOR_CLOSE-1-2-36
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-18, BLOCK_PISTON_EXTEND-1-2-22, BLOCK_WOODEN_DOOR_CLOSE-1-2-32, BLOCK_WOODEN_DOOR_CLOSE-1-2-36
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.5
+    firing-mode:
+      rate-of-fire: 600
+      type: FULLY_AUTOMATIC
+    headshot-damage-multiplier: 1.4
+    range:
+      long-range:
+        damage: 20.0
+        distance: 70.0
+      medium-range:
+        damage: 25.0
+        distance: 45.0
+      short-range:
+        damage: 30.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ITEM_BREAK-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 VECTOR:
-  accuracy: 0.5
   ammo:
+    default-supply: 3
     magazine: 25
     max: 8
-    supply: 3
   description: Fully automatic submachine gun. Incorporates recoil mitigation technology.
   display-name: Vector
   firearm-type: SUBMACHINE_GUN
-  firing-mode:
-    type: FULLY_AUTOMATIC
-    rate-of-fire: 1200
-  headshot-damage-multiplier: 1.4
   item:
     durability: 12
     material: IRON_HOE
   level-unlocked: 29
   price: 1250
-  range:
-    long-range:
-      damage: 18.0
-      distance: 70.0
-    medium-range:
-      damage: 25.0
-      distance: 45.0
-    short-range:
-      damage: 33.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 48
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.5
+    firing-mode:
+      rate-of-fire: 1200
+      type: FULLY_AUTOMATIC
+    headshot-damage-multiplier: 1.4
+    range:
+      long-range:
+        damage: 18.0
+        distance: 70.0
+      medium-range:
+        damage: 25.0
+        distance: 45.0
+      short-range:
+        damage: 33.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ITEM_BREAK-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
 
 AK-47:
-  accuracy: 0.6
   ammo:
+    default-supply: 3
     magazine: 30
     max: 8
-    supply: 3
   description: Fully automatic with high power. Effective at medium range.
   display-name: AK-47
   firearm-type: ASSAULT_RIFLE
-  firing-mode:
-    type: FULLY_AUTOMATIC
-    rate-of-fire: 600
-  headshot-damage-multiplier: 1.5
   item:
     durability: 13
     material: IRON_HOE
   level-unlocked: 38
   price: 2500
-  range:
-    long-range:
-      damage: 30.0
-      distance: 80.0
-    medium-range:
-      damage: 35.0
-      distance: 50.0
-    short-range:
-      damage: 40.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 54
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5, BLOCK_WOODEN_DOOR_OPEN-1-2-46, BLOCK_PISTON_EXTEND-1-2-46, BLOCK_WOODEN_DOOR_OPEN-1-2-50, BLOCK_PISTON_CONTRACT-1-2-50
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5, BLOCK_WOODEN_DOOR_OPEN-1-2-46, BLOCK_PISTON_EXTEND-1-2-46, BLOCK_WOODEN_DOOR_OPEN-1-2-50, BLOCK_PISTON_CONTRACT-1-2-50
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.6
+    firing-mode:
+      rate-of-fire: 600
+      type: FULLY_AUTOMATIC
+    headshot-damage-multiplier: 1.5
+    range:
+      long-range:
+        damage: 30.0
+        distance: 80.0
+      medium-range:
+        damage: 35.0
+        distance: 50.0
+      short-range:
+        damage: 40.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_CONTRACT-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-0.3-2-0, ENTITY_FIREWORK_BLAST-3-1-0
 
 AUG:
-  accuracy: 0.6
   ammo:
+    default-supply: 3
     magazine: 30
     max: 8
-    supply: 3
   description: Bullpup rifle with high rate of fire. Effective at medium range.
   display-name: AUG
   firearm-type: ASSAULT_RIFLE
-  firing-mode:
-    type: FULLY_AUTOMATIC
-    rate-of-fire: 600
-  headshot-damage-multiplier: 1.5
   item:
     durability: 14
     material: IRON_HOE
   level-unlocked: 46
   price: 3300
-  range:
-    long-range:
-      damage: 25.0
-      distance: 80.0
-    medium-range:
-      damage: 30.0
-      distance: 50.0
-    short-range:
-      damage: 35.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 54
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5, BLOCK_WOODEN_DOOR_OPEN-1-2-46, BLOCK_PISTON_EXTEND-1-2-46, BLOCK_WOODEN_DOOR_OPEN-1-2-50, BLOCK_PISTON_CONTRACT-1-2-50
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5, BLOCK_WOODEN_DOOR_OPEN-1-2-46, BLOCK_PISTON_EXTEND-1-2-46, BLOCK_WOODEN_DOOR_OPEN-1-2-50, BLOCK_PISTON_CONTRACT-1-2-50
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.6
+    firing-mode:
+      rate-of-fire: 600
+      type: FULLY_AUTOMATIC
+    headshot-damage-multiplier: 1.5
+    range:
+      long-range:
+        damage: 25.0
+        distance: 80.0
+      medium-range:
+        damage: 30.0
+        distance: 50.0
+      short-range:
+        damage: 35.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_CONTRACT-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-0.3-2-0, ENTITY_FIREWORK_BLAST-3-1-0
 
 FAL:
-  accuracy: 0.8
   ammo:
-    magazine: 30
+    default-supply: 3
+    magazine: 20
     max: 8
-    supply: 3
   description: Semi-automatic battle rifle with high damage. Effective at medium to long range.
   display-name: FAL
   firearm-type: ASSAULT_RIFLE
-  firing-mode:
-    type: SEMI_AUTOMATIC
-    cooldown: 3
-    rate-of-fire: 600
-  headshot-damage-multiplier: 1.5
   item:
     durability: 15
     material: IRON_HOE
   level-unlocked: 9
   price: 2500
-  range:
-    long-range:
-      damage: 40.0
-      distance: 80.0
-    medium-range:
-      damage: 45.0
-      distance: 50.0
-    short-range:
-      damage: 50.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 54
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5, BLOCK_WOODEN_DOOR_OPEN-1-2-46, BLOCK_PISTON_EXTEND-1-2-46, BLOCK_WOODEN_DOOR_OPEN-1-2-50, BLOCK_PISTON_CONTRACT-1-2-50
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5, BLOCK_WOODEN_DOOR_OPEN-1-2-46, BLOCK_PISTON_EXTEND-1-2-46, BLOCK_WOODEN_DOOR_OPEN-1-2-50, BLOCK_PISTON_CONTRACT-1-2-50
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.8
+    firing-mode:
+      cooldown: 3
+      rate-of-fire: 600
+      type: SEMI_AUTOMATIC
+    headshot-damage-multiplier: 1.5
+    range:
+      long-range:
+        damage: 40.0
+        distance: 80.0
+      medium-range:
+        damage: 45.0
+        distance: 50.0
+      short-range:
+        damage: 50.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-0.3-2-0, ENTITY_FIREWORK_BLAST-3-1-0
 
 FAMAS:
-  accuracy: 0.6
   ammo:
+    default-supply: 3
     magazine: 30
     max: 8
-    supply: 3
   description: Fully automatic with high rate of fire. Effective at medium range.
   display-name: FAMAS
   firearm-type: ASSAULT_RIFLE
-  firing-mode:
-    type: FULLY_AUTOMATIC
-    rate-of-fire: 600
-  headshot-damage-multiplier: 1.5
   item:
     durability: 16
     material: IRON_HOE
   level-unlocked: 5
   price: 2250
-  range:
-    long-range:
-      damage: 25.0
-      distance: 80.0
-    medium-range:
-      damage: 30.0
-      distance: 50.0
-    short-range:
-      damage: 35.0
-      distance: 20.0
-  reload:
+  reloading:
     duration: 54
-    feed-system: MAGAZINE
-  sound:
-    reload-sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5, BLOCK_WOODEN_DOOR_OPEN-1-2-46, BLOCK_PISTON_EXTEND-1-2-46, BLOCK_WOODEN_DOOR_OPEN-1-2-50, BLOCK_PISTON_CONTRACT-1-2-50
+    sound: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5, BLOCK_WOODEN_DOOR_OPEN-1-2-46, BLOCK_PISTON_EXTEND-1-2-46, BLOCK_WOODEN_DOOR_OPEN-1-2-50, BLOCK_PISTON_CONTRACT-1-2-50
+    type: MAGAZINE_RELOAD
+  shooting:
+    accuracy: 0.6
+    firing-mode:
+      rate-of-fire: 600
+      type: FULLY_AUTOMATIC
+    headshot-damage-multiplier: 1.5
+    range:
+      long-range:
+        damage: 25.0
+        distance: 80.0
+      medium-range:
+        damage: 30.0
+        distance: 50.0
+      short-range:
+        damage: 35.0
+        distance: 20.0
     shot-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-0.3-2-0, ENTITY_FIREWORK_BLAST-3-1-0

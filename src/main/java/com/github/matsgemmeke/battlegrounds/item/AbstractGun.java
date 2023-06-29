@@ -2,15 +2,18 @@ package com.github.matsgemmeke.battlegrounds.item;
 
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
+import com.github.matsgemmeke.battlegrounds.item.mechanism.ReloadSystem;
 import org.bukkit.Location;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
 public abstract class AbstractGun extends AbstractWeapon implements Gun {
 
+    protected boolean reloading;
     protected double accuracy;
     protected double damageAmplifier;
     protected double longDamage;
@@ -20,6 +23,8 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
     protected double recoilAmplifier;
     protected double shortDamage;
     protected double shortRange;
+    @Nullable
+    protected ReloadSystem reloadSystem;
 
     public AbstractGun(
             @NotNull String id,
@@ -27,6 +32,7 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
             @NotNull BattleContext context
     ) {
         super(id, name, context);
+        this.reloading = false;
     }
 
     public double getAccuracy() {
@@ -85,6 +91,15 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
         this.recoilAmplifier = recoilAmplifier;
     }
 
+    @Nullable
+    public ReloadSystem getReloadSystem() {
+        return reloadSystem;
+    }
+
+    public void setReloadSystem(@Nullable ReloadSystem reloadSystem) {
+        this.reloadSystem = reloadSystem;
+    }
+
     public double getShortDamage() {
         return shortDamage;
     }
@@ -99,6 +114,14 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
 
     public void setShortRange(double shortRange) {
         this.shortRange = shortRange;
+    }
+
+    public boolean isReloading() {
+        return reloading;
+    }
+
+    public void setReloading(boolean reloading) {
+        this.reloading = reloading;
     }
 
     @NotNull
@@ -121,6 +144,10 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
         shootingDirection.setDirection(new Vector(x, z, y));
 
         return shootingDirection;
+    }
+
+    public boolean reload() {
+        return reloadSystem != null && reloadSystem.activate();
     }
 
     public boolean update() {

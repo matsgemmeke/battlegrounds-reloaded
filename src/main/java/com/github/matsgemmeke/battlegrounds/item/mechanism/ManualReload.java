@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MagazineReload implements ReloadSystem {
+public class ManualReload implements ReloadSystem {
 
     @NotNull
     private Gun gun;
@@ -23,7 +23,7 @@ public class MagazineReload implements ReloadSystem {
     @NotNull
     private TaskRunner taskRunner;
 
-    public MagazineReload(
+    public ManualReload(
             @NotNull TaskRunner taskRunner,
             @NotNull Gun gun,
             @NotNull Iterable<BattleSound> reloadSounds,
@@ -47,12 +47,12 @@ public class MagazineReload implements ReloadSystem {
         gun.setReloading(true);
 
         for (BattleSound sound : reloadSounds) {
-            currentTasks.add(taskRunner.runTaskLater(() -> {
+            currentTasks.add(taskRunner.runTaskTimer(() -> {
                 context.playSound(sound, holder.getEntity().getLocation());
-            }, sound.getDelay()));
+            }, sound.getDelay(), duration));
         }
 
-        currentTasks.add(taskRunner.runTaskLater(this::performReload, duration));
+        currentTasks.add(taskRunner.runTaskTimer(this::performReload, duration, duration));
         return true;
     }
 
@@ -67,21 +67,12 @@ public class MagazineReload implements ReloadSystem {
     }
 
     public void performReload() {
-        int magazineAmmo = gun.getMagazineAmmo();
-        int magazineSize = gun.getMagazineSize();
-        int magazineSpace = magazineSize - magazineAmmo;
-        int reserveAmmo = gun.getReserveAmmo();
-
-        if (reserveAmmo > magazineSpace) {
-            gun.setReserveAmmo(reserveAmmo - magazineSpace);
-            gun.setMagazineAmmo(magazineSize);
-        } else {
-            // In case the magazine cannot be filled completely, use the remaining ammo
-            gun.setMagazineAmmo(magazineAmmo + reserveAmmo);
-            gun.setReserveAmmo(0);
-        }
-
-        gun.setReloading(false);
+        gun.setMagazineAmmo(gun.getMagazineAmmo() + 1);
+        gun.setReserveAmmo(gun.getReserveAmmo() - 1);
         gun.update();
+
+        if (gun.getMagazineAmmo() >= gun.getMagazineSize() || gun.getReserveAmmo() <= 0) {
+            this.cancel();
+        }
     }
 }

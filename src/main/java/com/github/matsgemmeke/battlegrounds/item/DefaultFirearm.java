@@ -18,6 +18,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     private double headshotDamageMultiplier;
     private FiringMode firingMode;
     private int magazineAmmo;
+    private int magazineSize;
     private int reserveAmmo;
     private Iterable<BattleSound> shotSounds;
     private Iterable<BattleSound> triggerSounds;
@@ -48,6 +49,14 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
 
     public void setMagazineAmmo(int magazineAmmo) {
         this.magazineAmmo = magazineAmmo;
+    }
+
+    public int getMagazineSize() {
+        return magazineSize;
+    }
+
+    public void setMagazineSize(int magazineSize) {
+        this.magazineSize = magazineSize;
     }
 
     public int getReserveAmmo() {
@@ -120,11 +129,27 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         return false;
     }
 
+    public void onChangeHeldItem(@NotNull BattleItemHolder holder) {
+        if (reloadSystem == null) {
+            return;
+        }
+
+        reloadSystem.cancel();
+    }
+
     public void onLeftClick(@NotNull BattleItemHolder holder) {
+        if (reloading || magazineAmmo >= magazineSize || reserveAmmo <= 0) {
+            return;
+        }
+
         this.reload();
     }
 
     public void onRightClick(@NotNull BattleItemHolder holder) {
+        if (reloading) {
+            return;
+        }
+
         if (magazineAmmo <= 0) {
             context.playSounds(triggerSounds, holder.getEntity().getLocation());
             return;
@@ -133,13 +158,9 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         firingMode.activate();
     }
 
-    public void reload() {
-        System.out.println("reload");
-    }
-
-    public void shoot() {
+    public boolean shoot() {
         if (holder == null) {
-            return;
+            return false;
         }
 
         // Place the shooting at the height of the firearm
@@ -148,6 +169,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         Location shootingDirection = this.getShootingDirection(direction, holder.getRelativeAccuracy());
 
         this.shootProjectile(holder, shootingDirection);
+        return true;
     }
 
     private void shootProjectile(@NotNull BattleItemHolder holder, @NotNull Location direction) {

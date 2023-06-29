@@ -1,6 +1,5 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
-import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
@@ -14,6 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,8 +26,8 @@ public class DefaultFreemodeContext extends AbstractBattleContext implements Fre
     @NotNull
     private List<BattlePlayer> players;
 
-    public DefaultFreemodeContext(@NotNull BlockCollisionChecker collisionChecker, @NotNull TaskRunner taskRunner) {
-        super(collisionChecker, taskRunner);
+    public DefaultFreemodeContext(@NotNull BlockCollisionChecker collisionChecker) {
+        super(collisionChecker);
         this.players = new ArrayList<>();
     }
 
@@ -84,6 +84,18 @@ public class DefaultFreemodeContext extends AbstractBattleContext implements Fre
         }
 
         event.setCancelled(true);
+        return true;
+    }
+
+    public boolean onItemHeld(@NotNull BattlePlayer battlePlayer, @NotNull PlayerItemHeldEvent event) {
+        ItemStack itemStack = battlePlayer.getEntity().getInventory().getItemInMainHand();
+        BattleItem item = battlePlayer.getBattleItem(itemStack);
+
+        if (item == null) {
+            return false;
+        }
+
+        item.onChangeHeldItem(battlePlayer);
         return true;
     }
 }

@@ -8,6 +8,7 @@ import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguratio
 import com.github.matsgemmeke.battlegrounds.game.DefaultBattleSound;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
+import com.github.matsgemmeke.battlegrounds.item.mechanism.ReloadSystem;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -23,15 +24,19 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
     private BattleItemConfiguration itemConfiguration;
     @NotNull
     private FiringModeFactory firingModeFactory;
+    @NotNull
+    private ReloadSystemFactory reloadSystemFactory;
 
     public FirearmFactory(
             @NotNull BattlegroundsConfig config,
             @NotNull BattleItemConfiguration itemConfiguration,
-            @NotNull FiringModeFactory firingModeFactory
+            @NotNull FiringModeFactory firingModeFactory,
+            @NotNull ReloadSystemFactory reloadSystemFactory
     ) {
         this.config = config;
         this.itemConfiguration = itemConfiguration;
         this.firingModeFactory = firingModeFactory;
+        this.reloadSystemFactory = reloadSystemFactory;
     }
 
     @NotNull
@@ -50,46 +55,50 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
         firearm.setDescription(description);
 
         // Other variables
-        double accuracy = section.getDouble("accuracy");
+        double accuracy = section.getDouble("shooting.accuracy");
         firearm.setAccuracy(accuracy);
 
         double damageAmplifier = config.getFirearmDamageAmplifier();
         firearm.setDamageAmplifier(damageAmplifier);
 
-        double headshotDamageMultiplier = section.getDouble("headshot-damage-multiplier");
+        double headshotDamageMultiplier = section.getDouble("shooting.headshot-damage-multiplier");
         firearm.setHeadshotDamageMultiplier(headshotDamageMultiplier);
 
         double recoilAmplifier = config.getFirearmRecoilAmplifier();
         firearm.setRecoilAmplifier(recoilAmplifier);
 
-        int magazineAmmo = section.getInt("ammo.magazine");
-        int reserveAmmo = section.getInt("ammo.supply") * magazineAmmo;
+        int magazineSize = section.getInt("ammo.magazine");
+        int reserveAmmo = section.getInt("ammo.default-supply") * magazineSize;
 
-        firearm.setMagazineAmmo(magazineAmmo);
+        firearm.setMagazineAmmo(magazineSize);
+        firearm.setMagazineSize(magazineSize);
         firearm.setReserveAmmo(reserveAmmo);
 
-        double shortDamage = section.getDouble("range.short-range.damage");
+        double shortDamage = section.getDouble("shooting.range.short-range.damage");
         firearm.setShortDamage(shortDamage);
 
-        double shortRange = section.getDouble("range.short-range.distance");
+        double shortRange = section.getDouble("shooting.range.short-range.distance");
         firearm.setShortRange(shortRange);
 
-        double mediumDamage = section.getDouble("range.medium-range.damage");
+        double mediumDamage = section.getDouble("shooting.range.medium-range.damage");
         firearm.setMediumDamage(mediumDamage);
 
-        double mediumRange = section.getDouble("range.medium-range.distance");
+        double mediumRange = section.getDouble("shooting.range.medium-range.distance");
         firearm.setMediumRange(mediumRange);
 
-        double longDamage = section.getDouble("range.long-range.damage");
+        double longDamage = section.getDouble("shooting.range.long-range.damage");
         firearm.setLongDamage(longDamage);
 
-        double longRange = section.getDouble("range.long-range.distance");
+        double longRange = section.getDouble("shooting.range.long-range.distance");
         firearm.setLongRange(longRange);
 
-        FiringMode firingMode = firingModeFactory.make(firearm, section.getSection("firing-mode"));
+        FiringMode firingMode = firingModeFactory.make(firearm, section.getSection("shooting.firing-mode"));
         firearm.setFiringMode(firingMode);
 
-        List<BattleSound> shotSounds = DefaultBattleSound.parseSounds(section.getString("sound.shot-sound"));
+        ReloadSystem reloadSystem = reloadSystemFactory.make(firearm, section.getSection("reloading"));
+        firearm.setReloadSystem(reloadSystem);
+
+        List<BattleSound> shotSounds = DefaultBattleSound.parseSounds(section.getString("shooting.shot-sound"));
         firearm.setShotSounds(shotSounds);
 
         List<BattleSound> triggerSounds = DefaultBattleSound.parseSounds(config.getFirearmTriggerSound());

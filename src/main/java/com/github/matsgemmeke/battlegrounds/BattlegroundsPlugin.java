@@ -17,6 +17,7 @@ import com.github.matsgemmeke.battlegrounds.configuration.LanguageConfiguration;
 import com.github.matsgemmeke.battlegrounds.event.EventBus;
 import com.github.matsgemmeke.battlegrounds.event.EventDispatcher;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerInteractEventHandler;
+import com.github.matsgemmeke.battlegrounds.event.handler.PlayerItemHeldEventHandler;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerJoinEventHandler;
 import com.github.matsgemmeke.battlegrounds.event.listener.EventListener;
 import com.github.matsgemmeke.battlegrounds.game.DefaultFreemodeContext;
@@ -25,8 +26,10 @@ import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.FirearmFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.FiringModeFactory;
+import com.github.matsgemmeke.battlegrounds.item.factory.ReloadSystemFactory;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -89,7 +92,8 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         gunsConfiguration.load();
 
         FiringModeFactory firingModeFactory = new FiringModeFactory(taskRunner);
-        FirearmFactory firearmFactory = new FirearmFactory(config, gunsConfiguration, firingModeFactory);
+        ReloadSystemFactory reloadSystemFactory = new ReloadSystemFactory(taskRunner);
+        FirearmFactory firearmFactory = new FirearmFactory(config, gunsConfiguration, firingModeFactory, reloadSystemFactory);
 
         weaponProvider = new WeaponProvider();
         weaponProvider.addWeaponFactory(gunsConfiguration, firearmFactory);
@@ -104,7 +108,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         File dataFolder = new File(this.getDataFolder().getPath() + "/data");
         File generalDataFile = new File(dataFolder.getPath() + "/data/general.yml");
 
-        GameContextFactory gameContextFactory = new GameContextFactory(taskRunner, dataFolder);
+        GameContextFactory gameContextFactory = new GameContextFactory(dataFolder);
 
         GeneralDataConfiguration generalData = new GeneralDataConfiguration(generalDataFile);
         generalData.load();
@@ -134,6 +138,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
         eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(contextProvider)));
+        eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(freemodeContext)));
 
         EventListener eventListener = new EventListener(eventDispatcher);
@@ -144,7 +149,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
     private void setUpFreemode() {
         BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
 
-        freemodeContext = new DefaultFreemodeContext(collisionChecker, taskRunner);
+        freemodeContext = new DefaultFreemodeContext(collisionChecker);
 
         contextProvider.addFreemodeContext(freemodeContext);
     }
