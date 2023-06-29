@@ -6,6 +6,7 @@ import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
+import com.github.matsgemmeke.battlegrounds.item.mechanism.ReloadSystem;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
@@ -33,9 +34,76 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    public void executesReloadActionWhenLeftClicked() {
+    public void doesNothingWhenChangingHeldItemWithoutReloadSystem() {
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.onChangeHeldItem(holder);
+    }
+
+    @Test
+    public void cancelsReloadSystemWhenChangingHeldItem() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setReloadSystem(reloadSystem);
+        firearm.onChangeHeldItem(holder);
+
+        verify(reloadSystem, times(1)).cancel();
+    }
+
+    @Test
+    public void activatesReloadSystemWhenLeftClicked() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setMagazineAmmo(0);
+        firearm.setMagazineSize(30);
+        firearm.setReloading(false);
+        firearm.setReloadSystem(reloadSystem);
+        firearm.setReserveAmmo(30);
         firearm.onLeftClick(holder);
+
+        verify(reloadSystem, times(1)).activate();
+    }
+
+    @Test
+    public void doesNotActivateReloadSystemWhenFirearmIsReloading() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setReloading(true);
+        firearm.setReloadSystem(reloadSystem);
+        firearm.onLeftClick(holder);
+
+        verify(reloadSystem, never()).activate();
+    }
+
+    @Test
+    public void doesNotActivateReloadSystemWhenMagazineIsAlreadyFull() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setMagazineAmmo(30);
+        firearm.setMagazineSize(30);
+        firearm.setReloading(true);
+        firearm.setReloadSystem(reloadSystem);
+        firearm.onLeftClick(holder);
+
+        verify(reloadSystem, never()).activate();
+    }
+
+    @Test
+    public void doesNotActivateReloadSystemWhenThereIsNoReserveAmmo() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setMagazineAmmo(0);
+        firearm.setMagazineSize(30);
+        firearm.setReloading(true);
+        firearm.setReloadSystem(reloadSystem);
+        firearm.setReserveAmmo(0);
+        firearm.onLeftClick(holder);
+
+        verify(reloadSystem, never()).activate();
     }
 
     @Test
