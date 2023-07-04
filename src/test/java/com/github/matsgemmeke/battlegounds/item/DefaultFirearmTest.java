@@ -130,7 +130,7 @@ public class DefaultFirearmTest {
         firearm.setTriggerSounds(triggerSounds);
         firearm.onRightClick(holder);
 
-        verify(context).playSounds(eq(triggerSounds), any(Location.class));
+        verify(context).playSounds(eq(triggerSounds), any());
     }
 
     @Test

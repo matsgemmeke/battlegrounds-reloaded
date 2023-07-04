@@ -37,7 +37,7 @@ public class CreateGameCommandTest {
         int gameId = 1;
         String message = "test";
 
-        when(contextProvider.addGameContext(any(GameContext.class))).thenReturn(true);
+        when(contextProvider.addGameContext(any())).thenReturn(true);
         when(translator.translate(eq(TranslationKey.GAME_CREATED.getPath()), any(PlaceholderEntry.class))).thenReturn(message);
 
         CreateGameCommand command = new CreateGameCommand(contextProvider, contextFactory, translator);
