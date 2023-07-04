@@ -46,6 +46,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
     private BattleContextProvider contextProvider;
     private BattlegroundsConfig config;
     private FreemodeContext freemodeContext;
+    private InternalsProvider internalsProvider;
     private TaskRunner taskRunner;
     private Translator translator;
     private WeaponProvider weaponProvider;
@@ -84,6 +85,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         config = new BattlegroundsFileConfiguration(configFile, configResource);
         config.load();
 
+        this.setUpInternalsProvider();
         this.setUpTaskRunner();
 
         File gunConfigFile = new File(configFolder.getPath() + "/items/guns.yml");
@@ -152,6 +154,16 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         freemodeContext = new DefaultFreemodeContext(collisionChecker);
 
         contextProvider.addFreemodeContext(freemodeContext);
+    }
+
+    private void setUpInternalsProvider() throws StartupFailedException {
+        try {
+            String packageName = BattlegroundsPlugin.class.getPackage().getName();
+            String internalsName = getServer().getClass().getPackage().getName().split("\\.")[3];
+            internalsProvider = (InternalsProvider) Class.forName(packageName + ".nms." + internalsName + "." + internalsName.toUpperCase()).newInstance();
+        } catch (Exception e) {
+            throw new StartupFailedException("Failed to find a valid implementation for this server version");
+        }
     }
 
     private void setUpTaskRunner() {
