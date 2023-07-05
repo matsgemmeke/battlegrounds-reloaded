@@ -6,7 +6,8 @@ import org.jetbrains.annotations.Nullable;
 public interface Weapon extends BattleItem {
 
     /**
-     * Gets the current operating mode being executed on the weapon.
+     * Gets the current operating mode being executed on the weapon. Returns null if the weapon has no ongoing
+     * operation.
      *
      * @return the current operating mode
      */

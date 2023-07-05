@@ -4,6 +4,7 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.item.OperatingMode;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
@@ -40,15 +41,14 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    public void cancelsReloadSystemWhenChangingHeldItem() {
-        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+    public void cancelsCurrentOperatingModeWhenChangingHeldItem() {
+        OperatingMode operatingMode = mock(OperatingMode.class);
 
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
-        firearm.setReloading(true);
-        firearm.setReloadSystem(reloadSystem);
+        firearm.setCurrentOperatingMode(operatingMode);
         firearm.onChangeHeldItem(holder);
 
-        verify(reloadSystem, times(1)).cancel();
+        verify(operatingMode, times(1)).cancel();
     }
 
     @Test
@@ -56,10 +56,10 @@ public class DefaultFirearmTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setCurrentOperatingMode(null);
         firearm.setHolder(holder);
         firearm.setMagazineAmmo(0);
         firearm.setMagazineSize(30);
-        firearm.setReloading(false);
         firearm.setReloadSystem(reloadSystem);
         firearm.setReserveAmmo(30);
         firearm.onLeftClick(holder);
@@ -68,11 +68,12 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    public void doesNotActivateReloadSystemWhenFirearmIsReloading() {
+    public void doesNotActivateReloadSystemWhenFirearmHasOngoingOperation() {
+        OperatingMode operatingMode = mock(OperatingMode.class);
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
-        firearm.setReloading(true);
+        firearm.setCurrentOperatingMode(operatingMode);
         firearm.setReloadSystem(reloadSystem);
         firearm.onLeftClick(holder);
 
@@ -84,9 +85,9 @@ public class DefaultFirearmTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setCurrentOperatingMode(null);
         firearm.setMagazineAmmo(30);
         firearm.setMagazineSize(30);
-        firearm.setReloading(true);
         firearm.setReloadSystem(reloadSystem);
         firearm.onLeftClick(holder);
 
@@ -98,9 +99,9 @@ public class DefaultFirearmTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setCurrentOperatingMode(null);
         firearm.setMagazineAmmo(0);
         firearm.setMagazineSize(30);
-        firearm.setReloading(true);
         firearm.setReloadSystem(reloadSystem);
         firearm.setReserveAmmo(0);
         firearm.onLeftClick(holder);
@@ -117,7 +118,7 @@ public class DefaultFirearmTest {
         firearm.setMagazineAmmo(10);
         firearm.onRightClick(holder);
 
-        verify(fireMode).activate();
+        verify(fireMode).activate(holder);
     }
 
     @Test

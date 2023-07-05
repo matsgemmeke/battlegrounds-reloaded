@@ -92,7 +92,7 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
         double longRange = section.getDouble("shooting.range.long-range.distance");
         firearm.setLongRange(longRange);
 
-        FireMode fireMode = fireModeFactory.make(firearm, section.getSection("shooting.firing-mode"));
+        FireMode fireMode = fireModeFactory.make(firearm, section.getSection("shooting.fire-mode"));
         firearm.setFireMode(fireMode);
 
         ReloadSystem reloadSystem = reloadSystemFactory.make(firearm, section.getSection("reloading"));

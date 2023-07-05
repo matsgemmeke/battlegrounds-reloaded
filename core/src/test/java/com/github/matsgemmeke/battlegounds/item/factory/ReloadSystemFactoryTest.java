@@ -48,7 +48,7 @@ public class ReloadSystemFactoryTest {
     }
 
     @Test(expected = WeaponFactoryCreationException.class)
-    public void throwErrorWhenUnknownFiringModeType() {
+    public void throwErrorWhenUnknownFireModeType() {
         when(section.getString("type")).thenReturn("error");
 
         ReloadSystemFactory factory = new ReloadSystemFactory(taskRunner);

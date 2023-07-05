@@ -116,14 +116,6 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
         this.shortRange = shortRange;
     }
 
-    public boolean isReloading() {
-        return reloading;
-    }
-
-    public void setReloading(boolean reloading) {
-        this.reloading = reloading;
-    }
-
     @NotNull
     protected abstract String getItemDisplayName();
 

@@ -1,8 +1,10 @@
 package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
+import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.SemiAutomaticMode;
+import org.bukkit.scheduler.BukkitTask;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,19 +24,36 @@ public class SemiAutomaticModeTest {
     }
 
     @Test
-    public void shootsAndExecutesCooldown() {
-        SemiAutomaticMode semiAutomaticMode = new SemiAutomaticMode(taskRunner, firearm, cooldown);
-        semiAutomaticMode.activate();
+    public void activatingMakesGunShootAndSetOperatingMode() {
+        BattleItemHolder holder = mock(BattleItemHolder.class);
 
-        verify(taskRunner).runTaskLater(any(Runnable.class), eq(cooldown));
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, firearm, cooldown);
+        fireMode.activate(holder);
+
+        verify(firearm, times(1)).setCurrentOperatingMode(fireMode);
+        verify(firearm, times(1)).shoot();
     }
 
     @Test
-    public void shouldNotShootAgainDuringCooldown() {
-        SemiAutomaticMode semiAutomaticMode = new SemiAutomaticMode(taskRunner, firearm, cooldown);
-        semiAutomaticMode.activate();
-        semiAutomaticMode.activate();
+    public void cancelingResetsOperatingMode() {
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, firearm, cooldown);
+        fireMode.cancel();
 
-        verify(firearm, times(1)).shoot();
+        verify(firearm, times(1)).setCurrentOperatingMode(null);
+    }
+
+    @Test
+    public void cancelingStopsCooldown() {
+        BattleItemHolder holder = mock(BattleItemHolder.class);
+        BukkitTask task = mock(BukkitTask.class);
+
+        when(taskRunner.runTaskLater(any(Runnable.class), anyLong())).thenReturn(task);
+
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, firearm, cooldown);
+        fireMode.activate(holder);
+        fireMode.cancel();
+
+        verify(firearm, times(1)).setCurrentOperatingMode(null);
+        verify(task, times(1)).cancel();
     }
 }

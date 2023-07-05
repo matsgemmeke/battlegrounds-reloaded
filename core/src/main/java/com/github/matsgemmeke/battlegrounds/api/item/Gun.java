@@ -59,20 +59,6 @@ public interface Gun extends Weapon {
     void setReserveAmmo(int reserveAmmo);
 
     /**
-     * Gets whether the gun is currently being reloaded.
-     *
-     * @return whether the gun is reloading
-     */
-    boolean isReloading();
-
-    /**
-     * Sets whether the gun is currently being reloaded.
-     *
-     * @param reloading whether the gun is reloading
-     */
-    void setReloading(boolean reloading);
-
-    /**
      * Reloads the gun.
      *
      * @return whether the gun was reloaded

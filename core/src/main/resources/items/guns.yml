@@ -19,7 +19,7 @@
 #     type: MAGAZINE_RELOAD, MANUAL_RELOAD
 #   shooting:
 #     accuracy: Represents how accurate the firearm fires onto the proposed target
-#     firing-mode:
+#     fire-mode:
 #       burst: Amount of rounds fired with a single pull on the trigger. This option only affects firearms using burst fire
 #       cooldown: The amount of ticks the firearm needs to wait to be able to shoot again
 #       rate-of-fire: Amount of rounds fired per minute. Semi-automatic firearms always fire only one projectile at a time
@@ -56,7 +56,7 @@ BERETTA_93R:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.6
-    firing-mode:
+    fire-mode:
       cooldown: 2
       rate-of-fire: 1200
       shots: 3
@@ -94,7 +94,7 @@ FIVE-SEVEN:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.6
-    firing-mode:
+    fire-mode:
       cooldown: 2
       type: SEMI_AUTOMATIC
     headshot-damage-multiplier: 1.4
@@ -130,7 +130,7 @@ GLOCK_17:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.7
-    firing-mode:
+    fire-mode:
       cooldown: 2
       type: SEMI_AUTOMATIC
     headshot-damage-multiplier: 1.5
@@ -166,7 +166,7 @@ M1911:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.8
-    firing-mode:
+    fire-mode:
       cooldown: 4
       type: SEMI_AUTOMATIC
     headshot-damage-multiplier: 1.5
@@ -202,7 +202,7 @@ PYTHON:
     type: MANUAL_RELOAD
   shooting:
     accuracy: 0.8
-    firing-mode:
+    fire-mode:
       cooldown: 4
       type: SEMI_AUTOMATIC
     headshot-damage-multiplier: 1.5
@@ -248,7 +248,7 @@ AKS-74U:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.6
-    firing-mode:
+    fire-mode:
       rate-of-fire: 600
       type: FULLY_AUTOMATIC
     headshot-damage-multiplier: 1.4
@@ -274,7 +274,7 @@ MAC-10:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.4
-    firing-mode:
+    fire-mode:
       rate-of-fire: 1200
       type: FULLY_AUTOMATIC
     headshot-damage-multiplier: 1.4
@@ -310,7 +310,7 @@ MP5:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.6
-    firing-mode:
+    fire-mode:
       rate-of-fire: 600
       type: FULLY_AUTOMATIC
     headshot-damage-multiplier: 1.4
@@ -346,7 +346,7 @@ MP7:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.4
-    firing-mode:
+    fire-mode:
       rate-of-fire: 1200
       type: FULLY_AUTOMATIC
     headshot-damage-multiplier: 1.4
@@ -382,7 +382,7 @@ QCW-05:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.6
-    firing-mode:
+    fire-mode:
       cooldown: 2
       rate-of-fire: 1200
       shots: 3
@@ -420,7 +420,7 @@ UZI:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.5
-    firing-mode:
+    fire-mode:
       rate-of-fire: 600
       type: FULLY_AUTOMATIC
     headshot-damage-multiplier: 1.4
@@ -456,7 +456,7 @@ VECTOR:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.5
-    firing-mode:
+    fire-mode:
       rate-of-fire: 1200
       type: FULLY_AUTOMATIC
     headshot-damage-multiplier: 1.4
@@ -492,7 +492,7 @@ AK-47:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.6
-    firing-mode:
+    fire-mode:
       rate-of-fire: 600
       type: FULLY_AUTOMATIC
     headshot-damage-multiplier: 1.5
@@ -528,7 +528,7 @@ AUG:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.6
-    firing-mode:
+    fire-mode:
       rate-of-fire: 600
       type: FULLY_AUTOMATIC
     headshot-damage-multiplier: 1.5
@@ -564,7 +564,7 @@ FAL:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.8
-    firing-mode:
+    fire-mode:
       cooldown: 3
       rate-of-fire: 600
       type: SEMI_AUTOMATIC
@@ -601,7 +601,7 @@ FAMAS:
     type: MAGAZINE_RELOAD
   shooting:
     accuracy: 0.6
-    firing-mode:
+    fire-mode:
       rate-of-fire: 600
       type: FULLY_AUTOMATIC
     headshot-damage-multiplier: 1.5

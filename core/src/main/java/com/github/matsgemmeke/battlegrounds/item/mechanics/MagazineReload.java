@@ -39,7 +39,7 @@ public class MagazineReload implements ReloadSystem {
     public boolean activate(@NotNull BattleItemHolder holder) {
         BattleContext context = gun.getContext();
 
-        gun.setReloading(true);
+        gun.setCurrentOperatingMode(this);
 
         for (BattleSound sound : reloadSounds) {
             currentTasks.add(taskRunner.runTaskLater(() -> {
@@ -58,7 +58,7 @@ public class MagazineReload implements ReloadSystem {
 
         currentTasks.clear();
 
-        gun.setReloading(false);
+        gun.setCurrentOperatingMode(null);
     }
 
     public void performReload() {
@@ -76,7 +76,7 @@ public class MagazineReload implements ReloadSystem {
             gun.setReserveAmmo(0);
         }
 
-        gun.setReloading(false);
+        gun.setCurrentOperatingMode(null);
         gun.update();
     }
 }

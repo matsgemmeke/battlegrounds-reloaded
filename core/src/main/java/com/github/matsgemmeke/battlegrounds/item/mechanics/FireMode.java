@@ -1,9 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
-public interface FireMode {
+import com.github.matsgemmeke.battlegrounds.api.item.OperatingMode;
 
-    /**
-     * Activates the firing mode.
-     */
-    void activate();
+public interface FireMode extends OperatingMode {
 }

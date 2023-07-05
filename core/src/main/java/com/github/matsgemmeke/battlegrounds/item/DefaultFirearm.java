@@ -130,11 +130,11 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     }
 
     public void onChangeHeldItem(@NotNull BattleItemHolder holder) {
-        if (!reloading || reloadSystem == null) {
+        if (currentOperatingMode == null) {
             return;
         }
 
-        reloadSystem.cancel();
+        currentOperatingMode.cancel();
     }
 
     public void onLeftClick(@NotNull BattleItemHolder holder) {
@@ -155,7 +155,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
             return;
         }
 
-        fireMode.activate();
+        fireMode.activate(holder);
     }
 
     public boolean shoot() {

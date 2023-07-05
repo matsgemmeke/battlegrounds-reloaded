@@ -59,7 +59,7 @@ public class ManualReloadTest {
 
         verify(task, atLeast(2)).cancel();
 
-        assertFalse(gun.isReloading());
+        assertNull(gun.getCurrentOperatingMode());
     }
 
     @Test

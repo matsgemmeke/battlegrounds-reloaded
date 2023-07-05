@@ -26,7 +26,7 @@ public class FireModeFactoryTest {
     }
 
     @Test
-    public void makeFiringModeInstanceForBurstMode() {
+    public void makeFireModeInstanceForBurstMode() {
         when(section.getString("type")).thenReturn("BURST_MODE");
 
         FireModeFactory factory = new FireModeFactory(taskRunner);
@@ -36,7 +36,7 @@ public class FireModeFactoryTest {
     }
 
     @Test
-    public void makeFiringModeInstanceForFullyAutomatic() {
+    public void makeFireModeInstanceForFullyAutomatic() {
         when(section.getString("type")).thenReturn("FULLY_AUTOMATIC");
 
         FireModeFactory factory = new FireModeFactory(taskRunner);
@@ -46,7 +46,7 @@ public class FireModeFactoryTest {
     }
 
     @Test
-    public void makeFiringModeInstanceForSemiAutomatic() {
+    public void makeFireModeInstanceForSemiAutomatic() {
         when(section.getString("type")).thenReturn("SEMI_AUTOMATIC");
 
         FireModeFactory factory = new FireModeFactory(taskRunner);
@@ -56,7 +56,7 @@ public class FireModeFactoryTest {
     }
 
     @Test(expected = WeaponFactoryCreationException.class)
-    public void throwErrorWhenUnknownFiringModeType() {
+    public void throwErrorWhenUnknownFireModeType() {
         when(section.getString("type")).thenReturn("error");
 
         FireModeFactory factory = new FireModeFactory(taskRunner);

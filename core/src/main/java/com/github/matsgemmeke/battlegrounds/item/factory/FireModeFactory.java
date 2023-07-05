@@ -33,7 +33,7 @@ public class FireModeFactory {
         try {
             fireModeType = FireModeType.valueOf(type);
         } catch (IllegalArgumentException e) {
-            throw new WeaponFactoryCreationException("Error while getting firing mode type \"" + type + "\"");
+            throw new WeaponFactoryCreationException("Error while getting fire mode type \"" + type + "\"");
         }
 
         int rateOfFire = section.getInt("rate-of-fire");
@@ -49,6 +49,6 @@ public class FireModeFactory {
                 return new SemiAutomaticMode(taskRunner, gun, cooldown);
         }
 
-        throw new WeaponFactoryCreationException("Invalid firing mode type \"" + type + "\"");
+        throw new WeaponFactoryCreationException("Invalid fire mode type \"" + type + "\"");
     }
 }

@@ -1,12 +1,16 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
+import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BurstMode implements FireMode {
 
-    private boolean readyToFire;
+    @Nullable
+    private BukkitTask currentTask;
     @NotNull
     private Gun gun;
     private int rateOfFire;
@@ -19,15 +23,10 @@ public class BurstMode implements FireMode {
         this.gun = gun;
         this.shotAmount = shotAmount;
         this.rateOfFire = rateOfFire;
-        this.readyToFire = true;
     }
 
-    public void activate() {
-        if (!readyToFire) {
-            return;
-        }
-
-        readyToFire = false;
+    public boolean activate(@NotNull BattleItemHolder holder) {
+        gun.setCurrentOperatingMode(this);
 
         int ticksPerSecond = 20;
         // Convert rate of fire to amount of rounds fired per second
@@ -36,6 +35,17 @@ public class BurstMode implements FireMode {
         long period = ticksPerSecond / shotsPerSecond;
         long delay = 0;
 
-        taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(gun, shotAmount, () -> readyToFire = true), delay, period);
+        currentTask = taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(gun, shotAmount, this::cancel), delay, period);
+        return true;
+    }
+
+    public void cancel() {
+        gun.setCurrentOperatingMode(null);
+
+        if (currentTask == null) {
+            return;
+        }
+
+        currentTask.cancel();
     }
 }

@@ -1,12 +1,16 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
+import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FullyAutomaticMode implements FireMode {
 
-    private boolean readyToFire;
+    @Nullable
+    private BukkitTask currentTask;
     @NotNull
     private Gun gun;
     private int rateOfFire;
@@ -17,15 +21,10 @@ public class FullyAutomaticMode implements FireMode {
         this.taskRunner = taskRunner;
         this.gun = gun;
         this.rateOfFire = rateOfFire;
-        this.readyToFire = true;
     }
 
-    public void activate() {
-        if (!readyToFire) {
-            return;
-        }
-
-        readyToFire = false;
+    public boolean activate(@NotNull BattleItemHolder holder) {
+        gun.setCurrentOperatingMode(this);
 
         // The amount of interaction events per second received when holding down the right mouse button
         int interactionsPerSecond = 5;
@@ -39,6 +38,17 @@ public class FullyAutomaticMode implements FireMode {
         long period = interactionsInterval / amountOfRounds;
         long delay = 0;
 
-        taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(gun, amountOfRounds, () -> readyToFire = true), delay, period);
+        currentTask = taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(gun, amountOfRounds, this::cancel), delay, period);
+        return true;
+    }
+
+    public void cancel() {
+        gun.setCurrentOperatingMode(null);
+
+        if (currentTask == null) {
+            return;
+        }
+
+        currentTask.cancel();
     }
 }
