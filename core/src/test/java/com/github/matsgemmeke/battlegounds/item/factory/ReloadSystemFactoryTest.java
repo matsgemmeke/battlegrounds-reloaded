@@ -4,7 +4,7 @@ import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.item.factory.ReloadSystemFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.WeaponFactoryCreationException;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.ReloadSystem;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.junit.Before;
 import org.junit.Test;

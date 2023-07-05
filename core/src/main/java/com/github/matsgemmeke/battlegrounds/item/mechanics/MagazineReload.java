@@ -1,4 +1,4 @@
-package com.github.matsgemmeke.battlegrounds.item.mechanism;
+package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManualReload implements ReloadSystem {
+public class MagazineReload implements ReloadSystem {
 
     @NotNull
     private Gun gun;
@@ -23,7 +23,7 @@ public class ManualReload implements ReloadSystem {
     @NotNull
     private TaskRunner taskRunner;
 
-    public ManualReload(
+    public MagazineReload(
             @NotNull TaskRunner taskRunner,
             @NotNull Gun gun,
             @NotNull Iterable<BattleSound> reloadSounds,
@@ -36,23 +36,18 @@ public class ManualReload implements ReloadSystem {
         this.currentTasks = new ArrayList<>();
     }
 
-    public boolean activate() {
+    public boolean activate(@NotNull BattleItemHolder holder) {
         BattleContext context = gun.getContext();
-        BattleItemHolder holder = gun.getHolder();
-
-        if (holder == null) {
-            return false;
-        }
 
         gun.setReloading(true);
 
         for (BattleSound sound : reloadSounds) {
-            currentTasks.add(taskRunner.runTaskTimer(() -> {
+            currentTasks.add(taskRunner.runTaskLater(() -> {
                 context.playSound(sound, holder.getEntity().getLocation());
-            }, sound.getDelay(), duration));
+            }, sound.getDelay()));
         }
 
-        currentTasks.add(taskRunner.runTaskTimer(this::performReload, duration, duration));
+        currentTasks.add(taskRunner.runTaskLater(this::performReload, duration));
         return true;
     }
 
@@ -67,12 +62,21 @@ public class ManualReload implements ReloadSystem {
     }
 
     public void performReload() {
-        gun.setMagazineAmmo(gun.getMagazineAmmo() + 1);
-        gun.setReserveAmmo(gun.getReserveAmmo() - 1);
-        gun.update();
+        int magazineAmmo = gun.getMagazineAmmo();
+        int magazineSize = gun.getMagazineSize();
+        int magazineSpace = magazineSize - magazineAmmo;
+        int reserveAmmo = gun.getReserveAmmo();
 
-        if (gun.getMagazineAmmo() >= gun.getMagazineSize() || gun.getReserveAmmo() <= 0) {
-            this.cancel();
+        if (reserveAmmo > magazineSpace) {
+            gun.setReserveAmmo(reserveAmmo - magazineSpace);
+            gun.setMagazineAmmo(magazineSize);
+        } else {
+            // In case the magazine cannot be filled completely, use the remaining ammo
+            gun.setMagazineAmmo(magazineAmmo + reserveAmmo);
+            gun.setReserveAmmo(0);
         }
+
+        gun.setReloading(false);
+        gun.update();
     }
 }

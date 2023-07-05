@@ -1,4 +1,4 @@
-package com.github.matsgemmeke.battlegrounds.item.mechanism;
+package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 public enum ReloadSystemType {
 

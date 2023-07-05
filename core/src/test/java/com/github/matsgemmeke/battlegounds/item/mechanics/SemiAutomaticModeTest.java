@@ -1,8 +1,8 @@
-package com.github.matsgemmeke.battlegounds.item.mechanism;
+package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.SemiAutomaticMode;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.SemiAutomaticMode;
 import org.junit.Before;
 import org.junit.Test;
 

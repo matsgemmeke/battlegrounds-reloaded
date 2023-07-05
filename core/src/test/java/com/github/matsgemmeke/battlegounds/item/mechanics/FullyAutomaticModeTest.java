@@ -1,9 +1,9 @@
-package com.github.matsgemmeke.battlegounds.item.mechanism;
+package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.AutomaticFireCycleRunnable;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.FullyAutomaticMode;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.AutomaticFireCycleRunnable;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.FullyAutomaticMode;
 import org.junit.Before;
 import org.junit.Test;
 

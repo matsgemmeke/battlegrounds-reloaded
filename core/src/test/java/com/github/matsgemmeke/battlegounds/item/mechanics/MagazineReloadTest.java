@@ -1,10 +1,10 @@
-package com.github.matsgemmeke.battlegounds.item.mechanism;
+package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.MagazineReload;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.MagazineReload;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,21 +28,13 @@ public class MagazineReloadTest {
     }
 
     @Test
-    public void doNothingIfGunHasNoHolder() {
-        MagazineReload magazineReload = new MagazineReload(taskRunner, gun, reloadSounds, 0);
-        boolean activated = magazineReload.activate();
-
-        assertFalse(activated);
-    }
-
-    @Test
     public void performReloadWhenGunHasHolder() {
         BattleItemHolder holder = mock(BattleItemHolder.class);
 
         when(gun.getHolder()).thenReturn(holder);
 
         MagazineReload magazineReload = new MagazineReload(taskRunner, gun, reloadSounds, 0);
-        boolean activated = magazineReload.activate();
+        boolean activated = magazineReload.activate(holder);
 
         assertTrue(activated);
     }
@@ -57,7 +49,7 @@ public class MagazineReloadTest {
         when(taskRunner.runTaskTimer(any(Runnable.class), anyLong(), anyLong())).thenReturn(task);
 
         MagazineReload magazineReload = new MagazineReload(taskRunner, gun, reloadSounds, 0);
-        magazineReload.activate();
+        magazineReload.activate(holder);
         magazineReload.cancel();
 
         verify(task, atLeast(2)).cancel();

@@ -7,8 +7,8 @@ import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.game.DefaultBattleSound;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.ReloadSystem;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -23,19 +23,19 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
     @NotNull
     private BattleItemConfiguration itemConfiguration;
     @NotNull
-    private FiringModeFactory firingModeFactory;
+    private FireModeFactory fireModeFactory;
     @NotNull
     private ReloadSystemFactory reloadSystemFactory;
 
     public FirearmFactory(
             @NotNull BattlegroundsConfig config,
             @NotNull BattleItemConfiguration itemConfiguration,
-            @NotNull FiringModeFactory firingModeFactory,
+            @NotNull FireModeFactory fireModeFactory,
             @NotNull ReloadSystemFactory reloadSystemFactory
     ) {
         this.config = config;
         this.itemConfiguration = itemConfiguration;
-        this.firingModeFactory = firingModeFactory;
+        this.fireModeFactory = fireModeFactory;
         this.reloadSystemFactory = reloadSystemFactory;
     }
 
@@ -92,8 +92,8 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
         double longRange = section.getDouble("shooting.range.long-range.distance");
         firearm.setLongRange(longRange);
 
-        FiringMode firingMode = firingModeFactory.make(firearm, section.getSection("shooting.firing-mode"));
-        firearm.setFiringMode(firingMode);
+        FireMode fireMode = fireModeFactory.make(firearm, section.getSection("shooting.firing-mode"));
+        firearm.setFireMode(fireMode);
 
         ReloadSystem reloadSystem = reloadSystemFactory.make(firearm, section.getSection("reloading"));
         firearm.setReloadSystem(reloadSystem);

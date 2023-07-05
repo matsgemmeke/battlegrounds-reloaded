@@ -5,8 +5,8 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.ReloadSystem;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
@@ -44,6 +44,7 @@ public class DefaultFirearmTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setReloading(true);
         firearm.setReloadSystem(reloadSystem);
         firearm.onChangeHeldItem(holder);
 
@@ -55,6 +56,7 @@ public class DefaultFirearmTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setHolder(holder);
         firearm.setMagazineAmmo(0);
         firearm.setMagazineSize(30);
         firearm.setReloading(false);
@@ -62,7 +64,7 @@ public class DefaultFirearmTest {
         firearm.setReserveAmmo(30);
         firearm.onLeftClick(holder);
 
-        verify(reloadSystem, times(1)).activate();
+        verify(reloadSystem, times(1)).activate(holder);
     }
 
     @Test
@@ -74,7 +76,7 @@ public class DefaultFirearmTest {
         firearm.setReloadSystem(reloadSystem);
         firearm.onLeftClick(holder);
 
-        verify(reloadSystem, never()).activate();
+        verify(reloadSystem, never()).activate(holder);
     }
 
     @Test
@@ -88,7 +90,7 @@ public class DefaultFirearmTest {
         firearm.setReloadSystem(reloadSystem);
         firearm.onLeftClick(holder);
 
-        verify(reloadSystem, never()).activate();
+        verify(reloadSystem, never()).activate(holder);
     }
 
     @Test
@@ -103,19 +105,19 @@ public class DefaultFirearmTest {
         firearm.setReserveAmmo(0);
         firearm.onLeftClick(holder);
 
-        verify(reloadSystem, never()).activate();
+        verify(reloadSystem, never()).activate(holder);
     }
 
     @Test
     public void executesShootActionWhenRightClicked() {
-        FiringMode firingMode = mock(FiringMode.class);
+        FireMode fireMode = mock(FireMode.class);
 
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
-        firearm.setFiringMode(firingMode);
+        firearm.setFireMode(fireMode);
         firearm.setMagazineAmmo(10);
         firearm.onRightClick(holder);
 
-        verify(firingMode).activate();
+        verify(fireMode).activate();
     }
 
     @Test

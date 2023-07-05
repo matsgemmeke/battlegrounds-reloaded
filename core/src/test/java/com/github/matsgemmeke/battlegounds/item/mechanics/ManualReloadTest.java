@@ -1,4 +1,4 @@
-package com.github.matsgemmeke.battlegounds.item.mechanism;
+package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
@@ -6,7 +6,7 @@ import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.ManualReload;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.ManualReload;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,16 +28,6 @@ public class ManualReloadTest {
     }
 
     @Test
-    public void doNothingIfGunHasNoHolder() {
-        Gun gun = mock(Gun.class);
-
-        ManualReload manualReload = new ManualReload(taskRunner, gun, reloadSounds, 0);
-        boolean activated = manualReload.activate();
-
-        assertFalse(activated);
-    }
-
-    @Test
     public void performReloadWhenGunHasHolder() {
         BattleContext context = mock(BattleContext.class);
         BattleItemHolder holder = mock(BattleItemHolder.class);
@@ -46,7 +36,7 @@ public class ManualReloadTest {
         gun.setHolder(holder);
 
         ManualReload manualReload = new ManualReload(taskRunner, gun, reloadSounds, 0);
-        boolean activated = manualReload.activate();
+        boolean activated = manualReload.activate(holder);
 
         assertTrue(activated);
     }
@@ -64,7 +54,7 @@ public class ManualReloadTest {
         when(taskRunner.runTaskTimer(any(Runnable.class), anyLong(), anyLong())).thenReturn(task);
 
         ManualReload manualReload = new ManualReload(taskRunner, gun, reloadSounds, 0);
-        manualReload.activate();
+        manualReload.activate(holder);
         manualReload.cancel();
 
         verify(task, atLeast(2)).cancel();

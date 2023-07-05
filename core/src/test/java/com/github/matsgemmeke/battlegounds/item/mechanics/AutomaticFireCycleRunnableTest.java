@@ -1,8 +1,8 @@
-package com.github.matsgemmeke.battlegounds.item.mechanism;
+package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.AutomaticFireCycleRunnable;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.Procedure;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.AutomaticFireCycleRunnable;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.Procedure;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;

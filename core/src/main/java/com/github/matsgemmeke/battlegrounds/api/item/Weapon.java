@@ -1,8 +1,24 @@
 package com.github.matsgemmeke.battlegrounds.api.item;
 
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public interface Weapon extends BattleItem {
+
+    /**
+     * Gets the current operating mode being executed on the weapon.
+     *
+     * @return the current operating mode
+     */
+    @Nullable
+    OperatingMode getCurrentOperatingMode();
+
+    /**
+     * Sets the current operating mode being executed on the weapon.
+     *
+     * @param operatingMode the current operating mode
+     */
+    void setCurrentOperatingMode(@Nullable OperatingMode operatingMode);
 
     /**
      * Updates the {@link ItemStack} of the weapon.

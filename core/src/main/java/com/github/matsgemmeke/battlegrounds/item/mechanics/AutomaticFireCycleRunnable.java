@@ -1,4 +1,4 @@
-package com.github.matsgemmeke.battlegrounds.item.mechanism;
+package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.bukkit.scheduler.BukkitRunnable;

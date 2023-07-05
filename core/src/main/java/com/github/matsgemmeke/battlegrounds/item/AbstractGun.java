@@ -2,7 +2,7 @@ package com.github.matsgemmeke.battlegrounds.item;
 
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.ReloadSystem;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
 import org.bukkit.Location;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -147,7 +147,11 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
     }
 
     public boolean reload() {
-        return reloadSystem != null && reloadSystem.activate();
+        if (holder == null) {
+            return false;
+        }
+
+        return reloadSystem != null && reloadSystem.activate(holder);
     }
 
     public boolean update() {

@@ -1,4 +1,4 @@
-package com.github.matsgemmeke.battlegrounds.item.mechanism;
+package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 @FunctionalInterface
 public interface Procedure {

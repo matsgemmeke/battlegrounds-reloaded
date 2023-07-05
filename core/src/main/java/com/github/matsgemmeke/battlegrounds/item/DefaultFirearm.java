@@ -6,7 +6,7 @@ import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.entity.Hitbox;
-import com.github.matsgemmeke.battlegrounds.item.mechanism.FiringMode;
+import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
 import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class DefaultFirearm extends AbstractGun implements Firearm {
 
     private double headshotDamageMultiplier;
-    private FiringMode firingMode;
+    private FireMode fireMode;
     private int magazineAmmo;
     private int magazineSize;
     private int reserveAmmo;
@@ -35,12 +35,12 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         this.headshotDamageMultiplier = headshotDamageMultiplier;
     }
 
-    public FiringMode getFiringMode() {
-        return firingMode;
+    public FireMode getFireMode() {
+        return fireMode;
     }
 
-    public void setFiringMode(FiringMode firingMode) {
-        this.firingMode = firingMode;
+    public void setFireMode(FireMode fireMode) {
+        this.fireMode = fireMode;
     }
 
     public int getMagazineAmmo() {
@@ -130,7 +130,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     }
 
     public void onChangeHeldItem(@NotNull BattleItemHolder holder) {
-        if (reloadSystem == null) {
+        if (!reloading || reloadSystem == null) {
             return;
         }
 
@@ -138,7 +138,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     }
 
     public void onLeftClick(@NotNull BattleItemHolder holder) {
-        if (reloading || magazineAmmo >= magazineSize || reserveAmmo <= 0) {
+        if (currentOperatingMode != null || magazineAmmo >= magazineSize || reserveAmmo <= 0) {
             return;
         }
 
@@ -146,7 +146,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     }
 
     public void onRightClick(@NotNull BattleItemHolder holder) {
-        if (reloading) {
+        if (currentOperatingMode != null) {
             return;
         }
 
@@ -155,7 +155,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
             return;
         }
 
-        firingMode.activate();
+        fireMode.activate();
     }
 
     public boolean shoot() {

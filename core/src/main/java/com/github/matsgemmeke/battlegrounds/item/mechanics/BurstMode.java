@@ -1,10 +1,10 @@
-package com.github.matsgemmeke.battlegrounds.item.mechanism;
+package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.jetbrains.annotations.NotNull;
 
-public class BurstMode implements FiringMode {
+public class BurstMode implements FireMode {
 
     private boolean readyToFire;
     @NotNull
