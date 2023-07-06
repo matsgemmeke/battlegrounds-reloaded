@@ -41,17 +41,19 @@ public class ManualReload implements ReloadSystem {
 
         gun.setCurrentOperatingMode(this);
 
+        holder.applyOperatingState(true);
+
         for (BattleSound sound : reloadSounds) {
             currentTasks.add(taskRunner.runTaskTimer(() -> {
                 context.playSound(sound, holder.getEntity().getLocation());
             }, sound.getDelay(), duration));
         }
 
-        currentTasks.add(taskRunner.runTaskTimer(this::performReload, duration, duration));
+        currentTasks.add(taskRunner.runTaskTimer(() -> this.performReload(holder), duration, duration));
         return true;
     }
 
-    public void cancel() {
+    public void cancel(@NotNull BattleItemHolder holder) {
         for (BukkitTask task : currentTasks) {
             task.cancel();
         }
@@ -59,15 +61,17 @@ public class ManualReload implements ReloadSystem {
         currentTasks.clear();
 
         gun.setCurrentOperatingMode(null);
+
+        holder.applyOperatingState(false);
     }
 
-    public void performReload() {
+    public void performReload(@NotNull BattleItemHolder holder) {
         gun.setMagazineAmmo(gun.getMagazineAmmo() + 1);
         gun.setReserveAmmo(gun.getReserveAmmo() - 1);
         gun.update();
 
         if (gun.getMagazineAmmo() >= gun.getMagazineSize() || gun.getReserveAmmo() <= 0) {
-            this.cancel();
+            this.cancel(holder);
         }
     }
 }

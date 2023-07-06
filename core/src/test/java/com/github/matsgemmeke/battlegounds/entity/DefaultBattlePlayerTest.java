@@ -82,4 +82,23 @@ public class DefaultBattlePlayerTest {
 
         assertTrue(accuracy < 1.0);
     }
+
+    @Test
+    public void applyingOperatingStateSetsFoodLevel() {
+        DefaultBattlePlayer battlePlayer = new DefaultBattlePlayer(player);
+        battlePlayer.applyOperatingState(true);
+
+        verify(player, times(1)).setFoodLevel(6);
+    }
+
+    @Test
+    public void resettingOperatingStateSetsFoodLevel() {
+        when(player.getFoodLevel()).thenReturn(10);
+
+        DefaultBattlePlayer battlePlayer = new DefaultBattlePlayer(player);
+        battlePlayer.applyOperatingState(true);
+        battlePlayer.applyOperatingState(false);
+
+        verify(player, times(1)).setFoodLevel(10);
+    }
 }

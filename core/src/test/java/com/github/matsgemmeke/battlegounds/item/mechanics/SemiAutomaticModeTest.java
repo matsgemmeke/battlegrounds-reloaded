@@ -12,12 +12,14 @@ import static org.mockito.Mockito.*;
 
 public class SemiAutomaticModeTest {
 
+    private BattleItemHolder holder;
     private Firearm firearm;
     private long cooldown;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
+        this.holder = mock(BattleItemHolder.class);
         this.taskRunner = mock(TaskRunner.class);
         this.firearm = mock(Firearm.class);
         this.cooldown = 1;
@@ -25,8 +27,6 @@ public class SemiAutomaticModeTest {
 
     @Test
     public void activatingMakesGunShootAndSetOperatingMode() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
-
         SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, firearm, cooldown);
         fireMode.activate(holder);
 
@@ -37,21 +37,20 @@ public class SemiAutomaticModeTest {
     @Test
     public void cancelingResetsOperatingMode() {
         SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, firearm, cooldown);
-        fireMode.cancel();
+        fireMode.cancel(holder);
 
         verify(firearm, times(1)).setCurrentOperatingMode(null);
     }
 
     @Test
     public void cancelingStopsCooldown() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
         BukkitTask task = mock(BukkitTask.class);
 
         when(taskRunner.runTaskLater(any(Runnable.class), anyLong())).thenReturn(task);
 
         SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, firearm, cooldown);
         fireMode.activate(holder);
-        fireMode.cancel();
+        fireMode.cancel(holder);
 
         verify(firearm, times(1)).setCurrentOperatingMode(null);
         verify(task, times(1)).cancel();

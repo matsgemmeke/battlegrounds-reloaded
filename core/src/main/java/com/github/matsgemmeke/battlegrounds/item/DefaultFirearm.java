@@ -134,7 +134,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
             return;
         }
 
-        currentOperatingMode.cancel();
+        currentOperatingMode.cancel(holder);
     }
 
     public void onLeftClick(@NotNull BattleItemHolder holder) {

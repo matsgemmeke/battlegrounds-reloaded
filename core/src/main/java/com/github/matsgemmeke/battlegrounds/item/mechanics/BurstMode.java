@@ -35,11 +35,15 @@ public class BurstMode implements FireMode {
         long period = ticksPerSecond / shotsPerSecond;
         long delay = 0;
 
-        currentTask = taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(gun, shotAmount, this::cancel), delay, period);
+        currentTask = taskRunner.runTaskTimer(
+                new AutomaticFireCycleRunnable(gun, shotAmount, () -> this.cancel(holder)),
+                delay,
+                period
+        );
         return true;
     }
 
-    public void cancel() {
+    public void cancel(@NotNull BattleItemHolder holder) {
         gun.setCurrentOperatingMode(null);
 
         if (currentTask == null) {

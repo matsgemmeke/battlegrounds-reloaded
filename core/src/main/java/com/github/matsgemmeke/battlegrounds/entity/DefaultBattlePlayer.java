@@ -13,6 +13,9 @@ import java.util.Set;
 
 public class DefaultBattlePlayer implements BattlePlayer {
 
+    private static final int OPERATING_FOOD_LEVEL = 6;
+
+    private int priorFoodLevel;
     @NotNull
     private Player player;
     @NotNull
@@ -46,6 +49,15 @@ public class DefaultBattlePlayer implements BattlePlayer {
 
     public double damage(double damageAmount) {
         return 0.0;
+    }
+
+    public void applyOperatingState(boolean operating) {
+        if (operating) {
+            priorFoodLevel = player.getFoodLevel();
+            player.setFoodLevel(OPERATING_FOOD_LEVEL);
+        } else {
+            player.setFoodLevel(priorFoodLevel);
+        }
     }
 
     @Nullable

@@ -38,11 +38,15 @@ public class FullyAutomaticMode implements FireMode {
         long period = interactionsInterval / amountOfRounds;
         long delay = 0;
 
-        currentTask = taskRunner.runTaskTimer(new AutomaticFireCycleRunnable(gun, amountOfRounds, this::cancel), delay, period);
+        currentTask = taskRunner.runTaskTimer(
+                new AutomaticFireCycleRunnable(gun, amountOfRounds, () -> this.cancel(holder)),
+                delay,
+                period
+        );
         return true;
     }
 
-    public void cancel() {
+    public void cancel(@NotNull BattleItemHolder holder) {
         gun.setCurrentOperatingMode(null);
 
         if (currentTask == null) {

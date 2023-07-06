@@ -14,19 +14,19 @@ import static org.mockito.Mockito.*;
 
 public class FullyAutomaticModeTest {
 
+    private BattleItemHolder holder;
     private Firearm firearm;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
+        this.holder = mock(BattleItemHolder.class);
         this.taskRunner = mock(TaskRunner.class);
         this.firearm = mock(Firearm.class);
     }
 
     @Test
     public void activatesWithCorrectDelayAndPeriod() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
-
         int rateOfFire = 1200;
 
         FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, firearm, rateOfFire);
@@ -40,14 +40,13 @@ public class FullyAutomaticModeTest {
         int rateOfFire = 600;
 
         FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, firearm, rateOfFire);
-        fireMode.cancel();
+        fireMode.cancel(holder);
 
         verify(firearm, times(1)).setCurrentOperatingMode(null);
     }
 
     @Test
     public void cancelingStopsCurrentCycle() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
         BukkitTask task = mock(BukkitTask.class);
 
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
@@ -56,7 +55,7 @@ public class FullyAutomaticModeTest {
 
         FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, firearm, rateOfFire);
         fireMode.activate(holder);
-        fireMode.cancel();
+        fireMode.cancel(holder);
 
         verify(task, times(1)).cancel();
     }

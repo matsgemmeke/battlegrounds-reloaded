@@ -41,17 +41,19 @@ public class MagazineReload implements ReloadSystem {
 
         gun.setCurrentOperatingMode(this);
 
+        holder.applyOperatingState(true);
+
         for (BattleSound sound : reloadSounds) {
             currentTasks.add(taskRunner.runTaskLater(() -> {
                 context.playSound(sound, holder.getEntity().getLocation());
             }, sound.getDelay()));
         }
 
-        currentTasks.add(taskRunner.runTaskLater(this::performReload, duration));
+        currentTasks.add(taskRunner.runTaskLater(() -> this.performReload(holder), duration));
         return true;
     }
 
-    public void cancel() {
+    public void cancel(@NotNull BattleItemHolder holder) {
         for (BukkitTask task : currentTasks) {
             task.cancel();
         }
@@ -59,9 +61,11 @@ public class MagazineReload implements ReloadSystem {
         currentTasks.clear();
 
         gun.setCurrentOperatingMode(null);
+
+        holder.applyOperatingState(false);
     }
 
-    public void performReload() {
+    public void performReload(@NotNull BattleItemHolder holder) {
         int magazineAmmo = gun.getMagazineAmmo();
         int magazineSize = gun.getMagazineSize();
         int magazineSpace = magazineSize - magazineAmmo;
@@ -75,6 +79,8 @@ public class MagazineReload implements ReloadSystem {
             gun.setMagazineAmmo(magazineAmmo + reserveAmmo);
             gun.setReserveAmmo(0);
         }
+
+        holder.applyOperatingState(false);
 
         gun.setCurrentOperatingMode(null);
         gun.update();

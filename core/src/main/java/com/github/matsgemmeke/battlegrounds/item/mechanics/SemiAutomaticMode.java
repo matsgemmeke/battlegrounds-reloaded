@@ -27,11 +27,11 @@ public class SemiAutomaticMode implements FireMode {
         gun.setCurrentOperatingMode(this);
         gun.shoot();
 
-        cooldownTask = taskRunner.runTaskLater(this::cancel, cooldown);
+        cooldownTask = taskRunner.runTaskLater(() -> this.cancel(holder), cooldown);
         return true;
     }
 
-    public void cancel() {
+    public void cancel(@NotNull BattleItemHolder holder) {
         gun.setCurrentOperatingMode(null);
 
         if (cooldownTask == null) {

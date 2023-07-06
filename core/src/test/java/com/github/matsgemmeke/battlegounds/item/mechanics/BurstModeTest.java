@@ -41,7 +41,7 @@ public class BurstModeTest {
         int rateOfFire = 600;
 
         BurstMode fireMode = new BurstMode(taskRunner, firearm, roundAmount, rateOfFire);
-        fireMode.cancel();
+        fireMode.cancel(holder);
 
         verify(firearm, times(1)).setCurrentOperatingMode(null);
     }
@@ -58,7 +58,7 @@ public class BurstModeTest {
 
         BurstMode fireMode = new BurstMode(taskRunner, firearm, roundAmount, rateOfFire);
         fireMode.activate(holder);
-        fireMode.cancel();
+        fireMode.cancel(holder);
 
         verify(task, times(1)).cancel();
     }

@@ -16,12 +16,14 @@ import static org.mockito.Mockito.*;
 
 public class MagazineReloadTest {
 
+    private BattleItemHolder holder;
     private Gun gun;
     private Iterable<BattleSound> reloadSounds;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
+        this.holder = mock(BattleItemHolder.class);
         this.gun = mock(Gun.class);
         this.taskRunner = mock(TaskRunner.class);
         this.reloadSounds = Collections.singletonList(mock(BattleSound.class));
@@ -29,10 +31,6 @@ public class MagazineReloadTest {
 
     @Test
     public void performReloadWhenGunHasHolder() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
-
-        when(gun.getHolder()).thenReturn(holder);
-
         MagazineReload magazineReload = new MagazineReload(taskRunner, gun, reloadSounds, 0);
         boolean activated = magazineReload.activate(holder);
 
@@ -41,16 +39,14 @@ public class MagazineReloadTest {
 
     @Test
     public void cancellingReloadRemovesAllTasksAndResetsGun() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
         BukkitTask task = mock(BukkitTask.class);
 
-        when(gun.getHolder()).thenReturn(holder);
         when(taskRunner.runTaskLater(any(Runnable.class), anyLong())).thenReturn(task);
         when(taskRunner.runTaskTimer(any(Runnable.class), anyLong(), anyLong())).thenReturn(task);
 
         MagazineReload magazineReload = new MagazineReload(taskRunner, gun, reloadSounds, 0);
         magazineReload.activate(holder);
-        magazineReload.cancel();
+        magazineReload.cancel(holder);
 
         verify(task, atLeast(2)).cancel();
 
@@ -64,7 +60,7 @@ public class MagazineReloadTest {
         when(gun.getReserveAmmo()).thenReturn(90);
 
         MagazineReload magazineReload = new MagazineReload(taskRunner, gun, reloadSounds, 0);
-        magazineReload.performReload();
+        magazineReload.performReload(holder);
 
         verify(gun).setMagazineAmmo(30);
         verify(gun).setReserveAmmo(60);
@@ -78,7 +74,7 @@ public class MagazineReloadTest {
         when(gun.getReserveAmmo()).thenReturn(10);
 
         MagazineReload magazineReload = new MagazineReload(taskRunner, gun, reloadSounds, 0);
-        magazineReload.performReload();
+        magazineReload.performReload(holder);
 
         verify(gun).setMagazineAmmo(10);
         verify(gun).setReserveAmmo(0);

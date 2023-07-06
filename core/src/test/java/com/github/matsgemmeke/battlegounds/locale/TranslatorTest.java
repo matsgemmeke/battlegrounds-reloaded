@@ -1,4 +1,4 @@
-package com.github.matsgemmeke.battlegounds;
+package com.github.matsgemmeke.battlegounds.locale;
 
 import com.github.matsgemmeke.battlegrounds.locale.InvalidTranslationKeyException;
 import com.github.matsgemmeke.battlegrounds.locale.PlaceholderEntry;

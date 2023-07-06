@@ -18,6 +18,8 @@ public interface OperatingMode {
 
     /**
      * Attempts to cancel the operation.
+     *
+     * @param holder the entity who cancelled the operation
      */
-    void cancel();
+    void cancel(@NotNull BattleItemHolder holder);
 }

@@ -18,11 +18,13 @@ import static org.mockito.Mockito.*;
 
 public class ManualReloadTest {
 
+    private BattleItemHolder holder;
     private Iterable<BattleSound> reloadSounds;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
+        this.holder = mock(BattleItemHolder.class);
         this.taskRunner = mock(TaskRunner.class);
         this.reloadSounds = Collections.singletonList(mock(BattleSound.class));
     }
@@ -30,7 +32,6 @@ public class ManualReloadTest {
     @Test
     public void performReloadWhenGunHasHolder() {
         BattleContext context = mock(BattleContext.class);
-        BattleItemHolder holder = mock(BattleItemHolder.class);
 
         Gun gun = new DefaultFirearm("id", "name", context);
         gun.setHolder(holder);
@@ -44,7 +45,6 @@ public class ManualReloadTest {
     @Test
     public void cancellingReloadRemovesAllTasksAndResetsGun() {
         BattleContext context = mock(BattleContext.class);
-        BattleItemHolder holder = mock(BattleItemHolder.class);
         BukkitTask task = mock(BukkitTask.class);
 
         Gun gun = new DefaultFirearm("id", "name", context);
@@ -55,7 +55,7 @@ public class ManualReloadTest {
 
         ManualReload manualReload = new ManualReload(taskRunner, gun, reloadSounds, 0);
         manualReload.activate(holder);
-        manualReload.cancel();
+        manualReload.cancel(holder);
 
         verify(task, atLeast(2)).cancel();
 
@@ -72,7 +72,7 @@ public class ManualReloadTest {
         gun.setReserveAmmo(1);
 
         ManualReload manualReload = new ManualReload(taskRunner, gun, reloadSounds, 0);
-        manualReload.performReload();
+        manualReload.performReload(holder);
 
         assertEquals(1, gun.getMagazineAmmo());
         assertEquals(0, gun.getReserveAmmo());

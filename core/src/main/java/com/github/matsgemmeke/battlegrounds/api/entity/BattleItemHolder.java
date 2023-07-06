@@ -11,6 +11,13 @@ import org.jetbrains.annotations.NotNull;
 public interface BattleItemHolder extends BattleEntity, TeamMember {
 
     /**
+     * Applies effects to the holder for when they are operating an item.
+     *
+     * @param operating whether to apply the state for operating an item or not
+     */
+    void applyOperatingState(boolean operating);
+
+    /**
      * Gets the relative accuracy based on the state of the entity. For example, it should return 1.0 if the
      * shooting accuracy is unaffected, 0.5 if the accuracy is worsened, 2.0 if the accuracy is improved etc.
      *

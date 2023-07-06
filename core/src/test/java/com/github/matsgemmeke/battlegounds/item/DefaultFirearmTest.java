@@ -48,7 +48,7 @@ public class DefaultFirearmTest {
         firearm.setCurrentOperatingMode(operatingMode);
         firearm.onChangeHeldItem(holder);
 
-        verify(operatingMode, times(1)).cancel();
+        verify(operatingMode, times(1)).cancel(holder);
     }
 
     @Test
