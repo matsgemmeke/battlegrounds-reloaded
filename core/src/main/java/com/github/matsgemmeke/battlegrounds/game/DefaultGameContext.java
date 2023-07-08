@@ -8,6 +8,7 @@ import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
 import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +56,10 @@ public class DefaultGameContext extends AbstractBattleContext implements GameCon
     }
 
     public boolean onInteract(@NotNull BattlePlayer battlePlayer, @NotNull PlayerInteractEvent event) {
+        return false;
+    }
+
+    public boolean onItemDrop(@NotNull BattlePlayer battlePlayer, @NotNull PlayerDropItemEvent event) {
         return false;
     }
 

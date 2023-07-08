@@ -16,6 +16,7 @@ import com.github.matsgemmeke.battlegrounds.configuration.GeneralDataConfigurati
 import com.github.matsgemmeke.battlegrounds.configuration.LanguageConfiguration;
 import com.github.matsgemmeke.battlegrounds.event.EventBus;
 import com.github.matsgemmeke.battlegrounds.event.EventDispatcher;
+import com.github.matsgemmeke.battlegrounds.event.handler.PlayerDropItemEventHandler;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerInteractEventHandler;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerItemHeldEventHandler;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerJoinEventHandler;
@@ -28,6 +29,7 @@ import com.github.matsgemmeke.battlegrounds.item.factory.FireModeFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.FirearmFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.ReloadSystemFactory;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -139,6 +141,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         PluginManager pluginManager = this.getServer().getPluginManager();
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
+        eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(freemodeContext)));

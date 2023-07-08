@@ -12,6 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
@@ -84,6 +85,18 @@ public class DefaultFreemodeContext extends AbstractBattleContext implements Fre
         }
 
         event.setCancelled(true);
+        return true;
+    }
+
+    public boolean onItemDrop(@NotNull BattlePlayer battlePlayer, @NotNull PlayerDropItemEvent event) {
+        ItemStack itemStack = event.getItemDrop().getItemStack();
+        BattleItem item = battlePlayer.getBattleItem(itemStack);
+
+        if (item == null) {
+            return false;
+        }
+
+        item.onDrop(battlePlayer);
         return true;
     }
 

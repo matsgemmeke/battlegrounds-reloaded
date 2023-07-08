@@ -11,12 +11,15 @@ import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultFirearmTest {
@@ -338,10 +341,61 @@ public class DefaultFirearmTest {
     }
 
     @Test
+    public void canNotReloadWithoutHolder() {
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        boolean reloaded = firearm.reload();
+
+        assertFalse(reloaded);
+    }
+
+    @Test
     public void canNotShootProjectilesWithoutHolder() {
         DefaultFirearm firearm = new DefaultFirearm(id, name, context);
         firearm.shoot();
 
         verify(context, never()).playSounds(any(), any());
+    }
+
+    @Test
+    public void resetsOperatingModeAndHolderWhenDropped() {
+        OperatingMode operatingMode = mock(OperatingMode.class);
+
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setCurrentOperatingMode(operatingMode);
+        firearm.setHolder(holder);
+        firearm.onDrop(holder);
+
+        verify(operatingMode, times(1)).cancel(holder);
+
+        assertNull(firearm.getHolder());
+    }
+
+    @Test
+    public void doesNotUpdateIfFirearmHasNoItemStack() {
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        boolean updated = firearm.update();
+
+        assertFalse(updated);
+    }
+
+    @Test
+    public void updatingItemChangesItsDisplayName() {
+        ItemStack itemStack = mock(ItemStack.class);
+        ItemMeta itemMeta = mock(ItemMeta.class);
+
+        when(holder.updateItemStack(itemStack)).thenReturn(true);
+        when(itemStack.getItemMeta()).thenReturn(itemMeta);
+
+        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        firearm.setHolder(holder);
+        firearm.setItemStack(itemStack);
+        firearm.setMagazineAmmo(10);
+        firearm.setReserveAmmo(20);
+
+        boolean updated = firearm.update();
+
+        verify(itemMeta, times(1)).setDisplayName(ChatColor.WHITE + "name 10/20");
+
+        assertTrue(updated);
     }
 }

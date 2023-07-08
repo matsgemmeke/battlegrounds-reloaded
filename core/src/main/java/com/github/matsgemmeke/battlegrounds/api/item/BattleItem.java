@@ -88,6 +88,13 @@ public interface BattleItem {
     void onChangeHeldItem(@NotNull BattleItemHolder holder);
 
     /**
+     * Handles a performed drop on the item.
+     *
+     * @param holder the entity who dropped the item
+     */
+    void onDrop(@NotNull BattleItemHolder holder);
+
+    /**
      * Handles a performed left click on the item.
      *
      * @param holder the entity who left-clicked the item

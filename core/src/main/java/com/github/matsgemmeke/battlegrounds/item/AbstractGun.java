@@ -1,5 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
+import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
@@ -136,6 +137,15 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
         shootingDirection.setDirection(new Vector(x, z, y));
 
         return shootingDirection;
+    }
+
+    public void onDrop(@NotNull BattleItemHolder holder) {
+        if (currentOperatingMode != null) {
+            currentOperatingMode.cancel(holder);
+            holder.applyOperatingState(false);
+        }
+
+        this.holder = null;
     }
 
     public boolean reload() {

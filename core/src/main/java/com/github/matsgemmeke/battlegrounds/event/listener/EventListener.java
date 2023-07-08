@@ -4,6 +4,7 @@ import com.github.matsgemmeke.battlegrounds.event.EventDispatcher;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -16,6 +17,11 @@ public class EventListener implements Listener {
 
     public EventListener(@NotNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
+    }
+
+    @EventHandler
+    public void onPlayerDropItem(@NotNull PlayerDropItemEvent event) {
+        this.dispatchEvent(event);
     }
 
     @EventHandler
