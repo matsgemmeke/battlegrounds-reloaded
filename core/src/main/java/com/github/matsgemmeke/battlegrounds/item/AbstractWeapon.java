@@ -11,12 +11,8 @@ public abstract class AbstractWeapon extends AbstractBattleItem implements Weapo
     @Nullable
     protected OperatingMode currentOperatingMode;
 
-    public AbstractWeapon(
-            @NotNull String id,
-            @NotNull String name,
-            @NotNull BattleContext context
-    ) {
-        super(id, name, context);
+    public AbstractWeapon(@NotNull BattleContext context) {
+        super(context);
     }
 
     @Nullable

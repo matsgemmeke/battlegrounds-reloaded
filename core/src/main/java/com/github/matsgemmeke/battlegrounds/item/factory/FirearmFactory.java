@@ -47,12 +47,13 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
             throw new InvalidBattleItemFormatException("Weapon id " + id + " is not a valid section");
         }
 
-        // Mandatory attributes
+        // Descriptive attributes
         String name = section.getString("display-name");
         String description = section.getString("description");
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setDescription(description);
+        firearm.setName(name);
 
         // Other variables
         double accuracy = section.getDouble("shooting.accuracy");

@@ -17,18 +17,10 @@ public abstract class AbstractBattleItem implements BattleItem {
     protected ItemStack itemStack;
     @Nullable
     protected String description;
-    @NotNull
-    protected String id;
-    @NotNull
+    @Nullable
     protected String name;
 
-    public AbstractBattleItem(
-            @NotNull String id,
-            @NotNull String name,
-            @NotNull BattleContext context
-    ) {
-        this.id = id;
-        this.name = name;
+    public AbstractBattleItem(@NotNull BattleContext context) {
         this.context = context;
     }
 
@@ -55,11 +47,6 @@ public abstract class AbstractBattleItem implements BattleItem {
         this.holder = holder;
     }
 
-    @NotNull
-    public String getId() {
-        return id;
-    }
-
     @Nullable
     public ItemStack getItemStack() {
         return itemStack;
@@ -69,8 +56,12 @@ public abstract class AbstractBattleItem implements BattleItem {
         this.itemStack = itemStack;
     }
 
-    @NotNull
+    @Nullable
     public String getName() {
         return name;
+    }
+
+    public void setName(@Nullable String name) {
+        this.name = name;
     }
 }

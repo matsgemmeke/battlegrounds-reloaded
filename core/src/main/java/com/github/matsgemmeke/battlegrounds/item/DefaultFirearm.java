@@ -23,8 +23,8 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     private Iterable<BattleSound> shotSounds;
     private Iterable<BattleSound> triggerSounds;
 
-    public DefaultFirearm(@NotNull String id, @NotNull String name, @NotNull BattleContext context) {
-        super(id, name, context);
+    public DefaultFirearm(@NotNull BattleContext context) {
+        super(context);
     }
 
     public double getHeadshotDamageMultiplier() {

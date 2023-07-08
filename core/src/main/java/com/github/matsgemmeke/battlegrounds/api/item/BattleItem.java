@@ -50,14 +50,6 @@ public interface BattleItem {
     void setHolder(@Nullable BattleItemHolder holder);
 
     /**
-     * Gets the id of the item.
-     *
-     * @return the item id
-     */
-    @NotNull
-    String getId();
-
-    /**
      * Gets the item stack of the item.
      *
      * @return the item stack
@@ -77,8 +69,15 @@ public interface BattleItem {
      *
      * @return the item name
      */
-    @NotNull
+    @Nullable
     String getName();
+
+    /**
+     * Sets the name of the item.
+     *
+     * @param name the item name
+     */
+    void setName(@Nullable String name);
 
     /**
      * Handles a performed held item change action on the item.

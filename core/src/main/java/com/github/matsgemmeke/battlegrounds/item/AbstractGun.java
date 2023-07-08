@@ -14,7 +14,6 @@ import java.util.Random;
 
 public abstract class AbstractGun extends AbstractWeapon implements Gun {
 
-    protected boolean reloading;
     protected double accuracy;
     protected double damageAmplifier;
     protected double longDamage;
@@ -27,13 +26,8 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
     @Nullable
     protected ReloadSystem reloadSystem;
 
-    public AbstractGun(
-            @NotNull String id,
-            @NotNull String name,
-            @NotNull BattleContext context
-    ) {
-        super(id, name, context);
-        this.reloading = false;
+    public AbstractGun(@NotNull BattleContext context) {
+        super(context);
     }
 
     public double getAccuracy() {

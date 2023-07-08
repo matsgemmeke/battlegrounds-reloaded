@@ -26,20 +26,16 @@ public class DefaultFirearmTest {
 
     private BattleContext context;
     private BattleItemHolder holder;
-    private String id;
-    private String name;
 
     @Before
     public void setUp() {
         this.context = mock(BattleContext.class);
         this.holder = mock(BattleItemHolder.class);
-        this.id = "id";
-        this.name = "name";
     }
 
     @Test
     public void doesNothingWhenChangingHeldItemWithoutReloadSystem() {
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.onChangeHeldItem(holder);
     }
 
@@ -47,7 +43,7 @@ public class DefaultFirearmTest {
     public void cancelsCurrentOperatingModeWhenChangingHeldItem() {
         OperatingMode operatingMode = mock(OperatingMode.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setCurrentOperatingMode(operatingMode);
         firearm.onChangeHeldItem(holder);
 
@@ -58,7 +54,7 @@ public class DefaultFirearmTest {
     public void activatesReloadSystemWhenLeftClicked() {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setCurrentOperatingMode(null);
         firearm.setHolder(holder);
         firearm.setMagazineAmmo(0);
@@ -75,7 +71,7 @@ public class DefaultFirearmTest {
         OperatingMode operatingMode = mock(OperatingMode.class);
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setCurrentOperatingMode(operatingMode);
         firearm.setReloadSystem(reloadSystem);
         firearm.onLeftClick(holder);
@@ -87,7 +83,7 @@ public class DefaultFirearmTest {
     public void doesNotActivateReloadSystemWhenMagazineIsAlreadyFull() {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setCurrentOperatingMode(null);
         firearm.setMagazineAmmo(30);
         firearm.setMagazineSize(30);
@@ -101,7 +97,7 @@ public class DefaultFirearmTest {
     public void doesNotActivateReloadSystemWhenThereIsNoReserveAmmo() {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setCurrentOperatingMode(null);
         firearm.setMagazineAmmo(0);
         firearm.setMagazineSize(30);
@@ -116,7 +112,7 @@ public class DefaultFirearmTest {
     public void executesShootActionWhenRightClicked() {
         FireMode fireMode = mock(FireMode.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setFireMode(fireMode);
         firearm.setMagazineAmmo(10);
         firearm.onRightClick(holder);
@@ -131,7 +127,7 @@ public class DefaultFirearmTest {
 
         when(holder.getEntity()).thenReturn(entity);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
         firearm.setTriggerSounds(triggerSounds);
         firearm.onRightClick(holder);
@@ -164,7 +160,7 @@ public class DefaultFirearmTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
         firearm.setShortDamage(100.0);
         firearm.setShortRange(10.0);
@@ -200,7 +196,7 @@ public class DefaultFirearmTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
         firearm.setMediumDamage(50.0);
         firearm.setMediumRange(50.0);
@@ -236,7 +232,7 @@ public class DefaultFirearmTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
         firearm.setLongDamage(10.0);
         firearm.setLongRange(100.0);
@@ -272,7 +268,7 @@ public class DefaultFirearmTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHeadshotDamageMultiplier(1.5);
         firearm.setHolder(holder);
         firearm.setShortDamage(100.0);
@@ -306,7 +302,7 @@ public class DefaultFirearmTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
@@ -331,7 +327,7 @@ public class DefaultFirearmTest {
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
@@ -342,7 +338,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void canNotReloadWithoutHolder() {
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         boolean reloaded = firearm.reload();
 
         assertFalse(reloaded);
@@ -350,7 +346,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void canNotShootProjectilesWithoutHolder() {
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.shoot();
 
         verify(context, never()).playSounds(any(), any());
@@ -360,7 +356,7 @@ public class DefaultFirearmTest {
     public void resetsOperatingModeAndHolderWhenDropped() {
         OperatingMode operatingMode = mock(OperatingMode.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setCurrentOperatingMode(operatingMode);
         firearm.setHolder(holder);
         firearm.onDrop(holder);
@@ -372,7 +368,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void doesNotUpdateIfFirearmHasNoItemStack() {
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         boolean updated = firearm.update();
 
         assertFalse(updated);
@@ -386,10 +382,11 @@ public class DefaultFirearmTest {
         when(holder.updateItemStack(itemStack)).thenReturn(true);
         when(itemStack.getItemMeta()).thenReturn(itemMeta);
 
-        DefaultFirearm firearm = new DefaultFirearm(id, name, context);
+        DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
         firearm.setItemStack(itemStack);
         firearm.setMagazineAmmo(10);
+        firearm.setName("name");
         firearm.setReserveAmmo(20);
 
         boolean updated = firearm.update();

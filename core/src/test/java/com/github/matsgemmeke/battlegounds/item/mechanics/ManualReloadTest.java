@@ -33,7 +33,7 @@ public class ManualReloadTest {
     public void performReloadWhenGunHasHolder() {
         BattleContext context = mock(BattleContext.class);
 
-        Gun gun = new DefaultFirearm("id", "name", context);
+        Gun gun = new DefaultFirearm(context);
         gun.setHolder(holder);
 
         ManualReload manualReload = new ManualReload(taskRunner, gun, reloadSounds, 0);
@@ -47,7 +47,7 @@ public class ManualReloadTest {
         BattleContext context = mock(BattleContext.class);
         BukkitTask task = mock(BukkitTask.class);
 
-        Gun gun = new DefaultFirearm("id", "name", context);
+        Gun gun = new DefaultFirearm(context);
         gun.setHolder(holder);
 
         when(taskRunner.runTaskLater(any(Runnable.class), anyLong())).thenReturn(task);
@@ -66,7 +66,7 @@ public class ManualReloadTest {
     public void addsSingleAmmoWithEachIteration() {
         BattleContext context = mock(BattleContext.class);
 
-        Gun gun = new DefaultFirearm("id", "name", context);
+        Gun gun = new DefaultFirearm(context);
         gun.setMagazineAmmo(0);
         gun.setMagazineSize(10);
         gun.setReserveAmmo(1);
