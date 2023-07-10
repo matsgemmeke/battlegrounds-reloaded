@@ -32,7 +32,7 @@ public class DefaultBattlePlayerTest {
         BattleItem item = mock(BattleItem.class);
 
         DefaultBattlePlayer battlePlayer = new DefaultBattlePlayer(player);
-        battlePlayer.getItems().add(item);
+        battlePlayer.addItem(item);
 
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
@@ -50,7 +50,7 @@ public class DefaultBattlePlayerTest {
         when(item.getItemStack()).thenReturn(other);
 
         DefaultBattlePlayer battlePlayer = new DefaultBattlePlayer(player);
-        battlePlayer.getItems().add(item);
+        battlePlayer.addItem(item);
 
         assertEquals(item, battlePlayer.getBattleItem(itemStack));
     }

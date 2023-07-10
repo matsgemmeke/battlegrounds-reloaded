@@ -32,7 +32,7 @@ public class GiveWeaponCommand extends CommandSource {
         Weapon weapon = weaponFactory.make(freemodeContext, weaponId);
 
         BattlePlayer battlePlayer = freemodeContext.getBattlePlayer(player);
-        battlePlayer.getItems().add(weapon);
+        battlePlayer.addItem(weapon);
 
         weapon.setHolder(battlePlayer);
 

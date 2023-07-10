@@ -4,11 +4,14 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * Describes the circumstances that form the setting for events that happen in Battlegrounds.
@@ -42,7 +45,7 @@ public interface BattleContext {
      * @return all targets inside the range
      */
     @NotNull
-    Iterable<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range);
+    Collection<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range);
 
     /**
      * Gets whether a player is present in the context.
@@ -78,6 +81,15 @@ public interface BattleContext {
      * @return whether the context has accepted the event
      */
     boolean onItemHeld(@NotNull BattlePlayer battlePlayer, @NotNull PlayerItemHeldEvent event);
+
+    /**
+     * Executes logic that handles item pickups by players.
+     *
+     * @param battlePlayer the player
+     * @param event the event
+     * @return whether the context has accepted the event
+     */
+    boolean onPickupItem(@NotNull BattlePlayer battlePlayer, @NotNull EntityPickupItemEvent event);
 
     /**
      * Plays a {@link BattleSound} for all players in the context.

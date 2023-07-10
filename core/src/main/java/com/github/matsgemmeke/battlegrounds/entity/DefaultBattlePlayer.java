@@ -33,11 +33,6 @@ public class DefaultBattlePlayer implements BattlePlayer {
         return player;
     }
 
-    @NotNull
-    public Set<BattleItem> getItems() {
-        return items;
-    }
-
     @Nullable
     public Team getTeam() {
         return team;
@@ -45,6 +40,10 @@ public class DefaultBattlePlayer implements BattlePlayer {
 
     public void setTeam(@Nullable Team team) {
         this.team = team;
+    }
+
+    public boolean addItem(@NotNull BattleItem item) {
+        return items.add(item);
     }
 
     public double damage(double damageAmount) {
@@ -78,6 +77,10 @@ public class DefaultBattlePlayer implements BattlePlayer {
             return 0.5;
         }
         return 1.0;
+    }
+
+    public boolean removeItem(@NotNull BattleItem item) {
+        return items.remove(item);
     }
 
     public boolean updateItemStack(@NotNull ItemStack itemStack) {

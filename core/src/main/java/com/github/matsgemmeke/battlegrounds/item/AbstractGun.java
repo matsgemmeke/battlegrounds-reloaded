@@ -139,6 +139,8 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
             holder.applyOperatingState(false);
         }
 
+        holder.removeItem(this);
+
         this.holder = null;
     }
 

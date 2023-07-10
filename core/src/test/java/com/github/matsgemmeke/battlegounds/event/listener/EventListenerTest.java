@@ -2,6 +2,7 @@ package com.github.matsgemmeke.battlegounds.event.listener;
 
 import com.github.matsgemmeke.battlegrounds.event.EventDispatcher;
 import com.github.matsgemmeke.battlegrounds.event.listener.EventListener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -18,6 +19,16 @@ public class EventListenerTest {
     @Before
     public void setUp() {
         this.eventDispatcher = mock(EventDispatcher.class);
+    }
+
+    @Test
+    public void callsEventDispatcherUponHandlingEntityPickupItemEvent() {
+        EntityPickupItemEvent event = mock(EntityPickupItemEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onEntityPickupItem(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
     }
 
     @Test

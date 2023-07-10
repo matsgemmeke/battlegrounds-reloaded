@@ -4,11 +4,20 @@ import com.github.matsgemmeke.battlegrounds.api.game.TeamMember;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents an entity that is capable of holding and operating a {@link BattleItem}.
  */
 public interface BattleItemHolder extends BattleEntity, TeamMember {
+
+    /**
+     * Adds a {@link BattleItem} to the holder.
+     *
+     * @param item the item
+     * @return whether the item was added
+     */
+    boolean addItem(@NotNull BattleItem item);
 
     /**
      * Applies effects to the holder for when they are operating an item.
@@ -18,12 +27,29 @@ public interface BattleItemHolder extends BattleEntity, TeamMember {
     void applyOperatingState(boolean operating);
 
     /**
+     * Attempts to find a {@link BattleItem} based on its {@link ItemStack}. Returns null if there were no matches.
+     *
+     * @param itemStack the item stack
+     * @return the corresponding {@link BattleItem} or null if there were no matches
+     */
+    @Nullable
+    BattleItem getBattleItem(@NotNull ItemStack itemStack);
+
+    /**
      * Gets the relative accuracy based on the state of the entity. For example, it should return 1.0 if the
      * shooting accuracy is unaffected, 0.5 if the accuracy is worsened, 2.0 if the accuracy is improved etc.
      *
      * @return the relative shooting accuracy
      */
     double getRelativeAccuracy();
+
+    /**
+     * Removes an item from the holder.
+     *
+     * @param item the item to remove
+     * @return whether the item was removed
+     */
+    boolean removeItem(@NotNull BattleItem item);
 
     /**
      * Updates the {@link ItemStack} of a {@link BattleItem} in the holder's inventory.

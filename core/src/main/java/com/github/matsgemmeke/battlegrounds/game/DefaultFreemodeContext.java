@@ -12,23 +12,29 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class DefaultFreemodeContext extends AbstractBattleContext implements FreemodeContext {
 
     @NotNull
+    private List<BattleItem> droppedItems;
+    @NotNull
     private List<BattlePlayer> players;
 
     public DefaultFreemodeContext(@NotNull BlockCollisionChecker collisionChecker) {
         super(collisionChecker);
+        this.droppedItems = new ArrayList<>();
         this.players = new ArrayList<>();
     }
 
@@ -47,7 +53,7 @@ public class DefaultFreemodeContext extends AbstractBattleContext implements Fre
     }
 
     @NotNull
-    public Iterable<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range) {
+    public Collection<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range) {
         if (location.getWorld() == null) {
             return Collections.emptyList();
         }
@@ -96,6 +102,7 @@ public class DefaultFreemodeContext extends AbstractBattleContext implements Fre
             return false;
         }
 
+        droppedItems.add(item);
         item.onDrop(battlePlayer);
         return true;
     }
@@ -110,5 +117,30 @@ public class DefaultFreemodeContext extends AbstractBattleContext implements Fre
 
         item.onChangeHeldItem(battlePlayer);
         return true;
+    }
+
+    public boolean onPickupItem(@NotNull BattlePlayer battlePlayer, @NotNull EntityPickupItemEvent event) {
+        ItemStack itemStack = event.getItem().getItemStack();
+        BattleItem item = this.getBattleItem(itemStack);
+
+        if (item == null) {
+            return false;
+        }
+
+        item.setHolder(battlePlayer);
+        battlePlayer.addItem(item);
+
+        droppedItems.remove(item);
+        return true;
+    }
+
+    @Nullable
+    private BattleItem getBattleItem(@NotNull ItemStack itemStack) {
+        for (BattleItem item : droppedItems) {
+            if (item.getItemStack() != null && item.getItemStack().isSimilar(itemStack)) {
+                return item;
+            }
+        }
+        return null;
     }
 }
