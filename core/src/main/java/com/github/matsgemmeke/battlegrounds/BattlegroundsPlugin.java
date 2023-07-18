@@ -46,7 +46,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
     private BattleContextProvider contextProvider;
     private BattlegroundsConfig config;
     private FreemodeContext freemodeContext;
-    private InternalsProvider internalsProvider;
+    private InternalsProvider internals;
     private TaskRunner taskRunner;
     private Translator translator;
     private WeaponProvider weaponProvider;
@@ -95,7 +95,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
 
         FireModeFactory fireModeFactory = new FireModeFactory(taskRunner);
         ReloadSystemFactory reloadSystemFactory = new ReloadSystemFactory(taskRunner);
-        FirearmFactory firearmFactory = new FirearmFactory(config, gunsConfiguration, fireModeFactory, reloadSystemFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, gunsConfiguration, fireModeFactory, internals, reloadSystemFactory);
 
         weaponProvider = new WeaponProvider();
         weaponProvider.addWeaponFactory(gunsConfiguration, firearmFactory);
@@ -162,7 +162,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         try {
             String packageName = BattlegroundsPlugin.class.getPackage().getName();
             String internalsName = getServer().getClass().getPackage().getName().split("\\.")[3];
-            internalsProvider = (InternalsProvider) Class.forName(packageName + ".nms." + internalsName + "." + internalsName.toUpperCase()).newInstance();
+            internals = (InternalsProvider) Class.forName(packageName + ".nms." + internalsName + "." + internalsName.toUpperCase()).newInstance();
         } catch (Exception e) {
             throw new StartupFailedException("Failed to find a valid implementation for this server version");
         }

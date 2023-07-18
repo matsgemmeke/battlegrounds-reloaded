@@ -5,6 +5,7 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.api.item.OperatingMode;
+import com.github.matsgemmeke.battlegrounds.api.item.ScopeAttachment;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
@@ -80,6 +81,22 @@ public class DefaultFirearmTest {
     }
 
     @Test
+    public void removesScopeFromPlayerWhenFirearmHasScopeAndIsUsingIt() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+        ScopeAttachment scopeAttachment = mock(ScopeAttachment.class);
+
+        when(scopeAttachment.isScoped()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(context);
+        firearm.setReloadSystem(reloadSystem);
+        firearm.setScopeAttachment(scopeAttachment);
+        firearm.onLeftClick(holder);
+
+        verify(reloadSystem, never()).activate(holder);
+        verify(scopeAttachment, times(1)).removeEffect();
+    }
+
+    @Test
     public void doesNotActivateReloadSystemWhenMagazineIsAlreadyFull() {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
@@ -118,6 +135,20 @@ public class DefaultFirearmTest {
         firearm.onRightClick(holder);
 
         verify(fireMode).activate(holder);
+    }
+
+    @Test
+    public void activatesScopeAttachmentWhenFirearmHasOne() {
+        FireMode fireMode = mock(FireMode.class);
+        ScopeAttachment scopeAttachment = mock(ScopeAttachment.class);
+
+        DefaultFirearm firearm = new DefaultFirearm(context);
+        firearm.setFireMode(fireMode);
+        firearm.setScopeAttachment(scopeAttachment);
+        firearm.onRightClick(holder);
+
+        verify(fireMode, never()).activate(holder);
+        verify(scopeAttachment, times(1)).applyEffect(holder);
     }
 
     @Test

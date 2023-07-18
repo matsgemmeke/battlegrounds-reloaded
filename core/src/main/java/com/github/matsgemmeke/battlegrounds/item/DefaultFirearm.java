@@ -138,7 +138,19 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     }
 
     public void onLeftClick(@NotNull BattleItemHolder holder) {
-        if (currentOperatingMode != null || magazineAmmo >= magazineSize || reserveAmmo <= 0) {
+        // Do not do anything if the firearm is currently being operated
+        if (currentOperatingMode != null) {
+            return;
+        }
+
+        // If the firearm is using a scope then stop using the scope istead of reloading
+        if (scopeAttachment != null && scopeAttachment.isScoped()) {
+            scopeAttachment.removeEffect();
+            return;
+        }
+
+        // If the magazine is already full or there is no reserve ammo, do not perform a reload
+        if (magazineAmmo >= magazineSize || reserveAmmo <= 0) {
             return;
         }
 
@@ -147,6 +159,11 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
 
     public void onRightClick(@NotNull BattleItemHolder holder) {
         if (currentOperatingMode != null) {
+            return;
+        }
+
+        if (scopeAttachment != null && !scopeAttachment.isScoped()) {
+            scopeAttachment.applyEffect(holder);
             return;
         }
 

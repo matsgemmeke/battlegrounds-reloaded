@@ -1,5 +1,6 @@
 package com.github.matsgemmeke.battlegounds.item.factory;
 
+import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
@@ -29,6 +30,7 @@ public class FirearmFactoryTest {
     private BattlegroundsConfig config;
     private BattleItemConfiguration itemConfiguration;
     private FireModeFactory fireModeFactory;
+    private InternalsProvider internals;
     private ReloadSystemFactory reloadSystemFactory;
 
     @Before
@@ -37,6 +39,7 @@ public class FirearmFactoryTest {
         this.config = mock(BattlegroundsConfig.class);
         this.itemConfiguration = mock(BattleItemConfiguration.class);
         this.fireModeFactory = mock(FireModeFactory.class);
+        this.internals = mock(InternalsProvider.class);
         this.reloadSystemFactory = mock(ReloadSystemFactory.class);
 
         PowerMockito.mockStatic(Bukkit.class);
@@ -45,7 +48,7 @@ public class FirearmFactoryTest {
     }
 
     @Test
-    public void canCreateFirearmFromConfiguration() {
+    public void createFirearmWithoutScopeFromConfiguration() {
         Section section = mock(Section.class);
         when(section.getString("description")).thenReturn("test");
         when(section.getString("display-name")).thenReturn("test");
@@ -57,15 +60,43 @@ public class FirearmFactoryTest {
         when(config.getFirearmTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(itemConfiguration.getSection(firearmId)).thenReturn(section);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, fireModeFactory, reloadSystemFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, fireModeFactory, internals, reloadSystemFactory);
         Firearm firearm = firearmFactory.make(context, firearmId);
 
         assertNotNull(firearm);
+        assertEquals("test", firearm.getName());
+    }
+
+    @Test
+    public void createFirearmWithScopeFromConfiguration() {
+        Section scopeSection = mock(Section.class);
+        when(scopeSection.getFloat("magnifications")).thenReturn(-0.1f);
+        when(scopeSection.getString("stop-use-sound")).thenReturn("ENTITY_BLAZE_HURT-1-1-0");
+        when(scopeSection.getString("use-sound")).thenReturn("ENTITY_BLAZE_HURT-1-1-0");
+
+        Section section = mock(Section.class);
+        when(section.getSection("scope")).thenReturn(scopeSection);
+        when(section.getString("description")).thenReturn("test");
+        when(section.getString("display-name")).thenReturn("test");
+        when(section.getString("item.material")).thenReturn("IRON_HOE");
+        when(section.getString("shooting.shot-sound")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
+
+        String firearmId = "test";
+
+        when(config.getFirearmTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
+        when(itemConfiguration.getSection(firearmId)).thenReturn(section);
+
+        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, fireModeFactory, internals, reloadSystemFactory);
+        Firearm firearm = firearmFactory.make(context, firearmId);
+
+        assertNotNull(firearm);
+        assertEquals("test", firearm.getName());
+        assertNotNull(firearm.getScopeAttachment());
     }
 
     @Test(expected = InvalidBattleItemFormatException.class)
     public void returnsErrorWhenConfigurationDoesNotHaveWeaponId() {
-        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, fireModeFactory, reloadSystemFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, fireModeFactory, internals, reloadSystemFactory);
         firearmFactory.make(context,"unknown");
     }
 }

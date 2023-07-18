@@ -1,5 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.api.item;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface Gun extends Weapon {
 
     /**
@@ -57,6 +59,21 @@ public interface Gun extends Weapon {
      * @param reserveAmmo the amount of reserve ammo
      */
     void setReserveAmmo(int reserveAmmo);
+
+    /**
+     * Gets the scope attachment of the gun. Returns null if the gun has no scope attachment in place.
+     *
+     * @return the scope attachment
+     */
+    @Nullable
+    ScopeAttachment getScopeAttachment();
+
+    /**
+     * Sets the scope attachment of the gun.
+     *
+     * @param scopeAttachment the scope attachment
+     */
+    void setScopeAttachment(@Nullable ScopeAttachment scopeAttachment);
 
     /**
      * Reloads the gun.

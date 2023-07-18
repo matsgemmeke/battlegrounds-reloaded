@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Collections;
 
 public class DefaultGameContext extends AbstractBattleContext implements GameContext {
@@ -52,7 +53,7 @@ public class DefaultGameContext extends AbstractBattleContext implements GameCon
     }
 
     @NotNull
-    public Iterable<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range) {
+    public Collection<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range) {
         return Collections.emptyList();
     }
 

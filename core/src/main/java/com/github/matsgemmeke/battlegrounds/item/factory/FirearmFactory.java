@@ -1,5 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item.factory;
 
+import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
@@ -7,6 +8,7 @@ import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.game.DefaultBattleSound;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
+import com.github.matsgemmeke.battlegrounds.item.DefaultScopeAttachment;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
@@ -25,17 +27,21 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
     @NotNull
     private FireModeFactory fireModeFactory;
     @NotNull
+    private InternalsProvider internals;
+    @NotNull
     private ReloadSystemFactory reloadSystemFactory;
 
     public FirearmFactory(
             @NotNull BattlegroundsConfig config,
             @NotNull BattleItemConfiguration itemConfiguration,
             @NotNull FireModeFactory fireModeFactory,
+            @NotNull InternalsProvider internals,
             @NotNull ReloadSystemFactory reloadSystemFactory
     ) {
         this.config = config;
         this.itemConfiguration = itemConfiguration;
         this.fireModeFactory = fireModeFactory;
+        this.internals = internals;
         this.reloadSystemFactory = reloadSystemFactory;
     }
 
@@ -104,6 +110,23 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
 
         List<BattleSound> triggerSounds = DefaultBattleSound.parseSounds(config.getFirearmTriggerSound());
         firearm.setTriggerSounds(triggerSounds);
+
+        // Handle the scope section if it's there
+        Section scopeSection = section.getSection("scope");
+
+        if (scopeSection != null) {
+            float magnification = scopeSection.getFloat("magnifications");
+
+            DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(context, internals, magnification);
+
+            List<BattleSound> scopeUseSounds = DefaultBattleSound.parseSounds(scopeSection.getString("use-sound"));
+            scopeAttachment.setUseSounds(scopeUseSounds);
+
+            List<BattleSound> scopeStopUseSounds = DefaultBattleSound.parseSounds(scopeSection.getString("stop-use-sound"));
+            scopeAttachment.setStopUseSounds(scopeStopUseSounds);
+
+            firearm.setScopeAttachment(scopeAttachment);
+        }
 
         // ItemStack creation
         Material material = Material.getMaterial(section.getString("item.material"));

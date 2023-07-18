@@ -3,6 +3,7 @@ package com.github.matsgemmeke.battlegrounds.item;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
+import com.github.matsgemmeke.battlegrounds.api.item.ScopeAttachment;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
 import org.bukkit.Location;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,6 +26,8 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
     protected double shortRange;
     @Nullable
     protected ReloadSystem reloadSystem;
+    @Nullable
+    protected ScopeAttachment scopeAttachment;
 
     public AbstractGun(@NotNull BattleContext context) {
         super(context);
@@ -93,6 +96,15 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
 
     public void setReloadSystem(@Nullable ReloadSystem reloadSystem) {
         this.reloadSystem = reloadSystem;
+    }
+
+    @Nullable
+    public ScopeAttachment getScopeAttachment() {
+        return scopeAttachment;
+    }
+
+    public void setScopeAttachment(@Nullable ScopeAttachment scopeAttachment) {
+        this.scopeAttachment = scopeAttachment;
     }
 
     public double getShortDamage() {

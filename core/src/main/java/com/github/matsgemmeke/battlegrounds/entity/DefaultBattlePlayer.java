@@ -3,6 +3,7 @@ package com.github.matsgemmeke.battlegrounds.entity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Team;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
+import com.github.matsgemmeke.battlegrounds.api.item.PlayerEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -20,11 +21,14 @@ public class DefaultBattlePlayer implements BattlePlayer {
     private Player player;
     @NotNull
     private Set<BattleItem> items;
+    @NotNull
+    private Set<PlayerEffect> effects;
     @Nullable
     private Team team;
 
     public DefaultBattlePlayer(@NotNull Player player) {
         this.player = player;
+        this.effects = new HashSet<>();
         this.items = new HashSet<>();
     }
 
@@ -40,6 +44,14 @@ public class DefaultBattlePlayer implements BattlePlayer {
 
     public void setTeam(@Nullable Team team) {
         this.team = team;
+    }
+
+    public boolean addEffect(@NotNull PlayerEffect effect) {
+        return effects.add(effect);
+    }
+
+    public boolean removeEffect(@NotNull PlayerEffect effect) {
+        return effects.remove(effect);
     }
 
     public boolean addItem(@NotNull BattleItem item) {
