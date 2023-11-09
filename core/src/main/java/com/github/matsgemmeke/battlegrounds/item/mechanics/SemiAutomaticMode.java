@@ -3,41 +3,36 @@ package com.github.matsgemmeke.battlegrounds.item.mechanics;
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class SemiAutomaticMode implements FireMode {
 
-    @Nullable
-    private BukkitTask cooldownTask;
+    private boolean coolingDown;
     @NotNull
     private Gun gun;
-    private long cooldown;
+    private long cooldownDuration;
     @NotNull
     private TaskRunner taskRunner;
 
-    public SemiAutomaticMode(@NotNull TaskRunner taskRunner, @NotNull Gun gun, long cooldown) {
+    public SemiAutomaticMode(@NotNull TaskRunner taskRunner, @NotNull Gun gun, long cooldownDuration) {
         this.taskRunner = taskRunner;
         this.gun = gun;
-        this.cooldown = cooldown;
+        this.cooldownDuration = cooldownDuration;
+        this.coolingDown = false;
     }
 
     public boolean activate(@NotNull BattleItemHolder holder) {
-        gun.setCurrentOperatingMode(this);
-        gun.shoot();
+        if (coolingDown) {
+            return false;
+        }
 
-        cooldownTask = taskRunner.runTaskLater(() -> this.cancel(holder), cooldown);
+        coolingDown = true;
+        gun.shoot();
+        taskRunner.runTaskLater(() -> this.cancel(holder), cooldownDuration);
         return true;
     }
 
     public void cancel(@NotNull BattleItemHolder holder) {
-        gun.setCurrentOperatingMode(null);
-
-        if (cooldownTask == null) {
-            return;
-        }
-
-        cooldownTask.cancel();
+        coolingDown = false;
     }
 }
