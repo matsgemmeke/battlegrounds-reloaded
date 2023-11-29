@@ -20,11 +20,12 @@ import com.github.matsgemmeke.battlegrounds.event.handler.*;
 import com.github.matsgemmeke.battlegrounds.event.listener.EventListener;
 import com.github.matsgemmeke.battlegrounds.game.DefaultFreemodeContext;
 import com.github.matsgemmeke.battlegrounds.game.GameContextFactory;
-import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
+import com.github.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.FireModeFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.FirearmFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.ReloadSystemFactory;
+import com.github.matsgemmeke.battlegrounds.item.recoil.RecoilSystemFactory;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -94,8 +95,9 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         gunsConfiguration.load();
 
         FireModeFactory fireModeFactory = new FireModeFactory(taskRunner);
+        RecoilSystemFactory recoilSystemFactory = new RecoilSystemFactory(internals);
         ReloadSystemFactory reloadSystemFactory = new ReloadSystemFactory(taskRunner);
-        FirearmFactory firearmFactory = new FirearmFactory(config, gunsConfiguration, fireModeFactory, internals, reloadSystemFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, gunsConfiguration, fireModeFactory, internals, recoilSystemFactory, reloadSystemFactory);
 
         weaponProvider = new WeaponProvider();
         weaponProvider.addWeaponFactory(gunsConfiguration, firearmFactory);
@@ -153,7 +155,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
     private void setUpFreemode() {
         BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
 
-        freemodeContext = new DefaultFreemodeContext(collisionChecker);
+        freemodeContext = new DefaultFreemodeContext(collisionChecker, internals);
 
         contextProvider.addFreemodeContext(freemodeContext);
     }

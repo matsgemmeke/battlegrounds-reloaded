@@ -1,12 +1,12 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
+import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
 import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
 import com.github.matsgemmeke.battlegrounds.entity.FreemodeEntity;
-import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -28,12 +28,15 @@ import java.util.List;
 public class DefaultFreemodeContext extends AbstractBattleContext implements FreemodeContext {
 
     @NotNull
+    private InternalsProvider internals;
+    @NotNull
     private List<BattleItem> droppedItems;
     @NotNull
     private List<BattlePlayer> players;
 
-    public DefaultFreemodeContext(@NotNull BlockCollisionChecker collisionChecker) {
+    public DefaultFreemodeContext(@NotNull BlockCollisionChecker collisionChecker, @NotNull InternalsProvider internals) {
         super(collisionChecker);
+        this.internals = internals;
         this.droppedItems = new ArrayList<>();
         this.players = new ArrayList<>();
     }
@@ -67,6 +70,14 @@ public class DefaultFreemodeContext extends AbstractBattleContext implements Fre
         }
 
         return entities;
+    }
+
+    public void handleRecoil(@NotNull BattleEntity battleEntity, float recoilYaw, float recoilPitch) {
+        if (!(battleEntity instanceof BattlePlayer battlePlayer)) {
+            return;
+        }
+
+        internals.setPlayerRotation(battlePlayer.getEntity(), recoilYaw, recoilPitch);
     }
 
     public boolean onInteract(@NotNull BattlePlayer battlePlayer, @NotNull PlayerInteractEvent event) {

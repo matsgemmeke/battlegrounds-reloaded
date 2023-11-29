@@ -1,4 +1,4 @@
-package com.github.matsgemmeke.battlegrounds.item;
+package com.github.matsgemmeke.battlegrounds.game;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

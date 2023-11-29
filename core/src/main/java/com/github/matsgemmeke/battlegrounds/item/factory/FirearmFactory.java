@@ -11,6 +11,8 @@ import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.DefaultScopeAttachment;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
+import com.github.matsgemmeke.battlegrounds.item.recoil.RecoilSystem;
+import com.github.matsgemmeke.battlegrounds.item.recoil.RecoilSystemFactory;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +31,8 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
     @NotNull
     private InternalsProvider internals;
     @NotNull
+    private RecoilSystemFactory recoilSystemFactory;
+    @NotNull
     private ReloadSystemFactory reloadSystemFactory;
 
     public FirearmFactory(
@@ -36,12 +40,14 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
             @NotNull BattleItemConfiguration itemConfiguration,
             @NotNull FireModeFactory fireModeFactory,
             @NotNull InternalsProvider internals,
+            @NotNull RecoilSystemFactory recoilSystemFactory,
             @NotNull ReloadSystemFactory reloadSystemFactory
     ) {
         this.config = config;
         this.itemConfiguration = itemConfiguration;
         this.fireModeFactory = fireModeFactory;
         this.internals = internals;
+        this.recoilSystemFactory = recoilSystemFactory;
         this.reloadSystemFactory = reloadSystemFactory;
     }
 
@@ -70,9 +76,6 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
 
         double headshotDamageMultiplier = section.getDouble("shooting.headshot-damage-multiplier");
         firearm.setHeadshotDamageMultiplier(headshotDamageMultiplier);
-
-        double recoilAmplifier = config.getFirearmRecoilAmplifier();
-        firearm.setRecoilAmplifier(recoilAmplifier);
 
         int magazineSize = section.getInt("ammo.magazine");
         int reserveAmmo = section.getInt("ammo.default-supply") * magazineSize;
@@ -110,6 +113,14 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
 
         List<BattleSound> triggerSounds = DefaultBattleSound.parseSounds(config.getFirearmTriggerSound());
         firearm.setTriggerSounds(triggerSounds);
+
+        // Handle the recoil section if it's there
+        Section recoilSection = section.getSection("shooting.recoil");
+
+        if (recoilSection != null) {
+            RecoilSystem recoilSystem = recoilSystemFactory.make(recoilSection);
+            firearm.setRecoilSystem(recoilSystem);
+        }
 
         // Handle the scope section if it's there
         Section scopeSection = section.getSection("scope");

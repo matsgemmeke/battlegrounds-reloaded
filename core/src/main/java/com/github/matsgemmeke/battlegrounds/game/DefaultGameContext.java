@@ -5,7 +5,6 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.GameConfiguration;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
-import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -55,6 +54,10 @@ public class DefaultGameContext extends AbstractBattleContext implements GameCon
     @NotNull
     public Collection<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range) {
         return Collections.emptyList();
+    }
+
+    public void handleRecoil(@NotNull BattleEntity battleEntity, float recoilYaw, float recoilPitch) {
+
     }
 
     public boolean onInteract(@NotNull BattlePlayer battlePlayer, @NotNull PlayerInteractEvent event) {

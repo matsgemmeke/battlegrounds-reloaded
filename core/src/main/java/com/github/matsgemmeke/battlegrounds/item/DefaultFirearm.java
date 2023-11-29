@@ -182,10 +182,13 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
 
         // Place the shooting at the height of the firearm
         Location direction = holder.getEntity().getEyeLocation().subtract(0, 0.25, 0);
-        // Calculate the direction of the projectile
-        Location shootingDirection = this.getShootingDirection(direction, holder.getRelativeAccuracy());
+        double relativeAccuracy = holder.getRelativeAccuracy();
 
-        this.shootProjectile(holder, shootingDirection);
+        if (recoilSystem != null) {
+            direction = recoilSystem.produceRecoil(holder, direction, relativeAccuracy);
+        }
+
+        this.shootProjectile(holder, direction);
         return true;
     }
 

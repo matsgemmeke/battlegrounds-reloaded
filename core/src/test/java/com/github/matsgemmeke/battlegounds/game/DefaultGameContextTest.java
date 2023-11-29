@@ -2,7 +2,7 @@ package com.github.matsgemmeke.battlegounds.game;
 
 import com.github.matsgemmeke.battlegrounds.api.game.GameConfiguration;
 import com.github.matsgemmeke.battlegrounds.game.DefaultGameContext;
-import com.github.matsgemmeke.battlegrounds.item.BlockCollisionChecker;
+import com.github.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import org.junit.Before;
 import org.junit.Test;
 
