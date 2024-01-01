@@ -63,11 +63,9 @@ public class DefaultScopeAttachment implements ScopeAttachment {
             return false;
         }
 
-        if (!(holder instanceof BattlePlayer)) {
+        if (!(holder instanceof BattlePlayer battlePlayer)) {
             return false;
         }
-
-        BattlePlayer battlePlayer = (BattlePlayer) holder;
 
         context.playSounds(useSounds, battlePlayer.getEntity().getLocation());
 

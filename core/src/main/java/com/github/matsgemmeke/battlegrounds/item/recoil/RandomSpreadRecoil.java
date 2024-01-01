@@ -8,8 +8,8 @@ import java.util.Random;
 
 public class RandomSpreadRecoil implements RecoilSystem {
 
-    private float horizontalRecoil;
-    private float verticalRecoil;
+    private Float[] horizontalRecoilValues;
+    private Float[] verticalRecoilValues;
     @NotNull
     private Random random;
 
@@ -17,32 +17,47 @@ public class RandomSpreadRecoil implements RecoilSystem {
         this.random = new Random();
     }
 
-    public float getHorizontalRecoil() {
-        return horizontalRecoil;
+    public Float[] getHorizontalRecoilValues() {
+        return horizontalRecoilValues;
     }
 
-    public void setHorizontalRecoil(float horizontalRecoil) {
-        this.horizontalRecoil = horizontalRecoil;
+    public void setHorizontalRecoilValues(Float[] horizontalRecoilValues) {
+        this.horizontalRecoilValues = horizontalRecoilValues;
     }
 
-    public float getVerticalRecoil() {
-        return verticalRecoil;
+    public Float[] getVerticalRecoilValues() {
+        return verticalRecoilValues;
     }
 
-    public void setVerticalRecoil(float verticalRecoil) {
-        this.verticalRecoil = verticalRecoil;
+    public void setVerticalRecoilValues(Float[] verticalRecoilValues) {
+        this.verticalRecoilValues = verticalRecoilValues;
     }
 
     @NotNull
-    public Location produceRecoil(@NotNull BattleItemHolder holder, @NotNull Location direction, double relativeAccuracy) {
-        double horizontalRecoilRange = horizontalRecoil / relativeAccuracy;
-        double verticalRecoilRange = verticalRecoil / relativeAccuracy;
+    public Location produceRecoil(@NotNull BattleItemHolder holder, @NotNull Location direction) {
+        float relAccuracy = (float) holder.getRelativeAccuracy();
 
-        double yaw = random.nextDouble() * verticalRecoilRange - verticalRecoilRange / 2;
-        double pitch = random.nextDouble() * horizontalRecoilRange - horizontalRecoilRange / 2;
+        float minHorRecoil = horizontalRecoilValues[0] / relAccuracy;
+        float maxHorRecoil = horizontalRecoilValues[1] / relAccuracy;
+        float minVerRecoil = verticalRecoilValues[0] / relAccuracy;
+        float maxVerRecoil = verticalRecoilValues[1] / relAccuracy;
 
-        direction.setYaw(direction.getYaw() + (float) yaw);
-        direction.setPitch(direction.getPitch() + (float) pitch);
+        float horRange = maxHorRecoil - minHorRecoil;
+        float verRange = maxVerRecoil - minVerRecoil;
+
+        float randomHorRecoil = random.nextFloat() * horRange + minHorRecoil;
+        float randomVerRecoil = random.nextFloat() * verRange + minVerRecoil;
+
+        // Invert the values by a 50 percent chance so the recoil spreads around the original direction
+        if (random.nextBoolean()) {
+            randomHorRecoil *= -1;
+        }
+        if (random.nextBoolean()) {
+            randomVerRecoil *= -1;
+        }
+
+        direction.setYaw(direction.getYaw() + randomHorRecoil);
+        direction.setPitch(direction.getPitch() + randomVerRecoil);
 
         return direction;
     }

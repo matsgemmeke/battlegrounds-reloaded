@@ -28,11 +28,12 @@ public class CameraMovementRecoilTest {
     @Test
     public void doesNoRecoilToNonPlayerEntities() {
         BattleItemHolder holder = mock(BattleItemHolder.class);
+        when(holder.getRelativeAccuracy()).thenReturn(1.0);
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
 
         CameraMovementRecoil recoil = new CameraMovementRecoil(internals, timer);
-        Location result = recoil.produceRecoil(holder, direction, 1.0);
+        Location result = recoil.produceRecoil(holder, direction);
 
         verify(internals, never()).setPlayerRotation(any(), anyFloat(), anyFloat());
 
@@ -42,19 +43,20 @@ public class CameraMovementRecoilTest {
     @Test
     public void onlySetsPlayerRotationWhenThereIsNoRotationDuration() {
         BattleItemHolder holder = mock(BattlePlayer.class);
+        when(holder.getRelativeAccuracy()).thenReturn(1.0);
 
-        float horizontalRecoil = 1.0f;
-        float verticalRecoil = 1.0f;
+        Float[] horizontalRecoil = new Float[] { 1.0f };
+        Float[] verticalRecoil = new Float[] { 1.0f };
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
 
         CameraMovementRecoil recoil = new CameraMovementRecoil(internals, timer);
-        recoil.setHorizontalRecoil(horizontalRecoil);
-        recoil.setVerticalRecoil(verticalRecoil);
+        recoil.setHorizontalRecoilValues(horizontalRecoil);
+        recoil.setVerticalRecoilValues(verticalRecoil);
 
-        Location result = recoil.produceRecoil(holder, direction, 1.0);
+        Location result = recoil.produceRecoil(holder, direction);
 
-        verify(internals, times(1)).setPlayerRotation(any(), eq(horizontalRecoil), eq(verticalRecoil));
+        verify(internals, times(1)).setPlayerRotation(any(), eq(1.0f), eq(1.0f));
 
         assertEquals(direction, result);
     }
@@ -63,13 +65,16 @@ public class CameraMovementRecoilTest {
     public void schedulesTaskForSmoothPlayerRotation() {
         BattlePlayer holder = mock(BattlePlayer.class);
         when(holder.getEntity()).thenReturn(mock(Player.class));
+        when(holder.getRelativeAccuracy()).thenReturn(1.0);
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
 
         CameraMovementRecoil recoil = new CameraMovementRecoil(internals, timer);
-        recoil.setRotationDuration(100);
+        recoil.setHorizontalRecoilValues(new Float[] { 1.0f });
+        recoil.setVerticalRecoilValues(new Float[] { 1.0f });
+        recoil.setRecoilDuration(100);
 
-        Location result = recoil.produceRecoil(holder, direction, 1.0);
+        Location result = recoil.produceRecoil(holder, direction);
 
         verify(timer, times(1)).scheduleAtFixedRate(any(), anyLong(), anyLong());
 

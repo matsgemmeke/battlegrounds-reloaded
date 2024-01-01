@@ -47,8 +47,6 @@ public interface BattleContext {
     @NotNull
     Collection<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range);
 
-    void handleRecoil(@NotNull BattleEntity battleEntity, float recoilYaw, float recoilPitch);
-
     /**
      * Gets whether a player is present in the context.
      *

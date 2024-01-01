@@ -35,8 +35,8 @@ public class RecoilSystemFactory {
             throw new WeaponFactoryCreationException("Error while getting recoil system type \"" + type + "\"");
         }
 
-        float horizontalRecoil = section.getFloat("horizontal");
-        float verticalRecoil = section.getFloat("vertical");
+        Float[] horizontalRecoilValues = section.getFloatList("horizontal").toArray(Float[]::new);
+        Float[] verticalRecoilValues = section.getFloatList("vertical").toArray(Float[]::new);
 
         switch (recoilSystemType) {
             case CAMERA_MOVEMENT -> {
@@ -46,17 +46,17 @@ public class RecoilSystemFactory {
                 Timer timer = new Timer();
 
                 CameraMovementRecoil recoilSystem = new CameraMovementRecoil(internals, timer);
-                recoilSystem.setHorizontalRecoil(horizontalRecoil);
-                recoilSystem.setVerticalRecoil(verticalRecoil);
+                recoilSystem.setHorizontalRecoilValues(horizontalRecoilValues);
+                recoilSystem.setVerticalRecoilValues(verticalRecoilValues);
+                recoilSystem.setRecoilDuration(rotationDuration);
                 recoilSystem.setRecoveryDuration(recoveryDuration);
-                recoilSystem.setRotationDuration(rotationDuration);
 
                 return recoilSystem;
             }
             case RANDOM_SPREAD -> {
                 RandomSpreadRecoil recoilSystem = new RandomSpreadRecoil();
-                recoilSystem.setHorizontalRecoil(horizontalRecoil);
-                recoilSystem.setVerticalRecoil(verticalRecoil);
+                recoilSystem.setHorizontalRecoilValues(horizontalRecoilValues);
+                recoilSystem.setVerticalRecoilValues(verticalRecoilValues);
 
                 return recoilSystem;
             }

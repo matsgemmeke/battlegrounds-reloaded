@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class V1_20_R2 implements InternalsProvider {
 
     public void setPlayerRotation(@NotNull Player player, float yaw, float pitch) {
-        PacketPlayOutPosition packet = new PacketPlayOutPosition(0.0D, 0.0D, 0.0D, yaw, pitch, RelativeMovement.f, 0);
+        PacketPlayOutPosition packet = new PacketPlayOutPosition(0.0d, 0.0d, 0.0d, yaw, pitch, RelativeMovement.f, 0);
 
         (((CraftPlayer)player).getHandle()).c.b(packet);
     }
@@ -23,6 +23,6 @@ public class V1_20_R2 implements InternalsProvider {
 
         PacketPlayOutAbilities packet = new PacketPlayOutAbilities(abilities);
 
-        ((CraftPlayer) player).getHandle().c.a(packet);
+        ((CraftPlayer) player).getHandle().c.b(packet);
     }
 }

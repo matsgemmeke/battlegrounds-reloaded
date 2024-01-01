@@ -11,9 +11,8 @@ public interface RecoilSystem {
      *
      * @param holder the entity who operates the gun
      * @param direction the direction of the shot
-     * @param relativeAccuracy the relative accuracy of the shot
      * @return the new direction of the shot after the recoil effect
      */
     @NotNull
-    Location produceRecoil(@NotNull BattleItemHolder holder, @NotNull Location direction, double relativeAccuracy);
+    Location produceRecoil(@NotNull BattleItemHolder holder, @NotNull Location direction);
 }

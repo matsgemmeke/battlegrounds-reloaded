@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DefaultFirearm extends AbstractGun implements Firearm {
 
+    private static final DustOptions defaultParticleColor = new DustOptions(Color.WHITE, 1);
+
     private double headshotDamageMultiplier;
     private FireMode fireMode;
     private int magazineAmmo;
@@ -84,8 +86,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     }
 
     private void displayParticle(@NotNull Location location) {
-        DustOptions dustOptions = new DustOptions(Color.WHITE, 1);
-        location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0.0, 0.0, 0.0, 0.0, dustOptions);
+        location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0.0, 0.0, 0.0, 0.0, defaultParticleColor);
     }
 
     private double getDamage(@NotNull Location holderLocation, @NotNull Location targetLocation, @NotNull Location projectileLocation) {
@@ -182,10 +183,9 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
 
         // Place the shooting at the height of the firearm
         Location direction = holder.getEntity().getEyeLocation().subtract(0, 0.25, 0);
-        double relativeAccuracy = holder.getRelativeAccuracy();
 
         if (recoilSystem != null) {
-            direction = recoilSystem.produceRecoil(holder, direction, relativeAccuracy);
+            direction = recoilSystem.produceRecoil(holder, direction);
         }
 
         this.shootProjectile(holder, direction);

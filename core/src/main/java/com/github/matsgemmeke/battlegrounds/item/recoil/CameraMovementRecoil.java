@@ -7,32 +7,46 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
 import java.util.Timer;
 
 public class CameraMovementRecoil implements RecoilSystem {
 
-    private static final long defaultRotationMillis = 20;
+    // The default value is 20 milliseconds, which equals to 50 times per second
+    private static final long defaultRotationDuration = 20;
 
-    private float horizontalRecoil;
-    private float verticalRecoil;
+    private Float[] horizontalRecoilValues;
+    private Float[] verticalRecoilValues;
+    private float recoveryRate;
     @NotNull
     private InternalsProvider internals;
+    private long recoilDuration;
     private long recoveryDuration;
-    private long rotationDuration;
+    @NotNull
+    private Random random;
     @NotNull
     private Timer timer;
 
     public CameraMovementRecoil(@NotNull InternalsProvider internals, @NotNull Timer timer) {
         this.internals = internals;
         this.timer = timer;
+        this.random = new Random();
     }
 
-    public float getHorizontalRecoil() {
-        return horizontalRecoil;
+    public Float[] getHorizontalRecoilValues() {
+        return horizontalRecoilValues;
     }
 
-    public void setHorizontalRecoil(float horizontalRecoil) {
-        this.horizontalRecoil = horizontalRecoil;
+    public void setHorizontalRecoilValues(Float[] horizontalRecoilValues) {
+        this.horizontalRecoilValues = horizontalRecoilValues;
+    }
+
+    public long getRecoilDuration() {
+        return recoilDuration;
+    }
+
+    public void setRecoilDuration(long recoilDuration) {
+        this.recoilDuration = recoilDuration;
     }
 
     public long getRecoveryDuration() {
@@ -43,24 +57,24 @@ public class CameraMovementRecoil implements RecoilSystem {
         this.recoveryDuration = recoveryDuration;
     }
 
-    public long getRotationDuration() {
-        return rotationDuration;
+    public float getRecoveryRate() {
+        return recoveryRate;
     }
 
-    public void setRotationDuration(long rotationDuration) {
-        this.rotationDuration = rotationDuration;
+    public void setRecoveryRate(float recoveryRate) {
+        this.recoveryRate = recoveryRate;
     }
 
-    public float getVerticalRecoil() {
-        return verticalRecoil;
+    public Float[] getVerticalRecoilValues() {
+        return verticalRecoilValues;
     }
 
-    public void setVerticalRecoil(float verticalRecoil) {
-        this.verticalRecoil = verticalRecoil;
+    public void setVerticalRecoilValues(Float[] verticalRecoilValues) {
+        this.verticalRecoilValues = verticalRecoilValues;
     }
 
     @NotNull
-    public Location produceRecoil(@NotNull BattleItemHolder holder, @NotNull Location direction, double relativeAccuracy) {
+    public Location produceRecoil(@NotNull BattleItemHolder holder, @NotNull Location direction) {
         // Only apply this recoil type to player entities
         if (!(holder instanceof BattlePlayer battlePlayer)) {
             return direction;
@@ -68,23 +82,26 @@ public class CameraMovementRecoil implements RecoilSystem {
 
         Player player = battlePlayer.getEntity();
 
+        // Select random values from the given recoil value arrays
+        float horizontalRecoil = horizontalRecoilValues[random.nextInt(horizontalRecoilValues.length)];
+        float verticalRecoil = verticalRecoilValues[random.nextInt(verticalRecoilValues.length)];
+
         // If the duration of the recoil rotation is zero, simply set the camera rotation
-        if (rotationDuration <= 0.0) {
+        if (recoilDuration <= 0) {
             internals.setPlayerRotation(player, horizontalRecoil, verticalRecoil);
             return direction;
         }
 
-        int rotationAmount = (int) (rotationDuration / defaultRotationMillis);
-        float yawRotation = horizontalRecoil / rotationAmount;
-        float pitchRotation = verticalRecoil / rotationAmount;
+        int rotationAmount = (int) (recoilDuration / defaultRotationDuration);
+        float yawRotation = horizontalRecoil / rotationAmount / (float) holder.getRelativeAccuracy();
+        float pitchRotation = verticalRecoil / rotationAmount / (float) holder.getRelativeAccuracy();
 
         CameraMovementTask task = new CameraMovementTask(player, internals);
-        task.setRecoverDirection(player.getEyeLocation());
         task.setRotationAmount(rotationAmount);
         task.setYawRotation(yawRotation);
         task.setPitchRotation(pitchRotation);
 
-        timer.scheduleAtFixedRate(task, 0, defaultRotationMillis);
+        timer.scheduleAtFixedRate(task, 0, defaultRotationDuration);
 
         // Camera movement recoil does not affect the projectile direction, so return the original direction
         return direction;

@@ -1,10 +1,8 @@
 package com.github.matsgemmeke.battlegrounds.item.recoil;
 
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 import java.util.TimerTask;
@@ -17,8 +15,6 @@ public class CameraMovementTask extends TimerTask {
     private int rotationCount;
     @NotNull
     private InternalsProvider internals;
-    @Nullable
-    private Location recoverDirection;
     @NotNull
     private Player player;
     @NotNull
@@ -37,15 +33,6 @@ public class CameraMovementTask extends TimerTask {
 
     public void setPitchRotation(float pitchRotation) {
         this.pitchRotation = pitchRotation;
-    }
-
-    @Nullable
-    public Location getRecoverDirection() {
-        return recoverDirection;
-    }
-
-    public void setRecoverDirection(@Nullable Location recoverDirection) {
-        this.recoverDirection = recoverDirection;
     }
 
     public int getRotationAmount() {
@@ -70,7 +57,7 @@ public class CameraMovementTask extends TimerTask {
             return;
         }
 
-        if (++ rotationCount > rotationAmount) {
+        if (++rotationCount > rotationAmount) {
             this.cancel();
             return;
         }
