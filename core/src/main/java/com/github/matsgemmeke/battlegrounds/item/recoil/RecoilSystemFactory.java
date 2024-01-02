@@ -40,6 +40,7 @@ public class RecoilSystemFactory {
 
         switch (recoilSystemType) {
             case CAMERA_MOVEMENT -> {
+                float recoveryRate = section.getFloat("recovery-rate");
                 long recoveryDuration = section.getLong("recovery-duration");
                 long rotationDuration = section.getLong("rotation-duration");
 
@@ -50,6 +51,7 @@ public class RecoilSystemFactory {
                 recoilSystem.setVerticalRecoilValues(verticalRecoilValues);
                 recoilSystem.setRecoilDuration(rotationDuration);
                 recoilSystem.setRecoveryDuration(recoveryDuration);
+                recoilSystem.setRecoveryRate(recoveryRate);
 
                 return recoilSystem;
             }

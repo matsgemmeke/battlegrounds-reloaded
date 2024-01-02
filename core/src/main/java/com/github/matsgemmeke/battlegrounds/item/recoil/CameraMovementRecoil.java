@@ -96,7 +96,11 @@ public class CameraMovementRecoil implements RecoilSystem {
         float yawRotation = horizontalRecoil / rotationAmount / (float) holder.getRelativeAccuracy();
         float pitchRotation = verticalRecoil / rotationAmount / (float) holder.getRelativeAccuracy();
 
+        int recoveryRotationAmount = (int) ((double) recoveryDuration / (double) recoilDuration * rotationAmount);
+
         CameraMovementTask task = new CameraMovementTask(player, internals);
+        task.setRecoveryRate(recoveryRate);
+        task.setRecoveryRotationAmount(recoveryRotationAmount);
         task.setRotationAmount(rotationAmount);
         task.setYawRotation(yawRotation);
         task.setPitchRotation(pitchRotation);

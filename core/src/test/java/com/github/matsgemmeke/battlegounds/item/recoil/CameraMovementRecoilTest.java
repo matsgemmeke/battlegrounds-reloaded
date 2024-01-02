@@ -72,7 +72,9 @@ public class CameraMovementRecoilTest {
         CameraMovementRecoil recoil = new CameraMovementRecoil(internals, timer);
         recoil.setHorizontalRecoilValues(new Float[] { 1.0f });
         recoil.setVerticalRecoilValues(new Float[] { 1.0f });
-        recoil.setRecoilDuration(100);
+        recoil.setRecoilDuration(200);
+        recoil.setRecoveryDuration(300);
+        recoil.setRecoveryRate(0.5f);
 
         Location result = recoil.produceRecoil(holder, direction);
 

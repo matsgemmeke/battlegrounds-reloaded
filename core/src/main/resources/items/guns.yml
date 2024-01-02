@@ -69,8 +69,14 @@
 #      # The amount of horizontal recoil of the gun. For camera movement, this should a list of numbers. For random
 #      # spread, this should be two numbers; the minimum and maximum spread.
 #      horizontal: [-1.0, 0.5]
-#      # The duration of camera rotation in milliseconds. This configuration is only required when using camera
-#      # movement recoil.
+#      # The duration of camera rotation for recovery in milliseconds. This configuration is only required when using
+#      # camera movement recoil and recovery.
+#      recovery-duration: 300
+#      # The amount of recovery the gun the recoil gives after a single shot. Should be a value between 0 and 1 as a
+#      # percentage. Leave the value at 0 to have no recovery.
+#      recovery-rate: 0
+#      # The duration of camera rotation for recoil in milliseconds. This configuration is only required when using
+#      # camera movement recoil.
 #      rotation-duration: 200
 #      # The type of recoil the gun uses. Should be either CAMERA_MOVEMENT or RANDOM_SPREAD.
 #      type: CAMERA_MOVEMENT
@@ -766,6 +772,8 @@ SV-98:
         distance: 180.0
     recoil:
       horizontal: [1.0, 1.5, 2.0]
+      recovery-duration: 300
+      recovery-rate: 0.8
       rotation-duration: 200
       type: CAMERA_MOVEMENT
       vertical: [-4.0, -4.5, -5.0]

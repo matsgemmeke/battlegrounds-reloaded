@@ -54,4 +54,24 @@ public class CameraMovementTaskTest {
 
         verify(internals, times(2)).setPlayerRotation(player, 1.0f, 1.0f);
     }
+
+    @Test
+    public void shouldApplyRecoveryAndKeepRotatingWhenRecoveryRateIsSet() {
+        when(player.isDead()).thenReturn(false);
+        when(player.isOnline()).thenReturn(true);
+
+        CameraMovementTask task = new CameraMovementTask(player, internals);
+        task.setRecoveryRate(0.5f);
+        task.setRecoveryRotationAmount(4);
+        task.setRotationAmount(2);
+        task.setPitchRotation(1.0f);
+        task.setYawRotation(1.0f);
+
+        for (int i = 0; i < 6; i++) {
+            task.run();
+        }
+
+        verify(internals, times(2)).setPlayerRotation(player, 1.0f, 1.0f);
+        verify(internals, times(4)).setPlayerRotation(player, -0.25f, -0.25f);
+    }
 }

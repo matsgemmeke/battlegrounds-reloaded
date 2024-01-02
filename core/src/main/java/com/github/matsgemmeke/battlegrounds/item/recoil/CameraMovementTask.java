@@ -9,8 +9,11 @@ import java.util.TimerTask;
 
 public class CameraMovementTask extends TimerTask {
 
+    private boolean recovering;
     private float pitchRotation;
     private float yawRotation;
+    private float recoveryRate;
+    private int recoveryRotationAmount;
     private int rotationAmount;
     private int rotationCount;
     @NotNull
@@ -24,6 +27,7 @@ public class CameraMovementTask extends TimerTask {
         this.player = player;
         this.internals = internals;
         this.random = new Random();
+        this.recovering = false;
         this.rotationCount = 0;
     }
 
@@ -43,6 +47,22 @@ public class CameraMovementTask extends TimerTask {
         this.rotationAmount = rotationAmount;
     }
 
+    public float getRecoveryRate() {
+        return recoveryRate;
+    }
+
+    public void setRecoveryRate(float recoveryRate) {
+        this.recoveryRate = recoveryRate;
+    }
+
+    public int getRecoveryRotationAmount() {
+        return recoveryRotationAmount;
+    }
+
+    public void setRecoveryRotationAmount(int recoveryRotationAmount) {
+        this.recoveryRotationAmount = recoveryRotationAmount;
+    }
+
     public float getYawRotation() {
         return yawRotation;
     }
@@ -58,8 +78,21 @@ public class CameraMovementTask extends TimerTask {
         }
 
         if (++rotationCount > rotationAmount) {
-            this.cancel();
-            return;
+            if (recoveryRate <= 0.0f || recovering) {
+                this.cancel();
+                return;
+            }
+
+            // The difference between the amount of rotations for the recoil and the recovery
+            float recoveryFactor = (float) recoveryRotationAmount / rotationAmount;
+
+            // Modify the rotation values by the recovery rate and the
+            yawRotation = (yawRotation * -recoveryRate) / recoveryFactor;
+            pitchRotation = (pitchRotation * -recoveryRate) / recoveryFactor;
+
+            recovering = true;
+            rotationAmount = recoveryRotationAmount;
+            rotationCount = 0;
         }
 
         internals.setPlayerRotation(player, yawRotation, pitchRotation);
