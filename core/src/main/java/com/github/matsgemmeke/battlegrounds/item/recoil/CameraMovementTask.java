@@ -4,7 +4,6 @@ import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
 import java.util.TimerTask;
 
 public class CameraMovementTask extends TimerTask {
@@ -13,20 +12,17 @@ public class CameraMovementTask extends TimerTask {
     private float pitchRotation;
     private float yawRotation;
     private float recoveryRate;
-    private int recoveryRotationAmount;
-    private int rotationAmount;
+    private int recoilRotations;
+    private int recoveryRotations;
     private int rotationCount;
     @NotNull
     private InternalsProvider internals;
     @NotNull
     private Player player;
-    @NotNull
-    private Random random;
 
     public CameraMovementTask(@NotNull Player player, @NotNull InternalsProvider internals) {
         this.player = player;
         this.internals = internals;
-        this.random = new Random();
         this.recovering = false;
         this.rotationCount = 0;
     }
@@ -39,12 +35,12 @@ public class CameraMovementTask extends TimerTask {
         this.pitchRotation = pitchRotation;
     }
 
-    public int getRotationAmount() {
-        return rotationAmount;
+    public int getRecoilRotations() {
+        return recoilRotations;
     }
 
-    public void setRotationAmount(int rotationAmount) {
-        this.rotationAmount = rotationAmount;
+    public void setRecoilRotations(int recoilRotations) {
+        this.recoilRotations = recoilRotations;
     }
 
     public float getRecoveryRate() {
@@ -55,12 +51,12 @@ public class CameraMovementTask extends TimerTask {
         this.recoveryRate = recoveryRate;
     }
 
-    public int getRecoveryRotationAmount() {
-        return recoveryRotationAmount;
+    public int getRecoveryRotations() {
+        return recoveryRotations;
     }
 
-    public void setRecoveryRotationAmount(int recoveryRotationAmount) {
-        this.recoveryRotationAmount = recoveryRotationAmount;
+    public void setRecoveryRotations(int recoveryRotations) {
+        this.recoveryRotations = recoveryRotations;
     }
 
     public float getYawRotation() {
@@ -77,21 +73,21 @@ public class CameraMovementTask extends TimerTask {
             return;
         }
 
-        if (++rotationCount > rotationAmount) {
+        if (++rotationCount > recoilRotations) {
             if (recoveryRate <= 0.0f || recovering) {
                 this.cancel();
                 return;
             }
 
             // The difference between the amount of rotations for the recoil and the recovery
-            float recoveryFactor = (float) recoveryRotationAmount / rotationAmount;
+            float recoveryFactor = (float) recoveryRotations / (float) recoilRotations;
 
-            // Modify the rotation values by the recovery rate and the
+            // Recalculate the rotations and reset the counter so the recoil gets repeated but with the recovery values
             yawRotation = (yawRotation * -recoveryRate) / recoveryFactor;
             pitchRotation = (pitchRotation * -recoveryRate) / recoveryFactor;
 
             recovering = true;
-            rotationAmount = recoveryRotationAmount;
+            recoilRotations = recoveryRotations;
             rotationCount = 0;
         }
 

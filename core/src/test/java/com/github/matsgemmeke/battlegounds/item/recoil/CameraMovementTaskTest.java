@@ -45,7 +45,7 @@ public class CameraMovementTaskTest {
         when(player.isOnline()).thenReturn(true);
 
         CameraMovementTask task = new CameraMovementTask(player, internals);
-        task.setRotationAmount(2);
+        task.setRecoilRotations(2);
         task.setPitchRotation(1.0f);
         task.setYawRotation(1.0f);
         task.run();
@@ -61,9 +61,9 @@ public class CameraMovementTaskTest {
         when(player.isOnline()).thenReturn(true);
 
         CameraMovementTask task = new CameraMovementTask(player, internals);
+        task.setRecoilRotations(2);
         task.setRecoveryRate(0.5f);
-        task.setRecoveryRotationAmount(4);
-        task.setRotationAmount(2);
+        task.setRecoveryRotations(4);
         task.setPitchRotation(1.0f);
         task.setYawRotation(1.0f);
 

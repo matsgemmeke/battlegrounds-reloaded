@@ -99,9 +99,9 @@ public class CameraMovementRecoil implements RecoilSystem {
         int recoveryRotationAmount = (int) ((double) recoveryDuration / (double) recoilDuration * rotationAmount);
 
         CameraMovementTask task = new CameraMovementTask(player, internals);
+        task.setRecoilRotations(rotationAmount);
         task.setRecoveryRate(recoveryRate);
-        task.setRecoveryRotationAmount(recoveryRotationAmount);
-        task.setRotationAmount(rotationAmount);
+        task.setRecoveryRotations(recoveryRotationAmount);
         task.setYawRotation(yawRotation);
         task.setPitchRotation(pitchRotation);
 
