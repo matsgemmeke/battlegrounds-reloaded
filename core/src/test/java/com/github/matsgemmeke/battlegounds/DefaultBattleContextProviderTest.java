@@ -2,7 +2,7 @@ package com.github.matsgemmeke.battlegounds;
 
 import com.github.matsgemmeke.battlegrounds.DefaultBattleContextProvider;
 import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
-import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import org.bukkit.entity.Player;
 import org.junit.Test;
 
@@ -20,11 +20,11 @@ public class DefaultBattleContextProviderTest {
     }
 
     @Test
-    public void shouldBeAbleToAddGame() {
-        GameContext context = mock(GameContext.class);
+    public void shouldBeAbleToAddSession() {
+        Session session = mock(Session.class);
         DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
 
-        assertTrue(contextProvider.addGameContext(context));
+        assertTrue(contextProvider.addSession(session));
     }
 
     @Test
@@ -37,16 +37,16 @@ public class DefaultBattleContextProviderTest {
     }
 
     @Test
-    public void shouldBeAbleToGetGameById() {
-        int gameId = 1;
+    public void shouldBeAbleToGetSessionById() {
+        int sessionId = 1;
 
-        GameContext context = mock(GameContext.class);
-        when(context.getId()).thenReturn(gameId);
+        Session session = mock(Session.class);
+        when(session.getId()).thenReturn(sessionId);
 
         DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
 
-        assertTrue(contextProvider.addGameContext(context));
-        assertEquals(context, contextProvider.getGameContext(gameId));
+        assertTrue(contextProvider.addSession(session));
+        assertEquals(session, contextProvider.getSession(sessionId));
     }
 
     @Test
@@ -60,13 +60,13 @@ public class DefaultBattleContextProviderTest {
     }
 
     @Test
-    public void shouldBeAbleToRemoveGame() {
-        GameContext context = mock(GameContext.class);
+    public void shouldBeAbleToRemoveSession() {
+        Session session = mock(Session.class);
         DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
 
-        assertFalse(contextProvider.removeGameContext(context));
-        assertTrue(contextProvider.addGameContext(context));
-        assertTrue(contextProvider.removeGameContext(context));
+        assertFalse(contextProvider.removeSession(session));
+        assertTrue(contextProvider.addSession(session));
+        assertTrue(contextProvider.removeSession(session));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class DefaultBattleContextProviderTest {
         Player player = mock(Player.class);
 
         DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
-        contextProvider.addGameContext(mock(GameContext.class));
+        contextProvider.addSession(mock(Session.class));
         contextProvider.addFreemodeContext(mock(FreemodeContext.class));
 
         assertNull(contextProvider.getContext(player));
@@ -94,16 +94,16 @@ public class DefaultBattleContextProviderTest {
     }
 
     @Test
-    public void getGameContextByPlayer() {
+    public void getSessionByPlayer() {
         Player player = mock(Player.class);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getId()).thenReturn(1);
-        when(context.hasPlayer(player)).thenReturn(true);
+        Session session = mock(Session.class);
+        when(session.getId()).thenReturn(1);
+        when(session.hasPlayer(player)).thenReturn(true);
 
         DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
-        contextProvider.addGameContext(context);
+        contextProvider.addSession(session);
 
-        assertEquals(context, contextProvider.getContext(player));
+        assertEquals(session, contextProvider.getContext(player));
     }
 }

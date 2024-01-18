@@ -5,9 +5,9 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
-import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Session;
+import com.github.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
-import com.github.matsgemmeke.battlegrounds.command.condition.NonexistentGameIdCondition;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,24 +31,24 @@ public class NonexistentGameIdConditionTest {
     }
 
     @Test
-    public void conditionShouldPassWhenGameDoesNotExist() {
-        int gameId = 1;
+    public void conditionShouldPassWhenSessionDoesNotExist() {
+        int sessionId = 1;
 
-        when(contextProvider.getGameContext(gameId)).thenReturn(null);
+        when(contextProvider.getSession(sessionId)).thenReturn(null);
 
-        NonexistentGameIdCondition condition = new NonexistentGameIdCondition(contextProvider, translator);
-        condition.validateCondition(context, execContext, gameId);
+        NonexistentSessionIdCondition condition = new NonexistentSessionIdCondition(contextProvider, translator);
+        condition.validateCondition(context, execContext, sessionId);
     }
 
     @Test(expected = ConditionFailedException.class)
-    public void conditionShouldNotPassWhenGameDoesNotExist() {
-        GameContext gameContext = mock(GameContext.class);
+    public void conditionShouldNotPassWhenSessionExists() {
+        Session session = mock(Session.class);
 
-        int gameId = 1;
+        int sessionId = 1;
 
-        when(contextProvider.getGameContext(gameId)).thenReturn(gameContext);
+        when(contextProvider.getSession(sessionId)).thenReturn(session);
 
-        NonexistentGameIdCondition condition = new NonexistentGameIdCondition(contextProvider, translator);
-        condition.validateCondition(context, execContext, gameId);
+        NonexistentSessionIdCondition condition = new NonexistentSessionIdCondition(contextProvider, translator);
+        condition.validateCondition(context, execContext, sessionId);
     }
 }

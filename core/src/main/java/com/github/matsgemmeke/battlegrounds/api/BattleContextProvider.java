@@ -2,7 +2,7 @@ package com.github.matsgemmeke.battlegrounds.api;
 
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
-import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,12 +23,12 @@ public interface BattleContextProvider {
     boolean addFreemodeContext(@NotNull FreemodeContext context);
 
     /**
-     * Adds a {@link GameContext} instance to the provider.
+     * Adds a {@link Session} instance to the provider.
      *
-     * @param gameContext the context to be added
-     * @return whether the context was added
+     * @param session the session to be added
+     * @return whether the session was added
      */
-    boolean addGameContext(@NotNull GameContext gameContext);
+    boolean addSession(@NotNull Session session);
 
     /**
      * Gets the {@link BattleContext} a player is currently in. Returns null if the player is not in any of the
@@ -51,14 +51,14 @@ public interface BattleContextProvider {
     Collection<BattleContext> getContexts();
 
     /**
-     * Gets a {@link GameContext} instance with a specific id from the provider. Returns null if the provider does not contain
-     * an instance with the id.
+     * Gets a {@link Session} instance with a specific id from the provider. Returns null if the provider does not
+     * contain an instance with the id.
      *
-     * @param id the game id
-     * @return the game instance or null if the provider does not have an instance with the id
+     * @param id the session id
+     * @return the session instance or null if the provider does not have an instance with the id
      */
     @Nullable
-    GameContext getGameContext(int id);
+    Session getSession(int id);
 
     /**
      * Removes a {@link FreemodeContext} instance from the provider.
@@ -69,10 +69,10 @@ public interface BattleContextProvider {
     boolean removeFreemodeContext(@NotNull FreemodeContext context);
 
     /**
-     * Removes a {@link GameContext} instance to the provider.
+     * Removes a {@link Session} instance to the provider.
      *
-     * @param context the context to be removed
-     * @return whether the context was removed
+     * @param session the session to be removed
+     * @return whether the session was removed
      */
-    boolean removeGameContext(@NotNull GameContext context);
+    boolean removeSession(@NotNull Session session);
 }

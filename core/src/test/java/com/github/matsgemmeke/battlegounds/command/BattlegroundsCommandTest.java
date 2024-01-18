@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegounds.command;
 
 import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
+import com.github.matsgemmeke.battlegrounds.game.SessionFactory;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
 import com.github.matsgemmeke.battlegrounds.command.*;
-import com.github.matsgemmeke.battlegrounds.game.GameContextFactory;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,10 +29,10 @@ public class BattlegroundsCommandTest {
     public void shouldNotBeAbleToGetSubcommandWhenItDoesNotExist() {
         when(translator.translate(anyString())).thenReturn("test");
 
-        GameContextFactory contextFactory = mock(GameContextFactory.class);
+        SessionFactory sessionFactory = mock(SessionFactory.class);
 
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
-        bgCommand.addSubcommand(new CreateGameCommand(contextProvider, contextFactory, translator));
+        bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
 
         bgCommand.onReload(player);
     }
@@ -75,13 +75,13 @@ public class BattlegroundsCommandTest {
     public void shouldBeAbleToRunCreateGameCommand() {
         int gameId = 1;
 
-        CreateGameCommand command = mock(CreateGameCommand.class);
-        when(command.getName()).thenReturn("creategame");
+        CreateSessionCommand command = mock(CreateSessionCommand.class);
+        when(command.getName()).thenReturn("createsession");
 
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
         bgCommand.addSubcommand(command);
 
-        bgCommand.onCreateGame(player, gameId);
+        bgCommand.onCreateSession(player, gameId);
 
         verify(command).execute(player, gameId);
     }
@@ -119,13 +119,13 @@ public class BattlegroundsCommandTest {
     public void shouldBeAbleToRunRemoveGameCommand() {
         int gameId = 1;
 
-        RemoveGameCommand command = mock(RemoveGameCommand.class);
-        when(command.getName()).thenReturn("removegame");
+        RemoveSessionCommand command = mock(RemoveSessionCommand.class);
+        when(command.getName()).thenReturn("removesession");
 
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
         bgCommand.addSubcommand(command);
 
-        bgCommand.onRemoveGame(player, gameId);
+        bgCommand.onRemoveSession(player, gameId);
 
         verify(command).execute(player, gameId);
     }

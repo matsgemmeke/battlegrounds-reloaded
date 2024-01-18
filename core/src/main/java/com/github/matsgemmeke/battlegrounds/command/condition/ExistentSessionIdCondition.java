@@ -8,25 +8,25 @@ import com.github.matsgemmeke.battlegrounds.locale.TranslationKey;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
 import org.jetbrains.annotations.NotNull;
 
-public class ExistentGameIdCondition implements ParameterCondition<Integer, BukkitCommandExecutionContext, BukkitCommandIssuer> {
+public class ExistentSessionIdCondition implements ParameterCondition<Integer, BukkitCommandExecutionContext, BukkitCommandIssuer> {
 
     @NotNull
     private BattleContextProvider contextProvider;
     @NotNull
     private Translator translator;
 
-    public ExistentGameIdCondition(@NotNull BattleContextProvider contextProvider, @NotNull Translator translator) {
+    public ExistentSessionIdCondition(@NotNull BattleContextProvider contextProvider, @NotNull Translator translator) {
         this.contextProvider = contextProvider;
         this.translator = translator;
     }
 
     public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, Integer value) throws InvalidCommandArgument {
-        if (contextProvider.getGameContext(value) != null) {
+        if (contextProvider.getSession(value) != null) {
             return;
         }
 
-        PlaceholderEntry placeholder = new PlaceholderEntry("bg_game", value.toString());
+        PlaceholderEntry placeholder = new PlaceholderEntry("bg_session", value.toString());
 
-        throw new ConditionFailedException(translator.translate(TranslationKey.GAME_NOT_EXISTS.getPath(), placeholder));
+        throw new ConditionFailedException(translator.translate(TranslationKey.SESSION_NOT_EXISTS.getPath(), placeholder));
     }
 }

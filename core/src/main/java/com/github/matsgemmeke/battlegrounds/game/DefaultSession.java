@@ -2,8 +2,8 @@ package com.github.matsgemmeke.battlegrounds.game;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
-import com.github.matsgemmeke.battlegrounds.api.game.GameConfiguration;
-import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Session;
+import com.github.matsgemmeke.battlegrounds.api.game.SessionConfiguration;
 import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -16,16 +16,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
-public class DefaultGameContext extends AbstractBattleContext implements GameContext {
+public class DefaultSession extends AbstractBattleContext implements Session {
 
     private final int id;
     @NotNull
-    private GameConfiguration configuration;
+    private SessionConfiguration configuration;
 
-    public DefaultGameContext(
+    public DefaultSession(
             @NotNull BlockCollisionChecker collisionChecker,
             int id,
-            @NotNull GameConfiguration configuration
+            @NotNull SessionConfiguration configuration
     ) {
         super(collisionChecker);
         this.id = id;
@@ -33,7 +33,7 @@ public class DefaultGameContext extends AbstractBattleContext implements GameCon
     }
 
     @NotNull
-    public GameConfiguration getConfiguration() {
+    public SessionConfiguration getConfiguration() {
         return configuration;
     }
 

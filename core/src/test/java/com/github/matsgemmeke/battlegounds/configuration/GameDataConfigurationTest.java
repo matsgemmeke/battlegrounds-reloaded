@@ -1,8 +1,8 @@
 package com.github.matsgemmeke.battlegounds.configuration;
 
-import com.github.matsgemmeke.battlegrounds.api.game.GameConfiguration;
-import com.github.matsgemmeke.battlegrounds.configuration.GameDataConfiguration;
-import com.github.matsgemmeke.battlegrounds.game.DefaultGameConfiguration;
+import com.github.matsgemmeke.battlegrounds.api.game.SessionConfiguration;
+import com.github.matsgemmeke.battlegrounds.configuration.SessionDataConfiguration;
+import com.github.matsgemmeke.battlegrounds.game.DefaultSessionConfiguration;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,28 +26,28 @@ public class GameDataConfigurationTest {
     }
 
     @Test
-    public void shouldBeAbleToLoadGameConfiguration() {
-        GameConfiguration gameConfiguration = DefaultGameConfiguration.getNewConfiguration();
+    public void shouldBeAbleToLoadSessionConfiguration() {
+        SessionConfiguration sessionConfiguration = DefaultSessionConfiguration.getNewConfiguration();
 
-        GameDataConfiguration dataConfiguration = new GameDataConfiguration(dataFolder);
+        SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFolder);
         dataConfiguration.load();
-        dataConfiguration.saveConfiguration(gameConfiguration);
+        dataConfiguration.saveConfiguration(sessionConfiguration);
 
-        GameConfiguration result = dataConfiguration.loadConfiguration();
+        SessionConfiguration result = dataConfiguration.loadConfiguration();
 
-        assertEquals(result.getMaxPlayers(), gameConfiguration.getMaxPlayers());
-        assertEquals(result.getMinPlayers(), gameConfiguration.getMinPlayers());
+        assertEquals(result.getMaxPlayers(), sessionConfiguration.getMaxPlayers());
+        assertEquals(result.getMinPlayers(), sessionConfiguration.getMinPlayers());
     }
 
     @Test
-    public void shouldBeAbleToSaveGameConfiguration() {
-        GameConfiguration gameConfiguration = DefaultGameConfiguration.getNewConfiguration();
+    public void shouldBeAbleToSaveSessionConfiguration() {
+        SessionConfiguration sessionConfiguration = DefaultSessionConfiguration.getNewConfiguration();
 
-        GameDataConfiguration dataConfiguration = new GameDataConfiguration(dataFolder);
+        SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFolder);
         dataConfiguration.load();
-        dataConfiguration.saveConfiguration(gameConfiguration);
+        dataConfiguration.saveConfiguration(sessionConfiguration);
 
-        assertEquals(gameConfiguration.getMaxPlayers(), dataConfiguration.getInteger("config.max-players"));
-        assertEquals(gameConfiguration.getMinPlayers(), dataConfiguration.getInteger("config.min-players"));
+        assertEquals(sessionConfiguration.getMaxPlayers(), dataConfiguration.getInteger("config.max-players"));
+        assertEquals(sessionConfiguration.getMinPlayers(), dataConfiguration.getInteger("config.min-players"));
     }
 }

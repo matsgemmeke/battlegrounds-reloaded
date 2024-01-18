@@ -3,7 +3,7 @@ package com.github.matsgemmeke.battlegrounds;
 import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
-import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,21 +15,21 @@ import java.util.stream.Stream;
 public class DefaultBattleContextProvider implements BattleContextProvider {
 
     private List<FreemodeContext> freemodeContexts;
-    private Map<Integer, GameContext> gameContexts;
+    private Map<Integer, Session> sessions;
 
     public DefaultBattleContextProvider() {
         this.freemodeContexts = new ArrayList<>();
-        this.gameContexts = new HashMap<>();
+        this.sessions = new HashMap<>();
     }
 
     public boolean addFreemodeContext(@NotNull FreemodeContext context) {
         return freemodeContexts.add(context);
     }
 
-    public boolean addGameContext(@NotNull GameContext gameContext) {
-        int id = gameContext.getId();
-        gameContexts.put(id, gameContext);
-        return gameContexts.get(id) != null;
+    public boolean addSession(@NotNull Session session) {
+        int id = session.getId();
+        sessions.put(id, session);
+        return sessions.get(id) != null;
     }
 
     @Nullable
@@ -40,9 +40,9 @@ public class DefaultBattleContextProvider implements BattleContextProvider {
             }
         }
 
-        for (GameContext context : gameContexts.values()) {
-            if (context.hasPlayer(player)) {
-                return context;
+        for (Session session : sessions.values()) {
+            if (session.hasPlayer(player)) {
+                return session;
             }
         }
 
@@ -51,19 +51,19 @@ public class DefaultBattleContextProvider implements BattleContextProvider {
 
     @NotNull
     public Collection<BattleContext> getContexts() {
-        return Collections.unmodifiableList(Stream.concat(freemodeContexts.stream(), gameContexts.values().stream()).collect(Collectors.toList()));
+        return Collections.unmodifiableList(Stream.concat(freemodeContexts.stream(), sessions.values().stream()).collect(Collectors.toList()));
     }
 
     @Nullable
-    public GameContext getGameContext(int id) {
-        return gameContexts.get(id);
+    public Session getSession(int id) {
+        return sessions.get(id);
     }
 
     public boolean removeFreemodeContext(@NotNull FreemodeContext context) {
         return freemodeContexts.remove(context);
     }
 
-    public boolean removeGameContext(@NotNull GameContext context) {
-        return gameContexts.remove(context.getId()) != null;
+    public boolean removeSession(@NotNull Session session) {
+        return sessions.remove(session.getId()) != null;
     }
 }

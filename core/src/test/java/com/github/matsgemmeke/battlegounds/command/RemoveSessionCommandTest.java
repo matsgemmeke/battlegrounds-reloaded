@@ -1,0 +1,76 @@
+package com.github.matsgemmeke.battlegounds.command;
+
+import com.github.matsgemmeke.battlegrounds.*;
+import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
+import com.github.matsgemmeke.battlegrounds.api.game.Session;
+import com.github.matsgemmeke.battlegrounds.command.RemoveSessionCommand;
+import com.github.matsgemmeke.battlegrounds.locale.PlaceholderEntry;
+import com.github.matsgemmeke.battlegrounds.locale.TranslationKey;
+import com.github.matsgemmeke.battlegrounds.locale.Translator;
+import org.bukkit.command.CommandSender;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.mockito.Mockito.*;
+
+public class RemoveSessionCommandTest {
+
+    private BattleContextProvider contextProvider;
+    private CommandSender sender;
+    private Session session;
+    private TaskRunner taskRunner;
+    private Translator translator;
+
+    @Before
+    public void setUp() {
+        this.contextProvider = mock(BattleContextProvider.class);
+        this.sender = mock(CommandSender.class);
+        this.session = mock(Session.class);
+        this.taskRunner = mock(TaskRunner.class);
+        this.translator = mock(Translator.class);
+
+        when(translator.translate(TranslationKey.DESCRIPTION_REMOVESESSION.getPath())).thenReturn("description");
+    }
+
+    @Test
+    public void shouldAddSenderToConfirmListUponFirstExecutingCommand() {
+        int gameId = 1;
+
+        RemoveSessionCommand command = new RemoveSessionCommand(contextProvider, taskRunner, translator);
+        command.execute(sender, gameId);
+
+        verify(taskRunner).runTaskLater(any(Runnable.class), anyLong());
+    }
+
+    @Test
+    public void shouldBeAbleToRemoveSession() {
+        int sessionId = 1;
+        String message = "hello";
+
+        when(contextProvider.getSession(sessionId)).thenReturn(session);
+        when(contextProvider.removeSession(session)).thenReturn(true);
+        when(translator.translate(eq(TranslationKey.SESSION_REMOVED.getPath()), any(PlaceholderEntry.class))).thenReturn(message);
+
+        RemoveSessionCommand command = new RemoveSessionCommand(contextProvider, taskRunner, translator);
+        command.execute(sender, sessionId);
+        command.execute(sender, sessionId);
+
+        verify(sender).sendMessage(message);
+    }
+
+    @Test
+    public void shouldNotifySenderWhenFailingToCreateSession() {
+        int sessionId = 1;
+        String message = "hello";
+
+        when(contextProvider.getSession(sessionId)).thenReturn(session);
+        when(contextProvider.removeSession(session)).thenReturn(false);
+        when(translator.translate(eq(TranslationKey.SESSION_REMOVAL_FAILED.getPath()), any(PlaceholderEntry.class))).thenReturn(message);
+
+        RemoveSessionCommand command = new RemoveSessionCommand(contextProvider, taskRunner, translator);
+        command.execute(sender, sessionId);
+        command.execute(sender, sessionId);
+
+        verify(sender).sendMessage(message);
+    }
+}

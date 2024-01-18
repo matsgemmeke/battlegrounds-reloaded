@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegrounds.api.game;
 
 /**
- * Holds configurable variables for a {@link GameContext} instance.
+ * Holds configurable variables for a {@link Session} instance.
  */
-public interface GameConfiguration {
+public interface SessionConfiguration {
 
     /**
      * Gets the duration of the lobby countdown in seconds.
@@ -13,14 +13,14 @@ public interface GameConfiguration {
     int getLobbyCountdownDuration();
 
     /**
-     * Gets the maximum amount of players allowed in the game.
+     * Gets the maximum amount of players allowed in the session.
      *
      * @return the maximum allowed amount of players
      */
     int getMaxPlayers();
 
     /**
-     * Gets the minimum amount of players allowed in the game.
+     * Gets the minimum amount of players allowed in the session.
      *
      * @return the minimum allowed amount of players
      */

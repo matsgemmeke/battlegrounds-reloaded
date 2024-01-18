@@ -4,24 +4,24 @@ import org.jetbrains.annotations.NotNull;
 
 public enum TranslationKey {
 
-    DESCRIPTION_CREATEGAME("commands.description-creategame"),
+    DESCRIPTION_CREATESESSION("commands.description-createsession"),
     DESCRIPTION_GIVEWEAPON("commands.description-giveweapon"),
     DESCRIPTION_RELOAD("commands.description-reload"),
-    DESCRIPTION_REMOVEGAME("commands.description-removegame"),
+    DESCRIPTION_REMOVESESSION("commands.description-removesession"),
     DESCRIPTION_SETMAINLOBBY("commands.description-setmainlobby"),
     FREEMODE_WEAPON_GIVEN("commands.freemode-weapon-given"),
-    GAME_ALREADY_EXISTS("admin.game-already-exists"),
-    GAME_CONFIRM_REMOVAL("admin.game-confirm-removal"),
-    GAME_CREATED("admin.game-created"),
-    GAME_CREATION_FAILED("admin.game-creation-failed"),
-    GAME_NOT_EXISTS("admin.game-not-exists"),
-    GAME_REMOVAL_FAILED("admin.game-removal-failed"),
-    GAME_REMOVED("admin.game-removed"),
     HELP_MENU_TITLE("commands.help-menu-title"),
     MAIN_LOBBY_SET("admin.main-lobby-set"),
     NOT_IN_FREEMODE("errors.not-in-freemode"),
     RELOAD_FAILED("admin.reload-failed"),
     RELOAD_SUCCESS("admin.reload-success"),
+    SESSION_ALREADY_EXISTS("admin.session-already-exists"),
+    SESSION_CONFIRM_REMOVAL("admin.session-confirm-removal"),
+    SESSION_CREATED("admin.session-created"),
+    SESSION_CREATION_FAILED("admin.session-creation-failed"),
+    SESSION_NOT_EXISTS("admin.session-not-exists"),
+    SESSION_REMOVAL_FAILED("admin.session-removal-failed"),
+    SESSION_REMOVED("admin.session-removed"),
     WEAPON_NOT_EXISTS("admin.weapon-not-exists");
 
     @NotNull

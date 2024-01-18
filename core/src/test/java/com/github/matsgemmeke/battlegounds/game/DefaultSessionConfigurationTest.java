@@ -1,12 +1,12 @@
 package com.github.matsgemmeke.battlegounds.game;
 
-import com.github.matsgemmeke.battlegrounds.game.DefaultGameConfiguration;
+import com.github.matsgemmeke.battlegrounds.game.DefaultSessionConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class DefaultGameConfigurationTest {
+public class DefaultSessionConfigurationTest {
 
     private int lobbyCountdownDuration;
     private int maxPlayers;
@@ -20,8 +20,8 @@ public class DefaultGameConfigurationTest {
     }
 
     @Test
-    public void shouldBeAbleToGetDefaultGameConfigurationInstance() {
-        DefaultGameConfiguration configuration = DefaultGameConfiguration.getNewConfiguration();
+    public void shouldBeAbleToGetDefaultSessionConfigurationInstance() {
+        DefaultSessionConfiguration configuration = DefaultSessionConfiguration.getNewConfiguration();
 
         assertTrue(configuration.getLobbyCountdownDuration() > 0);
         assertTrue(configuration.getMaxPlayers() > 0);
@@ -30,21 +30,21 @@ public class DefaultGameConfigurationTest {
 
     @Test
     public void shouldBeAbleToGetLobbyCountdownDuration() {
-        DefaultGameConfiguration configuration = new DefaultGameConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+        DefaultSessionConfiguration configuration = new DefaultSessionConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
 
         assertEquals(lobbyCountdownDuration, configuration.getLobbyCountdownDuration());
     }
 
     @Test
     public void shouldBeAbleToGetMaxPlayers() {
-        DefaultGameConfiguration configuration = new DefaultGameConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+        DefaultSessionConfiguration configuration = new DefaultSessionConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
 
         assertEquals(maxPlayers, configuration.getMaxPlayers());
     }
 
     @Test
     public void shouldBeAbleToGetMinPlayers() {
-        DefaultGameConfiguration configuration = new DefaultGameConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+        DefaultSessionConfiguration configuration = new DefaultSessionConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
 
         assertEquals(minPlayers, configuration.getMinPlayers());
     }

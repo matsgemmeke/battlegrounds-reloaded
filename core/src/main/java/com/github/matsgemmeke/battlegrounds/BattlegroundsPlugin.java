@@ -6,10 +6,10 @@ import com.github.matsgemmeke.battlegrounds.api.Battlegrounds;
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
 import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
 import com.github.matsgemmeke.battlegrounds.command.*;
-import com.github.matsgemmeke.battlegrounds.command.condition.ExistentGameIdCondition;
+import com.github.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdCondition;
 import com.github.matsgemmeke.battlegrounds.command.condition.ExistentWeaponIdCondition;
 import com.github.matsgemmeke.battlegrounds.command.condition.FreemodePresenceCondition;
-import com.github.matsgemmeke.battlegrounds.command.condition.NonexistentGameIdCondition;
+import com.github.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
 import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.configuration.BattlegroundsFileConfiguration;
 import com.github.matsgemmeke.battlegrounds.configuration.GeneralDataConfiguration;
@@ -19,8 +19,8 @@ import com.github.matsgemmeke.battlegrounds.event.EventDispatcher;
 import com.github.matsgemmeke.battlegrounds.event.handler.*;
 import com.github.matsgemmeke.battlegrounds.event.listener.EventListener;
 import com.github.matsgemmeke.battlegrounds.game.DefaultFreemodeContext;
-import com.github.matsgemmeke.battlegrounds.game.GameContextFactory;
 import com.github.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
+import com.github.matsgemmeke.battlegrounds.game.SessionFactory;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.FireModeFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.FirearmFactory;
@@ -110,9 +110,9 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
 
     private void setUpCommands() {
         File dataFolder = new File(this.getDataFolder().getPath() + "/data");
-        File generalDataFile = new File(dataFolder.getPath() + "/data/general.yml");
+        File generalDataFile = new File(dataFolder.getPath() + "/general.yml");
 
-        GameContextFactory gameContextFactory = new GameContextFactory(dataFolder);
+        SessionFactory sessionFactory = new SessionFactory(dataFolder);
 
         GeneralDataConfiguration generalData = new GeneralDataConfiguration(generalDataFile);
         generalData.load();
@@ -120,10 +120,10 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
 
         // Add all subcommands to the battlegrounds command
-        bgCommand.addSubcommand(new CreateGameCommand(contextProvider, gameContextFactory, translator));
+        bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
         bgCommand.addSubcommand(new GiveWeaponCommand(freemodeContext, weaponProvider, translator));
         bgCommand.addSubcommand(new ReloadCommand(config, translator));
-        bgCommand.addSubcommand(new RemoveGameCommand(contextProvider, taskRunner, translator));
+        bgCommand.addSubcommand(new RemoveSessionCommand(contextProvider, taskRunner, translator));
         bgCommand.addSubcommand(new SetMainLobbyCommand(generalData, translator));
 
         // Register the command to ACF
@@ -132,9 +132,9 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
 
         // Register custom conditions to ACF
         commandManager.getCommandConditions().addCondition("freemode-presence", new FreemodePresenceCondition(freemodeContext, translator));
-        commandManager.getCommandConditions().addCondition(Integer.class, "existent-game-id", new ExistentGameIdCondition(contextProvider, translator));
+        commandManager.getCommandConditions().addCondition(Integer.class, "existent-session-id", new ExistentSessionIdCondition(contextProvider, translator));
         commandManager.getCommandConditions().addCondition(String.class, "existent-weapon-id", new ExistentWeaponIdCondition(weaponProvider, translator));
-        commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-game-id", new NonexistentGameIdCondition(contextProvider, translator));
+        commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-session-id", new NonexistentSessionIdCondition(contextProvider, translator));
     }
 
     private void setUpEvents() {

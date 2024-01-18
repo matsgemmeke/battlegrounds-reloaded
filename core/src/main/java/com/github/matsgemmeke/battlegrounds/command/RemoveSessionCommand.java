@@ -2,7 +2,7 @@ package com.github.matsgemmeke.battlegrounds.command;
 
 import com.github.matsgemmeke.battlegrounds.*;
 import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
-import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import com.github.matsgemmeke.battlegrounds.locale.PlaceholderEntry;
 import com.github.matsgemmeke.battlegrounds.locale.TranslationKey;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RemoveGameCommand extends CommandSource {
+public class RemoveSessionCommand extends CommandSource {
 
     private static final long CONFIRM_LIST_COOLDOWN = 200;
 
@@ -25,12 +25,12 @@ public class RemoveGameCommand extends CommandSource {
     @NotNull
     private Translator translator;
 
-    public RemoveGameCommand(
+    public RemoveSessionCommand(
             @NotNull BattleContextProvider contextProvider,
             @NotNull TaskRunner taskRunner,
             @NotNull Translator translator
     ) {
-        super("removegame", translator.translate(TranslationKey.DESCRIPTION_REMOVEGAME.getPath()), "bg removegame <id>");
+        super("removesession", translator.translate(TranslationKey.DESCRIPTION_REMOVESESSION.getPath()), "bg removesession <id>");
         this.contextProvider = contextProvider;
         this.taskRunner = taskRunner;
         this.translator = translator;
@@ -41,20 +41,20 @@ public class RemoveGameCommand extends CommandSource {
         if (!confirmList.contains(sender)) {
             confirmList.add(sender);
 
-            sender.sendMessage(translator.translate(TranslationKey.GAME_CONFIRM_REMOVAL.getPath()));
+            sender.sendMessage(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath()));
 
             taskRunner.runTaskLater(() -> confirmList.remove(sender), CONFIRM_LIST_COOLDOWN);
             return;
         }
 
-        GameContext gameContext = contextProvider.getGameContext(id);
-        PlaceholderEntry placeholder = new PlaceholderEntry("bg_game", String.valueOf(id));
+        Session session = contextProvider.getSession(id);
+        PlaceholderEntry placeholder = new PlaceholderEntry("bg_session", String.valueOf(id));
 
-        if (!contextProvider.removeGameContext(gameContext)) {
-            sender.sendMessage(translator.translate(TranslationKey.GAME_REMOVAL_FAILED.getPath(), placeholder));
+        if (!contextProvider.removeSession(session)) {
+            sender.sendMessage(translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath(), placeholder));
             return;
         }
 
-        sender.sendMessage(translator.translate(TranslationKey.GAME_REMOVED.getPath(), placeholder));
+        sender.sendMessage(translator.translate(TranslationKey.SESSION_REMOVED.getPath(), placeholder));
     }
 }

@@ -8,7 +8,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -36,10 +35,10 @@ public class BattlegroundsCommand extends BaseCommand {
     }
 
     @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.creategame")
-    @Subcommand("creategame|cg")
-    public void onCreateGame(CommandSender sender, @Conditions("nonexistent-game-id") Integer id) {
-        CreateGameCommand command = this.getSubcommand("creategame");
+    @CommandPermission("battlegrounds.createsession")
+    @Subcommand("createsession|cs")
+    public void onCreateSession(CommandSender sender, @Conditions("nonexistent-session-id") Integer id) {
+        CreateSessionCommand command = this.getSubcommand("createsession");
         command.execute(sender, id);
     }
 
@@ -82,10 +81,10 @@ public class BattlegroundsCommand extends BaseCommand {
     }
 
     @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.removegame")
-    @Subcommand("removegame")
-    public void onRemoveGame(@NotNull CommandSender sender, @Conditions("existent-game-id") Integer id) {
-        RemoveGameCommand command = this.getSubcommand("removegame");
+    @CommandPermission("battlegrounds.removesession")
+    @Subcommand("removesession")
+    public void onRemoveSession(@NotNull CommandSender sender, @Conditions("existent-session-id") Integer id) {
+        RemoveSessionCommand command = this.getSubcommand("removesession");
         command.execute(sender, id);
     }
 
