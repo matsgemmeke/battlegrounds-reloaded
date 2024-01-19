@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegounds.event.handler;
 
-import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
+import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerJoinEventHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -11,21 +11,21 @@ import static org.mockito.Mockito.*;
 
 public class PlayerJoinEventHandlerTest {
 
-    private FreemodeContext freemodeContext;
+    private TrainingMode trainingMode;
 
     @Before
     public void setUp() {
-        this.freemodeContext = mock(FreemodeContext.class);
+        this.trainingMode = mock(TrainingMode.class);
     }
 
     @Test
-    public void addsPlayerToFreemodeUponJoining() {
+    public void addsPlayerToTrainingModeUponJoining() {
         Player player = mock(Player.class);
         PlayerJoinEvent event = new PlayerJoinEvent(player, "test");
 
-        PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(freemodeContext);
+        PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(trainingMode);
         eventHandler.handle(event);
 
-        verify(freemodeContext).addPlayer(player);
+        verify(trainingMode).addPlayer(player);
     }
 }

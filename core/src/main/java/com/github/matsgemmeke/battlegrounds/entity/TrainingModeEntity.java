@@ -4,14 +4,14 @@ import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class FreemodeEntity implements BattleEntity {
+public class TrainingModeEntity implements BattleEntity {
 
     private static final double RELATIVE_ACCURACY = 1.0;
 
     @NotNull
     private LivingEntity entity;
 
-    public FreemodeEntity(@NotNull LivingEntity entity) {
+    public TrainingModeEntity(@NotNull LivingEntity entity) {
         this.entity = entity;
     }
 

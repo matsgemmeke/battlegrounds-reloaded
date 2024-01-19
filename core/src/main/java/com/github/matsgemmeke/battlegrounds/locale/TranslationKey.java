@@ -9,10 +9,9 @@ public enum TranslationKey {
     DESCRIPTION_RELOAD("commands.description-reload"),
     DESCRIPTION_REMOVESESSION("commands.description-removesession"),
     DESCRIPTION_SETMAINLOBBY("commands.description-setmainlobby"),
-    FREEMODE_WEAPON_GIVEN("commands.freemode-weapon-given"),
     HELP_MENU_TITLE("commands.help-menu-title"),
     MAIN_LOBBY_SET("admin.main-lobby-set"),
-    NOT_IN_FREEMODE("errors.not-in-freemode"),
+    NOT_IN_TRAINING_MODE("errors.not-in-training-mode"),
     RELOAD_FAILED("admin.reload-failed"),
     RELOAD_SUCCESS("admin.reload-success"),
     SESSION_ALREADY_EXISTS("admin.session-already-exists"),
@@ -22,6 +21,7 @@ public enum TranslationKey {
     SESSION_NOT_EXISTS("admin.session-not-exists"),
     SESSION_REMOVAL_FAILED("admin.session-removal-failed"),
     SESSION_REMOVED("admin.session-removed"),
+    TRAINING_MODE_WEAPON_GIVEN("commands.training-mode-weapon-given"),
     WEAPON_NOT_EXISTS("admin.weapon-not-exists");
 
     @NotNull

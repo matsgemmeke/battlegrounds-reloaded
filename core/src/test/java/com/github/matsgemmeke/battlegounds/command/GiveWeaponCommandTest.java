@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegounds.command;
 
-import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
+import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.command.GiveWeaponCommand;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
@@ -18,23 +18,23 @@ import static org.mockito.Mockito.*;
 public class GiveWeaponCommandTest {
 
     private BattlePlayer battlePlayer;
-    private FreemodeContext freemodeContext;
     private Player player;
     private PlayerInventory inventory;
+    private TrainingMode trainingMode;
     private Translator translator;
     private WeaponProvider weaponProvider;
 
     @Before
     public void setUp() {
         this.battlePlayer = mock(BattlePlayer.class);
-        this.freemodeContext = mock(FreemodeContext.class);
         this.player = mock(Player.class);
         this.inventory = mock(PlayerInventory.class);
+        this.trainingMode = mock(TrainingMode.class);
         this.translator = mock(Translator.class);
         this.weaponProvider = mock(WeaponProvider.class);
 
-        when(freemodeContext.getBattlePlayer(player)).thenReturn(battlePlayer);
         when(player.getInventory()).thenReturn(inventory);
+        when(trainingMode.getBattlePlayer(player)).thenReturn(battlePlayer);
         when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn("description");
     }
 
@@ -47,11 +47,11 @@ public class GiveWeaponCommandTest {
         when(firearm.getName()).thenReturn("TEST");
 
         WeaponFactory<Firearm> weaponFactory = (WeaponFactory<Firearm>) mock(WeaponFactory.class);
-        when(weaponFactory.make(freemodeContext, weaponId)).thenReturn(firearm);
+        when(weaponFactory.make(trainingMode, weaponId)).thenReturn(firearm);
 
         when(weaponProvider.getWeaponFactory(weaponId)).thenAnswer(mock -> weaponFactory);
 
-        GiveWeaponCommand command = new GiveWeaponCommand(freemodeContext, weaponProvider, translator);
+        GiveWeaponCommand command = new GiveWeaponCommand(trainingMode, translator, weaponProvider);
         command.execute(player, weaponId);
 
         verify(inventory).addItem(any());

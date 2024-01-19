@@ -13,12 +13,12 @@ admin:
 
 commands:
   description-createsession: "Creates a new session with the given id"
-  description-giveweapon: "Gives a weapon for free play"
+  description-giveweapon: "Gives a weapon for training mode"
   description-reload: "Reloads all configuration files"
   description-removesession: "Removes a session and all of its arenas"
   description-setmainlobby: "Sets the main lobby location"
-  freemode-weapon-given: "&6You have been given a %bg_weapon%."
   help-menu-title: "&6&l Battlegrounds Help Menu"
+  training-mode-weapon-given: "&6You have been given a %bg_weapon%."
 
 errors:
-  not-in-freemode: "&cUnable to perform action; you are not in freemode."
+  not-in-training-mode: "&cUnable to perform action; you are not in training mode."

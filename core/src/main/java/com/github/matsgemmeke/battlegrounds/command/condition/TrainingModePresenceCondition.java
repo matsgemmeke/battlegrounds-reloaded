@@ -5,31 +5,31 @@ import co.aikar.commands.CommandConditions.Condition;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
-import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
+import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import com.github.matsgemmeke.battlegrounds.locale.TranslationKey;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class FreemodePresenceCondition implements Condition<BukkitCommandIssuer> {
+public class TrainingModePresenceCondition implements Condition<BukkitCommandIssuer> {
 
     @NotNull
-    private FreemodeContext freemodeContext;
+    private TrainingMode trainingMode;
     @NotNull
     private Translator translator;
 
-    public FreemodePresenceCondition(@NotNull FreemodeContext freemodeContext, @NotNull Translator translator) {
-        this.freemodeContext = freemodeContext;
+    public TrainingModePresenceCondition(@NotNull TrainingMode trainingMode, @NotNull Translator translator) {
+        this.trainingMode = trainingMode;
         this.translator = translator;
     }
 
     public void validateCondition(ConditionContext<BukkitCommandIssuer> context) throws InvalidCommandArgument {
         Player player = context.getIssuer().getPlayer();
 
-        if (freemodeContext.hasPlayer(player)) {
+        if (trainingMode.hasPlayer(player)) {
             return;
         }
 
-        throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_FREEMODE.getPath()));
+        throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_TRAINING_MODE.getPath()));
     }
 }

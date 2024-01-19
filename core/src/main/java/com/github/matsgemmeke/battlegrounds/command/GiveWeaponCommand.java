@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.command;
 
-import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
+import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import com.github.matsgemmeke.battlegrounds.locale.PlaceholderEntry;
 import com.github.matsgemmeke.battlegrounds.locale.TranslationKey;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
@@ -14,24 +14,24 @@ import org.jetbrains.annotations.NotNull;
 public class GiveWeaponCommand extends CommandSource {
 
     @NotNull
-    private FreemodeContext freemodeContext;
+    private TrainingMode trainingMode;
     @NotNull
     private Translator translator;
     @NotNull
     private WeaponProvider weaponProvider;
 
-    public GiveWeaponCommand(@NotNull FreemodeContext freemodeContext, @NotNull WeaponProvider weaponProvider, @NotNull Translator translator) {
+    public GiveWeaponCommand(@NotNull TrainingMode trainingMode, @NotNull Translator translator, @NotNull WeaponProvider weaponProvider) {
         super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()), "bg giveweapon <weapon>");
-        this.freemodeContext = freemodeContext;
-        this.weaponProvider = weaponProvider;
+        this.trainingMode = trainingMode;
         this.translator = translator;
+        this.weaponProvider = weaponProvider;
     }
 
     public void execute(@NotNull Player player, @NotNull String weaponId) {
         WeaponFactory<?> weaponFactory = weaponProvider.getWeaponFactory(weaponId.toUpperCase());
-        Weapon weapon = weaponFactory.make(freemodeContext, weaponId);
+        Weapon weapon = weaponFactory.make(trainingMode, weaponId);
 
-        BattlePlayer battlePlayer = freemodeContext.getBattlePlayer(player);
+        BattlePlayer battlePlayer = trainingMode.getBattlePlayer(player);
         battlePlayer.addItem(weapon);
 
         weapon.setHolder(battlePlayer);
@@ -40,6 +40,6 @@ public class GiveWeaponCommand extends CommandSource {
 
         PlaceholderEntry placeholder = new PlaceholderEntry("bg_weapon", weapon.getName());
 
-        player.sendMessage(translator.translate(TranslationKey.FREEMODE_WEAPON_GIVEN.getPath(), placeholder));
+        player.sendMessage(translator.translate(TranslationKey.TRAINING_MODE_WEAPON_GIVEN.getPath(), placeholder));
     }
 }

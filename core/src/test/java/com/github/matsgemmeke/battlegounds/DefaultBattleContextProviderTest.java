@@ -1,8 +1,8 @@
 package com.github.matsgemmeke.battlegounds;
 
 import com.github.matsgemmeke.battlegrounds.DefaultBattleContextProvider;
-import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
 import com.github.matsgemmeke.battlegrounds.api.game.Session;
+import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import org.bukkit.entity.Player;
 import org.junit.Test;
 
@@ -12,11 +12,11 @@ import static org.mockito.Mockito.*;
 public class DefaultBattleContextProviderTest {
 
     @Test
-    public void shouldBeAbleToAddFreemodeContext() {
-        FreemodeContext context = mock(FreemodeContext.class);
+    public void shouldBeAbleToAssignTrainingMode() {
+        TrainingMode trainingMode = mock(TrainingMode.class);
         DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
 
-        assertTrue(contextProvider.addFreemodeContext(context));
+        assertTrue(contextProvider.assignTrainingMode(trainingMode));
     }
 
     @Test
@@ -29,11 +29,11 @@ public class DefaultBattleContextProviderTest {
 
     @Test
     public void shouldBeAbleToGetContextCollection() {
-        FreemodeContext context = mock(FreemodeContext.class);
+        TrainingMode trainingMode = mock(TrainingMode.class);
         DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
 
-        assertTrue(contextProvider.addFreemodeContext(context));
-        assertTrue(contextProvider.getContexts().contains(context));
+        assertTrue(contextProvider.assignTrainingMode(trainingMode));
+        assertTrue(contextProvider.getContexts().contains(trainingMode));
     }
 
     @Test
@@ -47,16 +47,6 @@ public class DefaultBattleContextProviderTest {
 
         assertTrue(contextProvider.addSession(session));
         assertEquals(session, contextProvider.getSession(sessionId));
-    }
-
-    @Test
-    public void shouldBeAbleToRemoveContext() {
-        FreemodeContext context = mock(FreemodeContext.class);
-        DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
-
-        assertFalse(contextProvider.removeFreemodeContext(context));
-        assertTrue(contextProvider.addFreemodeContext(context));
-        assertTrue(contextProvider.removeFreemodeContext(context));
     }
 
     @Test
@@ -75,22 +65,22 @@ public class DefaultBattleContextProviderTest {
 
         DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
         contextProvider.addSession(mock(Session.class));
-        contextProvider.addFreemodeContext(mock(FreemodeContext.class));
+        contextProvider.assignTrainingMode(mock(TrainingMode.class));
 
         assertNull(contextProvider.getContext(player));
     }
 
     @Test
-    public void getFreemodeContextByPlayer() {
+    public void getTrainingModeByPlayer() {
         Player player = mock(Player.class);
 
-        FreemodeContext context = mock(FreemodeContext.class);
-        when(context.hasPlayer(player)).thenReturn(true);
+        TrainingMode trainingMode = mock(TrainingMode.class);
+        when(trainingMode.hasPlayer(player)).thenReturn(true);
 
         DefaultBattleContextProvider contextProvider = new DefaultBattleContextProvider();
-        contextProvider.addFreemodeContext(context);
+        contextProvider.assignTrainingMode(trainingMode);
 
-        assertEquals(context, contextProvider.getContext(player));
+        assertEquals(trainingMode, contextProvider.getContext(player));
     }
 
     @Test

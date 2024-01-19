@@ -4,12 +4,12 @@ import co.aikar.commands.PaperCommandManager;
 import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
 import com.github.matsgemmeke.battlegrounds.api.Battlegrounds;
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
-import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
+import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import com.github.matsgemmeke.battlegrounds.command.*;
 import com.github.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdCondition;
 import com.github.matsgemmeke.battlegrounds.command.condition.ExistentWeaponIdCondition;
-import com.github.matsgemmeke.battlegrounds.command.condition.FreemodePresenceCondition;
 import com.github.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
+import com.github.matsgemmeke.battlegrounds.command.condition.TrainingModePresenceCondition;
 import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.configuration.BattlegroundsFileConfiguration;
 import com.github.matsgemmeke.battlegrounds.configuration.GeneralDataConfiguration;
@@ -18,8 +18,8 @@ import com.github.matsgemmeke.battlegrounds.event.EventBus;
 import com.github.matsgemmeke.battlegrounds.event.EventDispatcher;
 import com.github.matsgemmeke.battlegrounds.event.handler.*;
 import com.github.matsgemmeke.battlegrounds.event.listener.EventListener;
-import com.github.matsgemmeke.battlegrounds.game.DefaultFreemodeContext;
 import com.github.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
+import com.github.matsgemmeke.battlegrounds.game.DefaultTrainingMode;
 import com.github.matsgemmeke.battlegrounds.game.SessionFactory;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.FireModeFactory;
@@ -46,9 +46,9 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
 
     private BattleContextProvider contextProvider;
     private BattlegroundsConfig config;
-    private FreemodeContext freemodeContext;
     private InternalsProvider internals;
     private TaskRunner taskRunner;
+    private TrainingMode trainingMode;
     private Translator translator;
     private WeaponProvider weaponProvider;
 
@@ -102,7 +102,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         weaponProvider = new WeaponProvider();
         weaponProvider.addWeaponFactory(gunsConfiguration, firearmFactory);
 
-        this.setUpFreemode();
+        this.setUpTrainingMode();
         this.setUpEvents();
         this.setUpTranslator();
         this.setUpCommands();
@@ -121,7 +121,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
 
         // Add all subcommands to the battlegrounds command
         bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
-        bgCommand.addSubcommand(new GiveWeaponCommand(freemodeContext, weaponProvider, translator));
+        bgCommand.addSubcommand(new GiveWeaponCommand(trainingMode, translator, weaponProvider));
         bgCommand.addSubcommand(new ReloadCommand(config, translator));
         bgCommand.addSubcommand(new RemoveSessionCommand(contextProvider, taskRunner, translator));
         bgCommand.addSubcommand(new SetMainLobbyCommand(generalData, translator));
@@ -131,7 +131,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         commandManager.registerCommand(bgCommand);
 
         // Register custom conditions to ACF
-        commandManager.getCommandConditions().addCondition("freemode-presence", new FreemodePresenceCondition(freemodeContext, translator));
+        commandManager.getCommandConditions().addCondition("training-mode-presence", new TrainingModePresenceCondition(trainingMode, translator));
         commandManager.getCommandConditions().addCondition(Integer.class, "existent-session-id", new ExistentSessionIdCondition(contextProvider, translator));
         commandManager.getCommandConditions().addCondition(String.class, "existent-weapon-id", new ExistentWeaponIdCondition(weaponProvider, translator));
         commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-session-id", new NonexistentSessionIdCondition(contextProvider, translator));
@@ -145,19 +145,19 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(contextProvider)));
-        eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(freemodeContext)));
+        eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(trainingMode)));
 
         EventListener eventListener = new EventListener(eventDispatcher);
 
         pluginManager.registerEvents(eventListener, this);
     }
 
-    private void setUpFreemode() {
+    private void setUpTrainingMode() {
         BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
 
-        freemodeContext = new DefaultFreemodeContext(collisionChecker, internals);
+        trainingMode = new DefaultTrainingMode(collisionChecker);
 
-        contextProvider.addFreemodeContext(freemodeContext);
+        contextProvider.assignTrainingMode(trainingMode);
     }
 
     private void setUpInternalsProvider() throws StartupFailedException {

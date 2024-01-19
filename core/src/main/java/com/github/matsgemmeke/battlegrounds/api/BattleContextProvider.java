@@ -1,8 +1,8 @@
 package com.github.matsgemmeke.battlegrounds.api;
 
 import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
-import com.github.matsgemmeke.battlegrounds.api.game.FreemodeContext;
 import com.github.matsgemmeke.battlegrounds.api.game.Session;
+import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,20 +15,20 @@ import java.util.Collection;
 public interface BattleContextProvider {
 
     /**
-     * Adds a {@link FreemodeContext} instance to the provider.
-     *
-     * @param context the context to be added
-     * @return whether the context was added
-     */
-    boolean addFreemodeContext(@NotNull FreemodeContext context);
-
-    /**
      * Adds a {@link Session} instance to the provider.
      *
      * @param session the session to be added
      * @return whether the session was added
      */
     boolean addSession(@NotNull Session session);
+
+    /**
+     * Adds a {@link TrainingMode} instance to the provider. There should only be one instance assigned.
+     *
+     * @param trainingMode the instance to be assigned
+     * @return whether the instance was assigned
+     */
+    boolean assignTrainingMode(@NotNull TrainingMode trainingMode);
 
     /**
      * Gets the {@link BattleContext} a player is currently in. Returns null if the player is not in any of the
@@ -38,7 +38,7 @@ public interface BattleContextProvider {
      * @return the context the player is currently or null if the player is not present in any
      */
     @Nullable
-    BattleContext getContext(Player player);
+    BattleContext getContext(@NotNull Player player);
 
     /**
      * Gathers all context instances and returns them as an immutable collection. This collection should not be used to
@@ -59,14 +59,6 @@ public interface BattleContextProvider {
      */
     @Nullable
     Session getSession(int id);
-
-    /**
-     * Removes a {@link FreemodeContext} instance from the provider.
-     *
-     * @param context the context to be removed
-     * @return whether the context was removed
-     */
-    boolean removeFreemodeContext(@NotNull FreemodeContext context);
 
     /**
      * Removes a {@link Session} instance to the provider.

@@ -1,11 +1,10 @@
 package com.github.matsgemmeke.battlegounds.game;
 
-import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
-import com.github.matsgemmeke.battlegrounds.game.DefaultFreemodeContext;
 import com.github.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
+import com.github.matsgemmeke.battlegrounds.game.DefaultTrainingMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -29,23 +28,21 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class DefaultFreemodeContextTest {
+public class DefaultTrainingModeTest {
 
     private BlockCollisionChecker collisionChecker;
-    private InternalsProvider internals;
 
     @Before
     public void setUp() {
         this.collisionChecker = mock(BlockCollisionChecker.class);
-        this.internals = mock(InternalsProvider.class);
     }
 
     @Test
     public void addingPlayersAddThemToPlayerList() {
         Player player = mock(Player.class);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        BattlePlayer battlePlayer = context.addPlayer(player);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        BattlePlayer battlePlayer = trainingMode.addPlayer(player);
 
         assertNotNull(battlePlayer);
     }
@@ -59,8 +56,8 @@ public class DefaultFreemodeContextTest {
         BattlePlayer battlePlayer = mock(BattlePlayer.class);
         when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        boolean result = context.onInteract(battlePlayer, event);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        boolean result = trainingMode.onInteract(battlePlayer, event);
 
         verify(battleItem).onLeftClick(battlePlayer);
 
@@ -77,8 +74,8 @@ public class DefaultFreemodeContextTest {
         BattlePlayer battlePlayer = mock(BattlePlayer.class);
         when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        boolean result = context.onInteract(battlePlayer, event);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        boolean result = trainingMode.onInteract(battlePlayer, event);
 
         verify(battleItem).onRightClick(battlePlayer);
 
@@ -91,8 +88,8 @@ public class DefaultFreemodeContextTest {
         BattlePlayer battlePlayer = mock(BattlePlayer.class);
         PlayerInteractEvent event = new PlayerInteractEvent(null, null, null, null, null);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        boolean result = context.onInteract(battlePlayer, event);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        boolean result = trainingMode.onInteract(battlePlayer, event);
 
         assertFalse(result);
     }
@@ -103,8 +100,8 @@ public class DefaultFreemodeContextTest {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(null, null, itemStack, null, null);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        boolean result = context.onInteract(battlePlayer, event);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        boolean result = trainingMode.onInteract(battlePlayer, event);
 
         assertFalse(result);
     }
@@ -114,8 +111,8 @@ public class DefaultFreemodeContextTest {
         BattleEntity entity = mock(BattleEntity.class);
         Location location = new Location(null, 1.0, 1.0, 1.0);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        Collection<BattleEntity> targets = context.getTargets(entity, location, 0.1);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        Collection<BattleEntity> targets = trainingMode.getTargets(entity, location, 0.1);
 
         assertEquals(0, targets.size());
     }
@@ -132,8 +129,8 @@ public class DefaultFreemodeContextTest {
 
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(nearbyEntities);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        Collection<BattleEntity> targets = context.getTargets(entity, location, range);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        Collection<BattleEntity> targets = trainingMode.getTargets(entity, location, range);
 
         assertEquals(1, targets.size());
     }
@@ -149,8 +146,8 @@ public class DefaultFreemodeContextTest {
 
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, item);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        boolean accepted = context.onItemDrop(battlePlayer, event);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        boolean accepted = trainingMode.onItemDrop(battlePlayer, event);
 
         assertFalse(accepted);
     }
@@ -168,8 +165,8 @@ public class DefaultFreemodeContextTest {
 
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, item);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        boolean accepted = context.onItemDrop(battlePlayer, event);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        boolean accepted = trainingMode.onItemDrop(battlePlayer, event);
 
         verify(battleItem, times(1)).onDrop(battlePlayer);
 
@@ -189,8 +186,8 @@ public class DefaultFreemodeContextTest {
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        boolean accepted = context.onItemHeld(battlePlayer, event);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        boolean accepted = trainingMode.onItemHeld(battlePlayer, event);
 
         assertFalse(accepted);
     }
@@ -210,8 +207,8 @@ public class DefaultFreemodeContextTest {
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
-        boolean accepted = context.onItemHeld(battlePlayer, event);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
+        boolean accepted = trainingMode.onItemHeld(battlePlayer, event);
 
         verify(battleItem, times(1)).onChangeHeldItem(battlePlayer);
 
@@ -231,11 +228,11 @@ public class DefaultFreemodeContextTest {
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
         // First call onDropItem to add the BattleItem to the dropped items list
-        context.onItemDrop(battlePlayer, new PlayerDropItemEvent(player, item));
+        trainingMode.onItemDrop(battlePlayer, new PlayerDropItemEvent(player, item));
 
-        boolean accepted = context.onPickupItem(battlePlayer, event);
+        boolean accepted = trainingMode.onPickupItem(battlePlayer, event);
 
         assertFalse(accepted);
     }
@@ -255,11 +252,11 @@ public class DefaultFreemodeContextTest {
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
-        DefaultFreemodeContext context = new DefaultFreemodeContext(collisionChecker, internals);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(collisionChecker);
         // First call onDropItem to add the BattleItem to the dropped items list
-        context.onItemDrop(battlePlayer, new PlayerDropItemEvent(player, item));
+        trainingMode.onItemDrop(battlePlayer, new PlayerDropItemEvent(player, item));
 
-        boolean accepted = context.onPickupItem(battlePlayer, event);
+        boolean accepted = trainingMode.onPickupItem(battlePlayer, event);
 
         verify(battlePlayer, times(1)).addItem(battleItem);
 
