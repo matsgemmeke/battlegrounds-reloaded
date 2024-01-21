@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegounds.command;
 
-import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
+import com.github.matsgemmeke.battlegrounds.api.GameProvider;
 import com.github.matsgemmeke.battlegrounds.game.SessionFactory;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
 import com.github.matsgemmeke.battlegrounds.command.*;
@@ -14,13 +14,13 @@ import static org.mockito.Mockito.*;
 
 public class BattlegroundsCommandTest {
 
-    private BattleContextProvider contextProvider;
+    private GameProvider gameProvider;
     private Player player;
     private Translator translator;
 
     @Before
     public void setUp() {
-        this.contextProvider = mock(BattleContextProvider.class);
+        this.gameProvider = mock(GameProvider.class);
         this.player = mock(Player.class);
         this.translator = mock(Translator.class);
     }
@@ -32,7 +32,7 @@ public class BattlegroundsCommandTest {
         SessionFactory sessionFactory = mock(SessionFactory.class);
 
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
-        bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
+        bgCommand.addSubcommand(new CreateSessionCommand(gameProvider, sessionFactory, translator));
 
         bgCommand.onReload(player);
     }

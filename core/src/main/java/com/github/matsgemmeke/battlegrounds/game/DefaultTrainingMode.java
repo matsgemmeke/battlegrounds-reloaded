@@ -1,14 +1,9 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
 import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
-import com.github.matsgemmeke.battlegrounds.entity.TrainingModeEntity;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -20,19 +15,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class DefaultTrainingMode extends AbstractBattleContext implements TrainingMode {
+public class DefaultTrainingMode extends AbstractGame implements TrainingMode {
 
     @NotNull
     private List<BattleItem> droppedItems;
     @NotNull
     private List<BattlePlayer> players;
 
-    public DefaultTrainingMode(@NotNull BlockCollisionChecker collisionChecker) {
-        super(collisionChecker);
+    public DefaultTrainingMode() {
         this.droppedItems = new ArrayList<>();
         this.players = new ArrayList<>();
     }
@@ -49,23 +41,6 @@ public class DefaultTrainingMode extends AbstractBattleContext implements Traini
     @NotNull
     public List<BattlePlayer> getPlayers() {
         return players;
-    }
-
-    @NotNull
-    public Collection<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range) {
-        if (location.getWorld() == null) {
-            return Collections.emptyList();
-        }
-
-        List<BattleEntity> entities = new ArrayList<>();
-
-        for (Entity entity : location.getWorld().getNearbyEntities(location, range, range, range)) {
-            if (entity != battleEntity.getEntity() && entity instanceof LivingEntity) {
-                entities.add(new TrainingModeEntity((LivingEntity) entity));
-            }
-        }
-
-        return entities;
     }
 
     public boolean onInteract(@NotNull BattlePlayer battlePlayer, @NotNull PlayerInteractEvent event) {

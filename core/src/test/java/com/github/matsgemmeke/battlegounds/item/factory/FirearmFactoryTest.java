@@ -2,7 +2,7 @@ package com.github.matsgemmeke.battlegounds.item.factory;
 
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.item.factory.FireModeFactory;
@@ -27,20 +27,20 @@ import static org.mockito.Mockito.*;
 @PrepareForTest(Bukkit.class)
 public class FirearmFactoryTest {
 
-    private BattleContext context;
     private BattlegroundsConfig config;
     private BattleItemConfiguration itemConfiguration;
     private FireModeFactory fireModeFactory;
+    private GameContext context;
     private InternalsProvider internals;
     private RecoilSystemFactory recoilSystemFactory;
     private ReloadSystemFactory reloadSystemFactory;
 
     @Before
     public void setUp() {
-        this.context = mock(BattleContext.class);
         this.config = mock(BattlegroundsConfig.class);
         this.itemConfiguration = mock(BattleItemConfiguration.class);
         this.fireModeFactory = mock(FireModeFactory.class);
+        this.context = mock(GameContext.class);
         this.internals = mock(InternalsProvider.class);
         this.recoilSystemFactory = mock(RecoilSystemFactory.class);
         this.reloadSystemFactory = mock(ReloadSystemFactory.class);

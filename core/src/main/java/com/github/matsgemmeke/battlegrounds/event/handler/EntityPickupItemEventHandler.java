@@ -1,8 +1,8 @@
 package com.github.matsgemmeke.battlegrounds.event.handler;
 
-import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
+import com.github.matsgemmeke.battlegrounds.api.GameProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.event.EventHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class EntityPickupItemEventHandler implements EventHandler<EntityPickupItemEvent> {
 
     @NotNull
-    private BattleContextProvider contextProvider;
+    private GameProvider gameProvider;
 
-    public EntityPickupItemEventHandler(@NotNull BattleContextProvider contextProvider) {
-        this.contextProvider = contextProvider;
+    public EntityPickupItemEventHandler(@NotNull GameProvider gameProvider) {
+        this.gameProvider = gameProvider;
     }
 
     public void handle(@NotNull EntityPickupItemEvent event) {
@@ -23,18 +23,18 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
         }
 
         Player player = (Player) event.getEntity();
-        BattleContext context = contextProvider.getContext(player);
+        Game game = gameProvider.getGame(player);
 
-        if (context == null) {
+        if (game == null) {
             return;
         }
 
-        BattlePlayer battlePlayer = context.getBattlePlayer(player);
+        BattlePlayer battlePlayer = game.getBattlePlayer(player);
 
         if (battlePlayer == null) {
             return;
         }
 
-        context.onPickupItem(battlePlayer, event);
+        game.onPickupItem(battlePlayer, event);
     }
 }

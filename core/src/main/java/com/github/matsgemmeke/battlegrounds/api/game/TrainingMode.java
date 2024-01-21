@@ -1,4 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.api.game;
 
-public interface TrainingMode extends BattleContext {
+/**
+ * The game mode of the plugin which has no set objectives or limitations.
+ */
+public interface TrainingMode extends Game {
 }

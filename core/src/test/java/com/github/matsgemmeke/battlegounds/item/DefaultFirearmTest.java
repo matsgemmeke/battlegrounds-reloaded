@@ -2,8 +2,8 @@ package com.github.matsgemmeke.battlegounds.item;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.OperatingMode;
 import com.github.matsgemmeke.battlegrounds.api.item.ScopeAttachment;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
@@ -25,13 +25,13 @@ import static org.mockito.Mockito.*;
 
 public class DefaultFirearmTest {
 
-    private BattleContext context;
     private BattleItemHolder holder;
+    private GameContext context;
 
     @Before
     public void setUp() {
-        this.context = mock(BattleContext.class);
         this.holder = mock(BattleItemHolder.class);
+        this.context = mock(GameContext.class);
     }
 
     @Test
@@ -328,7 +328,7 @@ public class DefaultFirearmTest {
         when(holderEntity.getEyeLocation()).thenReturn(holderLocation);
         when(holderEntity.getLocation()).thenReturn(holderLocation);
 
-        when(context.producesCollisionAt(any())).thenReturn(true);
+        when(context.producesCollisionAt(any(), any())).thenReturn(true);
 
         when(holder.getEntity()).thenReturn(holderEntity);
         when(holder.getRelativeAccuracy()).thenReturn(2.0);

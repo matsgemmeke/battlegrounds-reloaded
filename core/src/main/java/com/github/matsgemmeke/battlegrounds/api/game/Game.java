@@ -1,8 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.api.game;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -11,12 +9,10 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-
 /**
- * Describes the circumstances that form the setting for events that happen in Battlegrounds.
+ * Represents an activity which groups multiple players together to play under the rules of the plugin.
  */
-public interface BattleContext {
+public interface Game {
 
     /**
      * Adds a player to the context and creates a {@link BattlePlayer} instance.
@@ -35,17 +31,6 @@ public interface BattleContext {
      */
     @Nullable
     BattlePlayer getBattlePlayer(@NotNull Player player);
-
-    /**
-     * Looks for potential targets for a {@link BattleEntity} around a specific {@link Location}.
-     *
-     * @param battleEntity the entity
-     * @param location the location
-     * @param range the range
-     * @return all targets inside the range
-     */
-    @NotNull
-    Collection<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range);
 
     /**
      * Gets whether a player is present in the context.
@@ -90,28 +75,4 @@ public interface BattleContext {
      * @return whether the context has accepted the event
      */
     boolean onPickupItem(@NotNull BattlePlayer battlePlayer, @NotNull EntityPickupItemEvent event);
-
-    /**
-     * Plays a {@link BattleSound} for all players in the context.
-     *
-     * @param sound the sound
-     * @param location the location to play the sound
-     */
-    void playSound(@NotNull BattleSound sound, @NotNull Location location);
-
-    /**
-     * Plays multiple {@link BattleSound}s for all players in the context.
-     *
-     * @param sound the sound
-     * @param location the location to play the sound
-     */
-    void playSounds(@NotNull Iterable<BattleSound> sound,@NotNull Location location);
-
-    /**
-     * Checks if the given location produces a collision with a block.
-     *
-     * @param location the location
-     * @return whether a collision is produced
-     */
-    boolean producesCollisionAt(@NotNull Location location);
 }

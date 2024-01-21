@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.api.item.ScopeAttachment;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.ReloadSystem;
@@ -28,7 +28,7 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
     @Nullable
     protected ScopeAttachment scopeAttachment;
 
-    public AbstractGun(@NotNull BattleContext context) {
+    public AbstractGun(@NotNull GameContext context) {
         super(context);
     }
 

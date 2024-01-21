@@ -3,8 +3,8 @@ package com.github.matsgemmeke.battlegrounds.item;
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.ScopeAttachment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,13 +13,13 @@ import java.util.Collection;
 
 public class DefaultScopeAttachment implements ScopeAttachment {
 
-    @NotNull
-    private BattleContext context;
     @Nullable
     private BattlePlayer currentPlayer;
     @NotNull
     private Collection<Float> magnificationSettings;
     private float currentMagnification;
+    @NotNull
+    private GameContext context;
     @NotNull
     private InternalsProvider internals;
     private Iterable<BattleSound> stopUseSounds;
@@ -28,7 +28,7 @@ public class DefaultScopeAttachment implements ScopeAttachment {
     private ScopeZoomEffect currentEffect;
 
     public DefaultScopeAttachment(
-            @NotNull BattleContext context,
+            @NotNull GameContext context,
             @NotNull InternalsProvider internals,
             float currentMagnification
     ) {

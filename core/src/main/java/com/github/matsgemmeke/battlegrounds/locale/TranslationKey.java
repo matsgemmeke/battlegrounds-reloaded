@@ -21,7 +21,7 @@ public enum TranslationKey {
     SESSION_NOT_EXISTS("admin.session-not-exists"),
     SESSION_REMOVAL_FAILED("admin.session-removal-failed"),
     SESSION_REMOVED("admin.session-removed"),
-    TRAINING_MODE_WEAPON_GIVEN("commands.training-mode-weapon-given"),
+    WEAPON_GIVEN("commands.weapon-given"),
     WEAPON_NOT_EXISTS("admin.weapon-not-exists");
 
     @NotNull

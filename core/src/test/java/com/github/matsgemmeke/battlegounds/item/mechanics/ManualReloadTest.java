@@ -2,8 +2,8 @@ package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.ManualReload;
@@ -31,7 +31,7 @@ public class ManualReloadTest {
 
     @Test
     public void performReloadWhenGunHasHolder() {
-        BattleContext context = mock(BattleContext.class);
+        GameContext context = mock(GameContext.class);
 
         Gun gun = new DefaultFirearm(context);
         gun.setHolder(holder);
@@ -44,7 +44,7 @@ public class ManualReloadTest {
 
     @Test
     public void cancellingReloadRemovesAllTasksAndResetsGun() {
-        BattleContext context = mock(BattleContext.class);
+        GameContext context = mock(GameContext.class);
         BukkitTask task = mock(BukkitTask.class);
 
         Gun gun = new DefaultFirearm(context);
@@ -64,7 +64,7 @@ public class ManualReloadTest {
 
     @Test
     public void addsSingleAmmoWithEachIteration() {
-        BattleContext context = mock(BattleContext.class);
+        GameContext context = mock(GameContext.class);
 
         Gun gun = new DefaultFirearm(context);
         gun.setMagazineAmmo(0);

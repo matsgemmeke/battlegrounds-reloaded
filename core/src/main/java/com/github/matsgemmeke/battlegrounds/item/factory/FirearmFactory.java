@@ -2,8 +2,8 @@ package com.github.matsgemmeke.battlegrounds.item.factory;
 
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.game.DefaultBattleSound;
@@ -52,7 +52,7 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
     }
 
     @NotNull
-    public Firearm make(@NotNull BattleContext context, @NotNull String id) {
+    public Firearm make(@NotNull GameContext context, @NotNull String id) {
         Section section = itemConfiguration.getSection(id);
 
         if (section == null) {

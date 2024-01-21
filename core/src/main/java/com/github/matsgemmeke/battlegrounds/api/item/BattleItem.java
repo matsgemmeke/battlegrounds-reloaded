@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.api.item;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,12 +12,12 @@ import org.jetbrains.annotations.Nullable;
 public interface BattleItem {
 
     /**
-     * Gets the {@link BattleContext} the item is situated in.
+     * Gets the game context the item is situated in.
      *
-     * @return the item {@link BattleContext}
+     * @return the item's game context
      */
     @NotNull
-    BattleContext getContext();
+    GameContext getContext();
 
     /**
      * Gets the description of the item.

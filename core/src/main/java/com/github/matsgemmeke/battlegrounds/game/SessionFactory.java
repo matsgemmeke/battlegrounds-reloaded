@@ -33,8 +33,6 @@ public class SessionFactory {
         dataConfig.load();
         dataConfig.saveConfiguration(configuration);
 
-        BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
-
-        return new DefaultSession(collisionChecker, id, configuration);
+        return new DefaultSession(id, configuration);
     }
 }

@@ -18,10 +18,10 @@ public interface Battlegrounds extends Plugin {
     BattlegroundsConfig getBattlegroundsConfig();
 
     /**
-     * Gets the context provider of the plugin.
+     * Gets the game provider of the plugin.
      *
-     * @return the context provider
+     * @return the game provider
      */
     @NotNull
-    BattleContextProvider getContextProvider();
+    GameProvider getGameProvider();
 }

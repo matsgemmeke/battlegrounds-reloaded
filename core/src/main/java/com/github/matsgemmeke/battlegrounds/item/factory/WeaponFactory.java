@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item.factory;
 
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Weapon;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,5 +14,5 @@ public interface WeaponFactory<T extends Weapon> {
      * @return a new instance of the corresponding item
      */
     @NotNull
-    T make(@NotNull BattleContext context, @NotNull String id);
+    T make(@NotNull GameContext context, @NotNull String id);
 }

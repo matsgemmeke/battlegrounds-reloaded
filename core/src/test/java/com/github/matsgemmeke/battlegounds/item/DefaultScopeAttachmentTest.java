@@ -3,7 +3,7 @@ package com.github.matsgemmeke.battlegounds.item;
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.item.DefaultScopeAttachment;
 import org.bukkit.entity.Player;
 import org.junit.Before;
@@ -14,13 +14,13 @@ import static org.mockito.Mockito.*;
 
 public class DefaultScopeAttachmentTest {
 
-    private BattleContext context;
     private float magnification;
+    private GameContext context;
     private InternalsProvider internals;
 
     @Before
     public void setUp() {
-        this.context = mock(BattleContext.class);
+        this.context = mock(GameContext.class);
         this.internals = mock(InternalsProvider.class);
         this.magnification = -0.1f;
     }

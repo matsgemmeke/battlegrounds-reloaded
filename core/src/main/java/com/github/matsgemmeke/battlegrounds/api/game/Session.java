@@ -3,7 +3,7 @@ package com.github.matsgemmeke.battlegrounds.api.game;
 /**
  * Represents a session which groups multiple players to play various kinds of game modes.
  */
-public interface Session extends BattleContext {
+public interface Session extends Game {
 
     /**
      * Gets the configuration for the session.

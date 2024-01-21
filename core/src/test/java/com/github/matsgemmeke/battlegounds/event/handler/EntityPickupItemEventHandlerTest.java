@@ -1,8 +1,8 @@
 package com.github.matsgemmeke.battlegounds.event.handler;
 
-import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
+import com.github.matsgemmeke.battlegrounds.api.GameProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.event.handler.EntityPickupItemEventHandler;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -15,12 +15,12 @@ import static org.mockito.Mockito.*;
 
 public class EntityPickupItemEventHandlerTest {
 
-    private BattleContextProvider contextProvider;
+    private GameProvider gameProvider;
     private Item item;
 
     @Before
     public void setUp() {
-        this.contextProvider = mock(BattleContextProvider.class);
+        this.gameProvider = mock(GameProvider.class);
         this.item = mock(Item.class);
     }
 
@@ -30,49 +30,49 @@ public class EntityPickupItemEventHandlerTest {
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(zombie, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(contextProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameProvider);
         eventHandler.handle(event);
     }
 
     @Test
-    public void doNothingIfPlayerIsNotInContext() {
+    public void doNothingIfPlayerIsNotInAnyGame() {
         Player player = mock(Player.class);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(contextProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameProvider);
         eventHandler.handle(event);
     }
 
     @Test
     public void doNothingIfPlayerHasNoBattlePlayerInstance() {
-        BattleContext context = mock(BattleContext.class);
+        Game game = mock(Game.class);
         Player player = mock(Player.class);
 
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(gameProvider.getGame(player)).thenReturn(game);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(contextProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(context, never()).onPickupItem(any(), any());
+        verify(game, never()).onPickupItem(any(), any());
     }
 
     @Test
-    public void callsContextMethodWhenPlayerHasBattlePlayerInstance() {
-        BattleContext context = mock(BattleContext.class);
+    public void callsGameMethodWhenPlayerHasBattlePlayerInstance() {
+        Game game = mock(Game.class);
         BattlePlayer battlePlayer = mock(BattlePlayer.class);
         Player player = mock(Player.class);
 
-        when(context.getBattlePlayer(player)).thenReturn(battlePlayer);
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(game.getBattlePlayer(player)).thenReturn(battlePlayer);
+        when(gameProvider.getGame(player)).thenReturn(game);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(contextProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(context, times(1)).onPickupItem(battlePlayer, event);
+        verify(game, times(1)).onPickupItem(battlePlayer, event);
     }
 }

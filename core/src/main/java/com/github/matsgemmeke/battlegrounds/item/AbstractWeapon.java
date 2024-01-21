@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.OperatingMode;
 import com.github.matsgemmeke.battlegrounds.api.item.Weapon;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ public abstract class AbstractWeapon extends AbstractBattleItem implements Weapo
     @Nullable
     protected OperatingMode currentOperatingMode;
 
-    public AbstractWeapon(@NotNull BattleContext context) {
+    public AbstractWeapon(@NotNull GameContext context) {
         super(context);
     }
 

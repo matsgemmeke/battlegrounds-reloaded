@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegounds.command;
 
-import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
+import com.github.matsgemmeke.battlegrounds.api.GameProvider;
 import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import com.github.matsgemmeke.battlegrounds.command.CreateSessionCommand;
 import com.github.matsgemmeke.battlegrounds.game.SessionFactory;
@@ -17,15 +17,15 @@ import static org.mockito.Mockito.*;
 
 public class CreateSessionCommandTest {
 
-    private BattleContextProvider contextProvider;
     private CommandSender sender;
+    private GameProvider gameProvider;
     private SessionFactory sessionFactory;
     private Translator translator;
 
     @Before
     public void setUp() throws IOException {
-        this.contextProvider = mock(BattleContextProvider.class);
         this.sender = mock(CommandSender.class);
+        this.gameProvider = mock(GameProvider.class);
         this.sessionFactory = mock(SessionFactory.class);
         this.translator = mock(Translator.class);
 
@@ -37,10 +37,10 @@ public class CreateSessionCommandTest {
         int gameId = 1;
         String message = "test";
 
-        when(contextProvider.addSession(any())).thenReturn(true);
+        when(gameProvider.addSession(any())).thenReturn(true);
         when(translator.translate(eq(TranslationKey.SESSION_CREATED.getPath()), any(PlaceholderEntry.class))).thenReturn(message);
 
-        CreateSessionCommand command = new CreateSessionCommand(contextProvider, sessionFactory, translator);
+        CreateSessionCommand command = new CreateSessionCommand(gameProvider, sessionFactory, translator);
         command.execute(sender, gameId);
 
         verify(sender).sendMessage(message);
@@ -51,10 +51,10 @@ public class CreateSessionCommandTest {
         int gameId = 1;
         String message = "test";
 
-        when(contextProvider.addSession(any(Session.class))).thenReturn(false);
+        when(gameProvider.addSession(any(Session.class))).thenReturn(false);
         when(translator.translate(eq(TranslationKey.SESSION_CREATION_FAILED.getPath()), any(PlaceholderEntry.class))).thenReturn(message);
 
-        CreateSessionCommand command = new CreateSessionCommand(contextProvider, sessionFactory, translator);
+        CreateSessionCommand command = new CreateSessionCommand(gameProvider, sessionFactory, translator);
         command.execute(sender, gameId);
 
         verify(sender).sendMessage(message);

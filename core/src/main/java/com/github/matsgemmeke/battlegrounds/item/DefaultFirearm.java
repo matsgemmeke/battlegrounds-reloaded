@@ -2,8 +2,8 @@ package com.github.matsgemmeke.battlegrounds.item;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.entity.Hitbox;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
@@ -25,7 +25,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     private Iterable<BattleSound> shotSounds;
     private Iterable<BattleSound> triggerSounds;
 
-    public DefaultFirearm(@NotNull BattleContext context) {
+    public DefaultFirearm(@NotNull GameContext context) {
         super(context);
     }
 
@@ -204,9 +204,10 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
             Vector vector = direction.getDirection().multiply(distance);
             direction.add(vector);
 
+            Block block = direction.getBlock();
+
             // Check if the projectile's current location causes a collision
-            if (context.producesCollisionAt(direction)) {
-                Block block = direction.getBlock();
+            if (context.producesCollisionAt(block, direction)) {
                 block.getWorld().playEffect(direction, Effect.STEP_SOUND, block.getType());
                 break;
             }

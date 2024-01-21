@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegrounds;
 
-import com.github.matsgemmeke.battlegrounds.api.BattleContextProvider;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.GameProvider;
+import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import org.bukkit.entity.Player;
@@ -11,14 +11,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class DefaultBattleContextProvider implements BattleContextProvider {
+public class DefaultGameProvider implements GameProvider {
 
     @NotNull
     private Map<Integer, Session> sessions;
     @Nullable
     private TrainingMode trainingMode;
 
-    public DefaultBattleContextProvider() {
+    public DefaultGameProvider() {
         this.sessions = new HashMap<>();
     }
 
@@ -38,7 +38,7 @@ public class DefaultBattleContextProvider implements BattleContextProvider {
     }
 
     @Nullable
-    public BattleContext getContext(@NotNull Player player) {
+    public Game getGame(@NotNull Player player) {
         if (trainingMode != null && trainingMode.hasPlayer(player)) {
             return trainingMode;
         }
@@ -53,7 +53,7 @@ public class DefaultBattleContextProvider implements BattleContextProvider {
     }
 
     @NotNull
-    public Collection<BattleContext> getContexts() {
+    public Collection<Game> getGames() {
         return Stream.concat(Stream.of(trainingMode), sessions.values().stream()).toList();
     }
 

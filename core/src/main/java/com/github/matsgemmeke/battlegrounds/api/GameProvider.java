@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.api;
 
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
+import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import org.bukkit.entity.Player;
@@ -10,9 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 /**
- * Stores and provides {@link BattleContext} instances to outside classes.
+ * Stores and provides {@link Game} instances to outside classes.
  */
-public interface BattleContextProvider {
+public interface GameProvider {
 
     /**
      * Adds a {@link Session} instance to the provider.
@@ -31,24 +31,24 @@ public interface BattleContextProvider {
     boolean assignTrainingMode(@NotNull TrainingMode trainingMode);
 
     /**
-     * Gets the {@link BattleContext} a player is currently in. Returns null if the player is not in any of the
+     * Gets the {@link Game} a player is currently in. Returns null if the player is not in any of the
      * registered contexts.
      *
      * @param player the player
      * @return the context the player is currently or null if the player is not present in any
      */
     @Nullable
-    BattleContext getContext(@NotNull Player player);
+    Game getGame(@NotNull Player player);
 
     /**
-     * Gathers all context instances and returns them as an immutable collection. This collection should not be used to
+     * Gathers all game instances and returns them as an immutable collection. This collection should not be used to
      * add and remove instances from the manager. Use the {@code add} and {@code remove} methods instead for these
      * tasks.
      *
-     * @return an immutable collection of context instances
+     * @return an immutable collection of game instances
      */
     @NotNull
-    Collection<BattleContext> getContexts();
+    Collection<Game> getGames();
 
     /**
      * Gets a {@link Session} instance with a specific id from the provider. Returns null if the provider does not

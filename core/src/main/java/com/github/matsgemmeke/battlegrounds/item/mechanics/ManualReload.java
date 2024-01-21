@@ -2,8 +2,8 @@ package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleContext;
 import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +37,7 @@ public class ManualReload implements ReloadSystem {
     }
 
     public boolean activate(@NotNull BattleItemHolder holder) {
-        BattleContext context = gun.getContext();
+        GameContext context = gun.getContext();
 
         gun.setCurrentOperatingMode(this);
 
