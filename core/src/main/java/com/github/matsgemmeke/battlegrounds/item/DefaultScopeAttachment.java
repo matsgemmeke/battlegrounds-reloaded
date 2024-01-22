@@ -1,10 +1,10 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.api.item.ScopeAttachment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,17 +13,17 @@ import java.util.Collection;
 
 public class DefaultScopeAttachment implements ScopeAttachment {
 
-    @Nullable
-    private BattlePlayer currentPlayer;
     @NotNull
     private Collection<Float> magnificationSettings;
     private float currentMagnification;
     @NotNull
     private GameContext context;
+    @Nullable
+    private GamePlayer currentPlayer;
     @NotNull
     private InternalsProvider internals;
-    private Iterable<BattleSound> stopUseSounds;
-    private Iterable<BattleSound> useSounds;
+    private Iterable<GameSound> stopUseSounds;
+    private Iterable<GameSound> useSounds;
     @Nullable
     private ScopeZoomEffect currentEffect;
 
@@ -41,40 +41,40 @@ public class DefaultScopeAttachment implements ScopeAttachment {
         return currentMagnification;
     }
 
-    public Iterable<BattleSound> getStopUseSounds() {
+    public Iterable<GameSound> getStopUseSounds() {
         return stopUseSounds;
     }
 
-    public void setStopUseSounds(Iterable<BattleSound> stopUseSounds) {
+    public void setStopUseSounds(Iterable<GameSound> stopUseSounds) {
         this.stopUseSounds = stopUseSounds;
     }
 
-    public Iterable<BattleSound> getUseSounds() {
+    public Iterable<GameSound> getUseSounds() {
         return useSounds;
     }
 
-    public void setUseSounds(Iterable<BattleSound> useSounds) {
+    public void setUseSounds(Iterable<GameSound> useSounds) {
         this.useSounds = useSounds;
     }
 
-    public boolean applyEffect(@NotNull BattleItemHolder holder) {
+    public boolean applyEffect(@NotNull ItemHolder holder) {
         // Do not apply the effect if one is already being used
         if (currentEffect != null) {
             return false;
         }
 
-        if (!(holder instanceof BattlePlayer battlePlayer)) {
+        if (!(holder instanceof GamePlayer gamePlayer)) {
             return false;
         }
 
-        context.playSounds(useSounds, battlePlayer.getEntity().getLocation());
+        context.playSounds(useSounds, gamePlayer.getEntity().getLocation());
 
-        currentEffect = new ScopeZoomEffect(battlePlayer.getEntity(), internals, currentMagnification);
+        currentEffect = new ScopeZoomEffect(gamePlayer.getEntity(), internals, currentMagnification);
         currentEffect.apply();
 
-        currentPlayer = battlePlayer;
+        currentPlayer = gamePlayer;
 
-        return battlePlayer.addEffect(currentEffect);
+        return gamePlayer.addEffect(currentEffect);
     }
 
     public boolean isScoped() {

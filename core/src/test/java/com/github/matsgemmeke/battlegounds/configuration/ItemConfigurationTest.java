@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegounds.configuration;
 
-import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
+import com.github.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-public class BattleItemConfigurationTest {
+public class ItemConfigurationTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -33,7 +33,7 @@ public class BattleItemConfigurationTest {
         File resourceFile = new File("src/main/resources/items/guns.yml");
         InputStream resource = new FileInputStream(resourceFile);
 
-        BattleItemConfiguration configuration = new BattleItemConfiguration(configFile, resource);
+        ItemConfiguration configuration = new ItemConfiguration(configFile, resource);
         configuration.load();
 
         Set<String> idList = configuration.getIdList();

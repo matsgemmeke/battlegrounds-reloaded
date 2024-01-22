@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An entity object which holds information and can perform actions in Battlegrounds.
  */
-public interface BattleEntity {
+public interface GameEntity {
 
     /**
      * Gets the bukkit entity object of the entity.

@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegrounds.api.item;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 
 /**
- * Represents an effect on a {@link BattleItem} that is able to influence a {@link BattlePlayer}.
+ * Represents an effect on a {@link Item} that is able to influence a {@link GamePlayer}.
  */
 public interface PlayerEffect {
 

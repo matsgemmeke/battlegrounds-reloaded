@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.api.game;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -15,22 +15,22 @@ import org.jetbrains.annotations.Nullable;
 public interface Game {
 
     /**
-     * Adds a player to the context and creates a {@link BattlePlayer} instance.
+     * Adds a player to the context and creates a {@link GamePlayer} instance.
      *
      * @param player the player to add
-     * @return the created {@link BattlePlayer} instance
+     * @return the created {@link GamePlayer} instance
      */
     @NotNull
-    BattlePlayer addPlayer(@NotNull Player player);
+    GamePlayer addPlayer(@NotNull Player player);
 
     /**
-     * Finds the {@link BattlePlayer} instance for a player entity. Returns null if there is no entry for the player.
+     * Finds the {@link GamePlayer} instance for a player entity. Returns null if there is no entry for the player.
      *
      * @param player the player entity
-     * @return the {@link BattlePlayer} entry or null if there is none for the player
+     * @return the {@link GamePlayer} entry or null if there is none for the player
      */
     @Nullable
-    BattlePlayer getBattlePlayer(@NotNull Player player);
+    GamePlayer getGamePlayer(@NotNull Player player);
 
     /**
      * Gets whether a player is present in the context.
@@ -43,36 +43,36 @@ public interface Game {
     /**
      * Executes logic that handles item interactions by players.
      *
-     * @param battlePlayer the player
+     * @param gamePlayer the player
      * @param event the event
      * @return whether the context has accepted the event
      */
-    boolean onInteract(@NotNull BattlePlayer battlePlayer, @NotNull PlayerInteractEvent event);
+    boolean onInteract(@NotNull GamePlayer gamePlayer, @NotNull PlayerInteractEvent event);
 
     /**
      * Executes logic that handles item drops by players.
      *
-     * @param battlePlayer the player
+     * @param gamePlayer the player
      * @param event the event
      * @return whether the context has accepted the event
      */
-    boolean onItemDrop(@NotNull BattlePlayer battlePlayer, @NotNull PlayerDropItemEvent event);
+    boolean onItemDrop(@NotNull GamePlayer gamePlayer, @NotNull PlayerDropItemEvent event);
 
     /**
      * Executes logic that handles switching of held items by players.
      *
-     * @param battlePlayer the player
+     * @param gamePlayer the player
      * @param event the event
      * @return whether the context has accepted the event
      */
-    boolean onItemHeld(@NotNull BattlePlayer battlePlayer, @NotNull PlayerItemHeldEvent event);
+    boolean onItemHeld(@NotNull GamePlayer gamePlayer, @NotNull PlayerItemHeldEvent event);
 
     /**
      * Executes logic that handles item pickups by players.
      *
-     * @param battlePlayer the player
+     * @param gamePlayer the player
      * @param event the event
      * @return whether the context has accepted the event
      */
-    boolean onPickupItem(@NotNull BattlePlayer battlePlayer, @NotNull EntityPickupItemEvent event);
+    boolean onPickupItem(@NotNull GamePlayer gamePlayer, @NotNull EntityPickupItemEvent event);
 }

@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegounds.event.handler;
 
 import com.github.matsgemmeke.battlegrounds.api.GameProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerDropItemEventHandler;
 import org.bukkit.entity.Item;
@@ -35,7 +35,7 @@ public class PlayerDropItemEventHandlerTest {
     }
 
     @Test
-    public void doNothingIfPlayerHasNoBattlePlayerInstance() {
+    public void doNothingIfPlayerHasNoGamePlayerInstance() {
         Game game = mock(Game.class);
 
         when(gameProvider.getGame(player)).thenReturn(game);
@@ -49,15 +49,15 @@ public class PlayerDropItemEventHandlerTest {
     @Test
     public void sendEventToContext() {
         Game game = mock(Game.class);
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(game.getBattlePlayer(player)).thenReturn(battlePlayer);
-        when(game.onItemDrop(battlePlayer, event)).thenReturn(false);
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
+        when(game.onItemDrop(gamePlayer, event)).thenReturn(false);
         when(gameProvider.getGame(player)).thenReturn(game);
 
         PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(game, times(1)).onItemDrop(battlePlayer, event);
+        verify(game, times(1)).onItemDrop(gamePlayer, event);
     }
 }

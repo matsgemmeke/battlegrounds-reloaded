@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegounds.game;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.entity.GameEntity;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import com.github.matsgemmeke.battlegrounds.game.DefaultTrainingModeContext;
 import org.bukkit.Location;
@@ -31,11 +31,11 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void returnsNoTargetsIfGivenLocationHasNoWorld() {
-        BattleEntity entity = mock(BattleEntity.class);
+        GameEntity entity = mock(GameEntity.class);
         Location location = new Location(null, 1.0, 1.0, 1.0);
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(collisionChecker);
-        Collection<BattleEntity> targets = context.getTargets(entity, location, 0.1);
+        Collection<GameEntity> targets = context.getTargets(entity, location, 0.1);
 
         assertEquals(0, targets.size());
     }
@@ -44,7 +44,7 @@ public class DefaultTrainingModeContextTest {
     public void returnsListOfTargetsBasedOnNearbyEntities() {
         double range = 0.1;
 
-        BattleEntity entity = mock(BattleEntity.class);
+        GameEntity entity = mock(GameEntity.class);
         World world = mock(World.class);
 
         List<Entity> nearbyEntities = Collections.singletonList(mock(Player.class));
@@ -53,14 +53,14 @@ public class DefaultTrainingModeContextTest {
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(nearbyEntities);
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(collisionChecker);
-        Collection<BattleEntity> targets = context.getTargets(entity, location, range);
+        Collection<GameEntity> targets = context.getTargets(entity, location, range);
 
         assertEquals(1, targets.size());
     }
 
     @Test
     public void doesNotPlaySoundIfGivenLocationHasNoWorld() {
-        BattleSound sound = mock(BattleSound.class);
+        GameSound sound = mock(GameSound.class);
 
         Location location = new Location(null, 1.0, 1.0, 1.0);
 
@@ -72,7 +72,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldPlaySoundToAllPlayersInTheWorldOfTheLocation() {
-        BattleSound sound = mock(BattleSound.class);
+        GameSound sound = mock(GameSound.class);
         Player player = mock(Player.class);
 
         World world = mock(World.class);

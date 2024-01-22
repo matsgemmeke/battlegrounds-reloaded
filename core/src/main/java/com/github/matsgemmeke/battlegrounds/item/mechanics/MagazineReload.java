@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class MagazineReload implements ReloadSystem {
     private Gun gun;
     private int duration;
     @NotNull
-    private Iterable<BattleSound> reloadSounds;
+    private Iterable<GameSound> reloadSounds;
     @NotNull
     private List<BukkitTask> currentTasks;
     @NotNull
@@ -26,7 +26,7 @@ public class MagazineReload implements ReloadSystem {
     public MagazineReload(
             @NotNull TaskRunner taskRunner,
             @NotNull Gun gun,
-            @NotNull Iterable<BattleSound> reloadSounds,
+            @NotNull Iterable<GameSound> reloadSounds,
             int duration
     ) {
         this.taskRunner = taskRunner;
@@ -36,14 +36,14 @@ public class MagazineReload implements ReloadSystem {
         this.currentTasks = new ArrayList<>();
     }
 
-    public boolean activate(@NotNull BattleItemHolder holder) {
+    public boolean activate(@NotNull ItemHolder holder) {
         GameContext context = gun.getContext();
 
         gun.setCurrentOperatingMode(this);
 
         holder.applyOperatingState(true);
 
-        for (BattleSound sound : reloadSounds) {
+        for (GameSound sound : reloadSounds) {
             currentTasks.add(taskRunner.runTaskLater(() -> {
                 context.playSound(sound, holder.getEntity().getLocation());
             }, sound.getDelay()));
@@ -53,7 +53,7 @@ public class MagazineReload implements ReloadSystem {
         return true;
     }
 
-    public void cancel(@NotNull BattleItemHolder holder) {
+    public void cancel(@NotNull ItemHolder holder) {
         for (BukkitTask task : currentTasks) {
             task.cancel();
         }
@@ -65,7 +65,7 @@ public class MagazineReload implements ReloadSystem {
         holder.applyOperatingState(false);
     }
 
-    public void performReload(@NotNull BattleItemHolder holder) {
+    public void performReload(@NotNull ItemHolder holder) {
         int magazineAmmo = gun.getMagazineAmmo();
         int magazineSize = gun.getMagazineSize();
         int magazineSpace = magazineSize - magazineAmmo;

@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public class FullyAutomaticMode implements FireMode {
         this.rateOfFire = rateOfFire;
     }
 
-    public boolean activate(@NotNull BattleItemHolder holder) {
+    public boolean activate(@NotNull ItemHolder holder) {
         gun.setCurrentOperatingMode(this);
 
         // The amount of interaction events per second received when holding down the right mouse button
@@ -46,7 +46,7 @@ public class FullyAutomaticMode implements FireMode {
         return true;
     }
 
-    public void cancel(@NotNull BattleItemHolder holder) {
+    public void cancel(@NotNull ItemHolder holder) {
         gun.setCurrentOperatingMode(null);
 
         if (currentTask == null) {

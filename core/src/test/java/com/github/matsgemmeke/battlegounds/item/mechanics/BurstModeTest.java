@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.BurstMode;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -13,15 +13,15 @@ import static org.mockito.Mockito.*;
 
 public class BurstModeTest {
 
-    private BattleItemHolder holder;
     private Firearm firearm;
+    private ItemHolder holder;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
-        this.holder = mock(BattleItemHolder.class);
-        this.taskRunner = mock(TaskRunner.class);
         this.firearm = mock(Firearm.class);
+        this.holder = mock(ItemHolder.class);
+        this.taskRunner = mock(TaskRunner.class);
     }
 
     @Test
@@ -48,8 +48,8 @@ public class BurstModeTest {
 
     @Test
     public void cancelingStopsCurrentCycle() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
         BukkitTask task = mock(BukkitTask.class);
+        ItemHolder holder = mock(ItemHolder.class);
 
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
 

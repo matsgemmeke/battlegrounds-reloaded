@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegounds.item;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.entity.GameEntity;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.api.item.OperatingMode;
 import com.github.matsgemmeke.battlegrounds.api.item.ScopeAttachment;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
@@ -25,13 +25,13 @@ import static org.mockito.Mockito.*;
 
 public class DefaultFirearmTest {
 
-    private BattleItemHolder holder;
     private GameContext context;
+    private ItemHolder holder;
 
     @Before
     public void setUp() {
-        this.holder = mock(BattleItemHolder.class);
         this.context = mock(GameContext.class);
+        this.holder = mock(ItemHolder.class);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void playsTriggerSoundWhenRightClickingWithEmptyMagazine() {
-        List<BattleSound> triggerSounds = Collections.emptyList();
+        List<GameSound> triggerSounds = Collections.emptyList();
         LivingEntity entity = mock(LivingEntity.class);
 
         when(holder.getEntity()).thenReturn(entity);
@@ -168,7 +168,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtShortDistanceTarget() {
-        List<BattleSound> shotSounds = Collections.emptyList();
+        List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
         Location holderLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
@@ -181,10 +181,10 @@ public class DefaultFirearmTest {
         LivingEntity targetEntity = mock(LivingEntity.class);
         when(targetEntity.getLocation()).thenReturn(targetLocation);
 
-        BattleEntity target = mock(BattleEntity.class);
+        GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        List<BattleEntity> targets = Collections.singletonList(target);
+        List<GameEntity> targets = Collections.singletonList(target);
 
         when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
 
@@ -204,7 +204,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtMediumDistanceTarget() {
-        List<BattleSound> shotSounds = Collections.emptyList();
+        List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
         Location holderLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
@@ -217,10 +217,10 @@ public class DefaultFirearmTest {
         LivingEntity targetEntity = mock(LivingEntity.class);
         when(targetEntity.getLocation()).thenReturn(targetLocation);
 
-        BattleEntity target = mock(BattleEntity.class);
+        GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        List<BattleEntity> targets = Collections.singletonList(target);
+        List<GameEntity> targets = Collections.singletonList(target);
 
         when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
 
@@ -240,7 +240,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtLongDistanceTarget() {
-        List<BattleSound> shotSounds = Collections.emptyList();
+        List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
         Location holderLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
@@ -253,10 +253,10 @@ public class DefaultFirearmTest {
         LivingEntity targetEntity = mock(LivingEntity.class);
         when(targetEntity.getLocation()).thenReturn(targetLocation);
 
-        BattleEntity target = mock(BattleEntity.class);
+        GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        List<BattleEntity> targets = Collections.singletonList(target);
+        List<GameEntity> targets = Collections.singletonList(target);
 
         when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
 
@@ -276,7 +276,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtTargetWithHeadshotDamageMultiplier() {
-        List<BattleSound> shotSounds = Collections.emptyList();
+        List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
         Location holderLocation = new Location(world, 1.0, 2.0, 1.0, 0.0F, 0.0F);
@@ -289,10 +289,10 @@ public class DefaultFirearmTest {
         LivingEntity targetEntity = mock(LivingEntity.class);
         when(targetEntity.getLocation()).thenReturn(targetLocation);
 
-        BattleEntity target = mock(BattleEntity.class);
+        GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        List<BattleEntity> targets = Collections.singletonList(target);
+        List<GameEntity> targets = Collections.singletonList(target);
 
         when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
 
@@ -313,7 +313,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtSolidBlock() {
-        List<BattleSound> shotSounds = Collections.emptyList();
+        List<GameSound> shotSounds = Collections.emptyList();
 
         Block block = mock(Block.class);
         World world = mock(World.class);
@@ -344,7 +344,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void displaysParticlesAtProjectileTrajectory() {
-        List<BattleSound> shotSounds = Collections.emptyList();
+        List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
         Location holderLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);

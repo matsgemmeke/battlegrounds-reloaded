@@ -1,10 +1,10 @@
 package com.github.matsgemmeke.battlegounds.command;
 
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.command.GiveWeaponCommand;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.WeaponFactory;
 import com.github.matsgemmeke.battlegrounds.locale.TranslationKey;
@@ -18,9 +18,9 @@ import static org.mockito.Mockito.*;
 
 public class GiveWeaponCommandTest {
 
-    private BattlePlayer battlePlayer;
     private Game game;
     private GameContext context;
+    private GamePlayer gamePlayer;
     private Player player;
     private PlayerInventory inventory;
     private Translator translator;
@@ -28,15 +28,15 @@ public class GiveWeaponCommandTest {
 
     @Before
     public void setUp() {
-        this.battlePlayer = mock(BattlePlayer.class);
         this.game = mock(Game.class);
         this.context = mock(GameContext.class);
+        this.gamePlayer = mock(GamePlayer.class);
         this.player = mock(Player.class);
         this.inventory = mock(PlayerInventory.class);
         this.translator = mock(Translator.class);
         this.weaponProvider = mock(WeaponProvider.class);
 
-        when(game.getBattlePlayer(player)).thenReturn(battlePlayer);
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(player.getInventory()).thenReturn(inventory);
         when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn("description");
     }

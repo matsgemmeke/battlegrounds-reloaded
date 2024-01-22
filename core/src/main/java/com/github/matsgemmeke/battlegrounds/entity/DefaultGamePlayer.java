@@ -1,8 +1,8 @@
 package com.github.matsgemmeke.battlegrounds.entity;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Team;
-import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
+import com.github.matsgemmeke.battlegrounds.api.item.Item;
 import com.github.matsgemmeke.battlegrounds.api.item.PlayerEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DefaultBattlePlayer implements BattlePlayer {
+public class DefaultGamePlayer implements GamePlayer {
 
     private static final int OPERATING_FOOD_LEVEL = 6;
 
@@ -20,13 +20,13 @@ public class DefaultBattlePlayer implements BattlePlayer {
     @NotNull
     private Player player;
     @NotNull
-    private Set<BattleItem> items;
+    private Set<Item> items;
     @NotNull
     private Set<PlayerEffect> effects;
     @Nullable
     private Team team;
 
-    public DefaultBattlePlayer(@NotNull Player player) {
+    public DefaultGamePlayer(@NotNull Player player) {
         this.player = player;
         this.effects = new HashSet<>();
         this.items = new HashSet<>();
@@ -54,7 +54,7 @@ public class DefaultBattlePlayer implements BattlePlayer {
         return effects.remove(effect);
     }
 
-    public boolean addItem(@NotNull BattleItem item) {
+    public boolean addItem(@NotNull Item item) {
         return items.add(item);
     }
 
@@ -72,8 +72,8 @@ public class DefaultBattlePlayer implements BattlePlayer {
     }
 
     @Nullable
-    public BattleItem getBattleItem(@NotNull ItemStack itemStack) {
-        for (BattleItem item : items) {
+    public Item getItem(@NotNull ItemStack itemStack) {
+        for (Item item : items) {
             if (item.getItemStack() != null && item.getItemStack().isSimilar(itemStack)) {
                 return item;
             }
@@ -91,7 +91,7 @@ public class DefaultBattlePlayer implements BattlePlayer {
         return 1.0;
     }
 
-    public boolean removeItem(@NotNull BattleItem item) {
+    public boolean removeItem(@NotNull Item item) {
         return items.remove(item);
     }
 

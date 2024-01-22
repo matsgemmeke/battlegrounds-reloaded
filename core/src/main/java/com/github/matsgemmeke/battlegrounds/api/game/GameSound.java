@@ -4,9 +4,9 @@ import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a sound produced inside a {@link BattleContext}.
+ * Represents a sound produced inside a {@link Game} instance.
  */
-public interface BattleSound {
+public interface GameSound {
 
     /**
      * Gets the delay of the sound in ticks.

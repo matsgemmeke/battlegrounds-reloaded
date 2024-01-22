@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegounds.event.handler;
 
 import com.github.matsgemmeke.battlegrounds.api.GameProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Game;
-import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
+import com.github.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerItemHeldEventHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -14,8 +14,8 @@ import static org.mockito.Mockito.*;
 
 public class PlayerItemHeldEventHandlerTest {
 
-    private BattlePlayer battlePlayer;
     private Game game;
+    private GamePlayer gamePlayer;
     private GameProvider gameProvider;
     private Player player;
     private PlayerItemHeldEvent event;
@@ -26,7 +26,7 @@ public class PlayerItemHeldEventHandlerTest {
         this.gameProvider = mock(GameProvider.class);
         this.player = mock(Player.class);
 
-        this.battlePlayer = new DefaultBattlePlayer(player);
+        this.gamePlayer = new DefaultGamePlayer(player);
         this.event = new PlayerItemHeldEvent(player, 0, 1);
     }
 
@@ -35,27 +35,27 @@ public class PlayerItemHeldEventHandlerTest {
         PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(game, never()).onItemHeld(battlePlayer, event);
+        verify(game, never()).onItemHeld(gamePlayer, event);
     }
 
     @Test
-    public void doesNothingWithPlayerWithoutBattlePlayerInstance() {
+    public void doesNothingWithPlayerWithoutGamePlayerInstance() {
         when(gameProvider.getGame(player)).thenReturn(game);
 
         PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(game, never()).onItemHeld(battlePlayer, event);
+        verify(game, never()).onItemHeld(gamePlayer, event);
     }
 
     @Test
-    public void callsBattleContextMethodWhenPlayerHasBattlePlayerInstance() {
-        when(game.getBattlePlayer(player)).thenReturn(battlePlayer);
+    public void callsGameMethodWhenPlayerHasGamePlayerInstance() {
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(gameProvider.getGame(player)).thenReturn(game);
 
         PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(game).onItemHeld(battlePlayer, event);
+        verify(game).onItemHeld(gamePlayer, event);
     }
 }

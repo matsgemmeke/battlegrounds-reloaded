@@ -1,10 +1,10 @@
 package com.github.matsgemmeke.battlegrounds.entity;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
+import com.github.matsgemmeke.battlegrounds.api.entity.GameEntity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class TrainingModeEntity implements BattleEntity {
+public class TrainingModeEntity implements GameEntity {
 
     private static final double RELATIVE_ACCURACY = 1.0;
 

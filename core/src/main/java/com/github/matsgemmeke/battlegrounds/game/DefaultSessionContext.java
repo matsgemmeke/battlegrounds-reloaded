@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
+import com.github.matsgemmeke.battlegrounds.api.entity.GameEntity;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ public class DefaultSessionContext extends AbstractGameContext {
     }
 
     @NotNull
-    public Collection<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range) {
+    public Collection<GameEntity> getTargets(@NotNull GameEntity gameEntity, @NotNull Location location, double range) {
         return Collections.emptyList();
     }
 }

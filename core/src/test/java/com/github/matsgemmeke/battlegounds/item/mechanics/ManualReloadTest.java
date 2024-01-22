@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.ManualReload;
@@ -18,15 +18,15 @@ import static org.mockito.Mockito.*;
 
 public class ManualReloadTest {
 
-    private BattleItemHolder holder;
-    private Iterable<BattleSound> reloadSounds;
+    private ItemHolder holder;
+    private Iterable<GameSound> reloadSounds;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
-        this.holder = mock(BattleItemHolder.class);
+        this.holder = mock(ItemHolder.class);
         this.taskRunner = mock(TaskRunner.class);
-        this.reloadSounds = Collections.singletonList(mock(BattleSound.class));
+        this.reloadSounds = Collections.singletonList(mock(GameSound.class));
     }
 
     @Test

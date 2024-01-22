@@ -1,8 +1,8 @@
 package com.github.matsgemmeke.battlegounds.item;
 
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.item.DefaultScopeAttachment;
 import org.bukkit.entity.Player;
@@ -27,22 +27,22 @@ public class DefaultScopeAttachmentTest {
 
     @Test
     public void doesNotApplyEffectIfAlreadyBeingUsed() {
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         Player player = mock(Player.class);
 
-        when(battlePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getEntity()).thenReturn(player);
 
         DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(context, internals, magnification);
-        scopeAttachment.applyEffect(battlePlayer);
+        scopeAttachment.applyEffect(gamePlayer);
 
-        boolean applied = scopeAttachment.applyEffect(battlePlayer);
+        boolean applied = scopeAttachment.applyEffect(gamePlayer);
 
         assertFalse(applied);
     }
 
     @Test
     public void doesNotApplyEffectToEntitiesOtherThanPlayers() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
+        ItemHolder holder = mock(ItemHolder.class);
 
         DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(context, internals, magnification);
         boolean applied = scopeAttachment.applyEffect(holder);
@@ -51,17 +51,17 @@ public class DefaultScopeAttachmentTest {
     }
 
     @Test
-    public void appliesEffectAndAddsItToBattlePlayer() {
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+    public void appliesEffectAndAddsItToGamePlayer() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         Player player = mock(Player.class);
 
-        when(battlePlayer.addEffect(any())).thenReturn(true);
-        when(battlePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.addEffect(any())).thenReturn(true);
+        when(gamePlayer.getEntity()).thenReturn(player);
 
         DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(context, internals, magnification);
-        boolean applied = scopeAttachment.applyEffect(battlePlayer);
+        boolean applied = scopeAttachment.applyEffect(gamePlayer);
 
-        verify(battlePlayer, times(1)).addEffect(any());
+        verify(gamePlayer, times(1)).addEffect(any());
 
         assertTrue(applied);
     }
@@ -76,13 +76,13 @@ public class DefaultScopeAttachmentTest {
 
     @Test
     public void isScopedWhenEffectApplied() {
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         Player player = mock(Player.class);
 
-        when(battlePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getEntity()).thenReturn(player);
 
         DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(context, internals, magnification);
-        scopeAttachment.applyEffect(battlePlayer);
+        scopeAttachment.applyEffect(gamePlayer);
         boolean scoped = scopeAttachment.isScoped();
 
         assertTrue(scoped);
@@ -98,16 +98,16 @@ public class DefaultScopeAttachmentTest {
 
     @Test
     public void removingScopeAlsoRemovesEffect() {
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         Player player = mock(Player.class);
 
-        when(battlePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getEntity()).thenReturn(player);
 
         DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(context, internals, magnification);
-        scopeAttachment.applyEffect(battlePlayer);
+        scopeAttachment.applyEffect(gamePlayer);
         boolean removed = scopeAttachment.removeEffect();
 
-        verify(battlePlayer, times(1)).removeEffect(any());
+        verify(gamePlayer, times(1)).removeEffect(any());
 
         assertTrue(removed);
     }

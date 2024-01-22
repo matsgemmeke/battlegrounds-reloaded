@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ public class SemiAutomaticMode implements FireMode {
         this.coolingDown = false;
     }
 
-    public boolean activate(@NotNull BattleItemHolder holder) {
+    public boolean activate(@NotNull ItemHolder holder) {
         if (coolingDown) {
             return false;
         }
@@ -32,7 +32,7 @@ public class SemiAutomaticMode implements FireMode {
         return true;
     }
 
-    public void cancel(@NotNull BattleItemHolder holder) {
+    public void cancel(@NotNull ItemHolder holder) {
         coolingDown = false;
     }
 }

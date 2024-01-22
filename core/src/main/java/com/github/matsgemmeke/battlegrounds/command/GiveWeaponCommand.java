@@ -1,11 +1,11 @@
 package com.github.matsgemmeke.battlegrounds.command;
 
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.locale.PlaceholderEntry;
 import com.github.matsgemmeke.battlegrounds.locale.TranslationKey;
 import com.github.matsgemmeke.battlegrounds.locale.Translator;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
 import com.github.matsgemmeke.battlegrounds.api.item.Weapon;
 import com.github.matsgemmeke.battlegrounds.item.WeaponProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.WeaponFactory;
@@ -40,10 +40,10 @@ public class GiveWeaponCommand extends CommandSource {
         WeaponFactory<?> weaponFactory = weaponProvider.getWeaponFactory(weaponId.toUpperCase());
         Weapon weapon = weaponFactory.make(context, weaponId);
 
-        BattlePlayer battlePlayer = game.getBattlePlayer(player);
-        battlePlayer.addItem(weapon);
+        GamePlayer gamePlayer = game.getGamePlayer(player);
+        gamePlayer.addItem(weapon);
 
-        weapon.setHolder(battlePlayer);
+        weapon.setHolder(gamePlayer);
 
         player.getInventory().addItem(weapon.getItemStack());
 

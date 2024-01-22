@@ -4,10 +4,10 @@ import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
-import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
+import com.github.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.item.factory.FireModeFactory;
 import com.github.matsgemmeke.battlegrounds.item.factory.FirearmFactory;
-import com.github.matsgemmeke.battlegrounds.item.factory.InvalidBattleItemFormatException;
+import com.github.matsgemmeke.battlegrounds.item.factory.InvalidItemFormatException;
 import com.github.matsgemmeke.battlegrounds.item.factory.ReloadSystemFactory;
 import com.github.matsgemmeke.battlegrounds.item.recoil.RecoilSystemFactory;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
@@ -28,20 +28,20 @@ import static org.mockito.Mockito.*;
 public class FirearmFactoryTest {
 
     private BattlegroundsConfig config;
-    private BattleItemConfiguration itemConfiguration;
     private FireModeFactory fireModeFactory;
     private GameContext context;
     private InternalsProvider internals;
+    private ItemConfiguration itemConfiguration;
     private RecoilSystemFactory recoilSystemFactory;
     private ReloadSystemFactory reloadSystemFactory;
 
     @Before
     public void setUp() {
         this.config = mock(BattlegroundsConfig.class);
-        this.itemConfiguration = mock(BattleItemConfiguration.class);
         this.fireModeFactory = mock(FireModeFactory.class);
         this.context = mock(GameContext.class);
         this.internals = mock(InternalsProvider.class);
+        this.itemConfiguration = mock(ItemConfiguration.class);
         this.recoilSystemFactory = mock(RecoilSystemFactory.class);
         this.reloadSystemFactory = mock(ReloadSystemFactory.class);
 
@@ -63,7 +63,7 @@ public class FirearmFactoryTest {
         when(config.getFirearmTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(itemConfiguration.getSection(firearmId)).thenReturn(section);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, fireModeFactory, internals, recoilSystemFactory, reloadSystemFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, internals, itemConfiguration, recoilSystemFactory, reloadSystemFactory);
         Firearm firearm = firearmFactory.make(context, firearmId);
 
         assertNotNull(firearm);
@@ -89,7 +89,7 @@ public class FirearmFactoryTest {
         when(config.getFirearmTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(itemConfiguration.getSection(firearmId)).thenReturn(section);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, fireModeFactory, internals, recoilSystemFactory, reloadSystemFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, internals, itemConfiguration, recoilSystemFactory, reloadSystemFactory);
         Firearm firearm = firearmFactory.make(context, firearmId);
 
         assertNotNull(firearm);
@@ -97,9 +97,9 @@ public class FirearmFactoryTest {
         assertNotNull(firearm.getScopeAttachment());
     }
 
-    @Test(expected = InvalidBattleItemFormatException.class)
+    @Test(expected = InvalidItemFormatException.class)
     public void returnsErrorWhenConfigurationDoesNotHaveWeaponId() {
-        FirearmFactory firearmFactory = new FirearmFactory(config, itemConfiguration, fireModeFactory, internals, recoilSystemFactory, reloadSystemFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, internals, itemConfiguration, recoilSystemFactory, reloadSystemFactory);
         firearmFactory.make(context,"unknown");
     }
 }

@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
-import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
-import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.item.Item;
+import com.github.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -20,9 +20,9 @@ import java.util.List;
 public class DefaultTrainingMode extends AbstractGame implements TrainingMode {
 
     @NotNull
-    private List<BattleItem> droppedItems;
+    private List<Item> droppedItems;
     @NotNull
-    private List<BattlePlayer> players;
+    private List<GamePlayer> players;
 
     public DefaultTrainingMode() {
         this.droppedItems = new ArrayList<>();
@@ -30,27 +30,27 @@ public class DefaultTrainingMode extends AbstractGame implements TrainingMode {
     }
 
     @NotNull
-    public BattlePlayer addPlayer(@NotNull Player player) {
-        BattlePlayer battlePlayer = new DefaultBattlePlayer(player);
+    public GamePlayer addPlayer(@NotNull Player player) {
+        GamePlayer gamePlayer = new DefaultGamePlayer(player);
 
-        players.add(battlePlayer);
+        players.add(gamePlayer);
 
-        return battlePlayer;
+        return gamePlayer;
     }
 
     @NotNull
-    public List<BattlePlayer> getPlayers() {
+    public List<GamePlayer> getPlayers() {
         return players;
     }
 
-    public boolean onInteract(@NotNull BattlePlayer battlePlayer, @NotNull PlayerInteractEvent event) {
+    public boolean onInteract(@NotNull GamePlayer gamePlayer, @NotNull PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
 
         if (itemStack == null) {
             return false;
         }
 
-        BattleItem item = battlePlayer.getBattleItem(itemStack);
+        Item item = gamePlayer.getItem(itemStack);
 
         if (item == null) {
             return false;
@@ -59,58 +59,58 @@ public class DefaultTrainingMode extends AbstractGame implements TrainingMode {
         Action action = event.getAction();
 
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            item.onLeftClick(battlePlayer);
+            item.onLeftClick(gamePlayer);
         } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            item.onRightClick(battlePlayer);
+            item.onRightClick(gamePlayer);
         }
 
         event.setCancelled(true);
         return true;
     }
 
-    public boolean onItemDrop(@NotNull BattlePlayer battlePlayer, @NotNull PlayerDropItemEvent event) {
+    public boolean onItemDrop(@NotNull GamePlayer gamePlayer, @NotNull PlayerDropItemEvent event) {
         ItemStack itemStack = event.getItemDrop().getItemStack();
-        BattleItem item = battlePlayer.getBattleItem(itemStack);
+        Item item = gamePlayer.getItem(itemStack);
 
         if (item == null) {
             return false;
         }
 
         droppedItems.add(item);
-        item.onDrop(battlePlayer);
+        item.onDrop(gamePlayer);
         return true;
     }
 
-    public boolean onItemHeld(@NotNull BattlePlayer battlePlayer, @NotNull PlayerItemHeldEvent event) {
-        ItemStack itemStack = battlePlayer.getEntity().getInventory().getItemInMainHand();
-        BattleItem item = battlePlayer.getBattleItem(itemStack);
+    public boolean onItemHeld(@NotNull GamePlayer gamePlayer, @NotNull PlayerItemHeldEvent event) {
+        ItemStack itemStack = gamePlayer.getEntity().getInventory().getItemInMainHand();
+        Item item = gamePlayer.getItem(itemStack);
 
         if (item == null) {
             return false;
         }
 
-        item.onChangeHeldItem(battlePlayer);
+        item.onChangeHeldItem(gamePlayer);
         return true;
     }
 
-    public boolean onPickupItem(@NotNull BattlePlayer battlePlayer, @NotNull EntityPickupItemEvent event) {
+    public boolean onPickupItem(@NotNull GamePlayer gamePlayer, @NotNull EntityPickupItemEvent event) {
         ItemStack itemStack = event.getItem().getItemStack();
-        BattleItem item = this.getBattleItem(itemStack);
+        Item item = this.getItem(itemStack);
 
         if (item == null) {
             return false;
         }
 
-        item.setHolder(battlePlayer);
-        battlePlayer.addItem(item);
+        item.setHolder(gamePlayer);
+        gamePlayer.addItem(item);
 
         droppedItems.remove(item);
         return true;
     }
 
     @Nullable
-    private BattleItem getBattleItem(@NotNull ItemStack itemStack) {
-        for (BattleItem item : droppedItems) {
+    private Item getItem(@NotNull ItemStack itemStack) {
+        for (Item item : droppedItems) {
             if (item.getItemStack() != null && item.getItemStack().isSimilar(itemStack)) {
                 return item;
             }

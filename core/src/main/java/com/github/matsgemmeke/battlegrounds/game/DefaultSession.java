@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import com.github.matsgemmeke.battlegrounds.api.game.SessionConfiguration;
-import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
+import com.github.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -37,28 +37,28 @@ public class DefaultSession extends AbstractGame implements Session {
     }
 
     @NotNull
-    public BattlePlayer addPlayer(@NotNull Player player) {
-        return new DefaultBattlePlayer(player);
+    public GamePlayer addPlayer(@NotNull Player player) {
+        return new DefaultGamePlayer(player);
     }
 
     @NotNull
-    public Iterable<BattlePlayer> getPlayers() {
+    public Iterable<GamePlayer> getPlayers() {
         return Collections.emptyList();
     }
 
-    public boolean onInteract(@NotNull BattlePlayer battlePlayer, @NotNull PlayerInteractEvent event) {
+    public boolean onInteract(@NotNull GamePlayer gamePlayer, @NotNull PlayerInteractEvent event) {
         return false;
     }
 
-    public boolean onItemDrop(@NotNull BattlePlayer battlePlayer, @NotNull PlayerDropItemEvent event) {
+    public boolean onItemDrop(@NotNull GamePlayer gamePlayer, @NotNull PlayerDropItemEvent event) {
         return false;
     }
 
-    public boolean onItemHeld(@NotNull BattlePlayer battlePlayer, @NotNull PlayerItemHeldEvent event) {
+    public boolean onItemHeld(@NotNull GamePlayer gamePlayer, @NotNull PlayerItemHeldEvent event) {
         return false;
     }
 
-    public boolean onPickupItem(@NotNull BattlePlayer battlePlayer, @NotNull EntityPickupItemEvent event) {
+    public boolean onPickupItem(@NotNull GamePlayer gamePlayer, @NotNull EntityPickupItemEvent event) {
         return false;
     }
 }

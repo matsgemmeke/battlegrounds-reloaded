@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
-import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
+import com.github.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.item.factory.WeaponFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +11,7 @@ import java.util.Map;
 public class WeaponProvider {
 
     @NotNull
-    private Map<BattleItemConfiguration, WeaponFactory<?>> factories;
+    private Map<ItemConfiguration, WeaponFactory<?>> factories;
 
     public WeaponProvider() {
         this.factories = new HashMap<>();
@@ -24,7 +24,7 @@ public class WeaponProvider {
      * @param weaponFactory the weapon factory
      * @return whether the weapon factory was added
      */
-    public boolean addWeaponFactory(@NotNull BattleItemConfiguration configuration, @NotNull WeaponFactory<?> weaponFactory) {
+    public boolean addWeaponFactory(@NotNull ItemConfiguration configuration, @NotNull WeaponFactory<?> weaponFactory) {
         factories.put(configuration, weaponFactory);
         return factories.get(configuration) != null;
     }
@@ -47,7 +47,7 @@ public class WeaponProvider {
      */
     @Nullable
     public WeaponFactory<?> getWeaponFactory(@NotNull String weaponId) {
-        for (BattleItemConfiguration configuration : factories.keySet()) {
+        for (ItemConfiguration configuration : factories.keySet()) {
             if (configuration.getIdList().contains(weaponId)) {
                 return factories.get(configuration);
             }

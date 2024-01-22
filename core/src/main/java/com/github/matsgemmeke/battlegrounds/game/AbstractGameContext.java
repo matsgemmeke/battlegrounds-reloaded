@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -17,7 +17,7 @@ public abstract class AbstractGameContext implements GameContext {
         this.collisionChecker = collisionChecker;
     }
 
-    public void playSound(@NotNull BattleSound sound, @NotNull Location location) {
+    public void playSound(@NotNull GameSound sound, @NotNull Location location) {
         World world = location.getWorld();
 
         if (world == null) {
@@ -30,8 +30,8 @@ public abstract class AbstractGameContext implements GameContext {
         }
     }
 
-    public void playSounds(@NotNull Iterable<BattleSound> sounds, @NotNull Location location) {
-        for (BattleSound sound : sounds) {
+    public void playSounds(@NotNull Iterable<GameSound> sounds, @NotNull Location location) {
+        for (GameSound sound : sounds) {
             this.playSound(sound, location);
         }
     }

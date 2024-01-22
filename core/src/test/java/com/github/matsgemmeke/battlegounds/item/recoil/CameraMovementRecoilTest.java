@@ -1,8 +1,8 @@
 package com.github.matsgemmeke.battlegounds.item.recoil;
 
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.item.recoil.CameraMovementRecoil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ public class CameraMovementRecoilTest {
 
     @Test
     public void doesNoRecoilToNonPlayerEntities() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
+        ItemHolder holder = mock(ItemHolder.class);
         when(holder.getRelativeAccuracy()).thenReturn(1.0);
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
@@ -42,7 +42,7 @@ public class CameraMovementRecoilTest {
 
     @Test
     public void onlySetsPlayerRotationWhenThereIsNoRotationDuration() {
-        BattleItemHolder holder = mock(BattlePlayer.class);
+        ItemHolder holder = mock(GamePlayer.class);
         when(holder.getRelativeAccuracy()).thenReturn(1.0);
 
         Float[] horizontalRecoil = new Float[] { 1.0f };
@@ -63,7 +63,7 @@ public class CameraMovementRecoilTest {
 
     @Test
     public void schedulesTaskForSmoothPlayerRotation() {
-        BattlePlayer holder = mock(BattlePlayer.class);
+        ItemHolder holder = mock(GamePlayer.class);
         when(holder.getEntity()).thenReturn(mock(Player.class));
         when(holder.getRelativeAccuracy()).thenReturn(1.0);
 

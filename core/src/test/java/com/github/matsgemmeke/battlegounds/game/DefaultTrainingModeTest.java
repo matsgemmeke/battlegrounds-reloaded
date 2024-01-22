@@ -1,11 +1,10 @@
 package com.github.matsgemmeke.battlegounds.game;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
-import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
+import com.github.matsgemmeke.battlegrounds.api.item.Item;
 import com.github.matsgemmeke.battlegrounds.game.DefaultTrainingMode;
 import com.github.matsgemmeke.battlegrounds.game.DefaultTrainingModeContext;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -34,24 +33,24 @@ public class DefaultTrainingModeTest {
         Player player = mock(Player.class);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        BattlePlayer battlePlayer = trainingMode.addPlayer(player);
+        GamePlayer gamePlayer = trainingMode.addPlayer(player);
 
-        assertNotNull(battlePlayer);
+        assertNotNull(gamePlayer);
     }
 
     @Test
     public void executesLeftClickMethodIfActionIsLeftClick() {
-        BattleItem battleItem = mock(BattleItem.class);
+        Item item = mock(Item.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(null, Action.LEFT_CLICK_AIR, itemStack, null, null);
 
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
-        when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getItem(itemStack)).thenReturn(item);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        boolean result = trainingMode.onInteract(battlePlayer, event);
+        boolean result = trainingMode.onInteract(gamePlayer, event);
 
-        verify(battleItem).onLeftClick(battlePlayer);
+        verify(item).onLeftClick(gamePlayer);
 
         assertTrue(result);
         assertTrue(event.isCancelled());
@@ -59,17 +58,17 @@ public class DefaultTrainingModeTest {
 
     @Test
     public void executesRightClickMethodIfActionIsRightClick() {
-        BattleItem battleItem = mock(BattleItem.class);
+        Item item = mock(Item.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(null, Action.RIGHT_CLICK_AIR, itemStack, null, null);
 
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
-        when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getItem(itemStack)).thenReturn(item);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        boolean result = trainingMode.onInteract(battlePlayer, event);
+        boolean result = trainingMode.onInteract(gamePlayer, event);
 
-        verify(battleItem).onRightClick(battlePlayer);
+        verify(item).onRightClick(gamePlayer);
 
         assertTrue(result);
         assertTrue(event.isCancelled());
@@ -77,151 +76,151 @@ public class DefaultTrainingModeTest {
 
     @Test
     public void doesNothingWithInteractionWithoutItemStack() {
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         PlayerInteractEvent event = new PlayerInteractEvent(null, null, null, null, null);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        boolean result = trainingMode.onInteract(battlePlayer, event);
+        boolean result = trainingMode.onInteract(gamePlayer, event);
 
         assertFalse(result);
     }
 
     @Test
-    public void doesNothingWithInteractionWhenBattleItemDoesNotExist() {
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+    public void doesNothingWithInteractionWhenItemDoesNotExist() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(null, null, itemStack, null, null);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        boolean result = trainingMode.onInteract(battlePlayer, event);
+        boolean result = trainingMode.onInteract(gamePlayer, event);
 
         assertFalse(result);
     }
 
     @Test
     public void doesNothingIfDroppedItemIsNotInList() {
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
-        Item item = mock(Item.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        org.bukkit.entity.Item itemEntity = mock(org.bukkit.entity.Item.class);
         ItemStack itemStack = mock(ItemStack.class);
         Player player = mock(Player.class);
 
-        when(item.getItemStack()).thenReturn(itemStack);
+        when(itemEntity.getItemStack()).thenReturn(itemStack);
 
-        PlayerDropItemEvent event = new PlayerDropItemEvent(player, item);
+        PlayerDropItemEvent event = new PlayerDropItemEvent(player, itemEntity);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        boolean accepted = trainingMode.onItemDrop(battlePlayer, event);
+        boolean accepted = trainingMode.onItemDrop(gamePlayer, event);
 
         assertFalse(accepted);
     }
 
     @Test
     public void addsItemToListAndCallsMethod() {
-        BattleItem battleItem = mock(BattleItem.class);
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         Item item = mock(Item.class);
+        org.bukkit.entity.Item itemEntity = mock(org.bukkit.entity.Item.class);
         ItemStack itemStack = mock(ItemStack.class);
         Player player = mock(Player.class);
 
-        when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
-        when(item.getItemStack()).thenReturn(itemStack);
+        when(gamePlayer.getItem(itemStack)).thenReturn(item);
+        when(itemEntity.getItemStack()).thenReturn(itemStack);
 
-        PlayerDropItemEvent event = new PlayerDropItemEvent(player, item);
+        PlayerDropItemEvent event = new PlayerDropItemEvent(player, itemEntity);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        boolean accepted = trainingMode.onItemDrop(battlePlayer, event);
+        boolean accepted = trainingMode.onItemDrop(gamePlayer, event);
 
-        verify(battleItem, times(1)).onDrop(battlePlayer);
+        verify(item, times(1)).onDrop(gamePlayer);
 
         assertTrue(accepted);
     }
 
     @Test
-    public void doesNothingIfChangedItemIsNoBattleItem() {
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+    public void doesNothingIfChangedItemIsItem() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack itemStack = mock(ItemStack.class);
         Player player = mock(Player.class);
         PlayerInventory inventory = mock(PlayerInventory.class);
 
-        when(battlePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getEntity()).thenReturn(player);
         when(inventory.getItemInMainHand()).thenReturn(itemStack);
         when(player.getInventory()).thenReturn(inventory);
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        boolean accepted = trainingMode.onItemHeld(battlePlayer, event);
+        boolean accepted = trainingMode.onItemHeld(gamePlayer, event);
 
         assertFalse(accepted);
     }
 
     @Test
-    public void callsMethodWhenChangingItemThatHasBattleItemInstance() {
-        BattleItem battleItem = mock(BattleItem.class);
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+    public void callsMethodWhenChangingItemThatHasItemInstance() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        Item item = mock(Item.class);
         ItemStack itemStack = mock(ItemStack.class);
         Player player = mock(Player.class);
         PlayerInventory inventory = mock(PlayerInventory.class);
 
-        when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
-        when(battlePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getItem(itemStack)).thenReturn(item);
+        when(gamePlayer.getEntity()).thenReturn(player);
         when(inventory.getItemInMainHand()).thenReturn(itemStack);
         when(player.getInventory()).thenReturn(inventory);
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        boolean accepted = trainingMode.onItemHeld(battlePlayer, event);
+        boolean accepted = trainingMode.onItemHeld(gamePlayer, event);
 
-        verify(battleItem, times(1)).onChangeHeldItem(battlePlayer);
+        verify(item, times(1)).onChangeHeldItem(gamePlayer);
 
         assertTrue(accepted);
     }
 
     @Test
-    public void doNothingIfPickupItemHasNoBattleItemInstance() {
-        BattleItem battleItem = mock(BattleItem.class);
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+    public void doNothingIfPickupItemHasNoItemInstance() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         Item item = mock(Item.class);
+        org.bukkit.entity.Item itemEntity = mock(org.bukkit.entity.Item.class);
         ItemStack itemStack = mock(ItemStack.class);
         Player player = mock(Player.class);
 
-        when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
-        when(item.getItemStack()).thenReturn(itemStack);
+        when(gamePlayer.getItem(itemStack)).thenReturn(item);
+        when(itemEntity.getItemStack()).thenReturn(itemStack);
 
-        EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
+        EntityPickupItemEvent event = new EntityPickupItemEvent(player, itemEntity, 0);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        // First call onDropItem to add the BattleItem to the dropped items list
-        trainingMode.onItemDrop(battlePlayer, new PlayerDropItemEvent(player, item));
+        // First call onDropItem to add the item to the dropped items list
+        trainingMode.onItemDrop(gamePlayer, new PlayerDropItemEvent(player, itemEntity));
 
-        boolean accepted = trainingMode.onPickupItem(battlePlayer, event);
+        boolean accepted = trainingMode.onPickupItem(gamePlayer, event);
 
         assertFalse(accepted);
     }
 
     @Test
-    public void callsMethodWhenPickingUpItemThatHasBattleItemInstance() {
-        BattleItem battleItem = mock(BattleItem.class);
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+    public void callsMethodWhenPickingUpItemThatHasItemInstance() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         Item item = mock(Item.class);
+        org.bukkit.entity.Item itemEntity = mock(org.bukkit.entity.Item.class);
         ItemStack itemStack = mock(ItemStack.class);
         Player player = mock(Player.class);
 
-        when(battleItem.getItemStack()).thenReturn(itemStack);
-        when(battlePlayer.getBattleItem(itemStack)).thenReturn(battleItem);
+        when(gamePlayer.getItem(itemStack)).thenReturn(item);
         when(item.getItemStack()).thenReturn(itemStack);
+        when(itemEntity.getItemStack()).thenReturn(itemStack);
         when(itemStack.isSimilar(itemStack)).thenReturn(true);
 
-        EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
+        EntityPickupItemEvent event = new EntityPickupItemEvent(player, itemEntity, 0);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode();
-        // First call onDropItem to add the BattleItem to the dropped items list
-        trainingMode.onItemDrop(battlePlayer, new PlayerDropItemEvent(player, item));
+        // First call onDropItem to add the item to the dropped items list
+        trainingMode.onItemDrop(gamePlayer, new PlayerDropItemEvent(player, itemEntity));
 
-        boolean accepted = trainingMode.onPickupItem(battlePlayer, event);
+        boolean accepted = trainingMode.onPickupItem(gamePlayer, event);
 
-        verify(battlePlayer, times(1)).addItem(battleItem);
+        verify(gamePlayer, times(1)).addItem(item);
 
         assertTrue(accepted);
     }

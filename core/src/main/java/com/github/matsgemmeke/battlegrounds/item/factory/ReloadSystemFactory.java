@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegrounds.item.factory;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
-import com.github.matsgemmeke.battlegrounds.game.DefaultBattleSound;
+import com.github.matsgemmeke.battlegrounds.game.DefaultGameSound;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.*;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +37,7 @@ public class ReloadSystemFactory {
             throw new WeaponFactoryCreationException("Error while getting reload system type \"" + type + "\"");
         }
 
-        List<BattleSound> reloadSounds = DefaultBattleSound.parseSounds(section.getString("sound"));
+        List<GameSound> reloadSounds = DefaultGameSound.parseSounds(section.getString("sound"));
 
         int duration = section.getInt("duration");
 

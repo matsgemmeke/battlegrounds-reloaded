@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.api.item;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,12 +9,12 @@ import org.jetbrains.annotations.NotNull;
 public interface ScopeAttachment {
 
     /**
-     * Applies the scope effect to a {@link BattleItemHolder}.
+     * Applies the scope effect to a {@link ItemHolder}.
      *
      * @param holder the entity
      * @return whether the effect was applied
      */
-    boolean applyEffect(@NotNull BattleItemHolder holder);
+    boolean applyEffect(@NotNull ItemHolder holder);
 
     /**
      * Gets whether the scope attachment is being used by a player.

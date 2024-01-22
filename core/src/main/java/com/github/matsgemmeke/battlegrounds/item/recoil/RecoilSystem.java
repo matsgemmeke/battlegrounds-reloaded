@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item.recoil;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,5 +14,5 @@ public interface RecoilSystem {
      * @return the new direction of the shot after the recoil effect
      */
     @NotNull
-    Location produceRecoil(@NotNull BattleItemHolder holder, @NotNull Location direction);
+    Location produceRecoil(@NotNull ItemHolder holder, @NotNull Location direction);
 }

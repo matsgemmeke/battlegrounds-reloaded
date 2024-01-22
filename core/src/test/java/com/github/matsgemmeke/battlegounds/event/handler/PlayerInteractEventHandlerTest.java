@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegounds.event.handler;
 
 import com.github.matsgemmeke.battlegrounds.api.GameProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Game;
-import com.github.matsgemmeke.battlegrounds.entity.DefaultBattlePlayer;
+import com.github.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerInteractEventHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -15,8 +15,8 @@ import static org.mockito.Mockito.*;
 public class PlayerInteractEventHandlerTest {
 
     private Game game;
+    private GamePlayer gamePlayer;
     private GameProvider gameProvider;
-    private BattlePlayer battlePlayer;
     private Player player;
     private PlayerInteractEvent event;
 
@@ -26,7 +26,7 @@ public class PlayerInteractEventHandlerTest {
         this.gameProvider = mock(GameProvider.class);
         this.player = mock(Player.class);
 
-        this.battlePlayer = new DefaultBattlePlayer(player);
+        this.gamePlayer = new DefaultGamePlayer(player);
         this.event = new PlayerInteractEvent(player, null, null, null, null);
     }
 
@@ -35,27 +35,27 @@ public class PlayerInteractEventHandlerTest {
         PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(game, never()).onInteract(battlePlayer, event);
+        verify(game, never()).onInteract(gamePlayer, event);
     }
 
     @Test
-    public void doesNothingWithPlayerWithoutBattlePlayerInstance() {
+    public void doesNothingWithPlayerWithoutGamePlayerInstance() {
         when(gameProvider.getGame(player)).thenReturn(game);
 
         PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(game, never()).onInteract(battlePlayer, event);
+        verify(game, never()).onInteract(gamePlayer, event);
     }
 
     @Test
-    public void callsGameMethodWhenPlayerHasBattlePlayerInstance() {
-        when(game.getBattlePlayer(player)).thenReturn(battlePlayer);
+    public void callsGameMethodWhenPlayerHasGamePlayerInstance() {
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(gameProvider.getGame(player)).thenReturn(game);
 
         PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(game).onInteract(battlePlayer, event);
+        verify(game).onInteract(gamePlayer, event);
     }
 }

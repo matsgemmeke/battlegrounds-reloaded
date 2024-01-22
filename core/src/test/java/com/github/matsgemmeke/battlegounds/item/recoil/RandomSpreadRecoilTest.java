@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegounds.item.recoil;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.item.recoil.RandomSpreadRecoil;
 import org.bukkit.Location;
 import org.junit.Test;
@@ -12,7 +12,7 @@ public class RandomSpreadRecoilTest {
 
     @Test
     public void producesRecoilBasedOnModifyingDirection() {
-        BattleItemHolder holder = mock(BattleItemHolder.class);
+        ItemHolder holder = mock(ItemHolder.class);
         when(holder.getRelativeAccuracy()).thenReturn(1.0);
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
@@ -31,10 +31,10 @@ public class RandomSpreadRecoilTest {
 
     @Test
     public void modifyingRelativeAccuracyChangesDirectionDeviation() {
-        BattleItemHolder holderAccurate = mock(BattleItemHolder.class);
+        ItemHolder holderAccurate = mock(ItemHolder.class);
         when(holderAccurate.getRelativeAccuracy()).thenReturn(2.0);
 
-        BattleItemHolder holderNotAccurate = mock(BattleItemHolder.class);
+        ItemHolder holderNotAccurate = mock(ItemHolder.class);
         when(holderNotAccurate.getRelativeAccuracy()).thenReturn(0.5);
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);

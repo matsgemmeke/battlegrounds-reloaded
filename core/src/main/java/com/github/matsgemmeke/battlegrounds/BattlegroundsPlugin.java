@@ -11,9 +11,9 @@ import com.github.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdC
 import com.github.matsgemmeke.battlegrounds.command.condition.ExistentWeaponIdCondition;
 import com.github.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
 import com.github.matsgemmeke.battlegrounds.command.condition.TrainingModePresenceCondition;
-import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.configuration.BattlegroundsFileConfiguration;
 import com.github.matsgemmeke.battlegrounds.configuration.GeneralDataConfiguration;
+import com.github.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import com.github.matsgemmeke.battlegrounds.configuration.LanguageConfiguration;
 import com.github.matsgemmeke.battlegrounds.event.EventBus;
 import com.github.matsgemmeke.battlegrounds.event.EventDispatcher;
@@ -94,13 +94,13 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
 
         File gunConfigFile = new File(configFolder.getPath() + "/items/guns.yml");
 
-        BattleItemConfiguration gunsConfiguration = new BattleItemConfiguration(gunConfigFile, this.getResource("items/guns.yml"));
+        ItemConfiguration gunsConfiguration = new ItemConfiguration(gunConfigFile, this.getResource("items/guns.yml"));
         gunsConfiguration.load();
 
         FireModeFactory fireModeFactory = new FireModeFactory(taskRunner);
         RecoilSystemFactory recoilSystemFactory = new RecoilSystemFactory(internals);
         ReloadSystemFactory reloadSystemFactory = new ReloadSystemFactory(taskRunner);
-        FirearmFactory firearmFactory = new FirearmFactory(config, gunsConfiguration, fireModeFactory, internals, recoilSystemFactory, reloadSystemFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, internals, gunsConfiguration, recoilSystemFactory, reloadSystemFactory);
 
         weaponProvider = new WeaponProvider();
         weaponProvider.addWeaponFactory(gunsConfiguration, firearmFactory);

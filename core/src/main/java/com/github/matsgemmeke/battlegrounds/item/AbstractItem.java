@@ -1,18 +1,18 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
-import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
+import com.github.matsgemmeke.battlegrounds.api.item.Item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractBattleItem implements BattleItem {
+public abstract class AbstractItem implements Item {
 
-    @Nullable
-    protected BattleItemHolder holder;
     @NotNull
     protected GameContext context;
+    @Nullable
+    protected ItemHolder holder;
     @Nullable
     protected ItemStack itemStack;
     @Nullable
@@ -20,7 +20,7 @@ public abstract class AbstractBattleItem implements BattleItem {
     @Nullable
     protected String name;
 
-    public AbstractBattleItem(@NotNull GameContext context) {
+    public AbstractItem(@NotNull GameContext context) {
         this.context = context;
     }
 
@@ -39,11 +39,11 @@ public abstract class AbstractBattleItem implements BattleItem {
     }
 
     @Nullable
-    public BattleItemHolder getHolder() {
+    public ItemHolder getHolder() {
         return holder;
     }
 
-    public void setHolder(@Nullable BattleItemHolder holder) {
+    public void setHolder(@Nullable ItemHolder holder) {
         this.holder = holder;
     }
 

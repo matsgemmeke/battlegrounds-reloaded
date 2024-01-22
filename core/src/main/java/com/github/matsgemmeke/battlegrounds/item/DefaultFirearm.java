@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.entity.GameEntity;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.entity.Hitbox;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
@@ -22,8 +22,8 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     private int magazineAmmo;
     private int magazineSize;
     private int reserveAmmo;
-    private Iterable<BattleSound> shotSounds;
-    private Iterable<BattleSound> triggerSounds;
+    private Iterable<GameSound> shotSounds;
+    private Iterable<GameSound> triggerSounds;
 
     public DefaultFirearm(@NotNull GameContext context) {
         super(context);
@@ -69,19 +69,19 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         this.reserveAmmo = reserveAmmo;
     }
 
-    public Iterable<BattleSound> getShotSounds() {
+    public Iterable<GameSound> getShotSounds() {
         return shotSounds;
     }
 
-    public void setShotSounds(Iterable<BattleSound> shotSounds) {
+    public void setShotSounds(Iterable<GameSound> shotSounds) {
         this.shotSounds = shotSounds;
     }
 
-    public Iterable<BattleSound> getTriggerSounds() {
+    public Iterable<GameSound> getTriggerSounds() {
         return triggerSounds;
     }
 
-    public void setTriggerSounds(Iterable<BattleSound> triggerSounds) {
+    public void setTriggerSounds(Iterable<GameSound> triggerSounds) {
         this.triggerSounds = triggerSounds;
     }
 
@@ -115,10 +115,10 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         return ChatColor.WHITE + name + " " + magazineAmmo + "/" + reserveAmmo;
     }
 
-    private boolean inflictDamage(@NotNull BattleItemHolder holder, @NotNull Location projectileLocation) {
+    private boolean inflictDamage(@NotNull ItemHolder holder, @NotNull Location projectileLocation) {
         double range = 0.1;
 
-        for (BattleEntity target : context.getTargets(holder, projectileLocation, range)) {
+        for (GameEntity target : context.getTargets(holder, projectileLocation, range)) {
             Location holderLocation = holder.getEntity().getLocation();
             Location targetLocation = target.getEntity().getLocation();
 
@@ -130,7 +130,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         return false;
     }
 
-    public void onChangeHeldItem(@NotNull BattleItemHolder holder) {
+    public void onChangeHeldItem(@NotNull ItemHolder holder) {
         if (currentOperatingMode == null) {
             return;
         }
@@ -138,7 +138,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         currentOperatingMode.cancel(holder);
     }
 
-    public void onLeftClick(@NotNull BattleItemHolder holder) {
+    public void onLeftClick(@NotNull ItemHolder holder) {
         // Do not do anything if the firearm is currently being operated
         if (currentOperatingMode != null) {
             return;
@@ -158,7 +158,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         this.reload();
     }
 
-    public void onRightClick(@NotNull BattleItemHolder holder) {
+    public void onRightClick(@NotNull ItemHolder holder) {
         if (currentOperatingMode != null) {
             return;
         }
@@ -192,7 +192,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
         return true;
     }
 
-    private void shootProjectile(@NotNull BattleItemHolder holder, @NotNull Location direction) {
+    private void shootProjectile(@NotNull ItemHolder holder, @NotNull Location direction) {
         magazineAmmo--;
 
         context.playSounds(shotSounds, direction);

@@ -1,13 +1,13 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DefaultBattleSound implements BattleSound {
+public class DefaultGameSound implements GameSound {
 
     private float pitch;
     private float volume;
@@ -15,14 +15,14 @@ public class DefaultBattleSound implements BattleSound {
     @NotNull
     private Sound sound;
 
-    public DefaultBattleSound(@NotNull Sound sound, float volume, float pitch, long delay) {
+    public DefaultGameSound(@NotNull Sound sound, float volume, float pitch, long delay) {
         this.sound = sound;
         this.volume = volume;
         this.pitch = pitch;
         this.delay = delay;
     }
 
-    public static BattleSound parseSound(@NotNull String arg) {
+    public static GameSound parseSound(@NotNull String arg) {
         String[] parts = arg.split("-");
 
         Sound sound;
@@ -54,11 +54,11 @@ public class DefaultBattleSound implements BattleSound {
             throw new IllegalArgumentException("Unable to parse delay value " + parts[3]);
         }
 
-        return new DefaultBattleSound(sound, volume, pitch, delay);
+        return new DefaultGameSound(sound, volume, pitch, delay);
     }
 
-    public static List<BattleSound> parseSounds(@NotNull String arg) {
-        List<BattleSound> list = new ArrayList<>();
+    public static List<GameSound> parseSounds(@NotNull String arg) {
+        List<GameSound> list = new ArrayList<>();
         String[] sounds = arg.split(", ");
 
         for (String sound : sounds) {

@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item.recoil;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ public class RandomSpreadRecoil implements RecoilSystem {
     }
 
     @NotNull
-    public Location produceRecoil(@NotNull BattleItemHolder holder, @NotNull Location direction) {
+    public Location produceRecoil(@NotNull ItemHolder holder, @NotNull Location direction) {
         float relAccuracy = (float) holder.getRelativeAccuracy();
 
         float minHorRecoil = horizontalRecoilValues[0] / relAccuracy;

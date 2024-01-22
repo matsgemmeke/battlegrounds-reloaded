@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.SemiAutomaticMode;
 import org.junit.Before;
@@ -12,16 +12,16 @@ import static org.mockito.Mockito.*;
 
 public class SemiAutomaticModeTest {
 
-    private BattleItemHolder holder;
     private Gun gun;
+    private ItemHolder holder;
     private long cooldownDuration;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
-        this.holder = mock(BattleItemHolder.class);
-        this.taskRunner = mock(TaskRunner.class);
         this.gun = mock(Gun.class);
+        this.holder = mock(ItemHolder.class);
+        this.taskRunner = mock(TaskRunner.class);
         this.cooldownDuration = 1;
     }
 

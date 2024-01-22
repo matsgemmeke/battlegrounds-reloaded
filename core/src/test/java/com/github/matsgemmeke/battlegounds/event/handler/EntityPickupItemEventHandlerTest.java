@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegounds.event.handler;
 
 import com.github.matsgemmeke.battlegrounds.api.GameProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.event.handler.EntityPickupItemEventHandler;
 import org.bukkit.entity.Item;
@@ -45,7 +45,7 @@ public class EntityPickupItemEventHandlerTest {
     }
 
     @Test
-    public void doNothingIfPlayerHasNoBattlePlayerInstance() {
+    public void doNothingIfPlayerHasNoGamePlayerInstance() {
         Game game = mock(Game.class);
         Player player = mock(Player.class);
 
@@ -60,12 +60,12 @@ public class EntityPickupItemEventHandlerTest {
     }
 
     @Test
-    public void callsGameMethodWhenPlayerHasBattlePlayerInstance() {
+    public void callsGameMethodWhenPlayerHasGamePlayerInstance() {
         Game game = mock(Game.class);
-        BattlePlayer battlePlayer = mock(BattlePlayer.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         Player player = mock(Player.class);
 
-        when(game.getBattlePlayer(player)).thenReturn(battlePlayer);
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(gameProvider.getGame(player)).thenReturn(game);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
@@ -73,6 +73,6 @@ public class EntityPickupItemEventHandlerTest {
         EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameProvider);
         eventHandler.handle(event);
 
-        verify(game, times(1)).onPickupItem(battlePlayer, event);
+        verify(game, times(1)).onPickupItem(gamePlayer, event);
     }
 }

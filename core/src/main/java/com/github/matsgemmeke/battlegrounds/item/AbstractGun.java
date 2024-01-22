@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
 import com.github.matsgemmeke.battlegrounds.api.item.ScopeAttachment;
@@ -126,7 +126,7 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
     @NotNull
     protected abstract String getItemDisplayName();
 
-    public void onDrop(@NotNull BattleItemHolder holder) {
+    public void onDrop(@NotNull ItemHolder holder) {
         if (currentOperatingMode != null) {
             currentOperatingMode.cancel(holder);
             holder.applyOperatingState(false);

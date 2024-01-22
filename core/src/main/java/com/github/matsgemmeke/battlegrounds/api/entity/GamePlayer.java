@@ -1,13 +1,14 @@
 package com.github.matsgemmeke.battlegrounds.api.entity;
 
+import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.api.item.PlayerEffect;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A player object which holds information and can perform actions in Battlegrounds.
+ * A player who participates in a {@link Game}.
  */
-public interface BattlePlayer extends BattleEntity, BattleItemHolder {
+public interface GamePlayer extends GameEntity, ItemHolder {
 
     /**
      * Gets the {@link Player} entity of the object.

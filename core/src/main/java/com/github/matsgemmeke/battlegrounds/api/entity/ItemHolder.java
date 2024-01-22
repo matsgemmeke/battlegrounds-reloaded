@@ -1,23 +1,23 @@
 package com.github.matsgemmeke.battlegrounds.api.entity;
 
 import com.github.matsgemmeke.battlegrounds.api.game.TeamMember;
-import com.github.matsgemmeke.battlegrounds.api.item.BattleItem;
+import com.github.matsgemmeke.battlegrounds.api.item.Item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents an entity that is capable of holding and operating a {@link BattleItem}.
+ * Represents an entity that is capable of holding and operating a {@link Item}.
  */
-public interface BattleItemHolder extends BattleEntity, TeamMember {
+public interface ItemHolder extends GameEntity, TeamMember {
 
     /**
-     * Adds a {@link BattleItem} to the holder.
+     * Adds a {@link Item} to the holder.
      *
      * @param item the item
      * @return whether the item was added
      */
-    boolean addItem(@NotNull BattleItem item);
+    boolean addItem(@NotNull Item item);
 
     /**
      * Applies effects to the holder for when they are operating an item.
@@ -27,13 +27,13 @@ public interface BattleItemHolder extends BattleEntity, TeamMember {
     void applyOperatingState(boolean operating);
 
     /**
-     * Attempts to find a {@link BattleItem} based on its {@link ItemStack}. Returns null if there were no matches.
+     * Attempts to find a {@link Item} based on its {@link ItemStack}. Returns null if there were no matches.
      *
      * @param itemStack the item stack
-     * @return the corresponding {@link BattleItem} or null if there were no matches
+     * @return the corresponding item or null if there were no matches
      */
     @Nullable
-    BattleItem getBattleItem(@NotNull ItemStack itemStack);
+    Item getItem(@NotNull ItemStack itemStack);
 
     /**
      * Gets the relative accuracy based on the state of the entity. For example, it should return 1.0 if the
@@ -49,10 +49,10 @@ public interface BattleItemHolder extends BattleEntity, TeamMember {
      * @param item the item to remove
      * @return whether the item was removed
      */
-    boolean removeItem(@NotNull BattleItem item);
+    boolean removeItem(@NotNull Item item);
 
     /**
-     * Updates the {@link ItemStack} of a {@link BattleItem} in the holder's inventory.
+     * Updates the {@link ItemStack} of a {@link Item} in the holder's inventory.
      *
      * @param itemStack the item
      * @return whether the item was updated

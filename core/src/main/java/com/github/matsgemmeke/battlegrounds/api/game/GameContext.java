@@ -1,6 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.api.game;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleEntity;
+import com.github.matsgemmeke.battlegrounds.api.entity.GameEntity;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -13,31 +13,31 @@ import java.util.Collection;
 public interface GameContext {
 
     /**
-     * Looks for potential targets for a {@link BattleEntity} around a specific {@link Location}.
+     * Looks for potential targets for a {@link GameEntity} around a specific {@link Location}.
      *
-     * @param battleEntity the entity
+     * @param gameEntity the entity
      * @param location the location
      * @param range the range
      * @return all targets inside the range
      */
     @NotNull
-    Collection<BattleEntity> getTargets(@NotNull BattleEntity battleEntity, @NotNull Location location, double range);
+    Collection<GameEntity> getTargets(@NotNull GameEntity gameEntity, @NotNull Location location, double range);
 
     /**
-     * Plays a {@link BattleSound} for all players in the context.
+     * Plays a {@link GameSound} for all players in the context.
      *
      * @param sound the sound
      * @param location the location to play the sound
      */
-    void playSound(@NotNull BattleSound sound, @NotNull Location location);
+    void playSound(@NotNull GameSound sound, @NotNull Location location);
 
     /**
-     * Plays multiple {@link BattleSound}s for all players in the context.
+     * Plays multiple {@link GameSound}s for all players in the context.
      *
      * @param sound the sound
      * @param location the location to play the sound
      */
-    void playSounds(@NotNull Iterable<BattleSound> sound,@NotNull Location location);
+    void playSounds(@NotNull Iterable<GameSound> sound,@NotNull Location location);
 
     /**
      * Checks if the given location produces a collision with a block.

@@ -1,8 +1,8 @@
 package com.github.matsgemmeke.battlegrounds.item.recoil;
 
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -74,13 +74,13 @@ public class CameraMovementRecoil implements RecoilSystem {
     }
 
     @NotNull
-    public Location produceRecoil(@NotNull BattleItemHolder holder, @NotNull Location direction) {
+    public Location produceRecoil(@NotNull ItemHolder holder, @NotNull Location direction) {
         // Only apply this recoil type to player entities
-        if (!(holder instanceof BattlePlayer battlePlayer)) {
+        if (!(holder instanceof GamePlayer gamePlayer)) {
             return direction;
         }
 
-        Player player = battlePlayer.getEntity();
+        Player player = gamePlayer.getEntity();
 
         // Select random values from the given recoil value arrays
         float horizontalRecoil = horizontalRecoilValues[random.nextInt(horizontalRecoilValues.length)];

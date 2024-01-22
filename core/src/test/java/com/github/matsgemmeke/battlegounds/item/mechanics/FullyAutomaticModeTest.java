@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.AutomaticFireCycleRunnable;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.FullyAutomaticMode;
@@ -14,15 +14,15 @@ import static org.mockito.Mockito.*;
 
 public class FullyAutomaticModeTest {
 
-    private BattleItemHolder holder;
     private Firearm firearm;
+    private ItemHolder holder;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
-        this.holder = mock(BattleItemHolder.class);
-        this.taskRunner = mock(TaskRunner.class);
         this.firearm = mock(Firearm.class);
+        this.holder = mock(ItemHolder.class);
+        this.taskRunner = mock(TaskRunner.class);
     }
 
     @Test

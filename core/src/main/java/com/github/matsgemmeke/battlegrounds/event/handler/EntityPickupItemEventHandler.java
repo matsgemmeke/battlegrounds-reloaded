@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.event.handler;
 
 import com.github.matsgemmeke.battlegrounds.api.GameProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.BattlePlayer;
+import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Game;
 import com.github.matsgemmeke.battlegrounds.event.EventHandler;
 import org.bukkit.entity.Player;
@@ -29,12 +29,12 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
             return;
         }
 
-        BattlePlayer battlePlayer = game.getBattlePlayer(player);
+        GamePlayer gamePlayer = game.getGamePlayer(player);
 
-        if (battlePlayer == null) {
+        if (gamePlayer == null) {
             return;
         }
 
-        game.onPickupItem(battlePlayer, event);
+        game.onPickupItem(gamePlayer, event);
     }
 }

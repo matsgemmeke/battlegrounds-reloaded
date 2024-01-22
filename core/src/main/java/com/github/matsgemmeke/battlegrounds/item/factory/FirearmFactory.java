@@ -2,11 +2,11 @@ package com.github.matsgemmeke.battlegrounds.item.factory;
 
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.configuration.BattlegroundsConfig;
-import com.github.matsgemmeke.battlegrounds.api.game.BattleSound;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
+import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Firearm;
-import com.github.matsgemmeke.battlegrounds.configuration.BattleItemConfiguration;
-import com.github.matsgemmeke.battlegrounds.game.DefaultBattleSound;
+import com.github.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import com.github.matsgemmeke.battlegrounds.game.DefaultGameSound;
 import com.github.matsgemmeke.battlegrounds.item.DefaultFirearm;
 import com.github.matsgemmeke.battlegrounds.item.DefaultScopeAttachment;
 import com.github.matsgemmeke.battlegrounds.item.mechanics.FireMode;
@@ -25,11 +25,11 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
     @NotNull
     private BattlegroundsConfig config;
     @NotNull
-    private BattleItemConfiguration itemConfiguration;
-    @NotNull
     private FireModeFactory fireModeFactory;
     @NotNull
     private InternalsProvider internals;
+    @NotNull
+    private ItemConfiguration itemConfiguration;
     @NotNull
     private RecoilSystemFactory recoilSystemFactory;
     @NotNull
@@ -37,9 +37,9 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
 
     public FirearmFactory(
             @NotNull BattlegroundsConfig config,
-            @NotNull BattleItemConfiguration itemConfiguration,
             @NotNull FireModeFactory fireModeFactory,
             @NotNull InternalsProvider internals,
+            @NotNull ItemConfiguration itemConfiguration,
             @NotNull RecoilSystemFactory recoilSystemFactory,
             @NotNull ReloadSystemFactory reloadSystemFactory
     ) {
@@ -56,7 +56,7 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
         Section section = itemConfiguration.getSection(id);
 
         if (section == null) {
-            throw new InvalidBattleItemFormatException("Weapon id " + id + " is not a valid section");
+            throw new InvalidItemFormatException("Weapon id " + id + " is not a valid section");
         }
 
         // Descriptive attributes
@@ -108,10 +108,10 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
         ReloadSystem reloadSystem = reloadSystemFactory.make(firearm, section.getSection("reloading"));
         firearm.setReloadSystem(reloadSystem);
 
-        List<BattleSound> shotSounds = DefaultBattleSound.parseSounds(section.getString("shooting.shot-sound"));
+        List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("shooting.shot-sound"));
         firearm.setShotSounds(shotSounds);
 
-        List<BattleSound> triggerSounds = DefaultBattleSound.parseSounds(config.getFirearmTriggerSound());
+        List<GameSound> triggerSounds = DefaultGameSound.parseSounds(config.getFirearmTriggerSound());
         firearm.setTriggerSounds(triggerSounds);
 
         // Handle the recoil section if it's there
@@ -130,10 +130,10 @@ public class FirearmFactory implements WeaponFactory<Firearm> {
 
             DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(context, internals, magnification);
 
-            List<BattleSound> scopeUseSounds = DefaultBattleSound.parseSounds(scopeSection.getString("use-sound"));
+            List<GameSound> scopeUseSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sound"));
             scopeAttachment.setUseSounds(scopeUseSounds);
 
-            List<BattleSound> scopeStopUseSounds = DefaultBattleSound.parseSounds(scopeSection.getString("stop-use-sound"));
+            List<GameSound> scopeStopUseSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-use-sound"));
             scopeAttachment.setStopUseSounds(scopeStopUseSounds);
 
             firearm.setScopeAttachment(scopeAttachment);

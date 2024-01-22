@@ -1,15 +1,15 @@
 package com.github.matsgemmeke.battlegrounds.api.item;
 
-import com.github.matsgemmeke.battlegrounds.api.entity.BattleItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An item object used in Battlegrounds game modes.
+ * An item object that appears in game instances.
  */
-public interface BattleItem {
+public interface Item {
 
     /**
      * Gets the game context the item is situated in.
@@ -40,14 +40,14 @@ public interface BattleItem {
      * @return the item holder or null if it does not have one
      */
     @Nullable
-    BattleItemHolder getHolder();
+    ItemHolder getHolder();
 
     /**
      * Sets the holder of the item.
      *
      * @param holder the item holder
      */
-    void setHolder(@Nullable BattleItemHolder holder);
+    void setHolder(@Nullable ItemHolder holder);
 
     /**
      * Gets the item stack of the item.
@@ -84,26 +84,26 @@ public interface BattleItem {
      *
      * @param holder the entity who changed the held item
      */
-    void onChangeHeldItem(@NotNull BattleItemHolder holder);
+    void onChangeHeldItem(@NotNull ItemHolder holder);
 
     /**
      * Handles a performed drop on the item.
      *
      * @param holder the entity who dropped the item
      */
-    void onDrop(@NotNull BattleItemHolder holder);
+    void onDrop(@NotNull ItemHolder holder);
 
     /**
      * Handles a performed left click on the item.
      *
      * @param holder the entity who left-clicked the item
      */
-    void onLeftClick(@NotNull BattleItemHolder holder);
+    void onLeftClick(@NotNull ItemHolder holder);
 
     /**
      * Handles a performed right click on the item.
      *
      * @param holder the entity who right-clicked the item
      */
-    void onRightClick(@NotNull BattleItemHolder holder);
+    void onRightClick(@NotNull ItemHolder holder);
 }

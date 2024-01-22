@@ -6,7 +6,7 @@ import com.github.matsgemmeke.battlegrounds.api.item.Weapon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractWeapon extends AbstractBattleItem implements Weapon {
+public abstract class AbstractWeapon extends AbstractItem implements Weapon {
 
     @Nullable
     protected OperatingMode currentOperatingMode;

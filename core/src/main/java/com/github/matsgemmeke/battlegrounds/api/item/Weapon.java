@@ -3,7 +3,7 @@ package com.github.matsgemmeke.battlegrounds.api.item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface Weapon extends BattleItem {
+public interface Weapon extends Item {
 
     /**
      * Gets the current operating mode being executed on the weapon. Returns null if the weapon has no ongoing
