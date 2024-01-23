@@ -14,6 +14,9 @@ import java.util.Set;
 
 public class DefaultGamePlayer implements GamePlayer {
 
+    private static final float NORMAL_ACCURACY = 1.0f;
+    private static final float SNEAKING_ACCURACY = 2.0f;
+    private static final float SPRINTING_ACCURACY = 0.5f;
     private static final int OPERATING_FOOD_LEVEL = 6;
 
     private int priorFoodLevel;
@@ -81,14 +84,16 @@ public class DefaultGamePlayer implements GamePlayer {
         return null;
     }
 
-    public double getRelativeAccuracy() {
+    public float getRelativeAccuracy() {
         if (player.isSneaking()) {
-            return 2.0;
+            return SNEAKING_ACCURACY;
         }
+
         if (player.isSprinting()) {
-            return 0.5;
+            return SPRINTING_ACCURACY;
         }
-        return 1.0;
+
+        return NORMAL_ACCURACY;
     }
 
     public boolean removeItem(@NotNull Item item) {

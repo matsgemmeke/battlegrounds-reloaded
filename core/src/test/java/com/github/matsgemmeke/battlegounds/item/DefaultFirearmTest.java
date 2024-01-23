@@ -189,7 +189,7 @@ public class DefaultFirearmTest {
         when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
 
         when(holder.getEntity()).thenReturn(holderEntity);
-        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0f);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
@@ -225,7 +225,7 @@ public class DefaultFirearmTest {
         when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
 
         when(holder.getEntity()).thenReturn(holderEntity);
-        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0f);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
@@ -261,7 +261,7 @@ public class DefaultFirearmTest {
         when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
 
         when(holder.getEntity()).thenReturn(holderEntity);
-        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0f);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
@@ -297,7 +297,7 @@ public class DefaultFirearmTest {
         when(context.getTargets(any(), any(), anyDouble())).thenReturn(targets);
 
         when(holder.getEntity()).thenReturn(holderEntity);
-        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0f);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHeadshotDamageMultiplier(1.5);
@@ -331,7 +331,7 @@ public class DefaultFirearmTest {
         when(context.producesCollisionAt(any(), any())).thenReturn(true);
 
         when(holder.getEntity()).thenReturn(holderEntity);
-        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0f);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);
@@ -356,7 +356,7 @@ public class DefaultFirearmTest {
         when(context.getTargets(any(), any(), anyDouble())).thenReturn(Collections.emptyList());
 
         when(holder.getEntity()).thenReturn(holderEntity);
-        when(holder.getRelativeAccuracy()).thenReturn(2.0);
+        when(holder.getRelativeAccuracy()).thenReturn(2.0f);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.setHolder(holder);

@@ -41,7 +41,7 @@ public interface ItemHolder extends GameEntity, TeamMember {
      *
      * @return the relative shooting accuracy
      */
-    double getRelativeAccuracy();
+    float getRelativeAccuracy();
 
     /**
      * Removes an item from the holder.

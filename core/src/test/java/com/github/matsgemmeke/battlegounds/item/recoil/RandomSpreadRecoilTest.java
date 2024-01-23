@@ -13,7 +13,7 @@ public class RandomSpreadRecoilTest {
     @Test
     public void producesRecoilBasedOnModifyingDirection() {
         ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getRelativeAccuracy()).thenReturn(1.0);
+        when(holder.getRelativeAccuracy()).thenReturn(1.0f);
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
 
@@ -32,10 +32,10 @@ public class RandomSpreadRecoilTest {
     @Test
     public void modifyingRelativeAccuracyChangesDirectionDeviation() {
         ItemHolder holderAccurate = mock(ItemHolder.class);
-        when(holderAccurate.getRelativeAccuracy()).thenReturn(2.0);
+        when(holderAccurate.getRelativeAccuracy()).thenReturn(2.0f);
 
         ItemHolder holderNotAccurate = mock(ItemHolder.class);
-        when(holderNotAccurate.getRelativeAccuracy()).thenReturn(0.5);
+        when(holderNotAccurate.getRelativeAccuracy()).thenReturn(0.5f);
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
 

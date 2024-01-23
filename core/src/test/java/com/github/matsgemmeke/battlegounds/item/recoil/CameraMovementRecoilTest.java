@@ -28,7 +28,7 @@ public class CameraMovementRecoilTest {
     @Test
     public void doesNoRecoilToNonPlayerEntities() {
         ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getRelativeAccuracy()).thenReturn(1.0);
+        when(holder.getRelativeAccuracy()).thenReturn(1.0f);
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
 
@@ -43,7 +43,7 @@ public class CameraMovementRecoilTest {
     @Test
     public void onlySetsPlayerRotationWhenThereIsNoRotationDuration() {
         ItemHolder holder = mock(GamePlayer.class);
-        when(holder.getRelativeAccuracy()).thenReturn(1.0);
+        when(holder.getRelativeAccuracy()).thenReturn(1.0f);
 
         Float[] horizontalRecoil = new Float[] { 1.0f };
         Float[] verticalRecoil = new Float[] { 1.0f };
@@ -65,7 +65,7 @@ public class CameraMovementRecoilTest {
     public void schedulesTaskForSmoothPlayerRotation() {
         ItemHolder holder = mock(GamePlayer.class);
         when(holder.getEntity()).thenReturn(mock(Player.class));
-        when(holder.getRelativeAccuracy()).thenReturn(1.0);
+        when(holder.getRelativeAccuracy()).thenReturn(1.0f);
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
 
