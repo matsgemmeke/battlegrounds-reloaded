@@ -3,7 +3,6 @@ package com.github.matsgemmeke.battlegounds.event.handler;
 import com.github.matsgemmeke.battlegrounds.api.GameProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Game;
-import com.github.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import com.github.matsgemmeke.battlegrounds.event.handler.PlayerInteractEventHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -23,10 +22,10 @@ public class PlayerInteractEventHandlerTest {
     @Before
     public void setUp() {
         this.game = mock(Game.class);
+        this.gamePlayer = mock(GamePlayer.class);
         this.gameProvider = mock(GameProvider.class);
         this.player = mock(Player.class);
 
-        this.gamePlayer = new DefaultGamePlayer(player, null); //TODO fix
         this.event = new PlayerInteractEvent(player, null, null, null, null);
     }
 

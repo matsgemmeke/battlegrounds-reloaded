@@ -115,7 +115,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         File dataFolder = new File(this.getDataFolder().getPath() + "/data");
         File generalDataFile = new File(dataFolder.getPath() + "/general.yml");
 
-        SessionFactory sessionFactory = new SessionFactory(dataFolder);
+        SessionFactory sessionFactory = new SessionFactory(dataFolder, internals);
 
         GeneralDataConfiguration generalData = new GeneralDataConfiguration(generalDataFile);
         generalData.load();
@@ -158,7 +158,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
     private void setUpTrainingMode() {
         BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
 
-        trainingMode = new DefaultTrainingMode();
+        trainingMode = new DefaultTrainingMode(internals);
         trainingContext = new DefaultTrainingModeContext(collisionChecker);
 
         gameProvider.assignTrainingMode(trainingMode);

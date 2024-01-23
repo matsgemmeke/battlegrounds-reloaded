@@ -1,5 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
+import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.TrainingMode;
 import com.github.matsgemmeke.battlegrounds.api.item.Item;
@@ -20,18 +21,21 @@ import java.util.List;
 public class DefaultTrainingMode extends AbstractGame implements TrainingMode {
 
     @NotNull
+    private InternalsProvider internals;
+    @NotNull
     private List<Item> droppedItems;
     @NotNull
     private List<GamePlayer> players;
 
-    public DefaultTrainingMode() {
+    public DefaultTrainingMode(@NotNull InternalsProvider internals) {
+        this.internals = internals;
         this.droppedItems = new ArrayList<>();
         this.players = new ArrayList<>();
     }
 
     @NotNull
     public GamePlayer addPlayer(@NotNull Player player) {
-        GamePlayer gamePlayer = new DefaultGamePlayer(player, null);
+        GamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
 
         players.add(gamePlayer);
 

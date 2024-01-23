@@ -1,5 +1,6 @@
 package com.github.matsgemmeke.battlegounds.game;
 
+import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import com.github.matsgemmeke.battlegrounds.api.game.SessionConfiguration;
 import com.github.matsgemmeke.battlegrounds.game.DefaultSessionConfiguration;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class SessionContextFactoryTest {
 
@@ -20,9 +22,12 @@ public class SessionContextFactoryTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     private File dataFolder;
+    private InternalsProvider internals;
 
     @Before
     public void setUp() throws IOException {
+        this.internals = mock(InternalsProvider.class);
+
         this.dataFolder = folder.newFolder("data");
     }
 
@@ -31,7 +36,7 @@ public class SessionContextFactoryTest {
         int sessionId = 1;
 
         SessionConfiguration configuration = DefaultSessionConfiguration.getNewConfiguration();
-        SessionFactory sessionFactory = new SessionFactory(dataFolder);
+        SessionFactory sessionFactory = new SessionFactory(dataFolder, internals);
 
         Session session = sessionFactory.make(sessionId, configuration);
 

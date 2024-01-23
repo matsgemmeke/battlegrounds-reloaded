@@ -1,5 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
+import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import com.github.matsgemmeke.battlegrounds.api.game.SessionConfiguration;
 import com.github.matsgemmeke.battlegrounds.configuration.SessionDataConfiguration;
@@ -14,9 +15,12 @@ public class SessionFactory {
 
     @NotNull
     private File dataDirectory;
+    @NotNull
+    private InternalsProvider internals;
 
-    public SessionFactory(@NotNull File dataDirectory) {
+    public SessionFactory(@NotNull File dataDirectory, @NotNull InternalsProvider internals) {
         this.dataDirectory = dataDirectory;
+        this.internals = internals;
     }
 
     /**
@@ -33,6 +37,6 @@ public class SessionFactory {
         dataConfig.load();
         dataConfig.saveConfiguration(configuration);
 
-        return new DefaultSession(id, configuration);
+        return new DefaultSession(id, configuration, internals);
     }
 }

@@ -1,5 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.game;
 
+import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Session;
 import com.github.matsgemmeke.battlegrounds.api.game.SessionConfiguration;
@@ -17,14 +18,18 @@ public class DefaultSession extends AbstractGame implements Session {
 
     private final int id;
     @NotNull
+    private InternalsProvider internals;
+    @NotNull
     private SessionConfiguration configuration;
 
     public DefaultSession(
             int id,
-            @NotNull SessionConfiguration configuration
+            @NotNull SessionConfiguration configuration,
+            @NotNull InternalsProvider internals
     ) {
         this.id = id;
         this.configuration = configuration;
+        this.internals = internals;
     }
 
     @NotNull
@@ -38,7 +43,7 @@ public class DefaultSession extends AbstractGame implements Session {
 
     @NotNull
     public GamePlayer addPlayer(@NotNull Player player) {
-        return new DefaultGamePlayer(player, null);
+        return new DefaultGamePlayer(player, internals);
     }
 
     @NotNull

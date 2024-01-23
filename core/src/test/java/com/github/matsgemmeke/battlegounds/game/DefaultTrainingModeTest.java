@@ -1,9 +1,9 @@
 package com.github.matsgemmeke.battlegounds.game;
 
+import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.item.Item;
 import com.github.matsgemmeke.battlegrounds.game.DefaultTrainingMode;
-import com.github.matsgemmeke.battlegrounds.game.DefaultTrainingModeContext;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -21,18 +21,18 @@ import static org.mockito.Mockito.*;
 
 public class DefaultTrainingModeTest {
 
-    private DefaultTrainingModeContext context;
+    private InternalsProvider internals;
 
     @Before
     public void setUp() {
-        this.context = mock(DefaultTrainingModeContext.class);
+        this.internals = mock(InternalsProvider.class);
     }
 
     @Test
     public void addingPlayersAddThemToPlayerList() {
         Player player = mock(Player.class);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         GamePlayer gamePlayer = trainingMode.addPlayer(player);
 
         assertNotNull(gamePlayer);
@@ -47,7 +47,7 @@ public class DefaultTrainingModeTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getItem(itemStack)).thenReturn(item);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         boolean result = trainingMode.onInteract(gamePlayer, event);
 
         verify(item).onLeftClick(gamePlayer);
@@ -65,7 +65,7 @@ public class DefaultTrainingModeTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getItem(itemStack)).thenReturn(item);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         boolean result = trainingMode.onInteract(gamePlayer, event);
 
         verify(item).onRightClick(gamePlayer);
@@ -79,7 +79,7 @@ public class DefaultTrainingModeTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         PlayerInteractEvent event = new PlayerInteractEvent(null, null, null, null, null);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         boolean result = trainingMode.onInteract(gamePlayer, event);
 
         assertFalse(result);
@@ -91,7 +91,7 @@ public class DefaultTrainingModeTest {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(null, null, itemStack, null, null);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         boolean result = trainingMode.onInteract(gamePlayer, event);
 
         assertFalse(result);
@@ -108,7 +108,7 @@ public class DefaultTrainingModeTest {
 
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, itemEntity);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         boolean accepted = trainingMode.onItemDrop(gamePlayer, event);
 
         assertFalse(accepted);
@@ -127,7 +127,7 @@ public class DefaultTrainingModeTest {
 
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, itemEntity);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         boolean accepted = trainingMode.onItemDrop(gamePlayer, event);
 
         verify(item, times(1)).onDrop(gamePlayer);
@@ -148,7 +148,7 @@ public class DefaultTrainingModeTest {
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         boolean accepted = trainingMode.onItemHeld(gamePlayer, event);
 
         assertFalse(accepted);
@@ -169,7 +169,7 @@ public class DefaultTrainingModeTest {
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         boolean accepted = trainingMode.onItemHeld(gamePlayer, event);
 
         verify(item, times(1)).onChangeHeldItem(gamePlayer);
@@ -190,7 +190,7 @@ public class DefaultTrainingModeTest {
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, itemEntity, 0);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         // First call onDropItem to add the item to the dropped items list
         trainingMode.onItemDrop(gamePlayer, new PlayerDropItemEvent(player, itemEntity));
 
@@ -214,7 +214,7 @@ public class DefaultTrainingModeTest {
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, itemEntity, 0);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode();
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals);
         // First call onDropItem to add the item to the dropped items list
         trainingMode.onItemDrop(gamePlayer, new PlayerDropItemEvent(player, itemEntity));
 
