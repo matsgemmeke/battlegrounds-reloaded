@@ -26,7 +26,7 @@ public class PlayerInteractEventHandlerTest {
         this.gameProvider = mock(GameProvider.class);
         this.player = mock(Player.class);
 
-        this.gamePlayer = new DefaultGamePlayer(player);
+        this.gamePlayer = new DefaultGamePlayer(player, null); //TODO fix
         this.event = new PlayerInteractEvent(player, null, null, null, null);
     }
 

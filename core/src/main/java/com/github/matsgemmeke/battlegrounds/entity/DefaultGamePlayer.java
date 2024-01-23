@@ -1,9 +1,11 @@
 package com.github.matsgemmeke.battlegrounds.entity;
 
+import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Team;
 import com.github.matsgemmeke.battlegrounds.api.item.Item;
 import com.github.matsgemmeke.battlegrounds.api.item.PlayerEffect;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +23,8 @@ public class DefaultGamePlayer implements GamePlayer {
 
     private int priorFoodLevel;
     @NotNull
+    private InternalsProvider internals;
+    @NotNull
     private Player player;
     @NotNull
     private Set<Item> items;
@@ -29,8 +33,9 @@ public class DefaultGamePlayer implements GamePlayer {
     @Nullable
     private Team team;
 
-    public DefaultGamePlayer(@NotNull Player player) {
+    public DefaultGamePlayer(@NotNull Player player, @NotNull InternalsProvider internals) {
         this.player = player;
+        this.internals = internals;
         this.effects = new HashSet<>();
         this.items = new HashSet<>();
     }
@@ -74,6 +79,15 @@ public class DefaultGamePlayer implements GamePlayer {
         }
     }
 
+    public boolean canReceiveRecoil() {
+        return player.isOnline() && !player.isDead();
+    }
+
+    @NotNull
+    public Location getAimDirection() {
+        return player.getEyeLocation().subtract(0, 0.25, 0);
+    }
+
     @Nullable
     public Item getItem(@NotNull ItemStack itemStack) {
         for (Item item : items) {
@@ -94,6 +108,10 @@ public class DefaultGamePlayer implements GamePlayer {
         }
 
         return NORMAL_ACCURACY;
+    }
+
+    public void modifyCameraRotation(float yaw, float pitch) {
+        internals.setPlayerRotation(player, yaw, pitch);
     }
 
     public boolean removeItem(@NotNull Item item) {

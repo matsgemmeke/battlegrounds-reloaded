@@ -26,7 +26,7 @@ public class PlayerItemHeldEventHandlerTest {
         this.gameProvider = mock(GameProvider.class);
         this.player = mock(Player.class);
 
-        this.gamePlayer = new DefaultGamePlayer(player);
+        this.gamePlayer = new DefaultGamePlayer(player, null); //TODO fix
         this.event = new PlayerItemHeldEvent(player, 0, 1);
     }
 

@@ -31,7 +31,7 @@ public class DefaultTrainingMode extends AbstractGame implements TrainingMode {
 
     @NotNull
     public GamePlayer addPlayer(@NotNull Player player) {
-        GamePlayer gamePlayer = new DefaultGamePlayer(player);
+        GamePlayer gamePlayer = new DefaultGamePlayer(player, null);
 
         players.add(gamePlayer);
 

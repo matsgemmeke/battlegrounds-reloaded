@@ -38,7 +38,7 @@ public class DefaultSession extends AbstractGame implements Session {
 
     @NotNull
     public GamePlayer addPlayer(@NotNull Player player) {
-        return new DefaultGamePlayer(player);
+        return new DefaultGamePlayer(player, null);
     }
 
     @NotNull
