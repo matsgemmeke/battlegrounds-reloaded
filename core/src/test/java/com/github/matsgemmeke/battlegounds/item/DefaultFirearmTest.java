@@ -1,7 +1,7 @@
 package com.github.matsgemmeke.battlegounds.item;
 
 import com.github.matsgemmeke.battlegrounds.api.entity.GameEntity;
-import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.WeaponHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.api.item.OperatingMode;
@@ -26,12 +26,12 @@ import static org.mockito.Mockito.*;
 public class DefaultFirearmTest {
 
     private GameContext context;
-    private ItemHolder holder;
+    private WeaponHolder holder;
 
     @Before
     public void setUp() {
         this.context = mock(GameContext.class);
-        this.holder = mock(ItemHolder.class);
+        this.holder = mock(WeaponHolder.class);
     }
 
     @Test
