@@ -35,21 +35,6 @@ public interface Item {
     void setDescription(@Nullable String description);
 
     /**
-     * Gets the holder of the item. Returns null if the item does not have a holder.
-     *
-     * @return the item holder or null if it does not have one
-     */
-    @Nullable
-    ItemHolder getHolder();
-
-    /**
-     * Sets the holder of the item.
-     *
-     * @param holder the item holder
-     */
-    void setHolder(@Nullable ItemHolder holder);
-
-    /**
      * Gets the item stack of the item.
      *
      * @return the item stack

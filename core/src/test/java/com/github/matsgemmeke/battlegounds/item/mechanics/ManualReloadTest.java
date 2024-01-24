@@ -2,6 +2,7 @@ package com.github.matsgemmeke.battlegounds.item.mechanics;
 
 import com.github.matsgemmeke.battlegrounds.TaskRunner;
 import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.WeaponHolder;
 import com.github.matsgemmeke.battlegrounds.api.game.GameContext;
 import com.github.matsgemmeke.battlegrounds.api.game.GameSound;
 import com.github.matsgemmeke.battlegrounds.api.item.Gun;
@@ -18,13 +19,13 @@ import static org.mockito.Mockito.*;
 
 public class ManualReloadTest {
 
-    private ItemHolder holder;
     private Iterable<GameSound> reloadSounds;
     private TaskRunner taskRunner;
+    private WeaponHolder holder;
 
     @Before
     public void setUp() {
-        this.holder = mock(ItemHolder.class);
+        this.holder = mock(WeaponHolder.class);
         this.taskRunner = mock(TaskRunner.class);
         this.reloadSounds = Collections.singletonList(mock(GameSound.class));
     }
