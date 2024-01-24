@@ -24,7 +24,7 @@ public class FullyAutomaticMode implements FireMode {
     }
 
     public boolean activate(@NotNull ItemHolder holder) {
-        gun.setCurrentOperatingMode(this);
+        gun.setOperatingMode(this);
 
         // The amount of interaction events per second received when holding down the right mouse button
         int interactionsPerSecond = 5;
@@ -47,7 +47,7 @@ public class FullyAutomaticMode implements FireMode {
     }
 
     public void cancel(@NotNull ItemHolder holder) {
-        gun.setCurrentOperatingMode(null);
+        gun.setOperatingMode(null);
 
         if (currentTask == null) {
             return;

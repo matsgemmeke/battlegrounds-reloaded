@@ -9,18 +9,18 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AbstractWeapon extends AbstractItem implements Weapon {
 
     @Nullable
-    protected OperatingMode currentOperatingMode;
+    protected OperatingMode operatingMode;
 
     public AbstractWeapon(@NotNull GameContext context) {
         super(context);
     }
 
     @Nullable
-    public OperatingMode getCurrentOperatingMode() {
-        return currentOperatingMode;
+    public OperatingMode getOperatingMode() {
+        return operatingMode;
     }
 
-    public void setCurrentOperatingMode(@Nullable OperatingMode operatingMode) {
-        this.currentOperatingMode = operatingMode;
+    public void setOperatingMode(@Nullable OperatingMode operatingMode) {
+        this.operatingMode = operatingMode;
     }
 }

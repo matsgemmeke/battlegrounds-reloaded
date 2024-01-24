@@ -59,7 +59,7 @@ public class ManualReloadTest {
 
         verify(task, atLeast(2)).cancel();
 
-        assertNull(gun.getCurrentOperatingMode());
+        assertNull(gun.getOperatingMode());
     }
 
     @Test

@@ -42,7 +42,7 @@ public class FullyAutomaticModeTest {
         FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, firearm, rateOfFire);
         fireMode.cancel(holder);
 
-        verify(firearm, times(1)).setCurrentOperatingMode(null);
+        verify(firearm).setOperatingMode(null);
     }
 
     @Test

@@ -79,7 +79,7 @@ public class DefaultFirearmTest {
         OperatingMode operatingMode = mock(OperatingMode.class);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
-        firearm.setCurrentOperatingMode(operatingMode);
+        firearm.setOperatingMode(operatingMode);
         firearm.onChangeHeldItem(holder);
 
         verify(operatingMode, times(1)).cancel(holder);
@@ -90,10 +90,10 @@ public class DefaultFirearmTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
-        firearm.setCurrentOperatingMode(null);
         firearm.setHolder(holder);
         firearm.setMagazineAmmo(0);
         firearm.setMagazineSize(30);
+        firearm.setOperatingMode(null);
         firearm.setReloadSystem(reloadSystem);
         firearm.setReserveAmmo(30);
         firearm.onLeftClick(holder);
@@ -107,7 +107,7 @@ public class DefaultFirearmTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
-        firearm.setCurrentOperatingMode(operatingMode);
+        firearm.setOperatingMode(operatingMode);
         firearm.setReloadSystem(reloadSystem);
         firearm.onLeftClick(holder);
 
@@ -135,9 +135,9 @@ public class DefaultFirearmTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
-        firearm.setCurrentOperatingMode(null);
         firearm.setMagazineAmmo(30);
         firearm.setMagazineSize(30);
+        firearm.setOperatingMode(null);
         firearm.setReloadSystem(reloadSystem);
         firearm.onLeftClick(holder);
 
@@ -149,9 +149,9 @@ public class DefaultFirearmTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
-        firearm.setCurrentOperatingMode(null);
         firearm.setMagazineAmmo(0);
         firearm.setMagazineSize(30);
+        firearm.setOperatingMode(null);
         firearm.setReloadSystem(reloadSystem);
         firearm.setReserveAmmo(0);
         firearm.onLeftClick(holder);
@@ -422,8 +422,8 @@ public class DefaultFirearmTest {
         OperatingMode operatingMode = mock(OperatingMode.class);
 
         DefaultFirearm firearm = new DefaultFirearm(context);
-        firearm.setCurrentOperatingMode(operatingMode);
         firearm.setHolder(holder);
+        firearm.setOperatingMode(operatingMode);
         firearm.onDrop(holder);
 
         verify(operatingMode, times(1)).cancel(holder);

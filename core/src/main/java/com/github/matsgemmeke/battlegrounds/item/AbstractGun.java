@@ -127,8 +127,8 @@ public abstract class AbstractGun extends AbstractWeapon implements Gun {
     protected abstract String getItemDisplayName();
 
     public void onDrop(@NotNull ItemHolder holder) {
-        if (currentOperatingMode != null) {
-            currentOperatingMode.cancel(holder);
+        if (operatingMode != null) {
+            operatingMode.cancel(holder);
             holder.applyOperatingState(false);
         }
 

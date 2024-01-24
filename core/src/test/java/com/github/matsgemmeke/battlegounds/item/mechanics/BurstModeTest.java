@@ -43,7 +43,7 @@ public class BurstModeTest {
         BurstMode fireMode = new BurstMode(taskRunner, firearm, roundAmount, rateOfFire);
         fireMode.cancel(holder);
 
-        verify(firearm, times(1)).setCurrentOperatingMode(null);
+        verify(firearm).setOperatingMode(null);
     }
 
     @Test

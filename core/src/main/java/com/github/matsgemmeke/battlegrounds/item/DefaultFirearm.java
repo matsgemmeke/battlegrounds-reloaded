@@ -131,16 +131,16 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     }
 
     public void onChangeHeldItem(@NotNull ItemHolder holder) {
-        if (currentOperatingMode == null) {
+        if (operatingMode == null) {
             return;
         }
 
-        currentOperatingMode.cancel(holder);
+        operatingMode.cancel(holder);
     }
 
     public void onLeftClick(@NotNull ItemHolder holder) {
         // Do not do anything if the firearm is currently being operated
-        if (currentOperatingMode != null) {
+        if (operatingMode != null) {
             return;
         }
 
@@ -159,7 +159,7 @@ public class DefaultFirearm extends AbstractGun implements Firearm {
     }
 
     public void onRightClick(@NotNull ItemHolder holder) {
-        if (currentOperatingMode != null) {
+        if (operatingMode != null) {
             return;
         }
 

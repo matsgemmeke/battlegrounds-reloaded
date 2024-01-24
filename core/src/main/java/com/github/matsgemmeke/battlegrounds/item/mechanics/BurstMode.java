@@ -26,7 +26,7 @@ public class BurstMode implements FireMode {
     }
 
     public boolean activate(@NotNull ItemHolder holder) {
-        gun.setCurrentOperatingMode(this);
+        gun.setOperatingMode(this);
 
         int ticksPerSecond = 20;
         // Convert rate of fire to amount of rounds fired per second
@@ -44,7 +44,7 @@ public class BurstMode implements FireMode {
     }
 
     public void cancel(@NotNull ItemHolder holder) {
-        gun.setCurrentOperatingMode(null);
+        gun.setOperatingMode(null);
 
         if (currentTask == null) {
             return;

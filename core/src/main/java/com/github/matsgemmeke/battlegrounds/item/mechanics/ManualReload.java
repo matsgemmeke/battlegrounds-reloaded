@@ -39,7 +39,7 @@ public class ManualReload implements ReloadSystem {
     public boolean activate(@NotNull ItemHolder holder) {
         GameContext context = gun.getContext();
 
-        gun.setCurrentOperatingMode(this);
+        gun.setOperatingMode(this);
 
         holder.applyOperatingState(true);
 
@@ -60,7 +60,7 @@ public class ManualReload implements ReloadSystem {
 
         currentTasks.clear();
 
-        gun.setCurrentOperatingMode(null);
+        gun.setOperatingMode(null);
 
         holder.applyOperatingState(false);
     }

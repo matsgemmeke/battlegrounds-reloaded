@@ -50,7 +50,7 @@ public class MagazineReloadTest {
 
         verify(task, atLeast(2)).cancel();
 
-        assertNull(gun.getCurrentOperatingMode());
+        assertNull(gun.getOperatingMode());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class MagazineReloadTest {
 
         verify(gun).setMagazineAmmo(30);
         verify(gun).setReserveAmmo(60);
-        verify(gun).setCurrentOperatingMode(null);
+        verify(gun).setOperatingMode(null);
     }
 
     @Test
@@ -78,6 +78,6 @@ public class MagazineReloadTest {
 
         verify(gun).setMagazineAmmo(10);
         verify(gun).setReserveAmmo(0);
-        verify(gun).setCurrentOperatingMode(null);
+        verify(gun).setOperatingMode(null);
     }
 }

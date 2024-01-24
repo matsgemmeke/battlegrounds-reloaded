@@ -12,14 +12,14 @@ public interface Weapon extends Item {
      * @return the current operating mode
      */
     @Nullable
-    OperatingMode getCurrentOperatingMode();
+    OperatingMode getOperatingMode();
 
     /**
      * Sets the current operating mode being executed on the weapon.
      *
      * @param operatingMode the current operating mode
      */
-    void setCurrentOperatingMode(@Nullable OperatingMode operatingMode);
+    void setOperatingMode(@Nullable OperatingMode operatingMode);
 
     /**
      * Updates the {@link ItemStack} of the weapon.
