@@ -1,10 +1,7 @@
 package com.github.matsgemmeke.battlegrounds.item.recoil;
 
-import com.github.matsgemmeke.battlegrounds.InternalsProvider;
-import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
-import com.github.matsgemmeke.battlegrounds.api.entity.ItemHolder;
+import com.github.matsgemmeke.battlegrounds.api.entity.RecoilReceiver;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -18,8 +15,6 @@ public class CameraMovementRecoil implements RecoilSystem {
     private Float[] horizontalRecoilValues;
     private Float[] verticalRecoilValues;
     private float recoveryRate;
-    @NotNull
-    private InternalsProvider internals;
     private long recoilDuration;
     private long recoveryDuration;
     @NotNull
@@ -27,8 +22,7 @@ public class CameraMovementRecoil implements RecoilSystem {
     @NotNull
     private Timer timer;
 
-    public CameraMovementRecoil(@NotNull InternalsProvider internals, @NotNull Timer timer) {
-        this.internals = internals;
+    public CameraMovementRecoil(@NotNull Timer timer) {
         this.timer = timer;
         this.random = new Random();
     }
@@ -74,31 +68,24 @@ public class CameraMovementRecoil implements RecoilSystem {
     }
 
     @NotNull
-    public Location produceRecoil(@NotNull ItemHolder holder, @NotNull Location direction) {
-        // Only apply this recoil type to player entities
-        if (!(holder instanceof GamePlayer gamePlayer)) {
-            return direction;
-        }
-
-        Player player = gamePlayer.getEntity();
-
+    public Location produceRecoil(@NotNull RecoilReceiver receiver, @NotNull Location direction) {
         // Select random values from the given recoil value arrays
         float horizontalRecoil = horizontalRecoilValues[random.nextInt(horizontalRecoilValues.length)];
         float verticalRecoil = verticalRecoilValues[random.nextInt(verticalRecoilValues.length)];
 
         // If the duration of the recoil rotation is zero, simply set the camera rotation
         if (recoilDuration <= 0) {
-            internals.setPlayerRotation(player, horizontalRecoil, verticalRecoil);
+            receiver.modifyCameraRotation(horizontalRecoil, verticalRecoil);
             return direction;
         }
 
         int rotationAmount = (int) (recoilDuration / defaultRotationDuration);
-        float yawRotation = horizontalRecoil / rotationAmount / (float) holder.getRelativeAccuracy();
-        float pitchRotation = verticalRecoil / rotationAmount / (float) holder.getRelativeAccuracy();
+        float yawRotation = horizontalRecoil / rotationAmount / receiver.getRelativeAccuracy();
+        float pitchRotation = verticalRecoil / rotationAmount / receiver.getRelativeAccuracy();
 
         int recoveryRotationAmount = (int) ((double) recoveryDuration / (double) recoilDuration * rotationAmount);
 
-        CameraMovementTask task = new CameraMovementTask(player, internals);
+        CameraMovementTask task = new CameraMovementTask(receiver);
         task.setRecoilRotations(rotationAmount);
         task.setRecoveryRate(recoveryRate);
         task.setRecoveryRotations(recoveryRotationAmount);

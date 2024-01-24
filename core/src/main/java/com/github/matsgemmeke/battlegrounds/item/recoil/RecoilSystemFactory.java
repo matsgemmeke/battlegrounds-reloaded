@@ -1,6 +1,5 @@
 package com.github.matsgemmeke.battlegrounds.item.recoil;
 
-import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.item.factory.WeaponFactoryCreationException;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.jetbrains.annotations.NotNull;
@@ -11,13 +10,6 @@ import java.util.Timer;
  * Factory class responsible for instantiating {@link RecoilSystem} implementation classes.
  */
 public class RecoilSystemFactory {
-
-    @NotNull
-    private InternalsProvider internals;
-
-    public RecoilSystemFactory(@NotNull InternalsProvider internals) {
-        this.internals = internals;
-    }
 
     /**
      * Creates a new {@link RecoilSystem} instance based on configuration values.
@@ -46,7 +38,7 @@ public class RecoilSystemFactory {
 
                 Timer timer = new Timer();
 
-                CameraMovementRecoil recoilSystem = new CameraMovementRecoil(internals, timer);
+                CameraMovementRecoil recoilSystem = new CameraMovementRecoil(timer);
                 recoilSystem.setHorizontalRecoilValues(horizontalRecoilValues);
                 recoilSystem.setVerticalRecoilValues(verticalRecoilValues);
                 recoilSystem.setRecoilDuration(rotationDuration);

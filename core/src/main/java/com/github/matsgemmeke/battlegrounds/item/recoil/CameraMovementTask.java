@@ -1,7 +1,6 @@
 package com.github.matsgemmeke.battlegrounds.item.recoil;
 
-import com.github.matsgemmeke.battlegrounds.InternalsProvider;
-import org.bukkit.entity.Player;
+import com.github.matsgemmeke.battlegrounds.api.entity.RecoilReceiver;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.TimerTask;
@@ -16,13 +15,10 @@ public class CameraMovementTask extends TimerTask {
     private int recoveryRotations;
     private int rotationCount;
     @NotNull
-    private InternalsProvider internals;
-    @NotNull
-    private Player player;
+    private RecoilReceiver receiver;
 
-    public CameraMovementTask(@NotNull Player player, @NotNull InternalsProvider internals) {
-        this.player = player;
-        this.internals = internals;
+    public CameraMovementTask(@NotNull RecoilReceiver receiver) {
+        this.receiver = receiver;
         this.recovering = false;
         this.rotationCount = 0;
     }
@@ -68,7 +64,7 @@ public class CameraMovementTask extends TimerTask {
     }
 
     public void run() {
-        if (player.isDead() || !player.isOnline()) {
+        if (!receiver.canReceiveRecoil()) {
             this.cancel();
             return;
         }
@@ -91,6 +87,6 @@ public class CameraMovementTask extends TimerTask {
             rotationCount = 0;
         }
 
-        internals.setPlayerRotation(player, yawRotation, pitchRotation);
+        receiver.modifyCameraRotation(yawRotation, pitchRotation);
     }
 }

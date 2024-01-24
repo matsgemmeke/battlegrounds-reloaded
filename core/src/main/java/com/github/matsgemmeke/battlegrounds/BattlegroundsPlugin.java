@@ -98,7 +98,7 @@ public class BattlegroundsPlugin extends JavaPlugin implements Battlegrounds {
         gunsConfiguration.load();
 
         FireModeFactory fireModeFactory = new FireModeFactory(taskRunner);
-        RecoilSystemFactory recoilSystemFactory = new RecoilSystemFactory(internals);
+        RecoilSystemFactory recoilSystemFactory = new RecoilSystemFactory();
         ReloadSystemFactory reloadSystemFactory = new ReloadSystemFactory(taskRunner);
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, internals, gunsConfiguration, recoilSystemFactory, reloadSystemFactory);
 

@@ -1,8 +1,7 @@
 package com.github.matsgemmeke.battlegounds.item.recoil;
 
-import com.github.matsgemmeke.battlegrounds.InternalsProvider;
+import com.github.matsgemmeke.battlegrounds.api.entity.RecoilReceiver;
 import com.github.matsgemmeke.battlegrounds.item.recoil.CameraMovementTask;
-import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,41 +9,26 @@ import static org.mockito.Mockito.*;
 
 public class CameraMovementTaskTest {
 
-    private InternalsProvider internals;
-    private Player player;
+    private RecoilReceiver receiver;
 
     @Before
     public void setUp() {
-        this.internals = mock(InternalsProvider.class);
-        this.player = mock(Player.class);
+        this.receiver = mock(RecoilReceiver.class);
     }
 
     @Test
-    public void shouldStopTaskWhenPlayerIsDead() {
-        when(player.isDead()).thenReturn(true);
-
-        CameraMovementTask task = new CameraMovementTask(player, internals);
+    public void shouldStopTaskWhenReceiverCanNotReceiveRecoil() {
+        CameraMovementTask task = new CameraMovementTask(receiver);
         task.run();
 
-        verify(internals, never()).setPlayerRotation(eq(player), anyFloat(), anyFloat());
+        verify(receiver, never()).modifyCameraRotation(anyFloat(), anyFloat());
     }
 
     @Test
-    public void shouldStopTaskWhenPlayerIsOffline() {
-        when(player.isOnline()).thenReturn(false);
+    public void shouldOnlyRotateReceiverAsManyTimesAsGivenRotationAmount() {
+        when(receiver.canReceiveRecoil()).thenReturn(true);
 
-        CameraMovementTask task = new CameraMovementTask(player, internals);
-        task.run();
-
-        verify(internals, never()).setPlayerRotation(eq(player), anyFloat(), anyFloat());
-    }
-
-    @Test
-    public void shouldOnlyRotatePlayerAsManyTimesAsGivenRotationAmount() {
-        when(player.isDead()).thenReturn(false);
-        when(player.isOnline()).thenReturn(true);
-
-        CameraMovementTask task = new CameraMovementTask(player, internals);
+        CameraMovementTask task = new CameraMovementTask(receiver);
         task.setRecoilRotations(2);
         task.setPitchRotation(1.0f);
         task.setYawRotation(1.0f);
@@ -52,15 +36,14 @@ public class CameraMovementTaskTest {
         task.run();
         task.run();
 
-        verify(internals, times(2)).setPlayerRotation(player, 1.0f, 1.0f);
+        verify(receiver, times(2)).modifyCameraRotation(1.0f, 1.0f);
     }
 
     @Test
     public void shouldApplyRecoveryAndKeepRotatingWhenRecoveryRateIsSet() {
-        when(player.isDead()).thenReturn(false);
-        when(player.isOnline()).thenReturn(true);
+        when(receiver.canReceiveRecoil()).thenReturn(true);
 
-        CameraMovementTask task = new CameraMovementTask(player, internals);
+        CameraMovementTask task = new CameraMovementTask(receiver);
         task.setRecoilRotations(2);
         task.setRecoveryRate(0.5f);
         task.setRecoveryRotations(4);
@@ -71,7 +54,7 @@ public class CameraMovementTaskTest {
             task.run();
         }
 
-        verify(internals, times(2)).setPlayerRotation(player, 1.0f, 1.0f);
-        verify(internals, times(4)).setPlayerRotation(player, -0.25f, -0.25f);
+        verify(receiver, times(2)).modifyCameraRotation(1.0f, 1.0f);
+        verify(receiver, times(4)).modifyCameraRotation(-0.25f, -0.25f);
     }
 }
