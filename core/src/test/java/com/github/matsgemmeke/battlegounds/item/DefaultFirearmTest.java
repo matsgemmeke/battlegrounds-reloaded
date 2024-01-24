@@ -35,6 +35,40 @@ public class DefaultFirearmTest {
     }
 
     @Test
+    public void shouldNotMatchIfItemStackIsNull() {
+        ItemStack other = new ItemStack(Material.IRON_HOE);
+
+        DefaultFirearm firearm = new DefaultFirearm(context);
+
+        assertFalse(firearm.isMatching(other));
+    }
+
+    @Test
+    public void shouldNotMatchIfItemStackIsNotSimilar() {
+        ItemStack other = new ItemStack(Material.IRON_HOE);
+
+        ItemStack itemStack = mock(ItemStack.class);
+
+        DefaultFirearm firearm = new DefaultFirearm(context);
+        firearm.setItemStack(itemStack);
+
+        assertFalse(firearm.isMatching(other));
+    }
+
+    @Test
+    public void shouldMatchIfItemStackIsSimilar() {
+        ItemStack other = new ItemStack(Material.IRON_HOE);
+
+        ItemStack itemStack = mock(ItemStack.class);
+        when(itemStack.isSimilar(other)).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(context);
+        firearm.setItemStack(itemStack);
+
+        assertTrue(firearm.isMatching(other));
+    }
+
+    @Test
     public void doesNothingWhenChangingHeldItemWithoutReloadSystem() {
         DefaultFirearm firearm = new DefaultFirearm(context);
         firearm.onChangeHeldItem(holder);

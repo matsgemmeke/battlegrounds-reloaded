@@ -64,4 +64,8 @@ public abstract class AbstractItem implements Item {
     public void setName(@Nullable String name) {
         this.name = name;
     }
+
+    public boolean isMatching(@NotNull ItemStack itemStack) {
+        return this.itemStack != null && this.itemStack.isSimilar(itemStack);
+    }
 }

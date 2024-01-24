@@ -5,6 +5,7 @@ import com.github.matsgemmeke.battlegrounds.api.entity.GamePlayer;
 import com.github.matsgemmeke.battlegrounds.api.game.Team;
 import com.github.matsgemmeke.battlegrounds.api.item.Item;
 import com.github.matsgemmeke.battlegrounds.api.item.PlayerEffect;
+import com.github.matsgemmeke.battlegrounds.api.item.Weapon;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,6 +31,8 @@ public class DefaultGamePlayer implements GamePlayer {
     private Set<Item> items;
     @NotNull
     private Set<PlayerEffect> effects;
+    @NotNull
+    private Set<Weapon> weapons;
     @Nullable
     private Team team;
 
@@ -38,6 +41,7 @@ public class DefaultGamePlayer implements GamePlayer {
         this.internals = internals;
         this.effects = new HashSet<>();
         this.items = new HashSet<>();
+        this.weapons = new HashSet<>();
     }
 
     @NotNull
@@ -66,6 +70,10 @@ public class DefaultGamePlayer implements GamePlayer {
         return items.add(item);
     }
 
+    public boolean addWeapon(@NotNull Weapon weapon) {
+        return weapons.add(weapon);
+    }
+
     public double damage(double damageAmount) {
         return 0.0;
     }
@@ -91,8 +99,18 @@ public class DefaultGamePlayer implements GamePlayer {
     @Nullable
     public Item getItem(@NotNull ItemStack itemStack) {
         for (Item item : items) {
-            if (item.getItemStack() != null && item.getItemStack().isSimilar(itemStack)) {
+            if (item.isMatching(itemStack)) {
                 return item;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public Weapon getWeapon(@NotNull ItemStack itemStack) {
+        for (Weapon weapon : weapons) {
+            if (weapon.isMatching(itemStack)) {
+                return weapon;
             }
         }
         return null;
@@ -116,6 +134,10 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public boolean removeItem(@NotNull Item item) {
         return items.remove(item);
+    }
+
+    public boolean removeWeapon(@NotNull Weapon weapon) {
+        return weapons.remove(weapon);
     }
 
     public boolean updateItemStack(@NotNull ItemStack itemStack) {

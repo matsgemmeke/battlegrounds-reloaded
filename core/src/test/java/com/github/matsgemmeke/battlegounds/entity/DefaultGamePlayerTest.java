@@ -2,6 +2,7 @@ package com.github.matsgemmeke.battlegounds.entity;
 
 import com.github.matsgemmeke.battlegrounds.InternalsProvider;
 import com.github.matsgemmeke.battlegrounds.api.item.Item;
+import com.github.matsgemmeke.battlegrounds.api.item.Weapon;
 import com.github.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -88,16 +89,38 @@ public class DefaultGamePlayerTest {
     public void canFindItemByItemStack() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
-        ItemStack other = mock(ItemStack.class);
-        when(other.isSimilar(itemStack)).thenReturn(true);
-
         Item item = mock(Item.class);
-        when(item.getItemStack()).thenReturn(other);
+        when(item.isMatching(itemStack)).thenReturn(true);
 
         DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
         gamePlayer.addItem(item);
 
         assertEquals(item, gamePlayer.getItem(itemStack));
+    }
+
+    @Test
+    public void returnsNullWhenFindingWeaponWithUnknownItemStack() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        Weapon weapon = mock(Weapon.class);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        gamePlayer.addWeapon(weapon);
+
+        assertNull(gamePlayer.getWeapon(itemStack));
+    }
+
+    @Test
+    public void canFindWeaponByItemStack() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        Weapon weapon = mock(Weapon.class);
+        when(weapon.isMatching(itemStack)).thenReturn(true);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        gamePlayer.addWeapon(weapon);
+
+        assertEquals(weapon, gamePlayer.getWeapon(itemStack));
     }
 
     @Test
