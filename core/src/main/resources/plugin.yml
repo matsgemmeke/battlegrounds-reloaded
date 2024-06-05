@@ -1,0 +1,6 @@
+main: nl.matsgemmeke.battlegrounds.BattlegroundsPlugin
+name: Battlegrounds
+version: 3.0.0
+api-version: 1.18
+author: Mats9799
+softdepend: [Multiverse-Core, MultiWorld, PlaceholderAPI]

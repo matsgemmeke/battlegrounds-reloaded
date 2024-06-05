@@ -1,0 +1,42 @@
+ammo:
+  default-supply: 3
+  magazine-size: 20
+  max-magazine-amount: 8
+controls:
+  reload: LEFT_CLICK
+  shoot: RIGHT_CLICK
+description: Semi-automatic pistol. Versatile and strong overall with a large magazine.
+display-name: Five-seven
+firearm-type: HANDGUN
+id: FIVE-SEVEN
+item:
+  durability: 2
+  material: IRON_HOE
+level-unlocked: 1
+price: 750
+reloading:
+  duration: 36
+  sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+  type: MAGAZINE
+shooting:
+  fire-mode:
+    cooldown: 2
+    type: SEMI_AUTOMATIC
+  headshot-damage-multiplier: 1.4
+  range:
+    long-range:
+      damage: 22.0
+      distance: 50.0
+    medium-range:
+      damage: 32.0
+      distance: 30.0
+    short-range:
+      damage: 42.0
+      distance: 10.0
+  recoil:
+    horizontal: [-0.5, 0.0, 0.5]
+    kickback-duration: 200
+    type: CAMERA_MOVEMENT
+    vertical: [-1.5, -2.0, -2.5]
+  shot-sound: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
+  suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0

@@ -1,0 +1,7 @@
+description: description here
+display-name: Frag Grenade
+equipment-type: LETHAL
+id: FRAG_GRENADE
+item:
+  durability: 1
+  material: FLINT_AND_STEEL

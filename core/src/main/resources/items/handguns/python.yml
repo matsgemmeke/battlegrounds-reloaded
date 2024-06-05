@@ -1,0 +1,42 @@
+ammo:
+  default-supply: 3
+  magazine-size: 6
+  max-magazine-amount: 8
+controls:
+  reload: LEFT_CLICK
+  shoot: RIGHT_CLICK
+description: Double-action revolver pistol. Uses a 6 round cylinder feed system.
+display-name: Python
+firearm-type: HANDGUN
+id: PYTHON
+item:
+  durability: 5
+  material: IRON_HOE
+level-unlocked: 18
+price: 600
+reloading:
+  duration: 16
+  sound: BLOCK_STONE_BUTTON_CLICK_OFF-1-2-12
+  type: MANUAL_INSERTION
+shooting:
+  fire-mode:
+    cooldown: 4
+    type: SEMI_AUTOMATIC
+  headshot-damage-multiplier: 1.5
+  range:
+    long-range:
+      damage: 30.0
+      distance: 50.0
+    medium-range:
+      damage: 40.0
+      distance: 30.0
+    short-range:
+      damage: 50.0
+      distance: 10.0
+  recoil:
+    horizontal: [0.0, 0.5, 1.0]
+    kickback-duration: 200
+    type: CAMERA_MOVEMENT
+    vertical: [-3.0, -3.5, -4.0]
+  shot-sound: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
+  suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0

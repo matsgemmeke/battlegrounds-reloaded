@@ -1,0 +1,24 @@
+admin:
+  main-lobby-set: "&6You have set the main lobby to your current location."
+  reload-failed: "&cFailed to reload configuration files."
+  reload-success: "&6Successfully reloaded all configuration files."
+  session-already-exists: "&cA session by the id %bg_session% already exists."
+  session-confirm-removal: "&cAre you sure you want to remove session %bg_session%? Rerun the command to confirm the removal."
+  session-created: "&6You have created a new session by the id &f%bg_session%&6."
+  session-creation-failed: "&cFailed to create session %bg_session%!"
+  session-not-exists: "&cA session by the id %bg_session% doesn't exist."
+  session-removal-failed: "&cFailed to remove session %bg_session%!"
+  session-removed: "&6You have removed session &f%bg_session% &6and its content."
+  weapon-not-exists: "&cA weapon with the id %bg_weapon% doesn't exist."
+
+commands:
+  description-createsession: "Creates a new session with the given id"
+  description-giveweapon: "Gives a weapon for training mode"
+  description-reload: "Reloads all configuration files"
+  description-removesession: "Removes a session and all of its arenas"
+  description-setmainlobby: "Sets the main lobby location"
+  help-menu-title: "&6&l Battlegrounds Help Menu"
+  weapon-given: "&6You have been given a %bg_weapon%."
+
+errors:
+  not-in-training-mode: "&cUnable to perform action; you are not in training mode."
