@@ -107,6 +107,11 @@ public class DefaultGamePlayer implements GamePlayer {
         return player.getEyeLocation().subtract(0, 0.25, 0);
     }
 
+    @NotNull
+    public Location getThrowingDirection() {
+        return player.getEyeLocation();
+    }
+
     @Nullable
     public Weapon getWeapon(@NotNull ItemStack itemStack) {
         for (Weapon weapon : weapons) {

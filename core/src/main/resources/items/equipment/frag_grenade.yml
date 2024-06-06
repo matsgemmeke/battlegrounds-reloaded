@@ -1,3 +1,5 @@
+controls:
+  throw: LEFT_CLICK
 description: description here
 display-name: Frag Grenade
 equipment-type: LETHAL

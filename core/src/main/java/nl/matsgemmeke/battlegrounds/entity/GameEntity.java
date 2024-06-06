@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,7 +14,7 @@ public interface GameEntity {
      * @return the bukkit entity
      */
     @NotNull
-    LivingEntity getEntity();
+    Entity getEntity();
 
     /**
      * Applies damage to the entity.
