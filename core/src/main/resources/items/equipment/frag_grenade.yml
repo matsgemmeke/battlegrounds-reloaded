@@ -1,9 +1,12 @@
 controls:
   throw: LEFT_CLICK
-description: description here
+description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 display-name: Frag Grenade
 equipment-type: LETHAL
 id: FRAG_GRENADE
 item:
   durability: 1
   material: FLINT_AND_STEEL
+throwing:
+  projectile-speed: 1.2
+  sound: ENTITY_ARROW_SHOOT-1-0.5-0

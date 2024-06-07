@@ -25,7 +25,6 @@ public class StopScopeFunction implements ItemFunction<GunHolder> {
         this.sounds = new HashSet<>();
     }
 
-    @NotNull
     public void addSounds(@NotNull Iterable<GameSound> sounds) {
         this.sounds = Iterables.concat(this.sounds, sounds);
     }
