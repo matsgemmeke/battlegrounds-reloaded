@@ -20,7 +20,7 @@ reloading:
   type: MANUAL_INSERTION
 shooting:
   fire-mode:
-    cooldown: 6
+    delay-between-shots: 6
     type: SEMI_AUTOMATIC
   headshot-damage-multiplier: 1.1
   pattern:

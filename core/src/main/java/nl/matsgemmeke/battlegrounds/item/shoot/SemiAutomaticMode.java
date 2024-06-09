@@ -5,37 +5,37 @@ import org.jetbrains.annotations.NotNull;
 
 public class SemiAutomaticMode implements FireMode {
 
-    private boolean coolingDown;
-    private long cooldownDuration;
+    private boolean delaying;
+    private long delayBetweenShots;
     @NotNull
     private Shootable item;
     @NotNull
     private TaskRunner taskRunner;
 
-    public SemiAutomaticMode(@NotNull Shootable item, @NotNull TaskRunner taskRunner, long cooldownDuration) {
+    public SemiAutomaticMode(@NotNull Shootable item, @NotNull TaskRunner taskRunner, long delayBetweenShots) {
         this.item = item;
         this.taskRunner = taskRunner;
-        this.cooldownDuration = cooldownDuration;
-        this.coolingDown = false;
+        this.delayBetweenShots = delayBetweenShots;
+        this.delaying = false;
     }
 
     public boolean activateCycle() {
-        if (coolingDown) {
+        if (delaying) {
             return false;
         }
 
-        coolingDown = true;
+        delaying = true;
         item.shoot();
-        taskRunner.runTaskLater(this::cancel, cooldownDuration);
+        taskRunner.runTaskLater(this::cancel, delayBetweenShots);
         return true;
     }
 
     public boolean cancel() {
-        if (!coolingDown) {
+        if (!delaying) {
             return false;
         }
 
-        coolingDown = false;
+        delaying = false;
         return true;
     }
 
