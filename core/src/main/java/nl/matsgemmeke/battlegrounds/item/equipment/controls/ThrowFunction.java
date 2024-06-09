@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.common.collect.Iterables;
+import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
@@ -22,24 +23,33 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
     private AudioEmitter audioEmitter;
+    private boolean delaying;
     private double projectileSpeed;
     @NotNull
     private EquipmentMechanism mechanism;
     @Nullable
     private ItemStack itemStack;
+    private long delayBetweenThrows;
     @NotNull
     private Iterable<GameSound> sounds;
+    @NotNull
+    private TaskRunner taskRunner;
 
     public ThrowFunction(
             @NotNull EquipmentMechanism mechanism,
             @Nullable ItemStack itemStack,
             @NotNull AudioEmitter audioEmitter,
-            double projectileSpeed
+            @NotNull TaskRunner taskRunner,
+            double projectileSpeed,
+            long delayBetweenThrows
     ) {
         this.mechanism = mechanism;
         this.itemStack = itemStack;
         this.audioEmitter = audioEmitter;
+        this.taskRunner = taskRunner;
         this.projectileSpeed = projectileSpeed;
+        this.delayBetweenThrows = delayBetweenThrows;
+        this.delaying = false;
         this.sounds = new HashSet<>();
     }
 
@@ -48,7 +58,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return true;
+        return !delaying;
     }
 
     public boolean isBlocking() {
@@ -76,6 +86,9 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         item.setVelocity(direction.getDirection().multiply(projectileSpeed));
 
         audioEmitter.playSounds(sounds, direction);
+
+        delaying = true;
+        taskRunner.runTaskLater(() -> delaying = false, delayBetweenThrows);
 
         // Prime the mechanism if it isn't already cooked by the holder
         if (!mechanism.isPrimed()) {

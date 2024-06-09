@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
@@ -33,6 +34,7 @@ public class EquipmentFactoryTest {
     private ItemConfiguration configuration;
     private ItemFactory itemFactory;
     private Section rootSection;
+    private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
@@ -40,6 +42,7 @@ public class EquipmentFactoryTest {
         context = mock(GameContext.class);
         configuration = mock(ItemConfiguration.class);
         itemFactory = mock(ItemFactory.class);
+        taskRunner = mock(TaskRunner.class);
 
         rootSection = mock(Section.class);
         when(rootSection.getString("display-name")).thenReturn("name");
@@ -61,7 +64,7 @@ public class EquipmentFactoryTest {
         ItemRegister<Equipment, EquipmentHolder> register = (ItemRegister<Equipment, EquipmentHolder>) mock(ItemRegister.class);
         when(game.getEquipmentRegister()).thenReturn(register);
 
-        EquipmentFactory equipmentFactory = new EquipmentFactory();
+        EquipmentFactory equipmentFactory = new EquipmentFactory(taskRunner);
         Equipment equipment = equipmentFactory.make(configuration, game, context);
 
         assertEquals("name", equipment.getName());
@@ -85,7 +88,7 @@ public class EquipmentFactoryTest {
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        EquipmentFactory factory = new EquipmentFactory();
+        EquipmentFactory factory = new EquipmentFactory(taskRunner);
         Equipment equipment = factory.make(configuration, game, context, gamePlayer);
 
         assertNotNull(equipment);
@@ -100,7 +103,7 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        EquipmentFactory factory = new EquipmentFactory();
+        EquipmentFactory factory = new EquipmentFactory(taskRunner);
         factory.make(configuration, game, context);
     }
 }

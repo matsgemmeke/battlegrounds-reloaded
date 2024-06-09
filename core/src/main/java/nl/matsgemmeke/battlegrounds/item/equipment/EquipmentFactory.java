@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.DefaultGameSound;
@@ -18,6 +19,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class EquipmentFactory implements WeaponFactory {
+
+    @NotNull
+    private TaskRunner taskRunner;
+
+    public EquipmentFactory(@NotNull TaskRunner taskRunner) {
+        this.taskRunner = taskRunner;
+    }
 
     @NotNull
     public Equipment make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context) {
@@ -72,9 +80,10 @@ public class EquipmentFactory implements WeaponFactory {
         String throwActionValue = controlsSection.getString("throw");
 
         if (throwActionValue != null) {
+            long delayBetweenThrows = section.getLong("throwing.delay-between-throws");
             double projectileSpeed = section.getDouble("throwing.projectile-speed");
 
-            ThrowFunction throwFunction = new ThrowFunction(new TimedExplosionMechanism(), equipment.getItemStack(), context, projectileSpeed);
+            ThrowFunction throwFunction = new ThrowFunction(new TimedExplosionMechanism(), equipment.getItemStack(), context, taskRunner, projectileSpeed, delayBetweenThrows);
 
             List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("throwing.sound"));
             throwFunction.addSounds(shotSounds);
