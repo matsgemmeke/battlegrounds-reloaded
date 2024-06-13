@@ -10,8 +10,11 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
+import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivation;
+import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.TimedExplosionMechanism;
+import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanism;
+import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanismFactory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +24,19 @@ import java.util.List;
 public class EquipmentFactory implements WeaponFactory {
 
     @NotNull
+    private EquipmentActivationFactory activationFactory;
+    @NotNull
+    private EquipmentMechanismFactory mechanismFactory;
+    @NotNull
     private TaskRunner taskRunner;
 
-    public EquipmentFactory(@NotNull TaskRunner taskRunner) {
+    public EquipmentFactory(
+            @NotNull EquipmentActivationFactory activationFactory,
+            @NotNull EquipmentMechanismFactory mechanismFactory,
+            @NotNull TaskRunner taskRunner
+    ) {
+        this.activationFactory = activationFactory;
+        this.mechanismFactory = mechanismFactory;
         this.taskRunner = taskRunner;
     }
 
@@ -80,15 +93,18 @@ public class EquipmentFactory implements WeaponFactory {
         String throwActionValue = controlsSection.getString("throw");
 
         if (throwActionValue != null) {
+            Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
+
+            EquipmentMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
+            EquipmentActivation activation = activationFactory.make(section.getSection("activation"), mechanism);
+
             long delayBetweenThrows = section.getLong("throwing.delay-between-throws");
             double projectileSpeed = section.getDouble("throwing.projectile-speed");
 
-            ThrowFunction throwFunction = new ThrowFunction(new TimedExplosionMechanism(), equipment.getItemStack(), context, taskRunner, projectileSpeed, delayBetweenThrows);
-
             List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("throwing.sound"));
-            throwFunction.addSounds(shotSounds);
 
-            Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
+            ThrowFunction throwFunction = new ThrowFunction(activation, equipment.getItemStack(), context, taskRunner, projectileSpeed, delayBetweenThrows);
+            throwFunction.addSounds(shotSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);
         }

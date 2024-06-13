@@ -1,3 +1,6 @@
+activation:
+  delay-until-trigger: 80
+  type: DELAYED_TRIGGER
 controls:
   throw: LEFT_CLICK
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
@@ -7,6 +10,8 @@ id: FRAG_GRENADE
 item:
   durability: 1
   material: FLINT_AND_STEEL
+mechanism:
+  type: EXPLOSION
 throwing:
   delay-between-throws: 30
   projectile-speed: 1.2
