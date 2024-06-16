@@ -23,8 +23,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -89,7 +88,7 @@ public class EquipmentFactoryTest {
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
-        when(rootSection.getString("throwing.sound")).thenReturn("AMBIENT_CAVE-1-1-1");
+        when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
         ItemRegister<Equipment, EquipmentHolder> register = (ItemRegister<Equipment, EquipmentHolder>) mock(ItemRegister.class);
         when(game.getEquipmentRegister()).thenReturn(register);
@@ -113,6 +112,43 @@ public class EquipmentFactoryTest {
     public void shouldThrowErrorWhenThrowActionConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("throw")).thenReturn("fail");
+
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+
+        EquipmentFactory factory = new EquipmentFactory(activationFactory, mechanismFactory, taskRunner);
+        factory.make(configuration, game, context);
+    }
+
+    @Test
+    public void shouldCreateEquipmentItemWithCookControls() {
+        Section controlsSection = mock(Section.class);
+        when(controlsSection.getString("cook")).thenReturn("RIGHT_CLICK");
+        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
+
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+
+        EquipmentActivation activation = mock(EquipmentActivation.class);
+        EquipmentMechanism mechanism = mock(EquipmentMechanism.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+
+        ItemRegister<Equipment, EquipmentHolder> register = (ItemRegister<Equipment, EquipmentHolder>) mock(ItemRegister.class);
+        when(game.getEquipmentRegister()).thenReturn(register);
+
+        when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
+        when(activationFactory.make(any(), eq(mechanism))).thenReturn(activation);
+
+        EquipmentFactory factory = new EquipmentFactory(activationFactory, mechanismFactory, taskRunner);
+        Equipment equipment = factory.make(configuration, game, context, gamePlayer);
+
+        assertNotNull(equipment);
+        assertTrue(equipment instanceof DefaultEquipment);
+    }
+
+    @Test(expected = CreateEquipmentException.class)
+    public void shouldThrowErrorWhenCookActionConfigurationValueIsInvalid() {
+        Section controlsSection = mock(Section.class);
+        when(controlsSection.getString("cook")).thenReturn("fail");
+        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 

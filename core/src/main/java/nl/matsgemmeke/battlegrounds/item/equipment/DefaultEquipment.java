@@ -54,6 +54,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onRightClick() {
+        if (holder == null) {
+            return;
+        }
+
+        controls.performAction(Action.RIGHT_CLICK, holder);
     }
 
     public void onSwapFrom() {

@@ -32,4 +32,20 @@ public class DefaultEquipmentTest {
 
         verify(function).perform(holder);
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldPerformFunctionWhenRightClicked() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        ItemFunction<EquipmentHolder> function = (ItemFunction<EquipmentHolder>) mock(ItemFunction.class);
+        when(function.isAvailable()).thenReturn(true);
+
+        DefaultEquipment equipment = new DefaultEquipment(context);
+        equipment.getControls().addControl(Action.RIGHT_CLICK, function);
+        equipment.setHolder(holder);
+        equipment.onRightClick();
+
+        verify(function).perform(holder);
+    }
 }

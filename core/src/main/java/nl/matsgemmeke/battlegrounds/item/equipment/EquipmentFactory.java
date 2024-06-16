@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivationFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanism;
 import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanismFactory;
@@ -90,6 +91,7 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     private void addControls(@NotNull DefaultEquipment equipment, @NotNull GameContext context, @NotNull Section section, @NotNull Section controlsSection) {
+        String cookActionValue = controlsSection.getString("cook");
         String throwActionValue = controlsSection.getString("throw");
 
         if (throwActionValue != null) {
@@ -98,13 +100,24 @@ public class EquipmentFactory implements WeaponFactory {
             EquipmentMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
             EquipmentActivation activation = activationFactory.make(section.getSection("activation"), mechanism);
 
+            if (cookActionValue != null) {
+                Action cookAction = this.getActionFromConfiguration("cook", cookActionValue);
+
+                List<GameSound> cookSounds = DefaultGameSound.parseSounds(section.getString("throwing.cook-sound"));
+
+                CookFunction cookFunction = new CookFunction(activation, context);
+                cookFunction.addSounds(cookSounds);
+
+                equipment.getControls().addControl(cookAction, cookFunction);
+            }
+
             long delayBetweenThrows = section.getLong("throwing.delay-between-throws");
             double projectileSpeed = section.getDouble("throwing.projectile-speed");
 
-            List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("throwing.sound"));
+            List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
             ThrowFunction throwFunction = new ThrowFunction(activation, equipment.getItemStack(), context, taskRunner, projectileSpeed, delayBetweenThrows);
-            throwFunction.addSounds(shotSounds);
+            throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);
         }

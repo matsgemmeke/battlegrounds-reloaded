@@ -63,4 +63,40 @@ public class EquipmentBehaviorTest {
 
         verify(equipment, never()).onLeftClick();
     }
+
+    @Test
+    public void shouldCallFunctionOnEquipmentWhenRightClicked() {
+        when(equipment.getHolder()).thenReturn(gamePlayer);
+
+        register.addAssignedItem(equipment, gamePlayer);
+
+        EquipmentBehavior behavior = new EquipmentBehavior(register);
+        boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
+
+        assertFalse(performAction);
+
+        verify(equipment).onRightClick();
+    }
+
+    @Test
+    public void shouldDoNothingWhenRightClickedButEquipmentIsNotRegistered() {
+        EquipmentBehavior behavior = new EquipmentBehavior(register);
+        boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
+
+        assertTrue(performAction);
+
+        verify(equipment, never()).onRightClick();
+    }
+
+    @Test
+    public void shouldDoNothingWhenRightClickedButHolderDoesNotMatch() {
+        register.addAssignedItem(equipment, gamePlayer);
+
+        EquipmentBehavior behavior = new EquipmentBehavior(register);
+        boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
+
+        assertTrue(performAction);
+
+        verify(equipment, never()).onRightClick();
+    }
 }

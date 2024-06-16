@@ -43,7 +43,14 @@ public class EquipmentBehavior implements ItemBehavior {
     }
 
     public boolean handleRightClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        return true;
+        Equipment equipment = register.getAssignedItem(gamePlayer, clickedItem);
+
+        if (equipment == null || equipment.getHolder() != gamePlayer) {
+            return true;
+        }
+
+        equipment.onRightClick();
+        return false;
     }
 
     public boolean handleSwapFromAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack swappedItem) {
