@@ -1,7 +1,8 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.activation;
+package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.DelayedActivation;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,13 +14,13 @@ import static org.mockito.Mockito.verify;
 
 public class DelayedActivationTest {
 
-    private EquipmentMechanism mechanism;
+    private ItemMechanism mechanism;
     private long delayUntilTrigger;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
-        mechanism = mock(EquipmentMechanism.class);
+        mechanism = mock(ItemMechanism.class);
         taskRunner = mock(TaskRunner.class);
         delayUntilTrigger = 1L;
     }

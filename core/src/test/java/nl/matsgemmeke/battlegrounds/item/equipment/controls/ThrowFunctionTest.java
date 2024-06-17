@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivation;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -21,7 +21,7 @@ public class ThrowFunctionTest {
 
     private AudioEmitter audioEmitter;
     private double projectileSpeed;
-    private EquipmentActivation activation;
+    private ItemMechanismActivation mechanismActivation;
     private long delayBetweenThrows;
     private TaskRunner taskRunner;
 
@@ -29,7 +29,7 @@ public class ThrowFunctionTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         projectileSpeed = 2.0;
-        activation = mock(EquipmentActivation.class);
+        mechanismActivation = mock(ItemMechanismActivation.class);
         delayBetweenThrows = 1;
         taskRunner = mock(TaskRunner.class);
     }
@@ -51,7 +51,7 @@ public class ThrowFunctionTest {
         when(holder.getEntity()).thenReturn(entity);
         when(holder.getThrowingDirection()).thenReturn(location);
 
-        ThrowFunction function = new ThrowFunction(activation, itemStack, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
+        ThrowFunction function = new ThrowFunction(mechanismActivation, itemStack, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
         function.perform(holder);
         boolean available = function.isAvailable();
 
@@ -75,7 +75,7 @@ public class ThrowFunctionTest {
         when(holder.getEntity()).thenReturn(entity);
         when(holder.getThrowingDirection()).thenReturn(location);
 
-        ThrowFunction function = new ThrowFunction(activation, itemStack, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
+        ThrowFunction function = new ThrowFunction(mechanismActivation, itemStack, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
         function.perform(holder);
         boolean performing = function.isPerforming();
 
@@ -99,12 +99,12 @@ public class ThrowFunctionTest {
         when(holder.getEntity()).thenReturn(entity);
         when(holder.getThrowingDirection()).thenReturn(location);
 
-        ThrowFunction function = new ThrowFunction(activation, itemStack, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
+        ThrowFunction function = new ThrowFunction(mechanismActivation, itemStack, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
 
-        verify(activation).prime();
+        verify(mechanismActivation).prime();
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayBetweenThrows));
         verify(world).dropItem(location, itemStack);
     }
@@ -119,10 +119,10 @@ public class ThrowFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getEntity()).thenReturn(entity);
 
-        ThrowFunction function = new ThrowFunction(activation, null, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
+        ThrowFunction function = new ThrowFunction(mechanismActivation, null, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
         function.perform(holder);
 
-        verify(activation, never()).prime();
+        verify(mechanismActivation, never()).prime();
         verify(world, never()).dropItem(any(), any());
     }
 }

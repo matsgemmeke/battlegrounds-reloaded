@@ -1,23 +1,23 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.mechanism;
+package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-public class EquipmentMechanismFactory {
+public class ItemMechanismFactory {
 
-    public EquipmentMechanism make(@NotNull Section section, @NotNull GameContext context) {
+    public ItemMechanism make(@NotNull Section section, @NotNull GameContext context) {
         String type = section.getString("type");
 
         if (type == null) {
             throw new InvalidItemConfigurationException("Equipment mechanism type must be defined!");
         }
 
-        EquipmentMechanismType equipmentMechanismType;
+        ItemMechanismType equipmentMechanismType;
 
         try {
-            equipmentMechanismType = EquipmentMechanismType.valueOf(type);
+            equipmentMechanismType = ItemMechanismType.valueOf(type);
         } catch (IllegalArgumentException e) {
             throw new InvalidItemConfigurationException("Equipment mechanism type \"" + type + "\" is invalid!");
         }

@@ -2,9 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivation;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,19 +14,19 @@ import static org.mockito.Mockito.*;
 public class CookFunctionTest {
 
     private AudioEmitter audioEmitter;
-    private EquipmentActivation activation;
+    private ItemMechanismActivation mechanismActivation;
 
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        activation = mock(EquipmentActivation.class);
+        mechanismActivation = mock(ItemMechanismActivation.class);
     }
 
     @Test
     public void shouldOnlyBeAvailableIfActivationIsNotPrimed() {
-        when(activation.isPrimed()).thenReturn(false);
+        when(mechanismActivation.isPrimed()).thenReturn(false);
 
-        CookFunction function = new CookFunction(activation, audioEmitter);
+        CookFunction function = new CookFunction(mechanismActivation, audioEmitter);
         boolean available = function.isAvailable();
 
         assertTrue(available);
@@ -43,10 +42,10 @@ public class CookFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getEntity()).thenReturn(player);
 
-        CookFunction function = new CookFunction(activation, audioEmitter);
+        CookFunction function = new CookFunction(mechanismActivation, audioEmitter);
         function.perform(holder);
 
         verify(audioEmitter).playSounds(any(), eq(location));
-        verify(activation).prime();
+        verify(mechanismActivation).prime();
     }
 }

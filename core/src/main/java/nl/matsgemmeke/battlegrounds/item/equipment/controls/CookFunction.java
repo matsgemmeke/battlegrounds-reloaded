@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivation;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -15,12 +15,12 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
-    private EquipmentActivation activation;
+    private ItemMechanismActivation mechanismActivation;
     @NotNull
     private Iterable<GameSound> sounds;
 
-    public CookFunction(@NotNull EquipmentActivation activation, @NotNull AudioEmitter audioEmitter) {
-        this.activation = activation;
+    public CookFunction(@NotNull ItemMechanismActivation mechanismActivation, @NotNull AudioEmitter audioEmitter) {
+        this.mechanismActivation = mechanismActivation;
         this.audioEmitter = audioEmitter;
         this.sounds = new HashSet<>();
     }
@@ -30,7 +30,7 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return !activation.isPrimed();
+        return !mechanismActivation.isPrimed();
     }
 
     public boolean isBlocking() {
@@ -47,7 +47,7 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
 
     public boolean perform(@NotNull EquipmentHolder holder) {
         audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
-        activation.prime();
+        mechanismActivation.prime();
         return true;
     }
 }

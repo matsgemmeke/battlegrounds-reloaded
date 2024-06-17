@@ -1,45 +1,46 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.activation;
+package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Factory class responsible for instantiating {@link EquipmentActivation} implementation classes.
+ * Factory class responsible for instantiating {@link ItemMechanismActivation} implementation classes.
  */
-public class EquipmentActivationFactory {
+public class ItemMechanismActivationFactory {
 
     @NotNull
     private TaskRunner taskRunner;
 
-    public EquipmentActivationFactory(@NotNull TaskRunner taskRunner) {
+    public ItemMechanismActivationFactory(@NotNull TaskRunner taskRunner) {
         this.taskRunner = taskRunner;
     }
 
     /**
-     * Creates a new {@link EquipmentActivation} instance based on configuration values.
+     * Creates a new {@link ItemMechanismActivation} instance based on configuration values.
      *
      * @param section the configuration section
+     * @param mechanism the item mechanism instance
      * @return a new activation instance
      */
-    public EquipmentActivation make(@NotNull Section section, @NotNull EquipmentMechanism mechanism) {
+    public ItemMechanismActivation make(@NotNull Section section, @NotNull ItemMechanism mechanism) {
         String type = section.getString("type");
 
         if (type == null) {
             throw new InvalidItemConfigurationException("Equipment activation type must be defined!");
         }
 
-        EquipmentActivationType equipmentActivationType;
+        ItemMechanismActivationType mechanismActivationType;
 
         try {
-            equipmentActivationType = EquipmentActivationType.valueOf(type);
+            mechanismActivationType = ItemMechanismActivationType.valueOf(type);
         } catch (IllegalArgumentException e) {
             throw new InvalidItemConfigurationException("Equipment activation type \"" + type + "\" is invalid!");
         }
 
-        switch (equipmentActivationType) {
+        switch (mechanismActivationType) {
             case DELAYED_TRIGGER -> {
                 long delayUntilTrigger = section.getLong("delay-until-trigger");
                 return new DelayedActivation(mechanism, taskRunner, delayUntilTrigger);

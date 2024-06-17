@@ -1,9 +1,9 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.activation;
+package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,15 +12,15 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class EquipmentActivationFactoryTest {
+public class ItemMechanismActivationFactoryTest {
 
-    private EquipmentMechanism mechanism;
+    private ItemMechanism mechanism;
     private Section section;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
-        mechanism = mock(EquipmentMechanism.class);
+        mechanism = mock(ItemMechanism.class);
         section = mock(Section.class);
         taskRunner = mock(TaskRunner.class);
     }
@@ -29,8 +29,8 @@ public class EquipmentActivationFactoryTest {
     public void shouldCreateInstanceForDelayedActivationType() {
         when(section.getString("type")).thenReturn("DELAYED_TRIGGER");
 
-        EquipmentActivationFactory factory = new EquipmentActivationFactory(taskRunner);
-        EquipmentActivation activation = factory.make(section, mechanism);
+        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
+        ItemMechanismActivation activation = factory.make(section, mechanism);
 
         assertNotNull(activation);
         assertTrue(activation instanceof DelayedActivation);
@@ -40,7 +40,7 @@ public class EquipmentActivationFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsNotDefined() {
         when(section.getString("type")).thenReturn(null);
 
-        EquipmentActivationFactory factory = new EquipmentActivationFactory(taskRunner);
+        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
         factory.make(section, mechanism);
     }
 
@@ -48,7 +48,7 @@ public class EquipmentActivationFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsIncorrect() {
         when(section.getString("type")).thenReturn("fail");
 
-        EquipmentActivationFactory factory = new EquipmentActivationFactory(taskRunner);
+        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
         factory.make(section, mechanism);
     }
 }

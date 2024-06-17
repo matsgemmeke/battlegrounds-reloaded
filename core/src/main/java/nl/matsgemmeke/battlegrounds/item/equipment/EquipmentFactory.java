@@ -10,12 +10,12 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivation;
-import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivationFactory;
+import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanismFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanism;
-import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanismFactory;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -25,19 +25,19 @@ import java.util.List;
 public class EquipmentFactory implements WeaponFactory {
 
     @NotNull
-    private EquipmentActivationFactory activationFactory;
+    private ItemMechanismFactory mechanismFactory;
     @NotNull
-    private EquipmentMechanismFactory mechanismFactory;
+    private ItemMechanismActivationFactory mechanismActivationFactory;
     @NotNull
     private TaskRunner taskRunner;
 
     public EquipmentFactory(
-            @NotNull EquipmentActivationFactory activationFactory,
-            @NotNull EquipmentMechanismFactory mechanismFactory,
+            @NotNull ItemMechanismFactory mechanismFactory,
+            @NotNull ItemMechanismActivationFactory mechanismActivationFactory,
             @NotNull TaskRunner taskRunner
-    ) {
-        this.activationFactory = activationFactory;
+            ) {
         this.mechanismFactory = mechanismFactory;
+        this.mechanismActivationFactory = mechanismActivationFactory;
         this.taskRunner = taskRunner;
     }
 
@@ -97,8 +97,8 @@ public class EquipmentFactory implements WeaponFactory {
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
 
-            EquipmentMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
-            EquipmentActivation activation = activationFactory.make(section.getSection("activation"), mechanism);
+            ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
+            ItemMechanismActivation activation = mechanismActivationFactory.make(section.getSection("activation"), mechanism);
 
             if (cookActionValue != null) {
                 Action cookAction = this.getActionFromConfiguration("cook", cookActionValue);

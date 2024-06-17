@@ -7,10 +7,10 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
-import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivation;
-import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivationFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanism;
-import nl.matsgemmeke.battlegrounds.item.equipment.mechanism.EquipmentMechanismFactory;
+import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanismFactory;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFactory;
@@ -32,8 +32,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest(Bukkit.class)
 public class EquipmentFactoryTest {
 
-    private EquipmentActivationFactory activationFactory;
-    private EquipmentMechanismFactory mechanismFactory;
+    private ItemMechanismActivationFactory mechanismActivationFactory;
+    private ItemMechanismFactory mechanismFactory;
     private Game game;
     private GameContext context;
     private ItemConfiguration configuration;
@@ -43,8 +43,8 @@ public class EquipmentFactoryTest {
 
     @Before
     public void setUp() {
-        activationFactory = mock(EquipmentActivationFactory.class);
-        mechanismFactory = mock(EquipmentMechanismFactory.class);
+        mechanismActivationFactory = mock(ItemMechanismActivationFactory.class);
+        mechanismFactory = mock(ItemMechanismFactory.class);
         game = mock(Game.class);
         context = mock(GameContext.class);
         configuration = mock(ItemConfiguration.class);
@@ -71,7 +71,7 @@ public class EquipmentFactoryTest {
         ItemRegister<Equipment, EquipmentHolder> register = (ItemRegister<Equipment, EquipmentHolder>) mock(ItemRegister.class);
         when(game.getEquipmentRegister()).thenReturn(register);
 
-        EquipmentFactory factory = new EquipmentFactory(activationFactory, mechanismFactory, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, game, context);
 
         assertEquals("name", equipment.getName());
@@ -93,14 +93,14 @@ public class EquipmentFactoryTest {
         ItemRegister<Equipment, EquipmentHolder> register = (ItemRegister<Equipment, EquipmentHolder>) mock(ItemRegister.class);
         when(game.getEquipmentRegister()).thenReturn(register);
 
-        EquipmentActivation activation = mock(EquipmentActivation.class);
-        EquipmentMechanism mechanism = mock(EquipmentMechanism.class);
+        ItemMechanism mechanism = mock(ItemMechanism.class);
+        ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(activationFactory.make(any(), eq(mechanism))).thenReturn(activation);
+        when(mechanismActivationFactory.make(any(), eq(mechanism))).thenReturn(activation);
 
-        EquipmentFactory factory = new EquipmentFactory(activationFactory, mechanismFactory, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, game, context, gamePlayer);
 
         assertNotNull(equipment);
@@ -115,7 +115,7 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        EquipmentFactory factory = new EquipmentFactory(activationFactory, mechanismFactory, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         factory.make(configuration, game, context);
     }
 
@@ -127,17 +127,17 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        EquipmentActivation activation = mock(EquipmentActivation.class);
-        EquipmentMechanism mechanism = mock(EquipmentMechanism.class);
+        ItemMechanism mechanism = mock(ItemMechanism.class);
+        ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         ItemRegister<Equipment, EquipmentHolder> register = (ItemRegister<Equipment, EquipmentHolder>) mock(ItemRegister.class);
         when(game.getEquipmentRegister()).thenReturn(register);
 
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(activationFactory.make(any(), eq(mechanism))).thenReturn(activation);
+        when(mechanismActivationFactory.make(any(), eq(mechanism))).thenReturn(activation);
 
-        EquipmentFactory factory = new EquipmentFactory(activationFactory, mechanismFactory, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, game, context, gamePlayer);
 
         assertNotNull(equipment);
@@ -152,7 +152,7 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        EquipmentFactory factory = new EquipmentFactory(activationFactory, mechanismFactory, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         factory.make(configuration, game, context);
     }
 }

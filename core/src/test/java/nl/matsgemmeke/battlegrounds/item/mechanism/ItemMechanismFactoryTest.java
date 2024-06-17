@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.mechanism;
+package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class EquipmentMechanismFactoryTest {
+public class ItemMechanismFactoryTest {
 
     private GameContext context;
     private Section section;
@@ -26,8 +26,8 @@ public class EquipmentMechanismFactoryTest {
     public void shouldCreateInstanceForExplosionMechanismType() {
         when(section.getString("type")).thenReturn("EXPLOSION");
 
-        EquipmentMechanismFactory factory = new EquipmentMechanismFactory();
-        EquipmentMechanism mechanism = factory.make(section, context);
+        ItemMechanismFactory factory = new ItemMechanismFactory();
+        ItemMechanism mechanism = factory.make(section, context);
 
         assertNotNull(mechanism);
         assertTrue(mechanism instanceof ExplosionMechanism);
@@ -37,7 +37,7 @@ public class EquipmentMechanismFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsNotDefined() {
         when(section.getString("type")).thenReturn(null);
 
-        EquipmentMechanismFactory factory = new EquipmentMechanismFactory();
+        ItemMechanismFactory factory = new ItemMechanismFactory();
         factory.make(section, context);
     }
 
@@ -45,7 +45,7 @@ public class EquipmentMechanismFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsIncorrect() {
         when(section.getString("type")).thenReturn("fail");
 
-        EquipmentMechanismFactory factory = new EquipmentMechanismFactory();
+        ItemMechanismFactory factory = new ItemMechanismFactory();
         factory.make(section, context);
     }
 }

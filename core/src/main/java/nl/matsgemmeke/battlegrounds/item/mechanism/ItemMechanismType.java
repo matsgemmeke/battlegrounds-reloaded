@@ -1,6 +1,6 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.mechanism;
+package nl.matsgemmeke.battlegrounds.item.mechanism;
 
-public enum EquipmentMechanismType {
+public enum ItemMechanismType {
 
     DETECT_ENEMIES,
     EXPLOSION,

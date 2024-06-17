@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.equipment.activation.EquipmentActivation;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
@@ -26,7 +26,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private boolean delaying;
     private double projectileSpeed;
     @NotNull
-    private EquipmentActivation activation;
+    private ItemMechanismActivation mechanismActivation;
     @Nullable
     private ItemStack itemStack;
     @NotNull
@@ -36,14 +36,14 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private TaskRunner taskRunner;
 
     public ThrowFunction(
-            @NotNull EquipmentActivation activation,
+            @NotNull ItemMechanismActivation mechanismActivation,
             @Nullable ItemStack itemStack,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             double projectileSpeed,
             long delayBetweenThrows
     ) {
-        this.activation = activation;
+        this.mechanismActivation = mechanismActivation;
         this.itemStack = itemStack;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
@@ -91,8 +91,8 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         taskRunner.runTaskLater(() -> delaying = false, delayBetweenThrows);
 
         // Prime the mechanism if it isn't already cooked by the holder
-        if (!activation.isPrimed()) {
-            activation.prime();
+        if (!mechanismActivation.isPrimed()) {
+            mechanismActivation.prime();
         }
 
         return true;

@@ -1,9 +1,9 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.mechanism;
+package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import org.jetbrains.annotations.NotNull;
 
-public class ExplosionMechanism implements EquipmentMechanism {
+public class ExplosionMechanism implements ItemMechanism {
 
     @NotNull
     private GameContext context;
