@@ -46,6 +46,6 @@ public class CookFunctionTest {
         function.perform(holder);
 
         verify(audioEmitter).playSounds(any(), eq(location));
-        verify(mechanismActivation).prime();
+        verify(mechanismActivation).prime(holder);
     }
 }

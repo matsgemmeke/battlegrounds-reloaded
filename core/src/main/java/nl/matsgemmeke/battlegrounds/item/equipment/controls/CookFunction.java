@@ -47,7 +47,7 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
 
     public boolean perform(@NotNull EquipmentHolder holder) {
         audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
-        mechanismActivation.prime();
+        mechanismActivation.prime(holder);
         return true;
     }
 }

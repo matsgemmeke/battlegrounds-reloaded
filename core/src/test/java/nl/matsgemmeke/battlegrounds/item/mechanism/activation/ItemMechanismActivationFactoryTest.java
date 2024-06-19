@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.item.Droppable;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import org.junit.Before;
@@ -14,12 +15,14 @@ import static org.mockito.Mockito.when;
 
 public class ItemMechanismActivationFactoryTest {
 
+    private Droppable item;
     private ItemMechanism mechanism;
     private Section section;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
+        item = mock(Droppable.class);
         mechanism = mock(ItemMechanism.class);
         section = mock(Section.class);
         taskRunner = mock(TaskRunner.class);
@@ -30,7 +33,7 @@ public class ItemMechanismActivationFactoryTest {
         when(section.getString("type")).thenReturn("DELAYED_TRIGGER");
 
         ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
-        ItemMechanismActivation activation = factory.make(section, mechanism);
+        ItemMechanismActivation activation = factory.make(section, item, mechanism);
 
         assertNotNull(activation);
         assertTrue(activation instanceof DelayedActivation);
@@ -41,7 +44,7 @@ public class ItemMechanismActivationFactoryTest {
         when(section.getString("type")).thenReturn(null);
 
         ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
-        factory.make(section, mechanism);
+        factory.make(section, item, mechanism);
     }
 
     @Test(expected = InvalidItemConfigurationException.class)
@@ -49,6 +52,6 @@ public class ItemMechanismActivationFactoryTest {
         when(section.getString("type")).thenReturn("fail");
 
         ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
-        factory.make(section, mechanism);
+        factory.make(section, item, mechanism);
     }
 }

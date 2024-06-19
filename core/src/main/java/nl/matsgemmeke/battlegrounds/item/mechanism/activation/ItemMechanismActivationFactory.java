@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.item.Droppable;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +23,11 @@ public class ItemMechanismActivationFactory {
      * Creates a new {@link ItemMechanismActivation} instance based on configuration values.
      *
      * @param section the configuration section
+     * @param item the droppable item
      * @param mechanism the item mechanism instance
      * @return a new activation instance
      */
-    public ItemMechanismActivation make(@NotNull Section section, @NotNull ItemMechanism mechanism) {
+    public ItemMechanismActivation make(@NotNull Section section, @NotNull Droppable item,  @NotNull ItemMechanism mechanism) {
         String type = section.getString("type");
 
         if (type == null) {
@@ -43,7 +45,7 @@ public class ItemMechanismActivationFactory {
         switch (mechanismActivationType) {
             case DELAYED_TRIGGER -> {
                 long delayUntilTrigger = section.getLong("delay-until-trigger");
-                return new DelayedActivation(mechanism, taskRunner, delayUntilTrigger);
+                return new DelayedActivation(item, mechanism, taskRunner, delayUntilTrigger);
             }
         }
 

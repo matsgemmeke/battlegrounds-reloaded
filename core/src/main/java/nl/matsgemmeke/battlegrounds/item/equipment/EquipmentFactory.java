@@ -98,7 +98,7 @@ public class EquipmentFactory implements WeaponFactory {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
 
             ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
-            ItemMechanismActivation activation = mechanismActivationFactory.make(section.getSection("activation"), mechanism);
+            ItemMechanismActivation activation = mechanismActivationFactory.make(section.getSection("activation"), equipment, mechanism);
 
             if (cookActionValue != null) {
                 Action cookAction = this.getActionFromConfiguration("cook", cookActionValue);
@@ -116,7 +116,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
-            ThrowFunction throwFunction = new ThrowFunction(activation, equipment.getItemStack(), context, taskRunner, projectileSpeed, delayBetweenThrows);
+            ThrowFunction throwFunction = new ThrowFunction(equipment, activation, context, taskRunner, projectileSpeed, delayBetweenThrows);
             throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);

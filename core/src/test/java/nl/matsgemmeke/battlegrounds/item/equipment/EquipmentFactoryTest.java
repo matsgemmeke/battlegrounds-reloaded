@@ -98,12 +98,13 @@ public class EquipmentFactoryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(any(), eq(mechanism))).thenReturn(activation);
+        when(mechanismActivationFactory.make(any(), any(), eq(mechanism))).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, game, context, gamePlayer);
 
         assertNotNull(equipment);
+        assertTrue(equipment instanceof DefaultEquipment);
 
         verify(register).addAssignedItem(equipment, gamePlayer);
     }
@@ -135,7 +136,7 @@ public class EquipmentFactoryTest {
         when(game.getEquipmentRegister()).thenReturn(register);
 
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(any(), eq(mechanism))).thenReturn(activation);
+        when(mechanismActivationFactory.make(any(), any(), eq(mechanism))).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, game, context, gamePlayer);

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 public class ExplosionMechanism implements ItemMechanism {
@@ -12,7 +13,7 @@ public class ExplosionMechanism implements ItemMechanism {
         this.context = context;
     }
 
-    public void activate() {
+    public void activate(@NotNull Location location) {
         System.out.println("kaboom");
     }
 }

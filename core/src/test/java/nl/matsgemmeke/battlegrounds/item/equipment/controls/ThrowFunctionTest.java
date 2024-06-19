@@ -2,14 +2,12 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.Droppable;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
-import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,6 +19,7 @@ public class ThrowFunctionTest {
 
     private AudioEmitter audioEmitter;
     private double projectileSpeed;
+    private Droppable item;
     private ItemMechanismActivation mechanismActivation;
     private long delayBetweenThrows;
     private TaskRunner taskRunner;
@@ -29,6 +28,7 @@ public class ThrowFunctionTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         projectileSpeed = 2.0;
+        item = mock(Droppable.class);
         mechanismActivation = mock(ItemMechanismActivation.class);
         delayBetweenThrows = 1;
         taskRunner = mock(TaskRunner.class);
@@ -36,22 +36,21 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldReturnAvailabilityBasedOnThrowingDelay() {
-        Item item = mock(Item.class);
-
-        World world = mock(World.class);
-        when(world.dropItem(any(), any())).thenReturn(item);
-
-        ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
-        Location location = new Location(world, 1.0, 1.0, 1.0, 0.0f, 0.0f);
+        Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Entity entity = mock(Entity.class);
-        when(entity.getWorld()).thenReturn(world);
+        when(entity.getLocation()).thenReturn(location);
+
+        Item droppedItem = mock(Item.class);
+
+        when(item.canDrop()).thenReturn(true);
+        when(item.dropItem(location)).thenReturn(droppedItem);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getEntity()).thenReturn(entity);
         when(holder.getThrowingDirection()).thenReturn(location);
 
-        ThrowFunction function = new ThrowFunction(mechanismActivation, itemStack, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
+        ThrowFunction function = new ThrowFunction(item, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
         function.perform(holder);
         boolean available = function.isAvailable();
 
@@ -60,22 +59,21 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldReturnPerformingStateBasedOnThrowingDelay() {
-        Item item = mock(Item.class);
-
-        World world = mock(World.class);
-        when(world.dropItem(any(), any())).thenReturn(item);
-
-        ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
-        Location location = new Location(world, 1.0, 1.0, 1.0, 0.0f, 0.0f);
+        Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Entity entity = mock(Entity.class);
-        when(entity.getWorld()).thenReturn(world);
+        when(entity.getLocation()).thenReturn(location);
+
+        Item droppedItem = mock(Item.class);
+
+        when(item.canDrop()).thenReturn(true);
+        when(item.dropItem(location)).thenReturn(droppedItem);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getEntity()).thenReturn(entity);
         when(holder.getThrowingDirection()).thenReturn(location);
 
-        ThrowFunction function = new ThrowFunction(mechanismActivation, itemStack, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
+        ThrowFunction function = new ThrowFunction(item, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
         function.perform(holder);
         boolean performing = function.isPerforming();
 
@@ -84,45 +82,40 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldThrowItemWhenPerforming() {
-        Item item = mock(Item.class);
-
-        World world = mock(World.class);
-        when(world.dropItem(any(), any())).thenReturn(item);
-
-        ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
-        Location location = new Location(world, 1.0, 1.0, 1.0, 0.0f, 0.0f);
+        Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Entity entity = mock(Entity.class);
-        when(entity.getWorld()).thenReturn(world);
+        when(entity.getLocation()).thenReturn(location);
+
+        Item droppedItem = mock(Item.class);
+
+        when(item.canDrop()).thenReturn(true);
+        when(item.dropItem(location)).thenReturn(droppedItem);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getEntity()).thenReturn(entity);
         when(holder.getThrowingDirection()).thenReturn(location);
 
-        ThrowFunction function = new ThrowFunction(mechanismActivation, itemStack, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
+        ThrowFunction function = new ThrowFunction(item, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
 
-        verify(mechanismActivation).prime();
+        verify(item).dropItem(location);
+        verify(mechanismActivation).prime(holder);
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayBetweenThrows));
-        verify(world).dropItem(location, itemStack);
     }
 
     @Test
-    public void shouldNotThrowIfItemStackIsNull() {
-        World world = mock(World.class);
-
-        Entity entity = mock(Entity.class);
-        when(entity.getWorld()).thenReturn(world);
+    public void shouldNotThrowIfItemCannotBeThrown() {
+        when(item.canDrop()).thenReturn(false);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.getEntity()).thenReturn(entity);
 
-        ThrowFunction function = new ThrowFunction(mechanismActivation, null, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
+        ThrowFunction function = new ThrowFunction(item, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
         function.perform(holder);
 
-        verify(mechanismActivation, never()).prime();
-        verify(world, never()).dropItem(any(), any());
+        verify(mechanismActivation, never()).prime(holder);
+        verify(item, never()).dropItem(any());
     }
 }
