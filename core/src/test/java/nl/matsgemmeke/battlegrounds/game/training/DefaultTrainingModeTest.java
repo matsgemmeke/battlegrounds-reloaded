@@ -52,8 +52,8 @@ public class DefaultTrainingModeTest {
         when(behavior2.handleDropItemAction(gamePlayer, itemStack)).thenReturn(false);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addBehavior(behavior1);
-        trainingMode.addBehavior(behavior2);
+        trainingMode.addItemBehavior(behavior1);
+        trainingMode.addItemBehavior(behavior2);
         boolean result = trainingMode.handleItemDrop(gamePlayer, itemStack);
 
         assertFalse(result);
@@ -74,8 +74,8 @@ public class DefaultTrainingModeTest {
         when(behavior2.handleLeftClickAction(gamePlayer, itemStack)).thenReturn(true);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addBehavior(behavior1);
-        trainingMode.addBehavior(behavior2);
+        trainingMode.addItemBehavior(behavior1);
+        trainingMode.addItemBehavior(behavior2);
         boolean result = trainingMode.handleItemLeftClick(gamePlayer, itemStack);
 
         assertFalse(result);
@@ -96,8 +96,8 @@ public class DefaultTrainingModeTest {
         when(behavior2.handleRightClickAction(gamePlayer, itemStack)).thenReturn(true);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addBehavior(behavior1);
-        trainingMode.addBehavior(behavior2);
+        trainingMode.addItemBehavior(behavior1);
+        trainingMode.addItemBehavior(behavior2);
         boolean result = trainingMode.handleItemRightClick(gamePlayer, itemStack);
 
         assertTrue(result);
@@ -123,7 +123,7 @@ public class DefaultTrainingModeTest {
         when(behavior.handleChangeToAction(gamePlayer, toItem)).thenReturn(false);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addBehavior(behavior);
+        trainingMode.addItemBehavior(behavior);
         boolean result = trainingMode.handleItemChange(gamePlayer, fromItem, toItem);
 
         assertFalse(result);
@@ -142,7 +142,7 @@ public class DefaultTrainingModeTest {
         when(behavior.handleChangeToAction(gamePlayer, toItem)).thenReturn(true);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addBehavior(behavior);
+        trainingMode.addItemBehavior(behavior);
         boolean result = trainingMode.handleItemChange(gamePlayer, fromItem, toItem);
 
         assertFalse(result);
@@ -163,8 +163,8 @@ public class DefaultTrainingModeTest {
         when(behavior2.handlePickupItemAction(gamePlayer, itemStack)).thenReturn(false);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addBehavior(behavior1);
-        trainingMode.addBehavior(behavior2);
+        trainingMode.addItemBehavior(behavior1);
+        trainingMode.addItemBehavior(behavior2);
         boolean result = trainingMode.handleItemPickup(gamePlayer, itemStack);
 
         assertFalse(result);
@@ -184,7 +184,7 @@ public class DefaultTrainingModeTest {
         when(behavior.handleSwapToAction(gamePlayer, swapTo)).thenReturn(false);
 
         DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addBehavior(behavior);
+        trainingMode.addItemBehavior(behavior);
         boolean result = trainingMode.handleItemSwap(gamePlayer, swapFrom, swapTo);
 
         assertFalse(result);

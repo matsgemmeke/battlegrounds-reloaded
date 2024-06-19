@@ -1,10 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import nl.matsgemmeke.battlegrounds.item.Droppable;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import org.jetbrains.annotations.Nullable;
 
-public interface Equipment extends Weapon, Interactable<EquipmentHolder> {
+public interface Equipment extends Weapon, Droppable, Interactable<EquipmentHolder> {
 
     /**
      * Gets the holder of the equipmemt item. Returns null if the equipment does not have a holder.

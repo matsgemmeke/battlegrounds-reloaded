@@ -4,6 +4,9 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +14,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @Nullable
     private EquipmentHolder holder;
+    @Nullable
+    private Item droppedItem;
     @NotNull
     private ItemControls<EquipmentHolder> controls;
 
@@ -25,12 +30,37 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     @Nullable
+    public Item getDroppedItem() {
+        return droppedItem;
+    }
+
+    @Nullable
     public EquipmentHolder getHolder() {
         return holder;
     }
 
     public void setHolder(@Nullable EquipmentHolder holder) {
         this.holder = holder;
+    }
+
+    public boolean canDrop() {
+        return itemStack != null;
+    }
+
+    @NotNull
+    public Item dropItem(@NotNull Location location) {
+        if (itemStack == null) {
+            throw new IllegalStateException("Cannot perform an item drop for an item without item stack");
+        }
+
+        World world = location.getWorld();
+
+        if (world == null) {
+            throw new IllegalArgumentException("Cannot perform an item drop for a location without world");
+        }
+
+        droppedItem = world.dropItem(location, itemStack);
+        return droppedItem;
     }
 
     public void onChangeFrom() {
@@ -54,6 +84,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onRightClick() {
+        if (holder == null) {
+            return;
+        }
+
+        controls.performAction(Action.RIGHT_CLICK, holder);
     }
 
     public void onSwapFrom() {

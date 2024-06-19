@@ -44,8 +44,8 @@ public class FireModeFactory {
             case FULLY_AUTOMATIC:
                 return new FullyAutomaticMode(item, taskRunner, rateOfFire);
             case SEMI_AUTOMATIC:
-                long cooldown = section.getLong("cooldown");
-                return new SemiAutomaticMode(item, taskRunner, cooldown);
+                long delayBetweenShots = section.getLong("delay-between-shots");
+                return new SemiAutomaticMode(item, taskRunner, delayBetweenShots);
         }
 
         throw new WeaponFactoryCreationException("Invalid fire mode type \"" + type + "\"");

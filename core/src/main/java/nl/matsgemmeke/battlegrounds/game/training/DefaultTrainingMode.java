@@ -50,10 +50,6 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
         return gunRegister;
     }
 
-    public void addBehavior(@NotNull ItemBehavior behavior) {
-        behaviors.add(behavior);
-    }
-
     @NotNull
     public GamePlayer addPlayer(@NotNull Player player) {
         GamePlayer gamePlayer = new DefaultGamePlayer(player, internals);

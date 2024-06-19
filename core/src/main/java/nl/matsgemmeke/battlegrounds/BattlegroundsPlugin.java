@@ -18,16 +18,18 @@ import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingMode;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingModeContext;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
-import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.WeaponProviderLoader;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
+import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanismFactory;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
@@ -190,12 +192,11 @@ public class BattlegroundsPlugin extends JavaPlugin {
         ItemRegister<Equipment, EquipmentHolder> equipmentRegister = new ItemRegister<>();
         ItemRegister<Gun, GunHolder> gunRegister = new ItemRegister<>();
 
-        ItemBehavior gunBehavior = new GunBehavior(gunRegister);
-
         trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
         trainingContext = new DefaultTrainingModeContext(collisionChecker);
 
-        trainingMode.addItemBehavior(gunBehavior);
+        trainingMode.addItemBehavior(new EquipmentBehavior(equipmentRegister));
+        trainingMode.addItemBehavior(new GunBehavior(gunRegister));
 
         gameProvider.assignTrainingMode(trainingMode);
     }
@@ -221,7 +222,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
         SpreadPatternFactory spreadPatternFactory = new SpreadPatternFactory();
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
 
-        EquipmentFactory equipmentFactory = new EquipmentFactory();
+        ItemMechanismFactory mechanismFactory = new ItemMechanismFactory();
+        ItemMechanismActivationFactory mechanismActivationFactory = new ItemMechanismActivationFactory(taskRunner);
+        EquipmentFactory equipmentFactory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
 
         File itemsDirectory = new File(this.getDataFolder() + "/items");
         WeaponProviderLoader loader = new WeaponProviderLoader(equipmentFactory, firearmFactory);

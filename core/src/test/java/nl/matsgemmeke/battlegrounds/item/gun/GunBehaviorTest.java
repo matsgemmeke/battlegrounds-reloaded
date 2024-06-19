@@ -3,22 +3,14 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Bukkit.class)
 public class GunBehaviorTest {
 
     private GamePlayer gamePlayer;
@@ -34,10 +26,6 @@ public class GunBehaviorTest {
 
         this.gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);
-
-        PowerMockito.mockStatic(Bukkit.class);
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
     }
 
     @Test

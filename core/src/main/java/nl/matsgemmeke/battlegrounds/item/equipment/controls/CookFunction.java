@@ -1,26 +1,26 @@
-package nl.matsgemmeke.battlegrounds.item.gun.controls;
+package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.common.collect.Iterables;
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
-public class StopScopeFunction implements ItemFunction<GunHolder> {
+public class CookFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
-    private Iterable<GameSound> sounds;
+    private ItemMechanismActivation mechanismActivation;
     @NotNull
-    private ScopeAttachment scopeAttachment;
+    private Iterable<GameSound> sounds;
 
-    public StopScopeFunction(@NotNull ScopeAttachment scopeAttachment, @NotNull AudioEmitter audioEmitter) {
-        this.scopeAttachment = scopeAttachment;
+    public CookFunction(@NotNull ItemMechanismActivation mechanismActivation, @NotNull AudioEmitter audioEmitter) {
+        this.mechanismActivation = mechanismActivation;
         this.audioEmitter = audioEmitter;
         this.sounds = new HashSet<>();
     }
@@ -30,7 +30,7 @@ public class StopScopeFunction implements ItemFunction<GunHolder> {
     }
 
     public boolean isAvailable() {
-        return scopeAttachment.isScoped();
+        return !mechanismActivation.isPrimed();
     }
 
     public boolean isBlocking() {
@@ -45,13 +45,9 @@ public class StopScopeFunction implements ItemFunction<GunHolder> {
         return false;
     }
 
-    public boolean perform(@NotNull GunHolder holder) {
-        if (!scopeAttachment.isScoped()) {
-            return false;
-        }
-
+    public boolean perform(@NotNull EquipmentHolder holder) {
         audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
-
-        return scopeAttachment.removeEffect();
+        mechanismActivation.prime(holder);
+        return true;
     }
 }

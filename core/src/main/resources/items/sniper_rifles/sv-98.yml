@@ -28,7 +28,7 @@ scope:
   use-sound: ITEM_BUNDLE_INSERT-1-0.7-0
 shooting:
   fire-mode:
-    cooldown: 20
+    delay-between-shots: 20
     type: SEMI_AUTOMATIC
   headshot-damage-multiplier: 2.0
   range:
