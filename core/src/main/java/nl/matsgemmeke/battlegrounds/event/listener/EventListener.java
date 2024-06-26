@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,11 @@ public class EventListener implements Listener {
 
     public EventListener(@NotNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(@NotNull EntityDamageByEntityEvent event) {
+        this.dispatchEvent(event);
     }
 
     @EventHandler

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds;
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,15 @@ public interface GameProvider {
      * @return whether the instance was assigned
      */
     boolean assignTrainingMode(@NotNull TrainingMode trainingMode);
+
+    /**
+     * Gets the {@link Game} an entity is currently in. Returns null if the entity is not in any of the registered
+     * games.
+     *
+     * @param entity the entity
+     * @return the game the entity is currently in, or null if the entity is not being handled by a game instance
+     */
+    Game getGame(@NotNull Entity entity);
 
     /**
      * Gets the {@link Game} a player is currently in. Returns null if the player is not in any of the
