@@ -128,6 +128,14 @@ public interface Game {
     boolean handleItemSwap(@NotNull GamePlayer gamePlayer, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo);
 
     /**
+     * Gets whether a specific entity is present in the game instance.
+     *
+     * @param entity the entity
+     * @return whether the entity is present in the game
+     */
+    boolean hasEntity(@NotNull Entity entity);
+
+    /**
      * Gets whether a player is present in the context.
      *
      * @param player the player

@@ -40,6 +40,16 @@ public class DefaultGameProvider implements GameProvider {
     }
 
     public Game getGame(@NotNull Entity entity) {
+        if (trainingMode != null && trainingMode.hasEntity(entity)) {
+            return trainingMode;
+        }
+
+        for (Session session : sessions.values()) {
+            if (session.hasEntity(entity)) {
+                return session;
+            }
+        }
+
         return null;
     }
 

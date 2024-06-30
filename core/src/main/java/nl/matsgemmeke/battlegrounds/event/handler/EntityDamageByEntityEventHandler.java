@@ -35,7 +35,7 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
 
         double damage = game.calculateDamage(damager, entity, event.getDamage());
 
-        // Only set the event damage. Cancelling stops the animation as physics which we don't want.
+        // Only set the event damage. Cancelling stops the animation and physics which we don't want.
         event.setDamage(damage);
     }
 }
