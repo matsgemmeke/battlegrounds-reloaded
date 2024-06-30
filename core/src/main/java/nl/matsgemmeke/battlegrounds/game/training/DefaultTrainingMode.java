@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -57,6 +58,10 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
         players.add(gamePlayer);
 
         return gamePlayer;
+    }
+
+    public double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, double damage) {
+        return damage;
     }
 
     @NotNull

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.listener;
 
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.junit.Before;
@@ -16,6 +17,16 @@ public class EventListenerTest {
     @Before
     public void setUp() {
         this.eventDispatcher = mock(EventDispatcher.class);
+    }
+
+    @Test
+    public void callsEventDispatcherUponHandlingEntityDamageByEntityEvent() {
+        EntityDamageByEntityEvent event = mock(EntityDamageByEntityEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onEntityDamageByEntity(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
     }
 
     @Test

@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,10 @@ public class DefaultSession extends BaseGame implements Session {
     @NotNull
     public Iterable<GamePlayer> getPlayers() {
         return Collections.emptyList();
+    }
+
+    public double calculateDamage(@NotNull Entity entity, @NotNull Entity damager, double damage) {
+        return damage;
     }
 
     public boolean handleItemChange(@NotNull GamePlayer gamePlayer, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo) {

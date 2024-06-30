@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,18 @@ public interface Game {
      */
     @NotNull
     GamePlayer addPlayer(@NotNull Player player);
+
+    /**
+     * Calculates the amount of damage produced in an event where an entity directly damages another entity. This can
+     * be, for example, a player who attack another player, or an item entity explosion inflicting damage on another
+     * entity.
+     *
+     * @param damager the entity who inflicted damage
+     * @param entity the entity who got damaged
+     * @param damage the original damage amount
+     * @return the amount of produced damage
+     */
+    double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, double damage);
 
     /**
      * Gets the item register for equipment.
