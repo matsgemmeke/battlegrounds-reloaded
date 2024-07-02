@@ -60,6 +60,9 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         }
 
         droppedItem = world.dropItem(location, itemStack);
+
+        context.registerItem(droppedItem);
+
         return droppedItem;
     }
 

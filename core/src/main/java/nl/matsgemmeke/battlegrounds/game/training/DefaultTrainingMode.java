@@ -1,9 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
+import nl.matsgemmeke.battlegrounds.entity.*;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
@@ -11,13 +9,11 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DefaultTrainingMode extends BaseGame implements TrainingMode {
 
@@ -27,8 +23,6 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     private ItemRegister<Equipment, EquipmentHolder> equipmentRegister;
     @NotNull
     private ItemRegister<Gun, GunHolder> gunRegister;
-    @NotNull
-    private List<GamePlayer> players;
 
     public DefaultTrainingMode(
             @NotNull InternalsProvider internals,
@@ -38,7 +32,6 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
         this.internals = internals;
         this.equipmentRegister = equipmentRegister;
         this.gunRegister = gunRegister;
-        this.players = new ArrayList<>();
     }
 
     @NotNull
@@ -52,21 +45,25 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     }
 
     @NotNull
+    public GameItem addItem(@NotNull Item item) {
+        GameItem gameItem = new DefaultGameItem(item);
+
+        itemEntityRegister.addEntity(gameItem);
+
+        return gameItem;
+    }
+
+    @NotNull
     public GamePlayer addPlayer(@NotNull Player player) {
         GamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
 
-        players.add(gamePlayer);
+        playerRegister.addEntity(gamePlayer);
 
         return gamePlayer;
     }
 
     public double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, double damage) {
         return damage;
-    }
-
-    @NotNull
-    public List<GamePlayer> getPlayers() {
-        return players;
     }
 
     public boolean handleItemChange(@NotNull GamePlayer gamePlayer, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo) {

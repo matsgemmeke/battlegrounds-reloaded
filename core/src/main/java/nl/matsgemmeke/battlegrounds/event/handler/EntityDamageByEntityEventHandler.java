@@ -22,7 +22,7 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
         Game game = gameProvider.getGame(entity);
         Game damagerGame = gameProvider.getGame(damager);
 
-        if (game == null && damagerGame == null) {
+        if (game == null || damagerGame == null) {
             // Do not handle damage events outside game instances
             return;
         }

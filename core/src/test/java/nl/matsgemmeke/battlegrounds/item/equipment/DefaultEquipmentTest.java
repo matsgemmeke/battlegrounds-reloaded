@@ -67,6 +67,7 @@ public class DefaultEquipmentTest {
 
         assertNotNull(droppedItem);
 
+        verify(context).registerItem(droppedItem);
         verify(world).dropItem(location, itemStack);
     }
 

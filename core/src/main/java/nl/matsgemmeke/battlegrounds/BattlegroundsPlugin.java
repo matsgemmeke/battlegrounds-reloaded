@@ -195,7 +195,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         ItemRegister<Gun, GunHolder> gunRegister = new ItemRegister<>();
 
         trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingContext = new DefaultTrainingModeContext(collisionChecker);
+        trainingContext = new DefaultTrainingModeContext(trainingMode, collisionChecker);
 
         trainingMode.addItemBehavior(new EquipmentBehavior(equipmentRegister));
         trainingMode.addItemBehavior(new GunBehavior(gunRegister));

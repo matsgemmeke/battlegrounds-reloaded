@@ -1,11 +1,13 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.TrainingModeEntity;
 import nl.matsgemmeke.battlegrounds.game.BaseGameContext;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,8 +18,15 @@ import java.util.List;
 
 public class DefaultTrainingModeContext extends BaseGameContext {
 
-    public DefaultTrainingModeContext(@NotNull BlockCollisionChecker collisionChecker) {
+    @NotNull
+    private TrainingMode trainingMode;
+
+    public DefaultTrainingModeContext(
+            @NotNull TrainingMode trainingMode,
+            @NotNull BlockCollisionChecker collisionChecker
+    ) {
         super(collisionChecker);
+        this.trainingMode = trainingMode;
     }
 
     @NotNull
@@ -35,5 +44,10 @@ public class DefaultTrainingModeContext extends BaseGameContext {
         }
 
         return entities;
+    }
+
+    @NotNull
+    public GameItem registerItem(@NotNull Item item) {
+        return trainingMode.addItem(item);
     }
 }

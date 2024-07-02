@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game;
 
+import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
@@ -8,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +26,15 @@ public interface Game {
      * @param behavior the behavior handler
      */
     void addItemBehavior(@NotNull ItemBehavior behavior);
+
+    /**
+     * Adds an item entity to the game and creates a {@link GameItem} instance.
+     *
+     * @param item the item to add
+     * @return the created {@link GamePlayer} instance
+     */
+    @NotNull
+    GameItem addItem(@NotNull Item item);
 
     /**
      * Adds a player to the context and creates a {@link GamePlayer} instance.
