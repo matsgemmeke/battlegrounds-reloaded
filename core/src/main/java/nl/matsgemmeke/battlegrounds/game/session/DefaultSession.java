@@ -1,14 +1,14 @@
 package nl.matsgemmeke.battlegrounds.game.session;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
+import nl.matsgemmeke.battlegrounds.entity.*;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +59,11 @@ public class DefaultSession extends BaseGame implements Session {
     }
 
     @NotNull
+    public GameItem addItem(@NotNull Item item) {
+        return new DefaultGameItem(item);
+    }
+
+    @NotNull
     public GamePlayer addPlayer(@NotNull Player player) {
         return new DefaultGamePlayer(player, internals);
     }
@@ -66,6 +71,10 @@ public class DefaultSession extends BaseGame implements Session {
     @NotNull
     public Iterable<GamePlayer> getPlayers() {
         return Collections.emptyList();
+    }
+
+    public double calculateDamage(@NotNull Entity entity, @NotNull Entity damager, double damage) {
+        return damage;
     }
 
     public boolean handleItemChange(@NotNull GamePlayer gamePlayer, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo) {

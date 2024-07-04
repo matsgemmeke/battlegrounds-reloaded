@@ -1,9 +1,11 @@
 package nl.matsgemmeke.battlegrounds.game.session;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.BaseGameContext;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import org.bukkit.Location;
+import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -18,5 +20,10 @@ public class DefaultSessionContext extends BaseGameContext {
     @NotNull
     public Collection<GameEntity> getTargets(@NotNull GameEntity gameEntity, @NotNull Location location, double range) {
         return Collections.emptyList();
+    }
+
+    @NotNull
+    public GameItem registerItem(@NotNull Item item) {
+        return null;
     }
 }

@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.entity.ItemHolder;
+import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
+import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -32,4 +32,13 @@ public interface GameContext extends AudioEmitter {
      * @return whether a collision is produced
      */
     boolean producesCollisionAt(@NotNull Location location);
+
+    /**
+     * Registers an item entity to the game and creates a new {@link GameItem} instance.
+     *
+     * @param item the item
+     * @return the created item instance
+     */
+    @NotNull
+    GameItem registerItem(@NotNull Item item);
 }

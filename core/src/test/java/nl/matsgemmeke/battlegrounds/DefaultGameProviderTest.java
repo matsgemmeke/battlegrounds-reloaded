@@ -1,7 +1,9 @@
 package nl.matsgemmeke.battlegrounds;
 
+import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.junit.Test;
 
@@ -17,6 +19,18 @@ public class DefaultGameProviderTest {
         DefaultGameProvider gameProvider = new DefaultGameProvider();
 
         assertTrue(gameProvider.assignTrainingMode(trainingMode));
+    }
+
+    @Test
+    public void shouldOnlyBeAbleToSetTrainingModeOnce() {
+        TrainingMode trainingMode = mock(TrainingMode.class);
+
+        DefaultGameProvider gameProvider = new DefaultGameProvider();
+        gameProvider.assignTrainingMode(trainingMode);
+
+        boolean assignNewTrainingMode = gameProvider.assignTrainingMode(mock(TrainingMode.class));
+
+        assertFalse(assignNewTrainingMode);
     }
 
     @Test
@@ -95,5 +109,48 @@ public class DefaultGameProviderTest {
         gameProvider.addSession(session);
 
         assertEquals(session, gameProvider.getGame(player));
+    }
+
+    @Test
+    public void shouldReturnTrainingModeIfEntityIsInTrainingMode() {
+        Entity entity = mock(Entity.class);
+
+        TrainingMode trainingMode = mock(TrainingMode.class);
+        when(trainingMode.hasEntity(entity)).thenReturn(true);
+
+        DefaultGameProvider gameProvider = new DefaultGameProvider();
+        gameProvider.assignTrainingMode(trainingMode);
+
+        Game game = gameProvider.getGame(entity);
+
+        assertEquals(trainingMode, game);
+    }
+
+    @Test
+    public void shouldReturnSessionIfEntityIsInSession() {
+        Entity entity = mock(Entity.class);
+
+        Session session = mock(Session.class);
+        when(session.hasEntity(entity)).thenReturn(true);
+
+        DefaultGameProvider gameProvider = new DefaultGameProvider();
+        gameProvider.addSession(session);
+
+        Game game = gameProvider.getGame(entity);
+
+        assertEquals(session, game);
+    }
+
+    @Test
+    public void shouldReturnNullIfNoneOfTheGamesHasEntity() {
+        Entity entity = mock(Entity.class);
+
+        DefaultGameProvider gameProvider = new DefaultGameProvider();
+        gameProvider.assignTrainingMode(mock(TrainingMode.class));
+        gameProvider.addSession(mock(Session.class));
+
+        Game game = gameProvider.getGame(entity);
+
+        assertNull(game);
     }
 }

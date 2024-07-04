@@ -35,6 +35,7 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.locale.Translator;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.PluginManager;
@@ -140,6 +141,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         PluginManager pluginManager = this.getServer().getPluginManager();
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
+        eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(gameProvider)));
         eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(gameProvider)));
         eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(gameProvider)));
         eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(gameProvider)));
@@ -193,7 +195,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         ItemRegister<Gun, GunHolder> gunRegister = new ItemRegister<>();
 
         trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingContext = new DefaultTrainingModeContext(collisionChecker);
+        trainingContext = new DefaultTrainingModeContext(trainingMode, collisionChecker);
 
         trainingMode.addItemBehavior(new EquipmentBehavior(equipmentRegister));
         trainingMode.addItemBehavior(new GunBehavior(gunRegister));

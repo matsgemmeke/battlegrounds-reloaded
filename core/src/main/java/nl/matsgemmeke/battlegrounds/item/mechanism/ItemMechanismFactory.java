@@ -24,7 +24,11 @@ public class ItemMechanismFactory {
 
         switch (equipmentMechanismType) {
             case EXPLOSION -> {
-                return new ExplosionMechanism(context);
+                float power = section.getFloat("power");
+                boolean setFire = section.getBoolean("set-fire");
+                boolean breakBlocks = section.getBoolean("break-blocks");
+
+                return new ExplosionMechanism(context, power, setFire, breakBlocks);
             }
         }
 

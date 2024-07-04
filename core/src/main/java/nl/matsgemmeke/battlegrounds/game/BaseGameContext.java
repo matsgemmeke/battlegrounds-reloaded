@@ -1,9 +1,11 @@
 package nl.matsgemmeke.battlegrounds.game;
 
+import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

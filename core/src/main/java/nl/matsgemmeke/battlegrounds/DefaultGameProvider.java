@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds;
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +37,20 @@ public class DefaultGameProvider implements GameProvider {
 
         this.trainingMode = trainingMode;
         return true;
+    }
+
+    public Game getGame(@NotNull Entity entity) {
+        if (trainingMode != null && trainingMode.hasEntity(entity)) {
+            return trainingMode;
+        }
+
+        for (Session session : sessions.values()) {
+            if (session.hasEntity(entity)) {
+                return session;
+            }
+        }
+
+        return null;
     }
 
     @Nullable
