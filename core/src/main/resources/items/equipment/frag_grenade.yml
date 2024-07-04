@@ -12,6 +12,9 @@ item:
   durability: 1
   material: FLINT_AND_STEEL
 mechanism:
+  break-blocks: false
+  power: 2.0
+  set-fire: false
   type: EXPLOSION
 throwing:
   cook-sound: ENTITY_TNT_PRIMED-1-2-0
