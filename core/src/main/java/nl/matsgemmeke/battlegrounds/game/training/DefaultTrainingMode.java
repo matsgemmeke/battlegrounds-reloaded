@@ -15,9 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DefaultTrainingMode extends BaseGame implements TrainingMode {
 
     @NotNull
@@ -26,8 +23,6 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     private ItemRegister<Equipment, EquipmentHolder> equipmentRegister;
     @NotNull
     private ItemRegister<Gun, GunHolder> gunRegister;
-    @NotNull
-    private List<GamePlayer> players;
 
     public DefaultTrainingMode(
             @NotNull InternalsProvider internals,
