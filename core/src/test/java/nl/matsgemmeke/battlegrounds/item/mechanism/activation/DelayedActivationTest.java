@@ -60,6 +60,28 @@ public class DelayedActivationTest {
         DelayedActivation activation = new DelayedActivation(item, mechanism, taskRunner, delayUntilTrigger);
         activation.prime(holder);
 
+        verify(mechanism).activate(itemLocation);
+    }
+
+    @Test
+    public void shouldActivateMechanismAtHolderLocationIfNotDropped() {
+        Location entityLocation = new Location(null, 1, 1, 1);
+
+        Entity entity = mock(Entity.class);
+        when(entity.getLocation()).thenReturn(entityLocation);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        when(holder.getEntity()).thenReturn(entity);
+
+        when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilTrigger))).then(answer -> {
+            answer.getArgument(0, Runnable.class).run();
+            return null;
+        });
+
+        DelayedActivation activation = new DelayedActivation(item, mechanism, taskRunner, delayUntilTrigger);
+        activation.prime(holder);
+
+        verify(mechanism).activate(entityLocation);
         verify(mechanism).activate(droppedItem, holder);
     }
 }
