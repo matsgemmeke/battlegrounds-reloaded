@@ -15,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 /**
  * Represents an activity which groups multiple players together to play under the rules of the plugin.
  */
@@ -83,6 +85,14 @@ public interface Game {
     ItemRegister<Gun, GunHolder> getGunRegister();
 
     /**
+     * Gets the item behaviors registered to the game.
+     *
+     * @return the game's item behavior instances
+     */
+    @NotNull
+    Collection<ItemBehavior> getItemBehaviors();
+
+    /**
      * Executes logic that handles held item changes by players.
      *
      * @param gamePlayer the player
@@ -102,15 +112,6 @@ public interface Game {
     boolean handleItemDrop(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem);
 
     /**
-     * Executes logic that handles left clicks by players.
-     *
-     * @param gamePlayer the player
-     * @param clickedItem the item that was clicked
-     * @return whether the action should be performed
-     */
-    boolean handleItemLeftClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem);
-
-    /**
      * Executes logic that handles item pickups by players.
      *
      * @param gamePlayer the player
@@ -118,15 +119,6 @@ public interface Game {
      * @return whether the action should be performed
      */
     boolean handleItemPickup(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem);
-
-    /**
-     * Executes logic that handles right clicks by players.
-     *
-     * @param gamePlayer the player
-     * @param clickedItem the item that was clicked
-     * @return whether the action should be performed
-     */
-    boolean handleItemRightClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem);
 
     /**
      * Executes logic that handles item swaps by players.

@@ -69,7 +69,7 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     public boolean handleItemChange(@NotNull GamePlayer gamePlayer, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo) {
         boolean performAction = true;
 
-        for (ItemBehavior behavior : behaviors) {
+        for (ItemBehavior behavior : itemBehaviors) {
             if (changeFrom != null) {
                 performAction = performAction & behavior.handleChangeFromAction(gamePlayer, changeFrom);
             }
@@ -85,18 +85,8 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     public boolean handleItemDrop(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem) {
         boolean performAction = true;
 
-        for (ItemBehavior behavior : behaviors) {
+        for (ItemBehavior behavior : itemBehaviors) {
             performAction = performAction & behavior.handleDropItemAction(gamePlayer, droppedItem);
-        }
-
-        return performAction;
-    }
-
-    public boolean handleItemLeftClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : behaviors) {
-            performAction = performAction & behavior.handleLeftClickAction(gamePlayer, clickedItem);
         }
 
         return performAction;
@@ -105,18 +95,8 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     public boolean handleItemPickup(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem) {
         boolean performAction = true;
 
-        for (ItemBehavior behavior : behaviors) {
+        for (ItemBehavior behavior : itemBehaviors) {
             performAction = performAction & behavior.handlePickupItemAction(gamePlayer, pickupItem);
-        }
-
-        return performAction;
-    }
-
-    public boolean handleItemRightClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : behaviors) {
-            performAction = performAction & behavior.handleRightClickAction(gamePlayer, clickedItem);
         }
 
         return performAction;
@@ -125,7 +105,7 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     public boolean handleItemSwap(@NotNull GamePlayer gamePlayer, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo) {
         boolean performAction = true;
 
-        for (ItemBehavior behavior : behaviors) {
+        for (ItemBehavior behavior : itemBehaviors) {
             if (swapFrom != null) {
                 performAction = performAction & behavior.handleSwapFromAction(gamePlayer, swapFrom);
             }

@@ -14,6 +14,7 @@ import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.provider.ActionHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingMode;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingModeContext;
@@ -138,13 +139,14 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void setUpEvents() {
+        ActionHandlerProvider actionHandlerProvider = new ActionHandlerProvider(gameProvider);
         PluginManager pluginManager = this.getServer().getPluginManager();
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
         eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(gameProvider)));
         eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(gameProvider)));
         eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(gameProvider)));
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(gameProvider)));
+        eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(gameProvider)));
         eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(trainingMode)));
         eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(gameProvider)));

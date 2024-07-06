@@ -20,16 +20,21 @@ public abstract class BaseGame implements Game {
     @NotNull
     protected EntityRegister<GamePlayer> playerRegister;
     @NotNull
-    protected Set<ItemBehavior> behaviors;
+    protected Set<ItemBehavior> itemBehaviors;
 
     public BaseGame() {
-        this.behaviors = new HashSet<>();
+        this.itemBehaviors = new HashSet<>();
         this.itemEntityRegister = new EntityRegister<>();
         this.playerRegister = new EntityRegister<>();
     }
 
-    public void addItemBehavior(@NotNull ItemBehavior behavior) {
-        behaviors.add(behavior);
+    @NotNull
+    public Set<ItemBehavior> getItemBehaviors() {
+        return itemBehaviors;
+    }
+
+    public void addItemBehavior(@NotNull ItemBehavior itemBehavior) {
+        itemBehaviors.add(itemBehavior);
     }
 
     @Nullable

@@ -77,50 +77,6 @@ public class DefaultTrainingModeTest {
     }
 
     @Test
-    public void shouldPassOnLeftClicksToBehaviorInstancesAndReturnResult() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemStack itemStack = mock(ItemStack.class);
-
-        ItemBehavior behavior1 = mock(ItemBehavior.class);
-        when(behavior1.handleLeftClickAction(gamePlayer, itemStack)).thenReturn(false);
-
-        ItemBehavior behavior2 = mock(ItemBehavior.class);
-        when(behavior2.handleLeftClickAction(gamePlayer, itemStack)).thenReturn(true);
-
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addItemBehavior(behavior1);
-        trainingMode.addItemBehavior(behavior2);
-        boolean result = trainingMode.handleItemLeftClick(gamePlayer, itemStack);
-
-        assertFalse(result);
-
-        verify(behavior1).handleLeftClickAction(gamePlayer, itemStack);
-        verify(behavior2).handleLeftClickAction(gamePlayer, itemStack);
-    }
-
-    @Test
-    public void shouldPassOnRightClicksToBehaviorInstancesAndReturnResult() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemStack itemStack = mock(ItemStack.class);
-
-        ItemBehavior behavior1 = mock(ItemBehavior.class);
-        when(behavior1.handleRightClickAction(gamePlayer, itemStack)).thenReturn(true);
-
-        ItemBehavior behavior2 = mock(ItemBehavior.class);
-        when(behavior2.handleRightClickAction(gamePlayer, itemStack)).thenReturn(true);
-
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addItemBehavior(behavior1);
-        trainingMode.addItemBehavior(behavior2);
-        boolean result = trainingMode.handleItemRightClick(gamePlayer, itemStack);
-
-        assertTrue(result);
-
-        verify(behavior1).handleRightClickAction(gamePlayer, itemStack);
-        verify(behavior2).handleRightClickAction(gamePlayer, itemStack);
-    }
-
-    @Test
     public void shouldPassChangeFromToBehaviorInstancesAndReturnResult() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack fromItem = mock(ItemStack.class);
