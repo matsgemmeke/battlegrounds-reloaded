@@ -85,6 +85,40 @@ public class DefaultActionHandlerTest {
     }
 
     @Test
+    public void shouldAllowItemDropIfGameDoesNotHavePlayer() {
+        when(game.getGamePlayer(player)).thenReturn(null);
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+
+        boolean result = actionHandler.handleItemDrop(player, itemStack);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void shouldPassOnItemDropToItemBehaviorInstancesAndReturnResult() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+
+        ItemBehavior behavior1 = mock(ItemBehavior.class);
+        when(behavior1.handleDropItemAction(gamePlayer, itemStack)).thenReturn(true);
+
+        ItemBehavior behavior2 = mock(ItemBehavior.class);
+        when(behavior2.handleDropItemAction(gamePlayer, itemStack)).thenReturn(true);
+
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
+        when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+
+        boolean result = actionHandler.handleItemDrop(player, itemStack);
+
+        assertTrue(result);
+
+        verify(behavior1).handleDropItemAction(gamePlayer, itemStack);
+        verify(behavior2).handleDropItemAction(gamePlayer, itemStack);
+    }
+
+    @Test
     public void shouldAllowLeftClickIfGameDoesNotHavePlayer() {
         when(game.getGamePlayer(player)).thenReturn(null);
 

@@ -70,10 +70,6 @@ public class DefaultSession extends BaseGame implements Session {
         return damage;
     }
 
-    public boolean handleItemDrop(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem) {
-        return true;
-    }
-
     public boolean handleItemPickup(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem) {
         return false;
     }

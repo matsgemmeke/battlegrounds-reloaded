@@ -93,15 +93,6 @@ public interface Game {
     Collection<ItemBehavior> getItemBehaviors();
 
     /**
-     * Executes logic that handles item drops by players.
-     *
-     * @param gamePlayer the player
-     * @param droppedItem the item that was dropped
-     * @return whether the action should be performed
-     */
-    boolean handleItemDrop(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem);
-
-    /**
      * Executes logic that handles item pickups by players.
      *
      * @param gamePlayer the player

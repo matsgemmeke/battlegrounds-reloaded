@@ -18,6 +18,15 @@ public interface ActionHandler {
     boolean handleItemChange(@NotNull Player player, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo);
 
     /**
+     * Executes logic that handles item drops by players.
+     *
+     * @param player the player
+     * @param droppedItem the item that was dropped
+     * @return whether the action should be performed
+     */
+    boolean handleItemDrop(@NotNull Player player, @NotNull ItemStack droppedItem);
+
+    /**
      * Handles logic for when a player left-clicks an item.
      *
      * @param player the player

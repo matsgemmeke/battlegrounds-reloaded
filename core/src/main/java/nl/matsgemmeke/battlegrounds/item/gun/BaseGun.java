@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
+import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -160,6 +161,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         }
 
         controls.cancelAllFunctions();
+        controls.performAction(Action.DROP_ITEM, holder);
         holder = null;
     }
 
