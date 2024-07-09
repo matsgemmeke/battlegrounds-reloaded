@@ -28,6 +28,63 @@ public class DefaultActionHandlerTest {
     }
 
     @Test
+    public void shouldAllowItemChangeIfGameDoesNotHavePlayer() {
+        when(game.getGamePlayer(player)).thenReturn(null);
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+
+        boolean result = actionHandler.handleItemChange(player, null, null);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void shouldPassOnItemChangeFromToBehaviorInstancesAndReturnResult() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        ItemStack fromItem = new ItemStack(Material.IRON_HOE);
+
+        ItemBehavior behavior1 = mock(ItemBehavior.class);
+        when(behavior1.handleChangeFromAction(gamePlayer, fromItem)).thenReturn(true);
+
+        ItemBehavior behavior2 = mock(ItemBehavior.class);
+        when(behavior2.handleChangeFromAction(gamePlayer, fromItem)).thenReturn(true);
+
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
+        when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        boolean performAction = actionHandler.handleItemChange(player, fromItem, null);
+
+        assertTrue(performAction);
+
+        verify(behavior1).handleChangeFromAction(gamePlayer, fromItem);
+        verify(behavior2).handleChangeFromAction(gamePlayer, fromItem);
+    }
+
+    @Test
+    public void shouldPassItemChangeToToBehaviorInstancesAndReturnResult() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        ItemStack toItem = new ItemStack(Material.IRON_HOE);
+
+        ItemBehavior behavior1 = mock(ItemBehavior.class);
+        when(behavior1.handleChangeToAction(gamePlayer, toItem)).thenReturn(true);
+
+        ItemBehavior behavior2 = mock(ItemBehavior.class);
+        when(behavior2.handleChangeToAction(gamePlayer, toItem)).thenReturn(false);
+
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
+        when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        boolean performAction = actionHandler.handleItemChange(player, null, toItem);
+
+        assertFalse(performAction);
+
+        verify(behavior1).handleChangeToAction(gamePlayer, toItem);
+        verify(behavior2).handleChangeToAction(gamePlayer, toItem);
+    }
+
+    @Test
     public void shouldAllowLeftClickIfGameDoesNotHavePlayer() {
         when(game.getGamePlayer(player)).thenReturn(null);
 

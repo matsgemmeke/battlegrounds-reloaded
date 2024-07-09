@@ -66,22 +66,6 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
         return damage;
     }
 
-    public boolean handleItemChange(@NotNull GamePlayer gamePlayer, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : itemBehaviors) {
-            if (changeFrom != null) {
-                performAction = performAction & behavior.handleChangeFromAction(gamePlayer, changeFrom);
-            }
-
-            if (changeTo != null) {
-                performAction = performAction & behavior.handleChangeToAction(gamePlayer, changeTo);
-            }
-        }
-
-        return performAction;
-    }
-
     public boolean handleItemDrop(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem) {
         boolean performAction = true;
 

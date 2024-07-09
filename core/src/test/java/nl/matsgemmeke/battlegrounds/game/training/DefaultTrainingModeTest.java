@@ -10,11 +10,9 @@ import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,51 +72,6 @@ public class DefaultTrainingModeTest {
 
         verify(behavior1).handleDropItemAction(gamePlayer, itemStack);
         verify(behavior2).handleDropItemAction(gamePlayer, itemStack);
-    }
-
-    @Test
-    public void shouldPassChangeFromToBehaviorInstancesAndReturnResult() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemStack fromItem = mock(ItemStack.class);
-        ItemStack toItem = mock(ItemStack.class);
-
-        PlayerInventory inventory = mock(PlayerInventory.class);
-        when(inventory.getItemInMainHand()).thenReturn(fromItem);
-
-        Player player = mock(Player.class);
-        when(player.getInventory()).thenReturn(inventory);
-
-        ItemBehavior behavior = mock(ItemBehavior.class);
-        when(behavior.handleChangeFromAction(gamePlayer, fromItem)).thenReturn(true);
-        when(behavior.handleChangeToAction(gamePlayer, toItem)).thenReturn(false);
-
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addItemBehavior(behavior);
-        boolean result = trainingMode.handleItemChange(gamePlayer, fromItem, toItem);
-
-        assertFalse(result);
-
-        verify(behavior).handleChangeFromAction(gamePlayer, fromItem);
-    }
-
-    @Test
-    public void shouldPassItemChangeToBehaviorInstancesAndReturnResult() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemStack fromItem = mock(ItemStack.class);
-        ItemStack toItem = mock(ItemStack.class);
-
-        ItemBehavior behavior = mock(ItemBehavior.class);
-        when(behavior.handleChangeFromAction(gamePlayer, toItem)).thenReturn(false);
-        when(behavior.handleChangeToAction(gamePlayer, toItem)).thenReturn(true);
-
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addItemBehavior(behavior);
-        boolean result = trainingMode.handleItemChange(gamePlayer, fromItem, toItem);
-
-        assertFalse(result);
-
-        verify(behavior).handleChangeFromAction(gamePlayer, fromItem);
-        verify(behavior).handleChangeToAction(gamePlayer, toItem);
     }
 
     @Test

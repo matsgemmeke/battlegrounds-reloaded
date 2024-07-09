@@ -14,8 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-
 public class DefaultSession extends BaseGame implements Session {
 
     private final int id;
@@ -68,33 +66,16 @@ public class DefaultSession extends BaseGame implements Session {
         return new DefaultGamePlayer(player, internals);
     }
 
-    @NotNull
-    public Iterable<GamePlayer> getPlayers() {
-        return Collections.emptyList();
-    }
-
     public double calculateDamage(@NotNull Entity entity, @NotNull Entity damager, double damage) {
         return damage;
-    }
-
-    public boolean handleItemChange(@NotNull GamePlayer gamePlayer, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo) {
-        return false;
     }
 
     public boolean handleItemDrop(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem) {
         return true;
     }
 
-    public boolean handleItemLeftClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        return true;
-    }
-
     public boolean handleItemPickup(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem) {
         return false;
-    }
-
-    public boolean handleItemRightClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        return true;
     }
 
     public boolean handleItemSwap(@NotNull GamePlayer gamePlayer, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo) {

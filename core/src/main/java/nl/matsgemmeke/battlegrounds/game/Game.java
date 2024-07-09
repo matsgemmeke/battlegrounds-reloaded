@@ -93,16 +93,6 @@ public interface Game {
     Collection<ItemBehavior> getItemBehaviors();
 
     /**
-     * Executes logic that handles held item changes by players.
-     *
-     * @param gamePlayer the player
-     * @param changeFrom the held item that is being put away
-     * @param changeTo the item that is being changed to the current held item
-     * @return whether the action should be performed
-     */
-    boolean handleItemChange(@NotNull GamePlayer gamePlayer, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo);
-
-    /**
      * Executes logic that handles item drops by players.
      *
      * @param gamePlayer the player

@@ -3,8 +3,19 @@ package nl.matsgemmeke.battlegrounds.game;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface ActionHandler {
+
+    /**
+     * Executes logic that handles held item changes by players.
+     *
+     * @param player the player
+     * @param changeFrom the held item that is being put away
+     * @param changeTo the item that is being changed to the current held item
+     * @return whether the action should be performed
+     */
+    boolean handleItemChange(@NotNull Player player, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo);
 
     /**
      * Handles logic for when a player left-clicks an item.
