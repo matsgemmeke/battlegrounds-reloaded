@@ -93,15 +93,6 @@ public interface Game {
     Collection<ItemBehavior> getItemBehaviors();
 
     /**
-     * Executes logic that handles item pickups by players.
-     *
-     * @param gamePlayer the player
-     * @param pickupItem the item that was picked up
-     * @return whether the action should be performed
-     */
-    boolean handleItemPickup(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem);
-
-    /**
      * Executes logic that handles item swaps by players.
      *
      * @param gamePlayer the player

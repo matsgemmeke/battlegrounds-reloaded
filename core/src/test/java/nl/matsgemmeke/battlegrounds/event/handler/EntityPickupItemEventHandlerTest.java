@@ -1,8 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.GameProvider;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.ActionHandler;
+import nl.matsgemmeke.battlegrounds.game.provider.ActionHandlerProvider;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -11,76 +10,89 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class EntityPickupItemEventHandlerTest {
 
-    private GameProvider gameProvider;
+    private ActionHandlerProvider actionHandlerProvider;
     private Item item;
 
     @Before
     public void setUp() {
-        this.gameProvider = mock(GameProvider.class);
+        this.actionHandlerProvider = mock(ActionHandlerProvider.class);
         this.item = mock(Item.class);
     }
 
     @Test
-    public void doNothingIfEntityIsNotPlayer() {
+    public void shouldDoNothingIfEntityIsNotPlayer() {
         Zombie zombie = mock(Zombie.class);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(zombie, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(actionHandlerProvider);
         eventHandler.handle(event);
+
+        assertFalse(event.isCancelled());
     }
 
     @Test
-    public void doNothingIfPlayerIsNotInAnyGame() {
+    public void shouldDoNothingIfPlayerIsNotInAnyGame() {
         Player player = mock(Player.class);
+
+        when(actionHandlerProvider.getActionHandler(player)).thenReturn(null);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(actionHandlerProvider);
         eventHandler.handle(event);
+
+        assertFalse(event.isCancelled());
     }
 
     @Test
-    public void doNothingIfPlayerHasNoGamePlayerInstance() {
-        Game game = mock(Game.class);
-        Player player = mock(Player.class);
-
-        when(gameProvider.getGame(player)).thenReturn(game);
-
-        EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
-
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameProvider);
-        eventHandler.handle(event);
-
-        verify(game, never()).handleItemPickup(any(), any());
-    }
-
-    @Test
-    public void shouldCallGameActionMethodAndCancelEventBasedOnResult() {
-        Game game = mock(Game.class);
-        GamePlayer gamePlayer = mock(GamePlayer.class);
+    public void shouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
         Player player = mock(Player.class);
 
         ItemStack itemStack = mock(ItemStack.class);
         when(item.getItemStack()).thenReturn(itemStack);
 
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
-        when(game.handleItemPickup(gamePlayer, itemStack)).thenReturn(false);
+        ActionHandler actionHandler = mock(ActionHandler.class);
+        when(actionHandler.handleItemPickup(player, itemStack)).thenReturn(false);
 
-        when(gameProvider.getGame(player)).thenReturn(game);
+        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(actionHandlerProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());
 
-        verify(game).handleItemPickup(gamePlayer, itemStack);
+        verify(actionHandler).handleItemPickup(player, itemStack);
+    }
+
+    @Test
+    public void shouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
+        Player player = mock(Player.class);
+
+        ItemStack itemStack = mock(ItemStack.class);
+        when(item.getItemStack()).thenReturn(itemStack);
+
+        ActionHandler actionHandler = mock(ActionHandler.class);
+        when(actionHandler.handleItemPickup(player, itemStack)).thenReturn(true);
+
+        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
+
+        EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
+        event.setCancelled(true);
+
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(actionHandlerProvider);
+        eventHandler.handle(event);
+
+        assertTrue(event.isCancelled());
+
+        verify(actionHandler).handleItemPickup(player, itemStack);
     }
 }

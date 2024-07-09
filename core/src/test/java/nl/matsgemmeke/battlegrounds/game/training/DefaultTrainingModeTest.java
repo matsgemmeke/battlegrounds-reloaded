@@ -53,28 +53,6 @@ public class DefaultTrainingModeTest {
     }
 
     @Test
-    public void shouldPassOnItemPickupsToBehaviorInstancesAndReturnResult() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemStack itemStack = mock(ItemStack.class);
-
-        ItemBehavior behavior1 = mock(ItemBehavior.class);
-        when(behavior1.handlePickupItemAction(gamePlayer, itemStack)).thenReturn(true);
-
-        ItemBehavior behavior2 = mock(ItemBehavior.class);
-        when(behavior2.handlePickupItemAction(gamePlayer, itemStack)).thenReturn(false);
-
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addItemBehavior(behavior1);
-        trainingMode.addItemBehavior(behavior2);
-        boolean result = trainingMode.handleItemPickup(gamePlayer, itemStack);
-
-        assertFalse(result);
-
-        verify(behavior1).handlePickupItemAction(gamePlayer, itemStack);
-        verify(behavior2).handlePickupItemAction(gamePlayer, itemStack);
-    }
-
-    @Test
     public void shouldPassOnItemSwapsToBehaviorInstancesAndReturnResult() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack swapFrom = mock(ItemStack.class);

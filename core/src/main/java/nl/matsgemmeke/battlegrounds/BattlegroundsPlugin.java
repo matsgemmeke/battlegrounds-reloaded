@@ -144,7 +144,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
         eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(gameProvider)));
-        eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(gameProvider)));
+        eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(actionHandlerProvider)));

@@ -70,6 +70,22 @@ public class DefaultActionHandler implements ActionHandler {
         return performAction;
     }
 
+    public boolean handleItemPickup(@NotNull Player player, @NotNull ItemStack pickupItem) {
+        GamePlayer gamePlayer = game.getGamePlayer(player);
+
+        if (gamePlayer == null) {
+            return true;
+        }
+
+        boolean performAction = true;
+
+        for (ItemBehavior behavior : game.getItemBehaviors()) {
+            performAction = performAction & behavior.handlePickupItemAction(gamePlayer, pickupItem);
+        }
+
+        return performAction;
+    }
+
     public boolean handleItemRightClick(@NotNull Player player, @NotNull ItemStack clickedItem) {
         GamePlayer gamePlayer = game.getGamePlayer(player);
 

@@ -36,6 +36,15 @@ public interface ActionHandler {
     boolean handleItemLeftClick(@NotNull Player player, @NotNull ItemStack clickedItem);
 
     /**
+     * Executes logic that handles item pickups by players.
+     *
+     * @param player the player
+     * @param pickupItem the item that was picked up
+     * @return whether the action should be performed
+     */
+    boolean handleItemPickup(@NotNull Player player, @NotNull ItemStack pickupItem);
+
+    /**
      * Executes logic that handles right clicks by players.
      *
      * @param player the player

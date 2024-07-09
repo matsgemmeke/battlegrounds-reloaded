@@ -167,6 +167,8 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
 
     public void onPickUp(@NotNull GunHolder holder) {
         this.holder = holder;
+
+        controls.performAction(Action.PICKUP_ITEM, holder);
     }
 
     public void onSwapTo() {

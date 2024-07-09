@@ -33,9 +33,9 @@ public class DefaultActionHandlerTest {
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game);
 
-        boolean result = actionHandler.handleItemChange(player, null, null);
+        boolean performAction = actionHandler.handleItemChange(player, null, null);
 
-        assertTrue(result);
+        assertTrue(performAction);
     }
 
     @Test
@@ -90,9 +90,9 @@ public class DefaultActionHandlerTest {
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game);
 
-        boolean result = actionHandler.handleItemDrop(player, itemStack);
+        boolean performAction = actionHandler.handleItemDrop(player, itemStack);
 
-        assertTrue(result);
+        assertTrue(performAction);
     }
 
     @Test
@@ -110,9 +110,9 @@ public class DefaultActionHandlerTest {
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game);
 
-        boolean result = actionHandler.handleItemDrop(player, itemStack);
+        boolean performAction = actionHandler.handleItemDrop(player, itemStack);
 
-        assertTrue(result);
+        assertTrue(performAction);
 
         verify(behavior1).handleDropItemAction(gamePlayer, itemStack);
         verify(behavior2).handleDropItemAction(gamePlayer, itemStack);
@@ -124,9 +124,9 @@ public class DefaultActionHandlerTest {
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game);
 
-        boolean result = actionHandler.handleItemLeftClick(player, itemStack);
+        boolean performAction = actionHandler.handleItemLeftClick(player, itemStack);
 
-        assertTrue(result);
+        assertTrue(performAction);
     }
 
     @Test
@@ -144,12 +144,46 @@ public class DefaultActionHandlerTest {
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game);
 
-        boolean result = actionHandler.handleItemLeftClick(player, itemStack);
+        boolean performAction = actionHandler.handleItemLeftClick(player, itemStack);
 
-        assertFalse(result);
+        assertFalse(performAction);
 
         verify(behavior1).handleLeftClickAction(gamePlayer, itemStack);
         verify(behavior2).handleLeftClickAction(gamePlayer, itemStack);
+    }
+
+    @Test
+    public void shouldAllowItemPickUpIfGameDoesNotHavePlayer() {
+        when(game.getGamePlayer(player)).thenReturn(null);
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+
+        boolean performAction = actionHandler.handleItemPickup(player, itemStack);
+
+        assertTrue(performAction);
+    }
+
+    @Test
+    public void shouldPassOnItemPickUpToItemBehaviorInstancesAndReturnResult() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+
+        ItemBehavior behavior1 = mock(ItemBehavior.class);
+        when(behavior1.handlePickupItemAction(gamePlayer, itemStack)).thenReturn(false);
+
+        ItemBehavior behavior2 = mock(ItemBehavior.class);
+        when(behavior2.handlePickupItemAction(gamePlayer, itemStack)).thenReturn(false);
+
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
+        when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+
+        boolean performAction = actionHandler.handleItemPickup(player, itemStack);
+
+        assertFalse(performAction);
+
+        verify(behavior1).handlePickupItemAction(gamePlayer, itemStack);
+        verify(behavior2).handlePickupItemAction(gamePlayer, itemStack);
     }
 
     @Test
@@ -158,9 +192,9 @@ public class DefaultActionHandlerTest {
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game);
 
-        boolean result = actionHandler.handleItemRightClick(player, itemStack);
+        boolean performAction = actionHandler.handleItemRightClick(player, itemStack);
 
-        assertTrue(result);
+        assertTrue(performAction);
     }
 
     @Test
@@ -178,9 +212,9 @@ public class DefaultActionHandlerTest {
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game);
 
-        boolean result = actionHandler.handleItemRightClick(player, itemStack);
+        boolean performAction = actionHandler.handleItemRightClick(player, itemStack);
 
-        assertFalse(result);
+        assertFalse(performAction);
 
         verify(behavior1).handleRightClickAction(gamePlayer, itemStack);
         verify(behavior2).handleRightClickAction(gamePlayer, itemStack);

@@ -15,22 +15,22 @@ public class ItemControls<T extends ItemHolder> {
     @NotNull
     private ConcurrentMap<Action, List<ItemFunction<T>>> controls;
     @NotNull
-    private Set<ItemFunction<T>> functions;
+    private Set<ItemFunction<T>> performingFunctions;
 
     public ItemControls() {
         this.controls = new ConcurrentHashMap<>();
-        this.functions = new HashSet<>();
+        this.performingFunctions = new HashSet<>();
     }
 
     public void addControl(@NotNull Action action, @NotNull ItemFunction<T> function) {
         controls.putIfAbsent(action, new ArrayList<>());
         controls.get(action).add(function);
 
-        functions.add(function);
+        performingFunctions.add(function);
     }
 
     public void cancelAllFunctions() {
-        for (ItemFunction<T> function : functions) {
+        for (ItemFunction<T> function : performingFunctions) {
             if (function.isPerforming()) {
                 function.cancel();
             }
@@ -57,7 +57,7 @@ public class ItemControls<T extends ItemHolder> {
     }
 
     private boolean isPerformingBlockingFunction() {
-        for (ItemFunction<T> function : functions) {
+        for (ItemFunction<T> function : performingFunctions) {
             if (function.isPerforming() && function.isBlocking()) {
                 return true;
             }

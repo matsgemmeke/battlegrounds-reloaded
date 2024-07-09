@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.GameProvider;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
-import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.ActionHandler;
+import nl.matsgemmeke.battlegrounds.game.provider.ActionHandlerProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -12,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class EntityPickupItemEventHandler implements EventHandler<EntityPickupItemEvent> {
 
     @NotNull
-    private GameProvider gameProvider;
+    private ActionHandlerProvider actionHandlerProvider;
 
-    public EntityPickupItemEventHandler(@NotNull GameProvider gameProvider) {
-        this.gameProvider = gameProvider;
+    public EntityPickupItemEventHandler(@NotNull ActionHandlerProvider actionHandlerProvider) {
+        this.actionHandlerProvider = actionHandlerProvider;
     }
 
     public void handle(@NotNull EntityPickupItemEvent event) {
@@ -24,21 +23,15 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
         }
 
         Player player = (Player) event.getEntity();
-        Game game = gameProvider.getGame(player);
+        ActionHandler actionHandler = actionHandlerProvider.getActionHandler(player);
 
-        if (game == null) {
-            return;
-        }
-
-        GamePlayer gamePlayer = game.getGamePlayer(player);
-
-        if (gamePlayer == null) {
+        if (actionHandler == null) {
             return;
         }
 
         ItemStack itemStack = event.getItem().getItemStack();
 
-        boolean performEvent = game.handleItemPickup(gamePlayer, itemStack);
+        boolean performEvent = actionHandler.handleItemPickup(player, itemStack);
 
         event.setCancelled(event.isCancelled() || !performEvent);
     }
