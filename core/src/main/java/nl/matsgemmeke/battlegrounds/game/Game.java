@@ -93,16 +93,6 @@ public interface Game {
     Collection<ItemBehavior> getItemBehaviors();
 
     /**
-     * Executes logic that handles item swaps by players.
-     *
-     * @param gamePlayer the player
-     * @param swapFrom the item that the player swaps from
-     * @param swapTo the item that the player swaps to
-     * @return whether the action should be performed
-     */
-    boolean handleItemSwap(@NotNull GamePlayer gamePlayer, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo);
-
-    /**
      * Gets whether a specific entity is present in the game instance.
      *
      * @param entity the entity

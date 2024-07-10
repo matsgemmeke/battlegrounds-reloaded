@@ -5,14 +5,12 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,23 +48,6 @@ public class DefaultTrainingModeTest {
         GamePlayer gamePlayer = trainingMode.addPlayer(player);
 
         assertNotNull(gamePlayer);
-    }
-
-    @Test
-    public void shouldPassOnItemSwapsToBehaviorInstancesAndReturnResult() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemStack swapFrom = mock(ItemStack.class);
-        ItemStack swapTo = mock(ItemStack.class);
-
-        ItemBehavior behavior = mock(ItemBehavior.class);
-        when(behavior.handleSwapFromAction(gamePlayer, swapFrom)).thenReturn(true);
-        when(behavior.handleSwapToAction(gamePlayer, swapTo)).thenReturn(false);
-
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingMode.addItemBehavior(behavior);
-        boolean result = trainingMode.handleItemSwap(gamePlayer, swapFrom, swapTo);
-
-        assertFalse(result);
     }
 
     @Test

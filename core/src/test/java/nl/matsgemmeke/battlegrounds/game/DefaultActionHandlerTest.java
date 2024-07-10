@@ -219,4 +219,61 @@ public class DefaultActionHandlerTest {
         verify(behavior1).handleRightClickAction(gamePlayer, itemStack);
         verify(behavior2).handleRightClickAction(gamePlayer, itemStack);
     }
+
+    @Test
+    public void shouldAllowItemSwapIfGameDoesNotHavePlayer() {
+        when(game.getGamePlayer(player)).thenReturn(null);
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+
+        boolean performAction = actionHandler.handleItemSwap(player, null, null);
+
+        assertTrue(performAction);
+    }
+
+    @Test
+    public void shouldPassOnItemSwapFromToBehaviorInstancesAndReturnResult() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        ItemStack fromItem = new ItemStack(Material.IRON_HOE);
+
+        ItemBehavior behavior1 = mock(ItemBehavior.class);
+        when(behavior1.handleSwapFromAction(gamePlayer, fromItem)).thenReturn(true);
+
+        ItemBehavior behavior2 = mock(ItemBehavior.class);
+        when(behavior2.handleSwapFromAction(gamePlayer, fromItem)).thenReturn(false);
+
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
+        when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        boolean performAction = actionHandler.handleItemSwap(player, fromItem, null);
+
+        assertFalse(performAction);
+
+        verify(behavior1).handleSwapFromAction(gamePlayer, fromItem);
+        verify(behavior2).handleSwapFromAction(gamePlayer, fromItem);
+    }
+
+    @Test
+    public void shouldPassItemSwapToToBehaviorInstancesAndReturnResult() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        ItemStack toItem = new ItemStack(Material.IRON_HOE);
+
+        ItemBehavior behavior1 = mock(ItemBehavior.class);
+        when(behavior1.handleSwapToAction(gamePlayer, toItem)).thenReturn(true);
+
+        ItemBehavior behavior2 = mock(ItemBehavior.class);
+        when(behavior2.handleSwapToAction(gamePlayer, toItem)).thenReturn(false);
+
+        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
+        when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        boolean performAction = actionHandler.handleItemSwap(player, null, toItem);
+
+        assertFalse(performAction);
+
+        verify(behavior1).handleSwapToAction(gamePlayer, toItem);
+        verify(behavior2).handleSwapToAction(gamePlayer, toItem);
+    }
 }

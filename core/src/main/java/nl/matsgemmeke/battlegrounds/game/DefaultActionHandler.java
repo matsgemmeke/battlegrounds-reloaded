@@ -101,4 +101,26 @@ public class DefaultActionHandler implements ActionHandler {
 
         return performAction;
     }
+
+    public boolean handleItemSwap(@NotNull Player player, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo) {
+        GamePlayer gamePlayer = game.getGamePlayer(player);
+
+        if (gamePlayer == null) {
+            return true;
+        }
+
+        boolean performAction = true;
+
+        for (ItemBehavior behavior : game.getItemBehaviors()) {
+            if (swapFrom != null) {
+                performAction = performAction & behavior.handleSwapFromAction(gamePlayer, swapFrom);
+            }
+
+            if (swapTo != null) {
+                performAction = performAction & behavior.handleSwapToAction(gamePlayer, swapTo);
+            }
+        }
+
+        return performAction;
+    }
 }

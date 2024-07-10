@@ -149,7 +149,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(trainingMode)));
-        eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(gameProvider)));
+        eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(actionHandlerProvider)));
 
         EventListener eventListener = new EventListener(eventDispatcher);
 

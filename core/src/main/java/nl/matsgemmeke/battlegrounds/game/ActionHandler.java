@@ -52,4 +52,14 @@ public interface ActionHandler {
      * @return whether the action should be performed
      */
     boolean handleItemRightClick(@NotNull Player player, @NotNull ItemStack clickedItem);
+
+    /**
+     * Executes logic that handles item swaps by players.
+     *
+     * @param player the player
+     * @param swapFrom the item that the player swaps from
+     * @param swapTo the item that the player swaps to
+     * @return whether the action should be performed
+     */
+    boolean handleItemSwap(@NotNull Player player, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo);
 }

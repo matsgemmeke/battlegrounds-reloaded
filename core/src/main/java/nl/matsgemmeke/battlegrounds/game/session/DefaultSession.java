@@ -10,9 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DefaultSession extends BaseGame implements Session {
 
@@ -68,9 +66,5 @@ public class DefaultSession extends BaseGame implements Session {
 
     public double calculateDamage(@NotNull Entity entity, @NotNull Entity damager, double damage) {
         return damage;
-    }
-
-    public boolean handleItemSwap(@NotNull GamePlayer gamePlayer, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo) {
-        return false;
     }
 }

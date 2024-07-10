@@ -46,7 +46,7 @@ public class ReloadFunction implements ItemFunction<GunHolder> {
     }
 
     public boolean perform(@NotNull GunHolder holder) {
-        if (ammunitionHolder.getMagazineAmmo() >= ammunitionHolder.getMagazineSize()) {
+        if (ammunitionHolder.getMagazineAmmo() >= ammunitionHolder.getMagazineSize() || ammunitionHolder.getReserveAmmo() <= 0) {
             return false;
         }
 

@@ -65,20 +65,4 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     public double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, double damage) {
         return damage;
     }
-
-    public boolean handleItemSwap(@NotNull GamePlayer gamePlayer, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : itemBehaviors) {
-            if (swapFrom != null) {
-                performAction = performAction & behavior.handleSwapFromAction(gamePlayer, swapFrom);
-            }
-
-            if (swapTo != null) {
-                performAction = performAction & behavior.handleSwapToAction(gamePlayer, swapTo);
-            }
-        }
-
-        return performAction;
-    }
 }

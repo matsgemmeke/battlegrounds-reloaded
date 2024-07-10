@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.GameProvider;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.ActionHandler;
+import nl.matsgemmeke.battlegrounds.game.provider.ActionHandlerProvider;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
@@ -15,57 +15,63 @@ import static org.mockito.Mockito.*;
 
 public class PlayerSwapHandItemsEventHandlerTest {
 
-    private GameProvider gameProvider;
+    private ActionHandlerProvider actionHandlerProvider;
     private Player player;
 
     @Before
     public void setUp() {
-        this.gameProvider = mock(GameProvider.class);
-        this.player = mock(Player.class);
+        actionHandlerProvider = mock(ActionHandlerProvider.class);
+        player = mock(Player.class);
     }
 
     @Test
     public void shouldDoNothingIfPlayerIsNotInAnyGame() {
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, null, null);
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(gameProvider);
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionHandlerProvider);
         eventHandler.handle(event);
 
         assertFalse(event.isCancelled());
     }
 
     @Test
-    public void shouldDoNothingIfGameHasNoGamePlayerInstance() {
-        Game game = mock(Game.class);
-        when(gameProvider.getGame(player)).thenReturn(game);
+    public void shouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
+        ItemStack swapFrom = new ItemStack(Material.IRON_HOE);
+        ItemStack swapTo = new ItemStack(Material.IRON_HOE);
 
-        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, null, null);
+        ActionHandler actionHandler = mock(ActionHandler.class);
+        when(actionHandler.handleItemSwap(player, swapFrom, swapTo)).thenReturn(false);
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(gameProvider);
-        eventHandler.handle(event);
-
-        assertFalse(event.isCancelled());
-    }
-
-    @Test
-    public void shouldCallGameFunctionIfGameHasGamePlayerInstance() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-
-        ItemStack swapFrom = mock(ItemStack.class);
-        ItemStack swapTo = mock(ItemStack.class);
-
-        Game game = mock(Game.class);
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
-        when(game.handleItemSwap(gamePlayer, swapFrom, swapTo)).thenReturn(false);
-        when(gameProvider.getGame(player)).thenReturn(game);
+        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
 
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, swapTo, swapFrom);
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(gameProvider);
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionHandlerProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());
 
-        verify(game).handleItemSwap(gamePlayer, swapFrom, swapTo);
+        verify(actionHandler).handleItemSwap(player, swapFrom, swapTo);
+    }
+
+    @Test
+    public void shouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
+        ItemStack swapFrom = new ItemStack(Material.IRON_HOE);
+        ItemStack swapTo = new ItemStack(Material.IRON_HOE);
+
+        ActionHandler actionHandler = mock(ActionHandler.class);
+        when(actionHandler.handleItemSwap(player, swapFrom, swapTo)).thenReturn(true);
+
+        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
+
+        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, swapTo, swapFrom);
+        event.setCancelled(true);
+
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionHandlerProvider);
+        eventHandler.handle(event);
+
+        assertTrue(event.isCancelled());
+
+        verify(actionHandler).handleItemSwap(player, swapFrom, swapTo);
     }
 }
