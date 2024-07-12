@@ -1,9 +1,10 @@
-package nl.matsgemmeke.battlegrounds.game.provider;
+package nl.matsgemmeke.battlegrounds.game.access.provider;
 
 import nl.matsgemmeke.battlegrounds.GameProvider;
-import nl.matsgemmeke.battlegrounds.game.ActionHandler;
-import nl.matsgemmeke.battlegrounds.game.DefaultActionHandler;
+import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
+import nl.matsgemmeke.battlegrounds.game.access.DefaultActionHandler;
 import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;

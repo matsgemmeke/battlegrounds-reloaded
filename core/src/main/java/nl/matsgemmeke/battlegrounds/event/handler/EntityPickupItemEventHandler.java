@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
-import nl.matsgemmeke.battlegrounds.game.ActionHandler;
-import nl.matsgemmeke.battlegrounds.game.provider.ActionHandlerProvider;
+import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
+import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;

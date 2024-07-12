@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game;
+package nl.matsgemmeke.battlegrounds.game.access;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

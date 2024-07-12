@@ -14,7 +14,7 @@ import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.provider.ActionHandlerProvider;
+import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingMode;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingModeContext;

@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.game.ActionHandler;
-import nl.matsgemmeke.battlegrounds.game.provider.ActionHandlerProvider;
+import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
+import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemHeldEvent;
