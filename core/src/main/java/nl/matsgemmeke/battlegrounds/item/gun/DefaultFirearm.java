@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
@@ -22,6 +23,8 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     private static final DustOptions defaultParticleColor = new DustOptions(Color.WHITE, 1);
 
     @NotNull
+    private AudioEmitter audioEmitter;
+    @NotNull
     private CollisionDetector collisionDetector;
     private double headshotDamageMultiplier;
     private FireMode fireMode;
@@ -33,8 +36,9 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @Nullable
     private SpreadPattern spreadPattern;
 
-    public DefaultFirearm(@NotNull GameContext context, @NotNull CollisionDetector collisionDetector) {
+    public DefaultFirearm(@NotNull GameContext context, @NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector) {
         super(context);
+        this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
     }
 

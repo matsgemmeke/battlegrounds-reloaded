@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.GameContext;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
@@ -56,9 +57,11 @@ public class FirearmFactoryTest {
         this.reloadSystemFactory = mock(ReloadSystemFactory.class);
         this.spreadPatternFactory = mock(SpreadPatternFactory.class);
 
+        AudioEmitter audioEmitter = mock(AudioEmitter.class);
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
 
         context = mock(GameContext.class);
+        when(context.getAudioEmitter()).thenReturn(audioEmitter);
         when(context.getCollisionDetector()).thenReturn(collisionDetector);
 
         this.mainSection = mock(Section.class);
@@ -185,7 +188,7 @@ public class FirearmFactoryTest {
 
         assertNotNull(firearm);
 
-        verify(reloadSystemFactory).make(eq(firearm), any(), eq(old));
+        verify(reloadSystemFactory).make(eq(firearm), any(), any());
         verify(register).addUnassignedItem(firearm);
     }
 

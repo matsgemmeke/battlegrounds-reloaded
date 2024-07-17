@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
@@ -75,6 +76,7 @@ public class FirearmFactory implements WeaponFactory {
 
     @NotNull
     private Firearm createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext old, @NotNull nl.matsgemmeke.battlegrounds.game.component.GameContext context) {
+        AudioEmitter audioEmitter = context.getAudioEmitter();
         CollisionDetector collisionDetector = context.getCollisionDetector();
 
         Section section = configuration.getRoot();
@@ -83,7 +85,7 @@ public class FirearmFactory implements WeaponFactory {
         String name = section.getString("display-name");
         String description = section.getString("description");
 
-        DefaultFirearm firearm = new DefaultFirearm(old, collisionDetector);
+        DefaultFirearm firearm = new DefaultFirearm(old, audioEmitter, collisionDetector);
         firearm.setDescription(description);
         firearm.setName(name);
 
@@ -131,7 +133,7 @@ public class FirearmFactory implements WeaponFactory {
         Section controlsSection = section.getSection("controls");
 
         if (controlsSection != null) {
-            this.addControls(firearm, old, section, controlsSection);
+            this.addControls(firearm, context, section, controlsSection);
         }
 
         // Handle the pattern section if it's there
@@ -164,7 +166,9 @@ public class FirearmFactory implements WeaponFactory {
         return firearm;
     }
 
-    private void addControls(@NotNull DefaultFirearm firearm, @NotNull GameContext old, @NotNull Section section, @NotNull Section controlsSection) {
+    private void addControls(@NotNull DefaultFirearm firearm, @NotNull nl.matsgemmeke.battlegrounds.game.component.GameContext context, @NotNull Section section, @NotNull Section controlsSection) {
+        AudioEmitter audioEmitter = context.getAudioEmitter();
+
         String reloadActionValue = controlsSection.getString("reload");
         String changeScopeMagnificationActionValue = controlsSection.getString("scope-change-magnification");
         String stopScopeActionValue = controlsSection.getString("scope-stop");
@@ -182,7 +186,7 @@ public class FirearmFactory implements WeaponFactory {
             if (changeScopeMagnificationActionValue != null) {
                 List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSection.getString("change-magnification-sound"));
 
-                ChangeScopeMagnificationFunction changeScopeMagnificationFunction = new ChangeScopeMagnificationFunction(scopeAttachment, old);
+                ChangeScopeMagnificationFunction changeScopeMagnificationFunction = new ChangeScopeMagnificationFunction(scopeAttachment, audioEmitter);
                 changeScopeMagnificationFunction.addSounds(changeMagnificationSounds);
 
                 Action changeScopeMagnificationAction = this.getActionFromConfiguration("scope-change-magnification", changeScopeMagnificationActionValue);
@@ -192,12 +196,12 @@ public class FirearmFactory implements WeaponFactory {
 
             List<GameSound> useScopeSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sound"));
 
-            UseScopeFunction useScopeFunction = new UseScopeFunction(scopeAttachment, old);
+            UseScopeFunction useScopeFunction = new UseScopeFunction(scopeAttachment, audioEmitter);
             useScopeFunction.addSounds(useScopeSounds);
 
             List<GameSound> stopScopeSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sound"));
 
-            StopScopeFunction stopScopeFunction = new StopScopeFunction(scopeAttachment, old);
+            StopScopeFunction stopScopeFunction = new StopScopeFunction(scopeAttachment, audioEmitter);
             stopScopeFunction.addSounds(stopScopeSounds);
 
             Action useScopeAction = this.getActionFromConfiguration("scope-use", useScopeActionValue);
@@ -208,7 +212,7 @@ public class FirearmFactory implements WeaponFactory {
         }
 
         if (reloadActionValue != null) {
-            ReloadSystem reloadSystem = reloadSystemFactory.make(firearm, section.getSection("reloading"), old);
+            ReloadSystem reloadSystem = reloadSystemFactory.make(firearm, section.getSection("reloading"), audioEmitter);
             List<GameSound> reloadSounds = DefaultGameSound.parseSounds(section.getString("reloading.sound"));
 
             ReloadFunction reloadFunction = new ReloadFunction(firearm, reloadSystem);
@@ -223,7 +227,7 @@ public class FirearmFactory implements WeaponFactory {
             FireMode fireMode = fireModeFactory.make(firearm, section.getSection("shooting.fire-mode"));
             List<GameSound> triggerSounds = DefaultGameSound.parseSounds(config.getGunTriggerSound());
 
-            ShootFunction shootFunction = new ShootFunction(firearm, old, fireMode);
+            ShootFunction shootFunction = new ShootFunction(firearm, audioEmitter, fireMode);
             shootFunction.setTriggerSounds(triggerSounds);
 
             Action shootAction = this.getActionFromConfiguration("shoot", shootActionValue);
