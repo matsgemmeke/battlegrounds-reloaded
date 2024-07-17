@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
-import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 
