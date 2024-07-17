@@ -3,7 +3,8 @@ package nl.matsgemmeke.battlegrounds.game.training;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.*;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
-import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
+import nl.matsgemmeke.battlegrounds.game.component.GameContext;
+import nl.matsgemmeke.battlegrounds.game.training.component.DefaultTrainingModeContext;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -11,12 +12,12 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DefaultTrainingMode extends BaseGame implements TrainingMode {
 
+    @NotNull
+    private GameContext context;
     @NotNull
     private InternalsProvider internals;
     @NotNull
@@ -32,6 +33,12 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
         this.internals = internals;
         this.equipmentRegister = equipmentRegister;
         this.gunRegister = gunRegister;
+        this.context = new DefaultTrainingModeContext();
+    }
+
+    @NotNull
+    public GameContext getContext() {
+        return context;
     }
 
     @NotNull

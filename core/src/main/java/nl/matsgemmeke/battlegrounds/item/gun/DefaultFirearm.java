@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
@@ -20,6 +21,8 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
     private static final DustOptions defaultParticleColor = new DustOptions(Color.WHITE, 1);
 
+    @NotNull
+    private CollisionDetector collisionDetector;
     private double headshotDamageMultiplier;
     private FireMode fireMode;
     private int magazineAmmo;
@@ -30,8 +33,9 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @Nullable
     private SpreadPattern spreadPattern;
 
-    public DefaultFirearm(@NotNull GameContext context) {
+    public DefaultFirearm(@NotNull GameContext context, @NotNull CollisionDetector collisionDetector) {
         super(context);
+        this.collisionDetector = collisionDetector;
     }
 
     public double getHeadshotDamageMultiplier() {
@@ -138,7 +142,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     private boolean inflictDamage(@NotNull Location startingLocation, @NotNull Location projectileLocation) {
         double range = 0.1;
 
-        for (GameEntity target : context.getTargets(holder, projectileLocation, range)) {
+        for (GameEntity target : collisionDetector.findTargets(holder, projectileLocation, range)) {
             Location targetLocation = target.getEntity().getLocation();
 
             double damage = this.getDamage(startingLocation, targetLocation, projectileLocation);
@@ -225,7 +229,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
             direction.add(vector);
 
             // Check if the projectile's current location causes a collision
-            if (context.producesCollisionAt(direction)) {
+            if (collisionDetector.producesBlockCollisionAt(direction)) {
                 Block block = direction.getBlock();
                 block.getWorld().playEffect(direction, Effect.STEP_SOUND, block.getType());
                 break;

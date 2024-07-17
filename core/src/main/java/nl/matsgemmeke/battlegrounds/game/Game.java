@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.game;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
+import nl.matsgemmeke.battlegrounds.game.component.GameContext;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -11,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +58,14 @@ public interface Game {
      * @return the amount of produced damage
      */
     double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, double damage);
+
+    /**
+     * Gets the context of the game instance which holds the instances to component interfaces.
+     *
+     * @return the game context
+     */
+    @NotNull
+    GameContext getContext();
 
     /**
      * Gets the item register for equipment.

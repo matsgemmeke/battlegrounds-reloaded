@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.session;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.*;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
+import nl.matsgemmeke.battlegrounds.game.component.GameContext;
 import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -38,6 +39,11 @@ public class DefaultSession extends BaseGame implements Session {
     @NotNull
     public SessionConfiguration getConfiguration() {
         return configuration;
+    }
+
+    @NotNull
+    public GameContext getContext() {
+        throw new UnsupportedOperationException();
     }
 
     @NotNull
