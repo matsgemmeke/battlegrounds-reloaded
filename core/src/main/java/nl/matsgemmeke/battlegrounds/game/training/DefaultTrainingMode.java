@@ -55,7 +55,7 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     public GameItem addItem(@NotNull Item item) {
         GameItem gameItem = new DefaultGameItem(item);
 
-        itemEntityRegister.addEntity(gameItem);
+        itemStorage.addEntity(gameItem);
 
         return gameItem;
     }
@@ -64,7 +64,7 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     public GamePlayer addPlayer(@NotNull Player player) {
         GamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
 
-        playerRegister.addEntity(gamePlayer);
+        playerStorage.addEntity(gamePlayer);
 
         return gamePlayer;
     }

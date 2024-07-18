@@ -8,12 +8,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EntityRegister<T extends GameEntity> {
+public class EntityStorage<T extends GameEntity> {
 
     @NotNull
     private Set<T> entities;
 
-    public EntityRegister() {
+    public EntityStorage() {
         this.entities = new HashSet<>();
     }
 

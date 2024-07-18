@@ -16,16 +16,16 @@ import java.util.Set;
 public abstract class BaseGame implements Game {
 
     @NotNull
-    protected EntityRegister<GameItem> itemEntityRegister;
+    protected EntityStorage<GameItem> itemStorage;
     @NotNull
-    protected EntityRegister<GamePlayer> playerRegister;
+    protected EntityStorage<GamePlayer> playerStorage;
     @NotNull
     protected Set<ItemBehavior> itemBehaviors;
 
     public BaseGame() {
         this.itemBehaviors = new HashSet<>();
-        this.itemEntityRegister = new EntityRegister<>();
-        this.playerRegister = new EntityRegister<>();
+        this.itemStorage = new EntityStorage<>();
+        this.playerStorage = new EntityStorage<>();
     }
 
     @NotNull
@@ -39,8 +39,8 @@ public abstract class BaseGame implements Game {
 
     @Nullable
     public GameEntity getGameEntity(@NotNull Entity entity) {
-        for (EntityRegister<?> entityRegister : this.getEntityRegisters()) {
-            var foundEntity = entityRegister.getEntity(entity);
+        for (EntityStorage<?> entityStorage : this.getEntityStorages()) {
+            var foundEntity = entityStorage.getEntity(entity);
             if (foundEntity != null) {
                 return foundEntity;
             }
@@ -49,13 +49,13 @@ public abstract class BaseGame implements Game {
     }
 
     @NotNull
-    private Iterable<EntityRegister<?>> getEntityRegisters() {
-        return List.of(itemEntityRegister, playerRegister);
+    private Iterable<EntityStorage<?>> getEntityStorages() {
+        return List.of(itemStorage, playerStorage);
     }
 
     @Nullable
     public GamePlayer getGamePlayer(@NotNull Player player) {
-        return playerRegister.getEntity(player);
+        return playerStorage.getEntity(player);
     }
 
     public boolean hasEntity(@NotNull Entity entity) {

@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class EntityRegisterTest {
+public class EntityStorageTest {
 
     private GamePlayer gamePlayer;
     private Player player;
@@ -25,26 +25,26 @@ public class EntityRegisterTest {
 
     @Test
     public void shouldAddEntityToRegister() {
-        EntityRegister<GamePlayer> register = new EntityRegister<>();
-        register.addEntity(gamePlayer);
+        EntityStorage<GamePlayer> storage = new EntityStorage<>();
+        storage.addEntity(gamePlayer);
 
-        assertEquals(gamePlayer, register.getEntity(player));
+        assertEquals(gamePlayer, storage.getEntity(player));
     }
 
     @Test
     public void shouldReturnNullIfThereIsNoCorrespondingEntity() {
-        EntityRegister<GamePlayer> register = new EntityRegister<>();
-        register.addEntity(mock(GamePlayer.class));
+        EntityStorage<GamePlayer> storage = new EntityStorage<>();
+        storage.addEntity(mock(GamePlayer.class));
 
-        assertNull(register.getEntity(player));
+        assertNull(storage.getEntity(player));
     }
 
     @Test
     public void shouldRemoveEntityFromRegister() {
-        EntityRegister<GamePlayer> register = new EntityRegister<>();
-        register.addEntity(gamePlayer);
-        register.removeEntity(gamePlayer);
+        EntityStorage<GamePlayer> storage = new EntityStorage<>();
+        storage.addEntity(gamePlayer);
+        storage.removeEntity(gamePlayer);
 
-        assertNull(register.getEntity(player));
+        assertNull(storage.getEntity(player));
     }
 }
