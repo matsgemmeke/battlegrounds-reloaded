@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.game.component.GameContext;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -68,12 +68,12 @@ public interface Game {
     GameContext getContext();
 
     /**
-     * Gets the item register for equipment.
+     * Gets the item storage for equipment items.
      *
-     * @return the equipment register
+     * @return the equipment storage
      */
     @NotNull
-    ItemRegister<Equipment, EquipmentHolder> getEquipmentRegister();
+    ItemStorage<Equipment, EquipmentHolder> getEquipmentStorage();
 
     /**
      * Finds the {@link GamePlayer} instance for a player entity. Returns null if there is no entry for the player.
@@ -85,12 +85,12 @@ public interface Game {
     GamePlayer getGamePlayer(@NotNull Player player);
 
     /**
-     * Gets the item register for guns.
+     * Gets the item storage for gun items.
      *
-     * @return the gun register
+     * @return the gun storage
      */
     @NotNull
-    ItemRegister<Gun, GunHolder> getGunRegister();
+    ItemStorage<Gun, GunHolder> getGunStorage();
 
     /**
      * Gets the item behaviors registered to the game.

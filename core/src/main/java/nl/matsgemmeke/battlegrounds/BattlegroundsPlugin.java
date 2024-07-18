@@ -19,7 +19,7 @@ import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingMode;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingModeContext;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.WeaponProviderLoader;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
@@ -193,14 +193,14 @@ public class BattlegroundsPlugin extends JavaPlugin {
     private void setUpTrainingMode() {
         BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
 
-        ItemRegister<Equipment, EquipmentHolder> equipmentRegister = new ItemRegister<>();
-        ItemRegister<Gun, GunHolder> gunRegister = new ItemRegister<>();
+        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
+        ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
 
-        trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
+        trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
         trainingContext = new DefaultTrainingModeContext(trainingMode, collisionChecker);
 
-        trainingMode.addItemBehavior(new EquipmentBehavior(equipmentRegister));
-        trainingMode.addItemBehavior(new GunBehavior(gunRegister));
+        trainingMode.addItemBehavior(new EquipmentBehavior(equipmentStorage));
+        trainingMode.addItemBehavior(new GunBehavior(gunStorage));
 
         gameProvider.assignTrainingMode(trainingMode);
     }

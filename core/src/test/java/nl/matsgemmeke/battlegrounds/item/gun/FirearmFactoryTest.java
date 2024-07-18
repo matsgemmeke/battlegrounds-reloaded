@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.GameContext;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
@@ -82,11 +82,11 @@ public class FirearmFactoryTest {
     @Test
     public void createFirearmWithoutScopeFromConfiguration() {
         nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
-        ItemRegister<Gun, GunHolder> register = (ItemRegister<Gun, GunHolder>) mock(ItemRegister.class);
+        ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
-        when(game.getGunRegister()).thenReturn(register);
+        when(game.getGunStorage()).thenReturn(storage);
 
         when(itemConfiguration.getItemId()).thenReturn("TEST_GUN");
 
@@ -96,18 +96,18 @@ public class FirearmFactoryTest {
         assertNotNull(firearm);
         assertEquals("test", firearm.getName());
 
-        verify(register).addUnassignedItem(firearm);
+        verify(storage).addUnassignedItem(firearm);
     }
 
     @Test
     public void createFirearmWithShootControlsConfiguration() {
         FireMode fireMode = mock(FireMode.class);
-        ItemRegister<Gun, GunHolder> register = (ItemRegister<Gun, GunHolder>) mock(ItemRegister.class);
+        ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
         nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
-        when(game.getGunRegister()).thenReturn(register);
+        when(game.getGunStorage()).thenReturn(storage);
 
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("shoot")).thenReturn("RIGHT_CLICK");
@@ -127,12 +127,12 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmWithSpreadPatternFromConfiguration() {
-        ItemRegister<Gun, GunHolder> register = (ItemRegister<Gun, GunHolder>) mock(ItemRegister.class);
+        ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
         nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
-        when(game.getGunRegister()).thenReturn(register);
+        when(game.getGunStorage()).thenReturn(storage);
 
         Section patternSection = mock(Section.class);
         when(mainSection.getSection("shooting.pattern")).thenReturn(patternSection);
@@ -147,12 +147,12 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmWithRecoilProducerFromConfiguration() {
-        ItemRegister<Gun, GunHolder> register = (ItemRegister<Gun, GunHolder>) mock(ItemRegister.class);
+        ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
         nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
-        when(game.getGunRegister()).thenReturn(register);
+        when(game.getGunStorage()).thenReturn(storage);
 
         Section recoilSection = mock(Section.class);
         when(mainSection.getSection("shooting.recoil")).thenReturn(recoilSection);
@@ -163,7 +163,7 @@ public class FirearmFactoryTest {
         assertNotNull(firearm);
 
         verify(recoilProducerFactory).make(recoilSection);
-        verify(register).addUnassignedItem(firearm);
+        verify(storage).addUnassignedItem(firearm);
     }
 
     @Test
@@ -171,17 +171,17 @@ public class FirearmFactoryTest {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("reload")).thenReturn("LEFT_CLICK");
 
-        ItemRegister<Gun, GunHolder> register = (ItemRegister<Gun, GunHolder>) mock(ItemRegister.class);
+        ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
-        when(game.getGunRegister()).thenReturn(register);
+        when(game.getGunStorage()).thenReturn(storage);
 
         when(mainSection.getSection("controls")).thenReturn(controlsSection);
-        when(reloadSystemFactory.make(any(), any(), eq(old))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.make(any(), any(), any())).thenReturn(reloadSystem);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, game, old);
@@ -189,7 +189,7 @@ public class FirearmFactoryTest {
         assertNotNull(firearm);
 
         verify(reloadSystemFactory).make(eq(firearm), any(), any());
-        verify(register).addUnassignedItem(firearm);
+        verify(storage).addUnassignedItem(firearm);
     }
 
     @Test
@@ -204,11 +204,11 @@ public class FirearmFactoryTest {
         when(scopeSection.getString("use-sound")).thenReturn("ENTITY_BLAZE_HURT-1-1-0");
 
         nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
-        ItemRegister<Gun, GunHolder> register = (ItemRegister<Gun, GunHolder>) mock(ItemRegister.class);
+        ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
-        when(game.getGunRegister()).thenReturn(register);
+        when(game.getGunStorage()).thenReturn(storage);
 
         when(mainSection.getSection("controls")).thenReturn(controlsSection);
         when(mainSection.getSection("scope")).thenReturn(scopeSection);
@@ -219,7 +219,7 @@ public class FirearmFactoryTest {
         assertNotNull(firearm);
         assertEquals("test", firearm.getName());
 
-        verify(register).addUnassignedItem(firearm);
+        verify(storage).addUnassignedItem(firearm);
     }
 
     @Test
@@ -239,11 +239,11 @@ public class FirearmFactoryTest {
         when(mainSection.getSection("scope")).thenReturn(scopeSection);
 
         nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
-        ItemRegister<Gun, GunHolder> register = (ItemRegister<Gun, GunHolder>) mock(ItemRegister.class);
+        ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
-        when(game.getGunRegister()).thenReturn(register);
+        when(game.getGunStorage()).thenReturn(storage);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, game, old);
@@ -251,7 +251,7 @@ public class FirearmFactoryTest {
         assertNotNull(firearm);
         assertEquals("test", firearm.getName());
 
-        verify(register).addUnassignedItem(firearm);
+        verify(storage).addUnassignedItem(firearm);
     }
 
     @Test(expected = CreateFirearmException.class)
@@ -304,11 +304,11 @@ public class FirearmFactoryTest {
     public void createFirearmAndAssignPlayer() {
         nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemRegister<Gun, GunHolder> register = (ItemRegister<Gun, GunHolder>) mock(ItemRegister.class);
+        ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
-        when(game.getGunRegister()).thenReturn(register);
+        when(game.getGunStorage()).thenReturn(storage);
 
         when(config.getGunTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(mainSection.getInt("ammo.default-supply")).thenReturn(3);
@@ -324,6 +324,6 @@ public class FirearmFactoryTest {
         assertEquals(100, firearm.getMaxAmmo());
         assertEquals(30, firearm.getReserveAmmo());
 
-        verify(register).addAssignedItem(firearm, gamePlayer);
+        verify(storage).addAssignedItem(firearm, gamePlayer);
     }
 }

@@ -14,20 +14,20 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Stores and handles states of a specific subtype of item.
  */
-public class ItemRegister<T extends Item, U extends ItemHolder> {
+public class ItemStorage<T extends Item, U extends ItemHolder> {
 
     @NotNull
     private ConcurrentMap<U, Set<T>> assignedItems;
     @NotNull
     private Set<T> unassignedItems;
 
-    public ItemRegister() {
+    public ItemStorage() {
         this.assignedItems = new ConcurrentHashMap<>();
         this.unassignedItems = new HashSet<>();
     }
 
     /**
-     * Adds an item to the register that already has an assigned holder.
+     * Adds an item to the storage that already has an assigned holder.
      *
      * @param item the item
      * @param holder the holder
@@ -38,7 +38,7 @@ public class ItemRegister<T extends Item, U extends ItemHolder> {
     }
 
     /**
-     * Adds an unassigned item to the register.
+     * Adds an unassigned item to the storage.
      *
      * @param item the item
      */
@@ -47,8 +47,8 @@ public class ItemRegister<T extends Item, U extends ItemHolder> {
     }
 
     /**
-     * Attempts to find an item in the register by its {@link ItemStack}, and is assigned to a specific holder. Returns
-     * null if the register does not have an item with the corresponding {@link ItemStack} and holder.
+     * Attempts to find an item in the storage by its {@link ItemStack}, and is assigned to a specific holder. Returns
+     * null if the storage does not have an item with the corresponding {@link ItemStack} and holder.
      *
      * @param holder the item holder
      * @param itemStack the item stack
@@ -64,7 +64,7 @@ public class ItemRegister<T extends Item, U extends ItemHolder> {
     }
 
     /**
-     * Attempts to find an item in the register by its {@link ItemStack}. Returns null if the register does not contain
+     * Attempts to find an item in the storage by its {@link ItemStack}. Returns null if the storage does not contain
      * an item with the given {@link ItemStack}.
      *
      * @param itemStack the item stack
@@ -86,7 +86,7 @@ public class ItemRegister<T extends Item, U extends ItemHolder> {
     }
 
     /**
-     * Removes an assigned item from the register.
+     * Removes an assigned item from the storage.
      *
      * @param item the item to remove
      * @param holder the item's holder
@@ -101,7 +101,7 @@ public class ItemRegister<T extends Item, U extends ItemHolder> {
     }
 
     /**
-     * Removes an unassigned item from the register.
+     * Removes an unassigned item from the storage.
      *
      * @param item the item to remove
      * @return whether the item was removed

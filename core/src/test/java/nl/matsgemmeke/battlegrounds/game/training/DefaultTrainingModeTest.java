@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -20,21 +20,21 @@ import static org.mockito.Mockito.*;
 public class DefaultTrainingModeTest {
 
     private InternalsProvider internals;
-    private ItemRegister<Equipment, EquipmentHolder> equipmentRegister;
-    private ItemRegister<Gun, GunHolder> gunRegister;
+    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
+    private ItemStorage<Gun, GunHolder> gunStorage;
 
     @Before
     public void setUp() {
         internals = mock(InternalsProvider.class);
-        equipmentRegister = new ItemRegister<>();
-        gunRegister = new ItemRegister<>();
+        equipmentStorage = new ItemStorage<>();
+        gunStorage = new ItemStorage<>();
     }
 
     @Test
     public void addingItemsReturnsNewGameItemInstance() {
         Item item = mock(Item.class);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
         GameItem gameItem = trainingMode.addItem(item);
 
         assertNotNull(gameItem);
@@ -44,7 +44,7 @@ public class DefaultTrainingModeTest {
     public void addingPlayersReturnsNewGamePlayerInstance() {
         Player player = mock(Player.class);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
         GamePlayer gamePlayer = trainingMode.addPlayer(player);
 
         assertNotNull(gamePlayer);
@@ -54,7 +54,7 @@ public class DefaultTrainingModeTest {
     public void shouldReturnMatchingEntityInAnyRegisterWhenGettingGameEntity() {
         Player player = mock(Player.class);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
         trainingMode.addPlayer(player);
 
         GameEntity result = trainingMode.getGameEntity(player);
@@ -68,7 +68,7 @@ public class DefaultTrainingModeTest {
         Player player = mock(Player.class);
         Player otherPlayer = mock(Player.class);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
         trainingMode.addPlayer(otherPlayer);
 
         GameEntity result = trainingMode.getGameEntity(player);
@@ -80,7 +80,7 @@ public class DefaultTrainingModeTest {
     public void shouldReturnCorrespondingPlayerWrapperWhenGettingPlayer() {
         Player player = mock(Player.class);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
         trainingMode.addPlayer(player);
 
         GamePlayer result = trainingMode.getGamePlayer(player);
@@ -93,7 +93,7 @@ public class DefaultTrainingModeTest {
     public void shouldReturnWhetherTheInstanceHasRegisteredEntityWrapper() {
         Player player = mock(Player.class);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
         trainingMode.addPlayer(player);
 
         boolean hasEntity = trainingMode.hasEntity(player);
@@ -105,7 +105,7 @@ public class DefaultTrainingModeTest {
     public void shouldReturnWhetherTheInstanceHasRegisteredPlayerWrapper() {
         Player player = mock(Player.class);
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
+        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
         trainingMode.addPlayer(player);
 
         boolean hasPlayer = trainingMode.hasPlayer(player);

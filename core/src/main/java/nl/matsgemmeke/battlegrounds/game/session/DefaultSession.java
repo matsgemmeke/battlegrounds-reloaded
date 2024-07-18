@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.*;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
 import nl.matsgemmeke.battlegrounds.game.component.GameContext;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -19,9 +19,9 @@ public class DefaultSession extends BaseGame implements Session {
     @NotNull
     private InternalsProvider internals;
     @NotNull
-    private ItemRegister<Equipment, EquipmentHolder> equipmentRegister;
+    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
     @NotNull
-    private ItemRegister<Gun, GunHolder> gunRegister;
+    private ItemStorage<Gun, GunHolder> gunStorage;
     @NotNull
     private SessionConfiguration configuration;
 
@@ -29,7 +29,7 @@ public class DefaultSession extends BaseGame implements Session {
             int id,
             @NotNull SessionConfiguration configuration,
             @NotNull InternalsProvider internals,
-            @NotNull ItemRegister<Gun, GunHolder> gunRegister
+            @NotNull ItemStorage<Gun, GunHolder> gunStorage
     ) {
         this.id = id;
         this.configuration = configuration;
@@ -47,13 +47,13 @@ public class DefaultSession extends BaseGame implements Session {
     }
 
     @NotNull
-    public ItemRegister<Equipment, EquipmentHolder> getEquipmentRegister() {
-        return equipmentRegister;
+    public ItemStorage<Equipment, EquipmentHolder> getEquipmentStorage() {
+        return equipmentStorage;
     }
 
     @NotNull
-    public ItemRegister<Gun, GunHolder> getGunRegister() {
-        return gunRegister;
+    public ItemStorage<Gun, GunHolder> getGunStorage() {
+        return gunStorage;
     }
 
     public int getId() {

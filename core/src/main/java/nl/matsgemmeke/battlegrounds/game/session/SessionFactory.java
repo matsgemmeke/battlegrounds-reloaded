@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.session;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.configuration.SessionDataConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,8 +38,8 @@ public class SessionFactory {
         dataConfig.load();
         dataConfig.saveConfiguration(configuration);
 
-        ItemRegister<Gun, GunHolder> gunRegister = new ItemRegister<>();
+        ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
 
-        return new DefaultSession(id, configuration, internals, gunRegister);
+        return new DefaultSession(id, configuration, internals, gunStorage);
     }
 }

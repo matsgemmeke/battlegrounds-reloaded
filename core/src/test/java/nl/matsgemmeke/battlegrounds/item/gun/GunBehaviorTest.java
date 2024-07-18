@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
@@ -15,14 +15,14 @@ public class GunBehaviorTest {
 
     private GamePlayer gamePlayer;
     private Gun gun;
-    private ItemRegister<Gun, GunHolder> register;
+    private ItemStorage<Gun, GunHolder> storage;
     private ItemStack itemStack;
 
     @Before
     public void setUp() {
         this.gamePlayer = mock(GamePlayer.class);
-        this.register = new ItemRegister<>();
         this.itemStack = new ItemStack(Material.IRON_HOE);
+        this.storage = new ItemStorage<>();
 
         this.gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);
@@ -32,9 +32,9 @@ public class GunBehaviorTest {
     public void shouldCallFunctionOnGunWhenHolderPutsGunAway() {
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleChangeFromAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -44,7 +44,7 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderPutsAwayGunButItIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleChangeFromAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -54,9 +54,9 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderPutsAwayGunButHolderDoesNotMatch() {
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleChangeToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -68,9 +68,9 @@ public class GunBehaviorTest {
     public void shouldCallFunctionOnGunWhenHolderSwitchesToGun() {
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleChangeToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -79,8 +79,8 @@ public class GunBehaviorTest {
     }
 
     @Test
-    public void shouldDoNothingWhenHolderSwitchesToGunButItIsNotInTheRegister() {
-        GunBehavior behavior = new GunBehavior(register);
+    public void shouldDoNothingWhenHolderSwitchesToGunButItIsNotInTheStorage() {
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleChangeToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -90,9 +90,9 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderSwitchesToGunButHolderDoesNotMatch() {
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleChangeToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -104,13 +104,13 @@ public class GunBehaviorTest {
     public void shouldCallFunctionOnGunWhenHolderDropsTheGun() {
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleDropItemAction(gamePlayer, itemStack);
 
-        Gun assignedResult = register.getAssignedItem(gamePlayer, itemStack);
-        Gun unassignedResult = register.getUnassignedItem(itemStack);
+        Gun assignedResult = storage.getAssignedItem(gamePlayer, itemStack);
+        Gun unassignedResult = storage.getUnassignedItem(itemStack);
 
         assertTrue(performAction);
         assertEquals(gun, unassignedResult);
@@ -120,8 +120,8 @@ public class GunBehaviorTest {
     }
 
     @Test
-    public void shouldDoNothingWhenHolderDropsTheGunButItIsNotInTheRegister() {
-        GunBehavior behavior = new GunBehavior(register);
+    public void shouldDoNothingWhenHolderDropsTheGunButItIsNotInTheStorage() {
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleDropItemAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -131,9 +131,9 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderDropsTheGunButHolderDoesNotMatch() {
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleDropItemAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -143,13 +143,13 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldCallFunctionOnGunWhenHolderPicksUpTheGun() {
-        register.addUnassignedItem(gun);
+        storage.addUnassignedItem(gun);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handlePickupItemAction(gamePlayer, itemStack);
 
-        Gun assignedResult = register.getAssignedItem(gamePlayer, itemStack);
-        Gun unassignedResult = register.getUnassignedItem(itemStack);
+        Gun assignedResult = storage.getAssignedItem(gamePlayer, itemStack);
+        Gun unassignedResult = storage.getUnassignedItem(itemStack);
 
         assertTrue(performAction);
         assertEquals(gun, assignedResult);
@@ -160,7 +160,7 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingUponItemPickupWhenGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handlePickupItemAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -172,9 +172,9 @@ public class GunBehaviorTest {
     public void shouldCallFunctionOnGunWhenHolderLeftClicks() {
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
@@ -184,7 +184,7 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderLeftClicksButGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -194,9 +194,9 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderLeftClicksButHolderDoesNotMatch() {
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -208,9 +208,9 @@ public class GunBehaviorTest {
     public void shouldCallFunctionOnGunWhenHolderRightClicks() {
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
@@ -220,7 +220,7 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderRightClicksButGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -230,9 +230,9 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderRightClicksButHolderDoesNotMatch() {
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -244,9 +244,9 @@ public class GunBehaviorTest {
     public void shouldCallFunctionOnGunWhenHolderSwapsItemAway() {
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleSwapFromAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
@@ -256,7 +256,7 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderSwapsItemAwayButGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleSwapFromAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -266,9 +266,9 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderSwapsItemAwayButHolderDoesNotMatch() {
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleSwapFromAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -280,9 +280,9 @@ public class GunBehaviorTest {
     public void shouldCallFunctionOnGunWhenHolderSwapsToItem() {
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleSwapToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -292,7 +292,7 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderSwapsToItemButGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleSwapToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -302,9 +302,9 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderSwapsToItemButHolderDoesNotMatch() {
-        register.addAssignedItem(gun, gamePlayer);
+        storage.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(register);
+        GunBehavior behavior = new GunBehavior(storage);
         boolean performAction = behavior.handleSwapToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);

@@ -45,7 +45,7 @@ public class EquipmentFactory implements WeaponFactory {
     public Equipment make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context) {
         Equipment equipment = this.createInstance(configuration, context);
 
-        game.getEquipmentRegister().addUnassignedItem(equipment);
+        game.getEquipmentStorage().addUnassignedItem(equipment);
 
         return equipment;
     }
@@ -55,7 +55,7 @@ public class EquipmentFactory implements WeaponFactory {
         Equipment equipment = this.createInstance(configuration, context);
         equipment.setHolder(gamePlayer);
 
-        game.getEquipmentRegister().addAssignedItem(equipment, gamePlayer);
+        game.getEquipmentStorage().addAssignedItem(equipment, gamePlayer);
 
         return equipment;
     }

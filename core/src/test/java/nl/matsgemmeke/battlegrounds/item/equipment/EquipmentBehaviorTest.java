@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
@@ -15,13 +15,13 @@ public class EquipmentBehaviorTest {
 
     private Equipment equipment;
     private GamePlayer gamePlayer;
-    private ItemRegister<Equipment, EquipmentHolder> register;
+    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
     private ItemStack itemStack;
 
     @Before
     public void setUp() {
         gamePlayer = mock(GamePlayer.class);
-        register = new ItemRegister<>();
+        equipmentStorage = new ItemStorage<>();
         itemStack = new ItemStack(Material.FLINT_AND_STEEL);
 
         equipment = mock(Equipment.class);
@@ -32,9 +32,9 @@ public class EquipmentBehaviorTest {
     public void shouldCallFunctionOnEquipmentWhenLeftClicked() {
         when(equipment.getHolder()).thenReturn(gamePlayer);
 
-        register.addAssignedItem(equipment, gamePlayer);
+        equipmentStorage.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(register);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
         boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
@@ -44,7 +44,7 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenLeftClickedButEquipmentIsNotRegistered() {
-        EquipmentBehavior behavior = new EquipmentBehavior(register);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
         boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -54,9 +54,9 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenLeftClickedButHolderDoesNotMatch() {
-        register.addAssignedItem(equipment, gamePlayer);
+        equipmentStorage.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(register);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
         boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -68,9 +68,9 @@ public class EquipmentBehaviorTest {
     public void shouldCallFunctionOnEquipmentWhenRightClicked() {
         when(equipment.getHolder()).thenReturn(gamePlayer);
 
-        register.addAssignedItem(equipment, gamePlayer);
+        equipmentStorage.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(register);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
         boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
@@ -80,7 +80,7 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenRightClickedButEquipmentIsNotRegistered() {
-        EquipmentBehavior behavior = new EquipmentBehavior(register);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
         boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -90,9 +90,9 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenRightClickedButHolderDoesNotMatch() {
-        register.addAssignedItem(equipment, gamePlayer);
+        equipmentStorage.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(register);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
         boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);

@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.*;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
 import nl.matsgemmeke.battlegrounds.game.component.GameContext;
 import nl.matsgemmeke.battlegrounds.game.training.component.DefaultTrainingModeContext;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -21,18 +21,18 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     @NotNull
     private InternalsProvider internals;
     @NotNull
-    private ItemRegister<Equipment, EquipmentHolder> equipmentRegister;
+    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
     @NotNull
-    private ItemRegister<Gun, GunHolder> gunRegister;
+    private ItemStorage<Gun, GunHolder> gunStorage;
 
     public DefaultTrainingMode(
             @NotNull InternalsProvider internals,
-            @NotNull ItemRegister<Equipment, EquipmentHolder> equipmentRegister,
-            @NotNull ItemRegister<Gun, GunHolder> gunRegister
+            @NotNull ItemStorage<Equipment, EquipmentHolder> equipmentStorage,
+            @NotNull ItemStorage<Gun, GunHolder> gunStorage
     ) {
         this.internals = internals;
-        this.equipmentRegister = equipmentRegister;
-        this.gunRegister = gunRegister;
+        this.equipmentStorage = equipmentStorage;
+        this.gunStorage = gunStorage;
         this.context = new DefaultTrainingModeContext();
     }
 
@@ -42,13 +42,13 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
     }
 
     @NotNull
-    public ItemRegister<Equipment, EquipmentHolder> getEquipmentRegister() {
-        return equipmentRegister;
+    public ItemStorage<Equipment, EquipmentHolder> getEquipmentStorage() {
+        return equipmentStorage;
     }
 
     @NotNull
-    public ItemRegister<Gun, GunHolder> getGunRegister() {
-        return gunRegister;
+    public ItemStorage<Gun, GunHolder> getGunStorage() {
+        return gunStorage;
     }
 
     @NotNull
