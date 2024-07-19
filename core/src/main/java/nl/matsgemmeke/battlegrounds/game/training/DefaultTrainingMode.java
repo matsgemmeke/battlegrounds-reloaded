@@ -33,7 +33,7 @@ public class DefaultTrainingMode extends BaseGame implements TrainingMode {
         this.internals = internals;
         this.equipmentStorage = equipmentStorage;
         this.gunStorage = gunStorage;
-        this.context = new DefaultTrainingModeContext();
+        this.context = new DefaultTrainingModeContext(this);
     }
 
     @NotNull

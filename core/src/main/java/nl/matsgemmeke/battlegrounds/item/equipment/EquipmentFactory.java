@@ -3,11 +3,13 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
@@ -17,6 +19,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,15 +38,15 @@ public class EquipmentFactory implements WeaponFactory {
             @NotNull ItemMechanismFactory mechanismFactory,
             @NotNull ItemMechanismActivationFactory mechanismActivationFactory,
             @NotNull TaskRunner taskRunner
-            ) {
+    ) {
         this.mechanismFactory = mechanismFactory;
         this.mechanismActivationFactory = mechanismActivationFactory;
         this.taskRunner = taskRunner;
     }
 
     @NotNull
-    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context) {
-        Equipment equipment = this.createInstance(configuration, context);
+    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext old) {
+        Equipment equipment = this.createInstance(configuration, old, game.getContext());
 
         game.getEquipmentStorage().addUnassignedItem(equipment);
 
@@ -51,8 +54,8 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context, @NotNull GamePlayer gamePlayer) {
-        Equipment equipment = this.createInstance(configuration, context);
+    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext old, @NotNull GamePlayer gamePlayer) {
+        Equipment equipment = this.createInstance(configuration, old, game.getContext());
         equipment.setHolder(gamePlayer);
 
         game.getEquipmentStorage().addAssignedItem(equipment, gamePlayer);
@@ -61,13 +64,15 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
+    private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext old, @NotNull nl.matsgemmeke.battlegrounds.game.component.GameContext context) {
+        EntityRegistry<Item, GameItem> itemRegistry = context.getItemRegistry();
+
         Section section = configuration.getRoot();
 
         String name = section.getString("display-name");
         String description = section.getString("description");
 
-        DefaultEquipment equipment = new DefaultEquipment(context);
+        DefaultEquipment equipment = new DefaultEquipment(old, itemRegistry);
         equipment.setName(name);
         equipment.setDescription(description);
 
@@ -84,20 +89,20 @@ public class EquipmentFactory implements WeaponFactory {
         Section controlsSection = section.getSection("controls");
 
         if (controlsSection != null) {
-            this.addControls(equipment, context, section, controlsSection);
+            this.addControls(equipment, old, section, controlsSection);
         }
 
         return equipment;
     }
 
-    private void addControls(@NotNull DefaultEquipment equipment, @NotNull GameContext context, @NotNull Section section, @NotNull Section controlsSection) {
+    private void addControls(@NotNull DefaultEquipment equipment, @NotNull GameContext old, @NotNull Section section, @NotNull Section controlsSection) {
         String cookActionValue = controlsSection.getString("cook");
         String throwActionValue = controlsSection.getString("throw");
 
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
 
-            ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
+            ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), old);
             ItemMechanismActivation activation = mechanismActivationFactory.make(section.getSection("activation"), equipment, mechanism);
 
             if (cookActionValue != null) {
@@ -105,7 +110,7 @@ public class EquipmentFactory implements WeaponFactory {
 
                 List<GameSound> cookSounds = DefaultGameSound.parseSounds(section.getString("throwing.cook-sound"));
 
-                CookFunction cookFunction = new CookFunction(activation, context);
+                CookFunction cookFunction = new CookFunction(activation, old);
                 cookFunction.addSounds(cookSounds);
 
                 equipment.getControls().addControl(cookAction, cookFunction);
@@ -116,7 +121,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
-            ThrowFunction throwFunction = new ThrowFunction(equipment, activation, context, taskRunner, projectileSpeed, delayBetweenThrows);
+            ThrowFunction throwFunction = new ThrowFunction(equipment, activation, old, taskRunner, projectileSpeed, delayBetweenThrows);
             throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);

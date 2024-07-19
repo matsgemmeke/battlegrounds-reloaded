@@ -101,6 +101,15 @@ public interface Game {
     Collection<ItemBehavior> getItemBehaviors();
 
     /**
+     * Gets the item entity storages of the game. Not to be confused with storage for held items, these have their own
+     * specific storages. See for example {@link #getGunStorage()}.
+     *
+     * @return the item entity storage of the game
+     */
+    @NotNull
+    EntityStorage<GameItem> getItemStorage();
+
+    /**
      * Gets whether a specific entity is present in the game instance.
      *
      * @param entity the entity

@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
@@ -12,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class DefaultEquipment extends BaseWeapon implements Equipment {
 
+    @NotNull
+    private EntityRegistry<Item, GameItem> itemRegistry;
     @Nullable
     private EquipmentHolder holder;
     @Nullable
@@ -19,8 +23,9 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     private ItemControls<EquipmentHolder> controls;
 
-    public DefaultEquipment(@NotNull GameContext context) {
+    public DefaultEquipment(@NotNull GameContext context, @NotNull EntityRegistry<Item, GameItem> itemRegistry) {
         super(context);
+        this.itemRegistry = itemRegistry;
         this.controls = new ItemControls<>();
     }
 
@@ -61,7 +66,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
         droppedItem = world.dropItem(location, itemStack);
 
-        context.registerItem(droppedItem);
+        itemRegistry.registerEntity(droppedItem);
 
         return droppedItem;
     }
