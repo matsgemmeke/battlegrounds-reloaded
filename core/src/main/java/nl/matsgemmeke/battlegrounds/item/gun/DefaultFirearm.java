@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.Hitbox;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
@@ -36,8 +35,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @Nullable
     private SpreadPattern spreadPattern;
 
-    public DefaultFirearm(@NotNull GameContext context, @NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector) {
-        super(context);
+    public DefaultFirearm(@NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector) {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
     }
@@ -207,7 +205,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
         Location direction = holder.getShootingDirection();
 
         magazineAmmo--;
-        context.playSounds(shotSounds, direction);
+        audioEmitter.playSounds(shotSounds, direction);
 
         if (recoilProducer != null) {
             direction = recoilProducer.produceRecoil(holder, direction);

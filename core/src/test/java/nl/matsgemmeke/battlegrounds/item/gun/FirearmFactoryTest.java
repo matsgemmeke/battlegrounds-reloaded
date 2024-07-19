@@ -91,7 +91,7 @@ public class FirearmFactoryTest {
         when(itemConfiguration.getItemId()).thenReturn("TEST_GUN");
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, old);
+        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
 
         assertNotNull(firearm);
         assertEquals("test", firearm.getName());
@@ -118,7 +118,7 @@ public class FirearmFactoryTest {
         when(fireModeFactory.make(any(), any())).thenReturn(fireMode);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, old);
+        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
 
         assertNotNull(firearm);
 
@@ -138,7 +138,7 @@ public class FirearmFactoryTest {
         when(mainSection.getSection("shooting.pattern")).thenReturn(patternSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, old);
+        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
 
         assertNotNull(firearm);
 
@@ -158,7 +158,7 @@ public class FirearmFactoryTest {
         when(mainSection.getSection("shooting.recoil")).thenReturn(recoilSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, old);
+        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
 
         assertNotNull(firearm);
 
@@ -184,7 +184,7 @@ public class FirearmFactoryTest {
         when(reloadSystemFactory.make(any(), any(), any())).thenReturn(reloadSystem);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, old);
+        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
 
         assertNotNull(firearm);
 
@@ -214,7 +214,7 @@ public class FirearmFactoryTest {
         when(mainSection.getSection("scope")).thenReturn(scopeSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, old);
+        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
 
         assertNotNull(firearm);
         assertEquals("test", firearm.getName());
@@ -246,7 +246,7 @@ public class FirearmFactoryTest {
         when(game.getGunStorage()).thenReturn(storage);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, old);
+        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
 
         assertNotNull(firearm);
         assertEquals("test", firearm.getName());
@@ -274,7 +274,7 @@ public class FirearmFactoryTest {
         when(game.getContext()).thenReturn(context);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        firearmFactory.make(itemConfiguration, game, old);
+        firearmFactory.make(itemConfiguration, game, context);
     }
 
     @Test(expected = CreateFirearmException.class)
@@ -297,7 +297,7 @@ public class FirearmFactoryTest {
         when(game.getContext()).thenReturn(context);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        firearmFactory.make(itemConfiguration, game, old);
+        firearmFactory.make(itemConfiguration, game, context);
     }
 
     @Test
@@ -316,7 +316,7 @@ public class FirearmFactoryTest {
         when(mainSection.getInt("ammo.max-magazine-amount")).thenReturn(10);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, old, gamePlayer);
+        Firearm firearm = firearmFactory.make(itemConfiguration, game, context, gamePlayer);
 
         assertEquals(gamePlayer, firearm.getHolder());
         assertEquals(10, firearm.getMagazineAmmo());

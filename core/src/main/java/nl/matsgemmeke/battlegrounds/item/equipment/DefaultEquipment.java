@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -23,8 +22,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     private ItemControls<EquipmentHolder> controls;
 
-    public DefaultEquipment(@NotNull GameContext context, @NotNull EntityRegistry<Item, GameItem> itemRegistry) {
-        super(context);
+    public DefaultEquipment(@NotNull EntityRegistry<Item, GameItem> itemRegistry) {
         this.itemRegistry = itemRegistry;
         this.controls = new ItemControls<>();
     }

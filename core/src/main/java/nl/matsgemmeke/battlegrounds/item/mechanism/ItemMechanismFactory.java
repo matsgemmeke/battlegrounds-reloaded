@@ -1,13 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemMechanismFactory {
 
-    public ItemMechanism make(@NotNull Section section, @NotNull GameContext context) {
+    public ItemMechanism make(@NotNull Section section) {
         String type = section.getString("type");
 
         if (type == null) {
@@ -28,7 +27,7 @@ public class ItemMechanismFactory {
                 boolean setFire = section.getBoolean("set-fire");
                 boolean breakBlocks = section.getBoolean("break-blocks");
 
-                return new ExplosionMechanism(context, power, setFire, breakBlocks);
+                return new ExplosionMechanism(power, setFire, breakBlocks);
             }
         }
 

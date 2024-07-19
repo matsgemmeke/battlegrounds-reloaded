@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
@@ -34,8 +33,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     @Nullable
     protected ScopeAttachment scopeAttachment;
 
-    public BaseGun(@NotNull GameContext context) {
-        super(context);
+    public BaseGun() {
         this.controls = new ItemControls<>();
     }
 

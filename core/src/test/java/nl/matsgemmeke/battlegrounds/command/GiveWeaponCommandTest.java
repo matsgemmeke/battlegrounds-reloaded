@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.game.Game;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.GameContext;
 import nl.matsgemmeke.battlegrounds.item.*;
 import nl.matsgemmeke.battlegrounds.locale.TranslationKey;
 import nl.matsgemmeke.battlegrounds.locale.Translator;
@@ -31,12 +31,13 @@ public class GiveWeaponCommandTest {
         this.translator = mock(Translator.class);
         this.weaponProvider = mock(WeaponProvider.class);
 
+        when(game.getContext()).thenReturn(context);
         when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn("test");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowErrorWhenGivenIncompatibleWeaponId() {
-        GiveWeaponCommand command = new GiveWeaponCommand(game, context, translator, weaponProvider);
+        GiveWeaponCommand command = new GiveWeaponCommand(game, translator, weaponProvider);
         command.execute(player, "fail");
     }
 
@@ -60,7 +61,7 @@ public class GiveWeaponCommandTest {
 
         when(weaponProvider.getFactory(configuration)).thenReturn(factory);
 
-        GiveWeaponCommand command = new GiveWeaponCommand(game, context, translator, weaponProvider);
+        GiveWeaponCommand command = new GiveWeaponCommand(game, translator, weaponProvider);
         command.execute(player, weaponId);
 
         verify(inventory).addItem(itemStack);

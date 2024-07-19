@@ -4,11 +4,11 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -57,7 +57,7 @@ public class FirearmFactory implements WeaponFactory {
 
     @NotNull
     public Firearm make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context) {
-        Firearm firearm = this.createInstance(configuration, context, game.getContext());
+        Firearm firearm = this.createInstance(configuration, context);
 
         game.getGunStorage().addUnassignedItem(firearm);
 
@@ -66,7 +66,7 @@ public class FirearmFactory implements WeaponFactory {
 
     @NotNull
     public Firearm make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context, @NotNull GamePlayer gamePlayer) {
-        Firearm firearm = this.createInstance(configuration, context, game.getContext());
+        Firearm firearm = this.createInstance(configuration, context);
         firearm.setHolder(gamePlayer);
 
         game.getGunStorage().addAssignedItem(firearm, gamePlayer);
@@ -75,7 +75,7 @@ public class FirearmFactory implements WeaponFactory {
     }
 
     @NotNull
-    private Firearm createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext old, @NotNull nl.matsgemmeke.battlegrounds.game.component.GameContext context) {
+    private Firearm createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
         AudioEmitter audioEmitter = context.getAudioEmitter();
         CollisionDetector collisionDetector = context.getCollisionDetector();
 
@@ -85,7 +85,7 @@ public class FirearmFactory implements WeaponFactory {
         String name = section.getString("display-name");
         String description = section.getString("description");
 
-        DefaultFirearm firearm = new DefaultFirearm(old, audioEmitter, collisionDetector);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector);
         firearm.setDescription(description);
         firearm.setName(name);
 
