@@ -81,7 +81,6 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmWithoutScopeFromConfiguration() {
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
         ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
 
         Game game = mock(Game.class);
@@ -103,7 +102,6 @@ public class FirearmFactoryTest {
     public void createFirearmWithShootControlsConfiguration() {
         FireMode fireMode = mock(FireMode.class);
         ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
@@ -128,7 +126,6 @@ public class FirearmFactoryTest {
     @Test
     public void createFirearmWithSpreadPatternFromConfiguration() {
         ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
@@ -148,7 +145,6 @@ public class FirearmFactoryTest {
     @Test
     public void createFirearmWithRecoilProducerFromConfiguration() {
         ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
@@ -173,8 +169,6 @@ public class FirearmFactoryTest {
 
         ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
@@ -203,7 +197,6 @@ public class FirearmFactoryTest {
         when(scopeSection.getString("stop-sound")).thenReturn("ENTITY_BLAZE_HURT-1-1-0");
         when(scopeSection.getString("use-sound")).thenReturn("ENTITY_BLAZE_HURT-1-1-0");
 
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
         ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
 
         Game game = mock(Game.class);
@@ -238,7 +231,6 @@ public class FirearmFactoryTest {
         when(mainSection.getSection("controls")).thenReturn(controlsSection);
         when(mainSection.getSection("scope")).thenReturn(scopeSection);
 
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
         ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
 
         Game game = mock(Game.class);
@@ -268,8 +260,6 @@ public class FirearmFactoryTest {
         when(mainSection.getSection("controls")).thenReturn(controlsSection);
         when(mainSection.getSection("scope")).thenReturn(scopeSection);
 
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
-
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
 
@@ -291,8 +281,6 @@ public class FirearmFactoryTest {
         when(mainSection.getSection("controls")).thenReturn(controlsSection);
         when(mainSection.getSection("scope")).thenReturn(scopeSection);
 
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
-
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
 
@@ -302,7 +290,6 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmAndAssignPlayer() {
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStorage<Gun, GunHolder> storage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
 

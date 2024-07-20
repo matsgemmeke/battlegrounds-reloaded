@@ -129,8 +129,6 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
-
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
 
@@ -150,7 +148,6 @@ public class EquipmentFactoryTest {
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
         ItemStorage<Equipment, EquipmentHolder> storage = (ItemStorage<Equipment, EquipmentHolder>) mock(ItemStorage.class);
 
         Game game = mock(Game.class);
@@ -174,8 +171,6 @@ public class EquipmentFactoryTest {
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
-
-        nl.matsgemmeke.battlegrounds.game.GameContext old = mock(nl.matsgemmeke.battlegrounds.game.GameContext.class);
 
         Game game = mock(Game.class);
         when(game.getContext()).thenReturn(context);
