@@ -3,12 +3,16 @@ package nl.matsgemmeke.battlegrounds.game.training;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
+import nl.matsgemmeke.battlegrounds.item.ItemStorage;
+import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.entity.Item;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DefaultTrainingModeContextTest {
 
@@ -35,6 +39,19 @@ public class DefaultTrainingModeContextTest {
         CollisionDetector collisionDetector = context.getCollisionDetector();
 
         assertTrue(collisionDetector instanceof TrainingModeCollisionDetector);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldReturnNewInstanceOfItemRegistryForEquipmentItems() {
+        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = (ItemStorage<Equipment, EquipmentHolder>) mock(ItemStorage.class);
+        when(trainingMode.getEquipmentStorage()).thenReturn(equipmentStorage);
+
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode);
+
+        ItemRegistry<Equipment, EquipmentHolder> equipmentRegistry = context.getEquipmentRegistry();
+
+        assertTrue(equipmentRegistry instanceof DefaultEquipmentRegistry);
     }
 
     @Test
