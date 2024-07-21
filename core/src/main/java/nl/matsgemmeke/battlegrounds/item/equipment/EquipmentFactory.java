@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -46,7 +45,7 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context) {
+    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
         Equipment equipment = this.createInstance(configuration, context);
 
         context.getEquipmentRegistry().registerItem(equipment);
@@ -55,7 +54,7 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context, @NotNull GamePlayer gamePlayer) {
+    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull GameContext context, @NotNull GamePlayer gamePlayer) {
         Equipment equipment = this.createInstance(configuration, context);
         equipment.setHolder(gamePlayer);
 

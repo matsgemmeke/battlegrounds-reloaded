@@ -57,7 +57,7 @@ public class GiveWeaponCommandTest {
         when(weapon.getName()).thenReturn("test");
 
         WeaponFactory factory = mock(WeaponFactory.class);
-        when(factory.make(eq(configuration), eq(game), eq(context), any())).thenReturn(weapon);
+        when(factory.make(eq(configuration), eq(context), any())).thenReturn(weapon);
 
         when(weaponProvider.getFactory(configuration)).thenReturn(factory);
 

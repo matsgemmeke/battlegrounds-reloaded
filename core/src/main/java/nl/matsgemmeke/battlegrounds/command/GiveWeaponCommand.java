@@ -44,7 +44,7 @@ public class GiveWeaponCommand extends CommandSource {
         GamePlayer gamePlayer = game.getGamePlayer(player);
 
         WeaponFactory factory = weaponProvider.getFactory(configuration);
-        Weapon weapon = factory.make(configuration, game, game.getContext(), gamePlayer);
+        Weapon weapon = factory.make(configuration, game.getContext(), gamePlayer);
 
         player.getInventory().addItem(weapon.getItemStack());
 

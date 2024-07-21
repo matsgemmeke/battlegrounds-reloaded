@@ -4,7 +4,6 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -56,7 +55,7 @@ public class FirearmFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context) {
+    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
         Firearm firearm = this.createInstance(configuration, context);
 
         context.getGunRegistry().registerItem(firearm);
@@ -65,7 +64,7 @@ public class FirearmFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context, @NotNull GamePlayer gamePlayer) {
+    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull GameContext context, @NotNull GamePlayer gamePlayer) {
         Firearm firearm = this.createInstance(configuration, context);
         firearm.setHolder(gamePlayer);
 

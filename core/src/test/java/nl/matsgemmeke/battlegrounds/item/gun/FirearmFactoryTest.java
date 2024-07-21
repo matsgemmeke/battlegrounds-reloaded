@@ -5,12 +5,10 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GunHolder;
-import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.ItemRegistry;
-import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
@@ -85,12 +83,10 @@ public class FirearmFactoryTest {
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
-        Game game = mock(Game.class);
-
         when(itemConfiguration.getItemId()).thenReturn("TEST_GUN");
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
+        Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
         assertNotNull(firearm);
         assertEquals("test", firearm.getName());
@@ -105,8 +101,6 @@ public class FirearmFactoryTest {
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
-        Game game = mock(Game.class);
-
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("shoot")).thenReturn("RIGHT_CLICK");
 
@@ -116,7 +110,7 @@ public class FirearmFactoryTest {
         when(fireModeFactory.make(any(), any())).thenReturn(fireMode);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
+        Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
         assertNotNull(firearm);
 
@@ -129,13 +123,11 @@ public class FirearmFactoryTest {
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
-        Game game = mock(Game.class);
-
         Section patternSection = mock(Section.class);
         when(mainSection.getSection("shooting.pattern")).thenReturn(patternSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
+        Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
         assertNotNull(firearm);
 
@@ -148,13 +140,11 @@ public class FirearmFactoryTest {
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
-        Game game = mock(Game.class);
-
         Section recoilSection = mock(Section.class);
         when(mainSection.getSection("shooting.recoil")).thenReturn(recoilSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
+        Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
         assertNotNull(firearm);
 
@@ -171,13 +161,12 @@ public class FirearmFactoryTest {
         when(context.getGunRegistry()).thenReturn(registry);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        Game game = mock(Game.class);
 
         when(mainSection.getSection("controls")).thenReturn(controlsSection);
         when(reloadSystemFactory.make(any(), any(), any())).thenReturn(reloadSystem);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
+        Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
         assertNotNull(firearm);
 
@@ -199,13 +188,11 @@ public class FirearmFactoryTest {
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
-        Game game = mock(Game.class);
-
         when(mainSection.getSection("controls")).thenReturn(controlsSection);
         when(mainSection.getSection("scope")).thenReturn(scopeSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
+        Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
         assertNotNull(firearm);
         assertEquals("test", firearm.getName());
@@ -232,10 +219,8 @@ public class FirearmFactoryTest {
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
-        Game game = mock(Game.class);
-
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, context);
+        Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
         assertNotNull(firearm);
         assertEquals("test", firearm.getName());
@@ -257,10 +242,8 @@ public class FirearmFactoryTest {
         when(mainSection.getSection("controls")).thenReturn(controlsSection);
         when(mainSection.getSection("scope")).thenReturn(scopeSection);
 
-        Game game = mock(Game.class);
-
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        firearmFactory.make(itemConfiguration, game, context);
+        firearmFactory.make(itemConfiguration, context);
     }
 
     @Test(expected = CreateFirearmException.class)
@@ -277,10 +260,8 @@ public class FirearmFactoryTest {
         when(mainSection.getSection("controls")).thenReturn(controlsSection);
         when(mainSection.getSection("scope")).thenReturn(scopeSection);
 
-        Game game = mock(Game.class);
-
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        firearmFactory.make(itemConfiguration, game, context);
+        firearmFactory.make(itemConfiguration, context);
     }
 
     @Test
@@ -290,15 +271,13 @@ public class FirearmFactoryTest {
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
-        Game game = mock(Game.class);
-
         when(config.getGunTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(mainSection.getInt("ammo.default-supply")).thenReturn(3);
         when(mainSection.getInt("ammo.magazine-size")).thenReturn(10);
         when(mainSection.getInt("ammo.max-magazine-amount")).thenReturn(10);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, game, context, gamePlayer);
+        Firearm firearm = firearmFactory.make(itemConfiguration, context, gamePlayer);
 
         assertEquals(gamePlayer, firearm.getHolder());
         assertEquals(10, firearm.getMagazineAmmo());

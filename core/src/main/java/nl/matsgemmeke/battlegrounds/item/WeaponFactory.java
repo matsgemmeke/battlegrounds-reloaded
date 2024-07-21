@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +19,7 @@ public interface WeaponFactory {
      * @return a new instance of the corresponding item
      */
     @NotNull
-    Weapon make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context);
+    Weapon make(@NotNull ItemConfiguration configuration, @NotNull GameContext context);
 
     /**
      * Makes a new weapon based on the given id and adds it to a game instance while also assigning it to a player. The
@@ -32,5 +31,5 @@ public interface WeaponFactory {
      * @return a new instance of the corresponding item
      */
     @NotNull
-    Weapon make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context, @NotNull GamePlayer gamePlayer);
+    Weapon make(@NotNull ItemConfiguration configuration, @NotNull GameContext context, @NotNull GamePlayer gamePlayer);
 }
