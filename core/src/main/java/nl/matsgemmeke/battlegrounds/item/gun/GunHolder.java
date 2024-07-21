@@ -1,6 +1,9 @@
-package nl.matsgemmeke.battlegrounds.entity;
+package nl.matsgemmeke.battlegrounds.item.gun;
 
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.recoil.RecoilReceiver;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
+import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
-import nl.matsgemmeke.battlegrounds.entity.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.ItemMechanism;
 import org.jetbrains.annotations.NotNull;
 

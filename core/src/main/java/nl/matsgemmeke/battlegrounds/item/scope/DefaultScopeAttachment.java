@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.scope;
 
 import com.google.common.collect.Iterables;
-import nl.matsgemmeke.battlegrounds.entity.ScopeUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

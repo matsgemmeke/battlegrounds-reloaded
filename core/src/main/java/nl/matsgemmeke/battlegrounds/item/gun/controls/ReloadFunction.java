@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
 import com.google.common.collect.Iterables;
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import org.jetbrains.annotations.NotNull;
 

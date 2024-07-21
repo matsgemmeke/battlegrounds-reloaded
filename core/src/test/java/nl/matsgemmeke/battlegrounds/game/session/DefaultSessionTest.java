@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.game.session;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.junit.Before;
 import org.junit.Test;
 

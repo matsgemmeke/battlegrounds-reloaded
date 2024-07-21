@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

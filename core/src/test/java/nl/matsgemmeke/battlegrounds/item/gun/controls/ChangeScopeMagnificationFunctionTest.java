@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

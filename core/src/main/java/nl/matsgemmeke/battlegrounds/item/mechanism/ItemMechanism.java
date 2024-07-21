@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
-import nl.matsgemmeke.battlegrounds.entity.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

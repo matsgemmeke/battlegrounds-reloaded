@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import org.junit.Before;
 import org.junit.Test;

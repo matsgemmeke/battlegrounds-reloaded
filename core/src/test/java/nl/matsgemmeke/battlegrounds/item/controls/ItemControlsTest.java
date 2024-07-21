@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.controls;
 
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;

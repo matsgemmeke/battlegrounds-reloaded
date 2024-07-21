@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.entity.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
