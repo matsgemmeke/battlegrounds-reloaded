@@ -1,9 +1,10 @@
-package nl.matsgemmeke.battlegrounds.game.training.component;
+package nl.matsgemmeke.battlegrounds.game.training;
 
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
-import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
+import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 

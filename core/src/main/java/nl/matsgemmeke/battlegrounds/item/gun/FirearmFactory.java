@@ -5,10 +5,10 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -166,7 +166,7 @@ public class FirearmFactory implements WeaponFactory {
         return firearm;
     }
 
-    private void addControls(@NotNull DefaultFirearm firearm, @NotNull nl.matsgemmeke.battlegrounds.game.component.GameContext context, @NotNull Section section, @NotNull Section controlsSection) {
+    private void addControls(@NotNull DefaultFirearm firearm, @NotNull GameContext context, @NotNull Section section, @NotNull Section controlsSection) {
         AudioEmitter audioEmitter = context.getAudioEmitter();
 
         String reloadActionValue = controlsSection.getString("reload");

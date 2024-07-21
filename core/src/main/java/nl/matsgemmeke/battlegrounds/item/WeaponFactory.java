@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
-import nl.matsgemmeke.battlegrounds.game.component.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
