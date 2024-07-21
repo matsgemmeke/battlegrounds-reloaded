@@ -14,11 +14,11 @@ public class DefaultEquipmentRegistry implements ItemRegistry<Equipment, Equipme
         this.equipmentStorage = equipmentStorage;
     }
 
-    public void registerItem(@NotNull Equipment item) {
-        equipmentStorage.addUnassignedItem(item);
+    public void registerItem(@NotNull Equipment equipment) {
+        equipmentStorage.addUnassignedItem(equipment);
     }
 
-    public void registerItem(@NotNull Equipment item, @NotNull EquipmentHolder holder) {
-        equipmentStorage.addAssignedItem(item, holder);
+    public void registerItem(@NotNull Equipment equipment, @NotNull EquipmentHolder holder) {
+        equipmentStorage.addAssignedItem(equipment, holder);
     }
 }

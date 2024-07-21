@@ -59,7 +59,7 @@ public class FirearmFactory implements WeaponFactory {
     public Firearm make(@NotNull ItemConfiguration configuration, @NotNull Game game, @NotNull GameContext context) {
         Firearm firearm = this.createInstance(configuration, context);
 
-        game.getGunStorage().addUnassignedItem(firearm);
+        context.getGunRegistry().registerItem(firearm);
 
         return firearm;
     }
@@ -69,7 +69,7 @@ public class FirearmFactory implements WeaponFactory {
         Firearm firearm = this.createInstance(configuration, context);
         firearm.setHolder(gamePlayer);
 
-        game.getGunStorage().addAssignedItem(firearm, gamePlayer);
+        context.getGunRegistry().registerItem(firearm, gamePlayer);
 
         return firearm;
     }

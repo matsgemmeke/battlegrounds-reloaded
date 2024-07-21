@@ -1,11 +1,13 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
+import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.bukkit.entity.Item;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,5 +63,18 @@ public class DefaultTrainingModeContextTest {
         EntityRegistry<Item, GameItem> itemRegistry = context.getItemRegistry();
 
         assertTrue(itemRegistry instanceof DefaultItemRegistry);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldReturnNewInstanceOfItemRegistryForGunItems() {
+        ItemStorage<Gun, GunHolder> gunStorage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
+        when(trainingMode.getGunStorage()).thenReturn(gunStorage);
+
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode);
+
+        ItemRegistry<Gun, GunHolder> gunRegistry = context.getGunRegistry();
+
+        assertTrue(gunRegistry instanceof DefaultGunRegistry);
     }
 }
