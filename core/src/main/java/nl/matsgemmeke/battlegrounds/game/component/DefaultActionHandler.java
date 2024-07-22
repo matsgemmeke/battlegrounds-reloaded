@@ -1,8 +1,7 @@
-package nl.matsgemmeke.battlegrounds.game.access;
+package nl.matsgemmeke.battlegrounds.game.component;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
-import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
