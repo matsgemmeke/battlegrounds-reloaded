@@ -38,6 +38,11 @@ public abstract class BaseGame implements Game {
         return itemStorage;
     }
 
+    @NotNull
+    public EntityStorage<GamePlayer> getPlayerStorage() {
+        return playerStorage;
+    }
+
     public void addItemBehavior(@NotNull ItemBehavior itemBehavior) {
         itemBehaviors.add(itemBehavior);
     }

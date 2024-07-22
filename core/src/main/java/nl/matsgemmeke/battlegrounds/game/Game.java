@@ -109,6 +109,14 @@ public interface Game {
     EntityStorage<GameItem> getItemStorage();
 
     /**
+     * Gets the player storage of the game.
+     *
+     * @return the player storage of the game
+     */
+    @NotNull
+    EntityStorage<GamePlayer> getPlayerStorage();
+
+    /**
      * Gets whether a specific entity is present in the game instance.
      *
      * @param entity the entity

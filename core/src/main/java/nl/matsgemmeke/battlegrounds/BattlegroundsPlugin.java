@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.event.EventBus;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingMode;
@@ -51,6 +52,7 @@ import java.util.logging.Logger;
 public class BattlegroundsPlugin extends JavaPlugin {
 
     private BattlegroundsConfiguration config;
+    private GameContext trainingModeContext;
     private GameProvider gameProvider;
     private InternalsProvider internals;
     private Logger logger;
@@ -144,7 +146,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(actionHandlerProvider)));
-        eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(trainingMode)));
+        eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(trainingModeContext.getPlayerRegistry())));
         eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(actionHandlerProvider)));
 
         EventListener eventListener = new EventListener(eventDispatcher);
@@ -191,6 +193,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
 
         trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
+        trainingModeContext = trainingMode.getContext();
 
         trainingMode.addItemBehavior(new EquipmentBehavior(equipmentStorage));
         trainingMode.addItemBehavior(new GunBehavior(gunStorage));

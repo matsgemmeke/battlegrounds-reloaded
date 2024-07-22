@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface EntityRegistry<T extends Entity, S extends GameEntity> {
 
+    boolean isRegistered(T entity);
+
     @NotNull
     S registerEntity(T entity);
 }

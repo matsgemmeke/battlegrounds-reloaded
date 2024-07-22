@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.junit.Before;
@@ -11,11 +12,12 @@ import static org.mockito.Mockito.verify;
 
 public class PlayerJoinEventHandlerTest {
 
-    private TrainingMode trainingMode;
+    private EntityRegistry<Player, GamePlayer> playerRegistry;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setUp() {
-        this.trainingMode = mock(TrainingMode.class);
+        playerRegistry = (EntityRegistry<Player, GamePlayer>) mock(EntityRegistry.class);
     }
 
     @Test
@@ -23,9 +25,9 @@ public class PlayerJoinEventHandlerTest {
         Player player = mock(Player.class);
         PlayerJoinEvent event = new PlayerJoinEvent(player, "test");
 
-        PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(trainingMode);
+        PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(playerRegistry);
         eventHandler.handle(event);
 
-        verify(trainingMode).addPlayer(player);
+        verify(playerRegistry).registerEntity(player);
     }
 }
