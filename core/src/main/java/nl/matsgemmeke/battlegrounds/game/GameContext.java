@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -15,6 +16,9 @@ import org.jetbrains.annotations.NotNull;
  * Entry point for provision of segregated interfaces for a game instance.
  */
 public interface GameContext {
+
+    @NotNull
+    ActionHandler getActionHandler();
 
     @NotNull
     AudioEmitter getAudioEmitter();

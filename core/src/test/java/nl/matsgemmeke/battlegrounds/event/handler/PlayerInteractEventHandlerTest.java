@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
-import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -16,14 +17,14 @@ import static org.mockito.Mockito.*;
 
 public class PlayerInteractEventHandlerTest {
 
-    private ActionHandler actionHandler;
-    private ActionHandlerProvider actionHandlerProvider;
+    private GameContext context;
+    private GameContextProvider contextProvider;
     private Player player;
 
     @Before
     public void setUp() {
-        actionHandler = mock(ActionHandler.class);
-        actionHandlerProvider = mock(ActionHandlerProvider.class);
+        context = mock(GameContext.class);
+        contextProvider = mock(GameContextProvider.class);
         player = mock(Player.class);
     }
 
@@ -31,35 +32,37 @@ public class PlayerInteractEventHandlerTest {
     public void shouldDoNothingIfClickedItemIsNull() {
         PlayerInteractEvent event = new PlayerInteractEvent(player, null, null, null, null);
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(actionHandlerProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        verify(actionHandler, never()).handleItemLeftClick(any(), any());
-        verify(actionHandler, never()).handleItemRightClick(any(), any());
+        assertEquals(Result.DEFAULT, event.useItemInHand());
     }
 
     @Test
-    public void shouldDoNothingIfPlayerIsNotInAnyGame() {
+    public void shouldDoNothingIfPlayerIsNotInAnyContext() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(player, null, itemStack, null, null);
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(actionHandlerProvider);
+        when(contextProvider.getContext(player)).thenReturn(null);
+
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        verify(actionHandler, never()).handleItemLeftClick(any(), any());
-        verify(actionHandler, never()).handleItemRightClick(any(), any());
+        assertEquals(Result.DEFAULT, event.useItemInHand());
     }
 
     @Test
     public void shouldCallLeftClickFunctionAndCancelEventBasedOnResult() {
-        ItemStack itemStack = mock(ItemStack.class);
-
-        when(actionHandler.handleItemLeftClick(player, itemStack)).thenReturn(false);
-        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
-
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, itemStack, null, null);
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(actionHandlerProvider);
+        ActionHandler actionHandler = mock(ActionHandler.class);
+        when(actionHandler.handleItemLeftClick(player, itemStack)).thenReturn(false);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+
+        when(contextProvider.getContext(player)).thenReturn(context);
+
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertEquals(Result.DENY, event.useItemInHand());
@@ -69,14 +72,16 @@ public class PlayerInteractEventHandlerTest {
 
     @Test
     public void shouldCallRightClickFunctionAndCancelEventBasedOnResult() {
-        ItemStack itemStack = mock(ItemStack.class);
-
-        when(actionHandler.handleItemRightClick(player, itemStack)).thenReturn(true);
-        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
-
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, itemStack, null, null);
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(actionHandlerProvider);
+        ActionHandler actionHandler = mock(ActionHandler.class);
+        when(actionHandler.handleItemRightClick(player, itemStack)).thenReturn(true);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+
+        when(contextProvider.getContext(player)).thenReturn(context);
+
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertEquals(Result.DEFAULT, event.useItemInHand());

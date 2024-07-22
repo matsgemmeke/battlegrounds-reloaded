@@ -54,6 +54,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
     private BattlegroundsConfiguration config;
     private GameContext trainingModeContext;
     private GameProvider gameProvider;
+    private GameContextProvider gameContextProvider;
     private InternalsProvider internals;
     private Logger logger;
     private TaskRunner taskRunner;
@@ -67,8 +68,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     @NotNull
-    public GameProvider getGameProvider() {
-        return gameProvider;
+    public GameContextProvider getGameContextProvider() {
+        return gameContextProvider;
     }
 
     @Override
@@ -89,6 +90,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     private void startPlugin() throws StartupFailedException {
         gameProvider = new DefaultGameProvider();
+        gameContextProvider = new GameContextProvider();
 
         // Make sure the configuration folders are created
         File configFolder = this.getDataFolder();
@@ -144,7 +146,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(gameProvider)));
         eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(actionHandlerProvider)));
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(actionHandlerProvider)));
+        eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(gameContextProvider)));
         eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(actionHandlerProvider)));
         eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(trainingModeContext.getPlayerRegistry())));
         eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(actionHandlerProvider)));
@@ -198,6 +200,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         trainingMode.addItemBehavior(new EquipmentBehavior(equipmentStorage));
         trainingMode.addItemBehavior(new GunBehavior(gunStorage));
 
+        gameContextProvider.assignTrainingModeContext(trainingModeContext);
         gameProvider.assignTrainingMode(trainingMode);
     }
 

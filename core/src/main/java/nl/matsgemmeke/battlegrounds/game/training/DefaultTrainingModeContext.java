@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
+import nl.matsgemmeke.battlegrounds.game.access.DefaultActionHandler;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -18,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 public class DefaultTrainingModeContext implements GameContext {
 
     @NotNull
+    private ActionHandler actionHandler;
+    @NotNull
     private InternalsProvider internals;
     @NotNull
     private TrainingMode trainingMode;
@@ -25,6 +29,12 @@ public class DefaultTrainingModeContext implements GameContext {
     public DefaultTrainingModeContext(@NotNull TrainingMode trainingMode, @NotNull InternalsProvider internals) {
         this.trainingMode = trainingMode;
         this.internals = internals;
+        this.actionHandler = new DefaultActionHandler(trainingMode);
+    }
+
+    @NotNull
+    public ActionHandler getActionHandler() {
+        return actionHandler;
     }
 
     @NotNull
