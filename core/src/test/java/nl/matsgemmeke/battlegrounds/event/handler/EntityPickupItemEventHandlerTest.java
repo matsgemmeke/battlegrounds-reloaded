@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
-import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -16,12 +17,12 @@ import static org.mockito.Mockito.*;
 
 public class EntityPickupItemEventHandlerTest {
 
-    private ActionHandlerProvider actionHandlerProvider;
+    private GameContextProvider contextProvider;
     private Item item;
 
     @Before
     public void setUp() {
-        this.actionHandlerProvider = mock(ActionHandlerProvider.class);
+        this.contextProvider = mock(GameContextProvider.class);
         this.item = mock(Item.class);
     }
 
@@ -31,7 +32,7 @@ public class EntityPickupItemEventHandlerTest {
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(zombie, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(actionHandlerProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertFalse(event.isCancelled());
@@ -41,11 +42,11 @@ public class EntityPickupItemEventHandlerTest {
     public void shouldDoNothingIfPlayerIsNotInAnyGame() {
         Player player = mock(Player.class);
 
-        when(actionHandlerProvider.getActionHandler(player)).thenReturn(null);
+        when(contextProvider.getContext(player)).thenReturn(null);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(actionHandlerProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertFalse(event.isCancelled());
@@ -61,11 +62,13 @@ public class EntityPickupItemEventHandlerTest {
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemPickup(player, itemStack)).thenReturn(false);
 
-        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+        when(contextProvider.getContext(player)).thenReturn(context);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(actionHandlerProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());
@@ -83,12 +86,14 @@ public class EntityPickupItemEventHandlerTest {
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemPickup(player, itemStack)).thenReturn(true);
 
-        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+        when(contextProvider.getContext(player)).thenReturn(context);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
         event.setCancelled(true);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(actionHandlerProvider);
+        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());

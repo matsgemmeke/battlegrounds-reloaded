@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
-import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -15,20 +16,22 @@ import static org.mockito.Mockito.*;
 
 public class PlayerSwapHandItemsEventHandlerTest {
 
-    private ActionHandlerProvider actionHandlerProvider;
+    private GameContextProvider contextProvider;
     private Player player;
 
     @Before
     public void setUp() {
-        actionHandlerProvider = mock(ActionHandlerProvider.class);
+        contextProvider = mock(GameContextProvider.class);
         player = mock(Player.class);
     }
 
     @Test
-    public void shouldDoNothingIfPlayerIsNotInAnyGame() {
+    public void shouldDoNothingIfPlayerIsNotInAnyContext() {
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, null, null);
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionHandlerProvider);
+        when(contextProvider.getContext(player)).thenReturn(null);
+
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertFalse(event.isCancelled());
@@ -42,11 +45,13 @@ public class PlayerSwapHandItemsEventHandlerTest {
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemSwap(player, swapFrom, swapTo)).thenReturn(false);
 
-        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+        when(contextProvider.getContext(player)).thenReturn(context);
 
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, swapTo, swapFrom);
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionHandlerProvider);
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());
@@ -62,12 +67,14 @@ public class PlayerSwapHandItemsEventHandlerTest {
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemSwap(player, swapFrom, swapTo)).thenReturn(true);
 
-        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+        when(contextProvider.getContext(player)).thenReturn(context);
 
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, swapTo, swapFrom);
         event.setCancelled(true);
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionHandlerProvider);
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());

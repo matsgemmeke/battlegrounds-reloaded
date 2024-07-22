@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
-import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -10,30 +11,29 @@ import org.bukkit.inventory.PlayerInventory;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class PlayerItemHeldEventHandlerTest {
 
-    private ActionHandler actionHandler;
-    private ActionHandlerProvider actionHandlerProvider;
+    private GameContextProvider contextProvider;
     private Player player;
 
     @Before
     public void setUp() {
-        this.actionHandler = mock(ActionHandler.class);
-        this.actionHandlerProvider = mock(ActionHandlerProvider.class);
-        this.player = mock(Player.class);
+        contextProvider = mock(GameContextProvider.class);
+        player = mock(Player.class);
     }
 
     @Test
     public void shouldDoNothingIfPlayerIsNotInAnyGame() {
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(actionHandlerProvider);
+        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        verifyNoInteractions(actionHandler);
+        assertFalse(event.isCancelled());
     }
 
     @Test
@@ -46,13 +46,16 @@ public class PlayerItemHeldEventHandlerTest {
         when(inventory.getItemInMainHand()).thenReturn(changeFrom);
         when(player.getInventory()).thenReturn(inventory);
 
+        ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemChange(player, changeFrom, changeTo)).thenReturn(false);
 
-        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+        when(contextProvider.getContext(player)).thenReturn(context);
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(actionHandlerProvider);
+        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());
@@ -70,14 +73,17 @@ public class PlayerItemHeldEventHandlerTest {
         when(inventory.getItemInMainHand()).thenReturn(changeFrom);
         when(player.getInventory()).thenReturn(inventory);
 
+        ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemChange(player, changeFrom, changeTo)).thenReturn(true);
 
-        when(actionHandlerProvider.getActionHandler(player)).thenReturn(actionHandler);
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+        when(contextProvider.getContext(player)).thenReturn(context);
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
         event.setCancelled(true);
 
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(actionHandlerProvider);
+        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());

@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingMode;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
@@ -54,7 +53,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
     private BattlegroundsConfiguration config;
     private GameContext trainingModeContext;
     private GameProvider gameProvider;
-    private GameContextProvider gameContextProvider;
+    private GameContextProvider contextProvider;
     private InternalsProvider internals;
     private Logger logger;
     private TaskRunner taskRunner;
@@ -68,8 +67,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     @NotNull
-    public GameContextProvider getGameContextProvider() {
-        return gameContextProvider;
+    public GameContextProvider getContextProvider() {
+        return contextProvider;
     }
 
     @Override
@@ -90,7 +89,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     private void startPlugin() throws StartupFailedException {
         gameProvider = new DefaultGameProvider();
-        gameContextProvider = new GameContextProvider();
+        contextProvider = new GameContextProvider();
 
         // Make sure the configuration folders are created
         File configFolder = this.getDataFolder();
@@ -139,17 +138,16 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void setUpEvents() {
-        ActionHandlerProvider actionHandlerProvider = new ActionHandlerProvider(gameProvider);
         PluginManager pluginManager = this.getServer().getPluginManager();
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
         eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(gameProvider)));
-        eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(actionHandlerProvider)));
-        eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(actionHandlerProvider)));
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(gameContextProvider)));
-        eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(actionHandlerProvider)));
+        eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(contextProvider)));
+        eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(contextProvider)));
+        eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(contextProvider)));
+        eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(trainingModeContext.getPlayerRegistry())));
-        eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(actionHandlerProvider)));
+        eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(contextProvider)));
 
         EventListener eventListener = new EventListener(eventDispatcher);
 
@@ -200,7 +198,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         trainingMode.addItemBehavior(new EquipmentBehavior(equipmentStorage));
         trainingMode.addItemBehavior(new GunBehavior(gunStorage));
 
-        gameContextProvider.assignTrainingModeContext(trainingModeContext);
+        contextProvider.assignTrainingModeContext(trainingModeContext);
         gameProvider.assignTrainingMode(trainingMode);
     }
 
