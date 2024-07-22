@@ -14,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEvent> {
 
     @NotNull
-    private GameContextProvider gameContextProvider;
+    private GameContextProvider contextProvider;
 
-    public PlayerInteractEventHandler(@NotNull GameContextProvider gameContextProvider) {
-        this.gameContextProvider = gameContextProvider;
+    public PlayerInteractEventHandler(@NotNull GameContextProvider contextProvider) {
+        this.contextProvider = contextProvider;
     }
 
     public void handle(@NotNull PlayerInteractEvent event) {
@@ -28,7 +28,7 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
         }
 
         Player player = event.getPlayer();
-        GameContext context = gameContextProvider.getContext(player);
+        GameContext context = contextProvider.getContext(player);
 
         if (context == null) {
             return;

@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
-import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
@@ -11,19 +12,21 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerSwapHandItemsEventHandler implements EventHandler<PlayerSwapHandItemsEvent> {
 
     @NotNull
-    private ActionHandlerProvider actionHandlerProvider;
+    private GameContextProvider contextProvider;
 
-    public PlayerSwapHandItemsEventHandler(@NotNull ActionHandlerProvider actionHandlerProvider) {
-        this.actionHandlerProvider = actionHandlerProvider;
+    public PlayerSwapHandItemsEventHandler(@NotNull GameContextProvider contextProvider) {
+        this.contextProvider = contextProvider;
     }
 
     public void handle(@NotNull PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
-        ActionHandler actionHandler = actionHandlerProvider.getActionHandler(player);
+        GameContext context = contextProvider.getContext(player);
 
-        if (actionHandler == null) {
+        if (context == null) {
             return;
         }
+
+        ActionHandler actionHandler = context.getActionHandler();
 
         ItemStack swapFrom = event.getOffHandItem();
         ItemStack swapTo = event.getMainHandItem();

@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.access.ActionHandler;
-import nl.matsgemmeke.battlegrounds.game.access.provider.ActionHandlerProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -11,10 +12,10 @@ import org.jetbrains.annotations.NotNull;
 public class EntityPickupItemEventHandler implements EventHandler<EntityPickupItemEvent> {
 
     @NotNull
-    private ActionHandlerProvider actionHandlerProvider;
+    private GameContextProvider contextProvider;
 
-    public EntityPickupItemEventHandler(@NotNull ActionHandlerProvider actionHandlerProvider) {
-        this.actionHandlerProvider = actionHandlerProvider;
+    public EntityPickupItemEventHandler(@NotNull GameContextProvider contextProvider) {
+        this.contextProvider = contextProvider;
     }
 
     public void handle(@NotNull EntityPickupItemEvent event) {
@@ -23,12 +24,13 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
         }
 
         Player player = (Player) event.getEntity();
-        ActionHandler actionHandler = actionHandlerProvider.getActionHandler(player);
+        GameContext context = contextProvider.getContext(player);
 
-        if (actionHandler == null) {
+        if (context == null) {
             return;
         }
 
+        ActionHandler actionHandler = context.getActionHandler();
         ItemStack itemStack = event.getItem().getItemStack();
 
         boolean performEvent = actionHandler.handleItemPickup(player, itemStack);

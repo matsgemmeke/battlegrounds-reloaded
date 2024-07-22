@@ -17,13 +17,11 @@ import static org.mockito.Mockito.*;
 
 public class PlayerInteractEventHandlerTest {
 
-    private GameContext context;
     private GameContextProvider contextProvider;
     private Player player;
 
     @Before
     public void setUp() {
-        context = mock(GameContext.class);
         contextProvider = mock(GameContextProvider.class);
         player = mock(Player.class);
     }
@@ -58,8 +56,9 @@ public class PlayerInteractEventHandlerTest {
 
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemLeftClick(player, itemStack)).thenReturn(false);
-        when(context.getActionHandler()).thenReturn(actionHandler);
 
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
         when(contextProvider.getContext(player)).thenReturn(context);
 
         PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
@@ -77,8 +76,9 @@ public class PlayerInteractEventHandlerTest {
 
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemRightClick(player, itemStack)).thenReturn(true);
-        when(context.getActionHandler()).thenReturn(actionHandler);
 
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
         when(contextProvider.getContext(player)).thenReturn(context);
 
         PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
