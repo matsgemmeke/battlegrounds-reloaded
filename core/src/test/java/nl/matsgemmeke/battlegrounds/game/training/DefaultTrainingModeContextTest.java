@@ -33,6 +33,15 @@ public class DefaultTrainingModeContextTest {
     }
 
     @Test
+    public void shouldReturnInstanceOfActionHandler() {
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+
+        ActionHandler actionHandler = context.getActionHandler();
+
+        assertTrue(actionHandler instanceof DefaultActionHandler);
+    }
+
+    @Test
     public void shouldReturnNewInstanceOfAudioEmitter() {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 

@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -19,18 +18,34 @@ public class DefaultPlayerRegistryTest {
     private InternalsProvider internals;
 
     @Before
-    @SuppressWarnings("unchecked")
     public void setUp() {
-        playerStorage = (EntityStorage<GamePlayer>) mock(EntityStorage.class);
+        playerStorage = new EntityStorage<>();
         internals = mock(InternalsProvider.class);
     }
 
     @Test
-    public void shouldReportAsRegisteredIfStorageContainsRecordWithCorrespondingPlayerEntity() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
+    public void shouldFindByEntityAndReturnMatchingEntity() {
         Player player = mock(Player.class);
 
-        when(playerStorage.getEntity(player)).thenReturn(gamePlayer);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getEntity()).thenReturn(player);
+
+        playerStorage.addEntity(gamePlayer);
+
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(playerStorage, internals);
+        GamePlayer result = playerRegistry.findByEntity(player);
+
+        assertEquals(gamePlayer, result);
+    }
+
+    @Test
+    public void shouldReportAsRegisteredIfStorageContainsRecordWithCorrespondingPlayerEntity() {
+        Player player = mock(Player.class);
+
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getEntity()).thenReturn(player);
+
+        playerStorage.addEntity(gamePlayer);
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(playerStorage, internals);
         boolean registered = playerRegistry.isRegistered(player);
@@ -46,11 +61,5 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = playerRegistry.registerEntity(player);
 
         assertTrue(gamePlayer instanceof DefaultGamePlayer);
-
-        ArgumentCaptor<DefaultGamePlayer> captor = ArgumentCaptor.forClass(DefaultGamePlayer.class);
-        verify(playerStorage).addEntity(captor.capture());
-
-        DefaultGamePlayer createdPlayer = captor.getValue();
-        assertEquals(player, createdPlayer.getEntity());
     }
 }

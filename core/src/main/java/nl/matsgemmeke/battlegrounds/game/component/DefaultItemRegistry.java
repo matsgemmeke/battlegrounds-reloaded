@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DefaultItemRegistry implements EntityRegistry<Item, GameItem> {
 
@@ -13,6 +14,16 @@ public class DefaultItemRegistry implements EntityRegistry<Item, GameItem> {
 
     public DefaultItemRegistry(@NotNull EntityStorage<GameItem> itemStorage) {
         this.itemStorage = itemStorage;
+    }
+
+    @Nullable
+    public GameItem findByEntity(Item itemEntity) {
+        for (GameItem gameItem : itemStorage.getEntities()) {
+            if (gameItem.getEntity() == itemEntity) {
+                return gameItem;
+            }
+        }
+        return null;
     }
 
     public boolean isRegistered(Item item) {

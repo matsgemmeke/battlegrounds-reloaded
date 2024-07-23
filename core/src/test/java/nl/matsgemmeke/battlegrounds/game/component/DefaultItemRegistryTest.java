@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import org.bukkit.entity.Item;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -17,17 +16,33 @@ public class DefaultItemRegistryTest {
     private EntityStorage<GameItem> itemStorage;
 
     @Before
-    @SuppressWarnings("unchecked")
     public void setUp() {
-        itemStorage = (EntityStorage<GameItem>) mock(EntityStorage.class);
+        itemStorage = new EntityStorage<>();
+    }
+
+    @Test
+    public void shouldFindByEntityAndReturnMatchingEntity() {
+        Item item = mock(Item.class);
+
+        GameItem gameItem = mock(GameItem.class);
+        when(gameItem.getEntity()).thenReturn(item);
+
+        itemStorage.addEntity(gameItem);
+
+        DefaultItemRegistry itemRegistry = new DefaultItemRegistry(itemStorage);
+        GameItem result = itemRegistry.findByEntity(item);
+
+        assertEquals(gameItem, result);
     }
 
     @Test
     public void shouldReportAsRegisteredIfStorageContainsRecordWithCorrespondingItemEntity() {
-        GameItem gameItem = mock(GameItem.class);
         Item item = mock(Item.class);
 
-        when(itemStorage.getEntity(item)).thenReturn(gameItem);
+        GameItem gameItem = mock(GameItem.class);
+        when(gameItem.getEntity()).thenReturn(item);
+
+        itemStorage.addEntity(gameItem);
 
         DefaultItemRegistry itemRegistry = new DefaultItemRegistry(itemStorage);
         boolean registered = itemRegistry.isRegistered(item);
@@ -43,11 +58,5 @@ public class DefaultItemRegistryTest {
         GameItem gameItem = itemRegistry.registerEntity(item);
 
         assertTrue(gameItem instanceof DefaultGameItem);
-
-        ArgumentCaptor<DefaultGameItem> captor = ArgumentCaptor.forClass(DefaultGameItem.class);
-        verify(itemStorage).addEntity(captor.capture());
-
-        DefaultGameItem createdItem = captor.getValue();
-        assertEquals(item, createdItem.getEntity());
     }
 }

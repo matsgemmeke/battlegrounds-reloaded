@@ -48,6 +48,10 @@ public class GameContextProvider {
 
     @NotNull
     private Collection<GameContext> getContexts() {
+        if (trainingModeContext == null) {
+            return sessionContexts.values();
+        }
+
         return Stream.concat(Stream.of(trainingModeContext), sessionContexts.values().stream()).toList();
     }
 

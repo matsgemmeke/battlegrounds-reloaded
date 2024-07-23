@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Set;
+
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
@@ -37,6 +39,16 @@ public class EntityStorageTest {
         storage.addEntity(mock(GamePlayer.class));
 
         assertNull(storage.getEntity(player));
+    }
+
+    @Test
+    public void shouldReturnAllStoredInstances() {
+        EntityStorage<GamePlayer> storage = new EntityStorage<>();
+        storage.addEntity(mock(GamePlayer.class));
+
+        Set<GamePlayer> players = storage.getEntities();
+
+        assertEquals(1, players.size());
     }
 
     @Test

@@ -31,6 +31,11 @@ public class EntityStorage<T extends GameEntity> {
         return null;
     }
 
+    @NotNull
+    public Set<T> getEntities() {
+        return entities;
+    }
+
     public void removeEntity(@NotNull T entity) {
         entities.remove(entity);
     }

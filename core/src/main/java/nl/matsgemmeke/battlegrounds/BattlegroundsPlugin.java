@@ -121,7 +121,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         // Add all subcommands to the battlegrounds command
         bgCommand.addSubcommand(new CreateSessionCommand(gameProvider, sessionFactory, translator));
-        bgCommand.addSubcommand(new GiveWeaponCommand(trainingMode, translator, weaponProvider));
+        bgCommand.addSubcommand(new GiveWeaponCommand(trainingModeContext, translator, weaponProvider));
         bgCommand.addSubcommand(new ReloadCommand(config, translator));
         bgCommand.addSubcommand(new RemoveSessionCommand(gameProvider, taskRunner, translator));
         bgCommand.addSubcommand(new SetMainLobbyCommand(generalData, translator));

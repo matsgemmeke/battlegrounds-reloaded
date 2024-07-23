@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
@@ -15,19 +15,19 @@ import org.jetbrains.annotations.NotNull;
 public class GiveWeaponCommand extends CommandSource {
 
     @NotNull
-    private Game game;
+    private GameContext context;
     @NotNull
     private Translator translator;
     @NotNull
     private WeaponProvider weaponProvider;
 
     public GiveWeaponCommand(
-            @NotNull Game game,
+            @NotNull GameContext context,
             @NotNull Translator translator,
             @NotNull WeaponProvider weaponProvider
     ) {
         super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()), "bg giveweapon <weapon>");
-        this.game = game;
+        this.context = context;
         this.translator = translator;
         this.weaponProvider = weaponProvider;
     }
@@ -41,10 +41,10 @@ public class GiveWeaponCommand extends CommandSource {
             throw new IllegalArgumentException("Unable to find a factory instance for weapon with the id " + weaponId);
         }
 
-        GamePlayer gamePlayer = game.getGamePlayer(player);
+        GamePlayer gamePlayer = context.getPlayerRegistry().findByEntity(player);
 
         WeaponFactory factory = weaponProvider.getFactory(configuration);
-        Weapon weapon = factory.make(configuration, game.getContext(), gamePlayer);
+        Weapon weapon = factory.make(configuration, context, gamePlayer);
 
         player.getInventory().addItem(weapon.getItemStack());
 
