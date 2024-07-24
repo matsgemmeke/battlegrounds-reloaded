@@ -3,7 +3,9 @@ package nl.matsgemmeke.battlegrounds.command.condition;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
-import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.locale.Translator;
 import org.bukkit.entity.Player;
 import org.junit.Before;
@@ -16,36 +18,41 @@ public class TrainingModePresenceConditionTest {
 
     private BukkitCommandIssuer issuer;
     private ConditionContext<BukkitCommandIssuer> conditionContext;
+    private EntityRegistry<Player, GamePlayer> playerRegistry;
+    private GameContext gameContext;
     private Player player;
-    private TrainingMode trainingMode;
     private Translator translator;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        this.issuer = mock(BukkitCommandIssuer.class);
-        this.conditionContext = (ConditionContext<BukkitCommandIssuer>) mock(ConditionContext.class);
-        this.player = mock(Player.class);
-        this.trainingMode = mock(TrainingMode.class);
-        this.translator = mock(Translator.class);
+        playerRegistry = (EntityRegistry<Player, GamePlayer>) mock(EntityRegistry.class);
+        player = mock(Player.class);
+        translator = mock(Translator.class);
 
+        issuer = mock(BukkitCommandIssuer.class);
         when(issuer.getPlayer()).thenReturn(player);
+
+        conditionContext = (ConditionContext<BukkitCommandIssuer>) mock(ConditionContext.class);
         when(conditionContext.getIssuer()).thenReturn(issuer);
+
+        gameContext = mock(GameContext.class);
+        when(gameContext.getPlayerRegistry()).thenReturn(playerRegistry);
     }
 
     @Test
     public void shouldPassWhenPlayerIsInTrainingMode() {
-        when(trainingMode.hasPlayer(player)).thenReturn(true);
+        when(playerRegistry.isRegistered(player)).thenReturn(true);
 
-        TrainingModePresenceCondition condition = new TrainingModePresenceCondition(trainingMode, translator);
+        TrainingModePresenceCondition condition = new TrainingModePresenceCondition(gameContext, translator);
         condition.validateCondition(conditionContext);
     }
 
     @Test(expected = ConditionFailedException.class)
     public void shouldNotPassWhenPlayerIsNotInTrainingMode() {
-        when(trainingMode.hasPlayer(player)).thenReturn(false);
+        when(playerRegistry.isRegistered(player)).thenReturn(false);
 
-        TrainingModePresenceCondition condition = new TrainingModePresenceCondition(trainingMode, translator);
+        TrainingModePresenceCondition condition = new TrainingModePresenceCondition(gameContext, translator);
         condition.validateCondition(conditionContext);
     }
 }

@@ -5,7 +5,7 @@ import co.aikar.commands.CommandConditions.Condition;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
-import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.locale.TranslationKey;
 import nl.matsgemmeke.battlegrounds.locale.Translator;
 import org.bukkit.entity.Player;
@@ -14,19 +14,19 @@ import org.jetbrains.annotations.NotNull;
 public class TrainingModePresenceCondition implements Condition<BukkitCommandIssuer> {
 
     @NotNull
-    private TrainingMode trainingMode;
+    private GameContext gameContext;
     @NotNull
     private Translator translator;
 
-    public TrainingModePresenceCondition(@NotNull TrainingMode trainingMode, @NotNull Translator translator) {
-        this.trainingMode = trainingMode;
+    public TrainingModePresenceCondition(@NotNull GameContext gameContext, @NotNull Translator translator) {
+        this.gameContext = gameContext;
         this.translator = translator;
     }
 
-    public void validateCondition(ConditionContext<BukkitCommandIssuer> context) throws InvalidCommandArgument {
-        Player player = context.getIssuer().getPlayer();
+    public void validateCondition(ConditionContext<BukkitCommandIssuer> conditionContext) throws InvalidCommandArgument {
+        Player player = conditionContext.getIssuer().getPlayer();
 
-        if (trainingMode.hasPlayer(player)) {
+        if (gameContext.getPlayerRegistry().isRegistered(player)) {
             return;
         }
 

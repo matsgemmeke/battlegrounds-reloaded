@@ -131,10 +131,10 @@ public class BattlegroundsPlugin extends JavaPlugin {
         commandManager.registerCommand(bgCommand);
 
         // Register custom conditions to ACF
-        commandManager.getCommandConditions().addCondition("training-mode-presence", new TrainingModePresenceCondition(trainingMode, translator));
-        commandManager.getCommandConditions().addCondition(Integer.class, "existent-session-id", new ExistentSessionIdCondition(gameProvider, translator));
+        commandManager.getCommandConditions().addCondition("training-mode-presence", new TrainingModePresenceCondition(trainingModeContext, translator));
+        commandManager.getCommandConditions().addCondition(Integer.class, "existent-session-id", new ExistentSessionIdCondition(contextProvider, translator));
         commandManager.getCommandConditions().addCondition(String.class, "existent-weapon-id", new ExistentWeaponIdCondition(weaponProvider, translator));
-        commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-session-id", new NonexistentSessionIdCondition(gameProvider, translator));
+        commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-session-id", new NonexistentSessionIdCondition(contextProvider, translator));
     }
 
     private void setUpEvents() {
