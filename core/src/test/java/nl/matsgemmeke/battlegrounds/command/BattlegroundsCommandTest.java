@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import net.md_5.bungee.api.chat.BaseComponent;
-import nl.matsgemmeke.battlegrounds.GameProvider;
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.locale.Translator;
 import org.bukkit.command.CommandSender;
@@ -13,25 +13,24 @@ import static org.mockito.Mockito.*;
 
 public class BattlegroundsCommandTest {
 
-    private GameProvider gameProvider;
     private Player player;
     private Translator translator;
 
     @Before
     public void setUp() {
-        this.gameProvider = mock(GameProvider.class);
-        this.player = mock(Player.class);
-        this.translator = mock(Translator.class);
+        player = mock(Player.class);
+        translator = mock(Translator.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotBeAbleToGetSubcommandWhenItDoesNotExist() {
         when(translator.translate(anyString())).thenReturn("test");
 
+        GameContextProvider contextProvider = mock(GameContextProvider.class);
         SessionFactory sessionFactory = mock(SessionFactory.class);
 
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
-        bgCommand.addSubcommand(new CreateSessionCommand(gameProvider, sessionFactory, translator));
+        bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
 
         bgCommand.onReload(player);
     }
@@ -87,7 +86,6 @@ public class BattlegroundsCommandTest {
 
     @Test
     public void shouldBeAbleToRunGiveWeaponCommand() {
-        int gameId = 1;
         String weapon = "test";
 
         GiveWeaponCommand command = mock(GiveWeaponCommand.class);

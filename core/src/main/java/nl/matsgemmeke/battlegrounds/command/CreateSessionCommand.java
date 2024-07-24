@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.GameProvider;
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.session.DefaultSessionConfiguration;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
 import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
@@ -14,19 +14,19 @@ import org.jetbrains.annotations.NotNull;
 public class CreateSessionCommand extends CommandSource {
 
     @NotNull
-    private GameProvider gameProvider;
+    private GameContextProvider contextProvider;
     @NotNull
     private SessionFactory sessionFactory;
     @NotNull
     private Translator translator;
 
     public CreateSessionCommand(
-            @NotNull GameProvider gameProvider,
+            @NotNull GameContextProvider contextProvider,
             @NotNull SessionFactory sessionFactory,
             @NotNull Translator translator
     ) {
         super("createsession", translator.translate(TranslationKey.DESCRIPTION_CREATESESSION.getPath()), "bg createsession <id>");
-        this.gameProvider = gameProvider;
+        this.contextProvider = contextProvider;
         this.sessionFactory = sessionFactory;
         this.translator = translator;
     }
@@ -37,7 +37,7 @@ public class CreateSessionCommand extends CommandSource {
 
         PlaceholderEntry placeholder = new PlaceholderEntry("bg_session", String.valueOf(id));
 
-        if (!gameProvider.addSession(session)) {
+        if (!contextProvider.addSessionContext(id, session.getContext())) {
             sender.sendMessage(translator.translate(TranslationKey.SESSION_CREATION_FAILED.getPath(), placeholder));
             return;
         }
