@@ -12,12 +12,12 @@ import static org.mockito.Mockito.verify;
 
 public class PlayerJoinEventHandlerTest {
 
-    private EntityRegistry<Player, GamePlayer> playerRegistry;
+    private EntityRegistry<GamePlayer, Player> playerRegistry;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        playerRegistry = (EntityRegistry<Player, GamePlayer>) mock(EntityRegistry.class);
+        playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
     }
 
     @Test

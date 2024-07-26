@@ -7,8 +7,7 @@ import org.bukkit.entity.Item;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultItemRegistryTest {
@@ -33,6 +32,22 @@ public class DefaultItemRegistryTest {
         GameItem result = itemRegistry.findByEntity(item);
 
         assertEquals(gameItem, result);
+    }
+
+    @Test
+    public void shouldReturnNoEntityIfThereIsNoMatch() {
+        Item item = mock(Item.class);
+        Item otherItem = mock(Item.class);
+
+        GameItem gameItem = mock(GameItem.class);
+        when(gameItem.getEntity()).thenReturn(item);
+
+        itemStorage.addEntity(gameItem);
+
+        DefaultItemRegistry itemRegistry = new DefaultItemRegistry(itemStorage);
+        GameItem result = itemRegistry.findByEntity(otherItem);
+
+        assertNull(result);
     }
 
     @Test

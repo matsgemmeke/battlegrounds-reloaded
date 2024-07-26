@@ -29,11 +29,11 @@ public interface GameContext {
     ItemRegistry<Equipment, EquipmentHolder> getEquipmentRegistry();
 
     @NotNull
-    EntityRegistry<Item, GameItem> getItemRegistry();
+    EntityRegistry<GameItem, Item> getItemRegistry();
 
     @NotNull
     ItemRegistry<Gun, GunHolder> getGunRegistry();
 
     @NotNull
-    EntityRegistry<Player, GamePlayer> getPlayerRegistry();
+    EntityRegistry<GamePlayer, Player> getPlayerRegistry();
 }

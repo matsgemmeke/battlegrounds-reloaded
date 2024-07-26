@@ -78,7 +78,7 @@ public class DefaultTrainingModeContextTest {
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        EntityRegistry<Item, GameItem> itemRegistry = context.getItemRegistry();
+        EntityRegistry<GameItem, Item> itemRegistry = context.getItemRegistry();
 
         assertTrue(itemRegistry instanceof DefaultItemRegistry);
     }
@@ -102,7 +102,7 @@ public class DefaultTrainingModeContextTest {
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        EntityRegistry<Player, GamePlayer> playerRegistry = context.getPlayerRegistry();
+        EntityRegistry<GamePlayer, Player> playerRegistry = context.getPlayerRegistry();
 
         assertTrue(playerRegistry instanceof DefaultPlayerRegistry);
     }

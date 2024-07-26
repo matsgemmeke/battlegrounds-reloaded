@@ -53,7 +53,7 @@ public class DefaultTrainingModeContext implements GameContext {
     }
 
     @NotNull
-    public EntityRegistry<Item, GameItem> getItemRegistry() {
+    public EntityRegistry<GameItem, Item> getItemRegistry() {
         return new DefaultItemRegistry(trainingMode.getItemStorage());
     }
 
@@ -63,7 +63,7 @@ public class DefaultTrainingModeContext implements GameContext {
     }
 
     @NotNull
-    public EntityRegistry<Player, GamePlayer> getPlayerRegistry() {
+    public EntityRegistry<GamePlayer, Player> getPlayerRegistry() {
         return new DefaultPlayerRegistry(trainingMode.getPlayerStorage(), internals);
     }
 }

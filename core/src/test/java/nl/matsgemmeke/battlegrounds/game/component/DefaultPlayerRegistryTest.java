@@ -8,8 +8,7 @@ import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultPlayerRegistryTest {
@@ -36,6 +35,22 @@ public class DefaultPlayerRegistryTest {
         GamePlayer result = playerRegistry.findByEntity(player);
 
         assertEquals(gamePlayer, result);
+    }
+
+    @Test
+    public void shouldReturnNoEntityIfThereIsNoMatch() {
+        Player player = mock(Player.class);
+        Player otherPlayer = mock(Player.class);
+
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getEntity()).thenReturn(player);
+
+        playerStorage.addEntity(gamePlayer);
+
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(playerStorage, internals);
+        GamePlayer result = playerRegistry.findByEntity(otherPlayer);
+
+        assertNull(result);
     }
 
     @Test

@@ -18,7 +18,7 @@ public class TrainingModePresenceConditionTest {
 
     private BukkitCommandIssuer issuer;
     private ConditionContext<BukkitCommandIssuer> conditionContext;
-    private EntityRegistry<Player, GamePlayer> playerRegistry;
+    private EntityRegistry<GamePlayer, Player> playerRegistry;
     private GameContext gameContext;
     private Player player;
     private Translator translator;
@@ -26,7 +26,7 @@ public class TrainingModePresenceConditionTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        playerRegistry = (EntityRegistry<Player, GamePlayer>) mock(EntityRegistry.class);
+        playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
         player = mock(Player.class);
         translator = mock(Translator.class);
 

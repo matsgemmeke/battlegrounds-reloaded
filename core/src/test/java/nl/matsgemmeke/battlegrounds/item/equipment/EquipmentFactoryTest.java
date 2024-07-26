@@ -53,7 +53,7 @@ public class EquipmentFactoryTest {
         itemFactory = mock(ItemFactory.class);
         taskRunner = mock(TaskRunner.class);
 
-        EntityRegistry<Item, GameItem> itemRegistry = (EntityRegistry<Item, GameItem>) mock(EntityRegistry.class);
+        EntityRegistry<GameItem, Item> itemRegistry = (EntityRegistry<GameItem, Item>) mock(EntityRegistry.class);
 
         context = mock(GameContext.class);
         when(context.getAudioEmitter()).thenReturn(audioEmitter);

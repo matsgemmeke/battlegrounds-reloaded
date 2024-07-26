@@ -53,7 +53,7 @@ public class GiveWeaponCommandTest {
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        EntityRegistry<Player, GamePlayer> playerRegistry = (EntityRegistry<Player, GamePlayer>) mock(EntityRegistry.class);
+        EntityRegistry<GamePlayer, Player> playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
         when(playerRegistry.findByEntity(player)).thenReturn(gamePlayer);
         when(context.getPlayerRegistry()).thenReturn(playerRegistry);
 

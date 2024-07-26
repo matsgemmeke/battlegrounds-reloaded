@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerJoinEventHandler implements EventHandler<PlayerJoinEvent> {
 
     @NotNull
-    private EntityRegistry<Player, GamePlayer> playerRegistry;
+    private EntityRegistry<GamePlayer, Player> playerRegistry;
 
-    public PlayerJoinEventHandler(@NotNull EntityRegistry<Player, GamePlayer> playerRegistry) {
+    public PlayerJoinEventHandler(@NotNull EntityRegistry<GamePlayer, Player> playerRegistry) {
         this.playerRegistry = playerRegistry;
     }
 

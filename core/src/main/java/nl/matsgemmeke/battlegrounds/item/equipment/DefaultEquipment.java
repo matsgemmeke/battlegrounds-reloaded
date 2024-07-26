@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @NotNull
-    private EntityRegistry<Item, GameItem> itemRegistry;
+    private EntityRegistry<GameItem, Item> itemRegistry;
     @Nullable
     private EquipmentHolder holder;
     @Nullable
@@ -22,7 +22,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     private ItemControls<EquipmentHolder> controls;
 
-    public DefaultEquipment(@NotNull EntityRegistry<Item, GameItem> itemRegistry) {
+    public DefaultEquipment(@NotNull EntityRegistry<GameItem, Item> itemRegistry) {
         this.itemRegistry = itemRegistry;
         this.controls = new ItemControls<>();
     }

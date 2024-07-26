@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DefaultPlayerRegistry implements EntityRegistry<Player, GamePlayer> {
+public class DefaultPlayerRegistry implements EntityRegistry<GamePlayer, Player> {
 
     @NotNull
     private EntityStorage<GamePlayer> playerStorage;

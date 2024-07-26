@@ -18,12 +18,12 @@ import static org.mockito.Mockito.*;
 
 public class DefaultEquipmentTest {
 
-    private EntityRegistry<Item, GameItem> itemRegistry;
+    private EntityRegistry<GameItem, Item> itemRegistry;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        itemRegistry = (EntityRegistry<Item, GameItem>) mock(EntityRegistry.class);
+        itemRegistry = (EntityRegistry<GameItem, Item>) mock(EntityRegistry.class);
     }
 
     @Test

@@ -65,7 +65,7 @@ public class EquipmentFactory implements WeaponFactory {
 
     @NotNull
     private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
-        EntityRegistry<Item, GameItem> itemRegistry = context.getItemRegistry();
+        EntityRegistry<GameItem, Item> itemRegistry = context.getItemRegistry();
 
         Section section = configuration.getRoot();
 

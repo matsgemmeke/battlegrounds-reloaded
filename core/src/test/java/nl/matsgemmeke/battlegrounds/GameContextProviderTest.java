@@ -49,7 +49,7 @@ public class GameContextProviderTest {
     public void shouldReturnContextWhosePlayerRegistryHasPlayer() {
         Player player = mock(Player.class);
 
-        EntityRegistry<Player, GamePlayer> playerRegistry = (EntityRegistry<Player, GamePlayer>) mock(EntityRegistry.class);
+        EntityRegistry<GamePlayer, Player> playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
         when(playerRegistry.isRegistered(player)).thenReturn(true);
 
         GameContext context = mock(GameContext.class);
@@ -68,7 +68,7 @@ public class GameContextProviderTest {
     public void shouldReturnNullContextWhenPlayerIsNotInAnyGame() {
         Player player = mock(Player.class);
 
-        EntityRegistry<Player, GamePlayer> playerRegistry = (EntityRegistry<Player, GamePlayer>) mock(EntityRegistry.class);
+        EntityRegistry<GamePlayer, Player> playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
         when(playerRegistry.isRegistered(player)).thenReturn(false);
 
         GameContext context = mock(GameContext.class);

@@ -7,7 +7,7 @@ import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DefaultItemRegistry implements EntityRegistry<Item, GameItem> {
+public class DefaultItemRegistry implements EntityRegistry<GameItem, Item> {
 
     @NotNull
     private EntityStorage<GameItem> itemStorage;
