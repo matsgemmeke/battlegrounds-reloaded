@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component;
 
-import nl.matsgemmeke.battlegrounds.item.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.junit.Before;

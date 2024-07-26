@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item;
+package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;

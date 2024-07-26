@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
-import nl.matsgemmeke.battlegrounds.item.ItemStorage;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

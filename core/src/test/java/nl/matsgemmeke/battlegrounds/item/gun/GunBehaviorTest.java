@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.item.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
