@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class DefaultPlayerRegistry implements EntityRegistry<GamePlayer, Player> {
 
     @NotNull
@@ -21,7 +23,7 @@ public class DefaultPlayerRegistry implements EntityRegistry<GamePlayer, Player>
     }
 
     @Nullable
-    public GamePlayer findByEntity(Player player) {
+    public GamePlayer findByEntity(@NotNull Player player) {
         for (GamePlayer gamePlayer : playerStorage.getEntities()) {
             if (gamePlayer.getEntity() == player) {
                 return gamePlayer;
@@ -30,12 +32,21 @@ public class DefaultPlayerRegistry implements EntityRegistry<GamePlayer, Player>
         return null;
     }
 
-    public boolean isRegistered(Player entity) {
-        return playerStorage.getEntity(entity) != null;
+    @Nullable
+    public GamePlayer findByUUID(@NotNull UUID uuid) {
+        return playerStorage.getEntity(uuid);
+    }
+
+    public boolean isRegistered(@NotNull Player player) {
+        return playerStorage.getEntity(player) != null;
+    }
+
+    public boolean isRegistered(@NotNull UUID uuid) {
+        return playerStorage.getEntity(uuid) != null;
     }
 
     @NotNull
-    public GamePlayer registerEntity(Player player) {
+    public GamePlayer registerEntity(@NotNull Player player) {
         GamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
 
         playerStorage.addEntity(gamePlayer);

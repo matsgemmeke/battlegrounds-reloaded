@@ -7,6 +7,8 @@ import org.bukkit.entity.Item;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -51,6 +53,21 @@ public class DefaultItemRegistryTest {
     }
 
     @Test
+    public void shouldFindByUUIDAndReturnMatchingEntity() {
+        UUID uuid = UUID.randomUUID();
+
+        Item item = mock(Item.class);
+        when(item.getUniqueId()).thenReturn(uuid);
+
+        DefaultItemRegistry itemRegistry = new DefaultItemRegistry(itemStorage);
+        GameItem gameItem = itemRegistry.registerEntity(item);
+
+        GameItem result = itemRegistry.findByUUID(uuid);
+
+        assertEquals(gameItem, result);
+    }
+
+    @Test
     public void shouldReportAsRegisteredIfStorageContainsRecordWithCorrespondingItemEntity() {
         Item item = mock(Item.class);
 
@@ -61,6 +78,21 @@ public class DefaultItemRegistryTest {
 
         DefaultItemRegistry itemRegistry = new DefaultItemRegistry(itemStorage);
         boolean registered = itemRegistry.isRegistered(item);
+
+        assertTrue(registered);
+    }
+
+    @Test
+    public void shouldReturnRegisteredIfStorageContainsEntryWithGivenUUID() {
+        UUID uuid = UUID.randomUUID();
+
+        Item item = mock(Item.class);
+        when(item.getUniqueId()).thenReturn(uuid);
+
+        DefaultItemRegistry itemRegistry = new DefaultItemRegistry(itemStorage);
+        itemRegistry.registerEntity(item);
+
+        boolean registered = itemRegistry.isRegistered(uuid);
 
         assertTrue(registered);
     }

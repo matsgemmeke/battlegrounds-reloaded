@@ -5,25 +5,25 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class EntityStorage<T extends GameEntity> {
 
     @NotNull
-    private Set<T> entities;
+    private Map<UUID, T> entities;
 
     public EntityStorage() {
-        this.entities = new HashSet<>();
+        this.entities = new HashMap<>();
     }
 
     public void addEntity(@NotNull T entity) {
-        entities.add(entity);
+        UUID uuid = entity.getEntity().getUniqueId();
+        entities.put(uuid, entity);
     }
 
     @Nullable
     public T getEntity(@NotNull Entity entity) {
-        for (T gameEntity : entities) {
+        for (T gameEntity : entities.values()) {
             if (gameEntity.getEntity() == entity) {
                 return gameEntity;
             }
@@ -31,12 +31,17 @@ public class EntityStorage<T extends GameEntity> {
         return null;
     }
 
-    @NotNull
-    public Set<T> getEntities() {
-        return entities;
+    @Nullable
+    public T getEntity(@NotNull UUID uuid) {
+        return entities.get(uuid);
     }
 
-    public void removeEntity(@NotNull T entity) {
-        entities.remove(entity);
+    @NotNull
+    public Collection<T> getEntities() {
+        return entities.values();
+    }
+
+    public void removeEntity(@NotNull UUID uuid) {
+        entities.remove(uuid);
     }
 }

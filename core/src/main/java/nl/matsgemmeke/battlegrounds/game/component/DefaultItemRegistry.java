@@ -7,6 +7,8 @@ import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class DefaultItemRegistry implements EntityRegistry<GameItem, Item> {
 
     @NotNull
@@ -17,7 +19,7 @@ public class DefaultItemRegistry implements EntityRegistry<GameItem, Item> {
     }
 
     @Nullable
-    public GameItem findByEntity(Item itemEntity) {
+    public GameItem findByEntity(@NotNull Item itemEntity) {
         for (GameItem gameItem : itemStorage.getEntities()) {
             if (gameItem.getEntity() == itemEntity) {
                 return gameItem;
@@ -26,12 +28,21 @@ public class DefaultItemRegistry implements EntityRegistry<GameItem, Item> {
         return null;
     }
 
-    public boolean isRegistered(Item item) {
+    @Nullable
+    public GameItem findByUUID(@NotNull UUID uuid) {
+        return itemStorage.getEntity(uuid);
+    }
+
+    public boolean isRegistered(@NotNull Item item) {
         return itemStorage.getEntity(item) != null;
     }
 
+    public boolean isRegistered(@NotNull UUID uuid) {
+        return itemStorage.getEntity(uuid) != null;
+    }
+
     @NotNull
-    public GameItem registerEntity(Item item) {
+    public GameItem registerEntity(@NotNull Item item) {
         GameItem gameItem = new DefaultGameItem(item);
 
         itemStorage.addEntity(gameItem);
