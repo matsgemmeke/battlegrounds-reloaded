@@ -11,14 +11,17 @@ import org.jetbrains.annotations.Nullable;
 public class DefaultActionHandler implements ActionHandler {
 
     @NotNull
+    private EntityRegistry<GamePlayer, Player> playerRegistry;
+    @NotNull
     private Game game;
 
-    public DefaultActionHandler(@NotNull Game game) {
+    public DefaultActionHandler(@NotNull Game game, @NotNull EntityRegistry<GamePlayer, Player> playerRegistry) {
         this.game = game;
+        this.playerRegistry = playerRegistry;
     }
 
     public boolean handleItemChange(@NotNull Player player, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo) {
-        GamePlayer gamePlayer = game.getGamePlayer(player);
+        GamePlayer gamePlayer = playerRegistry.findByUUID(player.getUniqueId());
 
         if (gamePlayer == null) {
             return true;
@@ -40,7 +43,7 @@ public class DefaultActionHandler implements ActionHandler {
     }
 
     public boolean handleItemDrop(@NotNull Player player, @NotNull ItemStack droppedItem) {
-        GamePlayer gamePlayer = game.getGamePlayer(player);
+        GamePlayer gamePlayer = playerRegistry.findByUUID(player.getUniqueId());
 
         if (gamePlayer == null) {
             return true;
@@ -56,7 +59,7 @@ public class DefaultActionHandler implements ActionHandler {
     }
 
     public boolean handleItemLeftClick(@NotNull Player player, @NotNull ItemStack clickedItem) {
-        GamePlayer gamePlayer = game.getGamePlayer(player);
+        GamePlayer gamePlayer = playerRegistry.findByUUID(player.getUniqueId());
 
         if (gamePlayer == null) {
             return true;
@@ -72,7 +75,7 @@ public class DefaultActionHandler implements ActionHandler {
     }
 
     public boolean handleItemPickup(@NotNull Player player, @NotNull ItemStack pickupItem) {
-        GamePlayer gamePlayer = game.getGamePlayer(player);
+        GamePlayer gamePlayer = playerRegistry.findByUUID(player.getUniqueId());
 
         if (gamePlayer == null) {
             return true;
@@ -88,7 +91,7 @@ public class DefaultActionHandler implements ActionHandler {
     }
 
     public boolean handleItemRightClick(@NotNull Player player, @NotNull ItemStack clickedItem) {
-        GamePlayer gamePlayer = game.getGamePlayer(player);
+        GamePlayer gamePlayer = playerRegistry.findByUUID(player.getUniqueId());
 
         if (gamePlayer == null) {
             return true;
@@ -104,7 +107,7 @@ public class DefaultActionHandler implements ActionHandler {
     }
 
     public boolean handleItemSwap(@NotNull Player player, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo) {
-        GamePlayer gamePlayer = game.getGamePlayer(player);
+        GamePlayer gamePlayer = playerRegistry.findByUUID(player.getUniqueId());
 
         if (gamePlayer == null) {
             return true;

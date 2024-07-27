@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -17,22 +18,29 @@ import static org.mockito.Mockito.*;
 
 public class DefaultActionHandlerTest {
 
+    private EntityRegistry<GamePlayer, Player> playerRegistry;
     private Game game;
     private ItemStack itemStack;
     private Player player;
+    private UUID uuid;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setUp() {
+        playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
         game = mock(Game.class);
         itemStack = new ItemStack(Material.IRON_HOE);
+        uuid = UUID.randomUUID();
+
         player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
     }
 
     @Test
     public void shouldAllowItemChangeIfGameDoesNotHavePlayer() {
-        when(game.getGamePlayer(player)).thenReturn(null);
+        when(playerRegistry.findByUUID(uuid)).thenReturn(null);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemChange(player, null, null);
 
@@ -50,10 +58,10 @@ public class DefaultActionHandlerTest {
         ItemBehavior behavior2 = mock(ItemBehavior.class);
         when(behavior2.handleChangeFromAction(gamePlayer, fromItem)).thenReturn(true);
 
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+        when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
         boolean performAction = actionHandler.handleItemChange(player, fromItem, null);
 
         assertTrue(performAction);
@@ -73,10 +81,10 @@ public class DefaultActionHandlerTest {
         ItemBehavior behavior2 = mock(ItemBehavior.class);
         when(behavior2.handleChangeToAction(gamePlayer, toItem)).thenReturn(false);
 
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+        when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
         boolean performAction = actionHandler.handleItemChange(player, null, toItem);
 
         assertFalse(performAction);
@@ -87,9 +95,9 @@ public class DefaultActionHandlerTest {
 
     @Test
     public void shouldAllowItemDropIfGameDoesNotHavePlayer() {
-        when(game.getGamePlayer(player)).thenReturn(null);
+        when(playerRegistry.findByUUID(uuid)).thenReturn(null);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemDrop(player, itemStack);
 
@@ -106,10 +114,10 @@ public class DefaultActionHandlerTest {
         ItemBehavior behavior2 = mock(ItemBehavior.class);
         when(behavior2.handleDropItemAction(gamePlayer, itemStack)).thenReturn(true);
 
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+        when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemDrop(player, itemStack);
 
@@ -121,9 +129,9 @@ public class DefaultActionHandlerTest {
 
     @Test
     public void shouldAllowLeftClickIfGameDoesNotHavePlayer() {
-        when(game.getGamePlayer(player)).thenReturn(null);
+        when(playerRegistry.findByUUID(uuid)).thenReturn(null);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemLeftClick(player, itemStack);
 
@@ -140,10 +148,10 @@ public class DefaultActionHandlerTest {
         ItemBehavior behavior2 = mock(ItemBehavior.class);
         when(behavior2.handleLeftClickAction(gamePlayer, itemStack)).thenReturn(true);
 
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+        when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemLeftClick(player, itemStack);
 
@@ -155,9 +163,9 @@ public class DefaultActionHandlerTest {
 
     @Test
     public void shouldAllowItemPickUpIfGameDoesNotHavePlayer() {
-        when(game.getGamePlayer(player)).thenReturn(null);
+        when(playerRegistry.findByUUID(uuid)).thenReturn(null);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemPickup(player, itemStack);
 
@@ -174,10 +182,10 @@ public class DefaultActionHandlerTest {
         ItemBehavior behavior2 = mock(ItemBehavior.class);
         when(behavior2.handlePickupItemAction(gamePlayer, itemStack)).thenReturn(false);
 
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+        when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemPickup(player, itemStack);
 
@@ -189,9 +197,9 @@ public class DefaultActionHandlerTest {
 
     @Test
     public void shouldAllowRightClickIfGameDoesNotHavePlayer() {
-        when(game.getGamePlayer(player)).thenReturn(null);
+        when(playerRegistry.findByUUID(uuid)).thenReturn(null);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemRightClick(player, itemStack);
 
@@ -208,10 +216,10 @@ public class DefaultActionHandlerTest {
         ItemBehavior behavior2 = mock(ItemBehavior.class);
         when(behavior2.handleLeftClickAction(gamePlayer, itemStack)).thenReturn(true);
 
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+        when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemRightClick(player, itemStack);
 
@@ -223,9 +231,9 @@ public class DefaultActionHandlerTest {
 
     @Test
     public void shouldAllowItemSwapIfGameDoesNotHavePlayer() {
-        when(game.getGamePlayer(player)).thenReturn(null);
+        when(playerRegistry.findByUUID(uuid)).thenReturn(null);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
 
         boolean performAction = actionHandler.handleItemSwap(player, null, null);
 
@@ -243,10 +251,10 @@ public class DefaultActionHandlerTest {
         ItemBehavior behavior2 = mock(ItemBehavior.class);
         when(behavior2.handleSwapFromAction(gamePlayer, fromItem)).thenReturn(false);
 
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+        when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
         boolean performAction = actionHandler.handleItemSwap(player, fromItem, null);
 
         assertFalse(performAction);
@@ -266,10 +274,10 @@ public class DefaultActionHandlerTest {
         ItemBehavior behavior2 = mock(ItemBehavior.class);
         when(behavior2.handleSwapToAction(gamePlayer, toItem)).thenReturn(false);
 
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
         when(game.getItemBehaviors()).thenReturn(List.of(behavior1, behavior2));
+        when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
-        DefaultActionHandler actionHandler = new DefaultActionHandler(game);
+        DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
         boolean performAction = actionHandler.handleItemSwap(player, null, toItem);
 
         assertFalse(performAction);

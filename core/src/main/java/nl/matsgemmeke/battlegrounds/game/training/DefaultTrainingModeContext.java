@@ -28,7 +28,13 @@ public class DefaultTrainingModeContext implements GameContext {
     public DefaultTrainingModeContext(@NotNull TrainingMode trainingMode, @NotNull InternalsProvider internals) {
         this.trainingMode = trainingMode;
         this.internals = internals;
-        this.actionHandler = new DefaultActionHandler(trainingMode);
+        this.actionHandler = this.setUpActionHandlerInstance();
+    }
+
+    private ActionHandler setUpActionHandlerInstance() {
+        EntityRegistry<GamePlayer, Player> playerRegistry = new DefaultPlayerRegistry(trainingMode.getPlayerStorage(), internals);
+
+        return new DefaultActionHandler(trainingMode, playerRegistry);
     }
 
     @NotNull
