@@ -1,10 +1,14 @@
 package nl.matsgemmeke.battlegrounds;
 
+import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.junit.Test;
+
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -78,6 +82,55 @@ public class GameContextProviderTest {
         contextProvider.addSessionContext(1, context);
 
         GameContext result = contextProvider.getContext(player);
+
+        assertNull(result);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldReturnContextWhoseEntityRegistriesContainsEntityWithMatchingUUID() {
+        UUID uuid = UUID.randomUUID();
+
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
+
+        EntityRegistry<GameItem, Item> itemRegistry = (EntityRegistry<GameItem, Item>) mock(EntityRegistry.class);
+        when(itemRegistry.isRegistered(uuid)).thenReturn(false);
+
+        EntityRegistry<GamePlayer, Player> playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
+        when(playerRegistry.isRegistered(uuid)).thenReturn(true);
+
+        GameContext context = mock(GameContext.class);
+        when(context.getItemRegistry()).thenReturn(itemRegistry);
+        when(context.getPlayerRegistry()).thenReturn(playerRegistry);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.addSessionContext(1, context);
+
+        GameContext result = contextProvider.getContext(uuid);
+
+        assertEquals(context, result);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldReturnNullContextWhenEntityIsNotInAnyGame() {
+        UUID uuid = UUID.randomUUID();
+
+        Item item = mock(Item.class);
+        when(item.getUniqueId()).thenReturn(uuid);
+
+        EntityRegistry<GameItem, Item> itemRegistry = (EntityRegistry<GameItem, Item>) mock(EntityRegistry.class);
+        EntityRegistry<GamePlayer, Player> playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
+
+        GameContext context = mock(GameContext.class);
+        when(context.getItemRegistry()).thenReturn(itemRegistry);
+        when(context.getPlayerRegistry()).thenReturn(playerRegistry);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.addSessionContext(1, context);
+
+        GameContext result = contextProvider.getContext(uuid);
 
         assertNull(result);
     }

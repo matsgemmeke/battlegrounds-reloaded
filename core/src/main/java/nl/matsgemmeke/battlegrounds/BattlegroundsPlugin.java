@@ -52,7 +52,6 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     private BattlegroundsConfiguration config;
     private GameContext trainingModeContext;
-    private GameProvider gameProvider;
     private GameContextProvider contextProvider;
     private InternalsProvider internals;
     private Logger logger;
@@ -88,7 +87,6 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void startPlugin() throws StartupFailedException {
-        gameProvider = new DefaultGameProvider();
         contextProvider = new GameContextProvider();
 
         // Make sure the configuration folders are created
@@ -141,7 +139,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         PluginManager pluginManager = this.getServer().getPluginManager();
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
-        eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(gameProvider)));
+        eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(contextProvider)));
@@ -199,7 +197,6 @@ public class BattlegroundsPlugin extends JavaPlugin {
         trainingMode.addItemBehavior(new GunBehavior(gunStorage));
 
         contextProvider.assignTrainingModeContext(trainingModeContext);
-        gameProvider.assignTrainingMode(trainingMode);
     }
 
     private void setUpTranslator() {
