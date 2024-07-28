@@ -20,5 +20,5 @@ public interface EntityRegistry<T extends GameEntity, S extends Entity> {
     boolean isRegistered(@NotNull UUID uuid);
 
     @NotNull
-    T registerEntity(@NotNull  S entity);
+    T registerEntity(@NotNull S entity);
 }
