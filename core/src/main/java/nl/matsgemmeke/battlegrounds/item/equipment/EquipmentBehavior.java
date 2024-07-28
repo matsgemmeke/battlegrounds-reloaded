@@ -1,18 +1,18 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class EquipmentBehavior implements ItemBehavior {
 
     @NotNull
-    private ItemRegister<Equipment, EquipmentHolder> register;
+    private ItemStorage<Equipment, EquipmentHolder> storage;
 
-    public EquipmentBehavior(@NotNull ItemRegister<Equipment, EquipmentHolder> register) {
-        this.register = register;
+    public EquipmentBehavior(@NotNull ItemStorage<Equipment, EquipmentHolder> storage) {
+        this.storage = storage;
     }
 
     public boolean handleChangeFromAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack changedItem) {
@@ -28,7 +28,7 @@ public class EquipmentBehavior implements ItemBehavior {
     }
 
     public boolean handleLeftClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        Equipment equipment = register.getAssignedItem(gamePlayer, clickedItem);
+        Equipment equipment = storage.getAssignedItem(gamePlayer, clickedItem);
 
         if (equipment == null || equipment.getHolder() != gamePlayer) {
             return true;
@@ -43,7 +43,7 @@ public class EquipmentBehavior implements ItemBehavior {
     }
 
     public boolean handleRightClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        Equipment equipment = register.getAssignedItem(gamePlayer, clickedItem);
+        Equipment equipment = storage.getAssignedItem(gamePlayer, clickedItem);
 
         if (equipment == null || equipment.getHolder() != gamePlayer) {
             return true;

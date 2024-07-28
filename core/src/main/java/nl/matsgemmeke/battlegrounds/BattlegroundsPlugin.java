@@ -7,24 +7,22 @@ import nl.matsgemmeke.battlegrounds.command.condition.ExistentWeaponIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.TrainingModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.configuration.*;
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.event.EventBus;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
-import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingMode;
-import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingModeContext;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
 import nl.matsgemmeke.battlegrounds.item.WeaponProviderLoader;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
@@ -53,8 +51,8 @@ import java.util.logging.Logger;
 public class BattlegroundsPlugin extends JavaPlugin {
 
     private BattlegroundsConfiguration config;
-    private GameContext trainingContext;
-    private GameProvider gameProvider;
+    private GameContext trainingModeContext;
+    private GameContextProvider contextProvider;
     private InternalsProvider internals;
     private Logger logger;
     private TaskRunner taskRunner;
@@ -68,8 +66,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     @NotNull
-    public GameProvider getGameProvider() {
-        return gameProvider;
+    public GameContextProvider getContextProvider() {
+        return contextProvider;
     }
 
     @Override
@@ -89,7 +87,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void startPlugin() throws StartupFailedException {
-        gameProvider = new DefaultGameProvider();
+        contextProvider = new GameContextProvider();
 
         // Make sure the configuration folders are created
         File configFolder = this.getDataFolder();
@@ -120,10 +118,10 @@ public class BattlegroundsPlugin extends JavaPlugin {
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
 
         // Add all subcommands to the battlegrounds command
-        bgCommand.addSubcommand(new CreateSessionCommand(gameProvider, sessionFactory, translator));
-        bgCommand.addSubcommand(new GiveWeaponCommand(trainingMode, trainingContext, translator, weaponProvider));
+        bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
+        bgCommand.addSubcommand(new GiveWeaponCommand(trainingModeContext, translator, weaponProvider));
         bgCommand.addSubcommand(new ReloadCommand(config, translator));
-        bgCommand.addSubcommand(new RemoveSessionCommand(gameProvider, taskRunner, translator));
+        bgCommand.addSubcommand(new RemoveSessionCommand(contextProvider, taskRunner, translator));
         bgCommand.addSubcommand(new SetMainLobbyCommand(generalData, translator));
 
         // Register the command to ACF
@@ -131,23 +129,23 @@ public class BattlegroundsPlugin extends JavaPlugin {
         commandManager.registerCommand(bgCommand);
 
         // Register custom conditions to ACF
-        commandManager.getCommandConditions().addCondition("training-mode-presence", new TrainingModePresenceCondition(trainingMode, translator));
-        commandManager.getCommandConditions().addCondition(Integer.class, "existent-session-id", new ExistentSessionIdCondition(gameProvider, translator));
+        commandManager.getCommandConditions().addCondition("training-mode-presence", new TrainingModePresenceCondition(trainingModeContext, translator));
+        commandManager.getCommandConditions().addCondition(Integer.class, "existent-session-id", new ExistentSessionIdCondition(contextProvider, translator));
         commandManager.getCommandConditions().addCondition(String.class, "existent-weapon-id", new ExistentWeaponIdCondition(weaponProvider, translator));
-        commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-session-id", new NonexistentSessionIdCondition(gameProvider, translator));
+        commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-session-id", new NonexistentSessionIdCondition(contextProvider, translator));
     }
 
     private void setUpEvents() {
         PluginManager pluginManager = this.getServer().getPluginManager();
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
-        eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(gameProvider)));
-        eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(gameProvider)));
-        eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(gameProvider)));
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(gameProvider)));
-        eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(gameProvider)));
-        eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(trainingMode)));
-        eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(gameProvider)));
+        eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(contextProvider)));
+        eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(contextProvider)));
+        eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(contextProvider)));
+        eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(contextProvider)));
+        eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(contextProvider)));
+        eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(trainingModeContext.getPlayerRegistry())));
+        eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(contextProvider)));
 
         EventListener eventListener = new EventListener(eventDispatcher);
 
@@ -189,18 +187,16 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void setUpTrainingMode() {
-        BlockCollisionChecker collisionChecker = new BlockCollisionChecker();
+        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
+        ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
 
-        ItemRegister<Equipment, EquipmentHolder> equipmentRegister = new ItemRegister<>();
-        ItemRegister<Gun, GunHolder> gunRegister = new ItemRegister<>();
+        trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
+        trainingModeContext = trainingMode.getContext();
 
-        trainingMode = new DefaultTrainingMode(internals, equipmentRegister, gunRegister);
-        trainingContext = new DefaultTrainingModeContext(trainingMode, collisionChecker);
+        trainingMode.addItemBehavior(new EquipmentBehavior(equipmentStorage));
+        trainingMode.addItemBehavior(new GunBehavior(gunStorage));
 
-        trainingMode.addItemBehavior(new EquipmentBehavior(equipmentRegister));
-        trainingMode.addItemBehavior(new GunBehavior(gunRegister));
-
-        gameProvider.assignTrainingMode(trainingMode);
+        contextProvider.assignTrainingModeContext(trainingModeContext);
     }
 
     private void setUpTranslator() {

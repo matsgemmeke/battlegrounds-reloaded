@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.GameProvider;
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.session.Session;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.locale.PlaceholderEntry;
 import nl.matsgemmeke.battlegrounds.locale.TranslationKey;
 import nl.matsgemmeke.battlegrounds.locale.Translator;
@@ -17,7 +17,7 @@ public class RemoveSessionCommand extends CommandSource {
     private static final long CONFIRM_LIST_COOLDOWN = 200;
 
     @NotNull
-    private GameProvider gameProvider;
+    private GameContextProvider contextProvider;
     @NotNull
     private List<CommandSender> confirmList;
     @NotNull
@@ -26,12 +26,12 @@ public class RemoveSessionCommand extends CommandSource {
     private Translator translator;
 
     public RemoveSessionCommand(
-            @NotNull GameProvider gameProvider,
+            @NotNull GameContextProvider contextProvider,
             @NotNull TaskRunner taskRunner,
             @NotNull Translator translator
     ) {
         super("removesession", translator.translate(TranslationKey.DESCRIPTION_REMOVESESSION.getPath()), "bg removesession <id>");
-        this.gameProvider = gameProvider;
+        this.contextProvider = contextProvider;
         this.taskRunner = taskRunner;
         this.translator = translator;
         this.confirmList = new ArrayList<>();
@@ -47,10 +47,10 @@ public class RemoveSessionCommand extends CommandSource {
             return;
         }
 
-        Session session = gameProvider.getSession(id);
+        GameContext sessionContext = contextProvider.getSessionContext(id);
         PlaceholderEntry placeholder = new PlaceholderEntry("bg_session", String.valueOf(id));
 
-        if (!gameProvider.removeSession(session)) {
+        if (sessionContext == null || !contextProvider.removeSessionContext(id)) {
             sender.sendMessage(translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath(), placeholder));
             return;
         }

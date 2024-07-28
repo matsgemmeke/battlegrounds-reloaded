@@ -1,5 +1,6 @@
-package nl.matsgemmeke.battlegrounds.game.audio;
+package nl.matsgemmeke.battlegrounds.game.component;
 
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 

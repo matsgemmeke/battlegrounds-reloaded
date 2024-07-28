@@ -1,140 +1,49 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.*;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
-import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DefaultTrainingMode extends BaseGame implements TrainingMode {
 
     @NotNull
+    private GameContext context;
+    @NotNull
     private InternalsProvider internals;
     @NotNull
-    private ItemRegister<Equipment, EquipmentHolder> equipmentRegister;
+    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
     @NotNull
-    private ItemRegister<Gun, GunHolder> gunRegister;
+    private ItemStorage<Gun, GunHolder> gunStorage;
 
     public DefaultTrainingMode(
             @NotNull InternalsProvider internals,
-            @NotNull ItemRegister<Equipment, EquipmentHolder> equipmentRegister,
-            @NotNull ItemRegister<Gun, GunHolder> gunRegister
+            @NotNull ItemStorage<Equipment, EquipmentHolder> equipmentStorage,
+            @NotNull ItemStorage<Gun, GunHolder> gunStorage
     ) {
         this.internals = internals;
-        this.equipmentRegister = equipmentRegister;
-        this.gunRegister = gunRegister;
+        this.equipmentStorage = equipmentStorage;
+        this.gunStorage = gunStorage;
+        this.context = new DefaultTrainingModeContext(this, internals);
     }
 
     @NotNull
-    public ItemRegister<Equipment, EquipmentHolder> getEquipmentRegister() {
-        return equipmentRegister;
+    public GameContext getContext() {
+        return context;
     }
 
     @NotNull
-    public ItemRegister<Gun, GunHolder> getGunRegister() {
-        return gunRegister;
+    public ItemStorage<Equipment, EquipmentHolder> getEquipmentStorage() {
+        return equipmentStorage;
     }
 
     @NotNull
-    public GameItem addItem(@NotNull Item item) {
-        GameItem gameItem = new DefaultGameItem(item);
-
-        itemEntityRegister.addEntity(gameItem);
-
-        return gameItem;
-    }
-
-    @NotNull
-    public GamePlayer addPlayer(@NotNull Player player) {
-        GamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
-
-        playerRegister.addEntity(gamePlayer);
-
-        return gamePlayer;
-    }
-
-    public double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, double damage) {
-        return damage;
-    }
-
-    public boolean handleItemChange(@NotNull GamePlayer gamePlayer, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : behaviors) {
-            if (changeFrom != null) {
-                performAction = performAction & behavior.handleChangeFromAction(gamePlayer, changeFrom);
-            }
-
-            if (changeTo != null) {
-                performAction = performAction & behavior.handleChangeToAction(gamePlayer, changeTo);
-            }
-        }
-
-        return performAction;
-    }
-
-    public boolean handleItemDrop(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : behaviors) {
-            performAction = performAction & behavior.handleDropItemAction(gamePlayer, droppedItem);
-        }
-
-        return performAction;
-    }
-
-    public boolean handleItemLeftClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : behaviors) {
-            performAction = performAction & behavior.handleLeftClickAction(gamePlayer, clickedItem);
-        }
-
-        return performAction;
-    }
-
-    public boolean handleItemPickup(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : behaviors) {
-            performAction = performAction & behavior.handlePickupItemAction(gamePlayer, pickupItem);
-        }
-
-        return performAction;
-    }
-
-    public boolean handleItemRightClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : behaviors) {
-            performAction = performAction & behavior.handleRightClickAction(gamePlayer, clickedItem);
-        }
-
-        return performAction;
-    }
-
-    public boolean handleItemSwap(@NotNull GamePlayer gamePlayer, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo) {
-        boolean performAction = true;
-
-        for (ItemBehavior behavior : behaviors) {
-            if (swapFrom != null) {
-                performAction = performAction & behavior.handleSwapFromAction(gamePlayer, swapFrom);
-            }
-
-            if (swapTo != null) {
-                performAction = performAction & behavior.handleSwapToAction(gamePlayer, swapTo);
-            }
-        }
-
-        return performAction;
+    public ItemStorage<Gun, GunHolder> getGunStorage() {
+        return gunStorage;
     }
 }

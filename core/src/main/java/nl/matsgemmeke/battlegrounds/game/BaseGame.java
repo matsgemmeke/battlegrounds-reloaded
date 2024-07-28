@@ -1,63 +1,44 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public abstract class BaseGame implements Game {
 
     @NotNull
-    protected EntityRegister<GameItem> itemEntityRegister;
+    protected EntityStorage<GameItem> itemStorage;
     @NotNull
-    protected EntityRegister<GamePlayer> playerRegister;
+    protected EntityStorage<GamePlayer> playerStorage;
     @NotNull
-    protected Set<ItemBehavior> behaviors;
+    protected Set<ItemBehavior> itemBehaviors;
 
     public BaseGame() {
-        this.behaviors = new HashSet<>();
-        this.itemEntityRegister = new EntityRegister<>();
-        this.playerRegister = new EntityRegister<>();
-    }
-
-    public void addItemBehavior(@NotNull ItemBehavior behavior) {
-        behaviors.add(behavior);
-    }
-
-    @Nullable
-    public GameEntity getGameEntity(@NotNull Entity entity) {
-        for (EntityRegister<?> entityRegister : this.getEntityRegisters()) {
-            var foundEntity = entityRegister.getEntity(entity);
-            if (foundEntity != null) {
-                return foundEntity;
-            }
-        }
-        return null;
+        this.itemBehaviors = new HashSet<>();
+        this.itemStorage = new EntityStorage<>();
+        this.playerStorage = new EntityStorage<>();
     }
 
     @NotNull
-    private Iterable<EntityRegister<?>> getEntityRegisters() {
-        return List.of(itemEntityRegister, playerRegister);
+    public Set<ItemBehavior> getItemBehaviors() {
+        return itemBehaviors;
     }
 
-    @Nullable
-    public GamePlayer getGamePlayer(@NotNull Player player) {
-        return playerRegister.getEntity(player);
+    @NotNull
+    public EntityStorage<GameItem> getItemStorage() {
+        return itemStorage;
     }
 
-    public boolean hasEntity(@NotNull Entity entity) {
-        return this.getGameEntity(entity) != null;
+    @NotNull
+    public EntityStorage<GamePlayer> getPlayerStorage() {
+        return playerStorage;
     }
 
-    public boolean hasPlayer(@NotNull Player player) {
-        return this.getGamePlayer(player) != null;
+    public void addItemBehavior(@NotNull ItemBehavior itemBehavior) {
+        itemBehaviors.add(itemBehavior);
     }
 }

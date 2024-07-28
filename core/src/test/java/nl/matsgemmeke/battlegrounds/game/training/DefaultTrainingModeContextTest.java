@@ -1,125 +1,122 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
-import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.EntityStorage;
+import nl.matsgemmeke.battlegrounds.game.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageCalculator;
+import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
+@SuppressWarnings("unchecked")
 public class DefaultTrainingModeContextTest {
 
-    private BlockCollisionChecker collisionChecker;
+    private InternalsProvider internals;
     private TrainingMode trainingMode;
 
     @Before
     public void setUp() {
-        collisionChecker = mock(BlockCollisionChecker.class);
+        internals = mock(InternalsProvider.class);
         trainingMode = mock(TrainingMode.class);
     }
 
     @Test
-    public void returnsNoTargetsIfGivenLocationHasNoWorld() {
-        GameEntity entity = mock(GameEntity.class);
-        Location location = new Location(null, 1.0, 1.0, 1.0);
+    public void shouldReturnInstanceOfActionHandler() {
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, collisionChecker);
-        Collection<GameEntity> targets = context.getTargets(entity, location, 0.1);
+        ActionHandler actionHandler = context.getActionHandler();
 
-        assertEquals(0, targets.size());
+        assertTrue(actionHandler instanceof DefaultActionHandler);
     }
 
     @Test
-    public void returnsListOfTargetsBasedOnNearbyEntities() {
-        double range = 0.1;
+    public void shouldReturnNewInstanceOfAudioEmitter() {
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        GameEntity entity = mock(GameEntity.class);
-        World world = mock(World.class);
+        AudioEmitter audioEmitter = context.getAudioEmitter();
 
-        List<Entity> nearbyEntities = Collections.singletonList(mock(Player.class));
-        Location location = new Location(world, 1.0, 1.0, 1.0);
-
-        when(world.getNearbyEntities(location, range, range, range)).thenReturn(nearbyEntities);
-
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, collisionChecker);
-        Collection<GameEntity> targets = context.getTargets(entity, location, range);
-
-        assertEquals(1, targets.size());
+        assertTrue(audioEmitter instanceof DefaultAudioEmitter);
     }
 
     @Test
-    public void doesNotPlaySoundIfGivenLocationHasNoWorld() {
-        GameSound sound = mock(GameSound.class);
+    public void shouldReturnNewInstanceOfCollisionDetector() {
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        Location location = new Location(null, 1.0, 1.0, 1.0);
+        CollisionDetector collisionDetector = context.getCollisionDetector();
 
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, collisionChecker);
-        context.playSound(sound, location);
-
-        verifyNoInteractions(sound);
+        assertTrue(collisionDetector instanceof TrainingModeCollisionDetector);
     }
 
     @Test
-    public void shouldPlaySoundToAllPlayersInTheWorldOfTheLocation() {
-        GameSound sound = mock(GameSound.class);
-        Player player = mock(Player.class);
+    public void shouldReturnInstanceOfDamageCalculator() {
+        EntityStorage<GameItem> itemStorage = (EntityStorage<GameItem>) mock(EntityStorage.class);
+        when(trainingMode.getItemStorage()).thenReturn(itemStorage);
 
-        World world = mock(World.class);
-        when(world.getPlayers()).thenReturn(List.of(player));
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        Location location = new Location(world, 1.0, 1.0, 1.0);
+        DamageCalculator damageCalculator = context.getDamageCalculator();
 
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, collisionChecker);
-        context.playSounds(List.of(sound), location);
-
-        verify(player).playSound(eq(location), (Sound) isNull(), anyFloat(), anyFloat());
+        assertTrue(damageCalculator instanceof TrainingModeDamageCalculator);
     }
 
     @Test
-    public void producesCollisionsBasedOnTheCollisionChecker() {
-        Block block = mock(Block.class);
-        World world = mock(World.class);
+    public void shouldReturnNewInstanceOfItemRegistryForEquipmentItems() {
+        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = (ItemStorage<Equipment, EquipmentHolder>) mock(ItemStorage.class);
+        when(trainingMode.getEquipmentStorage()).thenReturn(equipmentStorage);
 
-        Location locationNoCollision = new Location(world, 1.0, 1.0, 1.0);
-        Location locationYesCollision = new Location(world, 2.0, 2.0, 2.0);
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        when(world.getBlockAt(locationNoCollision)).thenReturn(block);
-        when(world.getBlockAt(locationYesCollision)).thenReturn(block);
+        ItemRegistry<Equipment, EquipmentHolder> equipmentRegistry = context.getEquipmentRegistry();
 
-        when(collisionChecker.isSolid(block, locationNoCollision)).thenReturn(false);
-        when(collisionChecker.isSolid(block, locationYesCollision)).thenReturn(true);
-
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, collisionChecker);
-        boolean firstCollision = context.producesCollisionAt(locationNoCollision);
-        boolean secondCollision = context.producesCollisionAt(locationYesCollision);
-
-        assertFalse(firstCollision);
-        assertTrue(secondCollision);
+        assertTrue(equipmentRegistry instanceof DefaultEquipmentRegistry);
     }
 
     @Test
-    public void shouldAddItemToGameWhenRegistering() {
-        Item item = mock(Item.class);
+    public void shouldReturnNewInstanceOfEntityRegisterForItemEntities() {
+        EntityStorage<GameItem> itemEntityStorage = (EntityStorage<GameItem>) mock(EntityStorage.class);
+        when(trainingMode.getItemStorage()).thenReturn(itemEntityStorage);
 
-        when(trainingMode.addItem(item)).thenReturn(mock(GameItem.class));
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, collisionChecker);
-        context.registerItem(item);
+        EntityRegistry<GameItem, Item> itemRegistry = context.getItemRegistry();
 
-        verify(trainingMode).addItem(item);
+        assertTrue(itemRegistry instanceof DefaultItemRegistry);
+    }
+
+    @Test
+    public void shouldReturnNewInstanceOfItemRegistryForGunItems() {
+        ItemStorage<Gun, GunHolder> gunStorage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
+        when(trainingMode.getGunStorage()).thenReturn(gunStorage);
+
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+
+        ItemRegistry<Gun, GunHolder> gunRegistry = context.getGunRegistry();
+
+        assertTrue(gunRegistry instanceof DefaultGunRegistry);
+    }
+
+    @Test
+    public void shouldReturnNewInstanceOfEntityRegisterForPlayerEntities() {
+        EntityStorage<GamePlayer> playerStorage = (EntityStorage<GamePlayer>) mock(EntityStorage.class);
+        when(trainingMode.getPlayerStorage()).thenReturn(playerStorage);
+
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+
+        EntityRegistry<GamePlayer, Player> playerRegistry = context.getPlayerRegistry();
+
+        assertTrue(playerRegistry instanceof DefaultPlayerRegistry);
     }
 }

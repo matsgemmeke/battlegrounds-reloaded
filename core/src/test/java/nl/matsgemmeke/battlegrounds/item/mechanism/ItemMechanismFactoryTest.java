@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,12 +12,10 @@ import static org.mockito.Mockito.when;
 
 public class ItemMechanismFactoryTest {
 
-    private GameContext context;
     private Section section;
 
     @Before
     public void setUp() {
-        context = mock(GameContext.class);
         section = mock(Section.class);
     }
 
@@ -27,7 +24,7 @@ public class ItemMechanismFactoryTest {
         when(section.getString("type")).thenReturn("EXPLOSION");
 
         ItemMechanismFactory factory = new ItemMechanismFactory();
-        ItemMechanism mechanism = factory.make(section, context);
+        ItemMechanism mechanism = factory.make(section);
 
         assertNotNull(mechanism);
         assertTrue(mechanism instanceof ExplosionMechanism);
@@ -38,7 +35,7 @@ public class ItemMechanismFactoryTest {
         when(section.getString("type")).thenReturn(null);
 
         ItemMechanismFactory factory = new ItemMechanismFactory();
-        factory.make(section, context);
+        factory.make(section);
     }
 
     @Test(expected = InvalidItemConfigurationException.class)
@@ -46,6 +43,6 @@ public class ItemMechanismFactoryTest {
         when(section.getString("type")).thenReturn("fail");
 
         ItemMechanismFactory factory = new ItemMechanismFactory();
-        factory.make(section, context);
+        factory.make(section);
     }
 }

@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;

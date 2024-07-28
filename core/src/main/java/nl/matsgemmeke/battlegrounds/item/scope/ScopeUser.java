@@ -1,4 +1,6 @@
-package nl.matsgemmeke.battlegrounds.entity;
+package nl.matsgemmeke.battlegrounds.item.scope;
+
+import nl.matsgemmeke.battlegrounds.entity.ItemEffectReceiver;
 
 public interface ScopeUser extends ItemEffectReceiver {
 

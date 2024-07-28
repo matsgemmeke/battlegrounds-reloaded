@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.entity;
+package nl.matsgemmeke.battlegrounds.item.recoil;
 
 /**
  * An entity capable of receiving recoil from an item.

@@ -1,11 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.entity.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.Droppable;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
-import nl.matsgemmeke.battlegrounds.entity.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 

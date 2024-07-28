@@ -1,7 +1,7 @@
-package nl.matsgemmeke.battlegrounds.item;
+package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ItemRegisterTest {
+public class ItemStorageTest {
 
     @Test
     public void shouldFindItemByItsCorrespondingItemStack() {
@@ -19,10 +19,10 @@ public class ItemRegisterTest {
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);
 
-        ItemRegister<Gun, GunHolder> register = new ItemRegister<>();
-        register.addUnassignedItem(gun);
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        storage.addUnassignedItem(gun);
 
-        Gun result = register.getUnassignedItem(itemStack);
+        Gun result = storage.getUnassignedItem(itemStack);
 
         assertEquals(gun, result);
     }
@@ -33,10 +33,10 @@ public class ItemRegisterTest {
 
         Gun gun = mock(Gun.class);
 
-        ItemRegister<Gun, GunHolder> register = new ItemRegister<>();
-        register.addUnassignedItem(gun);
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        storage.addUnassignedItem(gun);
 
-        Gun result = register.getUnassignedItem(itemStack);
+        Gun result = storage.getUnassignedItem(itemStack);
 
         assertNull(result);
     }
@@ -50,22 +50,22 @@ public class ItemRegisterTest {
 
         GunHolder holder = mock(GunHolder.class);
 
-        ItemRegister<Gun, GunHolder> register = new ItemRegister<>();
-        register.addAssignedItem(gun, holder);
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        storage.addAssignedItem(gun, holder);
 
-        Gun result = register.getAssignedItem(holder, itemStack);
+        Gun result = storage.getAssignedItem(holder, itemStack);
 
         assertEquals(gun, result);
     }
     
     @Test
-    public void shouldReturnNullWhenHolderIsNotInRegister() {
+    public void shouldReturnNullWhenHolderIsNotInStorage() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         
         GunHolder holder = mock(GunHolder.class);
 
-        ItemRegister<Gun, GunHolder> register = new ItemRegister<>();
-        Gun result = register.getAssignedItem(holder, itemStack);
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        Gun result = storage.getAssignedItem(holder, itemStack);
         
         assertNull(result);
     }
@@ -77,26 +77,26 @@ public class ItemRegisterTest {
         Gun gun = mock(Gun.class);
         GunHolder holder = mock(GunHolder.class);
 
-        ItemRegister<Gun, GunHolder> register = new ItemRegister<>();
-        register.addAssignedItem(gun, holder);
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        storage.addAssignedItem(gun, holder);
 
-        Gun result = register.getAssignedItem(holder, notAdded);
+        Gun result = storage.getAssignedItem(holder, notAdded);
 
         assertNull(result);
     }
 
     @Test
-    public void shouldRemoveItemFromRegister() {
+    public void shouldRemoveItemFromStorage() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);
 
-        ItemRegister<Gun, GunHolder> register = new ItemRegister<>();
-        register.addUnassignedItem(gun);
-        register.removeUnassignedItem(gun);
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        storage.addUnassignedItem(gun);
+        storage.removeUnassignedItem(gun);
 
-        Gun result = register.getUnassignedItem(itemStack);
+        Gun result = storage.getUnassignedItem(itemStack);
 
         assertNull(result);
     }
@@ -107,22 +107,22 @@ public class ItemRegisterTest {
 
         GunHolder holder = mock(GunHolder.class);
 
-        ItemRegister<Gun, GunHolder> register = new ItemRegister<>();
-        register.addAssignedItem(gun, holder);
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        storage.addAssignedItem(gun, holder);
 
-        boolean result = register.removeAssignedItem(gun, holder);
+        boolean result = storage.removeAssignedItem(gun, holder);
 
         assertTrue(result);
     }
 
     @Test
-    public void shouldNotRemoveItemFromHolderIfRegisterDoesNotContainHolder() {
+    public void shouldNotRemoveItemFromHolderIfStorageDoesNotContainHolder() {
         Gun gun = mock(Gun.class);
 
         GunHolder holder = mock(GunHolder.class);
 
-        ItemRegister<Gun, GunHolder> register = new ItemRegister<>();
-        boolean result = register.removeAssignedItem(gun, holder);
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        boolean result = storage.removeAssignedItem(gun, holder);
 
         assertFalse(result);
     }
@@ -133,10 +133,10 @@ public class ItemRegisterTest {
 
         GunHolder holder = mock(GunHolder.class);
 
-        ItemRegister<Gun, GunHolder> register = new ItemRegister<>();
-        register.addAssignedItem(mock(Gun.class), holder);
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        storage.addAssignedItem(mock(Gun.class), holder);
 
-        boolean result = register.removeAssignedItem(gun, holder);
+        boolean result = storage.removeAssignedItem(gun, holder);
 
         assertFalse(result);
     }

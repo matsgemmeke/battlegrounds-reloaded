@@ -1,5 +1,6 @@
-package nl.matsgemmeke.battlegrounds.game;
+package nl.matsgemmeke.battlegrounds.game.audio;
 
+import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import org.bukkit.Sound;
 import org.junit.Test;

@@ -1,8 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
+import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -33,8 +32,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     @Nullable
     protected ScopeAttachment scopeAttachment;
 
-    public BaseGun(@NotNull GameContext context) {
-        super(context);
+    public BaseGun() {
         this.controls = new ItemControls<>();
     }
 
@@ -160,11 +158,14 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         }
 
         controls.cancelAllFunctions();
+        controls.performAction(Action.DROP_ITEM, holder);
         holder = null;
     }
 
     public void onPickUp(@NotNull GunHolder holder) {
         this.holder = holder;
+
+        controls.performAction(Action.PICKUP_ITEM, holder);
     }
 
     public void onSwapTo() {

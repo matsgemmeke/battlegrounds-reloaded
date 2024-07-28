@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.scope;
 
-import nl.matsgemmeke.battlegrounds.entity.ScopeUser;
 import org.junit.Before;
 import org.junit.Test;
 

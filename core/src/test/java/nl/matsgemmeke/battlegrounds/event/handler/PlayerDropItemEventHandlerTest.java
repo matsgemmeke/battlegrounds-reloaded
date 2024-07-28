@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.GameProvider;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.ActionHandler;
+import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -10,60 +11,74 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class PlayerDropItemEventHandlerTest {
 
-    private GameProvider gameProvider;
+    private GameContextProvider contextProvider;
     private Item item;
     private Player player;
     private PlayerDropItemEvent event;
 
     @Before
     public void setUp() {
-        this.gameProvider = mock(GameProvider.class);
-        this.item = mock(Item.class);
-        this.player = mock(Player.class);
-
-        this.event = new PlayerDropItemEvent(player, item);
+        contextProvider = mock(GameContextProvider.class);
+        item = mock(Item.class);
+        player = mock(Player.class);
+        event = new PlayerDropItemEvent(player, item);
     }
 
     @Test
-    public void doNothingIfPlayerIsNotInContext() {
-        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(gameProvider);
-        eventHandler.handle(event);
-    }
+    public void shouldDoNothingIfPlayerIsNotInAnyGames() {
+        when(contextProvider.getContext(player)).thenReturn(null);
 
-    @Test
-    public void doNothingIfPlayerHasNoGamePlayerInstance() {
-        Game game = mock(Game.class);
-
-        when(gameProvider.getGame(player)).thenReturn(game);
-
-        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(gameProvider);
+        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        verify(game, never()).handleItemDrop(any(), any());
+        assertFalse(event.isCancelled());
     }
 
     @Test
-    public void shouldCallGameFunctionAndCancelEventAccordingToResult() {
-        Game game = mock(Game.class);
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-
-        ItemStack itemStack = mock(ItemStack.class);
+    public void shouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         when(item.getItemStack()).thenReturn(itemStack);
 
-        when(game.handleItemDrop(gamePlayer, itemStack)).thenReturn(false);
-        when(game.getGamePlayer(player)).thenReturn(gamePlayer);
-        when(gameProvider.getGame(player)).thenReturn(game);
+        ActionHandler actionHandler = mock(ActionHandler.class);
+        when(actionHandler.handleItemDrop(player, itemStack)).thenReturn(false);
 
-        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(gameProvider);
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+        when(contextProvider.getContext(player)).thenReturn(context);
+
+        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());
 
-        verify(game).handleItemDrop(gamePlayer, itemStack);
+        verify(actionHandler).handleItemDrop(player, itemStack);
+    }
+
+    @Test
+    public void shouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
+        event.setCancelled(true);
+
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        when(item.getItemStack()).thenReturn(itemStack);
+
+        ActionHandler actionHandler = mock(ActionHandler.class);
+        when(actionHandler.handleItemDrop(player, itemStack)).thenReturn(true);
+
+        GameContext context = mock(GameContext.class);
+        when(context.getActionHandler()).thenReturn(actionHandler);
+        when(contextProvider.getContext(player)).thenReturn(context);
+
+        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(contextProvider);
+        eventHandler.handle(event);
+
+        assertTrue(event.isCancelled());
+
+        verify(actionHandler).handleItemDrop(player, itemStack);
     }
 }

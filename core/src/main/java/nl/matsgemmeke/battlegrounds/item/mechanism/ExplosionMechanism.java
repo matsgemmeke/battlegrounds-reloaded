@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
-import nl.matsgemmeke.battlegrounds.entity.ItemHolder;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -14,11 +13,8 @@ public class ExplosionMechanism implements ItemMechanism {
     private boolean breakBlocks;
     private boolean setFire;
     private float power;
-    @NotNull
-    private GameContext context;
 
-    public ExplosionMechanism(@NotNull GameContext context, float power, boolean setFire, boolean breakBlocks) {
-        this.context = context;
+    public ExplosionMechanism(float power, boolean setFire, boolean breakBlocks) {
         this.power = power;
         this.setFire = setFire;
         this.breakBlocks = breakBlocks;

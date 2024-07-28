@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.entity;
+package nl.matsgemmeke.battlegrounds.item.reload;
 
 import nl.matsgemmeke.battlegrounds.game.audio.AudioSource;
 

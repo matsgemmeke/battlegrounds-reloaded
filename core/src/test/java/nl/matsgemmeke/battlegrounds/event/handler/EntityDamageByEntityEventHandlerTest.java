@@ -1,12 +1,15 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.GameProvider;
-import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.DamageCalculator;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.UUID;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -17,23 +20,31 @@ public class EntityDamageByEntityEventHandlerTest {
     private Entity damager;
     private Entity entity;
     private EntityDamageByEntityEvent event;
-    private GameProvider gameProvider;
+    private GameContextProvider contextProvider;
+    private UUID damagerUUID;
+    private UUID entityUUID;
 
     @Before
     public void setUp() {
+        contextProvider = mock(GameContextProvider.class);
+        damagerUUID = UUID.randomUUID();
+        entityUUID = UUID.randomUUID();
+
         damager = mock(Entity.class);
+        when(damager.getUniqueId()).thenReturn(damagerUUID);
+
         entity = mock(Entity.class);
-        gameProvider = mock(GameProvider.class);
+        when(entity.getUniqueId()).thenReturn(entityUUID);
 
         event = spy(new EntityDamageByEntityEvent(damager, entity, DamageCause.ENTITY_ATTACK, 10.0));
     }
 
     @Test
     public void shouldNotProcessEventIfEntityAndDamagerAreNotInGames() {
-        when(gameProvider.getGame(entity)).thenReturn(null);
-        when(gameProvider.getGame(damager)).thenReturn(null);
+        when(contextProvider.getContext(entityUUID)).thenReturn(null);
+        when(contextProvider.getContext(damagerUUID)).thenReturn(null);
 
-        EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(gameProvider);
+        EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertEquals(10.0, event.getDamage(), 0.0);
@@ -41,34 +52,38 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Test
     public void shouldCancelEventIfDamagerIsInDifferentGame() {
-        Game game = mock(Game.class);
-        Game otherGame = mock(Game.class);
+        GameContext game = mock(GameContext.class);
+        GameContext otherContext = mock(GameContext.class);
 
-        when(gameProvider.getGame(entity)).thenReturn(game);
-        when(gameProvider.getGame(damager)).thenReturn(otherGame);
+        when(contextProvider.getContext(entityUUID)).thenReturn(game);
+        when(contextProvider.getContext(damagerUUID)).thenReturn(otherContext);
 
-        EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(gameProvider);
+        EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);
 
         assertTrue(event.isCancelled());
     }
 
     @Test
-    public void shouldSetEventDamageBasedOnResultFromGame() {
-        double damage = 100.0;
+    public void shouldSetEventDamageBasedOnResultFromDamageCalculator() {
+        double originalDamage = 10.0;
+        double finalDamage = 100.0;
 
-        Game game = mock(Game.class);
-        when(game.calculateDamage(damager, entity, 10.0)).thenReturn(damage);
+        DamageCalculator damageCalculator = mock(DamageCalculator.class);
+        when(damageCalculator.calculateDamage(damager, entity, originalDamage)).thenReturn(finalDamage);
 
-        when(gameProvider.getGame(entity)).thenReturn(game);
-        when(gameProvider.getGame(damager)).thenReturn(game);
+        GameContext context = mock(GameContext.class);
+        when(context.getDamageCalculator()).thenReturn(damageCalculator);
 
-        when(event.getDamage()).thenReturn(10.0);
+        when(contextProvider.getContext(entityUUID)).thenReturn(context);
+        when(contextProvider.getContext(damagerUUID)).thenReturn(context);
 
-        EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(gameProvider);
+        when(event.getDamage()).thenReturn(originalDamage);
+
+        EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        verify(game).calculateDamage(damager, entity, 10.0);
-        verify(event).setDamage(damage);
+        verify(damageCalculator).calculateDamage(damager, entity, originalDamage);
+        verify(event).setDamage(finalDamage);
     }
 }

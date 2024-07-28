@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.entity.GameItem;
+import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import org.bukkit.Location;
@@ -17,18 +18,19 @@ import static org.mockito.Mockito.*;
 
 public class DefaultEquipmentTest {
 
-    private GameContext context;
+    private EntityRegistry<GameItem, Item> itemRegistry;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setUp() {
-        context = mock(GameContext.class);
+        itemRegistry = (EntityRegistry<GameItem, Item>) mock(EntityRegistry.class);
     }
 
     @Test
     public void shouldOnlyBeDroppableWhenItemStackIsSet() {
         ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
 
-        DefaultEquipment equipment = new DefaultEquipment(context);
+        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.setItemStack(itemStack);
         boolean droppable = equipment.canDrop();
 
@@ -39,7 +41,7 @@ public class DefaultEquipmentTest {
     public void shouldThrowErrorWhenDroppingItemWithoutSetItemStack() {
         Location location = new Location(null, 1, 1, 1);
 
-        DefaultEquipment equipment = new DefaultEquipment(context);
+        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.dropItem(location);
     }
 
@@ -48,7 +50,7 @@ public class DefaultEquipmentTest {
         ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
         Location location = new Location(null, 1, 1, 1);
 
-        DefaultEquipment equipment = new DefaultEquipment(context);
+        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.setItemStack(itemStack);
         equipment.dropItem(location);
     }
@@ -61,13 +63,13 @@ public class DefaultEquipmentTest {
 
         when(world.dropItem(location, itemStack)).thenReturn(mock(Item.class));
 
-        DefaultEquipment equipment = new DefaultEquipment(context);
+        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.setItemStack(itemStack);
         Item droppedItem = equipment.dropItem(location);
 
         assertNotNull(droppedItem);
 
-        verify(context).registerItem(droppedItem);
+        verify(itemRegistry).registerEntity(droppedItem);
         verify(world).dropItem(location, itemStack);
     }
 
@@ -79,7 +81,7 @@ public class DefaultEquipmentTest {
         ItemFunction<EquipmentHolder> function = (ItemFunction<EquipmentHolder>) mock(ItemFunction.class);
         when(function.isAvailable()).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment(context);
+        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.getControls().addControl(Action.LEFT_CLICK, function);
         equipment.setHolder(holder);
         equipment.onLeftClick();
@@ -95,7 +97,7 @@ public class DefaultEquipmentTest {
         ItemFunction<EquipmentHolder> function = (ItemFunction<EquipmentHolder>) mock(ItemFunction.class);
         when(function.isAvailable()).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment(context);
+        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.getControls().addControl(Action.RIGHT_CLICK, function);
         equipment.setHolder(holder);
         equipment.onRightClick();

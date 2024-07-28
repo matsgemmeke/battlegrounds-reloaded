@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.reload;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
 import org.jetbrains.annotations.NotNull;

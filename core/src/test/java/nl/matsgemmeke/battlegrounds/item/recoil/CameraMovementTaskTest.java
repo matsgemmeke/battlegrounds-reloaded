@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
-import nl.matsgemmeke.battlegrounds.entity.RecoilReceiver;
 import org.junit.Before;
 import org.junit.Test;
 

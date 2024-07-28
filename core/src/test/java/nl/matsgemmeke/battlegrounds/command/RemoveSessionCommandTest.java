@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.GameProvider;
+import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.session.Session;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.locale.PlaceholderEntry;
 import nl.matsgemmeke.battlegrounds.locale.TranslationKey;
 import nl.matsgemmeke.battlegrounds.locale.Translator;
@@ -15,16 +15,16 @@ import static org.mockito.Mockito.*;
 public class RemoveSessionCommandTest {
 
     private CommandSender sender;
-    private GameProvider gameProvider;
-    private Session session;
+    private GameContext sessionContext;
+    private GameContextProvider contextProvider;
     private TaskRunner taskRunner;
     private Translator translator;
 
     @Before
     public void setUp() {
         this.sender = mock(CommandSender.class);
-        this.gameProvider = mock(GameProvider.class);
-        this.session = mock(Session.class);
+        this.sessionContext = mock(GameContext.class);
+        this.contextProvider = mock(GameContextProvider.class);
         this.taskRunner = mock(TaskRunner.class);
         this.translator = mock(Translator.class);
 
@@ -35,7 +35,7 @@ public class RemoveSessionCommandTest {
     public void shouldAddSenderToConfirmListUponFirstExecutingCommand() {
         int gameId = 1;
 
-        RemoveSessionCommand command = new RemoveSessionCommand(gameProvider, taskRunner, translator);
+        RemoveSessionCommand command = new RemoveSessionCommand(contextProvider, taskRunner, translator);
         command.execute(sender, gameId);
 
         verify(taskRunner).runTaskLater(any(Runnable.class), anyLong());
@@ -46,11 +46,11 @@ public class RemoveSessionCommandTest {
         int sessionId = 1;
         String message = "hello";
 
-        when(gameProvider.getSession(sessionId)).thenReturn(session);
-        when(gameProvider.removeSession(session)).thenReturn(true);
+        when(contextProvider.getSessionContext(sessionId)).thenReturn(sessionContext);
+        when(contextProvider.removeSessionContext(sessionId)).thenReturn(true);
         when(translator.translate(eq(TranslationKey.SESSION_REMOVED.getPath()), any(PlaceholderEntry.class))).thenReturn(message);
 
-        RemoveSessionCommand command = new RemoveSessionCommand(gameProvider, taskRunner, translator);
+        RemoveSessionCommand command = new RemoveSessionCommand(contextProvider, taskRunner, translator);
         command.execute(sender, sessionId);
         command.execute(sender, sessionId);
 
@@ -62,11 +62,11 @@ public class RemoveSessionCommandTest {
         int sessionId = 1;
         String message = "hello";
 
-        when(gameProvider.getSession(sessionId)).thenReturn(session);
-        when(gameProvider.removeSession(session)).thenReturn(false);
+        when(contextProvider.getSessionContext(sessionId)).thenReturn(sessionContext);
+        when(contextProvider.removeSessionContext(sessionId)).thenReturn(false);
         when(translator.translate(eq(TranslationKey.SESSION_REMOVAL_FAILED.getPath()), any(PlaceholderEntry.class))).thenReturn(message);
 
-        RemoveSessionCommand command = new RemoveSessionCommand(gameProvider, taskRunner, translator);
+        RemoveSessionCommand command = new RemoveSessionCommand(contextProvider, taskRunner, translator);
         command.execute(sender, sessionId);
         command.execute(sender, sessionId);
 

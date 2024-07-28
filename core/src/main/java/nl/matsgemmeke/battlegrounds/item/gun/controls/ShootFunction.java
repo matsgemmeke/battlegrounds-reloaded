@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
-import nl.matsgemmeke.battlegrounds.entity.GunHolder;
-import nl.matsgemmeke.battlegrounds.game.audio.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import org.jetbrains.annotations.NotNull;
 

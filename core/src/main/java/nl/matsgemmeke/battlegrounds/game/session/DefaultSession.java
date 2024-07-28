@@ -3,18 +3,16 @@ package nl.matsgemmeke.battlegrounds.game.session;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.*;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
-import nl.matsgemmeke.battlegrounds.item.ItemRegister;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
 
 public class DefaultSession extends BaseGame implements Session {
 
@@ -22,9 +20,9 @@ public class DefaultSession extends BaseGame implements Session {
     @NotNull
     private InternalsProvider internals;
     @NotNull
-    private ItemRegister<Equipment, EquipmentHolder> equipmentRegister;
+    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
     @NotNull
-    private ItemRegister<Gun, GunHolder> gunRegister;
+    private ItemStorage<Gun, GunHolder> gunStorage;
     @NotNull
     private SessionConfiguration configuration;
 
@@ -32,7 +30,7 @@ public class DefaultSession extends BaseGame implements Session {
             int id,
             @NotNull SessionConfiguration configuration,
             @NotNull InternalsProvider internals,
-            @NotNull ItemRegister<Gun, GunHolder> gunRegister
+            @NotNull ItemStorage<Gun, GunHolder> gunStorage
     ) {
         this.id = id;
         this.configuration = configuration;
@@ -45,13 +43,18 @@ public class DefaultSession extends BaseGame implements Session {
     }
 
     @NotNull
-    public ItemRegister<Equipment, EquipmentHolder> getEquipmentRegister() {
-        return equipmentRegister;
+    public GameContext getContext() {
+        throw new UnsupportedOperationException();
     }
 
     @NotNull
-    public ItemRegister<Gun, GunHolder> getGunRegister() {
-        return gunRegister;
+    public ItemStorage<Equipment, EquipmentHolder> getEquipmentStorage() {
+        return equipmentStorage;
+    }
+
+    @NotNull
+    public ItemStorage<Gun, GunHolder> getGunStorage() {
+        return gunStorage;
     }
 
     public int getId() {
@@ -68,36 +71,7 @@ public class DefaultSession extends BaseGame implements Session {
         return new DefaultGamePlayer(player, internals);
     }
 
-    @NotNull
-    public Iterable<GamePlayer> getPlayers() {
-        return Collections.emptyList();
-    }
-
     public double calculateDamage(@NotNull Entity entity, @NotNull Entity damager, double damage) {
         return damage;
-    }
-
-    public boolean handleItemChange(@NotNull GamePlayer gamePlayer, @Nullable ItemStack changeFrom, @Nullable ItemStack changeTo) {
-        return false;
-    }
-
-    public boolean handleItemDrop(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem) {
-        return true;
-    }
-
-    public boolean handleItemLeftClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        return true;
-    }
-
-    public boolean handleItemPickup(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem) {
-        return false;
-    }
-
-    public boolean handleItemRightClick(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        return true;
-    }
-
-    public boolean handleItemSwap(@NotNull GamePlayer gamePlayer, @Nullable ItemStack swapFrom, @Nullable ItemStack swapTo) {
-        return false;
     }
 }

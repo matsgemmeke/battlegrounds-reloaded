@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.scope;
 
-import nl.matsgemmeke.battlegrounds.entity.ScopeUser;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,6 +1,5 @@
-package nl.matsgemmeke.battlegrounds.game;
+package nl.matsgemmeke.battlegrounds.game.audio;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
