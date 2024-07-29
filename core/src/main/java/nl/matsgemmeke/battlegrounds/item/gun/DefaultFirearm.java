@@ -19,7 +19,10 @@ import java.util.List;
 
 public class DefaultFirearm extends BaseGun implements Firearm {
 
-    private static final DustOptions defaultParticleColor = new DustOptions(Color.WHITE, 1);
+    private static final double ENTITY_FINDING_RANGE = 0.1;
+    private static final double PROJECTILE_DISTANCE_JUMP = 0.5;
+    private static final double PROJECTILE_DISTANCE_START = 0.5;
+    private static final DustOptions DEFAULT_PARTICLE_COLOR = new DustOptions(Color.WHITE, 1);
 
     @NotNull
     private AudioEmitter audioEmitter;
@@ -112,7 +115,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
             return;
         }
 
-        world.spawnParticle(Particle.REDSTONE, location, 1, 0.0, 0.0, 0.0, 0.0, defaultParticleColor);
+        world.spawnParticle(Particle.REDSTONE, location, 1, 0.0, 0.0, 0.0, 0.0, DEFAULT_PARTICLE_COLOR);
     }
 
     private double getDamage(@NotNull Location startingLocation, @NotNull Location targetLocation, @NotNull Location projectileLocation) {
@@ -142,9 +145,11 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     }
 
     private boolean inflictDamage(@NotNull Location startingLocation, @NotNull Location projectileLocation) {
-        double range = 0.1;
+        for (GameEntity target : collisionDetector.findTargets(holder, projectileLocation, ENTITY_FINDING_RANGE)) {
+            if (target.getEntity() == holder.getEntity()) {
+                continue;
+            }
 
-        for (GameEntity target : collisionDetector.findTargets(holder, projectileLocation, range)) {
             Location targetLocation = target.getEntity().getLocation();
 
             double damage = this.getDamage(startingLocation, targetLocation, projectileLocation);
@@ -220,8 +225,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     }
 
     private void shootProjectile(@NotNull Location direction) {
-        double distance = 0.5;
-        double distanceJump = 0.5;
+        double distance = PROJECTILE_DISTANCE_START;
 
         // Keep reference to starting point
         Location startingPoint = direction.clone();
@@ -246,7 +250,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
             direction.subtract(vector);
 
-            distance += distanceJump;
+            distance += PROJECTILE_DISTANCE_JUMP;
         } while (distance < longRange);
     }
 

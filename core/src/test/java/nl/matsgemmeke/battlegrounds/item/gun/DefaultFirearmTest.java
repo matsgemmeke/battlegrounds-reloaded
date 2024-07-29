@@ -209,6 +209,24 @@ public class DefaultFirearmTest {
     }
 
     @Test
+    public void shouldNeverInflictDamageOnGunHolder() {
+        World world = mock(World.class);
+        Location startingLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
+
+        when(holder.getRelativeAccuracy()).thenReturn(2.0f);
+        when(holder.getShootingDirection()).thenReturn(startingLocation);
+
+        when(collisionDetector.findTargets(eq(holder), any(), eq(0.1))).thenReturn(List.of(holder));
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector);
+        firearm.setHolder(holder);
+        firearm.setShotSounds(Collections.emptyList());
+        firearm.shoot();
+
+        verify(holder, never()).damage(anyDouble());
+    }
+
+    @Test
     public void canShootProjectilesAtShortDistanceTarget() {
         List<GameSound> shotSounds = Collections.emptyList();
 

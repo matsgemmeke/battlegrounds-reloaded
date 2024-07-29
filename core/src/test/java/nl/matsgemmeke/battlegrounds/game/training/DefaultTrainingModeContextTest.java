@@ -31,6 +31,9 @@ public class DefaultTrainingModeContextTest {
     public void setUp() {
         internals = mock(InternalsProvider.class);
         trainingMode = mock(TrainingMode.class);
+
+        EntityStorage<GamePlayer> playerStorage = new EntityStorage<>();
+        when(trainingMode.getPlayerStorage()).thenReturn(playerStorage);
     }
 
     @Test

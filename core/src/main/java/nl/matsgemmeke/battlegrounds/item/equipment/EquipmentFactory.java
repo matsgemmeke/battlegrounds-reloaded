@@ -104,7 +104,7 @@ public class EquipmentFactory implements WeaponFactory {
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
 
-            ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"));
+            ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
             ItemMechanismActivation activation = mechanismActivationFactory.make(section.getSection("activation"), equipment, mechanism);
 
             if (cookActionValue != null) {

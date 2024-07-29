@@ -31,7 +31,7 @@ public class TrainingModeCollisionDetector implements CollisionDetector {
         List<GameEntity> entities = new ArrayList<>();
 
         for (Entity entity : location.getWorld().getNearbyEntities(location, range, range, range)) {
-            if (entity != gameEntity.getEntity() && entity instanceof LivingEntity) {
+            if (entity instanceof LivingEntity) {
                 entities.add(new TrainingModeEntity((LivingEntity) entity));
             }
         }

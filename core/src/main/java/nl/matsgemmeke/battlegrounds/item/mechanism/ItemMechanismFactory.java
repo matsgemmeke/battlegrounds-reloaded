@@ -1,12 +1,15 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemMechanismFactory {
 
-    public ItemMechanism make(@NotNull Section section) {
+    public ItemMechanism make(@NotNull Section section, @NotNull GameContext context) {
         String type = section.getString("type");
 
         if (type == null) {
@@ -23,11 +26,22 @@ public class ItemMechanismFactory {
 
         switch (equipmentMechanismType) {
             case EXPLOSION -> {
+                CollisionDetector collisionDetector = context.getCollisionDetector();
+
                 float power = section.getFloat("power");
                 boolean setFire = section.getBoolean("set-fire");
                 boolean breakBlocks = section.getBoolean("break-blocks");
 
-                return new ExplosionMechanism(power, setFire, breakBlocks);
+                double longRangeDamage = section.getDouble("range.long-range.damage");
+                double longRangeDistance = section.getDouble("range.long-range.distance");
+                double mediumRangeDamage = section.getDouble("range.medium-range.damage");
+                double mediumRangeDistance = section.getDouble("range.medium-range.distance");
+                double shortRangeDamage = section.getDouble("range.short-range.damage");
+                double shortRangeDistance = section.getDouble("range.short-range.distance");
+
+                RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
+
+                return new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
             }
         }
 

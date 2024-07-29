@@ -105,7 +105,7 @@ public class EquipmentFactoryTest {
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(mechanismFactory.make(any())).thenReturn(mechanism);
+        when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
         when(mechanismActivationFactory.make(any(), any(), eq(mechanism))).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
@@ -143,7 +143,7 @@ public class EquipmentFactoryTest {
         ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
         when(context.getEquipmentRegistry()).thenReturn(registry);
 
-        when(mechanismFactory.make(any())).thenReturn(mechanism);
+        when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
         when(mechanismActivationFactory.make(any(), any(), eq(mechanism))).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
