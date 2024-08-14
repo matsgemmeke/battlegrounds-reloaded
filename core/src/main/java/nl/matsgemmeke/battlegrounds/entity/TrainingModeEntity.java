@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,11 @@ public class TrainingModeEntity implements GameEntity {
     @NotNull
     public LivingEntity getEntity() {
         return entity;
+    }
+
+    @NotNull
+    public Location getLocation() {
+        return entity.getLocation();
     }
 
     public double damage(double damageAmount) {

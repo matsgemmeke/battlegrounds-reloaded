@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,11 @@ public class DefaultGameItem implements GameItem {
     @NotNull
     public Item getEntity() {
         return itemEntity;
+    }
+
+    @NotNull
+    public Location getLocation() {
+        return itemEntity.getLocation();
     }
 
     public double damage(double damageAmount) {

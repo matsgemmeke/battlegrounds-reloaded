@@ -138,7 +138,7 @@ public class DefaultGamePlayer implements GamePlayer {
         internals.setPlayerRotation(player, yaw, pitch);
     }
 
-    public boolean updateItemStack(@NotNull ItemStack itemStack) {
+    public boolean setHeldItem(@Nullable ItemStack itemStack) {
         player.getInventory().setItemInMainHand(itemStack);
         return true;
     }

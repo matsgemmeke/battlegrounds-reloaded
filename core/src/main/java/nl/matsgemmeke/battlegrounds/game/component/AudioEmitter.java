@@ -23,5 +23,5 @@ public interface AudioEmitter {
      * @param sound the sound
      * @param location the location to play the sound
      */
-    void playSounds(@NotNull Iterable<GameSound> sound,@NotNull Location location);
+    void playSounds(@NotNull Iterable<GameSound> sound, @NotNull Location location);
 }

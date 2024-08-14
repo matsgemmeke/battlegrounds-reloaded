@@ -45,13 +45,26 @@ public class DefaultEquipmentTest {
         equipment.dropItem(location);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowErrorWhenDroppingItemAtLocationWithoutWorld() {
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowErrorWhenDroppingItemAtLocationWithoutHolder() {
         ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
         Location location = new Location(null, 1, 1, 1);
 
         DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.setItemStack(itemStack);
+        equipment.dropItem(location);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowErrorWhenDroppingItemAtLocationWithoutWorld() {
+        ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
+        Location location = new Location(null, 1, 1, 1);
+
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
+        equipment.setItemStack(itemStack);
+        equipment.setHolder(holder);
         equipment.dropItem(location);
     }
 
@@ -61,10 +74,14 @@ public class DefaultEquipmentTest {
         World world = mock(World.class);
         Location location = new Location(world, 1, 1, 1);
 
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.getLocation()).thenReturn(location);
+
         when(world.dropItem(location, itemStack)).thenReturn(mock(Item.class));
 
         DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.setItemStack(itemStack);
+        equipment.setHolder(holder);
         Item droppedItem = equipment.dropItem(location);
 
         assertNotNull(droppedItem);

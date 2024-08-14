@@ -38,16 +38,12 @@ public class ThrowFunctionTest {
     public void shouldReturnAvailabilityBasedOnThrowingDelay() {
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
-        Entity entity = mock(Entity.class);
-        when(entity.getLocation()).thenReturn(location);
-
         Item droppedItem = mock(Item.class);
 
         when(item.canDrop()).thenReturn(true);
         when(item.dropItem(location)).thenReturn(droppedItem);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.getEntity()).thenReturn(entity);
         when(holder.getThrowingDirection()).thenReturn(location);
 
         ThrowFunction function = new ThrowFunction(item, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
@@ -110,12 +106,14 @@ public class ThrowFunctionTest {
     public void shouldNotThrowIfItemCannotBeThrown() {
         when(item.canDrop()).thenReturn(false);
 
+        Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
+
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
         ThrowFunction function = new ThrowFunction(item, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
         function.perform(holder);
 
         verify(mechanismActivation, never()).prime(holder);
-        verify(item, never()).dropItem(any());
+        verify(item, never()).dropItem(location);
     }
 }

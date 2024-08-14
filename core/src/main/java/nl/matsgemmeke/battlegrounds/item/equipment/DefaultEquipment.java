@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,10 +22,21 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private Item droppedItem;
     @NotNull
     private ItemControls<EquipmentHolder> controls;
+    @Nullable
+    private ItemStack activatorItemStack;
 
     public DefaultEquipment(@NotNull EntityRegistry<GameItem, Item> itemRegistry) {
         this.itemRegistry = itemRegistry;
         this.controls = new ItemControls<>();
+    }
+
+    @Nullable
+    public ItemStack getActivatorItemStack() {
+        return activatorItemStack;
+    }
+
+    public void setActivatorItemStack(@Nullable ItemStack activatorItemStack) {
+        this.activatorItemStack = activatorItemStack;
     }
 
     @NotNull
@@ -56,6 +68,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
             throw new IllegalStateException("Cannot perform an item drop for an item without item stack");
         }
 
+        if (holder == null) {
+            throw new IllegalStateException("Cannot perform an item drop if there is no holder");
+        }
+
         World world = location.getWorld();
 
         if (world == null) {
@@ -66,7 +82,14 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
         itemRegistry.registerEntity(droppedItem);
 
+        // Update the original item to the activator item. If the activator item is null it will set an empty item.
+        holder.setHeldItem(activatorItemStack);
+
         return droppedItem;
+    }
+
+    public boolean isMatching(@NotNull ItemStack itemStack) {
+        return super.isMatching(itemStack) || activatorItemStack != null && activatorItemStack.isSimilar(itemStack);
     }
 
     public void onChangeFrom() {

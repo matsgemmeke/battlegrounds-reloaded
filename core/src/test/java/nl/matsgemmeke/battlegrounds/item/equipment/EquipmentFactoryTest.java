@@ -91,6 +91,31 @@ public class EquipmentFactoryTest {
     }
 
     @Test
+    public void shouldCreateEquipmentItemWithActivatorItem() {
+        short durability = (short) 1;
+
+        Damageable itemMeta = mock(Damageable.class);
+        when(itemFactory.getItemMeta(Material.FLINT)).thenReturn(itemMeta);
+
+        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
+        when(context.getEquipmentRegistry()).thenReturn(registry);
+
+        Section activatorItemSection = mock(Section.class);
+        when(activatorItemSection.getShort("durability")).thenReturn(durability);
+        when(activatorItemSection.getString("material")).thenReturn("FLINT");
+
+        when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
+
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertEquals(Material.FLINT, equipment.getActivatorItemStack().getType());
+
+        verify(itemMeta).setDamage(durability);
+        verify(registry).registerItem(equipment);
+    }
+
+    @Test
     public void shouldCreateEquipmentItemWithThrowControls() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
@@ -165,5 +190,31 @@ public class EquipmentFactoryTest {
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         factory.make(configuration, context);
+    }
+
+    @Test
+    public void shouldCreateEquipmentItemWithActivateControls() {
+        Section controlsSection = mock(Section.class);
+        when(controlsSection.getString("activate")).thenReturn("RIGHT_CLICK");
+
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+
+        ItemMechanism mechanism = mock(ItemMechanism.class);
+        ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+
+        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
+        when(context.getEquipmentRegistry()).thenReturn(registry);
+
+        when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
+        when(mechanismActivationFactory.make(any(), any(), eq(mechanism))).thenReturn(activation);
+
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
+        Equipment equipment = factory.make(configuration, context, gamePlayer);
+
+        assertNotNull(equipment);
+        assertTrue(equipment instanceof DefaultEquipment);
+
+        verify(registry).registerItem(equipment, gamePlayer);
     }
 }

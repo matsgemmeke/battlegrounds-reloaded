@@ -1,0 +1,36 @@
+activation:
+  activation-sound: UI_BUTTON_CLICK-1-1.5-0
+  delay-until-activation: 5
+  type: MANUAL
+controls:
+  activate: RIGHT_CLICK
+  throw: LEFT_CLICK
+description: A plastic explosive device that is detonated remotely with the clacker.
+display-name: C4
+equipment-type: LETHAL
+id: C4
+item:
+  activator:
+    durability: 3
+    material: FLINT_AND_STEEL
+  durability: 2
+  material: FLINT_AND_STEEL
+mechanism:
+  break-blocks: false
+  power: 3.0
+  range:
+    long-range:
+      damage: 50.0
+      distance: 10.0
+    medium-range:
+      damage: 150.0
+      distance: 5.0
+    short-range:
+      damage: 300.0
+      distance: 2.5
+  set-fire: false
+  type: EXPLOSION
+throwing:
+  delay-between-throws: 60
+  projectile-speed: 1.0
+  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0

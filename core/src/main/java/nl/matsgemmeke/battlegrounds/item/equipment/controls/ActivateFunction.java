@@ -8,47 +8,36 @@ import nl.matsgemmeke.battlegrounds.item.Droppable;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
-import org.bukkit.Location;
-import org.bukkit.entity.Item;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
-public class ThrowFunction implements ItemFunction<EquipmentHolder> {
-
-    // Take a high number to make sure the item cannot be picked up before its ignition
-    private static final int DEFAULT_PICKUP_DELAY = 1000;
+public class ActivateFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
     private AudioEmitter audioEmitter;
-    private boolean delaying;
-    private double projectileSpeed;
     @NotNull
     private Droppable item;
     @NotNull
     private ItemMechanismActivation mechanismActivation;
     @NotNull
     private Iterable<GameSound> sounds;
-    private long delayBetweenThrows;
+    private long delayUntilActivation;
     @NotNull
     private TaskRunner taskRunner;
 
-    public ThrowFunction(
+    public ActivateFunction(
             @NotNull Droppable item,
             @NotNull ItemMechanismActivation mechanismActivation,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
-            double projectileSpeed,
-            long delayBetweenThrows
+            long delayUntilActivation
     ) {
         this.item = item;
         this.mechanismActivation = mechanismActivation;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
-        this.projectileSpeed = projectileSpeed;
-        this.delayBetweenThrows = delayBetweenThrows;
-        this.delaying = false;
+        this.delayUntilActivation = delayUntilActivation;
         this.sounds = new HashSet<>();
     }
 
@@ -57,7 +46,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return !delaying;
+        return item.getDroppedItem() != null && mechanismActivation.isPrimed();
     }
 
     public boolean isBlocking() {
@@ -65,7 +54,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isPerforming() {
-        return delaying;
+        return false;
     }
 
     public boolean cancel() {
@@ -73,26 +62,11 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        if (!item.canDrop()) {
-            return false;
-        }
+        audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
 
-        Location location = holder.getThrowingDirection();
-        Vector velocity = location.getDirection().multiply(projectileSpeed);
+        taskRunner.runTaskLater(() -> mechanismActivation.activate(holder), delayUntilActivation);
 
-        Item droppedItem = item.dropItem(location);
-        droppedItem.setPickupDelay(DEFAULT_PICKUP_DELAY);
-        droppedItem.setVelocity(velocity);
-
-        audioEmitter.playSounds(sounds, droppedItem.getLocation());
-
-        delaying = true;
-        taskRunner.runTaskLater(() -> delaying = false, delayBetweenThrows);
-
-        // Prime the mechanism if it isn't already cooked by the holder
-        if (!mechanismActivation.isPrimed()) {
-            mechanismActivation.prime(holder);
-        }
+        holder.setHeldItem(null);
 
         return true;
     }

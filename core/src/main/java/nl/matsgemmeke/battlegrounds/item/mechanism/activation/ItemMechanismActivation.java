@@ -10,6 +10,13 @@ import org.jetbrains.annotations.NotNull;
 public interface ItemMechanismActivation {
 
     /**
+     * Activates the mechanism instantly, overriding any other procedures.
+     *
+     * @param holder the holder who triggers the activation
+     */
+    void activate(@NotNull ItemHolder holder);
+
+    /**
      * Gets whether the activation is primed.
      *
      * @return whether the activation is primed

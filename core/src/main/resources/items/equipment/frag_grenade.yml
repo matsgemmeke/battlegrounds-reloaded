@@ -1,6 +1,6 @@
 activation:
-  delay-until-trigger: 80
-  type: DELAYED_TRIGGER
+  delay-until-activation: 80
+  type: DELAYED
 controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK

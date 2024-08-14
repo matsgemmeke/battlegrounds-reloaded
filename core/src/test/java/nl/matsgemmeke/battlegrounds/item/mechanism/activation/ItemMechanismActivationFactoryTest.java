@@ -30,13 +30,24 @@ public class ItemMechanismActivationFactoryTest {
 
     @Test
     public void shouldCreateInstanceForDelayedActivationType() {
-        when(section.getString("type")).thenReturn("DELAYED_TRIGGER");
+        when(section.getString("type")).thenReturn("DELAYED");
 
         ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
         ItemMechanismActivation activation = factory.make(section, item, mechanism);
 
         assertNotNull(activation);
         assertTrue(activation instanceof DelayedActivation);
+    }
+
+    @Test
+    public void shouldCreateInstanceForManualActivationType() {
+        when(section.getString("type")).thenReturn("MANUAL");
+
+        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
+        ItemMechanismActivation activation = factory.make(section, item, mechanism);
+
+        assertNotNull(activation);
+        assertTrue(activation instanceof ManualActivation);
     }
 
     @Test(expected = InvalidItemConfigurationException.class)

@@ -43,9 +43,12 @@ public class ItemMechanismActivationFactory {
         }
 
         switch (mechanismActivationType) {
-            case DELAYED_TRIGGER -> {
-                long delayUntilTrigger = section.getLong("delay-until-trigger");
-                return new DelayedActivation(item, mechanism, taskRunner, delayUntilTrigger);
+            case DELAYED -> {
+                long delayUntilActivation = section.getLong("delay-until-activation");
+                return new DelayedActivation(item, mechanism, taskRunner, delayUntilActivation);
+            }
+            case MANUAL -> {
+                return new ManualActivation(item, mechanism);
             }
         }
 

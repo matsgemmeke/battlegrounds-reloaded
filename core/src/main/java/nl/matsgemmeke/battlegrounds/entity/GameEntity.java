@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,14 @@ public interface GameEntity {
      */
     @NotNull
     Entity getEntity();
+
+    /**
+     * Gets the location of the entity.
+     *
+     * @return the entity location
+     */
+    @NotNull
+    Location getLocation();
 
     /**
      * Applies damage to the entity.

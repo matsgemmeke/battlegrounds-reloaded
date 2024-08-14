@@ -466,7 +466,7 @@ public class DefaultFirearmTest {
         ItemStack itemStack = mock(ItemStack.class);
         ItemMeta itemMeta = mock(ItemMeta.class);
 
-        when(holder.updateItemStack(itemStack)).thenReturn(true);
+        when(holder.setHeldItem(itemStack)).thenReturn(true);
         when(itemStack.getItemMeta()).thenReturn(itemMeta);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector);

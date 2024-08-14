@@ -182,7 +182,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
 
         itemStack.setItemMeta(itemMeta);
 
-        return holder != null && holder.updateItemStack(itemStack);
+        return holder != null && holder.setHeldItem(itemStack);
     }
 
     public void updateAmmoDisplay() {
