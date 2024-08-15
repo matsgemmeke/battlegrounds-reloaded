@@ -44,6 +44,7 @@ public class ItemControlsTest {
 
         ItemFunction<GunHolder> function1 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function1.isAvailable()).thenReturn(true);
+        when(function1.perform(holder)).thenReturn(true);
 
         ItemFunction<GunHolder> function2 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function2.isAvailable()).thenReturn(true);
@@ -89,6 +90,7 @@ public class ItemControlsTest {
         when(function1.isAvailable()).thenReturn(true).thenReturn(false);
         when(function1.isBlocking()).thenReturn(true);
         when(function1.isPerforming()).thenReturn(false).thenReturn(true);
+        when(function1.perform(holder)).thenReturn(true);
 
         ItemFunction<GunHolder> function2 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function2.isAvailable()).thenReturn(true);
@@ -110,6 +112,7 @@ public class ItemControlsTest {
         ItemFunction<GunHolder> function1 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function1.isAvailable()).thenReturn(true).thenReturn(false);
         when(function1.isPerforming()).thenReturn(false).thenReturn(true);
+        when(function1.perform(holder)).thenReturn(true);
 
         ItemFunction<GunHolder> function2 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function2.isAvailable()).thenReturn(true);

@@ -28,6 +28,6 @@ mechanism:
   type: EXPLOSION
 throwing:
   cook-sound: ENTITY_TNT_PRIMED-1-2-0
-  delay-between-throws: 30
+  delay-after-throw: 30
   projectile-speed: 1.2
   throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0

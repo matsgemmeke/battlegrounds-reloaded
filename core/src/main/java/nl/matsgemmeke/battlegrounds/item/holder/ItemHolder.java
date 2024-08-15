@@ -1,6 +1,7 @@
-package nl.matsgemmeke.battlegrounds.item;
+package nl.matsgemmeke.battlegrounds.item.holder;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.item.Item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 

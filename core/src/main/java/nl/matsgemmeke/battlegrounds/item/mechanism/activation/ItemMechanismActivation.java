@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import org.jetbrains.annotations.NotNull;
 

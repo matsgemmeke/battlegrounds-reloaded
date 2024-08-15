@@ -133,12 +133,12 @@ public class EquipmentFactory implements WeaponFactory {
                 equipment.getControls().addControl(cookAction, cookFunction);
             }
 
-            long delayBetweenThrows = section.getLong("throwing.delay-between-throws");
+            long delayAfterThrow = section.getLong("throwing.delay-after-throw");
             double projectileSpeed = section.getDouble("throwing.projectile-speed");
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
-            ThrowFunction throwFunction = new ThrowFunction(equipment, activation, audioEmitter, taskRunner, projectileSpeed, delayBetweenThrows);
+            ThrowFunction throwFunction = new ThrowFunction(equipment, activation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
             throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);

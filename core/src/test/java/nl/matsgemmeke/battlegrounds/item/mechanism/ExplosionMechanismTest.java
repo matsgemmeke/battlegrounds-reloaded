@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;

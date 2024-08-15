@@ -22,7 +22,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
     private AudioEmitter audioEmitter;
-    private boolean delaying;
     private double projectileSpeed;
     @NotNull
     private Droppable item;
@@ -30,7 +29,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private ItemMechanismActivation mechanismActivation;
     @NotNull
     private Iterable<GameSound> sounds;
-    private long delayBetweenThrows;
+    private long delayAfterThrow;
     @NotNull
     private TaskRunner taskRunner;
 
@@ -40,15 +39,14 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             double projectileSpeed,
-            long delayBetweenThrows
+            long delayAfterThrow
     ) {
         this.item = item;
         this.mechanismActivation = mechanismActivation;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.projectileSpeed = projectileSpeed;
-        this.delayBetweenThrows = delayBetweenThrows;
-        this.delaying = false;
+        this.delayAfterThrow = delayAfterThrow;
         this.sounds = new HashSet<>();
     }
 
@@ -57,7 +55,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return !delaying;
+        return true;
     }
 
     public boolean isBlocking() {
@@ -65,7 +63,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isPerforming() {
-        return delaying;
+        return false;
     }
 
     public boolean cancel() {
@@ -73,7 +71,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        if (!item.canDrop()) {
+        if (!item.canDrop() || !holder.isAbleToThrow()) {
             return false;
         }
 
@@ -86,8 +84,9 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
         audioEmitter.playSounds(sounds, droppedItem.getLocation());
 
-        delaying = true;
-        taskRunner.runTaskLater(() -> delaying = false, delayBetweenThrows);
+        holder.setAbleToThrow(false);
+
+        taskRunner.runTaskLater(() -> holder.setAbleToThrow(true), delayAfterThrow);
 
         // Prime the mechanism if it isn't already cooked by the holder
         if (!mechanismActivation.isPrimed()) {

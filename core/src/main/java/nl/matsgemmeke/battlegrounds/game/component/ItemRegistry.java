@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component;
 
 import nl.matsgemmeke.battlegrounds.item.Item;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.controls;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,8 +49,7 @@ public class ItemControls<T extends ItemHolder> {
         }
 
         for (ItemFunction<T> function : functions) {
-            if (function.isAvailable()) {
-                function.perform(holder);
+            if (function.isAvailable() && function.perform(holder)) {
                 break;
             }
         }

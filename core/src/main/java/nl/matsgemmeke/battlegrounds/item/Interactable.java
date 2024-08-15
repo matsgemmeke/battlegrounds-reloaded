@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item;
 
+import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilReceiver;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
