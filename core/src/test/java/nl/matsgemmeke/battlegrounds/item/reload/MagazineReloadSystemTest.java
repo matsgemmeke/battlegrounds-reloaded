@@ -84,7 +84,7 @@ public class MagazineReloadSystemTest {
     @Test
     public void shouldNotCancelIfItHasNoPerformer() {
         MagazineReloadSystem reloadSystem = new MagazineReloadSystem(ammunitionHolder, audioEmitter, taskRunner, 0);
-        boolean cancelled = reloadSystem.cancel();
+        boolean cancelled = reloadSystem.cancelReload();
 
         assertFalse(cancelled);
     }
@@ -98,7 +98,7 @@ public class MagazineReloadSystemTest {
         MagazineReloadSystem reloadSystem = new MagazineReloadSystem(ammunitionHolder, audioEmitter, taskRunner, 0);
         reloadSystem.performReload(performer);
 
-        boolean cancelled = reloadSystem.cancel();
+        boolean cancelled = reloadSystem.cancelReload();
 
         assertTrue(cancelled);
 
@@ -115,7 +115,7 @@ public class MagazineReloadSystemTest {
         MagazineReloadSystem reloadSystem = new MagazineReloadSystem(ammunitionHolder, audioEmitter, taskRunner, 0);
         reloadSystem.performReload(performer);
 
-        boolean cancelled = reloadSystem.cancel();
+        boolean cancelled = reloadSystem.cancelReload();
 
         assertTrue(cancelled);
 

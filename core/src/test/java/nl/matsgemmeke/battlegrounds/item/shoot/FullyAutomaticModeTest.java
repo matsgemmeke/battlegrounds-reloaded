@@ -36,7 +36,7 @@ public class FullyAutomaticModeTest {
         int rateOfFire = 600;
 
         FullyAutomaticMode fireMode = new FullyAutomaticMode(item, taskRunner, rateOfFire);
-        boolean cancelled = fireMode.cancel();
+        boolean cancelled = fireMode.cancelCycle();
 
         assertFalse(cancelled);
     }
@@ -51,7 +51,7 @@ public class FullyAutomaticModeTest {
 
         FullyAutomaticMode fireMode = new FullyAutomaticMode(item, taskRunner, rateOfFire);
         fireMode.activateCycle();
-        boolean cancelled = fireMode.cancel();
+        boolean cancelled = fireMode.cancelCycle();
 
         assertTrue(cancelled);
 

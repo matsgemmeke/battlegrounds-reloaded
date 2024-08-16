@@ -43,7 +43,7 @@ public class ReloadFunctionTest {
 
     @Test
     public void shouldCancelReloadSystemWhenCancelling() {
-        when(reloadSystem.cancel()).thenReturn(true);
+        when(reloadSystem.cancelReload()).thenReturn(true);
 
         ReloadFunction function = new ReloadFunction(ammunitionHolder, reloadSystem);
         boolean cancelled = function.cancel();

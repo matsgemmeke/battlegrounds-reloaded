@@ -42,7 +42,7 @@ public class ReloadFunction implements ItemFunction<GunHolder> {
     }
 
     public boolean cancel() {
-        return reloadSystem.cancel();
+        return reloadSystem.cancelReload();
     }
 
     public boolean perform(@NotNull GunHolder holder) {

@@ -84,7 +84,7 @@ public class ManualInsertionReloadSystemTest {
     @Test
     public void shouldNotCancelIfItHasNoPerformer() {
         ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(ammunitionHolder, audioEmitter, taskRunner, 0);
-        boolean cancelled = reloadSystem.cancel();
+        boolean cancelled = reloadSystem.cancelReload();
 
         assertFalse(cancelled);
     }
@@ -98,7 +98,7 @@ public class ManualInsertionReloadSystemTest {
         ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(ammunitionHolder, audioEmitter, taskRunner, 0);
         reloadSystem.performReload(performer);
 
-        boolean cancelled = reloadSystem.cancel();
+        boolean cancelled = reloadSystem.cancelReload();
 
         assertTrue(cancelled);
 
@@ -115,7 +115,7 @@ public class ManualInsertionReloadSystemTest {
         ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(ammunitionHolder, audioEmitter, taskRunner, 0);
         reloadSystem.performReload(performer);
 
-        boolean cancelled = reloadSystem.cancel();
+        boolean cancelled = reloadSystem.cancelReload();
 
         assertTrue(cancelled);
 

@@ -1,9 +1,15 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
-import nl.matsgemmeke.battlegrounds.item.ItemMechanism;
 import org.jetbrains.annotations.NotNull;
 
-public interface ReloadSystem extends ItemMechanism {
+public interface ReloadSystem {
+
+    /**
+     * Attempts to cancel the current reload operation.
+     *
+     * @return whether the reload was cancelled
+     */
+    boolean cancelReload();
 
     /**
      * Gets whether the reload system is performing a reload.

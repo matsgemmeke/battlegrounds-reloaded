@@ -68,7 +68,7 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
         return true;
     }
 
-    public boolean cancel() {
+    public boolean cancelReload() {
         if (currentPerformer == null) {
             return false;
         }
@@ -89,7 +89,7 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
         ammunitionHolder.updateAmmoDisplay();
 
         if (ammunitionHolder.getMagazineAmmo() >= ammunitionHolder.getMagazineSize() || ammunitionHolder.getReserveAmmo() <= 0) {
-            this.cancel();
+            this.cancelReload();
         }
     }
 }

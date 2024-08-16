@@ -51,7 +51,7 @@ public class ShootFunctionTest {
 
     @Test
     public void shouldCancelFireModeCycleWhenCancelling() {
-        when(fireMode.cancel()).thenReturn(true);
+        when(fireMode.cancelCycle()).thenReturn(true);
 
         ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
         boolean cancelled = function.cancel();

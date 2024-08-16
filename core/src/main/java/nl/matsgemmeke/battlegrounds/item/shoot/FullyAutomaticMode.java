@@ -35,14 +35,14 @@ public class FullyAutomaticMode implements FireMode {
         long delay = 0;
 
         currentTask = taskRunner.runTaskTimer(
-                new AutomaticFireCycleRunnable(item, amountOfRounds, this::cancel),
+                new AutomaticFireCycleRunnable(item, amountOfRounds, this::cancelCycle),
                 delay,
                 period
         );
         return true;
     }
 
-    public boolean cancel() {
+    public boolean cancelCycle() {
         if (currentTask == null) {
             return false;
         }

@@ -26,11 +26,11 @@ public class SemiAutomaticMode implements FireMode {
 
         delaying = true;
         item.shoot();
-        taskRunner.runTaskLater(this::cancel, delayBetweenShots);
+        taskRunner.runTaskLater(this::cancelCycle, delayBetweenShots);
         return true;
     }
 
-    public boolean cancel() {
+    public boolean cancelCycle() {
         if (!delaying) {
             return false;
         }

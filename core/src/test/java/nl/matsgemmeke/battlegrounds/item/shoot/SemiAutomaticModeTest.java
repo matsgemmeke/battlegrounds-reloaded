@@ -43,7 +43,7 @@ public class SemiAutomaticModeTest {
     @Test
     public void shouldNotCancelIfNotActivated() {
         SemiAutomaticMode fireMode = new SemiAutomaticMode(item, taskRunner, delayBetweenShots);
-        boolean cancelled = fireMode.cancel();
+        boolean cancelled = fireMode.cancelCycle();
 
         assertFalse(cancelled);
     }
@@ -52,7 +52,7 @@ public class SemiAutomaticModeTest {
     public void shouldResetDelayWhenCancelling() {
         SemiAutomaticMode fireMode = new SemiAutomaticMode(item, taskRunner, delayBetweenShots);
         fireMode.activateCycle();
-        boolean cancelled = fireMode.cancel();
+        boolean cancelled = fireMode.cancelCycle();
         fireMode.activateCycle();
 
         assertTrue(cancelled);

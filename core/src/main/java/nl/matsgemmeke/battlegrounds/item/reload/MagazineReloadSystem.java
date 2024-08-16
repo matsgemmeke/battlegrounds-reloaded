@@ -69,7 +69,7 @@ public class MagazineReloadSystem implements ReloadSystem {
         return true;
     }
 
-    public boolean cancel() {
+    public boolean cancelReload() {
         if (currentPerformer == null) {
             return false;
         }

@@ -54,7 +54,7 @@ public class ShootFunction implements ItemFunction<GunHolder> {
     }
 
     public boolean cancel() {
-        return fireMode.cancel();
+        return fireMode.cancelCycle();
     }
 
     public boolean perform(@NotNull GunHolder holder) {

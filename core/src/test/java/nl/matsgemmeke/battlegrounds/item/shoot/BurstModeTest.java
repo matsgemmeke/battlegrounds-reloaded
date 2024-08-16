@@ -36,7 +36,7 @@ public class BurstModeTest {
     @Test
     public void shouldNotCancelIfNotActivated() {
         BurstMode fireMode = new BurstMode(item, taskRunner, shotsAmount, rateOfFire);
-        boolean cancelled = fireMode.cancel();
+        boolean cancelled = fireMode.cancelCycle();
 
         assertFalse(cancelled);
     }
@@ -49,7 +49,7 @@ public class BurstModeTest {
 
         BurstMode fireMode = new BurstMode(item, taskRunner, shotsAmount, rateOfFire);
         fireMode.activateCycle();
-        boolean cancelled = fireMode.cancel();
+        boolean cancelled = fireMode.cancelCycle();
 
         assertTrue(cancelled);
 

@@ -32,14 +32,14 @@ public class BurstMode implements FireMode {
         long delay = 0;
 
         currentTask = taskRunner.runTaskTimer(
-                new AutomaticFireCycleRunnable(item, shotAmount, this::cancel),
+                new AutomaticFireCycleRunnable(item, shotAmount, this::cancelCycle),
                 delay,
                 period
         );
         return true;
     }
 
-    public boolean cancel() {
+    public boolean cancelCycle() {
         if (currentTask == null) {
             return false;
         }
