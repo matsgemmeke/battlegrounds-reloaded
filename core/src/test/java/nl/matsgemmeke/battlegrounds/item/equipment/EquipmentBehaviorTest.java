@@ -22,7 +22,7 @@ public class EquipmentBehaviorTest {
     public void setUp() {
         gamePlayer = mock(GamePlayer.class);
         equipmentStorage = new ItemStorage<>();
-        itemStack = new ItemStack(Material.FLINT_AND_STEEL);
+        itemStack = new ItemStack(Material.SHEARS);
 
         equipment = mock(Equipment.class);
         when(equipment.isMatching(itemStack)).thenReturn(true);

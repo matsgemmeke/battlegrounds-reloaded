@@ -12,8 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultEquipmentTest {
@@ -28,7 +27,7 @@ public class DefaultEquipmentTest {
 
     @Test
     public void shouldOnlyBeDroppableWhenItemStackIsSet() {
-        ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.setItemStack(itemStack);
@@ -47,7 +46,7 @@ public class DefaultEquipmentTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowErrorWhenDroppingItemAtLocationWithoutHolder() {
-        ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
         Location location = new Location(null, 1, 1, 1);
 
         DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
@@ -57,7 +56,7 @@ public class DefaultEquipmentTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowErrorWhenDroppingItemAtLocationWithoutWorld() {
-        ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
         Location location = new Location(null, 1, 1, 1);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
@@ -70,7 +69,7 @@ public class DefaultEquipmentTest {
 
     @Test
     public void shouldProduceNewItemEntityWhenDroppingItem() {
-        ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
         World world = mock(World.class);
         Location location = new Location(world, 1, 1, 1);
 
@@ -88,6 +87,33 @@ public class DefaultEquipmentTest {
 
         verify(itemRegistry).registerEntity(droppedItem);
         verify(world).dropItem(location, itemStack);
+    }
+
+    @Test
+    public void shouldDoNothingIfHolderIsNullWhenDeploying() {
+        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
+        equipment.onDeploy();
+
+        boolean deployed = equipment.isDeployed();
+
+        assertFalse(deployed);
+    }
+
+    @Test
+    public void shouldSetHolderHeldItemToActivatorItemStackWhenDeploying() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        ItemStack activatorItemStack = new ItemStack(Material.SHEARS);
+
+        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
+        equipment.setActivatorItemStack(activatorItemStack);
+        equipment.setHolder(holder);
+        equipment.onDeploy();
+
+        boolean deployed = equipment.isDeployed();
+
+        assertTrue(deployed);
+
+        verify(holder).setHeldItem(activatorItemStack);
     }
 
     @Test

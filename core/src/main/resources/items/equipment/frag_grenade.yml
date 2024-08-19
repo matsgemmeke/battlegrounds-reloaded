@@ -10,7 +10,7 @@ equipment-type: LETHAL
 id: FRAG_GRENADE
 item:
   durability: 1
-  material: FLINT_AND_STEEL
+  material: SHEARS
 mechanism:
   break-blocks: false
   power: 2.0

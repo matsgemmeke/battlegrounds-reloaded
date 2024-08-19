@@ -12,7 +12,9 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
+import nl.matsgemmeke.battlegrounds.item.deployment.PlantDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.PlantFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanismFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
@@ -114,10 +116,11 @@ public class EquipmentFactory implements WeaponFactory {
 
         String activateActionValue = controlsSection.getString("activate");
         String cookActionValue = controlsSection.getString("cook");
+        String plantActionValue = controlsSection.getString("plant");
         String throwActionValue = controlsSection.getString("throw");
 
         ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
-        ItemMechanismActivation activation = mechanismActivationFactory.make(section.getSection("activation"), equipment, mechanism);
+        ItemMechanismActivation mechanismActivation = mechanismActivationFactory.make(section.getSection("activation"), equipment, mechanism);
 
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
@@ -127,7 +130,7 @@ public class EquipmentFactory implements WeaponFactory {
 
                 List<GameSound> cookSounds = DefaultGameSound.parseSounds(section.getString("throwing.cook-sound"));
 
-                CookFunction cookFunction = new CookFunction(activation, audioEmitter);
+                CookFunction cookFunction = new CookFunction(mechanismActivation, audioEmitter);
                 cookFunction.addSounds(cookSounds);
 
                 equipment.getControls().addControl(cookAction, cookFunction);
@@ -138,10 +141,29 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
-            ThrowFunction throwFunction = new ThrowFunction(equipment, activation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+            ThrowFunction throwFunction = new ThrowFunction(equipment, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
             throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);
+        }
+
+        if (plantActionValue != null) {
+            Action plantAction = this.getActionFromConfiguration("plant", plantActionValue);
+
+            Material material;
+            String materialValue = section.getString("planting.material");
+
+            try {
+                material = Material.valueOf(materialValue);
+            } catch (IllegalArgumentException e) {
+                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", planting material " + materialValue + " is invalid");
+            }
+
+            PlantDeployment deployment = new PlantDeployment(material);
+
+            PlantFunction plantFunction = new PlantFunction(equipment, mechanismActivation, deployment);
+
+            equipment.getControls().addControl(plantAction, plantFunction);
         }
 
         if (activateActionValue != null) {
@@ -151,7 +173,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> activateSounds = DefaultGameSound.parseSounds(section.getString("activation.activation-sound"));
 
-            ActivateFunction activateFunction = new ActivateFunction(equipment, activation, audioEmitter, taskRunner, delayUntilActivation);
+            ActivateFunction activateFunction = new ActivateFunction(equipment, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
             activateFunction.addSounds(activateSounds);
 
             equipment.getControls().addControl(activateAction, activateFunction);

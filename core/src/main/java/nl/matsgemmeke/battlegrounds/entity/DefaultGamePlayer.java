@@ -5,12 +5,14 @@ import nl.matsgemmeke.battlegrounds.item.Item;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DefaultGamePlayer implements GamePlayer {
@@ -110,6 +112,11 @@ public class DefaultGamePlayer implements GamePlayer {
             }
         }
         return null;
+    }
+
+    @NotNull
+    public List<Block> getLastTwoTargetBlocks(int maxDistance) {
+        return player.getLastTwoTargetBlocks(null, maxDistance);
     }
 
     @NotNull

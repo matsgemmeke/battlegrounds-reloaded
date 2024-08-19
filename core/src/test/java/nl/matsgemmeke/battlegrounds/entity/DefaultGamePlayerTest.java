@@ -5,10 +5,13 @@ import nl.matsgemmeke.battlegrounds.item.Item;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -108,6 +111,19 @@ public class DefaultGamePlayerTest {
         gamePlayer.addWeapon(weapon);
 
         assertEquals(weapon, gamePlayer.getWeapon(itemStack));
+    }
+
+    @Test
+    public void shouldReturnPlayerTargetBlocks() {
+        int maxDistance = 3;
+        List<Block> targetBlocks = List.of(mock(Block.class), mock(Block.class));
+
+        when(player.getLastTwoTargetBlocks(null, maxDistance)).thenReturn(targetBlocks);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        List<Block> result = gamePlayer.getLastTwoTargetBlocks(maxDistance);
+
+        assertEquals(targetBlocks, result);
     }
 
     @Test

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DefaultEquipment extends BaseWeapon implements Equipment {
 
+    private boolean deployed;
     @NotNull
     private EntityRegistry<GameItem, Item> itemRegistry;
     @Nullable
@@ -28,6 +29,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public DefaultEquipment(@NotNull EntityRegistry<GameItem, Item> itemRegistry) {
         this.itemRegistry = itemRegistry;
         this.controls = new ItemControls<>();
+        this.deployed = false;
     }
 
     @Nullable
@@ -56,6 +58,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void setHolder(@Nullable EquipmentHolder holder) {
         this.holder = holder;
+    }
+
+    public boolean isDeployed() {
+        return deployed;
     }
 
     public boolean canDrop() {
@@ -96,6 +102,17 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onChangeTo() {
+    }
+
+    public void onDeploy() {
+        if (holder == null) {
+            return;
+        }
+
+        deployed = true;
+
+        // Update the original item to the activator item. If the activator item is null it will set an empty item.
+        holder.setHeldItem(activatorItemStack);
     }
 
     public void onDrop() {
