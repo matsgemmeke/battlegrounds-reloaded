@@ -27,12 +27,13 @@ mechanism:
       damage: 150.0
       distance: 5.0
     short-range:
-      damage: 300.0
+      damage: 300.0`
       distance: 2.5
   set-fire: false
   type: EXPLOSION
 planting:
   material: WARPED_BUTTON
+  plant-sound: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
 throwing:
   delay-after-throw: 30
   projectile-speed: 1.0
