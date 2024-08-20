@@ -5,9 +5,10 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.deployment.PlantDeployment;
+import nl.matsgemmeke.battlegrounds.item.deployment.PlantableObject;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
@@ -28,17 +29,17 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private Iterable<GameSound> sounds;
     @NotNull
-    private PlantDeployment deployment;
+    private Material material;
 
     public PlantFunction(
             @NotNull Deployable item,
             @NotNull ItemMechanismActivation mechanismActivation,
-            @NotNull PlantDeployment deployment,
+            @NotNull Material material,
             @NotNull AudioEmitter audioEmitter
     ) {
         this.item = item;
         this.mechanismActivation = mechanismActivation;
-        this.deployment = deployment;
+        this.material = material;
         this.audioEmitter = audioEmitter;
         this.sounds = new HashSet<>();
     }
@@ -78,11 +79,13 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
             return false;
         }
 
+        PlantableObject plantableObject = new PlantableObject(adjacentBlock, targetBlockFace, material);
+        plantableObject.plant();
+
         audioEmitter.playSounds(sounds, adjacentBlock.getLocation());
 
         item.onDeploy();
         mechanismActivation.prime(holder);
-        deployment.plant(adjacentBlock, targetBlockFace);
         return true;
     }
 }

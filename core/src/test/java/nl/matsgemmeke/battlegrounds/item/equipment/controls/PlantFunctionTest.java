@@ -3,13 +3,14 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.deployment.PlantDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.FaceAttachable;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,21 +26,21 @@ public class PlantFunctionTest {
     private AudioEmitter audioEmitter;
     private Deployable item;
     private ItemMechanismActivation mechanismActivation;
-    private PlantDeployment deployment;
+    private Material material;
 
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         item = mock(Deployable.class);
         mechanismActivation = mock(ItemMechanismActivation.class);
-        deployment = mock(PlantDeployment.class);
+        material = Material.WARPED_BUTTON;
     }
 
     @Test
     public void shouldBeAvailableIfDeployableItemIsNotYetDeployed() {
         when(item.isDeployed()).thenReturn(false);
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, deployment, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         boolean available = function.isAvailable();
 
         assertTrue(available);
@@ -49,7 +50,7 @@ public class PlantFunctionTest {
     public void shouldNotBeAvailableIfDeployableItemIsDeployed() {
         when(item.isDeployed()).thenReturn(true);
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, deployment, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         boolean available = function.isAvailable();
 
         assertFalse(available);
@@ -60,7 +61,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, deployment, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -77,7 +78,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, deployment, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -97,7 +98,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, deployment, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -108,11 +109,14 @@ public class PlantFunctionTest {
 
     @Test
     public void shouldApplyFunctionsForPlantingWhenPerforming() {
-        BlockFace targetBlockFace = BlockFace.NORTH;
+        BlockFace targetBlockFace = BlockFace.UP;
+        FaceAttachable faceAttachable = mock(FaceAttachable.class);
         Location location = new Location(null, 1, 1, 1);
 
         Block adjacentBlock = mock(Block.class);
+        when(adjacentBlock.getBlockData()).thenReturn(faceAttachable);
         when(adjacentBlock.getLocation()).thenReturn(location);
+        when(adjacentBlock.getState()).thenReturn(mock(BlockState.class));
 
         Block targetBlock = mock(Block.class);
         when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
@@ -123,7 +127,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, deployment, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 
@@ -132,6 +136,5 @@ public class PlantFunctionTest {
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(item).onDeploy();
         verify(mechanismActivation).prime(holder);
-        verify(deployment).plant(adjacentBlock, targetBlockFace);
     }
 }

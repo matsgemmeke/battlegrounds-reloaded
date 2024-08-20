@@ -27,7 +27,7 @@ mechanism:
       damage: 150.0
       distance: 5.0
     short-range:
-      damage: 300.0`
+      damage: 300.0
       distance: 2.5
   set-fire: false
   type: EXPLOSION

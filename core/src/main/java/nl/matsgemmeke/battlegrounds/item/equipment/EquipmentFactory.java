@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.deployment.PlantDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.PlantFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
@@ -160,9 +159,8 @@ public class EquipmentFactory implements WeaponFactory {
             }
 
             List<GameSound> plantSounds = DefaultGameSound.parseSounds(section.getString("planting.plant-sound"));
-            PlantDeployment deployment = new PlantDeployment(material);
 
-            PlantFunction plantFunction = new PlantFunction(equipment, mechanismActivation, deployment, audioEmitter);
+            PlantFunction plantFunction = new PlantFunction(equipment, mechanismActivation, material, audioEmitter);
             plantFunction.addSounds(plantSounds);
 
             equipment.getControls().addControl(plantAction, plantFunction);

@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.deployment;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -9,19 +11,32 @@ import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.block.data.FaceAttachable.AttachedFace;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Method of item deployment where the item gets planted against a block.
- */
-public class PlantDeployment {
+public class PlantableObject implements DeployableObject {
 
+    @NotNull
+    private Block block;
+    @NotNull
+    private BlockFace blockFace;
     @NotNull
     private Material material;
 
-    public PlantDeployment(@NotNull Material material) {
+    public PlantableObject(@NotNull Block block, @NotNull BlockFace blockFace, @NotNull Material material) {
+        this.block = block;
+        this.blockFace = blockFace;
         this.material = material;
     }
 
-    public void plant(@NotNull Block block, @NotNull BlockFace blockFace) {
+    @NotNull
+    public Location getLocation() {
+        return block.getLocation();
+    }
+
+    @NotNull
+    public World getWorld() {
+        return block.getWorld();
+    }
+
+    public void plant() {
         block.setType(material);
 
         AttachedFace attachedFace;
@@ -53,5 +68,9 @@ public class PlantDeployment {
         }
 
         plantBlockState.update(true, true);
+    }
+
+    public void remove() {
+        block.setType(Material.AIR);
     }
 }
