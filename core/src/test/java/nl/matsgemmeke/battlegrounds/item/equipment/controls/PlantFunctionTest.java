@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.deployment.PlantableObject;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
@@ -13,12 +14,12 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.FaceAttachable;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class PlantFunctionTest {
@@ -133,8 +134,12 @@ public class PlantFunctionTest {
 
         assertTrue(performed);
 
+        ArgumentCaptor<PlantableObject> captor = ArgumentCaptor.forClass(PlantableObject.class);
+        verify(item).onDeploy(captor.capture());
+
+        assertEquals(location, captor.getValue().getLocation());
+
         verify(audioEmitter).playSounds(any(), eq(location));
-        verify(item).onDeploy();
         verify(mechanismActivation).prime(holder);
     }
 }

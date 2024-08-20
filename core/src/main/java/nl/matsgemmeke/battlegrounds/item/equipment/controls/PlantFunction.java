@@ -84,7 +84,7 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
 
         audioEmitter.playSounds(sounds, adjacentBlock.getLocation());
 
-        item.onDeploy();
+        item.onDeploy(plantableObject);
         mechanismActivation.prime(holder);
         return true;
     }

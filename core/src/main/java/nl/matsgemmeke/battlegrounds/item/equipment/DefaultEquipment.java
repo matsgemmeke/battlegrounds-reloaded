@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployableObject;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
@@ -14,7 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class DefaultEquipment extends BaseWeapon implements Equipment {
 
-    private boolean deployed;
+    @Nullable
+    private DeployableObject deployableObject;
     @NotNull
     private EntityRegistry<GameItem, Item> itemRegistry;
     @Nullable
@@ -29,7 +31,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public DefaultEquipment(@NotNull EntityRegistry<GameItem, Item> itemRegistry) {
         this.itemRegistry = itemRegistry;
         this.controls = new ItemControls<>();
-        this.deployed = false;
     }
 
     @Nullable
@@ -58,10 +59,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void setHolder(@Nullable EquipmentHolder holder) {
         this.holder = holder;
-    }
-
-    public boolean isDeployed() {
-        return deployed;
     }
 
     public boolean canDrop() {
@@ -94,6 +91,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         return droppedItem;
     }
 
+    public boolean isDeployed() {
+        return deployableObject != null;
+    }
+
     public boolean isMatching(@NotNull ItemStack itemStack) {
         return super.isMatching(itemStack) || activatorItemStack != null && activatorItemStack.isSimilar(itemStack);
     }
@@ -104,12 +105,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public void onChangeTo() {
     }
 
-    public void onDeploy() {
+    public void onDeploy(@NotNull DeployableObject deployableObject) {
         if (holder == null) {
             return;
         }
 
-        deployed = true;
+        this.deployableObject = deployableObject;
 
         // Update the original item to the activator item. If the activator item is null it will set an empty item.
         holder.setHeldItem(activatorItemStack);
