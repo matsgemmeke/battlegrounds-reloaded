@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableObject;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployedObject;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -92,10 +92,10 @@ public class DefaultEquipmentTest {
 
     @Test
     public void shouldDoNothingIfHolderIsNullWhenDeploying() {
-        DeployableObject deployableObject = mock(DeployableObject.class);
+        DeployedObject deployedObject = mock(DeployedObject.class);
 
         DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
-        equipment.onDeploy(deployableObject);
+        equipment.onDeploy(deployedObject);
 
         boolean deployed = equipment.isDeployed();
 
@@ -104,14 +104,14 @@ public class DefaultEquipmentTest {
 
     @Test
     public void shouldSetHolderHeldItemToActivatorItemStackWhenDeploying() {
-        DeployableObject deployableObject = mock(DeployableObject.class);
+        DeployedObject deployedObject = mock(DeployedObject.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
         ItemStack activatorItemStack = new ItemStack(Material.SHEARS);
 
         DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.setActivatorItemStack(activatorItemStack);
         equipment.setHolder(holder);
-        equipment.onDeploy(deployableObject);
+        equipment.onDeploy(deployedObject);
 
         boolean deployed = equipment.isDeployed();
 

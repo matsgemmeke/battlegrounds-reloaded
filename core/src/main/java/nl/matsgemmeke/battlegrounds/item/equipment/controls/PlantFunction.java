@@ -5,12 +5,16 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.deployment.PlantableObject;
+import nl.matsgemmeke.battlegrounds.item.deployment.RotatableBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.FaceAttachable;
+import org.bukkit.block.data.FaceAttachable.AttachedFace;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -79,13 +83,50 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
             return false;
         }
 
-        PlantableObject plantableObject = new PlantableObject(adjacentBlock, targetBlockFace, material);
-        plantableObject.plant();
+        this.plantBlock(adjacentBlock, targetBlockFace);
+
+        RotatableBlock rotatableBlock = new RotatableBlock(adjacentBlock);
+        item.onDeploy(rotatableBlock);
 
         audioEmitter.playSounds(sounds, adjacentBlock.getLocation());
 
-        item.onDeploy(plantableObject);
         mechanismActivation.prime(holder);
         return true;
+    }
+
+    private void plantBlock(@NotNull Block block, @NotNull BlockFace blockFace) {
+        block.setType(material);
+
+        AttachedFace attachedFace = this.getCorrespondingAttachedFace(blockFace);
+        BlockState plantBlockState = block.getState();
+
+        FaceAttachable faceAttachable = (FaceAttachable) block.getBlockData();
+        faceAttachable.setAttachedFace(attachedFace);
+
+        plantBlockState.setBlockData(faceAttachable);
+
+        if (attachedFace == FaceAttachable.AttachedFace.WALL) {
+            Directional directional = (Directional) block.getBlockData();
+            directional.setFacing(blockFace);
+
+            plantBlockState.setBlockData(directional);
+        }
+
+        plantBlockState.update(true, true);
+    }
+
+    @NotNull
+    private AttachedFace getCorrespondingAttachedFace(@NotNull BlockFace blockFace) {
+        switch (blockFace) {
+            case UP -> {
+                return AttachedFace.FLOOR;
+            }
+            case DOWN -> {
+                return AttachedFace.CEILING;
+            }
+            default -> {
+                return AttachedFace.WALL;
+            }
+        }
     }
 }

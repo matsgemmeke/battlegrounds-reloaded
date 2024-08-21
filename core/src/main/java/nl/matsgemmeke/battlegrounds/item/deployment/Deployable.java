@@ -6,5 +6,5 @@ public interface Deployable {
 
     boolean isDeployed();
 
-    void onDeploy(@NotNull DeployableObject deployableObject);
+    void onDeploy(@NotNull DeployedObject deployedObject);
 }

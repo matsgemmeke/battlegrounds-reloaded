@@ -1,22 +1,17 @@
-package nl.matsgemmeke.battlegrounds.entity;
+package nl.matsgemmeke.battlegrounds.item.deployment;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 
-public class DefaultGameItem implements GameItem {
+public class DroppedItem implements DeployedObject {
 
     @NotNull
     private Item itemEntity;
 
-    public DefaultGameItem(@NotNull Item itemEntity) {
+    public DroppedItem(@NotNull Item itemEntity) {
         this.itemEntity = itemEntity;
-    }
-
-    @NotNull
-    public Item getEntity() {
-        return itemEntity;
     }
 
     @NotNull
@@ -29,7 +24,7 @@ public class DefaultGameItem implements GameItem {
         return itemEntity.getWorld();
     }
 
-    public double damage(double damageAmount) {
-        return 0;
+    public void remove() {
+        itemEntity.remove();
     }
 }

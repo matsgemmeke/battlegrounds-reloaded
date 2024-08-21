@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.Item;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -60,6 +61,11 @@ public class DefaultGamePlayer implements GamePlayer {
     @NotNull
     public Location getLocation() {
         return player.getLocation();
+    }
+
+    @NotNull
+    public World getWorld() {
+        return player.getWorld();
     }
 
     public boolean addEffect(@NotNull ItemEffect effect) {

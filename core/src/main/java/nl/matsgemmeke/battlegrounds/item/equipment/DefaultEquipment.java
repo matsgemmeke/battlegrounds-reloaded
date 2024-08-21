@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableObject;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployedObject;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @Nullable
-    private DeployableObject deployableObject;
+    private DeployedObject deployedObject;
     @NotNull
     private EntityRegistry<GameItem, Item> itemRegistry;
     @Nullable
@@ -92,7 +92,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public boolean isDeployed() {
-        return deployableObject != null;
+        return deployedObject != null;
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {
@@ -105,12 +105,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public void onChangeTo() {
     }
 
-    public void onDeploy(@NotNull DeployableObject deployableObject) {
+    public void onDeploy(@NotNull DeployedObject deployedObject) {
         if (holder == null) {
             return;
         }
 
-        this.deployableObject = deployableObject;
+        this.deployedObject = deployedObject;
 
         // Update the original item to the activator item. If the activator item is null it will set an empty item.
         holder.setHeldItem(activatorItemStack);
