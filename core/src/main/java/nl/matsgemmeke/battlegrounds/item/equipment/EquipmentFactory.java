@@ -144,7 +144,7 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", planting material " + materialValue + " is invalid");
             }
 
-            short durability = section.getShort("item.thrown-item.durability");
+            short durability = section.getShort("item.throw-item.durability");
 
             ItemStack itemStack = new ItemStack(material);
             itemStack.setDurability(durability);

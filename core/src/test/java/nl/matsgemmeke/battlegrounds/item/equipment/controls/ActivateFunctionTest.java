@@ -2,12 +2,11 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.Droppable;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +17,7 @@ import static org.mockito.Mockito.*;
 public class ActivateFunctionTest {
 
     private AudioEmitter audioEmitter;
-    private Droppable item;
+    private Deployable item;
     private ItemMechanismActivation mechanismActivation;
     private long delayUntilActivation;
     private TaskRunner taskRunner;
@@ -26,7 +25,7 @@ public class ActivateFunctionTest {
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        item = mock(Droppable.class);
+        item = mock(Deployable.class);
         mechanismActivation = mock(ItemMechanismActivation.class);
         delayUntilActivation = 1L;
         taskRunner = mock(TaskRunner.class);
@@ -34,7 +33,7 @@ public class ActivateFunctionTest {
 
     @Test
     public void shouldNotBeAvailableIfItemIsNotDropped() {
-        when(item.getDroppedItem()).thenReturn(null);
+        when(item.isDeployed()).thenReturn(false);
 
         ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
         boolean available = function.isAvailable();
@@ -44,7 +43,7 @@ public class ActivateFunctionTest {
 
     @Test
     public void shouldNotBeAvailableIfNotMechanismActivationIsNotPrimed() {
-        when(item.getDroppedItem()).thenReturn(mock(Item.class));
+        when(item.isDeployed()).thenReturn(true);
         when(mechanismActivation.isPrimed()).thenReturn(false);
 
         ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
@@ -55,7 +54,7 @@ public class ActivateFunctionTest {
 
     @Test
     public void shouldBeAvailableIfItemIsDroppedAndMechanismActivationIsPrimed() {
-        when(item.getDroppedItem()).thenReturn(mock(Item.class));
+        when(item.isDeployed()).thenReturn(true);
         when(mechanismActivation.isPrimed()).thenReturn(true);
 
         ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);

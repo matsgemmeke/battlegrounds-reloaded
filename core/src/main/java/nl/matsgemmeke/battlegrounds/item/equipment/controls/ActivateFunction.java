@@ -4,8 +4,8 @@ import com.google.common.collect.Iterables;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.Droppable;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
-    private Droppable item;
+    private Deployable item;
     @NotNull
     private ItemMechanismActivation mechanismActivation;
     @NotNull
@@ -27,7 +27,7 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     private TaskRunner taskRunner;
 
     public ActivateFunction(
-            @NotNull Droppable item,
+            @NotNull Deployable item,
             @NotNull ItemMechanismActivation mechanismActivation,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
@@ -46,7 +46,7 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return item.getDroppedItem() != null && mechanismActivation.isPrimed();
+        return item.isDeployed() && mechanismActivation.isPrimed();
     }
 
     public boolean isBlocking() {
