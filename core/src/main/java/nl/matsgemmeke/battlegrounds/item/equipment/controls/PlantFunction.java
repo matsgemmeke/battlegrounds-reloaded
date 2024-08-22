@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.deployment.RotatableBlock;
+import nl.matsgemmeke.battlegrounds.item.deployment.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Material;
@@ -85,8 +85,8 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
 
         this.plantBlock(adjacentBlock, targetBlockFace);
 
-        RotatableBlock rotatableBlock = new RotatableBlock(adjacentBlock);
-        item.onDeploy(rotatableBlock);
+        PlacedBlock placedBlock = new PlacedBlock(adjacentBlock);
+        item.onDeploy(placedBlock);
 
         audioEmitter.playSounds(sounds, adjacentBlock.getLocation());
 

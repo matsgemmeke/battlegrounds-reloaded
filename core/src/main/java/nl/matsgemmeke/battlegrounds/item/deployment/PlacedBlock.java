@@ -6,12 +6,12 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
-public class RotatableBlock implements DeployedObject {
+public class PlacedBlock implements DeployedObject {
 
     @NotNull
     private Block block;
 
-    public RotatableBlock(@NotNull Block block) {
+    public PlacedBlock(@NotNull Block block) {
         this.block = block;
     }
 

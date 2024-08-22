@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.deployment.RotatableBlock;
+import nl.matsgemmeke.battlegrounds.item.deployment.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
@@ -40,7 +40,7 @@ public class PlantFunctionTest {
     }
 
     @Test
-    public void shouldBeAvailableIfDeployableItemIsNotYetDeployed() {
+    public void shouldBeAvailableIfDeployedItemIsNotYetDeployed() {
         when(item.isDeployed()).thenReturn(false);
 
         PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
@@ -50,7 +50,7 @@ public class PlantFunctionTest {
     }
 
     @Test
-    public void shouldNotBeAvailableIfDeployableItemIsDeployed() {
+    public void shouldNotBeAvailableIfDeployedItemIsDeployed() {
         when(item.isDeployed()).thenReturn(true);
 
         PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
@@ -137,7 +137,7 @@ public class PlantFunctionTest {
 
         assertTrue(performed);
 
-        ArgumentCaptor<RotatableBlock> captor = ArgumentCaptor.forClass(RotatableBlock.class);
+        ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
         verify(item).onDeploy(captor.capture());
 
         assertEquals(location, captor.getValue().getLocation());
@@ -175,7 +175,7 @@ public class PlantFunctionTest {
 
         assertTrue(performed);
 
-        ArgumentCaptor<RotatableBlock> captor = ArgumentCaptor.forClass(RotatableBlock.class);
+        ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
         verify(item).onDeploy(captor.capture());
 
         assertEquals(location, captor.getValue().getLocation());
@@ -214,7 +214,7 @@ public class PlantFunctionTest {
 
         assertTrue(performed);
 
-        ArgumentCaptor<RotatableBlock> captor = ArgumentCaptor.forClass(RotatableBlock.class);
+        ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
         verify(item).onDeploy(captor.capture());
 
         assertEquals(location, captor.getValue().getLocation());

@@ -10,7 +10,7 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class RotatableBlockTest {
+public class PlacedBlockTest {
 
     private Block block;
 
@@ -24,8 +24,8 @@ public class RotatableBlockTest {
         Location location = new Location(null, 1, 1, 1);
         when(block.getLocation()).thenReturn(location);
 
-        RotatableBlock rotatableBlock = new RotatableBlock(block);
-        Location objectLocation = rotatableBlock.getLocation();
+        PlacedBlock placedBlock = new PlacedBlock(block);
+        Location objectLocation = placedBlock.getLocation();
 
         assertEquals(location, objectLocation);
     }
@@ -35,16 +35,16 @@ public class RotatableBlockTest {
         World world = mock(World.class);
         when(block.getWorld()).thenReturn(world);
 
-        RotatableBlock rotatableBlock = new RotatableBlock(block);
-        World objectWorld = rotatableBlock.getWorld();
+        PlacedBlock placedBlock = new PlacedBlock(block);
+        World objectWorld = placedBlock.getWorld();
 
         assertEquals(world, objectWorld);
     }
 
     @Test
     public void shouldRemoveBlockWhenRemovingObject() {
-        RotatableBlock rotatableBlock = new RotatableBlock(block);
-        rotatableBlock.remove();
+        PlacedBlock placedBlock = new PlacedBlock(block);
+        placedBlock.remove();
 
         verify(block).setType(Material.AIR);
     }
