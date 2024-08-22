@@ -135,12 +135,26 @@ public class EquipmentFactory implements WeaponFactory {
                 equipment.getControls().addControl(cookAction, cookFunction);
             }
 
+            Material material;
+            String materialValue = section.getString("item.throw-item.material");
+
+            try {
+                material = Material.valueOf(materialValue);
+            } catch (IllegalArgumentException e) {
+                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", planting material " + materialValue + " is invalid");
+            }
+
+            short durability = section.getShort("item.thrown-item.durability");
+
+            ItemStack itemStack = new ItemStack(material);
+            itemStack.setDurability(durability);
+
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");
             double projectileSpeed = section.getDouble("throwing.projectile-speed");
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
-            ThrowFunction throwFunction = new ThrowFunction(equipment, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+            ThrowFunction throwFunction = new ThrowFunction(equipment, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
             throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);

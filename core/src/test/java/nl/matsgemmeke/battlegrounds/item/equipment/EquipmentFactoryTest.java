@@ -121,6 +121,7 @@ public class EquipmentFactoryTest {
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getString("item.throw-item.material")).thenReturn("SHEARS");
         when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
         ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
@@ -143,11 +144,23 @@ public class EquipmentFactoryTest {
     }
 
     @Test(expected = CreateEquipmentException.class)
-    public void shouldThrowErrorWhenThrowActionConfigurationValueIsInvalid() {
+    public void shouldThrowErrorWhenThrowItemMaterialConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("throw")).thenReturn("fail");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
+
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
+        factory.make(configuration, context);
+    }
+
+    @Test(expected = CreateEquipmentException.class)
+    public void shouldThrowErrorWhenThrowActionConfigurationValueIsInvalid() {
+        Section controlsSection = mock(Section.class);
+        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
+
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getString("item.throw-item.material")).thenReturn("fail");
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         factory.make(configuration, context);
@@ -160,6 +173,7 @@ public class EquipmentFactoryTest {
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getString("item.throw-item.material")).thenReturn("SHEARS");
 
         ItemMechanism mechanism = mock(ItemMechanism.class);
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);

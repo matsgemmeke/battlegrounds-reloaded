@@ -16,6 +16,9 @@ item:
     material: SHEARS
   durability: 2
   material: SHEARS
+  throw-item:
+    durability: 2
+    material: SHEARS
 mechanism:
   break-blocks: false
   power: 3.0
