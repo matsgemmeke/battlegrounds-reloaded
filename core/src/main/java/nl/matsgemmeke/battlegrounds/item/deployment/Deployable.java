@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-public interface DeployedObject {
+public interface Deployable {
 
     @NotNull
     Location getLocation();

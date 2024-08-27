@@ -5,7 +5,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 
-public class DroppedItem implements DeployedObject {
+public class DroppedItem implements Deployable {
 
     @NotNull
     private Item itemEntity;

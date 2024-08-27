@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployedObject;
 import nl.matsgemmeke.battlegrounds.item.deployment.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
@@ -52,7 +52,7 @@ public class PlantFunctionTest {
 
     @Test
     public void shouldNotBeAvailableIfItemHasDeployedObjects() {
-        when(item.getDeployedObjects()).thenReturn(List.of(mock(DeployedObject.class)));
+        when(item.getDeployedObjects()).thenReturn(List.of(mock(Deployable.class)));
 
         PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         boolean available = function.isAvailable();

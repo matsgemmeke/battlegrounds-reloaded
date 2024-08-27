@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployedObject;
 import nl.matsgemmeke.battlegrounds.item.deployment.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
@@ -80,7 +80,7 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldNotThrowIfItemAlreadyHasDeployedObject() {
-        when(item.getDeployedObjects()).thenReturn(List.of(mock(DeployedObject.class)));
+        when(item.getDeployedObjects()).thenReturn(List.of(mock(Deployable.class)));
 
         World world = mock(World.class);
 

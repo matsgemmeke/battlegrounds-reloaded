@@ -6,7 +6,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
-public class PlacedBlock implements DeployedObject {
+public class PlacedBlock implements Deployable {
 
     @NotNull
     private Block block;

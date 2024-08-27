@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployedObject;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
@@ -29,7 +29,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @Nullable
     private ItemStack activatorItemStack;
     @NotNull
-    private List<DeployedObject> deployedObjects;
+    private List<Deployable> deployedObjects;
 
     public DefaultEquipment(@NotNull EntityRegistry<GameItem, Item> itemRegistry) {
         this.itemRegistry = itemRegistry;
@@ -52,7 +52,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     @NotNull
-    public List<DeployedObject> getDeployedObjects() {
+    public List<Deployable> getDeployedObjects() {
         return deployedObjects;
     }
 
@@ -110,7 +110,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public void onChangeTo() {
     }
 
-    public void onDeploy(@NotNull DeployedObject object) {
+    public void onDeploy(@NotNull Deployable object) {
         if (holder == null) {
             return;
         }

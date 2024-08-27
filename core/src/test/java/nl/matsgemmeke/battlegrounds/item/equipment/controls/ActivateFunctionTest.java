@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployedObject;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
@@ -47,7 +47,7 @@ public class ActivateFunctionTest {
 
     @Test
     public void shouldNotBeAvailableIfMechanismActivationIsNotPrimed() {
-        DeployedObject object = mock(DeployedObject.class);
+        Deployable object = mock(Deployable.class);
 
         when(item.getDeployedObjects()).thenReturn(List.of(object));
         when(mechanismActivation.isPrimed()).thenReturn(false);
@@ -60,7 +60,7 @@ public class ActivateFunctionTest {
 
     @Test
     public void shouldBeAvailableIfItemHasDeployedObjectsAndMechanismActivationIsPrimed() {
-        DeployedObject object = mock(DeployedObject.class);
+        Deployable object = mock(Deployable.class);
 
         when(item.getDeployedObjects()).thenReturn(List.of(object));
         when(mechanismActivation.isPrimed()).thenReturn(true);

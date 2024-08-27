@@ -5,12 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * An item capable of creating and holding references to {@link DeployedObject}s.
+ * An item capable of creating and holding references to {@link Deployable} objects.
  */
 public interface DeployableSource {
 
     @NotNull
-    List<DeployedObject> getDeployedObjects();
+    List<Deployable> getDeployedObjects();
 
-    void onDeploy(@NotNull DeployedObject object);
+    void onDeploy(@NotNull Deployable object);
 }
