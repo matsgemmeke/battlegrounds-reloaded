@@ -4,7 +4,7 @@ import com.google.common.collect.Iterables;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.deployment.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
@@ -27,7 +27,7 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
-    private Deployable item;
+    private DeployableSource item;
     @NotNull
     private ItemMechanismActivation mechanismActivation;
     @NotNull
@@ -36,7 +36,7 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
     private Material material;
 
     public PlantFunction(
-            @NotNull Deployable item,
+            @NotNull DeployableSource item,
             @NotNull ItemMechanismActivation mechanismActivation,
             @NotNull Material material,
             @NotNull AudioEmitter audioEmitter
@@ -53,7 +53,7 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return !item.isDeployed();
+        return item.getDeployedObjects().isEmpty();
     }
 
     public boolean isBlocking() {

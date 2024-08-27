@@ -2,7 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployedObject;
 import nl.matsgemmeke.battlegrounds.item.deployment.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
@@ -27,21 +28,21 @@ import static org.mockito.Mockito.*;
 public class PlantFunctionTest {
 
     private AudioEmitter audioEmitter;
-    private Deployable item;
+    private DeployableSource item;
     private ItemMechanismActivation mechanismActivation;
     private Material material;
 
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        item = mock(Deployable.class);
+        item = mock(DeployableSource.class);
         mechanismActivation = mock(ItemMechanismActivation.class);
         material = Material.WARPED_BUTTON;
     }
 
     @Test
-    public void shouldBeAvailableIfDeployedItemIsNotYetDeployed() {
-        when(item.isDeployed()).thenReturn(false);
+    public void shouldBeAvailableIfItemHasNoDeployedObjectsYet() {
+        when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
 
         PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         boolean available = function.isAvailable();
@@ -50,8 +51,8 @@ public class PlantFunctionTest {
     }
 
     @Test
-    public void shouldNotBeAvailableIfDeployedItemIsDeployed() {
-        when(item.isDeployed()).thenReturn(true);
+    public void shouldNotBeAvailableIfItemHasDeployedObjects() {
+        when(item.getDeployedObjects()).thenReturn(List.of(mock(DeployedObject.class)));
 
         PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         boolean available = function.isAvailable();

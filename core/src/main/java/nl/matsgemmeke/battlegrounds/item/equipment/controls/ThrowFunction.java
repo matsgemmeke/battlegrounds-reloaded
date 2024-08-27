@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.deployment.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
@@ -26,7 +26,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
-    private Deployable item;
+    private DeployableSource item;
     private double projectileSpeed;
     @NotNull
     private ItemMechanismActivation mechanismActivation;
@@ -39,7 +39,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private TaskRunner taskRunner;
 
     public ThrowFunction(
-            @NotNull Deployable item,
+            @NotNull DeployableSource item,
             @NotNull ItemStack itemStack,
             @NotNull ItemMechanismActivation mechanismActivation,
             @NotNull AudioEmitter audioEmitter,
@@ -78,7 +78,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        if (item.isDeployed() || !holder.isAbleToThrow()) {
+        if (!item.getDeployedObjects().isEmpty() || !holder.isAbleToThrow()) {
             return false;
         }
 

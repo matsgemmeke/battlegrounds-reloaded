@@ -97,9 +97,7 @@ public class DefaultEquipmentTest {
         DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
         equipment.onDeploy(deployedObject);
 
-        boolean deployed = equipment.isDeployed();
-
-        assertFalse(deployed);
+        assertTrue(equipment.getDeployedObjects().isEmpty());
     }
 
     @Test
@@ -113,9 +111,7 @@ public class DefaultEquipmentTest {
         equipment.setHolder(holder);
         equipment.onDeploy(deployedObject);
 
-        boolean deployed = equipment.isDeployed();
-
-        assertTrue(deployed);
+        assertEquals(1, equipment.getDeployedObjects().size());
 
         verify(holder).setHeldItem(activatorItemStack);
     }

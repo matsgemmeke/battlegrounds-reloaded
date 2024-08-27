@@ -13,10 +13,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DefaultEquipment extends BaseWeapon implements Equipment {
 
-    @Nullable
-    private DeployedObject deployedObject;
     @NotNull
     private EntityRegistry<GameItem, Item> itemRegistry;
     @Nullable
@@ -27,10 +28,13 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private ItemControls<EquipmentHolder> controls;
     @Nullable
     private ItemStack activatorItemStack;
+    @NotNull
+    private List<DeployedObject> deployedObjects;
 
     public DefaultEquipment(@NotNull EntityRegistry<GameItem, Item> itemRegistry) {
         this.itemRegistry = itemRegistry;
         this.controls = new ItemControls<>();
+        this.deployedObjects = new ArrayList<>();
     }
 
     @Nullable
@@ -45,6 +49,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     public ItemControls<EquipmentHolder> getControls() {
         return controls;
+    }
+
+    @NotNull
+    public List<DeployedObject> getDeployedObjects() {
+        return deployedObjects;
     }
 
     @Nullable
@@ -91,10 +100,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         return droppedItem;
     }
 
-    public boolean isDeployed() {
-        return deployedObject != null;
-    }
-
     public boolean isMatching(@NotNull ItemStack itemStack) {
         return super.isMatching(itemStack) || activatorItemStack != null && activatorItemStack.isSimilar(itemStack);
     }
@@ -105,12 +110,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public void onChangeTo() {
     }
 
-    public void onDeploy(@NotNull DeployedObject deployedObject) {
+    public void onDeploy(@NotNull DeployedObject object) {
         if (holder == null) {
             return;
         }
 
-        this.deployedObject = deployedObject;
+        deployedObjects.add(object);
 
         // Update the original item to the activator item. If the activator item is null it will set an empty item.
         holder.setHeldItem(activatorItemStack);

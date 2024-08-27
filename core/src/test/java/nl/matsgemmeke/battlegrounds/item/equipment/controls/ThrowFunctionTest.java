@@ -2,19 +2,22 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployedObject;
 import nl.matsgemmeke.battlegrounds.item.deployment.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,7 +26,7 @@ import static org.mockito.Mockito.*;
 public class ThrowFunctionTest {
 
     private AudioEmitter audioEmitter;
-    private Deployable item;
+    private DeployableSource item;
     private double projectileSpeed;
     private ItemMechanismActivation mechanismActivation;
     private ItemStack itemStack;
@@ -33,7 +36,7 @@ public class ThrowFunctionTest {
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        item = mock(Deployable.class);
+        item = mock(DeployableSource.class);
         projectileSpeed = 2.0;
         mechanismActivation = mock(ItemMechanismActivation.class);
         itemStack = new ItemStack(Material.SHEARS);
@@ -51,7 +54,7 @@ public class ThrowFunctionTest {
         World world = mock(World.class);
         when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
 
-        when(item.isDeployed()).thenReturn(false);
+        when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLocation()).thenReturn(location);
@@ -76,8 +79,8 @@ public class ThrowFunctionTest {
     }
 
     @Test
-    public void shouldNotThrowIfItemAlreadyIsDeployed() {
-        when(item.isDeployed()).thenReturn(true);
+    public void shouldNotThrowIfItemAlreadyHasDeployedObject() {
+        when(item.getDeployedObjects()).thenReturn(List.of(mock(DeployedObject.class)));
 
         World world = mock(World.class);
 
@@ -94,7 +97,7 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldNotThrowIfHolderIsUnableToThrow() {
-        when(item.isDeployed()).thenReturn(false);
+        when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
 
         World world = mock(World.class);
 

@@ -2,13 +2,17 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployedObject;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -17,7 +21,7 @@ import static org.mockito.Mockito.*;
 public class ActivateFunctionTest {
 
     private AudioEmitter audioEmitter;
-    private Deployable item;
+    private DeployableSource item;
     private ItemMechanismActivation mechanismActivation;
     private long delayUntilActivation;
     private TaskRunner taskRunner;
@@ -25,15 +29,15 @@ public class ActivateFunctionTest {
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        item = mock(Deployable.class);
+        item = mock(DeployableSource.class);
         mechanismActivation = mock(ItemMechanismActivation.class);
         delayUntilActivation = 1L;
         taskRunner = mock(TaskRunner.class);
     }
 
     @Test
-    public void shouldNotBeAvailableIfItemIsNotDropped() {
-        when(item.isDeployed()).thenReturn(false);
+    public void shouldNotBeAvailableIfItemHasNoDeployedObjects() {
+        when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
 
         ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
         boolean available = function.isAvailable();
@@ -42,8 +46,10 @@ public class ActivateFunctionTest {
     }
 
     @Test
-    public void shouldNotBeAvailableIfNotMechanismActivationIsNotPrimed() {
-        when(item.isDeployed()).thenReturn(true);
+    public void shouldNotBeAvailableIfMechanismActivationIsNotPrimed() {
+        DeployedObject object = mock(DeployedObject.class);
+
+        when(item.getDeployedObjects()).thenReturn(List.of(object));
         when(mechanismActivation.isPrimed()).thenReturn(false);
 
         ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
@@ -53,8 +59,10 @@ public class ActivateFunctionTest {
     }
 
     @Test
-    public void shouldBeAvailableIfItemIsDroppedAndMechanismActivationIsPrimed() {
-        when(item.isDeployed()).thenReturn(true);
+    public void shouldBeAvailableIfItemHasDeployedObjectsAndMechanismActivationIsPrimed() {
+        DeployedObject object = mock(DeployedObject.class);
+
+        when(item.getDeployedObjects()).thenReturn(List.of(object));
         when(mechanismActivation.isPrimed()).thenReturn(true);
 
         ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
