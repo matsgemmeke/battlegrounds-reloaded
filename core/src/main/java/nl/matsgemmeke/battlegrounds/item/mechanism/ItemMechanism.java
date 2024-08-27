@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
-import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A mechanism component of an item. Produces a certain effect when activated.
@@ -11,10 +10,25 @@ import org.jetbrains.annotations.Nullable;
 public interface ItemMechanism {
 
     /**
-     * Activates the mechanism.
+     * <p>Activates the mechanism in the holder's hand.</p>
      *
-     * @param droppedItem the dropped item entity
-     * @param holder the entity who activated the mechanism
+     * <p>This method triggers the specific behavior associated with the mechanism directly within the
+     * {@link ItemHolder}'s hand. Unlike other activation methods, this one does not target a deployed object but
+     * instead activates solely based on the holder's action.</p>
+     *
+     * @param holder the entity or object that activates the mechanism
      */
-    void activate(@Nullable Item droppedItem, @NotNull ItemHolder holder);
+    void activate(@NotNull ItemHolder holder);
+
+    /**
+     * <p>Activates the mechanism with the specified item holder and deployed object.</p>
+     *
+     * <p>This method triggers the specific behavior associated with the mechanism, using the provided
+     * {@link ItemHolder} to indicate which entity is activating the mechanism and the {@link Deployable} object to
+     * specify the target instance on which the mechanism is applied.</p>
+     *
+     * @param holder the entity or object that activates the mechanism
+     * @param object the object instance on which the mechanism is activated
+     */
+    void activate(@NotNull ItemHolder holder, @NotNull Deployable object);
 }

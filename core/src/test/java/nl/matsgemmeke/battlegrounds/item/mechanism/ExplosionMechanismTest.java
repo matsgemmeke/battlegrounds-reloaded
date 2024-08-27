@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.mechanism;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -40,38 +41,39 @@ public class ExplosionMechanismTest {
     }
 
     @Test
-    public void shouldCreateExplosionAtDroppedItemLocation() {
-        World world = mock(World.class);
-        Location location = new Location(world, 1, 1, 1);
-
-        Item droppedItem = mock(Item.class);
-        when(droppedItem.getLocation()).thenReturn(location);
-        when(droppedItem.getWorld()).thenReturn(world);
-
-        ItemHolder holder = mock(ItemHolder.class);
-
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
-        explosionMechanism.activate(droppedItem, holder);
-
-        verify(world).createExplosion(location, power, setFire, breakBlocks, droppedItem);
-    }
-
-    @Test
-    public void shouldCreateExplosionAtLocationOfHolderIfNoItemWasThrown() {
-        World world = mock(World.class);
-        Location location = new Location(world, 1, 1, 1);
-
+    public void shouldCreateExplosionAtLocationOfHolder() {
         Entity entity = mock(Entity.class);
-        when(entity.getLocation()).thenReturn(location);
-        when(entity.getWorld()).thenReturn(world);
+        World world = mock(World.class);
+        Location location = new Location(world, 1, 1, 1);
 
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getEntity()).thenReturn(entity);
+        when(holder.getLocation()).thenReturn(location);
+        when(holder.getWorld()).thenReturn(world);
 
         ExplosionMechanism explosionMechanism = new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
-        explosionMechanism.activate(null, holder);
+        explosionMechanism.activate(holder);
 
         verify(world).createExplosion(location, power, setFire, breakBlocks, entity);
+    }
+
+    @Test
+    public void shouldCreateExplosionAtDeployedObjectLocation() {
+        World world = mock(World.class);
+        Location location = new Location(world, 1, 1, 1);
+        Item itemEntity = mock(Item.class);
+
+        Deployable object = mock(Deployable.class);
+        when(object.getDamageSource()).thenReturn(itemEntity);
+        when(object.getLocation()).thenReturn(location);
+        when(object.getWorld()).thenReturn(world);
+
+        ItemHolder holder = mock(ItemHolder.class);
+
+        ExplosionMechanism explosionMechanism = new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
+        explosionMechanism.activate(holder, object);
+
+        verify(world).createExplosion(location, power, setFire, breakBlocks, itemEntity);
     }
 
     @Test
@@ -90,6 +92,8 @@ public class ExplosionMechanismTest {
 
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getEntity()).thenReturn(holderEntity);
+        when(holder.getLocation()).thenReturn(holderLocation);
+        when(holder.getWorld()).thenReturn(world);
 
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
@@ -97,7 +101,7 @@ public class ExplosionMechanismTest {
         when(collisionDetector.findTargets(holder, holderLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
         ExplosionMechanism explosionMechanism = new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
-        explosionMechanism.activate(null, holder);
+        explosionMechanism.activate(holder);
 
         verify(holder).damage(SHORT_RANGE_DAMAGE);
         verify(target).damage(LONG_RANGE_DAMAGE);

@@ -4,7 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PlacedBlock implements Deployable {
 
@@ -13,6 +15,11 @@ public class PlacedBlock implements Deployable {
 
     public PlacedBlock(@NotNull Block block) {
         this.block = block;
+    }
+
+    @Nullable
+    public Entity getDamageSource() {
+        return null;
     }
 
     @NotNull

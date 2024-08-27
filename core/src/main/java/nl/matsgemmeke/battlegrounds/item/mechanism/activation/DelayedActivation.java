@@ -46,7 +46,7 @@ public class DelayedActivation implements ItemMechanismActivation {
             currentTask.cancel();
         }
 
-        mechanism.activate(item.getDroppedItem(), holder);
+        mechanism.activate(holder);
     }
 
     public void prime(@NotNull ItemHolder holder) {

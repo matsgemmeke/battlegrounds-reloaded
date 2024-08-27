@@ -2,8 +2,10 @@ package nl.matsgemmeke.battlegrounds.item.deployment;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DroppedItem implements Deployable {
 
@@ -12,6 +14,11 @@ public class DroppedItem implements Deployable {
 
     public DroppedItem(@NotNull Item itemEntity) {
         this.itemEntity = itemEntity;
+    }
+
+    @Nullable
+    public Entity getDamageSource() {
+        return itemEntity;
     }
 
     @NotNull

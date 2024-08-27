@@ -45,7 +45,7 @@ public class DelayedActivationTest {
         activation.activate(holder);
 
         verify(task).cancel();
-        verify(mechanism).activate(droppedItem, holder);
+        verify(mechanism).activate(holder);
     }
 
     @Test
@@ -75,6 +75,6 @@ public class DelayedActivationTest {
         DelayedActivation activation = new DelayedActivation(item, mechanism, taskRunner, delayUntilActivation);
         activation.prime(holder);
 
-        verify(mechanism).activate(droppedItem, holder);
+        verify(mechanism).activate(holder);
     }
 }

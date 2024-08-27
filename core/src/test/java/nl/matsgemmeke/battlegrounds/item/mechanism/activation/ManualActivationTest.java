@@ -31,7 +31,7 @@ public class ManualActivationTest {
         ManualActivation activation = new ManualActivation(item, mechanism);
         activation.activate(holder);
 
-        verify(mechanism).activate(droppedItem, holder);
+        verify(mechanism).activate(holder);
     }
 
     @Test

@@ -23,7 +23,7 @@ public class ManualActivation implements ItemMechanismActivation {
     }
 
     public void activate(@NotNull ItemHolder holder) {
-        mechanism.activate(item.getDroppedItem(), holder);
+        mechanism.activate(holder);
     }
 
     public boolean isPrimed() {
