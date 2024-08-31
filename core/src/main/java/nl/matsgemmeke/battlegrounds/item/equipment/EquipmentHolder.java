@@ -1,14 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
-import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.holder.ItemThrower;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface EquipmentHolder extends ItemHolder, ItemThrower {
+public interface EquipmentHolder extends ItemHolder {
 
     /**
      * Gets the last two blocks in holder's line of sight.

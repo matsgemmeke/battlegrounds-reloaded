@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**
