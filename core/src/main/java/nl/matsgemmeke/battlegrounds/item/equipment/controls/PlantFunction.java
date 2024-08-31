@@ -90,7 +90,12 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
 
         audioEmitter.playSounds(sounds, adjacentBlock.getLocation());
 
-        mechanismActivation.prime(holder);
+        if (mechanismActivation.isPriming()) {
+            mechanismActivation.onDeployDeferredObject(placedBlock);
+        } else {
+            mechanismActivation.prime(holder, placedBlock);
+        }
+
         return true;
     }
 

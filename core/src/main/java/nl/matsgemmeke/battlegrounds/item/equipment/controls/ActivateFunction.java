@@ -46,7 +46,7 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return !item.getDeployedObjects().isEmpty() && mechanismActivation.isPrimed();
+        return !item.getDeployedObjects().isEmpty();
     }
 
     public boolean isBlocking() {

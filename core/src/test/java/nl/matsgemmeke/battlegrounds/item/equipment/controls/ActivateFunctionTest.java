@@ -46,24 +46,11 @@ public class ActivateFunctionTest {
     }
 
     @Test
-    public void shouldNotBeAvailableIfMechanismActivationIsNotPrimed() {
-        Deployable object = mock(Deployable.class);
-
-        when(item.getDeployedObjects()).thenReturn(List.of(object));
-        when(mechanismActivation.isPrimed()).thenReturn(false);
-
-        ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
-        boolean available = function.isAvailable();
-
-        assertFalse(available);
-    }
-
-    @Test
     public void shouldBeAvailableIfItemHasDeployedObjectsAndMechanismActivationIsPrimed() {
         Deployable object = mock(Deployable.class);
 
         when(item.getDeployedObjects()).thenReturn(List.of(object));
-        when(mechanismActivation.isPrimed()).thenReturn(true);
+        when(mechanismActivation.isPriming()).thenReturn(true);
 
         ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
         boolean available = function.isAvailable();

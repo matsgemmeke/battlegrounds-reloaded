@@ -132,6 +132,8 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
+        when(mechanismActivation.isPriming()).thenReturn(false);
+
         PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
@@ -146,7 +148,7 @@ public class PlantFunctionTest {
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(faceAttachable).setAttachedFace(AttachedFace.CEILING);
-        verify(mechanismActivation).prime(holder);
+        verify(mechanismActivation).prime(holder, captor.getValue());
     }
 
     @Test
@@ -170,6 +172,8 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
+        when(mechanismActivation.isPriming()).thenReturn(true);
+
         PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
@@ -184,7 +188,7 @@ public class PlantFunctionTest {
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(faceAttachable).setAttachedFace(AttachedFace.FLOOR);
-        verify(mechanismActivation).prime(holder);
+        verify(mechanismActivation).onDeployDeferredObject(captor.getValue());
     }
 
     @Test
@@ -209,6 +213,8 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
+        when(mechanismActivation.isPriming()).thenReturn(true);
+
         PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
@@ -225,6 +231,6 @@ public class PlantFunctionTest {
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(directional).setFacing(targetBlockFace);
         verify(faceAttachable).setAttachedFace(AttachedFace.WALL);
-        verify(mechanismActivation).prime(holder);
+        verify(mechanismActivation).onDeployDeferredObject(captor.getValue());
     }
 }

@@ -24,7 +24,7 @@ public class CookFunctionTest {
 
     @Test
     public void shouldOnlyBeAvailableIfActivationIsNotPrimed() {
-        when(mechanismActivation.isPrimed()).thenReturn(false);
+        when(mechanismActivation.isPriming()).thenReturn(false);
 
         CookFunction function = new CookFunction(mechanismActivation, audioEmitter);
         boolean available = function.isAvailable();
@@ -46,6 +46,6 @@ public class CookFunctionTest {
         function.perform(holder);
 
         verify(audioEmitter).playSounds(any(), eq(location));
-        verify(mechanismActivation).prime(holder);
+        verify(mechanismActivation).prime(holder, null);
     }
 }

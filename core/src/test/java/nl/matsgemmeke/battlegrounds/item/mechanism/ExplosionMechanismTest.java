@@ -73,6 +73,7 @@ public class ExplosionMechanismTest {
         ExplosionMechanism explosionMechanism = new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
         explosionMechanism.activate(holder, object);
 
+        verify(object).remove();
         verify(world).createExplosion(location, power, setFire, breakBlocks, itemEntity);
     }
 

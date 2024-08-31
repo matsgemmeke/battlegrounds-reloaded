@@ -1,15 +1,14 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.Droppable;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
-import org.bukkit.Location;
-import org.bukkit.entity.Item;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,7 +16,6 @@ import static org.mockito.Mockito.*;
 
 public class DelayedActivationTest {
 
-    private Droppable item;
     private ItemHolder holder;
     private ItemMechanism mechanism;
     private long delayUntilActivation;
@@ -25,7 +23,6 @@ public class DelayedActivationTest {
 
     @Before
     public void setUp() {
-        item = mock(Droppable.class);
         holder = mock(ItemHolder.class);
         mechanism = mock(ItemMechanism.class);
         taskRunner = mock(TaskRunner.class);
@@ -33,48 +30,63 @@ public class DelayedActivationTest {
     }
 
     @Test
-    public void shouldCancelCurrentTaskAndActivateMechanismWhenActivatingInstantly() {
-        Item droppedItem = mock(Item.class);
-        when(item.getDroppedItem()).thenReturn(droppedItem);
+    public void shouldActivateMechanismForAllDeployedObjectsWhenActivating() {
+        Deployable object = mock(Deployable.class);
 
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(task);
+        when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(mock(BukkitTask.class));
 
-        DelayedActivation activation = new DelayedActivation(item, mechanism, taskRunner, delayUntilActivation);
-        activation.prime(holder);
+        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        activation.prime(holder, null);
+        activation.prime(holder, object);
         activation.activate(holder);
 
-        verify(task).cancel();
         verify(mechanism).activate(holder);
+        verify(mechanism).activate(holder, object);
     }
 
     @Test
-    public void shouldScheduleDelayedTaskWhenPriming() {
-        DelayedActivation activation = new DelayedActivation(item, mechanism, taskRunner, delayUntilActivation);
-        activation.prime(holder);
-        boolean primed = activation.isPrimed();
+    public void isPrimingReturnsTrueWhenDeployedObjectsExistAndIsNull() {
+        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        activation.prime(holder, null);
 
-        assertTrue(primed);
+        boolean priming = activation.isPriming();
 
-        verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayUntilActivation));
+        assertTrue(priming);
     }
 
     @Test
-    public void shouldActivateMechanismAtItemLocationIfDropped() {
-        Location itemLocation = new Location(null, 1, 1, 1);
+    public void isPrimingReturnsFalseWhenActivationHasNoDeployedObjects() {
+        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
 
-        Item droppedItem = mock(Item.class);
-        when(droppedItem.getLocation()).thenReturn(itemLocation);
+        boolean priming = activation.isPriming();
 
-        when(item.getDroppedItem()).thenReturn(droppedItem);
-        when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).then(answer -> {
-            answer.getArgument(0, Runnable.class).run();
-            return null;
-        });
+        assertFalse(priming);
+    }
 
-        DelayedActivation activation = new DelayedActivation(item, mechanism, taskRunner, delayUntilActivation);
-        activation.prime(holder);
+    @Test
+    public void isPrimingReturnsFalseWhenMostRecentDeployedObjectIsNotNull() {
+        Deployable object = mock(Deployable.class);
 
-        verify(mechanism).activate(holder);
+        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        activation.prime(holder, object);
+
+        boolean priming = activation.isPriming();
+
+        assertFalse(priming);
+    }
+
+    @Test
+    public void shouldAssignDeferredDeployedObject() {
+        Deployable object = mock(Deployable.class);
+
+        when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(mock(BukkitTask.class));
+
+        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        activation.prime(holder, null);
+        activation.onDeployDeferredObject(object);
+        activation.activate(holder);
+
+        verify(mechanism).activate(holder, object);
+        verify(mechanism, never()).activate(holder);
     }
 }

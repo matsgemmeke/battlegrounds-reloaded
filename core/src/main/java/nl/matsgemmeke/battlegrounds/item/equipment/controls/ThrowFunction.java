@@ -87,7 +87,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         Location throwingDirection = holder.getThrowingDirection();
         Vector velocity = throwingDirection.getDirection().multiply(projectileSpeed);
 
-        Item itemEntity = world.dropItem(location, itemStack);
+        Item itemEntity = world.dropItem(throwingDirection, itemStack);
         itemEntity.setPickupDelay(DEFAULT_PICKUP_DELAY);
         itemEntity.setVelocity(velocity);
 
@@ -100,9 +100,12 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
         taskRunner.runTaskLater(() -> holder.setAbleToThrow(true), delayAfterThrow);
 
-        // Prime the mechanism if it isn't already cooked by the holder
-        if (!mechanismActivation.isPrimed()) {
-            mechanismActivation.prime(holder);
+        // Check if the activation mechanism is priming its next deployment. If yes, assign the dropped item. Otherwise,
+        // deploy like normally.
+        if (mechanismActivation.isPriming()) {
+            mechanismActivation.onDeployDeferredObject(droppedItem);
+        } else {
+            mechanismActivation.prime(holder, droppedItem);
         }
 
         return true;

@@ -30,7 +30,7 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return !mechanismActivation.isPrimed();
+        return !mechanismActivation.isPriming();
     }
 
     public boolean isBlocking() {
@@ -47,7 +47,7 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
 
     public boolean perform(@NotNull EquipmentHolder holder) {
         audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
-        mechanismActivation.prime(holder);
+        mechanismActivation.prime(holder, null);
         return true;
     }
 }

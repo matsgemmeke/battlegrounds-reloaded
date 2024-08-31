@@ -41,6 +41,8 @@ public class ExplosionMechanism implements ItemMechanism {
 
     public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
         this.activate(holder, object.getLocation(), object.getWorld(), object.getDamageSource());
+
+        object.remove();
     }
 
     private void activate(@NotNull ItemHolder holder, @NotNull Location location, @NotNull World world, @Nullable Entity source) {
