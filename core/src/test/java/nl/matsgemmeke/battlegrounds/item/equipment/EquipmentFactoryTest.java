@@ -132,7 +132,7 @@ public class EquipmentFactoryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(any(), any(), eq(mechanism))).thenReturn(activation);
+        when(mechanismActivationFactory.make(any(), eq(mechanism))).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
@@ -183,7 +183,7 @@ public class EquipmentFactoryTest {
         when(context.getEquipmentRegistry()).thenReturn(registry);
 
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(any(), any(), eq(mechanism))).thenReturn(activation);
+        when(mechanismActivationFactory.make(any(), eq(mechanism))).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
@@ -222,7 +222,7 @@ public class EquipmentFactoryTest {
         when(context.getEquipmentRegistry()).thenReturn(registry);
 
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(any(), any(), eq(mechanism))).thenReturn(activation);
+        when(mechanismActivationFactory.make(any(), eq(mechanism))).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
@@ -271,7 +271,7 @@ public class EquipmentFactoryTest {
         when(context.getEquipmentRegistry()).thenReturn(registry);
 
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(any(), any(), eq(mechanism))).thenReturn(activation);
+        when(mechanismActivationFactory.make(any(), eq(mechanism))).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);

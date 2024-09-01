@@ -119,7 +119,7 @@ public class EquipmentFactory implements WeaponFactory {
         String throwActionValue = controlsSection.getString("throw");
 
         ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
-        ItemMechanismActivation mechanismActivation = mechanismActivationFactory.make(section.getSection("activation"), equipment, mechanism);
+        ItemMechanismActivation mechanismActivation = mechanismActivationFactory.make(section.getSection("activation"), mechanism);
 
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
