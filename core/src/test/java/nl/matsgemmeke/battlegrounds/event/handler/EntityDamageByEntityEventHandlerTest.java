@@ -17,6 +17,7 @@ import static org.mockito.Mockito.*;
 
 public class EntityDamageByEntityEventHandlerTest {
 
+    private DamageCause damageCause;
     private Entity damager;
     private Entity entity;
     private EntityDamageByEntityEvent event;
@@ -26,6 +27,7 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Before
     public void setUp() {
+        damageCause = DamageCause.ENTITY_ATTACK;
         contextProvider = mock(GameContextProvider.class);
         damagerUUID = UUID.randomUUID();
         entityUUID = UUID.randomUUID();
@@ -36,7 +38,7 @@ public class EntityDamageByEntityEventHandlerTest {
         entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityUUID);
 
-        event = spy(new EntityDamageByEntityEvent(damager, entity, DamageCause.ENTITY_ATTACK, 10.0));
+        event = spy(new EntityDamageByEntityEvent(damager, entity, damageCause, 10.0));
     }
 
     @Test
@@ -70,7 +72,7 @@ public class EntityDamageByEntityEventHandlerTest {
         double finalDamage = 100.0;
 
         DamageCalculator damageCalculator = mock(DamageCalculator.class);
-        when(damageCalculator.calculateDamage(damager, entity, originalDamage)).thenReturn(finalDamage);
+        when(damageCalculator.calculateDamage(damager, entity, damageCause, originalDamage)).thenReturn(finalDamage);
 
         GameContext context = mock(GameContext.class);
         when(context.getDamageCalculator()).thenReturn(damageCalculator);
@@ -83,7 +85,7 @@ public class EntityDamageByEntityEventHandlerTest {
         EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        verify(damageCalculator).calculateDamage(damager, entity, originalDamage);
+        verify(damageCalculator).calculateDamage(damager, entity, damageCause, originalDamage);
         verify(event).setDamage(finalDamage);
     }
 }

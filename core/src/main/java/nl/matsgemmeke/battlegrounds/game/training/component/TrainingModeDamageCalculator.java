@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.DamageCalculator;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.jetbrains.annotations.NotNull;
 
 public class TrainingModeDamageCalculator implements DamageCalculator {
@@ -16,7 +17,7 @@ public class TrainingModeDamageCalculator implements DamageCalculator {
         this.itemRegistry = itemRegistry;
     }
 
-    public double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, double damage) {
+    public double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, @NotNull DamageCause damageCause, double damage) {
         if (itemRegistry.isRegistered(damager.getUniqueId())) {
             return 0.0;
         }
