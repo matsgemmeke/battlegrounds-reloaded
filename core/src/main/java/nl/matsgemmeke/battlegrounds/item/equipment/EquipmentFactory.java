@@ -3,13 +3,11 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
@@ -21,7 +19,6 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,14 +64,12 @@ public class EquipmentFactory implements WeaponFactory {
 
     @NotNull
     private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
-        EntityRegistry<GameItem, Item> itemRegistry = context.getItemRegistry();
-
         Section section = configuration.getRoot();
 
         String name = section.getString("display-name");
         String description = section.getString("description");
 
-        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
+        DefaultEquipment equipment = new DefaultEquipment();
         equipment.setName(name);
         equipment.setDescription(description);
 
