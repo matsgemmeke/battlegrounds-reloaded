@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
+import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
@@ -31,6 +32,7 @@ public class PlantFunctionTest {
     private DeployableSource item;
     private ItemMechanismActivation mechanismActivation;
     private Material material;
+    private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
@@ -38,13 +40,14 @@ public class PlantFunctionTest {
         item = mock(DeployableSource.class);
         mechanismActivation = mock(ItemMechanismActivation.class);
         material = Material.WARPED_BUTTON;
+        taskRunner = mock(TaskRunner.class);
     }
 
     @Test
     public void shouldBeAvailableIfItemHasNoDeployedObjectsYet() {
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
         boolean available = function.isAvailable();
 
         assertTrue(available);
@@ -54,10 +57,45 @@ public class PlantFunctionTest {
     public void shouldNotBeAvailableIfItemHasDeployedObjects() {
         when(item.getDeployedObjects()).thenReturn(List.of(mock(Deployable.class)));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
         boolean available = function.isAvailable();
 
         assertFalse(available);
+    }
+
+    @Test
+    public void shouldNotBePerformingIfNoBlocksWerePlanted() {
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        boolean performing = function.isPerforming();
+
+        assertFalse(performing);
+    }
+
+    @Test
+    public void shouldBePerformingIfBlockWasRecentlyPlanted() {
+        BlockFace targetBlockFace = BlockFace.DOWN;
+        BlockState adjacentBlockState = mock(BlockState.class);
+        FaceAttachable faceAttachable = mock(FaceAttachable.class);
+        Location location = new Location(null, 1, 1, 1);
+
+        Block adjacentBlock = mock(Block.class);
+        when(adjacentBlock.getBlockData()).thenReturn(faceAttachable);
+        when(adjacentBlock.getLocation()).thenReturn(location);
+        when(adjacentBlock.getState()).thenReturn(adjacentBlockState);
+
+        Block targetBlock = mock(Block.class);
+        when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
+        when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
+
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
+
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        function.perform(holder);
+
+        boolean performing = function.isPerforming();
+
+        assertTrue(performing);
     }
 
     @Test
@@ -65,7 +103,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -82,7 +120,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -102,7 +140,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -134,7 +172,7 @@ public class PlantFunctionTest {
 
         when(mechanismActivation.isPriming()).thenReturn(false);
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 
@@ -174,7 +212,7 @@ public class PlantFunctionTest {
 
         when(mechanismActivation.isPriming()).thenReturn(true);
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 
@@ -215,7 +253,7 @@ public class PlantFunctionTest {
 
         when(mechanismActivation.isPriming()).thenReturn(true);
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 

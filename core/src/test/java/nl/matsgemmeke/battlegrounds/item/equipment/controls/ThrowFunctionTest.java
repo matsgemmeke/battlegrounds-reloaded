@@ -19,8 +19,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class ThrowFunctionTest {
@@ -45,6 +44,33 @@ public class ThrowFunctionTest {
     }
 
     @Test
+    public void shouldNotBePerformingIfNoThrowsWereExecuted() {
+        ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        boolean performing = function.isPerforming();
+
+        assertFalse(performing);
+    }
+
+    @Test
+    public void shouldBePerformingIfThrowsWereRecentlyExecuted() {
+        World world = mock(World.class);
+        when(world.dropItem(any(Location.class), eq(itemStack))).thenReturn(mock(Item.class));
+
+        Location throwingDirection = new Location(world, 1.0, 1.0, 1.0);
+
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.getThrowingDirection()).thenReturn(throwingDirection);
+        when(holder.getWorld()).thenReturn(world);
+
+        ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        function.perform(holder);
+
+        boolean performing = function.isPerforming();
+
+        assertTrue(performing);
+    }
+
+    @Test
     public void shouldDeployDroppedItemAndPrimeWhenPerforming() {
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
@@ -61,7 +87,6 @@ public class ThrowFunctionTest {
         when(holder.getLocation()).thenReturn(location);
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
-        when(holder.isAbleToThrow()).thenReturn(true);
 
         ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performed = function.perform(holder);
@@ -73,7 +98,6 @@ public class ThrowFunctionTest {
 
         assertEquals(location, captor.getValue().getLocation());
 
-        verify(holder).setAbleToThrow(false);
         verify(mechanismActivation).prime(holder, captor.getValue());
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
         verify(world).dropItem(location, itemStack);
@@ -93,7 +117,6 @@ public class ThrowFunctionTest {
         when(holder.getLocation()).thenReturn(location);
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
-        when(holder.isAbleToThrow()).thenReturn(true);
 
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
         when(mechanismActivation.isPriming()).thenReturn(true);
@@ -106,7 +129,6 @@ public class ThrowFunctionTest {
         ArgumentCaptor<DroppedItem> captor = ArgumentCaptor.forClass(DroppedItem.class);
         verify(item).onDeploy(captor.capture());
 
-        verify(holder).setAbleToThrow(false);
         verify(mechanismActivation).onDeployDeferredObject(captor.getValue());
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
         verify(world).dropItem(location, itemStack);
@@ -120,24 +142,6 @@ public class ThrowFunctionTest {
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getWorld()).thenReturn(world);
-
-        ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
-        function.perform(holder);
-
-        verifyNoInteractions(audioEmitter);
-        verifyNoInteractions(mechanismActivation);
-        verifyNoInteractions(world);
-    }
-
-    @Test
-    public void shouldNotThrowIfHolderIsUnableToThrow() {
-        when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
-
-        World world = mock(World.class);
-
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.getWorld()).thenReturn(world);
-        when(holder.isAbleToThrow()).thenReturn(false);
 
         ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         function.perform(holder);

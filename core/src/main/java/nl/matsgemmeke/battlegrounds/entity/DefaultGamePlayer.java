@@ -23,7 +23,6 @@ public class DefaultGamePlayer implements GamePlayer {
     private static final float SPRINTING_ACCURACY = 0.5f;
     private static final int OPERATING_FOOD_LEVEL = 6;
 
-    private boolean ableToThrow;
     private int previousFoodLevel;
     @NotNull
     private InternalsProvider internals;
@@ -42,15 +41,6 @@ public class DefaultGamePlayer implements GamePlayer {
         this.effects = new HashSet<>();
         this.items = new HashSet<>();
         this.weapons = new HashSet<>();
-        this.ableToThrow = true;
-    }
-
-    public boolean isAbleToThrow() {
-        return ableToThrow;
-    }
-
-    public void setAbleToThrow(boolean ableToThrow) {
-        this.ableToThrow = ableToThrow;
     }
 
     @NotNull

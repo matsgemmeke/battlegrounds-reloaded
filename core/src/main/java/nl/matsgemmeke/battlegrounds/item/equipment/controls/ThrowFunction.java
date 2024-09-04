@@ -25,6 +25,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
     private AudioEmitter audioEmitter;
+    private boolean performing;
     @NotNull
     private DeployableSource item;
     private double projectileSpeed;
@@ -54,6 +55,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         this.taskRunner = taskRunner;
         this.projectileSpeed = projectileSpeed;
         this.delayAfterThrow = delayAfterThrow;
+        this.performing = false;
         this.sounds = new HashSet<>();
     }
 
@@ -66,11 +68,11 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isBlocking() {
-        return false;
+        return true;
     }
 
     public boolean isPerforming() {
-        return false;
+        return performing;
     }
 
     public boolean cancel() {
@@ -78,7 +80,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        if (!item.getDeployedObjects().isEmpty() || !holder.isAbleToThrow()) {
+        if (!item.getDeployedObjects().isEmpty()) {
             return false;
         }
 
@@ -96,9 +98,9 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
         audioEmitter.playSounds(sounds, location);
 
-        holder.setAbleToThrow(false);
+        performing = true;
 
-        taskRunner.runTaskLater(() -> holder.setAbleToThrow(true), delayAfterThrow);
+        taskRunner.runTaskLater(() -> performing = false, delayAfterThrow);
 
         // Check if the activation mechanism is priming its next deployment. If yes, assign the dropped item. Otherwise,
         // deploy like normally.

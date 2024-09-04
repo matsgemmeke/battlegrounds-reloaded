@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.common.collect.Iterables;
+import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
@@ -26,6 +27,7 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
     private AudioEmitter audioEmitter;
+    private boolean performing;
     @NotNull
     private DeployableSource item;
     @NotNull
@@ -34,17 +36,22 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
     private Iterable<GameSound> sounds;
     @NotNull
     private Material material;
+    @NotNull
+    private TaskRunner taskRunner;
 
     public PlantFunction(
             @NotNull DeployableSource item,
             @NotNull ItemMechanismActivation mechanismActivation,
             @NotNull Material material,
-            @NotNull AudioEmitter audioEmitter
+            @NotNull AudioEmitter audioEmitter,
+            @NotNull TaskRunner taskRunner
     ) {
         this.item = item;
         this.mechanismActivation = mechanismActivation;
         this.material = material;
         this.audioEmitter = audioEmitter;
+        this.taskRunner = taskRunner;
+        this.performing = false;
         this.sounds = new HashSet<>();
     }
 
@@ -57,11 +64,11 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isBlocking() {
-        return false;
+        return true;
     }
 
     public boolean isPerforming() {
-        return false;
+        return performing;
     }
 
     public boolean cancel() {
@@ -89,6 +96,10 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
         item.onDeploy(placedBlock);
 
         audioEmitter.playSounds(sounds, adjacentBlock.getLocation());
+
+        performing = true;
+
+        taskRunner.runTaskLater(() -> performing = false, 5);
 
         if (mechanismActivation.isPriming()) {
             mechanismActivation.onDeployDeferredObject(placedBlock);

@@ -10,20 +10,6 @@ import org.jetbrains.annotations.Nullable;
 public interface ItemHolder extends GameEntity {
 
     /**
-     * Gets whether the entity is currently able to throw items.
-     *
-     * @return whether the entity can throw items
-     */
-    boolean isAbleToThrow();
-
-    /**
-     * Sets whether the entity is currently able to throw items.
-     *
-     * @param ableToThrow whether the entity can throw items
-     */
-    void setAbleToThrow(boolean ableToThrow);
-
-    /**
      * Sets the {@link ItemStack} that the item holder is holding.
      *
      * @param itemStack the item

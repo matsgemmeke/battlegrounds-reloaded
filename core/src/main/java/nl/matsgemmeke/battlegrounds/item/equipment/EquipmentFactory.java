@@ -169,7 +169,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> plantSounds = DefaultGameSound.parseSounds(section.getString("planting.plant-sound"));
 
-            PlantFunction plantFunction = new PlantFunction(equipment, mechanismActivation, material, audioEmitter);
+            PlantFunction plantFunction = new PlantFunction(equipment, mechanismActivation, material, audioEmitter, taskRunner);
             plantFunction.addSounds(plantSounds);
 
             equipment.getControls().addControl(plantAction, plantFunction);
