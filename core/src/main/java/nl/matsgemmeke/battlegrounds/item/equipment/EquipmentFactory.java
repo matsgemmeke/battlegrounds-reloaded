@@ -11,7 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.PlantFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanismFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
@@ -110,7 +110,7 @@ public class EquipmentFactory implements WeaponFactory {
 
         String activateActionValue = controlsSection.getString("activate");
         String cookActionValue = controlsSection.getString("cook");
-        String plantActionValue = controlsSection.getString("plant");
+        String placeActionValue = controlsSection.getString("place");
         String throwActionValue = controlsSection.getString("throw");
 
         ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
@@ -136,7 +136,7 @@ public class EquipmentFactory implements WeaponFactory {
             try {
                 material = Material.valueOf(materialValue);
             } catch (IllegalArgumentException e) {
-                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", planting material " + materialValue + " is invalid");
+                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", throwing material " + materialValue + " is invalid");
             }
 
             short durability = section.getShort("item.throw-item.durability");
@@ -155,26 +155,26 @@ public class EquipmentFactory implements WeaponFactory {
             equipment.getControls().addControl(throwAction, throwFunction);
         }
 
-        if (plantActionValue != null) {
-            Action plantAction = this.getActionFromConfiguration("plant", plantActionValue);
+        if (placeActionValue != null) {
+            Action placeAction = this.getActionFromConfiguration("place", placeActionValue);
 
             Material material;
-            String materialValue = section.getString("planting.material");
+            String materialValue = section.getString("placing.material");
 
             try {
                 material = Material.valueOf(materialValue);
             } catch (IllegalArgumentException e) {
-                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", planting material " + materialValue + " is invalid");
+                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", placing material " + materialValue + " is invalid");
             }
 
             long delayAfterPlacement = section.getLong("placing.delay-after-placement");
 
-            List<GameSound> plantSounds = DefaultGameSound.parseSounds(section.getString("planting.plant-sound"));
+            List<GameSound> placeSounds = DefaultGameSound.parseSounds(section.getString("placing.place-sound"));
 
-            PlantFunction plantFunction = new PlantFunction(equipment, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
-            plantFunction.addSounds(plantSounds);
+            PlaceFunction placeFunction = new PlaceFunction(equipment, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+            placeFunction.addSounds(placeSounds);
 
-            equipment.getControls().addControl(plantAction, plantFunction);
+            equipment.getControls().addControl(placeAction, placeFunction);
         }
 
         if (activateActionValue != null) {

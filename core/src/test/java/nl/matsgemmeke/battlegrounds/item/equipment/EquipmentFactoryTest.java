@@ -207,12 +207,12 @@ public class EquipmentFactoryTest {
     }
 
     @Test
-    public void shouldCreateEquipmentItemWithPlantControls() {
+    public void shouldCreateEquipmentItemWithPlaceControls() {
         Section controlsSection = mock(Section.class);
-        when(controlsSection.getString("plant")).thenReturn("RIGHT_CLICK");
+        when(controlsSection.getString("place")).thenReturn("RIGHT_CLICK");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
-        when(rootSection.getString("planting.material")).thenReturn("WARPED_BUTTON");
+        when(rootSection.getString("placing.material")).thenReturn("WARPED_BUTTON");
 
         ItemMechanism mechanism = mock(ItemMechanism.class);
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
@@ -234,9 +234,9 @@ public class EquipmentFactoryTest {
     }
 
     @Test(expected = CreateEquipmentException.class)
-    public void shouldThrowErrorWhenPlantActionConfigurationValueIsInvalid() {
+    public void shouldThrowErrorWhenPlaceActionConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
-        when(controlsSection.getString("plant")).thenReturn("fail");
+        when(controlsSection.getString("place")).thenReturn("fail");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
@@ -245,12 +245,12 @@ public class EquipmentFactoryTest {
     }
 
     @Test(expected = CreateEquipmentException.class)
-    public void shouldThrowErrorWhenPlantingMaterialConfigurationValueIsInvalid() {
+    public void shouldThrowErrorWhenPlacingMaterialConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
-        when(controlsSection.getString("plant")).thenReturn("RIGHT_CLICK");
+        when(controlsSection.getString("place")).thenReturn("RIGHT_CLICK");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
-        when(rootSection.getString("planting.material")).thenReturn("fail");
+        when(rootSection.getString("placing.material")).thenReturn("fail");
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         factory.make(configuration, context);

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.List;
 
-public class PlantFunction implements ItemFunction<EquipmentHolder> {
+public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
     private static final int TARGET_BLOCK_SCAN_DISTANCE = 4;
 
@@ -40,7 +40,7 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private TaskRunner taskRunner;
 
-    public PlantFunction(
+    public PlaceFunction(
             @NotNull DeployableSource item,
             @NotNull ItemMechanismActivation mechanismActivation,
             @NotNull Material material,
@@ -93,7 +93,7 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
             return false;
         }
 
-        this.plantBlock(adjacentBlock, targetBlockFace);
+        this.placeBlock(adjacentBlock, targetBlockFace);
 
         PlacedBlock placedBlock = new PlacedBlock(adjacentBlock);
         item.onDeploy(placedBlock);
@@ -113,25 +113,25 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
         return true;
     }
 
-    private void plantBlock(@NotNull Block block, @NotNull BlockFace blockFace) {
+    private void placeBlock(@NotNull Block block, @NotNull BlockFace blockFace) {
         block.setType(material);
 
         AttachedFace attachedFace = this.getCorrespondingAttachedFace(blockFace);
-        BlockState plantBlockState = block.getState();
+        BlockState placedBlockState = block.getState();
 
         FaceAttachable faceAttachable = (FaceAttachable) block.getBlockData();
         faceAttachable.setAttachedFace(attachedFace);
 
-        plantBlockState.setBlockData(faceAttachable);
+        placedBlockState.setBlockData(faceAttachable);
 
         if (attachedFace == FaceAttachable.AttachedFace.WALL) {
             Directional directional = (Directional) block.getBlockData();
             directional.setFacing(blockFace);
 
-            plantBlockState.setBlockData(directional);
+            placedBlockState.setBlockData(directional);
         }
 
-        plantBlockState.update(true, true);
+        placedBlockState.update(true, true);
     }
 
     @NotNull

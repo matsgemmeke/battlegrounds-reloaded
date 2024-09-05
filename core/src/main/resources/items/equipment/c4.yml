@@ -4,7 +4,7 @@ activation:
   type: MANUAL
 controls:
   activate: RIGHT_CLICK
-  plant: RIGHT_CLICK
+  place: RIGHT_CLICK
   throw: LEFT_CLICK
 description: A plastic explosive device that is detonated remotely with the clacker.
 display-name: C4
@@ -37,7 +37,7 @@ mechanism:
 placing:
   delay-after-placement: 10
   material: WARPED_BUTTON
-  plant-sound: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
+  place-sound: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
 throwing:
   delay-after-throw: 30
   projectile-speed: 1.0
