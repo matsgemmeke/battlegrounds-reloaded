@@ -3,11 +3,11 @@ package nl.matsgemmeke.battlegrounds.item.mechanism;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,28 +35,19 @@ public class ExplosionMechanism implements ItemMechanism {
         this.breakBlocks = breakBlocks;
     }
 
-    public void activate(@Nullable Item droppedItem, @NotNull ItemHolder holder) {
-        Entity source;
-        Location location;
-        World world;
-
-        if (droppedItem != null) {
-            source = droppedItem;
-            location = droppedItem.getLocation();
-            world = droppedItem.getWorld();
-            droppedItem.remove();
-        } else {
-            source = holder.getEntity();
-            location = holder.getEntity().getLocation();
-            world = holder.getEntity().getWorld();
-        }
-
-        world.createExplosion(location, power, setFire, breakBlocks, source);
-
-        this.inflictDamage(holder, location);
+    public void activate(@NotNull ItemHolder holder) {
+        this.activate(holder, holder.getLocation(), holder.getWorld(), holder.getEntity());
     }
 
-    private void inflictDamage(@NotNull ItemHolder holder, @NotNull Location location) {
+    public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
+        this.activate(holder, object.getLocation(), object.getWorld(), object.getDamageSource());
+
+        object.remove();
+    }
+
+    private void activate(@NotNull ItemHolder holder, @NotNull Location location, @NotNull World world, @Nullable Entity source) {
+        world.createExplosion(location, power, setFire, breakBlocks, source);
+
         for (GameEntity target : collisionDetector.findTargets(holder, location, rangeProfile.getLongRangeDistance())) {
             Location targetLocation = target.getEntity().getLocation();
 

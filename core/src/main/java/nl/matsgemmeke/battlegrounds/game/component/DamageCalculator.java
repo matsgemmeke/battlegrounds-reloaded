@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.jetbrains.annotations.NotNull;
 
 public interface DamageCalculator {
@@ -12,8 +13,9 @@ public interface DamageCalculator {
      *
      * @param damager the entity who inflicted damage
      * @param entity the entity who got damaged
+     * @param damageCause the damage cause
      * @param damage the original damage amount
      * @return the amount of produced damage
      */
-    double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, double damage);
+    double calculateDamage(@NotNull Entity damager, @NotNull Entity entity, @NotNull DamageCause damageCause, double damage);
 }

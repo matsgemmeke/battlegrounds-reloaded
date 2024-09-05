@@ -33,7 +33,7 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
             return;
         }
 
-        double damage = context.getDamageCalculator().calculateDamage(damager, entity, event.getDamage());
+        double damage = context.getDamageCalculator().calculateDamage(damager, entity, event.getCause(), event.getDamage());
 
         // Only set the event damage. Cancelling stops the animation and physics which we don't want.
         event.setDamage(damage);

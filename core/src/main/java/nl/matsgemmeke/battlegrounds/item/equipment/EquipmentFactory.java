@@ -3,16 +3,15 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanismFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
@@ -20,7 +19,6 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,14 +64,12 @@ public class EquipmentFactory implements WeaponFactory {
 
     @NotNull
     private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
-        EntityRegistry<GameItem, Item> itemRegistry = context.getItemRegistry();
-
         Section section = configuration.getRoot();
 
         String name = section.getString("display-name");
         String description = section.getString("description");
 
-        DefaultEquipment equipment = new DefaultEquipment(itemRegistry);
+        DefaultEquipment equipment = new DefaultEquipment();
         equipment.setName(name);
         equipment.setDescription(description);
 
@@ -114,10 +110,11 @@ public class EquipmentFactory implements WeaponFactory {
 
         String activateActionValue = controlsSection.getString("activate");
         String cookActionValue = controlsSection.getString("cook");
+        String placeActionValue = controlsSection.getString("place");
         String throwActionValue = controlsSection.getString("throw");
 
         ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
-        ItemMechanismActivation activation = mechanismActivationFactory.make(section.getSection("activation"), equipment, mechanism);
+        ItemMechanismActivation mechanismActivation = mechanismActivationFactory.make(section.getSection("activation"), mechanism);
 
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
@@ -127,21 +124,57 @@ public class EquipmentFactory implements WeaponFactory {
 
                 List<GameSound> cookSounds = DefaultGameSound.parseSounds(section.getString("throwing.cook-sound"));
 
-                CookFunction cookFunction = new CookFunction(activation, audioEmitter);
+                CookFunction cookFunction = new CookFunction(mechanismActivation, audioEmitter);
                 cookFunction.addSounds(cookSounds);
 
                 equipment.getControls().addControl(cookAction, cookFunction);
             }
+
+            Material material;
+            String materialValue = section.getString("item.throw-item.material");
+
+            try {
+                material = Material.valueOf(materialValue);
+            } catch (IllegalArgumentException e) {
+                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", throwing material " + materialValue + " is invalid");
+            }
+
+            short durability = section.getShort("item.throw-item.durability");
+
+            ItemStack itemStack = new ItemStack(material);
+            itemStack.setDurability(durability);
 
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");
             double projectileSpeed = section.getDouble("throwing.projectile-speed");
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
-            ThrowFunction throwFunction = new ThrowFunction(equipment, activation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+            ThrowFunction throwFunction = new ThrowFunction(equipment, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
             throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);
+        }
+
+        if (placeActionValue != null) {
+            Action placeAction = this.getActionFromConfiguration("place", placeActionValue);
+
+            Material material;
+            String materialValue = section.getString("placing.material");
+
+            try {
+                material = Material.valueOf(materialValue);
+            } catch (IllegalArgumentException e) {
+                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", placing material " + materialValue + " is invalid");
+            }
+
+            long delayAfterPlacement = section.getLong("placing.delay-after-placement");
+
+            List<GameSound> placeSounds = DefaultGameSound.parseSounds(section.getString("placing.place-sound"));
+
+            PlaceFunction placeFunction = new PlaceFunction(equipment, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+            placeFunction.addSounds(placeSounds);
+
+            equipment.getControls().addControl(placeAction, placeFunction);
         }
 
         if (activateActionValue != null) {
@@ -151,7 +184,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> activateSounds = DefaultGameSound.parseSounds(section.getString("activation.activation-sound"));
 
-            ActivateFunction activateFunction = new ActivateFunction(equipment, activation, audioEmitter, taskRunner, delayUntilActivation);
+            ActivateFunction activateFunction = new ActivateFunction(equipment, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
             activateFunction.addSounds(activateSounds);
 
             equipment.getControls().addControl(activateAction, activateFunction);

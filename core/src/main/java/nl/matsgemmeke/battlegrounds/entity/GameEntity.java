@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +25,14 @@ public interface GameEntity {
      */
     @NotNull
     Location getLocation();
+
+    /**
+     * Gets the world the entity is located in.
+     *
+     * @return the entity's world
+     */
+    @NotNull
+    World getWorld();
 
     /**
      * Applies damage to the entity.

@@ -1,12 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
-import nl.matsgemmeke.battlegrounds.item.Droppable;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface Equipment extends Weapon, Droppable, Interactable<EquipmentHolder> {
+public interface Equipment extends Weapon, DeployableSource, Interactable<EquipmentHolder> {
 
     /**
      * Gets the activator item stack used to manually activate the equipment. Returns null if the equipment has no

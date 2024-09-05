@@ -1,36 +1,25 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
-import nl.matsgemmeke.battlegrounds.item.Droppable;
-import nl.matsgemmeke.battlegrounds.item.holder.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Activation that triggers the mechanism by a manual operation by the item holder.
  */
-public class ManualActivation implements ItemMechanismActivation {
+public class ManualActivation extends BaseItemMechanismActivation {
 
-    private boolean primed;
-    @NotNull
-    private Droppable item;
-    @NotNull
-    private ItemMechanism mechanism;
-
-    public ManualActivation(@NotNull Droppable item, @NotNull ItemMechanism mechanism) {
-        this.item = item;
-        this.mechanism = mechanism;
-        this.primed = false;
+    public ManualActivation(@NotNull ItemMechanism mechanism) {
+        super(mechanism);
     }
 
-    public void activate(@NotNull ItemHolder holder) {
-        mechanism.activate(item.getDroppedItem(), holder);
-    }
+    public void prime(@NotNull ItemHolder holder, @Nullable Deployable object) {
+        if (object == null) {
+            throw new IllegalArgumentException("Manual mechanism activation does support priming a deferred object");
+        }
 
-    public boolean isPrimed() {
-        return primed;
-    }
-
-    public void prime(@NotNull ItemHolder holder) {
-        primed = true;
+        deployedObjects.add(object);
     }
 }

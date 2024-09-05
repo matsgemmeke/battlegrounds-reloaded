@@ -4,6 +4,7 @@ activation:
   type: MANUAL
 controls:
   activate: RIGHT_CLICK
+  place: RIGHT_CLICK
   throw: LEFT_CLICK
 description: A plastic explosive device that is detonated remotely with the clacker.
 display-name: C4
@@ -12,9 +13,12 @@ id: C4
 item:
   activator:
     durability: 3
-    material: FLINT_AND_STEEL
+    material: SHEARS
   durability: 2
-  material: FLINT_AND_STEEL
+  material: SHEARS
+  throw-item:
+    durability: 2
+    material: SHEARS
 mechanism:
   break-blocks: false
   power: 3.0
@@ -30,6 +34,10 @@ mechanism:
       distance: 2.5
   set-fire: false
   type: EXPLOSION
+placing:
+  delay-after-placement: 10
+  material: WARPED_BUTTON
+  place-sound: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
 throwing:
   delay-after-throw: 30
   projectile-speed: 1.0
