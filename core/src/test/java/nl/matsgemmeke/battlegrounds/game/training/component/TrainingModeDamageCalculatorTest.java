@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +37,7 @@ public class TrainingModeDamageCalculatorTest {
 
         TrainingModeDamageCalculator damageCalculator = new TrainingModeDamageCalculator(itemRegistry);
 
-        double damage = damageCalculator.calculateDamage(damager, entity, 10.0);
+        double damage = damageCalculator.calculateDamage(damager, entity, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, 10.0);
 
         assertEquals(0.0, damage, 0.0);
     }
@@ -52,7 +53,7 @@ public class TrainingModeDamageCalculatorTest {
 
         TrainingModeDamageCalculator damageCalculator = new TrainingModeDamageCalculator(itemRegistry);
 
-        double damage = damageCalculator.calculateDamage(damager, entity, 10.0);
+        double damage = damageCalculator.calculateDamage(damager, entity, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, 10.0);
 
         assertEquals(10.0, damage, 0.0);
     }

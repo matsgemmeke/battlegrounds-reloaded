@@ -31,6 +31,7 @@ public class PlantFunctionTest {
     private AudioEmitter audioEmitter;
     private DeployableSource item;
     private ItemMechanismActivation mechanismActivation;
+    private long delayAfterPlacement;
     private Material material;
     private TaskRunner taskRunner;
 
@@ -39,6 +40,7 @@ public class PlantFunctionTest {
         audioEmitter = mock(AudioEmitter.class);
         item = mock(DeployableSource.class);
         mechanismActivation = mock(ItemMechanismActivation.class);
+        delayAfterPlacement = 10L;
         material = Material.WARPED_BUTTON;
         taskRunner = mock(TaskRunner.class);
     }
@@ -47,7 +49,7 @@ public class PlantFunctionTest {
     public void shouldBeAvailableIfItemHasNoDeployedObjectsYet() {
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean available = function.isAvailable();
 
         assertTrue(available);
@@ -57,7 +59,7 @@ public class PlantFunctionTest {
     public void shouldNotBeAvailableIfItemHasDeployedObjects() {
         when(item.getDeployedObjects()).thenReturn(List.of(mock(Deployable.class)));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean available = function.isAvailable();
 
         assertFalse(available);
@@ -65,7 +67,7 @@ public class PlantFunctionTest {
 
     @Test
     public void shouldNotBePerformingIfNoBlocksWerePlanted() {
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -90,7 +92,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
@@ -103,7 +105,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -120,7 +122,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -140,7 +142,7 @@ public class PlantFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -172,7 +174,7 @@ public class PlantFunctionTest {
 
         when(mechanismActivation.isPriming()).thenReturn(false);
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 
@@ -212,7 +214,7 @@ public class PlantFunctionTest {
 
         when(mechanismActivation.isPriming()).thenReturn(true);
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 
@@ -253,7 +255,7 @@ public class PlantFunctionTest {
 
         when(mechanismActivation.isPriming()).thenReturn(true);
 
-        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner);
+        PlantFunction function = new PlantFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 

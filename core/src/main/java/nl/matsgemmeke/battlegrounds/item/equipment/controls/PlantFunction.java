@@ -34,6 +34,7 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
     private ItemMechanismActivation mechanismActivation;
     @NotNull
     private Iterable<GameSound> sounds;
+    private long delayAfterPlacement;
     @NotNull
     private Material material;
     @NotNull
@@ -44,13 +45,15 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
             @NotNull ItemMechanismActivation mechanismActivation,
             @NotNull Material material,
             @NotNull AudioEmitter audioEmitter,
-            @NotNull TaskRunner taskRunner
+            @NotNull TaskRunner taskRunner,
+            long delayAfterPlacement
     ) {
         this.item = item;
         this.mechanismActivation = mechanismActivation;
         this.material = material;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
+        this.delayAfterPlacement = delayAfterPlacement;
         this.performing = false;
         this.sounds = new HashSet<>();
     }
@@ -99,7 +102,7 @@ public class PlantFunction implements ItemFunction<EquipmentHolder> {
 
         performing = true;
 
-        taskRunner.runTaskLater(() -> performing = false, 5);
+        taskRunner.runTaskLater(() -> performing = false, delayAfterPlacement);
 
         if (mechanismActivation.isPriming()) {
             mechanismActivation.onDeployDeferredObject(placedBlock);

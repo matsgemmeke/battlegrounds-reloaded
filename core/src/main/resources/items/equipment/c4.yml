@@ -34,7 +34,8 @@ mechanism:
       distance: 2.5
   set-fire: false
   type: EXPLOSION
-planting:
+placing:
+  delay-after-placement: 10
   material: WARPED_BUTTON
   plant-sound: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
 throwing:

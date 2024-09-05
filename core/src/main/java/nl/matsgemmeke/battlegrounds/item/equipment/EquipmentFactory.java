@@ -167,9 +167,11 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", planting material " + materialValue + " is invalid");
             }
 
+            long delayAfterPlacement = section.getLong("placing.delay-after-placement");
+
             List<GameSound> plantSounds = DefaultGameSound.parseSounds(section.getString("planting.plant-sound"));
 
-            PlantFunction plantFunction = new PlantFunction(equipment, mechanismActivation, material, audioEmitter, taskRunner);
+            PlantFunction plantFunction = new PlantFunction(equipment, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
             plantFunction.addSounds(plantSounds);
 
             equipment.getControls().addControl(plantAction, plantFunction);
