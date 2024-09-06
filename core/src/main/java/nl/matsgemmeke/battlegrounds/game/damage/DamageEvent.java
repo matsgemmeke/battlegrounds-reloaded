@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game.damage;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,11 +9,11 @@ public class DamageEvent {
     private DamageCause cause;
     private double damage;
     @NotNull
-    private GameEntity damager;
+    private Entity damager;
     @NotNull
-    private GameEntity entity;
+    private Entity entity;
 
-    public DamageEvent(@NotNull GameEntity damager, @NotNull GameEntity entity, @NotNull DamageCause cause, double damage) {
+    public DamageEvent(@NotNull Entity damager, @NotNull Entity entity, @NotNull DamageCause cause, double damage) {
         this.damager = damager;
         this.entity = entity;
         this.cause = cause;
@@ -35,12 +34,12 @@ public class DamageEvent {
     }
 
     @NotNull
-    public GameEntity getDamager() {
+    public Entity getDamager() {
         return damager;
     }
 
     @NotNull
-    public GameEntity getEntity() {
+    public Entity getEntity() {
         return entity;
     }
 }

@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.damage.check;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import org.bukkit.entity.Entity;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,14 +12,14 @@ import static org.mockito.Mockito.mock;
 public class DefaultExplosionDamageCheckTest {
 
     private double damage;
-    private GameEntity damager;
-    private GameEntity entity;
+    private Entity damager;
+    private Entity entity;
 
     @Before
     public void setUp() {
         damage = 10.0;
-        damager = mock(GameEntity.class);
-        entity = mock(GameEntity.class);
+        damager = mock(Entity.class);
+        entity = mock(Entity.class);
     }
 
     @Test

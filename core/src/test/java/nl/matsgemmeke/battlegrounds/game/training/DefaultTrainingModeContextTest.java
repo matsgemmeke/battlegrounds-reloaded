@@ -64,15 +64,15 @@ public class DefaultTrainingModeContextTest {
     }
 
     @Test
-    public void shouldReturnInstanceOfDamageCalculator() {
+    public void shouldReturnInstanceOfDamageProcessor() {
         EntityStorage<GameItem> itemStorage = (EntityStorage<GameItem>) mock(EntityStorage.class);
         when(trainingMode.getItemStorage()).thenReturn(itemStorage);
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        DamageCalculator damageCalculator = context.getDamageCalculator();
+        DamageProcessor damageProcessor = context.getDamageProcessor();
 
-        assertTrue(damageCalculator instanceof TrainingModeDamageCalculator);
+        assertTrue(damageProcessor instanceof DefaultDamageProcessor);
     }
 
     @Test

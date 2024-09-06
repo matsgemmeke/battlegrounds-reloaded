@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
@@ -33,9 +35,15 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
             return;
         }
 
-        double damage = context.getDamageCalculator().calculateDamage(damager, entity, event.getCause(), event.getDamage());
+        DamageCause cause = DamageCause.map(event.getCause());
+
+        if (cause == null) {
+            return;
+        }
+
+        DamageEvent damageEvent = context.getDamageProcessor().processDamage(new DamageEvent(damager, entity, cause, event.getDamage()));
 
         // Only set the event damage. Cancelling stops the animation and physics which we don't want.
-        event.setDamage(damage);
+        event.setDamage(damageEvent.getDamage());
     }
 }

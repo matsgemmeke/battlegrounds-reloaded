@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,22 +58,22 @@ public class ExplosionMechanismTest {
 
     @Test
     public void shouldCreateExplosionAtDeployedObjectLocation() {
+        Entity entity = mock(Entity.class);
         World world = mock(World.class);
         Location location = new Location(world, 1, 1, 1);
-        Item itemEntity = mock(Item.class);
 
         Deployable object = mock(Deployable.class);
-        when(object.getDamageSource()).thenReturn(itemEntity);
         when(object.getLocation()).thenReturn(location);
         when(object.getWorld()).thenReturn(world);
 
         ItemHolder holder = mock(ItemHolder.class);
+        when(holder.getEntity()).thenReturn(entity);
 
         ExplosionMechanism explosionMechanism = new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
         explosionMechanism.activate(holder, object);
 
         verify(object).remove();
-        verify(world).createExplosion(location, power, setFire, breakBlocks, itemEntity);
+        verify(world).createExplosion(location, power, setFire, breakBlocks, entity);
     }
 
     @Test
