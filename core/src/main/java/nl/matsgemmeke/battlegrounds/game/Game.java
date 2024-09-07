@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
-import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -64,14 +63,6 @@ public interface Game {
      */
     @NotNull
     EntityStorage<GameItem> getItemStorage();
-
-    /**
-     * Retrieves the storage for GameMob entities in the game.
-     *
-     * @return the storage for GameMob entities
-     */
-    @NotNull
-    EntityStorage<GameMob> getMobStorage();
 
     /**
      * Gets the player storage of the game.

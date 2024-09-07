@@ -4,7 +4,6 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
@@ -17,11 +16,6 @@ public class EventListener implements Listener {
 
     public EventListener(@NotNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
-    }
-
-    @EventHandler
-    public void onCreatureSpawn(@NotNull CreatureSpawnEvent event) {
-        this.dispatchEvent(event);
     }
 
     @EventHandler

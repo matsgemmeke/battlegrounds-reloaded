@@ -2,18 +2,17 @@ package nl.matsgemmeke.battlegrounds.game.training;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
-import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageCalculator;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;
@@ -110,18 +109,6 @@ public class DefaultTrainingModeContextTest {
         ItemRegistry<Gun, GunHolder> gunRegistry = context.getGunRegistry();
 
         assertTrue(gunRegistry instanceof DefaultGunRegistry);
-    }
-
-    @Test
-    public void shouldReturnNewInstanceOfEntityRegistryForMobEntities() {
-        EntityStorage<GameMob> mobStorage = (EntityStorage<GameMob>) mock(EntityStorage.class);
-        when(trainingMode.getMobStorage()).thenReturn(mobStorage);
-
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
-
-        EntityRegistry<GameMob, Mob> mobRegistry = context.getMobRegistry();
-
-        assertTrue(mobRegistry instanceof DefaultMobRegistry);
     }
 
     @Test

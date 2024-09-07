@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
-import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import org.jetbrains.annotations.NotNull;
@@ -14,8 +13,6 @@ public abstract class BaseGame implements Game {
     @NotNull
     protected EntityStorage<GameItem> itemStorage;
     @NotNull
-    protected EntityStorage<GameMob> mobStorage;
-    @NotNull
     protected EntityStorage<GamePlayer> playerStorage;
     @NotNull
     protected Set<ItemBehavior> itemBehaviors;
@@ -23,7 +20,6 @@ public abstract class BaseGame implements Game {
     public BaseGame() {
         this.itemBehaviors = new HashSet<>();
         this.itemStorage = new EntityStorage<>();
-        this.mobStorage = new EntityStorage<>();
         this.playerStorage = new EntityStorage<>();
     }
 
@@ -35,11 +31,6 @@ public abstract class BaseGame implements Game {
     @NotNull
     public EntityStorage<GameItem> getItemStorage() {
         return itemStorage;
-    }
-
-    @NotNull
-    public EntityStorage<GameMob> getMobStorage() {
-        return mobStorage;
     }
 
     @NotNull

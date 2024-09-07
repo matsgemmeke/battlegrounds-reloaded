@@ -32,10 +32,6 @@ public class BattlegroundsConfiguration extends BasePluginConfiguration {
         return this.checkConfigurationValue("language", "en");
     }
 
-    public boolean isEnabledRegisterEntitiesToTrainingModeUponSpawn() {
-        return this.checkConfigurationValue("training-mode-register-entities-on-spawn", true);
-    }
-
     @NotNull
     private <T> T checkConfigurationValue(@NotNull String route) {
         return this.checkConfigurationValue(route, null);
