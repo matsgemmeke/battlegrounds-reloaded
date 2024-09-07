@@ -4,7 +4,6 @@ import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,9 +23,9 @@ public class DefaultPlayerRegistry implements EntityRegistry<GamePlayer, Player>
     }
 
     @Nullable
-    public GamePlayer findByEntity(@NotNull Entity entity) {
+    public GamePlayer findByEntity(@NotNull Player player) {
         for (GamePlayer gamePlayer : playerStorage.getEntities()) {
-            if (gamePlayer.getEntity() == entity) {
+            if (gamePlayer.getEntity() == player) {
                 return gamePlayer;
             }
         }
@@ -38,8 +37,8 @@ public class DefaultPlayerRegistry implements EntityRegistry<GamePlayer, Player>
         return playerStorage.getEntity(uuid);
     }
 
-    public boolean isRegistered(@NotNull Entity entity) {
-        return playerStorage.getEntity(entity) != null;
+    public boolean isRegistered(@NotNull Player player) {
+        return playerStorage.getEntity(player) != null;
     }
 
     public boolean isRegistered(@NotNull UUID uuid) {

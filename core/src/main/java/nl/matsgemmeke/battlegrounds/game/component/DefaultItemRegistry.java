@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.game.component;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGameItem;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,9 +19,9 @@ public class DefaultItemRegistry implements EntityRegistry<GameItem, Item> {
     }
 
     @Nullable
-    public GameItem findByEntity(@NotNull Entity entity) {
+    public GameItem findByEntity(@NotNull Item itemEntity) {
         for (GameItem gameItem : itemStorage.getEntities()) {
-            if (gameItem.getEntity() == entity) {
+            if (gameItem.getEntity() == itemEntity) {
                 return gameItem;
             }
         }
@@ -34,8 +33,8 @@ public class DefaultItemRegistry implements EntityRegistry<GameItem, Item> {
         return itemStorage.getEntity(uuid);
     }
 
-    public boolean isRegistered(@NotNull Entity entity) {
-        return itemStorage.getEntity(entity) != null;
+    public boolean isRegistered(@NotNull Item item) {
+        return itemStorage.getEntity(item) != null;
     }
 
     public boolean isRegistered(@NotNull UUID uuid) {

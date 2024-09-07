@@ -1,11 +1,12 @@
 package nl.matsgemmeke.battlegrounds.game.training.component;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.TrainingModeEntity;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.EntityFinder;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -15,14 +16,10 @@ import java.util.List;
 
 public class TrainingModeCollisionDetector implements CollisionDetector {
 
-    @NotNull
     private BlockCollisionChecker blockCollisionChecker;
-    @NotNull
-    private EntityFinder entityFinder;
 
-    public TrainingModeCollisionDetector(@NotNull BlockCollisionChecker blockCollisionChecker, @NotNull EntityFinder entityFinder) {
+    public TrainingModeCollisionDetector(@NotNull BlockCollisionChecker blockCollisionChecker) {
         this.blockCollisionChecker = blockCollisionChecker;
-        this.entityFinder = entityFinder;
     }
 
     @NotNull
@@ -34,9 +31,8 @@ public class TrainingModeCollisionDetector implements CollisionDetector {
         List<GameEntity> entities = new ArrayList<>();
 
         for (Entity entity : location.getWorld().getNearbyEntities(location, range, range, range)) {
-            GameEntity target = entityFinder.findEntity(entity);
-            if (target != null) {
-                entities.add(target);
+            if (entity instanceof LivingEntity) {
+                entities.add(new TrainingModeEntity((LivingEntity) entity));
             }
         }
 

@@ -20,6 +20,9 @@ public class CreatureSpawnEventHandler implements EventHandler<CreatureSpawnEven
     }
 
     public void handle(@NotNull CreatureSpawnEvent event) {
+        System.out.println(event.getEntity().getName());
+        System.out.println(event.getEntity() instanceof Mob);
+
         if (!(event.getEntity() instanceof Mob mob)) {
             return;
         }
@@ -27,6 +30,8 @@ public class CreatureSpawnEventHandler implements EventHandler<CreatureSpawnEven
         if (!config.isEnabledRegisterEntitiesToTrainingModeUponSpawn()) {
             return;
         }
+
+        System.out.println("Registered " + event.getEntity() + " to training mode");
 
         trainingModeContext.getMobRegistry().registerEntity(mob);
     }

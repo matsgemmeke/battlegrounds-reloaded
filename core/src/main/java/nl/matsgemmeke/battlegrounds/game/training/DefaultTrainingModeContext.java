@@ -50,13 +50,9 @@ public class DefaultTrainingModeContext implements GameContext {
 
     @NotNull
     public CollisionDetector getCollisionDetector() {
-        EntityRegistry<GameMob, Mob> mobRegistry = new DefaultMobRegistry(trainingMode.getMobStorage());
-        EntityRegistry<GamePlayer, Player> playerRegistry = new DefaultPlayerRegistry(trainingMode.getPlayerStorage(), internals);
-
         BlockCollisionChecker blockCollisionChecker = new BlockCollisionChecker();
-        EntityFinder entityFinder = new EntityFinder(mobRegistry, playerRegistry);
 
-        return new TrainingModeCollisionDetector(blockCollisionChecker, entityFinder);
+        return new TrainingModeCollisionDetector(blockCollisionChecker);
     }
 
     @NotNull
