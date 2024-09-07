@@ -10,12 +10,12 @@ import java.util.UUID;
 public interface EntityRegistry<T extends GameEntity, S extends Entity> {
 
     @Nullable
-    T findByEntity(@NotNull S entity);
+    T findByEntity(@NotNull Entity entity);
 
     @Nullable
     T findByUUID(@NotNull UUID uuid);
 
-    boolean isRegistered(@NotNull S entity);
+    boolean isRegistered(@NotNull Entity entity);
 
     boolean isRegistered(@NotNull UUID uuid);
 

@@ -57,6 +57,12 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfCollisionDetector() {
+        EntityStorage<GameMob> mobStorage = (EntityStorage<GameMob>) mock(EntityStorage.class);
+        when(trainingMode.getMobStorage()).thenReturn(mobStorage);
+
+        EntityStorage<GamePlayer> playerStorage = (EntityStorage<GamePlayer>) mock(EntityStorage.class);
+        when(trainingMode.getPlayerStorage()).thenReturn(playerStorage);
+
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
         CollisionDetector collisionDetector = context.getCollisionDetector();
