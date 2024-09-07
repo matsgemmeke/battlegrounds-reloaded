@@ -71,10 +71,20 @@ public class BattlegroundsConfigurationTest {
     }
 
     @Test
-    public void canReadFirearmTriggerSound() {
+    public void canReadGunTriggerSound() {
         BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
         config.load();
 
         assertEquals("UI_BUTTON_CLICK-0.5-2-0", config.getGunTriggerSound());
+    }
+
+    @Test
+    public void canReadTrainingModeRegisterEntitiesOnSpawn() {
+        BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
+        config.load();
+
+        boolean registerEntitiesOnSpawn = config.isEnabledRegisterEntitiesToTrainingModeUponSpawn();
+
+        assertTrue(registerEntitiesOnSpawn);
     }
 }

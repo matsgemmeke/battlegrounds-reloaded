@@ -15,3 +15,7 @@ item-gun-damage-amplifier: 1.0
 # The sound guns make when pulling the trigger. This sound effect only gets played when a player attempts to shoot a
 # gun with an empty magazine.
 item-gun-trigger-sound: UI_BUTTON_CLICK-0.5-2-0
+
+# Whether the plugin should register new entities into the training mode when they spawn into the server. This means
+# that these entities are able to get damaged by other players in training mode.
+training-mode-register-entities-on-spawn: true

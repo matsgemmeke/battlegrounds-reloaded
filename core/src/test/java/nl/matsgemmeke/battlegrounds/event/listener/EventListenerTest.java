@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.listener;
 
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
@@ -17,6 +18,16 @@ public class EventListenerTest {
     @Before
     public void setUp() {
         this.eventDispatcher = mock(EventDispatcher.class);
+    }
+
+    @Test
+    public void callsEventDispatcherUponHandlingEntitySpawnEvent() {
+        CreatureSpawnEvent event = mock(CreatureSpawnEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onCreatureSpawn(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
     }
 
     @Test
