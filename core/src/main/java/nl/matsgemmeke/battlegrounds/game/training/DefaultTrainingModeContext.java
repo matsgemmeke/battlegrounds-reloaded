@@ -50,7 +50,7 @@ public class DefaultTrainingModeContext implements GameContext {
     public CollisionDetector getCollisionDetector() {
         BlockCollisionChecker blockCollisionChecker = new BlockCollisionChecker();
 
-        return new TrainingModeCollisionDetector(blockCollisionChecker);
+        return new TrainingModeCollisionDetector(blockCollisionChecker, trainingMode.getPlayerStorage());
     }
 
     @NotNull

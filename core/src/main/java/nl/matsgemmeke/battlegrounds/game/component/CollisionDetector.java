@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * A façade interface whose responsible is to identify targets inside a game context.
@@ -20,7 +20,7 @@ public interface CollisionDetector {
      * @return all targets inside the range
      */
     @NotNull
-    Collection<GameEntity> findTargets(@NotNull GameEntity gameEntity, @NotNull Location location, double range);
+    List<GameEntity> findTargets(@NotNull GameEntity gameEntity, @NotNull Location location, double range);
 
     /**
      * Verifies if the given location produces a collision with a block.

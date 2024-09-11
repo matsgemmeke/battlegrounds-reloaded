@@ -18,4 +18,18 @@ public interface GamePlayer extends GameEntity, EquipmentHolder, GunHolder {
      */
     @NotNull
     Player getEntity();
+
+    /**
+     * Gets whether the player is passive and cannot inflict or take damage from the plugin's custom items.
+     *
+     * @return whether the player is passive
+     */
+    boolean isPassive();
+
+    /**
+     * Sets whether the player is passive and cannot inflict or take damage from the plugin's custom items.
+     *
+     * @param passive whether the player is passive
+     */
+    void setPassive(boolean passive);
 }
