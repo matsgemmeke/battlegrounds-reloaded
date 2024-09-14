@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import org.bukkit.entity.Entity;
@@ -21,16 +22,26 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
     public void handle(@NotNull EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         Entity damager = event.getDamager();
-        GameContext context = contextProvider.getContext(entity.getUniqueId());
+        GameContext entityContext = contextProvider.getContext(entity.getUniqueId());
         GameContext damagerContext = contextProvider.getContext(damager.getUniqueId());
 
-        if (context == null || damagerContext == null) {
-            // Do not handle damage events outside game instances
+        if (entityContext == null && damagerContext == null) {
+            // Do not handle events outside of game instances
             return;
         }
 
-        if (context != damagerContext) {
-            // Cancel damage events that happen between entities not present in the same game
+        DamageProcessor damageProcessor;
+        GameContext otherContext;
+
+        if (damagerContext != null) {
+            damageProcessor = damagerContext.getDamageProcessor();
+            otherContext = entityContext;
+        } else {
+            damageProcessor = entityContext.getDamageProcessor();
+            otherContext = damagerContext;
+        }
+
+        if (!damageProcessor.isDamageAllowed(otherContext)) {
             event.setCancelled(true);
             return;
         }
@@ -38,12 +49,14 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
         DamageCause cause = DamageCause.map(event.getCause());
 
         if (cause == null) {
+            // Do not handle events whose damage cause does not map to damage causes the plugin handles
             return;
         }
 
-        DamageEvent damageEvent = context.getDamageProcessor().processDamage(new DamageEvent(damager, entity, cause, event.getDamage()));
+        DamageEvent damageEvent = new DamageEvent(damager, damagerContext, entity, entityContext, cause, event.getDamage());
+        DamageEvent result = damageProcessor.processDamage(damageEvent);
 
-        // Only set the event damage. Cancelling stops the animation and physics which we don't want.
-        event.setDamage(damageEvent.getDamage());
+        // Only set the event damage so the damage animation and physics are kept
+        event.setDamage(result.getDamage());
     }
 }

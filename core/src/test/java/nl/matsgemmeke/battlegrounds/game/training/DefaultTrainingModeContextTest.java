@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageCalculator;
+import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -72,7 +72,7 @@ public class DefaultTrainingModeContextTest {
 
         DamageProcessor damageProcessor = context.getDamageProcessor();
 
-        assertTrue(damageProcessor instanceof DefaultDamageProcessor);
+        assertTrue(damageProcessor instanceof TrainingModeDamageProcessor);
     }
 
     @Test
