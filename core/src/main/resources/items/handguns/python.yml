@@ -10,7 +10,7 @@ display-name: Python
 firearm-type: HANDGUN
 id: PYTHON
 item:
-  durability: 5
+  damage: 5
   material: IRON_HOE
 level-unlocked: 18
 price: 600

@@ -23,6 +23,8 @@ import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -153,10 +155,15 @@ public class FirearmFactory implements WeaponFactory {
 
         // ItemStack creation
         Material material = Material.getMaterial(section.getString("item.material"));
-        short durability = section.getShort("item.durability");
+        int damage = section.getInt("item.damage");
 
         ItemStack itemStack = new ItemStack(material);
-        itemStack.setDurability(durability);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        if (itemMeta instanceof Damageable) {
+            ((Damageable) itemMeta).setDamage(damage);
+            itemStack.setItemMeta(itemMeta);
+        }
 
         // Set and update the item stack
         firearm.setItemStack(itemStack);

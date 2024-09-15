@@ -10,7 +10,7 @@ display-name: AK-47
 firearm-type: ASSAULT_RIFLE
 id: AK-47
 item:
-  durability: 13
+  damage: 13
   material: IRON_HOE
 level-unlocked: 38
 price: 2500

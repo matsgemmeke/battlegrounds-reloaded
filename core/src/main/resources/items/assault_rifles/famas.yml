@@ -10,7 +10,7 @@ display-name: FAMAS
 firearm-type: ASSAULT_RIFLE
 id: FAMAS
 item:
-  durability: 16
+  damage: 16
   material: IRON_HOE
 level-unlocked: 5
 price: 2250

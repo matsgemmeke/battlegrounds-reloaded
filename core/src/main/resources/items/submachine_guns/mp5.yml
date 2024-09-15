@@ -10,7 +10,7 @@ display-name: MP5
 firearm-type: SUBMACHINE_GUN
 id: MP5
 item:
-  durability: 8
+  damage: 8
   material: IRON_HOE
 level-unlocked: 1
 price: 1200

@@ -10,7 +10,7 @@ display-name: Olympia
 firearm-type: SHOTGUN
 id: OLYMPIA
 item:
-  durability: 23
+  damage: 23
   material: IRON_HOE
 level-unlocked: 1
 price: 1100

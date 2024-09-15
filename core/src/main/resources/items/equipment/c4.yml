@@ -12,12 +12,12 @@ equipment-type: LETHAL
 id: C4
 item:
   activator:
-    durability: 3
+    damage: 3
     material: SHEARS
-  durability: 2
+  damage: 2
   material: SHEARS
   throw-item:
-    durability: 2
+    damage: 2
     material: SHEARS
 mechanism:
   break-blocks: false

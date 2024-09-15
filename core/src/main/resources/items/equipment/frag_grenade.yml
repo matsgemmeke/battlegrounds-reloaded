@@ -9,10 +9,10 @@ display-name: Frag Grenade
 equipment-type: LETHAL
 id: FRAG_GRENADE
 item:
-  durability: 1
+  damage: 1
   material: SHEARS
   throw-item:
-    durability: 1
+    damage: 1
     material: SHEARS
 mechanism:
   break-blocks: false

@@ -15,7 +15,9 @@ import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.meta.Damageable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,8 +27,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -42,6 +43,7 @@ public class FirearmFactoryTest {
     private GameContext context;
     private FireModeFactory fireModeFactory;
     private ItemConfiguration itemConfiguration;
+    private ItemFactory itemFactory;
     private RecoilProducerFactory recoilProducerFactory;
     private ReloadSystemFactory reloadSystemFactory;
     private Section mainSection;
@@ -49,11 +51,12 @@ public class FirearmFactoryTest {
 
     @Before
     public void setUp() {
-        this.config = mock(BattlegroundsConfiguration.class);
-        this.fireModeFactory = mock(FireModeFactory.class);
-        this.recoilProducerFactory = mock(RecoilProducerFactory.class);
-        this.reloadSystemFactory = mock(ReloadSystemFactory.class);
-        this.spreadPatternFactory = mock(SpreadPatternFactory.class);
+        config = mock(BattlegroundsConfiguration.class);
+        fireModeFactory = mock(FireModeFactory.class);
+        itemFactory = mock(ItemFactory.class);
+        recoilProducerFactory = mock(RecoilProducerFactory.class);
+        reloadSystemFactory = mock(ReloadSystemFactory.class);
+        spreadPatternFactory = mock(SpreadPatternFactory.class);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
@@ -62,9 +65,10 @@ public class FirearmFactoryTest {
         when(context.getAudioEmitter()).thenReturn(audioEmitter);
         when(context.getCollisionDetector()).thenReturn(collisionDetector);
 
-        this.mainSection = mock(Section.class);
+        mainSection = mock(Section.class);
         when(mainSection.getString("description")).thenReturn("test");
         when(mainSection.getString("display-name")).thenReturn("test");
+        when(mainSection.getInt("item.damage")).thenReturn(1);
         when(mainSection.getString("item.material")).thenReturn("IRON_HOE");
         when(mainSection.getString("shooting.shot-sound")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
 
@@ -73,23 +77,27 @@ public class FirearmFactoryTest {
         when(itemConfiguration.getRoot()).thenReturn(mainSection);
 
         PowerMockito.mockStatic(Bukkit.class);
-        ItemFactory itemFactory = mock(ItemFactory.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
     }
 
     @Test
-    public void createFirearmWithoutScopeFromConfiguration() {
+    public void createSimpleFirearm() {
+        Damageable itemMeta = mock(Damageable.class);
+
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
         when(itemConfiguration.getItemId()).thenReturn("TEST_GUN");
+        when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
-        assertNotNull(firearm);
+        assertTrue(firearm instanceof DefaultFirearm);
         assertEquals("test", firearm.getName());
+        assertEquals(Material.IRON_HOE, firearm.getItemStack().getType());
 
+        verify(itemMeta).setDamage(1);
         verify(registry).registerItem(firearm);
     }
 
