@@ -180,7 +180,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void setUpTrainingMode() {
-        TrainingModeFactory trainingModeFactory = new TrainingModeFactory(internals);
+        TrainingModeFactory trainingModeFactory = new TrainingModeFactory(config, internals);
         TrainingMode trainingMode = trainingModeFactory.make();
 
         trainingModeContext = trainingMode.getContext();
