@@ -21,6 +21,8 @@ public class DefaultTrainingModeContext implements GameContext {
     @NotNull
     private ActionHandler actionHandler;
     @NotNull
+    private DamageProcessor damageProcessor;
+    @NotNull
     private InternalsProvider internals;
     @NotNull
     private TrainingMode trainingMode;
@@ -29,6 +31,7 @@ public class DefaultTrainingModeContext implements GameContext {
         this.trainingMode = trainingMode;
         this.internals = internals;
         this.actionHandler = this.setUpActionHandlerInstance();
+        this.damageProcessor = new TrainingModeDamageProcessor(this);
     }
 
     private ActionHandler setUpActionHandlerInstance() {
@@ -56,7 +59,11 @@ public class DefaultTrainingModeContext implements GameContext {
 
     @NotNull
     public DamageProcessor getDamageProcessor() {
-        return new TrainingModeDamageProcessor(this);
+        return damageProcessor;
+    }
+
+    public void setDamageProcessor(@NotNull DamageProcessor damageProcessor) {
+        this.damageProcessor = damageProcessor;
     }
 
     @NotNull

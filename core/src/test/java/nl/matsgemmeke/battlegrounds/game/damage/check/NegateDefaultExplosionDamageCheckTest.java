@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class DefaultExplosionDamageCheckTest {
+public class NegateDefaultExplosionDamageCheckTest {
 
     @Test
     public void shouldNotAlterDamageForEventsWithoutDefaultExplosionDamageCause() {
@@ -22,7 +22,7 @@ public class DefaultExplosionDamageCheckTest {
 
         DamageEvent event = new DamageEvent(damager, damagerContext, entity, entityContext, DamageCause.GUN_PROJECTILE, damage);
 
-        DefaultExplosionDamageCheck check = new DefaultExplosionDamageCheck();
+        NegateDefaultExplosionDamageCheck check = new NegateDefaultExplosionDamageCheck();
         check.process(event);
 
         assertEquals(damage, event.getDamage(), 0.0);

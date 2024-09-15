@@ -28,6 +28,8 @@ public interface GameContext {
     @NotNull
     DamageProcessor getDamageProcessor();
 
+    void setDamageProcessor(@NotNull DamageProcessor damageProcessor);
+
     @NotNull
     ItemRegistry<Equipment, EquipmentHolder> getEquipmentRegistry();
 

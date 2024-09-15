@@ -12,20 +12,13 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
-import nl.matsgemmeke.battlegrounds.game.training.DefaultTrainingMode;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
+import nl.matsgemmeke.battlegrounds.game.training.TrainingModeFactory;
 import nl.matsgemmeke.battlegrounds.item.WeaponProviderLoader;
-import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanismFactory;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
@@ -187,14 +180,10 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void setUpTrainingMode() {
-        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
-        ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
+        TrainingModeFactory trainingModeFactory = new TrainingModeFactory(internals);
+        TrainingMode trainingMode = trainingModeFactory.make();
 
-        trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
         trainingModeContext = trainingMode.getContext();
-
-        trainingMode.addItemBehavior(new EquipmentBehavior(equipmentStorage));
-        trainingMode.addItemBehavior(new GunBehavior(gunStorage));
 
         contextProvider.assignTrainingModeContext(trainingModeContext);
     }

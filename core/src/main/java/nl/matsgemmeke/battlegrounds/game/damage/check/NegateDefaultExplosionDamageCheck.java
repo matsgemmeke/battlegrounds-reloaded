@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class DefaultExplosionDamageCheck implements DamageCheck {
+public class NegateDefaultExplosionDamageCheck implements DamageCheck {
 
     private static final double DEFAULT_EXPLOSION_DAMAGE = 0.0;
 
