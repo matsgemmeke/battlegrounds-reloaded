@@ -63,7 +63,7 @@ public class BattlegroundsConfigurationTest {
     }
 
     @Test
-    public void canReadFirearmDamageAmplifier() {
+    public void canReadGunDamageAmplifier() {
         BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
         config.load();
 
@@ -71,10 +71,18 @@ public class BattlegroundsConfigurationTest {
     }
 
     @Test
-    public void canReadFirearmTriggerSound() {
+    public void canReadGunTriggerSound() {
         BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
         config.load();
 
         assertEquals("UI_BUTTON_CLICK-0.5-2-0", config.getGunTriggerSound());
+    }
+
+    @Test
+    public void canReadRegisterPlayersAsPassive() {
+        BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
+        config.load();
+
+        assertFalse(config.isEnabledRegisterPlayersAsPassive());
     }
 }

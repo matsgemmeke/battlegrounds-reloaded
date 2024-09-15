@@ -23,6 +23,7 @@ public class DefaultGamePlayer implements GamePlayer {
     private static final float SPRINTING_ACCURACY = 0.5f;
     private static final int OPERATING_FOOD_LEVEL = 6;
 
+    private boolean passive;
     private int previousFoodLevel;
     @NotNull
     private InternalsProvider internals;
@@ -40,6 +41,7 @@ public class DefaultGamePlayer implements GamePlayer {
         this.internals = internals;
         this.effects = new HashSet<>();
         this.items = new HashSet<>();
+        this.passive = false;
         this.weapons = new HashSet<>();
     }
 
@@ -56,6 +58,14 @@ public class DefaultGamePlayer implements GamePlayer {
     @NotNull
     public World getWorld() {
         return player.getWorld();
+    }
+
+    public boolean isPassive() {
+        return passive;
+    }
+
+    public void setPassive(boolean passive) {
+        this.passive = passive;
     }
 
     public boolean addEffect(@NotNull ItemEffect effect) {

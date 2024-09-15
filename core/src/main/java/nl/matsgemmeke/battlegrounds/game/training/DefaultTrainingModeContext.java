@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageCalculator;
+import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -21,6 +21,8 @@ public class DefaultTrainingModeContext implements GameContext {
     @NotNull
     private ActionHandler actionHandler;
     @NotNull
+    private DamageProcessor damageProcessor;
+    @NotNull
     private InternalsProvider internals;
     @NotNull
     private TrainingMode trainingMode;
@@ -29,6 +31,7 @@ public class DefaultTrainingModeContext implements GameContext {
         this.trainingMode = trainingMode;
         this.internals = internals;
         this.actionHandler = this.setUpActionHandlerInstance();
+        this.damageProcessor = new TrainingModeDamageProcessor(this);
     }
 
     private ActionHandler setUpActionHandlerInstance() {
@@ -51,14 +54,16 @@ public class DefaultTrainingModeContext implements GameContext {
     public CollisionDetector getCollisionDetector() {
         BlockCollisionChecker blockCollisionChecker = new BlockCollisionChecker();
 
-        return new TrainingModeCollisionDetector(blockCollisionChecker);
+        return new TrainingModeCollisionDetector(blockCollisionChecker, trainingMode.getPlayerStorage());
     }
 
     @NotNull
-    public DamageCalculator getDamageCalculator() {
-        EntityRegistry<GameItem, Item> itemRegistry = new DefaultItemRegistry(trainingMode.getItemStorage());
+    public DamageProcessor getDamageProcessor() {
+        return damageProcessor;
+    }
 
-        return new TrainingModeDamageCalculator(itemRegistry);
+    public void setDamageProcessor(@NotNull DamageProcessor damageProcessor) {
+        this.damageProcessor = damageProcessor;
     }
 
     @NotNull

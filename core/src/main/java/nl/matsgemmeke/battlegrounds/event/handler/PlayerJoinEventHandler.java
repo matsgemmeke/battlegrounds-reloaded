@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
@@ -10,15 +11,19 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerJoinEventHandler implements EventHandler<PlayerJoinEvent> {
 
     @NotNull
+    private BattlegroundsConfiguration config;
+    @NotNull
     private EntityRegistry<GamePlayer, Player> playerRegistry;
 
-    public PlayerJoinEventHandler(@NotNull EntityRegistry<GamePlayer, Player> playerRegistry) {
+    public PlayerJoinEventHandler(@NotNull BattlegroundsConfiguration config, @NotNull EntityRegistry<GamePlayer, Player> playerRegistry) {
+        this.config = config;
         this.playerRegistry = playerRegistry;
     }
 
     public void handle(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        playerRegistry.registerEntity(player);
+        GamePlayer gamePlayer = playerRegistry.registerEntity(player);
+        gamePlayer.setPassive(config.isEnabledRegisterPlayersAsPassive());
     }
 }

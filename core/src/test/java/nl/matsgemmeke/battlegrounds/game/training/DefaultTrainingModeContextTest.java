@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageCalculator;
+import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -64,15 +64,15 @@ public class DefaultTrainingModeContextTest {
     }
 
     @Test
-    public void shouldReturnInstanceOfDamageCalculator() {
+    public void shouldReturnInstanceOfDamageProcessor() {
         EntityStorage<GameItem> itemStorage = (EntityStorage<GameItem>) mock(EntityStorage.class);
         when(trainingMode.getItemStorage()).thenReturn(itemStorage);
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
 
-        DamageCalculator damageCalculator = context.getDamageCalculator();
+        DamageProcessor damageProcessor = context.getDamageProcessor();
 
-        assertTrue(damageCalculator instanceof TrainingModeDamageCalculator);
+        assertTrue(damageProcessor instanceof TrainingModeDamageProcessor);
     }
 
     @Test

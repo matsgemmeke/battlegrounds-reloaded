@@ -26,7 +26,9 @@ public interface GameContext {
     CollisionDetector getCollisionDetector();
 
     @NotNull
-    DamageCalculator getDamageCalculator();
+    DamageProcessor getDamageProcessor();
+
+    void setDamageProcessor(@NotNull DamageProcessor damageProcessor);
 
     @NotNull
     ItemRegistry<Equipment, EquipmentHolder> getEquipmentRegistry();

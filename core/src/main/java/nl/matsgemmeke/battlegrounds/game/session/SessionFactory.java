@@ -31,6 +31,7 @@ public class SessionFactory {
      * @param configuration the session configuration
      * @return a new session instance
      */
+    @NotNull
     public Session make(int id, SessionConfiguration configuration) {
         File dataConfigFile = new File(dataDirectory.getPath() + "/session_" + id + "/config.yml");
 
