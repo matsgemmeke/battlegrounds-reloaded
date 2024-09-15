@@ -32,6 +32,10 @@ public class BattlegroundsConfiguration extends BasePluginConfiguration {
         return this.checkConfigurationValue("language", "en");
     }
 
+    public boolean isEnabledRegisterPlayersAsPassive() {
+        return this.checkConfigurationValue("training-mode-register-players-as-passive", false);
+    }
+
     @NotNull
     private <T> T checkConfigurationValue(@NotNull String route) {
         return this.checkConfigurationValue(route, null);
