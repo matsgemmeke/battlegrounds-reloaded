@@ -20,6 +20,8 @@ import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActiv
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -74,11 +76,22 @@ public class EquipmentFactory implements WeaponFactory {
         equipment.setDescription(description);
 
         // ItemStack creation
-        Material material = Material.getMaterial(section.getString("item.material"));
-        short durability = section.getShort("item.durability");
+        Material material;
+        String materialValue = section.getString("item.material");
+
+        try {
+            material = Material.valueOf(materialValue);
+        } catch (IllegalArgumentException e) {
+            throw new CreateEquipmentException("Unable to create equipment item " + name + "; item stack material " + materialValue + " is invalid");
+        }
 
         ItemStack itemStack = new ItemStack(material);
-        itemStack.setDurability(durability);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        if (itemMeta instanceof Damageable) {
+            ((Damageable) itemMeta).setDamage(section.getInt("item.damage"));
+            itemStack.setItemMeta(itemMeta);
+        }
 
         equipment.setItemStack(itemStack);
 
@@ -87,10 +100,15 @@ public class EquipmentFactory implements WeaponFactory {
 
         if (activatorItemSection != null) {
             Material activatorMaterial = Material.getMaterial(activatorItemSection.getString("material"));
-            short activatorDurability = activatorItemSection.getShort("durability");
+            int activatorDamage = activatorItemSection.getInt("damage");
 
             ItemStack activatorItemStack = new ItemStack(activatorMaterial);
-            activatorItemStack.setDurability(activatorDurability);
+            ItemMeta activatorItemMeta = activatorItemStack.getItemMeta();
+
+            if (activatorItemMeta instanceof Damageable) {
+                ((Damageable) activatorItemMeta).setDamage(activatorDamage);
+                activatorItemStack.setItemMeta(activatorItemMeta);
+            }
 
             equipment.setActivatorItemStack(activatorItemStack);
         }
@@ -139,10 +157,13 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", throwing material " + materialValue + " is invalid");
             }
 
-            short durability = section.getShort("item.throw-item.durability");
-
             ItemStack itemStack = new ItemStack(material);
-            itemStack.setDurability(durability);
+            ItemMeta itemMeta = itemStack.getItemMeta();
+
+            if (itemMeta instanceof Damageable) {
+                ((Damageable) itemMeta).setDamage(section.getInt("item.throw-item.damage"));
+                itemStack.setItemMeta(itemMeta);
+            }
 
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");
             double projectileSpeed = section.getDouble("throwing.projectile-speed");

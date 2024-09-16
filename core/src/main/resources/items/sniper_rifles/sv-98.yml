@@ -13,7 +13,7 @@ display-name: SV-98
 firearm-type: SNIPER_RIFLE
 id: SV-98
 item:
-  durability: 32
+  damage: 32
   material: IRON_HOE
 level-unlocked: 27
 price: 4750

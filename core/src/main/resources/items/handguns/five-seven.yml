@@ -10,7 +10,7 @@ display-name: Five-seven
 firearm-type: HANDGUN
 id: FIVE-SEVEN
 item:
-  durability: 2
+  damage: 2
   material: IRON_HOE
 level-unlocked: 1
 price: 750
