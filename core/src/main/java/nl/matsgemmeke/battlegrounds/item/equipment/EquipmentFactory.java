@@ -76,14 +76,20 @@ public class EquipmentFactory implements WeaponFactory {
         equipment.setDescription(description);
 
         // ItemStack creation
-        Material material = Material.getMaterial(section.getString("item.material"));
-        int damage = section.getInt("item.damage");
+        Material material;
+        String materialValue = section.getString("item.material");
+
+        try {
+            material = Material.valueOf(materialValue);
+        } catch (IllegalArgumentException e) {
+            throw new CreateEquipmentException("Unable to create equipment item " + name + "; item stack material " + materialValue + " is invalid");
+        }
 
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta instanceof Damageable) {
-            ((Damageable) itemMeta).setDamage(damage);
+            ((Damageable) itemMeta).setDamage(section.getInt("item.damage"));
             itemStack.setItemMeta(itemMeta);
         }
 
@@ -151,13 +157,11 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", throwing material " + materialValue + " is invalid");
             }
 
-            int damage = section.getInt("item.throw-item.damage");
-
             ItemStack itemStack = new ItemStack(material);
             ItemMeta itemMeta = itemStack.getItemMeta();
 
             if (itemMeta instanceof Damageable) {
-                ((Damageable) itemMeta).setDamage(damage);
+                ((Damageable) itemMeta).setDamage(section.getInt("item.throw-item.damage"));
                 itemStack.setItemMeta(itemMeta);
             }
 

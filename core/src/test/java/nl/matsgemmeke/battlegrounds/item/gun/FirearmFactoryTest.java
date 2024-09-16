@@ -46,7 +46,7 @@ public class FirearmFactoryTest {
     private ItemFactory itemFactory;
     private RecoilProducerFactory recoilProducerFactory;
     private ReloadSystemFactory reloadSystemFactory;
-    private Section mainSection;
+    private Section rootSection;
     private SpreadPatternFactory spreadPatternFactory;
 
     @Before
@@ -65,16 +65,14 @@ public class FirearmFactoryTest {
         when(context.getAudioEmitter()).thenReturn(audioEmitter);
         when(context.getCollisionDetector()).thenReturn(collisionDetector);
 
-        mainSection = mock(Section.class);
-        when(mainSection.getString("description")).thenReturn("test");
-        when(mainSection.getString("display-name")).thenReturn("test");
-        when(mainSection.getInt("item.damage")).thenReturn(1);
-        when(mainSection.getString("item.material")).thenReturn("IRON_HOE");
-        when(mainSection.getString("shooting.shot-sound")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
+        rootSection = mock(Section.class);
+        when(rootSection.getString("description")).thenReturn("test");
+        when(rootSection.getString("display-name")).thenReturn("test");
+        when(rootSection.getString("shooting.shot-sound")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
 
         this.itemConfiguration = mock(ItemConfiguration.class);
         when(itemConfiguration.getItemId()).thenReturn("TEST_GUN");
-        when(itemConfiguration.getRoot()).thenReturn(mainSection);
+        when(itemConfiguration.getRoot()).thenReturn(rootSection);
 
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
@@ -82,6 +80,13 @@ public class FirearmFactoryTest {
 
     @Test
     public void createSimpleFirearm() {
+        int damage = 1;
+        int defaultSupply = 3;
+        int magazineSize = 10;
+        int maxMagazineAmount = 10;
+        int reserveAmmo = defaultSupply * magazineSize;
+        int maxAmmo = maxMagazineAmount * magazineSize;
+
         Damageable itemMeta = mock(Damageable.class);
 
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
@@ -90,15 +95,33 @@ public class FirearmFactoryTest {
         when(itemConfiguration.getItemId()).thenReturn("TEST_GUN");
         when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
 
+        when(rootSection.getInt("ammo.default-supply")).thenReturn(defaultSupply);
+        when(rootSection.getInt("ammo.magazine-size")).thenReturn(magazineSize);
+        when(rootSection.getInt("ammo.max-magazine-amount")).thenReturn(maxMagazineAmount);
+        when(rootSection.getInt("item.damage")).thenReturn(damage);
+        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
+
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
         assertTrue(firearm instanceof DefaultFirearm);
         assertEquals("test", firearm.getName());
         assertEquals(Material.IRON_HOE, firearm.getItemStack().getType());
+        assertEquals(magazineSize, firearm.getMagazineAmmo());
+        assertEquals(magazineSize, firearm.getMagazineSize());
+        assertEquals(maxAmmo, firearm.getMaxAmmo());
+        assertEquals(reserveAmmo, firearm.getReserveAmmo());
 
-        verify(itemMeta).setDamage(1);
+        verify(itemMeta).setDamage(damage);
         verify(registry).registerItem(firearm);
+    }
+
+    @Test(expected = CreateFirearmException.class)
+    public void shouldThrowExceptionWhenCreatingFirearmWithInvalidMaterial() {
+        when(rootSection.getString("item.material")).thenReturn("fail");
+
+        FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
+        firearmFactory.make(itemConfiguration, context);
     }
 
     @Test
@@ -111,7 +134,8 @@ public class FirearmFactoryTest {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("shoot")).thenReturn("RIGHT_CLICK");
 
-        when(mainSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
 
         when(config.getGunTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(fireModeFactory.make(any(), any())).thenReturn(fireMode);
@@ -131,7 +155,9 @@ public class FirearmFactoryTest {
         when(context.getGunRegistry()).thenReturn(registry);
 
         Section patternSection = mock(Section.class);
-        when(mainSection.getSection("shooting.pattern")).thenReturn(patternSection);
+
+        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
+        when(rootSection.getSection("shooting.pattern")).thenReturn(patternSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
@@ -148,7 +174,9 @@ public class FirearmFactoryTest {
         when(context.getGunRegistry()).thenReturn(registry);
 
         Section recoilSection = mock(Section.class);
-        when(mainSection.getSection("shooting.recoil")).thenReturn(recoilSection);
+
+        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
+        when(rootSection.getSection("shooting.recoil")).thenReturn(recoilSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
@@ -169,8 +197,9 @@ public class FirearmFactoryTest {
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
-        when(mainSection.getSection("controls")).thenReturn(controlsSection);
         when(reloadSystemFactory.make(any(), any(), any())).thenReturn(reloadSystem);
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
@@ -195,8 +224,9 @@ public class FirearmFactoryTest {
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
-        when(mainSection.getSection("controls")).thenReturn(controlsSection);
-        when(mainSection.getSection("scope")).thenReturn(scopeSection);
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
+        when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
@@ -220,8 +250,9 @@ public class FirearmFactoryTest {
         when(scopeSection.getString("stop-sound")).thenReturn("ENTITY_BLAZE_HURT-1-1-0");
         when(scopeSection.getString("use-sound")).thenReturn("ENTITY_BLAZE_HURT-1-1-0");
 
-        when(mainSection.getSection("controls")).thenReturn(controlsSection);
-        when(mainSection.getSection("scope")).thenReturn(scopeSection);
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
+        when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
@@ -246,8 +277,8 @@ public class FirearmFactoryTest {
         when(scopeSection.getString("stop-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
         when(scopeSection.getString("use-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
-        when(mainSection.getSection("controls")).thenReturn(controlsSection);
-        when(mainSection.getSection("scope")).thenReturn(scopeSection);
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         firearmFactory.make(itemConfiguration, context);
@@ -264,8 +295,8 @@ public class FirearmFactoryTest {
         when(scopeSection.getString("stop-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
         when(scopeSection.getString("use-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
-        when(mainSection.getSection("controls")).thenReturn(controlsSection);
-        when(mainSection.getSection("scope")).thenReturn(scopeSection);
+        when(rootSection.getSection("controls")).thenReturn(controlsSection);
+        when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         firearmFactory.make(itemConfiguration, context);
@@ -279,18 +310,12 @@ public class FirearmFactoryTest {
         when(context.getGunRegistry()).thenReturn(registry);
 
         when(config.getGunTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
-        when(mainSection.getInt("ammo.default-supply")).thenReturn(3);
-        when(mainSection.getInt("ammo.magazine-size")).thenReturn(10);
-        when(mainSection.getInt("ammo.max-magazine-amount")).thenReturn(10);
+        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context, gamePlayer);
 
         assertEquals(gamePlayer, firearm.getHolder());
-        assertEquals(10, firearm.getMagazineAmmo());
-        assertEquals(10, firearm.getMagazineSize());
-        assertEquals(100, firearm.getMaxAmmo());
-        assertEquals(30, firearm.getReserveAmmo());
 
         verify(registry).registerItem(firearm, gamePlayer);
     }

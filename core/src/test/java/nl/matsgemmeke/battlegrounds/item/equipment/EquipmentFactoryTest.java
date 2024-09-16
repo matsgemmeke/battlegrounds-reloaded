@@ -91,6 +91,14 @@ public class EquipmentFactoryTest {
         verify(registry).registerItem(equipment);
     }
 
+    @Test(expected = CreateEquipmentException.class)
+    public void shouldThrowExceptionWhenCreatingEquipmentItemWithInvalidMaterial() {
+        when(rootSection.getString("item.material")).thenReturn("fail");
+
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
+        factory.make(configuration, context);
+    }
+
     @Test
     public void shouldCreateEquipmentItemWithActivatorItem() {
         int damage = 1;
@@ -149,7 +157,7 @@ public class EquipmentFactoryTest {
     }
 
     @Test(expected = CreateEquipmentException.class)
-    public void shouldThrowErrorWhenThrowItemMaterialConfigurationValueIsInvalid() {
+    public void shouldThrowErrorWhenThrowActionConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("throw")).thenReturn("fail");
 
@@ -160,7 +168,7 @@ public class EquipmentFactoryTest {
     }
 
     @Test(expected = CreateEquipmentException.class)
-    public void shouldThrowErrorWhenThrowActionConfigurationValueIsInvalid() {
+    public void shouldThrowErrorWhenThrowItemMaterialConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
 

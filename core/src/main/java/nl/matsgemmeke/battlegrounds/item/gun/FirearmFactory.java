@@ -154,7 +154,15 @@ public class FirearmFactory implements WeaponFactory {
         }
 
         // ItemStack creation
-        Material material = Material.getMaterial(section.getString("item.material"));
+        Material material;
+        String materialValue = section.getString("item.material");
+
+        try {
+            material = Material.valueOf(materialValue);
+        } catch (IllegalArgumentException e) {
+            throw new CreateFirearmException("Unable to create firearm " + name + "; item stack material " + materialValue + " is invalid");
+        }
+
         int damage = section.getInt("item.damage");
 
         ItemStack itemStack = new ItemStack(material);
