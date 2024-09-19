@@ -209,7 +209,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         SpreadPatternFactory spreadPatternFactory = new SpreadPatternFactory();
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
 
-        ItemMechanismFactory mechanismFactory = new ItemMechanismFactory();
+        ItemMechanismFactory mechanismFactory = new ItemMechanismFactory(taskRunner);
         ItemMechanismActivationFactory mechanismActivationFactory = new ItemMechanismActivationFactory(taskRunner);
         EquipmentFactory equipmentFactory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
 

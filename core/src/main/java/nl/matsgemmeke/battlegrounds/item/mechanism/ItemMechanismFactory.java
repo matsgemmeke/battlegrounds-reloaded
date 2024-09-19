@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
@@ -8,6 +9,13 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemMechanismFactory {
+
+    @NotNull
+    private TaskRunner taskRunner;
+
+    public ItemMechanismFactory(@NotNull TaskRunner taskRunner) {
+        this.taskRunner = taskRunner;
+    }
 
     public ItemMechanism make(@NotNull Section section, @NotNull GameContext context) {
         String type = section.getString("type");
@@ -25,6 +33,12 @@ public class ItemMechanismFactory {
         }
 
         switch (equipmentMechanismType) {
+            case COMBUSTION -> {
+                int radius = section.getInt("radius");
+                long ticksBetweenSpread = section.getLong("ticks-between-spread");
+
+                return new CombustionMechanism(taskRunner, radius, ticksBetweenSpread);
+            }
             case EXPLOSION -> {
                 CollisionDetector collisionDetector = context.getCollisionDetector();
 

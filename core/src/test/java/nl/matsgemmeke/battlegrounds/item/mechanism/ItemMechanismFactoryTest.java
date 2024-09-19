@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -16,11 +16,23 @@ public class ItemMechanismFactoryTest {
 
     private GameContext context;
     private Section section;
+    private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
         context = mock(GameContext.class);
         section = mock(Section.class);
+        taskRunner = mock(TaskRunner.class);
+    }
+
+    @Test
+    public void shouldCreateInstanceForCombustionMechanismType() {
+        when(section.getString("type")).thenReturn("COMBUSTION");
+
+        ItemMechanismFactory factory = new ItemMechanismFactory(taskRunner);
+        ItemMechanism mechanism = factory.make(section, context);
+
+        assertTrue(mechanism instanceof CombustionMechanism);
     }
 
     @Test
@@ -30,10 +42,9 @@ public class ItemMechanismFactoryTest {
 
         when(section.getString("type")).thenReturn("EXPLOSION");
 
-        ItemMechanismFactory factory = new ItemMechanismFactory();
+        ItemMechanismFactory factory = new ItemMechanismFactory(taskRunner);
         ItemMechanism mechanism = factory.make(section, context);
 
-        assertNotNull(mechanism);
         assertTrue(mechanism instanceof ExplosionMechanism);
     }
 
@@ -41,7 +52,7 @@ public class ItemMechanismFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsNotDefined() {
         when(section.getString("type")).thenReturn(null);
 
-        ItemMechanismFactory factory = new ItemMechanismFactory();
+        ItemMechanismFactory factory = new ItemMechanismFactory(taskRunner);
         factory.make(section, context);
     }
 
@@ -49,7 +60,7 @@ public class ItemMechanismFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsIncorrect() {
         when(section.getString("type")).thenReturn("fail");
 
-        ItemMechanismFactory factory = new ItemMechanismFactory();
+        ItemMechanismFactory factory = new ItemMechanismFactory(taskRunner);
         factory.make(section, context);
     }
 }

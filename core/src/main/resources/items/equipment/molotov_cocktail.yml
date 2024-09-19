@@ -1,0 +1,23 @@
+activation:
+  delay-until-activation: 80
+  type: DELAYED
+controls:
+  throw: LEFT_CLICK
+description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
+display-name: Molotov Cocktail
+equipment-type: LETHAL
+id: MOLOTOV_COCKTAIL
+item:
+  damage: 4
+  material: SHEARS
+  throw-item:
+    damage: 4
+    material: SHEARS
+mechanism:
+  radius: 3
+  ticks-between-spread: 5
+  type: COMBUSTION
+throwing:
+  delay-after-throw: 30
+  projectile-speed: 1.2
+  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
