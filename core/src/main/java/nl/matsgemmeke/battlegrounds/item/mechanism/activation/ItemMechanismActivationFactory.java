@@ -4,6 +4,7 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.trigger.FlootHitTrigger;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,7 +23,6 @@ public class ItemMechanismActivationFactory {
      * Creates a new {@link ItemMechanismActivation} instance based on configuration values.
      *
      * @param section the configuration section
-     * @param item the droppable item
      * @param mechanism the item mechanism instance
      * @return a new activation instance
      */
@@ -48,6 +48,12 @@ public class ItemMechanismActivationFactory {
             }
             case MANUAL -> {
                 return new ManualActivation(mechanism);
+            }
+            case TRIGGER -> {
+                TriggerActivation activation = new TriggerActivation(mechanism);
+                activation.addTrigger(new FlootHitTrigger(taskRunner, 5L));
+
+                return activation;
             }
         }
 

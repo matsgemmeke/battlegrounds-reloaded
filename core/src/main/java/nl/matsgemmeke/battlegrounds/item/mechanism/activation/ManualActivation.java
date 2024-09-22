@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Activation that triggers the mechanism by a manual operation by the item holder.
+ * Activation that initiates the mechanism by a manual operation by the item holder.
  */
 public class ManualActivation extends BaseItemMechanismActivation {
 
@@ -17,7 +17,7 @@ public class ManualActivation extends BaseItemMechanismActivation {
 
     public void prime(@NotNull ItemHolder holder, @Nullable Deployable object) {
         if (object == null) {
-            throw new IllegalArgumentException("Manual mechanism activation does support priming a deferred object");
+            throw new IllegalArgumentException("Manual mechanism activation does not support priming a deferred object");
         }
 
         deployedObjects.add(object);

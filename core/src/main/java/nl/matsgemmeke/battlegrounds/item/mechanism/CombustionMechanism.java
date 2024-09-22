@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CombustionMechanism implements ItemMechanism {
 
-    private static final int RUNNABLE_DELAY = 0;
+    private static final long RUNNABLE_DELAY = 0L;
 
     @Nullable
     private BukkitTask task;

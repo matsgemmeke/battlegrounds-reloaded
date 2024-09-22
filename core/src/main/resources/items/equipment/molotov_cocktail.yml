@@ -1,6 +1,5 @@
 activation:
-  delay-until-activation: 80
-  type: DELAYED
+  type: TRIGGER
 controls:
   throw: LEFT_CLICK
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
