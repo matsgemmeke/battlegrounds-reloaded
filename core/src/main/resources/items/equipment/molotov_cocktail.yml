@@ -13,7 +13,9 @@ item:
     damage: 4
     material: SHEARS
 mechanism:
+  burn-blocks: false
   radius: 3
+  spread-fire: false
   ticks-between-spread: 5
   type: COMBUSTION
 throwing:

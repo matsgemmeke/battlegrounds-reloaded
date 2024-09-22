@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import nl.matsgemmeke.battlegrounds.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
@@ -11,9 +12,12 @@ import org.jetbrains.annotations.NotNull;
 public class ItemMechanismFactory {
 
     @NotNull
+    private MetadataValueCreator metadataValueCreator;
+    @NotNull
     private TaskRunner taskRunner;
 
-    public ItemMechanismFactory(@NotNull TaskRunner taskRunner) {
+    public ItemMechanismFactory(@NotNull MetadataValueCreator metadataValueCreator, @NotNull TaskRunner taskRunner) {
+        this.metadataValueCreator = metadataValueCreator;
         this.taskRunner = taskRunner;
     }
 
@@ -36,8 +40,10 @@ public class ItemMechanismFactory {
             case COMBUSTION -> {
                 int radius = section.getInt("radius");
                 long ticksBetweenSpread = section.getLong("ticks-between-spread");
+                boolean burnBlocks = section.getBoolean("burn-blocks");
+                boolean spreadFire = section.getBoolean("spread-fire");
 
-                return new CombustionMechanism(taskRunner, radius, ticksBetweenSpread);
+                return new CombustionMechanism(metadataValueCreator, taskRunner, radius, ticksBetweenSpread, burnBlocks, spreadFire);
             }
             case EXPLOSION -> {
                 CollisionDetector collisionDetector = context.getCollisionDetector();

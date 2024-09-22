@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
+import nl.matsgemmeke.battlegrounds.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
@@ -7,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,19 +19,35 @@ import java.util.List;
 public class CombustionMechanism implements ItemMechanism {
 
     private static final long RUNNABLE_DELAY = 0L;
+    private static final String BURN_BLOCKS_METADATA_KEY = "battlegrounds-burn-blocks";
+    private static final String SPREAD_FIRE_METADATA_KEY = "battlegrounds-spread-fire";
 
+    private boolean burnBlocks;
+    private boolean spreadFire;
     @Nullable
     private BukkitTask task;
     private int currentRadius;
     private int radius;
     private long ticksBetweenSpread;
     @NotNull
+    private MetadataValueCreator metadataValueCreator;
+    @NotNull
     private TaskRunner taskRunner;
 
-    public CombustionMechanism(@NotNull TaskRunner taskRunner, int radius, long ticksBetweenSpread) {
+    public CombustionMechanism(
+            @NotNull MetadataValueCreator metadataValueCreator,
+            @NotNull TaskRunner taskRunner,
+            int radius,
+            long ticksBetweenSpread,
+            boolean burnBlocks,
+            boolean spreadFire
+    ) {
+        this.metadataValueCreator = metadataValueCreator;
         this.taskRunner = taskRunner;
         this.radius = radius;
         this.ticksBetweenSpread = ticksBetweenSpread;
+        this.burnBlocks = burnBlocks;
+        this.spreadFire = spreadFire;
         this.currentRadius = 0;
     }
 
@@ -55,7 +73,7 @@ public class CombustionMechanism implements ItemMechanism {
 
             for (Block block : getBlocksInRadius(location, world, currentRadius)) {
                 if (block.getType() == Material.AIR && hasLineOfSight(world, block.getLocation(), location)) {
-                    block.setType(Material.FIRE);
+                    this.setOnFire(block);
                 }
             }
         }, RUNNABLE_DELAY, ticksBetweenSpread);
@@ -97,5 +115,14 @@ public class CombustionMechanism implements ItemMechanism {
             }
         }
         return true;
+    }
+
+    private void setOnFire(@NotNull Block block) {
+        MetadataValue burnBlocksMetadata = metadataValueCreator.createFixedMetadataValue(burnBlocks);
+        MetadataValue spreadFireMetadata = metadataValueCreator.createFixedMetadataValue(spreadFire);
+
+        block.setMetadata(BURN_BLOCKS_METADATA_KEY, burnBlocksMetadata);
+        block.setMetadata(SPREAD_FIRE_METADATA_KEY, spreadFireMetadata);
+        block.setType(Material.FIRE);
     }
 }

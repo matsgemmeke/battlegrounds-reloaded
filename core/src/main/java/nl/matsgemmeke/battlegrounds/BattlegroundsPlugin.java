@@ -26,6 +26,8 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.locale.Translator;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
@@ -132,6 +134,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
         PluginManager pluginManager = this.getServer().getPluginManager();
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
+        eventDispatcher.registerEventBus(BlockBurnEvent.class, new EventBus<>(new BlockBurnEventHandler()));
+        eventDispatcher.registerEventBus(BlockSpreadEvent.class, new EventBus<>(new BlockSpreadEventHandler()));
         eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(contextProvider)));
         eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(contextProvider)));
@@ -209,7 +213,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
         SpreadPatternFactory spreadPatternFactory = new SpreadPatternFactory();
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
 
-        ItemMechanismFactory mechanismFactory = new ItemMechanismFactory(taskRunner);
+        MetadataValueCreator metadataValueCreator = new MetadataValueCreator(this);
+        ItemMechanismFactory mechanismFactory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
         ItemMechanismActivationFactory mechanismActivationFactory = new ItemMechanismActivationFactory(taskRunner);
         EquipmentFactory equipmentFactory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
 
