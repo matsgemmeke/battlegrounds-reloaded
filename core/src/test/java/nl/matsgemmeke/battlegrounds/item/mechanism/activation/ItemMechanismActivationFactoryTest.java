@@ -7,7 +7,9 @@ import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,7 +34,6 @@ public class ItemMechanismActivationFactoryTest {
         ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
         ItemMechanismActivation activation = factory.make(section, mechanism);
 
-        assertNotNull(activation);
         assertTrue(activation instanceof DelayedActivation);
     }
 
@@ -43,8 +44,24 @@ public class ItemMechanismActivationFactoryTest {
         ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
         ItemMechanismActivation activation = factory.make(section, mechanism);
 
-        assertNotNull(activation);
         assertTrue(activation instanceof ManualActivation);
+    }
+
+    @Test
+    public void shouldCreateInstanceForTriggerActivationType() {
+        Map<String, Object> trigger = Map.of(
+                "type", "FLOOR_HIT",
+                "period-between-checks", 10
+        );
+        List<Map<String, Object>> triggers = List.of(trigger);
+
+        when(section.get("triggers")).thenReturn(triggers);
+        when(section.getString("type")).thenReturn("TRIGGER");
+
+        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
+        ItemMechanismActivation activation = factory.make(section, mechanism);
+
+        assertTrue(activation instanceof TriggerActivation);
     }
 
     @Test(expected = InvalidItemConfigurationException.class)

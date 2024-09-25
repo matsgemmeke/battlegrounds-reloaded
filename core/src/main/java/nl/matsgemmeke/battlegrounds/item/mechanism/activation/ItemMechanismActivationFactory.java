@@ -4,8 +4,10 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
-import nl.matsgemmeke.battlegrounds.item.mechanism.activation.trigger.FlootHitTrigger;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.trigger.TriggerFactory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * Factory class responsible for instantiating {@link ItemMechanismActivation} implementation classes.
@@ -51,7 +53,12 @@ public class ItemMechanismActivationFactory {
             }
             case TRIGGER -> {
                 TriggerActivation activation = new TriggerActivation(mechanism);
-                activation.addTrigger(new FlootHitTrigger(taskRunner, 5L));
+                TriggerFactory triggerFactory = new TriggerFactory(taskRunner);
+                Iterable<Map<String, Object>> triggers = (Iterable<Map<String, Object>>) section.get("triggers");
+
+                for (Map<String, Object> triggerConfig : triggers) {
+                    activation.addTrigger(triggerFactory.make(triggerConfig));
+                }
 
                 return activation;
             }

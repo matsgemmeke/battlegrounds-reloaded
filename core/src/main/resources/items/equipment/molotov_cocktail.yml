@@ -1,4 +1,7 @@
 activation:
+  triggers:
+    - period-between-checks: 2
+      type: FLOOR_HIT
   type: TRIGGER
 controls:
   throw: LEFT_CLICK
