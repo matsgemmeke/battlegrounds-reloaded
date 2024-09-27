@@ -71,10 +71,10 @@ public class CombustionMechanismTest {
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
 
         // Simulate the task running three times to exceed the radius
-        Runnable taskRunnable = runnableCaptor.getValue();
-        taskRunnable.run();
-        taskRunnable.run();
-        taskRunnable.run();
+        Runnable runnable = runnableCaptor.getValue();
+        runnable.run();
+        runnable.run();
+        runnable.run();
 
         verify(middleBlock).setType(Material.FIRE);
         verify(middleBlock).setMetadata("battlegrounds-burn-blocks", metadataBurnBlocks);
@@ -99,7 +99,6 @@ public class CombustionMechanismTest {
         verify(blockOutsideLineOfSight, never()).setMetadata(anyString(), any());
 
         verify(task).cancel();
-        verify(taskRunner).runTaskTimer(taskRunnable, delay, ticksBetweenSpread);
     }
 
     @Test

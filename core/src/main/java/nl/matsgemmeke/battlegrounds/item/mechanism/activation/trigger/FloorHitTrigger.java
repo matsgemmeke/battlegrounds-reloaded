@@ -19,7 +19,7 @@ public class FloorHitTrigger implements Trigger {
     @Nullable
     private BukkitTask task;
     @NotNull
-    private List<TriggerListener> listeners;
+    private List<TriggerObserver> observers;
     private long periodBetweenChecks;
     @NotNull
     private TaskRunner taskRunner;
@@ -27,11 +27,11 @@ public class FloorHitTrigger implements Trigger {
     public FloorHitTrigger(@NotNull TaskRunner taskRunner, long periodBetweenChecks) {
         this.taskRunner = taskRunner;
         this.periodBetweenChecks = periodBetweenChecks;
-        this.listeners = new ArrayList<>();
+        this.observers = new ArrayList<>();
     }
 
-    public void addListener(@NotNull TriggerListener listener) {
-        listeners.add(listener);
+    public void addObserver(@NotNull TriggerObserver observer) {
+        observers.add(observer);
     }
 
     public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull Deployable object) {
@@ -43,14 +43,14 @@ public class FloorHitTrigger implements Trigger {
                 return;
             }
 
-            this.notifyListeners(holder, object);
+            this.notifyObservers(holder, object);
             task.cancel();
         }, RUNNABLE_DELAY, periodBetweenChecks);
     }
 
-    private void notifyListeners(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        for (TriggerListener listener : listeners) {
-            listener.onTrigger(holder, object);
+    private void notifyObservers(@NotNull ItemHolder holder, @NotNull Deployable object) {
+        for (TriggerObserver observer : observers) {
+            observer.onTrigger(holder, object);
         }
     }
 }

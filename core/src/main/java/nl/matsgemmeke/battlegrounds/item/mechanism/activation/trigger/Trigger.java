@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Trigger {
 
-    void addListener(@NotNull TriggerListener listener);
+    void addObserver(@NotNull TriggerObserver observer);
 
     void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull Deployable object);
 }

@@ -26,7 +26,7 @@ public class TriggerActivation extends BaseItemMechanismActivation {
     public void addTrigger(@NotNull Trigger trigger) {
         triggers.add(trigger);
 
-        trigger.addListener(this::onTrigger);
+        trigger.addObserver(this::handleActivation);
     }
 
     public void prime(@NotNull ItemHolder holder, @Nullable Deployable object) {
@@ -39,9 +39,5 @@ public class TriggerActivation extends BaseItemMechanismActivation {
         for (Trigger trigger : triggers) {
             trigger.checkTriggerActivation(holder, object);
         }
-    }
-
-    private void onTrigger(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        this.handleActivation(holder, object);
     }
 }
