@@ -22,32 +22,24 @@ public class CombustionMechanism implements ItemMechanism {
     private static final String BURN_BLOCKS_METADATA_KEY = "battlegrounds-burn-blocks";
     private static final String SPREAD_FIRE_METADATA_KEY = "battlegrounds-spread-fire";
 
-    private boolean burnBlocks;
-    private boolean spreadFire;
     @Nullable
     private BukkitTask task;
+    @NotNull
+    private CombustionSettings settings;
     private int currentRadius;
-    private int radius;
-    private long ticksBetweenSpread;
     @NotNull
     private MetadataValueCreator metadataValueCreator;
     @NotNull
     private TaskRunner taskRunner;
 
     public CombustionMechanism(
+            @NotNull CombustionSettings settings,
             @NotNull MetadataValueCreator metadataValueCreator,
-            @NotNull TaskRunner taskRunner,
-            int radius,
-            long ticksBetweenSpread,
-            boolean burnBlocks,
-            boolean spreadFire
+            @NotNull TaskRunner taskRunner
     ) {
+        this.settings = settings;
         this.metadataValueCreator = metadataValueCreator;
         this.taskRunner = taskRunner;
-        this.radius = radius;
-        this.ticksBetweenSpread = ticksBetweenSpread;
-        this.burnBlocks = burnBlocks;
-        this.spreadFire = spreadFire;
         this.currentRadius = 0;
     }
 
@@ -62,7 +54,7 @@ public class CombustionMechanism implements ItemMechanism {
     }
 
     private void activate(@NotNull Location location, @NotNull World world) {
-        int maxRadiusSize = radius;
+        int maxRadiusSize = settings.radius();
 
         task = taskRunner.runTaskTimer(() -> {
             if (++currentRadius > maxRadiusSize) {
@@ -76,7 +68,7 @@ public class CombustionMechanism implements ItemMechanism {
                     this.setOnFire(block);
                 }
             }
-        }, RUNNABLE_DELAY, ticksBetweenSpread);
+        }, RUNNABLE_DELAY, settings.ticksBetweenFireSpread());
     }
 
     @NotNull
@@ -118,8 +110,8 @@ public class CombustionMechanism implements ItemMechanism {
     }
 
     private void setOnFire(@NotNull Block block) {
-        MetadataValue burnBlocksMetadata = metadataValueCreator.createFixedMetadataValue(burnBlocks);
-        MetadataValue spreadFireMetadata = metadataValueCreator.createFixedMetadataValue(spreadFire);
+        MetadataValue burnBlocksMetadata = metadataValueCreator.createFixedMetadataValue(settings.burnBlocks());
+        MetadataValue spreadFireMetadata = metadataValueCreator.createFixedMetadataValue(settings.spreadFire());
 
         block.setMetadata(BURN_BLOCKS_METADATA_KEY, burnBlocksMetadata);
         block.setMetadata(SPREAD_FIRE_METADATA_KEY, spreadFireMetadata);

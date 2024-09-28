@@ -35,10 +35,11 @@ public class CombustionMechanismTest {
     @Test
     public void shouldCreateFireCircleAtHolderLocation() {
         int radius = 2;
-        long delay = 0L;
-        long ticksBetweenSpread = 5L;
+        long ticksBetweenFireSpread = 5L;
         boolean burnBlocks = false;
         boolean spreadFire = true;
+
+        CombustionSettings settings = new CombustionSettings(radius, ticksBetweenFireSpread, burnBlocks, spreadFire);
 
         MetadataValue metadataBurnBlocks = mock(MetadataValue.class);
         MetadataValue metadataSpreadFire = mock(MetadataValue.class);
@@ -62,9 +63,9 @@ public class CombustionMechanismTest {
         Block lowerBlock = this.createBlock(world, 0, 0, 1, Material.STONE, false);
         Block blockOutsideLineOfSight = this.createBlock(world, 0, 0, 2, Material.AIR, true);
 
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(delay), eq(ticksBetweenSpread))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenFireSpread))).thenReturn(task);
 
-        CombustionMechanism mechanism = new CombustionMechanism(metadataValueCreator, taskRunner, radius, ticksBetweenSpread, burnBlocks, spreadFire);
+        CombustionMechanism mechanism = new CombustionMechanism(settings, metadataValueCreator, taskRunner);
         mechanism.activate(holder);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -104,8 +105,9 @@ public class CombustionMechanismTest {
     @Test
     public void shouldCreateFireCircleAtDeployableObjectLocation() {
         int radius = 1;
-        long delay = 0L;
         long ticksBetweenSpread = 5L;
+
+        CombustionSettings settings = new CombustionSettings(radius, ticksBetweenSpread, false, false);
 
         World world = mock(World.class);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(mock(Block.class));
@@ -117,9 +119,9 @@ public class CombustionMechanismTest {
         when(object.getLocation()).thenReturn(location);
         when(object.getWorld()).thenReturn(world);
 
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(delay), eq(ticksBetweenSpread))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenSpread))).thenReturn(task);
 
-        CombustionMechanism mechanism = new CombustionMechanism(metadataValueCreator, taskRunner, radius, ticksBetweenSpread, false, false);
+        CombustionMechanism mechanism = new CombustionMechanism(settings, metadataValueCreator, taskRunner);
         mechanism.activate(holder, object);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -134,7 +136,6 @@ public class CombustionMechanismTest {
         verify(object).remove();
 
         verify(task).cancel();
-        verify(taskRunner).runTaskTimer(taskRunnable, delay, ticksBetweenSpread);
     }
 
     @NotNull

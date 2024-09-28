@@ -11,7 +11,12 @@ import java.util.List;
 public class BlockBurnEventHandler implements EventHandler<BlockBurnEvent> {
 
     public void handle(@NotNull BlockBurnEvent event) {
-        Block block = event.getBlock();
+        Block block = event.getIgnitingBlock();
+
+        if (block == null) {
+            return;
+        }
+
         List<MetadataValue> metadata = block.getMetadata("battlegrounds-burn-blocks");
 
         if (metadata.isEmpty() || metadata.get(0).asBoolean()) {

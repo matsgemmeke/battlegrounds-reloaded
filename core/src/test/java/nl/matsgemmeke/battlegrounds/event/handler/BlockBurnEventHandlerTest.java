@@ -26,6 +26,16 @@ public class BlockBurnEventHandlerTest {
     }
 
     @Test
+    public void shouldNotCancelIfIgnitingBlockIsNull() {
+        BlockBurnEvent event = new BlockBurnEvent(block, null);
+
+        BlockBurnEventHandler eventHandler = new BlockBurnEventHandler();
+        eventHandler.handle(event);
+
+        assertFalse(event.isCancelled());
+    }
+
+    @Test
     public void shouldNotCancelIfBlockHasNoMetadataValueForBurningBlocks() {
         when(block.getMetadata("battlegrounds-burn-blocks")).thenReturn(Collections.emptyList());
 
@@ -57,7 +67,7 @@ public class BlockBurnEventHandlerTest {
         MetadataValue metadataValue = mock(MetadataValue.class);
         when(metadataValue.asBoolean()).thenReturn(false);
 
-        when(block.getMetadata("battlegrounds-burn-blocks")).thenReturn(List.of(metadataValue));
+        when(ignitingBlock.getMetadata("battlegrounds-burn-blocks")).thenReturn(List.of(metadataValue));
 
         BlockBurnEvent event = new BlockBurnEvent(block, ignitingBlock);
 

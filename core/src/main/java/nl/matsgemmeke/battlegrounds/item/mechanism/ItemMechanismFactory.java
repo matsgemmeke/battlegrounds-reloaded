@@ -43,7 +43,9 @@ public class ItemMechanismFactory {
                 boolean burnBlocks = section.getBoolean("burn-blocks");
                 boolean spreadFire = section.getBoolean("spread-fire");
 
-                return new CombustionMechanism(metadataValueCreator, taskRunner, radius, ticksBetweenSpread, burnBlocks, spreadFire);
+                CombustionSettings settings = new CombustionSettings(radius, ticksBetweenSpread, burnBlocks, spreadFire);
+
+                return new CombustionMechanism(settings, metadataValueCreator, taskRunner);
             }
             case EXPLOSION -> {
                 CollisionDetector collisionDetector = context.getCollisionDetector();
