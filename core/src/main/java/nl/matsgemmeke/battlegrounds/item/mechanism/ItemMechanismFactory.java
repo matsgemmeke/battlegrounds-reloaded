@@ -61,9 +61,10 @@ public class ItemMechanismFactory {
                 double shortRangeDamage = section.getDouble("range.short-range.damage");
                 double shortRangeDistance = section.getDouble("range.short-range.distance");
 
+                ExplosionSettings settings = new ExplosionSettings(power, breakBlocks, setFire);
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
 
-                return new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
+                return new ExplosionMechanism(settings, collisionDetector, rangeProfile);
             }
         }
 

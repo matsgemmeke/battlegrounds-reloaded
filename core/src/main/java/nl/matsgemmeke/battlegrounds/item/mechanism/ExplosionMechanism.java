@@ -13,26 +13,21 @@ import org.jetbrains.annotations.Nullable;
 
 public class ExplosionMechanism implements ItemMechanism {
 
-    private boolean breakBlocks;
-    private boolean setFire;
     @NotNull
     private CollisionDetector collisionDetector;
-    private float power;
+    @NotNull
+    private ExplosionSettings settings;
     @NotNull
     private RangeProfile rangeProfile;
 
     public ExplosionMechanism(
+            @NotNull ExplosionSettings settings,
             @NotNull CollisionDetector collisionDetector,
-            @NotNull RangeProfile rangeProfile,
-            float power,
-            boolean setFire,
-            boolean breakBlocks
+            @NotNull RangeProfile rangeProfile
     ) {
+        this.settings = settings;
         this.collisionDetector = collisionDetector;
         this.rangeProfile = rangeProfile;
-        this.power = power;
-        this.setFire = setFire;
-        this.breakBlocks = breakBlocks;
     }
 
     public void activate(@NotNull ItemHolder holder) {
@@ -46,7 +41,7 @@ public class ExplosionMechanism implements ItemMechanism {
     }
 
     private void activate(@NotNull ItemHolder holder, @NotNull Location location, @NotNull World world, @Nullable Entity source) {
-        world.createExplosion(location, power, setFire, breakBlocks, source);
+        world.createExplosion(location, settings.power(), settings.setFire(), settings.breakBlocks(), source);
 
         for (GameEntity target : collisionDetector.findTargets(holder, location, rangeProfile.getLongRangeDistance())) {
             Location targetLocation = target.getEntity().getLocation();
