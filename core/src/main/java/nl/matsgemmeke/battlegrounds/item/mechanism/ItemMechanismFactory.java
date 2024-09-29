@@ -43,13 +43,20 @@ public class ItemMechanismFactory {
                 boolean burnBlocks = section.getBoolean("burn-blocks");
                 boolean spreadFire = section.getBoolean("spread-fire");
 
-                CombustionSettings settings = new CombustionSettings(radius, ticksBetweenSpread, burnBlocks, spreadFire);
+                double longRangeDamage = section.getDouble("range.long-range.damage");
+                double longRangeDistance = section.getDouble("range.long-range.distance");
+                double mediumRangeDamage = section.getDouble("range.medium-range.damage");
+                double mediumRangeDistance = section.getDouble("range.medium-range.distance");
+                double shortRangeDamage = section.getDouble("range.short-range.damage");
+                double shortRangeDistance = section.getDouble("range.short-range.distance");
 
-                return new CombustionMechanism(settings, metadataValueCreator, taskRunner);
+                CombustionSettings settings = new CombustionSettings(radius, ticksBetweenSpread, burnBlocks, spreadFire);
+                CollisionDetector collisionDetector = context.getCollisionDetector();
+                RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
+
+                return new CombustionMechanism(settings, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
             }
             case EXPLOSION -> {
-                CollisionDetector collisionDetector = context.getCollisionDetector();
-
                 float power = section.getFloat("power");
                 boolean setFire = section.getBoolean("set-fire");
                 boolean breakBlocks = section.getBoolean("break-blocks");
@@ -62,6 +69,7 @@ public class ItemMechanismFactory {
                 double shortRangeDistance = section.getDouble("range.short-range.distance");
 
                 ExplosionSettings settings = new ExplosionSettings(power, breakBlocks, setFire);
+                CollisionDetector collisionDetector = context.getCollisionDetector();
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
 
                 return new ExplosionMechanism(settings, collisionDetector, rangeProfile);

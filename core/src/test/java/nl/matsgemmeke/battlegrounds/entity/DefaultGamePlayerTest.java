@@ -1,13 +1,9 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.item.Item;
-import nl.matsgemmeke.battlegrounds.item.Weapon;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -64,53 +60,36 @@ public class DefaultGamePlayerTest {
     }
 
     @Test
-    public void returnsNullWhenFindingItemWithUnknownItemStack() {
-        Item item = mock(Item.class);
+    public void applyZeroDamageWhenPlayerIsDead() {
+        when(player.getHealth()).thenReturn(0.0);
+        when(player.isDead()).thenReturn(true);
 
         DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
-        gamePlayer.addItem(item);
+        double health = gamePlayer.damage(10.0);
 
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-
-        assertNull(gamePlayer.getItem(itemStack));
+        assertEquals(0.0, health, 0.0);
     }
 
     @Test
-    public void canFindItemByItemStack() {
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-
-        Item item = mock(Item.class);
-        when(item.isMatching(itemStack)).thenReturn(true);
+    public void applyZeroDamageWhenPlayerAlreadyHasNoHealth() {
+        when(player.getHealth()).thenReturn(0.0);
+        when(player.isDead()).thenReturn(false);
 
         DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
-        gamePlayer.addItem(item);
+        double health = gamePlayer.damage(10.0);
 
-        assertEquals(item, gamePlayer.getItem(itemStack));
+        assertEquals(0.0, health, 0.0);
     }
 
     @Test
-    public void returnsNullWhenFindingWeaponWithUnknownItemStack() {
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-
-        Weapon weapon = mock(Weapon.class);
-
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
-        gamePlayer.addWeapon(weapon);
-
-        assertNull(gamePlayer.getWeapon(itemStack));
-    }
-
-    @Test
-    public void canFindWeaponByItemStack() {
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-
-        Weapon weapon = mock(Weapon.class);
-        when(weapon.isMatching(itemStack)).thenReturn(true);
+    public void convertDamageToHeartsAndApplyDamageToPlayer() {
+        when(player.getHealth()).thenReturn(20.0);
+        when(player.isDead()).thenReturn(false);
 
         DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
-        gamePlayer.addWeapon(weapon);
+        double health = gamePlayer.damage(10.0);
 
-        assertEquals(weapon, gamePlayer.getWeapon(itemStack));
+        assertEquals(18.0, health, 0.0);
     }
 
     @Test

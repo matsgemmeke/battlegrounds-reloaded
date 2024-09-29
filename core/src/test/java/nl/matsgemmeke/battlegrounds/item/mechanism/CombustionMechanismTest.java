@@ -2,7 +2,10 @@ package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import nl.matsgemmeke.battlegrounds.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,20 +18,33 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class CombustionMechanismTest {
 
+    private static final double LONG_RANGE_DAMAGE = 25.0;
+    private static final double LONG_RANGE_DISTANCE = 10.0;
+    private static final double MEDIUM_RANGE_DAMAGE = 75.0;
+    private static final double MEDIUM_RANGE_DISTANCE = 5.0;
+    private static final double SHORT_RANGE_DAMAGE = 150.0;
+    private static final double SHORT_RANGE_DISTANCE = 2.5;
+
     private BukkitTask task;
+    private CollisionDetector collisionDetector;
     private MetadataValueCreator metadataValueCreator;
+    private RangeProfile rangeProfile;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
-        metadataValueCreator = mock(MetadataValueCreator.class);
         task = mock(BukkitTask.class);
+        collisionDetector = mock(CollisionDetector.class);
+        metadataValueCreator = mock(MetadataValueCreator.class);
+        rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
         taskRunner = mock(TaskRunner.class);
     }
 
@@ -65,7 +81,7 @@ public class CombustionMechanismTest {
 
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenFireSpread))).thenReturn(task);
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, metadataValueCreator, taskRunner);
+        CombustionMechanism mechanism = new CombustionMechanism(settings, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
         mechanism.activate(holder);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -103,7 +119,7 @@ public class CombustionMechanismTest {
     }
 
     @Test
-    public void shouldCreateFireCircleAtDeployableObjectLocation() {
+    public void shouldCreateFireCircleAtDeployableObjectLocationAndRemoveObject() {
         int radius = 1;
         long ticksBetweenSpread = 5L;
 
@@ -121,7 +137,7 @@ public class CombustionMechanismTest {
 
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenSpread))).thenReturn(task);
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, metadataValueCreator, taskRunner);
+        CombustionMechanism mechanism = new CombustionMechanism(settings, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
         mechanism.activate(holder, object);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -136,6 +152,34 @@ public class CombustionMechanismTest {
         verify(object).remove();
 
         verify(task).cancel();
+    }
+
+    @Test
+    public void damageNearbyEntitiesInsideTheLongRangeDistance() {
+        CombustionSettings settings = new CombustionSettings(0, 0, false, false);
+
+        World world = mock(World.class);
+        Location holderLocation = new Location(world, 4, 0, 0);
+        Location objectLocation = new Location(world, 0, 0, 0);
+        Location targetLocation = new Location(world, 2, 0, 0);
+
+        GameEntity target = mock(GameEntity.class);
+        when(target.getLocation()).thenReturn(targetLocation);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        when(holder.getLocation()).thenReturn(holderLocation);
+
+        Deployable object = mock(Deployable.class);
+        when(object.getLocation()).thenReturn(objectLocation);
+        when(object.getWorld()).thenReturn(world);
+
+        when(collisionDetector.findTargets(holder, objectLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
+
+        CombustionMechanism mechanism = new CombustionMechanism(settings, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
+        mechanism.activate(holder, object);
+
+        verify(holder).damage(MEDIUM_RANGE_DAMAGE);
+        verify(target).damage(SHORT_RANGE_DAMAGE);
     }
 
     @NotNull

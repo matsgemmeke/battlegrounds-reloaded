@@ -18,6 +18,7 @@ import java.util.Set;
 
 public class DefaultGamePlayer implements GamePlayer {
 
+    private static final double DAMAGE_ANIMATION_DAMAGE = 0.001;
     private static final float NORMAL_ACCURACY = 1.0f;
     private static final float SNEAKING_ACCURACY = 2.0f;
     private static final float SPRINTING_ACCURACY = 0.5f;
@@ -76,18 +77,6 @@ public class DefaultGamePlayer implements GamePlayer {
         return effects.remove(effect);
     }
 
-    public boolean addItem(@NotNull Item item) {
-        return items.add(item);
-    }
-
-    public boolean addWeapon(@NotNull Weapon weapon) {
-        return weapons.add(weapon);
-    }
-
-    public double damage(double damageAmount) {
-        return 0.0;
-    }
-
     public void applyReloadingState() {
         previousFoodLevel = player.getFoodLevel();
         player.setFoodLevel(OPERATING_FOOD_LEVEL);
@@ -105,19 +94,25 @@ public class DefaultGamePlayer implements GamePlayer {
         return player.isOnline() && !player.isDead();
     }
 
+    public double damage(double damageAmount) {
+        if (player.isDead() || player.getHealth() <= 0.0) {
+            return player.getHealth();
+        }
+
+        // Divide by 5 to convert to hearts value
+        double finalHealth = Math.max(player.getHealth() - damageAmount / 5, 0.0);
+
+        // Create fake damage animation
+        player.damage(DAMAGE_ANIMATION_DAMAGE);
+        // Set the health to 0 if the damage is greater than the health
+        player.setHealth(finalHealth);
+
+        return finalHealth;
+    }
+
     @NotNull
     public Location getAudioPlayLocation() {
         return player.getLocation();
-    }
-
-    @Nullable
-    public Item getItem(@NotNull ItemStack itemStack) {
-        for (Item item : items) {
-            if (item.isMatching(itemStack)) {
-                return item;
-            }
-        }
-        return null;
     }
 
     @NotNull
@@ -133,16 +128,6 @@ public class DefaultGamePlayer implements GamePlayer {
     @NotNull
     public Location getThrowingDirection() {
         return player.getEyeLocation();
-    }
-
-    @Nullable
-    public Weapon getWeapon(@NotNull ItemStack itemStack) {
-        for (Weapon weapon : weapons) {
-            if (weapon.isMatching(itemStack)) {
-                return weapon;
-            }
-        }
-        return null;
     }
 
     public float getRelativeAccuracy() {

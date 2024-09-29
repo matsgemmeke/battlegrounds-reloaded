@@ -2,7 +2,10 @@ package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import nl.matsgemmeke.battlegrounds.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,35 +28,45 @@ public class CombustionMechanism implements ItemMechanism {
     @Nullable
     private BukkitTask task;
     @NotNull
+    private CollisionDetector collisionDetector;
+    @NotNull
     private CombustionSettings settings;
     private int currentRadius;
     @NotNull
     private MetadataValueCreator metadataValueCreator;
     @NotNull
+    private RangeProfile rangeProfile;
+    @NotNull
     private TaskRunner taskRunner;
 
     public CombustionMechanism(
             @NotNull CombustionSettings settings,
+            @NotNull CollisionDetector collisionDetector,
+            @NotNull RangeProfile rangeProfile,
             @NotNull MetadataValueCreator metadataValueCreator,
             @NotNull TaskRunner taskRunner
     ) {
         this.settings = settings;
+        this.collisionDetector = collisionDetector;
+        this.rangeProfile = rangeProfile;
         this.metadataValueCreator = metadataValueCreator;
         this.taskRunner = taskRunner;
         this.currentRadius = 0;
     }
 
     public void activate(@NotNull ItemHolder holder) {
-        this.activate(holder.getLocation(), holder.getWorld());
+        this.activate(holder, holder.getLocation(), holder.getWorld());
     }
 
     public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
         object.remove();
 
-        this.activate(object.getLocation(), object.getWorld());
+        this.activate(holder, object.getLocation(), object.getWorld());
     }
 
-    private void activate(@NotNull Location location, @NotNull World world) {
+    private void activate(@NotNull ItemHolder holder, @NotNull Location location, @NotNull World world) {
+        this.inflictDamage(holder, location);
+
         int maxRadiusSize = settings.radius();
 
         task = taskRunner.runTaskTimer(() -> {
@@ -63,12 +76,23 @@ public class CombustionMechanism implements ItemMechanism {
                 return;
             }
 
-            for (Block block : getBlocksInRadius(location, world, currentRadius)) {
+            for (Block block : this.getBlocksInRadius(location, world, currentRadius)) {
                 if (block.getType() == Material.AIR && hasLineOfSight(world, block.getLocation(), location)) {
                     this.setOnFire(block);
                 }
             }
         }, RUNNABLE_DELAY, settings.ticksBetweenFireSpread());
+    }
+
+    private void inflictDamage(@NotNull ItemHolder holder, @NotNull Location location) {
+        for (GameEntity target : collisionDetector.findTargets(holder, location, rangeProfile.getLongRangeDistance())) {
+            Location targetLocation = target.getLocation();
+
+            double distance = location.distance(targetLocation);
+            double damage = rangeProfile.getDamageByDistance(distance);
+
+            target.damage(damage);
+        }
     }
 
     @NotNull

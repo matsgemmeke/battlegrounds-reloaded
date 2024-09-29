@@ -30,6 +30,9 @@ public class ItemMechanismFactoryTest {
 
     @Test
     public void shouldCreateInstanceForCombustionMechanismType() {
+        CollisionDetector collisionDetector = mock(CollisionDetector.class);
+        when(context.getCollisionDetector()).thenReturn(collisionDetector);
+
         when(section.getString("type")).thenReturn("COMBUSTION");
 
         ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
