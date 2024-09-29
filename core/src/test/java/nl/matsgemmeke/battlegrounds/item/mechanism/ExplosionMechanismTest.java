@@ -50,7 +50,9 @@ public class ExplosionMechanismTest {
         when(holder.getLocation()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
+        ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+
+        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, collisionDetector, rangeProfile);
         explosionMechanism.activate(holder);
 
         verify(world).createExplosion(location, power, setFire, breakBlocks, entity);
@@ -69,7 +71,9 @@ public class ExplosionMechanismTest {
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getEntity()).thenReturn(entity);
 
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
+        ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+
+        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, collisionDetector, rangeProfile);
         explosionMechanism.activate(holder, object);
 
         verify(object).remove();
@@ -100,7 +104,9 @@ public class ExplosionMechanismTest {
 
         when(collisionDetector.findTargets(holder, holderLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(collisionDetector, rangeProfile, power, setFire, breakBlocks);
+        ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+
+        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, collisionDetector, rangeProfile);
         explosionMechanism.activate(holder);
 
         verify(holder).damage(SHORT_RANGE_DAMAGE);

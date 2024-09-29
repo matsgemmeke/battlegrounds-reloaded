@@ -14,6 +14,10 @@ public class DroppedItem implements Deployable {
         this.itemEntity = itemEntity;
     }
 
+    public boolean exists() {
+        return !itemEntity.isDead();
+    }
+
     @NotNull
     public Location getLocation() {
         return itemEntity.getLocation();

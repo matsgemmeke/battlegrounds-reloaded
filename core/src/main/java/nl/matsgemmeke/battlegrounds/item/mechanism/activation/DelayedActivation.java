@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Activation that triggers the mechanism after a specific delay.
+ * Activation that initiates the mechanism after a specific delay.
  */
 public class DelayedActivation extends BaseItemMechanismActivation {
 

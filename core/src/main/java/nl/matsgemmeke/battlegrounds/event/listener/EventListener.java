@@ -4,6 +4,8 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
@@ -16,6 +18,16 @@ public class EventListener implements Listener {
 
     public EventListener(@NotNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
+    }
+
+    @EventHandler
+    public void onBlockBurn(@NotNull BlockBurnEvent event) {
+        this.dispatchEvent(event);
+    }
+
+    @EventHandler
+    public void onBlockSpread(@NotNull BlockSpreadEvent event) {
+        this.dispatchEvent(event);
     }
 
     @EventHandler

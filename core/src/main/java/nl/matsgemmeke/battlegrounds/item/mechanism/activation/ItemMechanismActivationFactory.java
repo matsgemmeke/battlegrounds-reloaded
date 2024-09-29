@@ -4,7 +4,10 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.activation.trigger.TriggerFactory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * Factory class responsible for instantiating {@link ItemMechanismActivation} implementation classes.
@@ -22,7 +25,6 @@ public class ItemMechanismActivationFactory {
      * Creates a new {@link ItemMechanismActivation} instance based on configuration values.
      *
      * @param section the configuration section
-     * @param item the droppable item
      * @param mechanism the item mechanism instance
      * @return a new activation instance
      */
@@ -48,6 +50,17 @@ public class ItemMechanismActivationFactory {
             }
             case MANUAL -> {
                 return new ManualActivation(mechanism);
+            }
+            case TRIGGER -> {
+                TriggerActivation activation = new TriggerActivation(mechanism);
+                TriggerFactory triggerFactory = new TriggerFactory(taskRunner);
+                Iterable<Map<String, Object>> triggers = (Iterable<Map<String, Object>>) section.get("triggers");
+
+                for (Map<String, Object> triggerConfig : triggers) {
+                    activation.addTrigger(triggerFactory.make(triggerConfig));
+                }
+
+                return activation;
             }
         }
 
