@@ -4,10 +4,15 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ItemMechanismFactory {
 
@@ -50,11 +55,14 @@ public class ItemMechanismFactory {
                 double shortRangeDamage = section.getDouble("range.short-range.damage");
                 double shortRangeDistance = section.getDouble("range.short-range.distance");
 
-                CombustionSettings settings = new CombustionSettings(radius, ticksBetweenSpread, burnBlocks, spreadFire);
+                List<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("combustion-sound"));
+
+                CombustionSettings settings = new CombustionSettings(sounds, radius, ticksBetweenSpread, burnBlocks, spreadFire);
+                AudioEmitter audioEmitter = context.getAudioEmitter();
                 CollisionDetector collisionDetector = context.getCollisionDetector();
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
 
-                return new CombustionMechanism(settings, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
+                return new CombustionMechanism(settings, audioEmitter, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
             }
             case EXPLOSION -> {
                 float power = section.getFloat("power");

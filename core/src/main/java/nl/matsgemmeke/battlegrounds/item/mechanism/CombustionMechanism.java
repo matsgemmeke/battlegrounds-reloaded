@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.mechanism;
 import nl.matsgemmeke.battlegrounds.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -25,6 +26,8 @@ public class CombustionMechanism implements ItemMechanism {
     private static final String BURN_BLOCKS_METADATA_KEY = "battlegrounds-burn-blocks";
     private static final String SPREAD_FIRE_METADATA_KEY = "battlegrounds-spread-fire";
 
+    @NotNull
+    private AudioEmitter audioEmitter;
     @Nullable
     private BukkitTask task;
     @NotNull
@@ -41,12 +44,14 @@ public class CombustionMechanism implements ItemMechanism {
 
     public CombustionMechanism(
             @NotNull CombustionSettings settings,
+            @NotNull AudioEmitter audioEmitter,
             @NotNull CollisionDetector collisionDetector,
             @NotNull RangeProfile rangeProfile,
             @NotNull MetadataValueCreator metadataValueCreator,
             @NotNull TaskRunner taskRunner
     ) {
         this.settings = settings;
+        this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
         this.rangeProfile = rangeProfile;
         this.metadataValueCreator = metadataValueCreator;
@@ -65,6 +70,8 @@ public class CombustionMechanism implements ItemMechanism {
     }
 
     private void activate(@NotNull ItemHolder holder, @NotNull Location location, @NotNull World world) {
+        audioEmitter.playSounds(settings.sounds(), location);
+
         this.inflictDamage(holder, location);
 
         int maxRadiusSize = settings.radius();

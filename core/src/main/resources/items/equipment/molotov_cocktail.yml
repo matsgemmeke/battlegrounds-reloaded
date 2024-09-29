@@ -17,6 +17,7 @@ item:
     material: SHEARS
 mechanism:
   burn-blocks: false
+  combustion-sound: BLOCK_GLASS_BREAK-1-1-0
   radius: 3
   range:
     long-range:
