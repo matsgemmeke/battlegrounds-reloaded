@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,6 @@ public class FloorHitTrigger implements Trigger {
     private static final double Y_SUBTRACTION = 0.01;
     private static final long RUNNABLE_DELAY = 0L;
 
-    @Nullable
     private BukkitTask task;
     @NotNull
     private List<TriggerObserver> observers;
@@ -35,17 +33,24 @@ public class FloorHitTrigger implements Trigger {
     }
 
     public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        task = taskRunner.runTaskTimer(() -> {
-            // Subtract a minimal amount from the y coordinate to make the sure we get the block right below the object
-            Block blockBelowObject = object.getLocation().subtract(0, Y_SUBTRACTION, 0).getBlock();
+        task = taskRunner.runTaskTimer(() -> this.runCheck(holder, object), RUNNABLE_DELAY, periodBetweenChecks);
+    }
 
-            if (blockBelowObject.isPassable()) {
-                return;
-            }
-
-            this.notifyObservers(holder, object);
+    private void runCheck(@NotNull ItemHolder holder, @NotNull Deployable object) {
+        if (!object.exists()) {
             task.cancel();
-        }, RUNNABLE_DELAY, periodBetweenChecks);
+            return;
+        }
+
+        // Subtract a minimal amount from the y coordinate to make the sure we get the block right below the object
+        Block blockBelowObject = object.getLocation().subtract(0, Y_SUBTRACTION, 0).getBlock();
+
+        if (blockBelowObject.isPassable()) {
+            return;
+        }
+
+        this.notifyObservers(holder, object);
+        task.cancel();
     }
 
     private void notifyObservers(@NotNull ItemHolder holder, @NotNull Deployable object) {

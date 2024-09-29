@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Deployable {
 
+    boolean exists();
+
     @NotNull
     Location getLocation();
 

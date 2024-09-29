@@ -10,9 +10,16 @@ public class PlacedBlock implements Deployable {
 
     @NotNull
     private Block block;
+    @NotNull
+    private Material material;
 
-    public PlacedBlock(@NotNull Block block) {
+    public PlacedBlock(@NotNull Block block, @NotNull Material material) {
         this.block = block;
+        this.material = material;
+    }
+
+    public boolean exists() {
+        return block.getType() == material;
     }
 
     @NotNull

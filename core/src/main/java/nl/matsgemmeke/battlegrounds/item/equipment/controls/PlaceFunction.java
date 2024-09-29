@@ -95,7 +95,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
         this.placeBlock(adjacentBlock, targetBlockFace);
 
-        PlacedBlock placedBlock = new PlacedBlock(adjacentBlock);
+        PlacedBlock placedBlock = new PlacedBlock(adjacentBlock, material);
         item.onDeploy(placedBlock);
 
         audioEmitter.playSounds(sounds, adjacentBlock.getLocation());
