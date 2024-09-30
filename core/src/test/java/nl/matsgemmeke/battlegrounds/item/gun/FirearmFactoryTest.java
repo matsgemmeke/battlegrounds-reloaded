@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.ItemRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
@@ -60,10 +61,12 @@ public class FirearmFactoryTest {
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
+        TargetFinder targetFinder = mock(TargetFinder.class);
 
         context = mock(GameContext.class);
         when(context.getAudioEmitter()).thenReturn(audioEmitter);
         when(context.getCollisionDetector()).thenReturn(collisionDetector);
+        when(context.getTargetFinder()).thenReturn(targetFinder);
 
         rootSection = mock(Section.class);
         when(rootSection.getString("description")).thenReturn("test");

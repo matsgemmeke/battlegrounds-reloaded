@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
@@ -38,18 +38,18 @@ public class CombustionMechanismTest {
 
     private AudioEmitter audioEmitter;
     private BukkitTask task;
-    private CollisionDetector collisionDetector;
     private MetadataValueCreator metadataValueCreator;
     private RangeProfile rangeProfile;
+    private TargetFinder targetFinder;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         task = mock(BukkitTask.class);
-        collisionDetector = mock(CollisionDetector.class);
         metadataValueCreator = mock(MetadataValueCreator.class);
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
+        targetFinder = mock(TargetFinder.class);
         taskRunner = mock(TaskRunner.class);
     }
 
@@ -86,7 +86,7 @@ public class CombustionMechanismTest {
 
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenFireSpread))).thenReturn(task);
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, audioEmitter, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
+        CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
         mechanism.activate(holder);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -142,7 +142,7 @@ public class CombustionMechanismTest {
 
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenSpread))).thenReturn(task);
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, audioEmitter, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
+        CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
         mechanism.activate(holder, object);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -178,9 +178,9 @@ public class CombustionMechanismTest {
         when(object.getLocation()).thenReturn(objectLocation);
         when(object.getWorld()).thenReturn(world);
 
-        when(collisionDetector.findTargets(holder, objectLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
+        when(targetFinder.findTargets(holder, objectLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, audioEmitter, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
+        CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
         mechanism.activate(holder, object);
 
         verify(holder).damage(MEDIUM_RANGE_DAMAGE);
@@ -201,7 +201,7 @@ public class CombustionMechanismTest {
         when(holder.getLocation()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, audioEmitter, collisionDetector, rangeProfile, metadataValueCreator, taskRunner);
+        CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
         mechanism.activate(holder);
 
         verify(audioEmitter).playSounds(sounds, location);

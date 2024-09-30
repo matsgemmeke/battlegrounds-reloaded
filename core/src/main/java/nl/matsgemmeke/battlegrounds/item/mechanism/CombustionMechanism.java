@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
@@ -31,8 +31,6 @@ public class CombustionMechanism implements ItemMechanism {
     @Nullable
     private BukkitTask task;
     @NotNull
-    private CollisionDetector collisionDetector;
-    @NotNull
     private CombustionSettings settings;
     private int currentRadius;
     @NotNull
@@ -40,21 +38,23 @@ public class CombustionMechanism implements ItemMechanism {
     @NotNull
     private RangeProfile rangeProfile;
     @NotNull
+    private TargetFinder targetFinder;
+    @NotNull
     private TaskRunner taskRunner;
 
     public CombustionMechanism(
             @NotNull CombustionSettings settings,
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull CollisionDetector collisionDetector,
             @NotNull RangeProfile rangeProfile,
+            @NotNull AudioEmitter audioEmitter,
             @NotNull MetadataValueCreator metadataValueCreator,
+            @NotNull TargetFinder targetFinder,
             @NotNull TaskRunner taskRunner
     ) {
         this.settings = settings;
-        this.audioEmitter = audioEmitter;
-        this.collisionDetector = collisionDetector;
         this.rangeProfile = rangeProfile;
+        this.audioEmitter = audioEmitter;
         this.metadataValueCreator = metadataValueCreator;
+        this.targetFinder = targetFinder;
         this.taskRunner = taskRunner;
         this.currentRadius = 0;
     }
@@ -92,7 +92,7 @@ public class CombustionMechanism implements ItemMechanism {
     }
 
     private void inflictDamage(@NotNull ItemHolder holder, @NotNull Location location) {
-        for (GameEntity target : collisionDetector.findTargets(holder, location, rangeProfile.getLongRangeDistance())) {
+        for (GameEntity target : targetFinder.findTargets(holder, location, rangeProfile.getLongRangeDistance())) {
             Location targetLocation = target.getLocation();
 
             double distance = location.distance(targetLocation);
