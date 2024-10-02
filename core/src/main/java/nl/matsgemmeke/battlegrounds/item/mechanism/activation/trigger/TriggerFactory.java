@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism.activation.trigger;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +18,7 @@ public class TriggerFactory {
     }
 
     @NotNull
-    public Trigger make(@NotNull Map<String, Object> triggerConfig) {
+    public Trigger make(@NotNull GameContext context, @NotNull Map<String, Object> triggerConfig) {
         String triggerTypeValue = (String) triggerConfig.get("type");
         TriggerType triggerType;
 
@@ -27,6 +29,14 @@ public class TriggerFactory {
         }
 
         switch (triggerType) {
+            case ENEMY_PROXIMITY -> {
+                TargetFinder targetFinder = context.getTargetFinder();
+
+                double checkingRange = (double) triggerConfig.get("checking-range");
+                long periodBetweenChecks = (int) triggerConfig.get("period-between-checks");
+
+                return new EnemyProximityTrigger(targetFinder, taskRunner, checkingRange, periodBetweenChecks);
+            }
             case FLOOR_HIT -> {
                 long periodBetweenChecks = (int) triggerConfig.get("period-between-checks");
 

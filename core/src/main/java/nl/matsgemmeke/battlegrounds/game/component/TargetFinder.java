@@ -12,6 +12,17 @@ import java.util.List;
 public interface TargetFinder {
 
     /**
+     * Finds targets that are considered hostile to the given entity, within a specified range around a location.
+     *
+     * @param gameEntity the entity
+     * @param location the location
+     * @param range the range
+     * @return a list of game entities that are considered enemy targets within the specified range
+     */
+    @NotNull
+    List<GameEntity> findEnemyTargets(@NotNull GameEntity gameEntity, @NotNull Location location, double range);
+
+    /**
      * Looks for potential targets for a {@link GameEntity} around a specific {@link Location}.
      *
      * @param gameEntity the entity

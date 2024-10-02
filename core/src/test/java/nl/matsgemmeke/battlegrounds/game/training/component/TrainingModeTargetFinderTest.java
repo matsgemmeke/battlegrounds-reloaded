@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,8 +15,7 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +27,35 @@ public class TrainingModeTargetFinderTest {
     @SuppressWarnings("unchecked")
     public void setUp() {
         playerStorage = mock(EntityStorage.class);
+    }
+
+    @Test
+    public void returnNearbyTargetsButWithoutTheGivenGameEntityInstance() {
+        Player player = mock(Player.class);
+        Player targetEntity = mock(Player.class);
+
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getEntity()).thenReturn(player);
+
+        GamePlayer target = mock(GamePlayer.class);
+        when(target.getEntity()).thenReturn(targetEntity);
+
+        World world = mock(World.class);
+        Location location = new Location(world, 1.0, 1.0, 1.0);
+
+        double range = 0.1;
+
+        when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(player, targetEntity));
+
+        when(playerStorage.getEntity(player)).thenReturn(gamePlayer);
+        when(playerStorage.getEntity(targetEntity)).thenReturn(target);
+
+        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(playerStorage);
+        Collection<GameEntity> targets = targetFinder.findEnemyTargets(gamePlayer, location, range);
+
+        assertEquals(1, targets.size());
+        assertTrue(targets.contains(target));
+        assertFalse(targets.contains(gamePlayer));
     }
 
     @Test
