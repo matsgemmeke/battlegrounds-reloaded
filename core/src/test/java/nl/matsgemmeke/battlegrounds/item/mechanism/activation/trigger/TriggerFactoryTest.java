@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.mechanism.activation.trigger;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TriggerFactoryTest {
 
@@ -37,6 +39,9 @@ public class TriggerFactoryTest {
                 "checking-range", 2.5,
                 "period-between-checks", 10
         );
+
+        TargetFinder targetFinder = mock(TargetFinder.class);
+        when(context.getTargetFinder()).thenReturn(targetFinder);
 
         TriggerFactory factory = new TriggerFactory(taskRunner);
         Trigger trigger = factory.make(context, triggerConfig);

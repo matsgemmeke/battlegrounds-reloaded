@@ -10,6 +10,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.mechanism.flash.FlashMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.flash.FlashSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -81,6 +83,24 @@ public class ItemMechanismFactory {
                 TargetFinder targetFinder = context.getTargetFinder();
 
                 return new ExplosionMechanism(settings, rangeProfile, targetFinder);
+            }
+            case FLASH -> {
+                double range = section.getDouble("range");
+
+                int effectDuration = section.getInt("effect.duration");
+                int effectAmplifier = section.getInt("effect.amplifier");
+                boolean effectAmbient = section.getBoolean("effect.ambient");
+                boolean effectParticles = section.getBoolean("effect.particles");
+                boolean effectIcon = section.getBoolean("effect.icon");
+
+                float explosionPower = section.getFloat("explosion.power");
+                boolean explosionBreakBlocks = section.getBoolean("explosion.break-blocks");
+                boolean explosionSetFire = section.getBoolean("explosion.set-fire");
+
+                FlashSettings settings = new FlashSettings(range, effectDuration, effectAmplifier, effectAmbient, effectParticles, effectIcon, explosionPower, explosionBreakBlocks, explosionSetFire);
+                TargetFinder targetFinder = context.getTargetFinder();
+
+                return new FlashMechanism(settings, targetFinder);
             }
         }
 

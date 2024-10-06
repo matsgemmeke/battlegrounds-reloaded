@@ -1,0 +1,34 @@
+activation:
+  delay-until-activation: 60
+  type: DELAYED
+controls:
+  cook: RIGHT_CLICK
+  throw: LEFT_CLICK
+description: Device that blinds the target when detonated.
+display-name: Flashbang
+equipment-type: TACTICAL
+id: FLASHBANG
+item:
+  damage: 6
+  material: SHEARS
+  throw-item:
+    damage: 6
+    material: SHEARS
+mechanism:
+  effect:
+    ambient: true
+    amplifier: 0
+    duration: 100
+    icon: false
+    particles: true
+  explosion:
+    break-blocks: false
+    power: 1
+    set-fire: false
+  range: 5.0
+  type: FLASH
+throwing:
+  cook-sound: ENTITY_TNT_PRIMED-1-2-0
+  delay-after-throw: 30
+  projectile-speed: 1.2
+  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
