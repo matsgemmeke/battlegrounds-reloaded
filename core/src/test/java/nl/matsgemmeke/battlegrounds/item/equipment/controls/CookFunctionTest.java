@@ -4,7 +4,9 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +26,7 @@ public class CookFunctionTest {
 
     @Test
     public void shouldOnlyBeAvailableIfActivationIsNotPrimed() {
-        when(mechanismActivation.isPriming()).thenReturn(false);
+        when(mechanismActivation.isPrimed()).thenReturn(false);
 
         CookFunction function = new CookFunction(mechanismActivation, audioEmitter);
         boolean available = function.isAvailable();
@@ -34,6 +36,7 @@ public class CookFunctionTest {
 
     @Test
     public void shouldPrimeActivationWhenPerforming() {
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
         Location location = new Location(null, 1, 1, 1);
 
         Player player = mock(Player.class);
@@ -41,11 +44,12 @@ public class CookFunctionTest {
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getEntity()).thenReturn(player);
+        when(holder.getHeldItem()).thenReturn(itemStack);
 
         CookFunction function = new CookFunction(mechanismActivation, audioEmitter);
         function.perform(holder);
 
         verify(audioEmitter).playSounds(any(), eq(location));
-        verify(mechanismActivation).prime(holder, null);
+        verify(mechanismActivation).primeInHand(holder, itemStack);
     }
 }

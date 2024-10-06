@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,9 @@ public class FlashMechanism implements ItemMechanism {
         this.targetFinder = targetFinder;
     }
 
-    public void activate(@NotNull ItemHolder holder) {
+    public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
+        holder.removeItem(itemStack);
+
         this.activate(holder, holder.getLocation(), holder.getWorld());
     }
 

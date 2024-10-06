@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
@@ -30,7 +29,6 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @NotNull
     private CollisionDetector collisionDetector;
     private double headshotDamageMultiplier;
-    private FireMode fireMode;
     private int magazineAmmo;
     private int magazineSize;
     private int reserveAmmo;
@@ -53,14 +51,6 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
     public void setHeadshotDamageMultiplier(double headshotDamageMultiplier) {
         this.headshotDamageMultiplier = headshotDamageMultiplier;
-    }
-
-    public FireMode getFireMode() {
-        return fireMode;
-    }
-
-    public void setFireMode(FireMode fireMode) {
-        this.fireMode = fireMode;
     }
 
     public int getMagazineAmmo() {

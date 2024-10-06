@@ -102,12 +102,12 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
         taskRunner.runTaskLater(() -> performing = false, delayAfterThrow);
 
-        // Check if the activation mechanism is priming its next deployment. If yes, assign the dropped item. Otherwise,
-        // deploy like normally.
-        if (mechanismActivation.isPriming()) {
-            mechanismActivation.onDeployDeferredObject(droppedItem);
+        // Check if the activation mechanism is priming its next deployment. If yes, deploy the dropped item. Otherwise,
+        // prime and deploy like normally.
+        if (mechanismActivation.isPrimed()) {
+            mechanismActivation.deploy(droppedItem);
         } else {
-            mechanismActivation.prime(holder, droppedItem);
+            mechanismActivation.primeDeployedObject(holder, droppedItem);
         }
 
         return true;

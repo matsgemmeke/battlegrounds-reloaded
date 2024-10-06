@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +72,7 @@ public class CombustionMechanismTest {
         World world = mock(World.class);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(mock(Block.class));
 
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
         Location location = new Location(world, 0, 0, 0);
 
         ItemHolder holder = mock(ItemHolder.class);
@@ -87,7 +89,7 @@ public class CombustionMechanismTest {
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenFireSpread))).thenReturn(task);
 
         CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        mechanism.activate(holder);
+        mechanism.activate(holder, itemStack);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -120,6 +122,7 @@ public class CombustionMechanismTest {
         verify(blockOutsideLineOfSight, never()).setType(Material.FIRE);
         verify(blockOutsideLineOfSight, never()).setMetadata(anyString(), any());
 
+        verify(holder).removeItem(itemStack);
         verify(task).cancel();
     }
 
@@ -201,8 +204,10 @@ public class CombustionMechanismTest {
         when(holder.getLocation()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+
         CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        mechanism.activate(holder);
+        mechanism.activate(holder, itemStack);
 
         verify(audioEmitter).playSounds(sounds, location);
     }

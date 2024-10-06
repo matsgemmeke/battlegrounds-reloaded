@@ -6,8 +6,10 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,10 +53,12 @@ public class ExplosionMechanismTest {
         when(holder.getWorld()).thenReturn(world);
 
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, rangeProfile, targetFinder);
-        explosionMechanism.activate(holder);
+        explosionMechanism.activate(holder, itemStack);
 
+        verify(holder).removeItem(itemStack);
         verify(world).createExplosion(location, power, setFire, breakBlocks, entity);
     }
 
@@ -105,9 +109,10 @@ public class ExplosionMechanismTest {
         when(targetFinder.findTargets(holder, holderLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, rangeProfile, targetFinder);
-        explosionMechanism.activate(holder);
+        explosionMechanism.activate(holder, itemStack);
 
         verify(holder).damage(SHORT_RANGE_DAMAGE);
         verify(target).damage(LONG_RANGE_DAMAGE);

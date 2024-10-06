@@ -5,10 +5,12 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.junit.Before;
@@ -40,7 +42,7 @@ public class FlashMechanismTest {
     }
 
     @Test
-    public void shouldCreateFlashEffectAtHolderLocation() {
+    public void shouldCreateFlashEffectAtHolderLocationAndRemoveItemStack() {
         World world = mock(World.class);
         Location holderLocation = new Location(world, 1, 1, 1);
 
@@ -52,10 +54,12 @@ public class FlashMechanismTest {
         when(holder.getWorld()).thenReturn(world);
 
         FlashSettings settings = new FlashSettings(RANGE, EFFECT_DURATION, EFFECT_AMPLIFIER, EFFECT_AMBIENT, EFFECT_PARTICLES, EFFECT_ICON, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         FlashMechanism mechanism = new FlashMechanism(settings, targetFinder);
-        mechanism.activate(holder);
+        mechanism.activate(holder, itemStack);
 
+        verify(holder).removeItem(itemStack);
         verify(world).createExplosion(holderLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, entity);
     }
 

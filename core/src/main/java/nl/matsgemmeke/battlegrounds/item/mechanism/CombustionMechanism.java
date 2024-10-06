@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,9 @@ public class CombustionMechanism implements ItemMechanism {
         this.currentRadius = 0;
     }
 
-    public void activate(@NotNull ItemHolder holder) {
+    public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
+        holder.removeItem(itemStack);
+
         this.activate(holder, holder.getLocation(), holder.getWorld());
     }
 

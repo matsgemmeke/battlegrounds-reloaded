@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Activation that initiates the mechanism by a manual operation by the item holder.
@@ -15,11 +15,11 @@ public class ManualActivation extends BaseItemMechanismActivation {
         super(mechanism);
     }
 
-    public void prime(@NotNull ItemHolder holder, @Nullable Deployable object) {
-        if (object == null) {
-            throw new IllegalArgumentException("Manual mechanism activation does not support priming a deferred object");
-        }
-
+    public void primeDeployedObject(@NotNull ItemHolder holder, @NotNull Deployable object) {
         deployedObjects.add(object);
+    }
+
+    public void primeInHand(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
+        throw new UnsupportedOperationException("Manual mechanism activation does not support priming an object in the holder's hand");
     }
 }

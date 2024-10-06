@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,9 @@ public class ExplosionMechanism implements ItemMechanism {
         this.rangeProfile = rangeProfile;
     }
 
-    public void activate(@NotNull ItemHolder holder) {
+    public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
+        holder.removeItem(itemStack);
+
         this.activate(holder, holder.getLocation(), holder.getWorld(), holder.getEntity());
     }
 

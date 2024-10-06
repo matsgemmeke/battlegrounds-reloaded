@@ -4,8 +4,8 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.trigger.Trigger;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +26,18 @@ public class TriggerActivation extends BaseItemMechanismActivation {
     public void addTrigger(@NotNull Trigger trigger) {
         triggers.add(trigger);
 
-        trigger.addObserver(this::handleActivation);
+        trigger.addObserver(mechanism::activate);
     }
 
-    public void prime(@NotNull ItemHolder holder, @Nullable Deployable object) {
-        if (object == null) {
-            throw new IllegalArgumentException("Trigger mechanism activation does not support priming a deferred object");
-        }
-
+    public void primeDeployedObject(@NotNull ItemHolder holder, @NotNull Deployable object) {
         deployedObjects.add(object);
 
         for (Trigger trigger : triggers) {
             trigger.checkTriggerActivation(holder, object);
         }
+    }
+
+    public void primeInHand(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
+        throw new UnsupportedOperationException("Trigger mechanism activation does not support priming a deferred object");
     }
 }

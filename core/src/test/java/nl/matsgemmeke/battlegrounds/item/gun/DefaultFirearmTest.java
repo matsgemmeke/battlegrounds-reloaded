@@ -469,7 +469,6 @@ public class DefaultFirearmTest {
         ItemStack itemStack = mock(ItemStack.class);
         ItemMeta itemMeta = mock(ItemMeta.class);
 
-        when(holder.setHeldItem(itemStack)).thenReturn(true);
         when(itemStack.getItemMeta()).thenReturn(itemMeta);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
@@ -481,6 +480,7 @@ public class DefaultFirearmTest {
 
         firearm.updateAmmoDisplay();
 
+        verify(holder).setHeldItem(itemStack);
         verify(itemMeta).setDisplayName(ChatColor.WHITE + "name 10/20");
     }
 }
