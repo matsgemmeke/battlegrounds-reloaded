@@ -116,6 +116,15 @@ public class DefaultGamePlayer implements GamePlayer {
     }
 
     @NotNull
+    public ItemStack getHeldItem() {
+        return player.getInventory().getItemInMainHand();
+    }
+
+    public void setHeldItem(@Nullable ItemStack itemStack) {
+        player.getInventory().setItemInMainHand(itemStack);
+    }
+
+    @NotNull
     public List<Block> getLastTwoTargetBlocks(int maxDistance) {
         return player.getLastTwoTargetBlocks(null, maxDistance);
     }
@@ -146,8 +155,7 @@ public class DefaultGamePlayer implements GamePlayer {
         internals.setPlayerRotation(player, yaw, pitch);
     }
 
-    public boolean setHeldItem(@Nullable ItemStack itemStack) {
-        player.getInventory().setItemInMainHand(itemStack);
-        return true;
+    public void removeItem(@NotNull ItemStack itemStack) {
+        player.getInventory().removeItem(itemStack);
     }
 }

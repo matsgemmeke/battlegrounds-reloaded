@@ -81,7 +81,7 @@ public class ThrowFunctionTest {
         when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
 
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
-        when(mechanismActivation.isPriming()).thenReturn(false);
+        when(mechanismActivation.isPrimed()).thenReturn(false);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLocation()).thenReturn(location);
@@ -98,7 +98,7 @@ public class ThrowFunctionTest {
 
         assertEquals(location, captor.getValue().getLocation());
 
-        verify(mechanismActivation).prime(holder, captor.getValue());
+        verify(mechanismActivation).primeDeployedObject(holder, captor.getValue());
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
         verify(world).dropItem(location, itemStack);
     }
@@ -119,7 +119,7 @@ public class ThrowFunctionTest {
         when(holder.getWorld()).thenReturn(world);
 
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
-        when(mechanismActivation.isPriming()).thenReturn(true);
+        when(mechanismActivation.isPrimed()).thenReturn(true);
 
         ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performed = function.perform(holder);
@@ -129,7 +129,7 @@ public class ThrowFunctionTest {
         ArgumentCaptor<DroppedItem> captor = ArgumentCaptor.forClass(DroppedItem.class);
         verify(item).onDeploy(captor.capture());
 
-        verify(mechanismActivation).onDeployDeferredObject(captor.getValue());
+        verify(mechanismActivation).deploy(captor.getValue());
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
         verify(world).dropItem(location, itemStack);
     }

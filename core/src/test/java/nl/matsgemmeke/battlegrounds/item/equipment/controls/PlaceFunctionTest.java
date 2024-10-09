@@ -172,7 +172,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        when(mechanismActivation.isPriming()).thenReturn(false);
+        when(mechanismActivation.isPrimed()).thenReturn(false);
 
         PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
@@ -188,7 +188,7 @@ public class PlaceFunctionTest {
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(faceAttachable).setAttachedFace(AttachedFace.CEILING);
-        verify(mechanismActivation).prime(holder, captor.getValue());
+        verify(mechanismActivation).primeDeployedObject(holder, captor.getValue());
     }
 
     @Test
@@ -212,7 +212,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        when(mechanismActivation.isPriming()).thenReturn(true);
+        when(mechanismActivation.isPrimed()).thenReturn(true);
 
         PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
@@ -228,7 +228,7 @@ public class PlaceFunctionTest {
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(faceAttachable).setAttachedFace(AttachedFace.FLOOR);
-        verify(mechanismActivation).onDeployDeferredObject(captor.getValue());
+        verify(mechanismActivation).deploy(captor.getValue());
     }
 
     @Test
@@ -253,7 +253,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        when(mechanismActivation.isPriming()).thenReturn(true);
+        when(mechanismActivation.isPrimed()).thenReturn(true);
 
         PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
@@ -271,6 +271,6 @@ public class PlaceFunctionTest {
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(directional).setFacing(targetBlockFace);
         verify(faceAttachable).setAttachedFace(AttachedFace.WALL);
-        verify(mechanismActivation).onDeployDeferredObject(captor.getValue());
+        verify(mechanismActivation).deploy(captor.getValue());
     }
 }

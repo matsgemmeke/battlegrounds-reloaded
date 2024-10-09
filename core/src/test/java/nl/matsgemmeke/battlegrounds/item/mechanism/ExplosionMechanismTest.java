@@ -1,13 +1,15 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,17 +28,17 @@ public class ExplosionMechanismTest {
 
     private boolean breakBlocks;
     private boolean setFire;
-    private CollisionDetector collisionDetector;
     private float power;
     private RangeProfile rangeProfile;
+    private TargetFinder targetFinder;
 
     @Before
     public void setUp() {
-        collisionDetector = mock(CollisionDetector.class);
         breakBlocks = false;
         setFire = false;
         power = 2.0F;
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
+        targetFinder = mock(TargetFinder.class);
     }
 
     @Test
@@ -51,10 +53,12 @@ public class ExplosionMechanismTest {
         when(holder.getWorld()).thenReturn(world);
 
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, collisionDetector, rangeProfile);
-        explosionMechanism.activate(holder);
+        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, rangeProfile, targetFinder);
+        explosionMechanism.activate(holder, itemStack);
 
+        verify(holder).removeItem(itemStack);
         verify(world).createExplosion(location, power, setFire, breakBlocks, entity);
     }
 
@@ -73,7 +77,7 @@ public class ExplosionMechanismTest {
 
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
 
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, collisionDetector, rangeProfile);
+        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, rangeProfile, targetFinder);
         explosionMechanism.activate(holder, object);
 
         verify(object).remove();
@@ -102,12 +106,13 @@ public class ExplosionMechanismTest {
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        when(collisionDetector.findTargets(holder, holderLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
+        when(targetFinder.findTargets(holder, holderLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, collisionDetector, rangeProfile);
-        explosionMechanism.activate(holder);
+        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, rangeProfile, targetFinder);
+        explosionMechanism.activate(holder, itemStack);
 
         verify(holder).damage(SHORT_RANGE_DAMAGE);
         verify(target).damage(LONG_RANGE_DAMAGE);

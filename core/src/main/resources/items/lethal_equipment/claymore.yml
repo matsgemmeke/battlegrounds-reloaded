@@ -1,0 +1,37 @@
+activation:
+  triggers:
+    - checking-range: 2.5
+      period-between-checks: 2
+      type: ENEMY_PROXIMITY
+  type: TRIGGER
+controls:
+  throw: LEFT_CLICK
+description: Anti-personnel mine that triggers a proximity-based explosion.
+display-name: Claymore
+equipment-type: LETHAL
+id: CLAYMORE
+item:
+  damage: 5
+  material: SHEARS
+  throw-item:
+    damage: 5
+    material: SHEARS
+mechanism:
+  break-blocks: false
+  power: 2.0
+  range:
+    long-range:
+      damage: 50.0
+      distance: 7.5
+    medium-range:
+      damage: 75.0
+      distance: 5.0
+    short-range:
+      damage: 150.0
+      distance: 2.5
+  set-fire: false
+  type: EXPLOSION
+throwing:
+  delay-after-throw: 30
+  projectile-speed: 0.0
+  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0

@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.trigger.TriggerFactory;
@@ -28,7 +29,7 @@ public class ItemMechanismActivationFactory {
      * @param mechanism the item mechanism instance
      * @return a new activation instance
      */
-    public ItemMechanismActivation make(@NotNull Section section, @NotNull ItemMechanism mechanism) {
+    public ItemMechanismActivation make(@NotNull GameContext context, @NotNull ItemMechanism mechanism, @NotNull Section section) {
         String type = section.getString("type");
 
         if (type == null) {
@@ -57,7 +58,7 @@ public class ItemMechanismActivationFactory {
                 Iterable<Map<String, Object>> triggers = (Iterable<Map<String, Object>>) section.get("triggers");
 
                 for (Map<String, Object> triggerConfig : triggers) {
-                    activation.addTrigger(triggerFactory.make(triggerConfig));
+                    activation.addTrigger(triggerFactory.make(context, triggerConfig));
                 }
 
                 return activation;

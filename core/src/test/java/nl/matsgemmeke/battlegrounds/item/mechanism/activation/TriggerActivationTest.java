@@ -4,6 +4,8 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.trigger.Trigger;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,10 +22,12 @@ public class TriggerActivationTest {
         mechanism = mock(ItemMechanism.class);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void throwErrorWhenAttemptingToStartWithDeferredObject() {
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+
         TriggerActivation activation = new TriggerActivation(mechanism);
-        activation.prime(holder, null);
+        activation.primeInHand(holder, itemStack);
     }
 
     @Test
@@ -34,12 +38,12 @@ public class TriggerActivationTest {
 
         Trigger trigger = mock(Trigger.class);
         doAnswer(answer -> {
-            activation.handleActivation(holder, object);
+            mechanism.activate(holder, object);
             return answer;
         }).when(trigger).checkTriggerActivation(holder, object);
 
         activation.addTrigger(trigger);
-        activation.prime(holder, object);
+        activation.primeDeployedObject(holder, object);
 
         verify(trigger).checkTriggerActivation(holder, object);
         verify(mechanism).activate(holder, object);

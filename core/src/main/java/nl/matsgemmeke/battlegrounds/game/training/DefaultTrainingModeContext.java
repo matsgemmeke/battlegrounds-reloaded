@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -54,7 +55,7 @@ public class DefaultTrainingModeContext implements GameContext {
     public CollisionDetector getCollisionDetector() {
         BlockCollisionChecker blockCollisionChecker = new BlockCollisionChecker();
 
-        return new TrainingModeCollisionDetector(blockCollisionChecker, trainingMode.getPlayerStorage());
+        return new TrainingModeCollisionDetector(blockCollisionChecker);
     }
 
     @NotNull
@@ -84,5 +85,10 @@ public class DefaultTrainingModeContext implements GameContext {
     @NotNull
     public EntityRegistry<GamePlayer, Player> getPlayerRegistry() {
         return new DefaultPlayerRegistry(trainingMode.getPlayerStorage(), internals);
+    }
+
+    @NotNull
+    public TargetFinder getTargetFinder() {
+        return new TrainingModeTargetFinder(trainingMode.getPlayerStorage());
     }
 }

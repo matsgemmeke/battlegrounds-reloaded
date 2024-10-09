@@ -104,10 +104,10 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
         taskRunner.runTaskLater(() -> performing = false, delayAfterPlacement);
 
-        if (mechanismActivation.isPriming()) {
-            mechanismActivation.onDeployDeferredObject(placedBlock);
+        if (mechanismActivation.isPrimed()) {
+            mechanismActivation.deploy(placedBlock);
         } else {
-            mechanismActivation.prime(holder, placedBlock);
+            mechanismActivation.primeDeployedObject(holder, placedBlock);
         }
 
         return true;

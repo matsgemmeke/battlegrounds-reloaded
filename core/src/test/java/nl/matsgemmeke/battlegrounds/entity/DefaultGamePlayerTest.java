@@ -2,8 +2,11 @@ package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -93,6 +96,33 @@ public class DefaultGamePlayerTest {
     }
 
     @Test
+    public void shouldReturnItemInMainHand() {
+        ItemStack itemStack = new ItemStack(Material.STONE);
+
+        PlayerInventory inventory = mock(PlayerInventory.class);
+        when(inventory.getItemInMainHand()).thenReturn(itemStack);
+        when(player.getInventory()).thenReturn(inventory);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        ItemStack heldItem = gamePlayer.getHeldItem();
+
+        assertEquals(itemStack, heldItem);
+    }
+
+    @Test
+    public void shouldSetItemInMainHand() {
+        ItemStack itemStack = new ItemStack(Material.STONE);
+
+        PlayerInventory inventory = mock(PlayerInventory.class);
+        when(player.getInventory()).thenReturn(inventory);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        gamePlayer.setHeldItem(itemStack);
+
+        verify(inventory).setItemInMainHand(itemStack);
+    }
+
+    @Test
     public void shouldReturnPlayerTargetBlocks() {
         int maxDistance = 3;
         List<Block> targetBlocks = List.of(mock(Block.class), mock(Block.class));
@@ -168,6 +198,19 @@ public class DefaultGamePlayerTest {
         gamePlayer.modifyCameraRotation(1.0f, 1.0f);
 
         verify(internals).setPlayerRotation(player, 1.0f, 1.0f);
+    }
+
+    @Test
+    public void removeItemStackFromInventory() {
+        ItemStack itemStack = new ItemStack(Material.STONE);
+
+        PlayerInventory inventory = mock(PlayerInventory.class);
+        when(player.getInventory()).thenReturn(inventory);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        gamePlayer.removeItem(itemStack);
+
+        verify(inventory).removeItem(itemStack);
     }
 
     @Test

@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,8 +18,9 @@ public interface ItemMechanism {
      * instead activates solely based on the holder's action.</p>
      *
      * @param holder the entity or object that activates the mechanism
+     * @param itemStack the item stack that was used to activate the mechanism
      */
-    void activate(@NotNull ItemHolder holder);
+    void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack);
 
     /**
      * <p>Activates the mechanism with the specified item holder and deployed object.</p>

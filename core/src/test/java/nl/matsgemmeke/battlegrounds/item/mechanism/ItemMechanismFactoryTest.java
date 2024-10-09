@@ -4,8 +4,10 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.item.mechanism.flash.FlashMechanism;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,8 +32,11 @@ public class ItemMechanismFactoryTest {
 
     @Test
     public void shouldCreateInstanceForCombustionMechanismType() {
-        CollisionDetector collisionDetector = mock(CollisionDetector.class);
-        when(context.getCollisionDetector()).thenReturn(collisionDetector);
+        AudioEmitter audioEmitter = mock(AudioEmitter.class);
+        when(context.getAudioEmitter()).thenReturn(audioEmitter);
+
+        TargetFinder targetFinder = mock(TargetFinder.class);
+        when(context.getTargetFinder()).thenReturn(targetFinder);
 
         when(section.getString("type")).thenReturn("COMBUSTION");
 
@@ -43,8 +48,8 @@ public class ItemMechanismFactoryTest {
 
     @Test
     public void shouldCreateInstanceForExplosionMechanismType() {
-        CollisionDetector collisionDetector = mock(CollisionDetector.class);
-        when(context.getCollisionDetector()).thenReturn(collisionDetector);
+        TargetFinder targetFinder = mock(TargetFinder.class);
+        when(context.getTargetFinder()).thenReturn(targetFinder);
 
         when(section.getString("type")).thenReturn("EXPLOSION");
 
@@ -52,6 +57,19 @@ public class ItemMechanismFactoryTest {
         ItemMechanism mechanism = factory.make(section, context);
 
         assertTrue(mechanism instanceof ExplosionMechanism);
+    }
+
+    @Test
+    public void shouldCreateInstanceForFlashMechanismType() {
+        TargetFinder targetFinder = mock(TargetFinder.class);
+        when(context.getTargetFinder()).thenReturn(targetFinder);
+
+        when(section.getString("type")).thenReturn("FLASH");
+
+        ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
+        ItemMechanism mechanism = factory.make(section, context);
+
+        assertTrue(mechanism instanceof FlashMechanism);
     }
 
     @Test(expected = InvalidItemConfigurationException.class)

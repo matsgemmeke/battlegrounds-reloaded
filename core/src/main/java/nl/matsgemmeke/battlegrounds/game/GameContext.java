@@ -41,4 +41,7 @@ public interface GameContext {
 
     @NotNull
     EntityRegistry<GamePlayer, Player> getPlayerRegistry();
+
+    @NotNull
+    TargetFinder getTargetFinder();
 }

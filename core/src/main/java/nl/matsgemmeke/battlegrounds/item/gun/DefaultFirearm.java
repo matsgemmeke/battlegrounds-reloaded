@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.entity.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
@@ -29,7 +29,6 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @NotNull
     private CollisionDetector collisionDetector;
     private double headshotDamageMultiplier;
-    private FireMode fireMode;
     private int magazineAmmo;
     private int magazineSize;
     private int reserveAmmo;
@@ -37,10 +36,13 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     private Iterable<GameSound> triggerSounds;
     @Nullable
     private SpreadPattern spreadPattern;
+    @NotNull
+    private TargetFinder targetFinder;
 
-    public DefaultFirearm(@NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector) {
+    public DefaultFirearm(@NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector, @NotNull TargetFinder targetFinder) {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
+        this.targetFinder = targetFinder;
     }
 
     public double getHeadshotDamageMultiplier() {
@@ -49,14 +51,6 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
     public void setHeadshotDamageMultiplier(double headshotDamageMultiplier) {
         this.headshotDamageMultiplier = headshotDamageMultiplier;
-    }
-
-    public FireMode getFireMode() {
-        return fireMode;
-    }
-
-    public void setFireMode(FireMode fireMode) {
-        this.fireMode = fireMode;
     }
 
     public int getMagazineAmmo() {
@@ -145,7 +139,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     }
 
     private boolean inflictDamage(@NotNull Location startingLocation, @NotNull Location projectileLocation) {
-        for (GameEntity target : collisionDetector.findTargets(holder, projectileLocation, ENTITY_FINDING_RANGE)) {
+        for (GameEntity target : targetFinder.findTargets(holder, projectileLocation, ENTITY_FINDING_RANGE)) {
             if (target.getEntity() == holder.getEntity()) {
                 continue;
             }

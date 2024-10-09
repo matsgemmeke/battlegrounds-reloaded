@@ -50,7 +50,7 @@ public class ActivateFunctionTest {
         Deployable object = mock(Deployable.class);
 
         when(item.getDeployedObjects()).thenReturn(List.of(object));
-        when(mechanismActivation.isPriming()).thenReturn(true);
+        when(mechanismActivation.isPrimed()).thenReturn(true);
 
         ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
         boolean available = function.isAvailable();
@@ -77,7 +77,7 @@ public class ActivateFunctionTest {
         function.perform(holder);
 
         verify(holder).setHeldItem(null);
-        verify(mechanismActivation).activate(holder);
+        verify(mechanismActivation).activateDeployedObjects(holder);
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayUntilActivation));
     }
 }

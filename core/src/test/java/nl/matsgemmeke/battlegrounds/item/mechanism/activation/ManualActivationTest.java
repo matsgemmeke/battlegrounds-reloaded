@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.mechanism.activation;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,28 +28,30 @@ public class ManualActivationTest {
         Deployable object2 = mock(Deployable.class);
 
         ManualActivation activation = new ManualActivation(mechanism);
-        activation.prime(holder, object1);
-        activation.prime(holder, object2);
-        activation.activate(holder);
+        activation.primeDeployedObject(holder, object1);
+        activation.primeDeployedObject(holder, object2);
+        activation.activateDeployedObjects(holder);
 
         verify(mechanism, times(2)).activate(eq(holder), any(Deployable.class));
     }
 
     @Test
-    public void isPrimingReturnsFalseWhenMostRecentDeployedObjectIsNotNull() {
+    public void isPrimedReturnsFalseWhenMostRecentDeployedObjectIsNotNull() {
         Deployable object = mock(Deployable.class);
 
         ManualActivation activation = new ManualActivation(mechanism);
-        activation.prime(holder, object);
+        activation.primeDeployedObject(holder, object);
 
-        boolean priming = activation.isPriming();
+        boolean primed = activation.isPrimed();
 
-        assertFalse(priming);
+        assertFalse(primed);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void throwErrorWhenDeployingDeferredObject() {
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+
         ManualActivation activation = new ManualActivation(mechanism);
-        activation.prime(holder, null);
+        activation.primeInHand(holder, itemStack);
     }
 }
