@@ -3,9 +3,9 @@ package nl.matsgemmeke.battlegrounds.command.condition;
 import co.aikar.commands.*;
 import co.aikar.commands.CommandConditions.ParameterCondition;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.locale.PlaceholderEntry;
-import nl.matsgemmeke.battlegrounds.locale.TranslationKey;
-import nl.matsgemmeke.battlegrounds.locale.Translator;
+import nl.matsgemmeke.battlegrounds.text.PlaceholderEntry;
+import nl.matsgemmeke.battlegrounds.text.TranslationKey;
+import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.jetbrains.annotations.NotNull;
 
 public class ExistentSessionIdCondition implements ParameterCondition<Integer, BukkitCommandExecutionContext, BukkitCommandIssuer> {

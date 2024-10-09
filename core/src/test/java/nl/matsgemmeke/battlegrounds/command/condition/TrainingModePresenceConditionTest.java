@@ -6,7 +6,7 @@ import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
-import nl.matsgemmeke.battlegrounds.locale.Translator;
+import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
 import org.junit.Before;
 import org.junit.Test;

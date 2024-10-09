@@ -6,9 +6,9 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
-import nl.matsgemmeke.battlegrounds.locale.PlaceholderEntry;
-import nl.matsgemmeke.battlegrounds.locale.TranslationKey;
-import nl.matsgemmeke.battlegrounds.locale.Translator;
+import nl.matsgemmeke.battlegrounds.text.PlaceholderEntry;
+import nl.matsgemmeke.battlegrounds.text.TranslationKey;
+import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

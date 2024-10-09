@@ -3,9 +3,9 @@ package nl.matsgemmeke.battlegrounds.command;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.locale.PlaceholderEntry;
-import nl.matsgemmeke.battlegrounds.locale.TranslationKey;
-import nl.matsgemmeke.battlegrounds.locale.Translator;
+import nl.matsgemmeke.battlegrounds.text.PlaceholderEntry;
+import nl.matsgemmeke.battlegrounds.text.TranslationKey;
+import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.locale;
+package nl.matsgemmeke.battlegrounds.text;
 
 import org.jetbrains.annotations.NotNull;
 

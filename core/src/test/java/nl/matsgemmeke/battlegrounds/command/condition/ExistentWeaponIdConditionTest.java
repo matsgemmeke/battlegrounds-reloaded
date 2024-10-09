@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.command.condition;
 
 import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
-import nl.matsgemmeke.battlegrounds.locale.Translator;
+import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.junit.Before;
 import org.junit.Test;
 

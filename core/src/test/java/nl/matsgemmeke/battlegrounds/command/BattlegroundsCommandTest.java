@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.command;
 import net.md_5.bungee.api.chat.BaseComponent;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
-import nl.matsgemmeke.battlegrounds.locale.Translator;
+import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Before;

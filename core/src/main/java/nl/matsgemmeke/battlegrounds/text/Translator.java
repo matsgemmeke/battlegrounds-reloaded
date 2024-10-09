@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.locale;
+package nl.matsgemmeke.battlegrounds.text;
 
 import nl.matsgemmeke.battlegrounds.configuration.LanguageConfiguration;
 import org.bukkit.ChatColor;
