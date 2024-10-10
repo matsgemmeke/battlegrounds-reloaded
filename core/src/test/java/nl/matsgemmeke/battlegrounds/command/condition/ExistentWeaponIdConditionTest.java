@@ -2,6 +2,8 @@ package nl.matsgemmeke.battlegrounds.command.condition;
 
 import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
+import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +36,7 @@ public class ExistentWeaponIdConditionTest {
     public void shouldNotPassWhenWeaponIdDoesNotExist() {
         String weaponId = "test";
 
+        when(translator.translate(TranslationKey.WEAPON_NOT_EXISTS.getPath())).thenReturn(new TextTemplate("message"));
         when(weaponProvider.exists(weaponId)).thenReturn(false);
 
         ExistentWeaponIdCondition condition = new ExistentWeaponIdCondition(weaponProvider, translator);

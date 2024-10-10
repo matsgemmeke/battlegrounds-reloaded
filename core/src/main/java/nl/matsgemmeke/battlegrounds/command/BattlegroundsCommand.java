@@ -44,7 +44,7 @@ public class BattlegroundsCommand extends BaseCommand {
 
     @Default
     public void onDefault(CommandSender sender) {
-        sender.sendMessage(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()));
+        sender.sendMessage(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText());
         sender.sendMessage(EMPTY_MESSAGE);
 
         if (sender instanceof Player) {

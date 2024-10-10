@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.command;
 import net.md_5.bungee.api.chat.BaseComponent;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
+import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,7 +26,7 @@ public class BattlegroundsCommandTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotBeAbleToGetSubcommandWhenItDoesNotExist() {
-        when(translator.translate(anyString())).thenReturn("test");
+        when(translator.translate(TranslationKey.DESCRIPTION_CREATESESSION.getPath())).thenReturn(new TextTemplate("text"));
 
         GameContextProvider contextProvider = mock(GameContextProvider.class);
         SessionFactory sessionFactory = mock(SessionFactory.class);
@@ -37,6 +39,8 @@ public class BattlegroundsCommandTest {
 
     @Test
     public void shouldShowHelpMenuToPlayerAsJSONMessages() {
+        String title = "title";
+
         Player player = mock(Player.class);
         Player.Spigot spigot = mock(Player.Spigot.class);
         when(player.spigot()).thenReturn(spigot);
@@ -44,21 +48,30 @@ public class BattlegroundsCommandTest {
         ReloadCommand command = mock(ReloadCommand.class);
         when(command.getName()).thenReturn("reload");
 
+        when(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(title));
+
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
         // Add a sample command so the help menu has something to display
         bgCommand.addSubcommand(command);
 
         bgCommand.onDefault(player);
 
+        verify(player).sendMessage(title);
         verify(spigot).sendMessage(any(BaseComponent.class));
     }
 
     @Test
     public void shouldShowHelpMenuToSenderAsNormalMessages() {
+        String title = "title";
+        String usage = "usage";
+
         CommandSender sender = mock(CommandSender.class);
 
         ReloadCommand command = mock(ReloadCommand.class);
         when(command.getName()).thenReturn("reload");
+        when(command.getUsage()).thenReturn(usage);
+
+        when(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(title));
 
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
         // Add a sample command so the help menu has something to display
@@ -66,7 +79,8 @@ public class BattlegroundsCommandTest {
 
         bgCommand.onDefault(sender);
 
-        verify(sender, atLeast(1)).sendMessage(anyString());
+        verify(sender).sendMessage(title);
+        verify(sender).sendMessage(usage);
     }
 
     @Test

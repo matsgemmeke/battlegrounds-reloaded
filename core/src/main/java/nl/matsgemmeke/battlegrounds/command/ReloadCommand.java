@@ -14,16 +14,16 @@ public class ReloadCommand extends CommandSource {
     private Translator translator;
 
     public ReloadCommand(@NotNull BattlegroundsConfiguration config, @NotNull Translator translator) {
-        super("reload", translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()), "bg reload");
+        super("reload", translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()).getText(), "bg reload");
         this.config = config;
         this.translator = translator;
     }
 
     public void execute(@NotNull CommandSender sender) {
         if (config.load()) {
-            sender.sendMessage(translator.translate(TranslationKey.RELOAD_SUCCESS.getPath()));
+            sender.sendMessage(translator.translate(TranslationKey.RELOAD_SUCCESS.getPath()).getText());
         } else {
-            sender.sendMessage(translator.translate(TranslationKey.RELOAD_FAILED.getPath()));
+            sender.sendMessage(translator.translate(TranslationKey.RELOAD_FAILED.getPath()).getText());
         }
     }
 }

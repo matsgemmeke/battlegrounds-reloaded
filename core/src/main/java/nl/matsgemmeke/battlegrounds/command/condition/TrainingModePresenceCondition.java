@@ -30,6 +30,6 @@ public class TrainingModePresenceCondition implements Condition<BukkitCommandIss
             return;
         }
 
-        throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_TRAINING_MODE.getPath()));
+        throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_TRAINING_MODE.getPath()).getText());
     }
 }

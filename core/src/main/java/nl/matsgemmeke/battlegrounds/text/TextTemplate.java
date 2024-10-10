@@ -24,6 +24,7 @@ public class TextTemplate {
 
     @NotNull
     public String replace(@NotNull Map<String, Object> values) {
+        String text = this.text;
         for (Entry<String, Object> value : values.entrySet()) {
             String placeholder = DEFAULT_VAR_START + value.getKey() + DEFAULT_VAR_END;
             if (text.contains(placeholder)) {

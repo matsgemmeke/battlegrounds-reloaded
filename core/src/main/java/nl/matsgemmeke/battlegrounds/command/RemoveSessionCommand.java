@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.command;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.text.PlaceholderEntry;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RemoveSessionCommand extends CommandSource {
 
@@ -30,7 +30,7 @@ public class RemoveSessionCommand extends CommandSource {
             @NotNull TaskRunner taskRunner,
             @NotNull Translator translator
     ) {
-        super("removesession", translator.translate(TranslationKey.DESCRIPTION_REMOVESESSION.getPath()), "bg removesession <id>");
+        super("removesession", translator.translate(TranslationKey.DESCRIPTION_REMOVESESSION.getPath()).getText(), "bg removesession <id>");
         this.contextProvider = contextProvider;
         this.taskRunner = taskRunner;
         this.translator = translator;
@@ -41,20 +41,23 @@ public class RemoveSessionCommand extends CommandSource {
         if (!confirmList.contains(sender)) {
             confirmList.add(sender);
 
-            sender.sendMessage(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath()));
+            String confirmMessage = translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath()).getText();
+            sender.sendMessage(confirmMessage);
 
             taskRunner.runTaskLater(() -> confirmList.remove(sender), CONFIRM_LIST_COOLDOWN);
             return;
         }
 
         GameContext sessionContext = contextProvider.getSessionContext(id);
-        PlaceholderEntry placeholder = new PlaceholderEntry("bg_session", String.valueOf(id));
+        Map<String, Object> values = Map.of("bg_session", id);
+        String message;
 
         if (sessionContext == null || !contextProvider.removeSessionContext(id)) {
-            sender.sendMessage(translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath(), placeholder));
-            return;
+            message = translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath()).replace(values);
+        } else {
+            message = translator.translate(TranslationKey.SESSION_REMOVED.getPath()).replace(values);
         }
 
-        sender.sendMessage(translator.translate(TranslationKey.SESSION_REMOVED.getPath(), placeholder));
+        sender.sendMessage(message);
     }
 }

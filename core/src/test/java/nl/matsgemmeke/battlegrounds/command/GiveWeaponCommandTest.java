@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.*;
+import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.Material;
@@ -30,7 +31,7 @@ public class GiveWeaponCommandTest {
         this.translator = mock(Translator.class);
         this.weaponProvider = mock(WeaponProvider.class);
 
-        when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn("test");
+        when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn(new TextTemplate("test"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -42,6 +43,7 @@ public class GiveWeaponCommandTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldGiveAssignedWeaponToPlayer() {
+        String message = "weapon given";
         String weaponId = "TEST_WEAPON";
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
@@ -64,11 +66,13 @@ public class GiveWeaponCommandTest {
         WeaponFactory factory = mock(WeaponFactory.class);
         when(factory.make(eq(configuration), eq(context), any())).thenReturn(weapon);
 
+        when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
         when(weaponProvider.getFactory(configuration)).thenReturn(factory);
 
         GiveWeaponCommand command = new GiveWeaponCommand(context, translator, weaponProvider);
         command.execute(player, weaponId);
 
         verify(inventory).addItem(itemStack);
+        verify(player).sendMessage(message);
     }
 }
