@@ -1,3 +1,5 @@
+id: AK-47
+name: AK-47
 ammo:
   default-supply: 3
   magazine-size: 30
@@ -6,11 +8,10 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Fully automatic with high power. Effective at medium range.
-display-name: AK-47
 firearm-type: ASSAULT_RIFLE
-id: AK-47
 item:
   damage: 13
+  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
   material: IRON_HOE
 level-unlocked: 38
 price: 2500

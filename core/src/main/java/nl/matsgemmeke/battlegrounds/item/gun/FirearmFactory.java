@@ -22,6 +22,8 @@ import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
+import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -85,7 +87,7 @@ public class FirearmFactory implements WeaponFactory {
         Section section = configuration.getRoot();
 
         // Descriptive attributes
-        String name = section.getString("display-name");
+        String name = section.getString("name");
         String description = section.getString("description");
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
@@ -166,6 +168,7 @@ public class FirearmFactory implements WeaponFactory {
         }
 
         int damage = section.getInt("item.damage");
+        String displayNameValue = section.getString("item.display-name");
 
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -173,6 +176,12 @@ public class FirearmFactory implements WeaponFactory {
         if (itemMeta instanceof Damageable) {
             ((Damageable) itemMeta).setDamage(damage);
             itemStack.setItemMeta(itemMeta);
+        }
+
+        if (displayNameValue != null) {
+            TextTemplate displayNameTemplate = new TextTemplate(ChatColor.translateAlternateColorCodes('&', displayNameValue));
+
+            firearm.setDisplayNameTemplate(displayNameTemplate);
         }
 
         // Set and update the item stack

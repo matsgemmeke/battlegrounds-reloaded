@@ -1,3 +1,5 @@
+id: FAMAS
+name: FAMAS
 ammo:
   default-supply: 3
   magazine-size: 30
@@ -6,11 +8,10 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Fully automatic with high rate of fire. Effective at medium range.
-display-name: FAMAS
 firearm-type: ASSAULT_RIFLE
-id: FAMAS
 item:
   damage: 16
+  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
   material: IRON_HOE
 level-unlocked: 5
 price: 2250

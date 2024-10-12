@@ -1,3 +1,5 @@
+id: OLYMPIA
+name: Olympia
 ammo:
   default-supply: 9
   magazine-size: 2
@@ -6,11 +8,10 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Double-barrel over/under shotgun. Effective at medium to close range.
-display-name: Olympia
 firearm-type: SHOTGUN
-id: OLYMPIA
 item:
   damage: 23
+  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
   material: IRON_HOE
 level-unlocked: 1
 price: 1100

@@ -1,3 +1,5 @@
+id: MP5
+name: MP5
 ammo:
   default-supply: 3
   magazine-size: 30
@@ -6,11 +8,10 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Fully automatic with good accuracy. Effective at close to medium range.
-display-name: MP5
 firearm-type: SUBMACHINE_GUN
-id: MP5
 item:
   damage: 8
+  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
   material: IRON_HOE
 level-unlocked: 1
 price: 1200

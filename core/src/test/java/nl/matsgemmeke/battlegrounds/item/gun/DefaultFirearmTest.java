@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
+import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
@@ -471,7 +472,10 @@ public class DefaultFirearmTest {
 
         when(itemStack.getItemMeta()).thenReturn(itemMeta);
 
+        TextTemplate displayNameTemplate = new TextTemplate("%name% %magazine_ammo% %reserve_ammo%");
+
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        firearm.setDisplayNameTemplate(displayNameTemplate);
         firearm.setHolder(holder);
         firearm.setItemStack(itemStack);
         firearm.setMagazineAmmo(10);
@@ -481,6 +485,6 @@ public class DefaultFirearmTest {
         firearm.updateAmmoDisplay();
 
         verify(holder).setHeldItem(itemStack);
-        verify(itemMeta).setDisplayName(ChatColor.WHITE + "name 10/20");
+        verify(itemMeta).setDisplayName("name 10 20");
     }
 }

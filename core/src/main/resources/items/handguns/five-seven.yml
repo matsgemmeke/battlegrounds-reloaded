@@ -1,3 +1,5 @@
+id: FIVE-SEVEN
+name: Five-seven
 ammo:
   default-supply: 3
   magazine-size: 20
@@ -6,11 +8,10 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Semi-automatic pistol. Versatile and strong overall with a large magazine.
-display-name: Five-seven
 firearm-type: HANDGUN
-id: FIVE-SEVEN
 item:
   damage: 2
+  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
   material: IRON_HOE
 level-unlocked: 1
 price: 750

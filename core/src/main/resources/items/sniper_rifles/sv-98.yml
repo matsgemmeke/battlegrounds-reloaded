@@ -1,3 +1,5 @@
+id: SV-98
+name: SV-98
 ammo:
   default-supply: 3
   magazine-size: 10
@@ -9,11 +11,10 @@ controls:
   scope-use: RIGHT_CLICK
   shoot: RIGHT_CLICK
 description: Bolt-action sniper rifle. Effective at long range.
-display-name: SV-98
 firearm-type: SNIPER_RIFLE
-id: SV-98
 item:
   damage: 32
+  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
   material: IRON_HOE
 level-unlocked: 27
 price: 4750
