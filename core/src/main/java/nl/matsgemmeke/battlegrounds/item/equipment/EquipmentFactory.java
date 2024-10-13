@@ -18,6 +18,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
+import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -68,7 +70,7 @@ public class EquipmentFactory implements WeaponFactory {
     private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
         Section section = configuration.getRoot();
 
-        String name = section.getString("display-name");
+        String name = section.getString("name");
         String description = section.getString("description");
 
         DefaultEquipment equipment = new DefaultEquipment();
@@ -85,31 +87,56 @@ public class EquipmentFactory implements WeaponFactory {
             throw new CreateEquipmentException("Unable to create equipment item " + name + "; item stack material " + materialValue + " is invalid");
         }
 
+        int damage = section.getInt("item.damage");
+        String displayName = section.getString("item.display-name");
+
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta instanceof Damageable) {
-            ((Damageable) itemMeta).setDamage(section.getInt("item.damage"));
+            ((Damageable) itemMeta).setDamage(damage);
             itemStack.setItemMeta(itemMeta);
         }
 
+        if (displayName != null) {
+            TextTemplate displayNameTemplate = new TextTemplate(ChatColor.translateAlternateColorCodes('&', displayName));
+
+            equipment.setDisplayNameTemplate(displayNameTemplate);
+        }
+
         equipment.setItemStack(itemStack);
+        equipment.update();
 
         // Setting the optional activator item
         Section activatorItemSection = section.getSection("item.activator");
 
         if (activatorItemSection != null) {
-            Material activatorMaterial = Material.getMaterial(activatorItemSection.getString("material"));
+            Material activatorMaterial;
+            String activatorMaterialValue = activatorItemSection.getString("material");
+
+            try {
+                activatorMaterial = Material.valueOf(activatorMaterialValue);
+            } catch (IllegalArgumentException e) {
+                throw new CreateEquipmentException("Unable to create equipment item " + name + "; activator item stack material " + activatorMaterialValue + " is invalid");
+            }
+
             int activatorDamage = activatorItemSection.getInt("damage");
+            String activatorDisplayName = activatorItemSection.getString("display-name");
 
             ItemStack activatorItemStack = new ItemStack(activatorMaterial);
             ItemMeta activatorItemMeta = activatorItemStack.getItemMeta();
 
             if (activatorItemMeta instanceof Damageable) {
                 ((Damageable) activatorItemMeta).setDamage(activatorDamage);
-                activatorItemStack.setItemMeta(activatorItemMeta);
             }
 
+            if (activatorDisplayName != null) {
+                TextTemplate activatorDisplayNameTemplate = new TextTemplate(ChatColor.translateAlternateColorCodes('&', activatorDisplayName));
+
+                activatorItemMeta.setDisplayName(activatorDisplayNameTemplate.getText());
+            }
+
+            activatorItemStack.setItemMeta(activatorItemMeta);
             equipment.setActivatorItemStack(activatorItemStack);
         }
 

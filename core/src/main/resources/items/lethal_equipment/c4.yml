@@ -1,3 +1,5 @@
+id: C4
+name: C4
 activation:
   activation-sound: UI_BUTTON_CLICK-1-1.5-0
   delay-until-activation: 5
@@ -7,14 +9,14 @@ controls:
   place: RIGHT_CLICK
   throw: LEFT_CLICK
 description: A plastic explosive device that is detonated remotely with the clacker.
-display-name: C4
 equipment-type: LETHAL
-id: C4
 item:
   activator:
     damage: 3
+    display-name: "&fActivator"
     material: SHEARS
   damage: 2
+  display-name: "&f%name%"
   material: SHEARS
   throw-item:
     damage: 2

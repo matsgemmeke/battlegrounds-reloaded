@@ -1,3 +1,5 @@
+id: MOLOTOV_COCKTAIL
+name: Molotov Cocktail
 activation:
   triggers:
     - period-between-checks: 2
@@ -6,11 +8,10 @@ activation:
 controls:
   throw: LEFT_CLICK
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
-display-name: Molotov Cocktail
 equipment-type: LETHAL
-id: MOLOTOV_COCKTAIL
 item:
   damage: 4
+  display-name: "&f%name%"
   material: SHEARS
   throw-item:
     damage: 4

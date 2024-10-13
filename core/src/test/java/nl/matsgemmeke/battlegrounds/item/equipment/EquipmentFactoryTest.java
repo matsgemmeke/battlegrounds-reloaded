@@ -60,7 +60,7 @@ public class EquipmentFactoryTest {
         when(context.getItemRegistry()).thenReturn(itemRegistry);
 
         rootSection = mock(Section.class);
-        when(rootSection.getString("display-name")).thenReturn("name");
+        when(rootSection.getString("name")).thenReturn("name");
         when(rootSection.getString("description")).thenReturn("description");
         when(rootSection.getInt("item.damage")).thenReturn(1);
         when(rootSection.getString("item.material")).thenReturn("SHEARS");
@@ -91,6 +91,20 @@ public class EquipmentFactoryTest {
         verify(registry).registerItem(equipment);
     }
 
+    @Test
+    public void createEquipmentItemWithDisplayName() {
+        when(rootSection.getString("item.display-name")).thenReturn("&f%name%");
+
+        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
+        when(context.getEquipmentRegistry()).thenReturn(registry);
+
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertTrue(equipment instanceof DefaultEquipment);
+        assertEquals("§f%name%", ((DefaultEquipment) equipment).getDisplayNameTemplate().getText());
+    }
+
     @Test(expected = CreateEquipmentException.class)
     public void shouldThrowExceptionWhenCreatingEquipmentItemWithInvalidMaterial() {
         when(rootSection.getString("item.material")).thenReturn("fail");
@@ -111,6 +125,7 @@ public class EquipmentFactoryTest {
 
         Section activatorItemSection = mock(Section.class);
         when(activatorItemSection.getInt("damage")).thenReturn(damage);
+        when(activatorItemSection.getString("display-name")).thenReturn("&fActivator");
         when(activatorItemSection.getString("material")).thenReturn("FLINT");
 
         when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
@@ -121,7 +136,18 @@ public class EquipmentFactoryTest {
         assertEquals(Material.FLINT, equipment.getActivatorItemStack().getType());
 
         verify(itemMeta).setDamage(damage);
+        verify(itemMeta).setDisplayName("§fActivator");
         verify(registry).registerItem(equipment);
+    }
+
+    @Test(expected = CreateEquipmentException.class)
+    public void throwExceptionWhenCreatingEquipmentItemWithInvalidActivatorMaterial() {
+        Section activatorItemSection = mock(Section.class);
+        when(activatorItemSection.getString("material")).thenReturn("fail");
+        when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
+
+        EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
+        factory.make(configuration, context);
     }
 
     @Test

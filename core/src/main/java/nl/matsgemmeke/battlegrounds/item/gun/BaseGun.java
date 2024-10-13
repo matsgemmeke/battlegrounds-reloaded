@@ -191,11 +191,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (displayNameTemplate != null) {
-            Map<String, Object> values = Map.of(
-                    "name", name,
-                    "magazine_ammo", this.getMagazineAmmo(),
-                    "reserve_ammo", this.getReserveAmmo()
-            );
+            Map<String, Object> values = this.getTemplateValues();
             String displayName = displayNameTemplate.replace(values);
 
             itemMeta.setDisplayName(displayName);
@@ -209,6 +205,15 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         }
 
         return false;
+    }
+
+    @NotNull
+    private Map<String, Object> getTemplateValues() {
+        return Map.of(
+                "name", name,
+                "magazine_ammo", this.getMagazineAmmo(),
+                "reserve_ammo", this.getReserveAmmo()
+        );
     }
 
     public void updateAmmoDisplay() {

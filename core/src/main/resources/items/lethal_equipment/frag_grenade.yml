@@ -1,3 +1,5 @@
+id: FRAG_GRENADE
+name: Frag Grenade
 activation:
   delay-until-activation: 80
   type: DELAYED
@@ -5,11 +7,10 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
-display-name: Frag Grenade
 equipment-type: LETHAL
-id: FRAG_GRENADE
 item:
   damage: 1
+  display-name: "&f%name%"
   material: SHEARS
   throw-item:
     damage: 1

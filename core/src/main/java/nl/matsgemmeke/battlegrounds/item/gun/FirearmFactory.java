@@ -168,7 +168,7 @@ public class FirearmFactory implements WeaponFactory {
         }
 
         int damage = section.getInt("item.damage");
-        String displayNameValue = section.getString("item.display-name");
+        String displayName = section.getString("item.display-name");
 
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -178,8 +178,8 @@ public class FirearmFactory implements WeaponFactory {
             itemStack.setItemMeta(itemMeta);
         }
 
-        if (displayNameValue != null) {
-            TextTemplate displayNameTemplate = new TextTemplate(ChatColor.translateAlternateColorCodes('&', displayNameValue));
+        if (displayName != null) {
+            TextTemplate displayNameTemplate = new TextTemplate(ChatColor.translateAlternateColorCodes('&', displayName));
 
             firearm.setDisplayNameTemplate(displayNameTemplate);
         }
