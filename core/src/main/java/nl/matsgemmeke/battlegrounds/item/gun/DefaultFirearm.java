@@ -133,11 +133,6 @@ public class DefaultFirearm extends BaseGun implements Firearm {
         return damage;
     }
 
-    @NotNull
-    protected String getItemDisplayName() {
-        return ChatColor.WHITE + name + " " + magazineAmmo + "/" + reserveAmmo;
-    }
-
     private boolean inflictDamage(@NotNull Location startingLocation, @NotNull Location projectileLocation) {
         for (GameEntity target : targetFinder.findTargets(holder, projectileLocation, ENTITY_FINDING_RANGE)) {
             if (target.getEntity() == holder.getEntity()) {

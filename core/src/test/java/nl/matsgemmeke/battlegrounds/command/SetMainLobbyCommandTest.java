@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.configuration.GeneralDataConfiguration;
-import nl.matsgemmeke.battlegrounds.locale.TranslationKey;
-import nl.matsgemmeke.battlegrounds.locale.Translator;
+import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import nl.matsgemmeke.battlegrounds.text.TranslationKey;
+import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -23,7 +24,7 @@ public class SetMainLobbyCommandTest {
         this.player = mock(Player.class);
         this.translator = mock(Translator.class);
 
-        when(translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath())).thenReturn("description");
+        when(translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath())).thenReturn(new TextTemplate("description"));
     }
 
     @Test
@@ -35,7 +36,7 @@ public class SetMainLobbyCommandTest {
         when(block.getLocation()).thenReturn(new Location(null, 1.0, 2.0, 3.0));
         when(location.getBlock()).thenReturn(block);
         when(player.getLocation()).thenReturn(location);
-        when(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath())).thenReturn(message);
+        when(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath())).thenReturn(new TextTemplate(message));
 
         SetMainLobbyCommand command = new SetMainLobbyCommand(generalData, translator);
         command.execute(player);

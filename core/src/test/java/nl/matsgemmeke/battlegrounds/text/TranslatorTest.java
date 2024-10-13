@@ -1,11 +1,9 @@
-package nl.matsgemmeke.battlegrounds.locale;
+package nl.matsgemmeke.battlegrounds.text;
 
 import nl.matsgemmeke.battlegrounds.configuration.LanguageConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
@@ -51,38 +49,8 @@ public class TranslatorTest {
         when(languageConfiguration.getString(translationKey)).thenReturn(translation);
 
         Translator translator = new Translator(languageConfiguration);
-        String result = translator.translate(translationKey);
+        String result = translator.translate(translationKey).getText();
 
         assertEquals("hello", result);
-    }
-
-    @Test
-    public void shouldReturnValueFromLanguageConfigurationAndApplySinglePlaceholder() {
-        String translation = "hello %test%";
-        String translationKey = "key";
-
-        when(languageConfiguration.getString(translationKey)).thenReturn(translation);
-
-        Translator translator = new Translator(languageConfiguration);
-        PlaceholderEntry placeholder = new PlaceholderEntry("test", "world");
-
-        String result = translator.translate(translationKey, placeholder);
-
-        assertEquals("hello world", result);
-    }
-
-    @Test
-    public void shouldReturnValueFromLanguageConfigurationAndApplyMultiplePlaceholders() {
-        String translation = "%hello% %test%";
-        String translationKey = "key";
-
-        when(languageConfiguration.getString(translationKey)).thenReturn(translation);
-
-        Translator translator = new Translator(languageConfiguration);
-        List<PlaceholderEntry> placeholders = Arrays.asList(new PlaceholderEntry("hello", "hola"), new PlaceholderEntry("test", "mundo"));
-
-        String result = translator.translate(translationKey, placeholders);
-
-        assertEquals("hola mundo", result);
     }
 }

@@ -1,3 +1,5 @@
+id: CLAYMORE
+name: Claymore
 activation:
   triggers:
     - checking-range: 2.5
@@ -7,11 +9,10 @@ activation:
 controls:
   throw: LEFT_CLICK
 description: Anti-personnel mine that triggers a proximity-based explosion.
-display-name: Claymore
 equipment-type: LETHAL
-id: CLAYMORE
 item:
   damage: 5
+  display-name: "&f%name%"
   material: SHEARS
   throw-item:
     damage: 5

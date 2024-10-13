@@ -6,7 +6,9 @@ import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.locale.Translator;
+import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import nl.matsgemmeke.battlegrounds.text.TranslationKey;
+import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,6 +48,7 @@ public class NonexistentSessionIdConditionTest {
         int sessionId = 1;
 
         when(contextProvider.getSessionContext(sessionId)).thenReturn(sessionContext);
+        when(translator.translate(TranslationKey.SESSION_ALREADY_EXISTS.getPath())).thenReturn(new TextTemplate("message"));
 
         NonexistentSessionIdCondition condition = new NonexistentSessionIdCondition(contextProvider, translator);
         condition.validateCondition(conditionContext, execContext, sessionId);

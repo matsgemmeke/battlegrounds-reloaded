@@ -1,3 +1,5 @@
+id: FLASHBANG
+name: Flashbang
 activation:
   delay-until-activation: 60
   type: DELAYED
@@ -5,11 +7,10 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 description: Device that blinds the target when detonated.
-display-name: Flashbang
 equipment-type: TACTICAL
-id: FLASHBANG
 item:
   damage: 6
+  display-name: "%&fname%"
   material: SHEARS
   throw-item:
     damage: 6

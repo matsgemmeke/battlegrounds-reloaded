@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.configuration.GeneralDataConfiguration;
-import nl.matsgemmeke.battlegrounds.locale.TranslationKey;
-import nl.matsgemmeke.battlegrounds.locale.Translator;
+import nl.matsgemmeke.battlegrounds.text.TranslationKey;
+import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ public class SetMainLobbyCommand extends CommandSource {
     private Translator translator;
 
     public SetMainLobbyCommand(@NotNull GeneralDataConfiguration generalData, @NotNull Translator translator) {
-        super("setmainlobby", translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()), "bg setmainlobby");
+        super("setmainlobby", translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()).getText(), "bg setmainlobby");
         this.generalData = generalData;
         this.translator = translator;
     }
@@ -27,6 +27,6 @@ public class SetMainLobbyCommand extends CommandSource {
         generalData.setMainLobbyLocation(location);
         generalData.save();
 
-        player.sendMessage(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath()));
+        player.sendMessage(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath()).getText());
     }
 }

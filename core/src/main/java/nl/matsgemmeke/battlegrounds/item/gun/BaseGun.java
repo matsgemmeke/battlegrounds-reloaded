@@ -6,9 +6,12 @@ import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
+import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public abstract class BaseGun extends BaseWeapon implements Gun {
 
@@ -31,6 +34,8 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     protected ReloadSystem reloadSystem;
     @Nullable
     protected ScopeAttachment scopeAttachment;
+    @Nullable
+    protected TextTemplate displayNameTemplate;
 
     public BaseGun() {
         this.controls = new ItemControls<>();
@@ -55,6 +60,15 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
 
     public void setDamageAmplifier(double damageAmplifier) {
         this.damageAmplifier = damageAmplifier;
+    }
+
+    @Nullable
+    public TextTemplate getDisplayNameTemplate() {
+        return displayNameTemplate;
+    }
+
+    public void setDisplayNameTemplate(@Nullable TextTemplate displayNameTemplate) {
+        this.displayNameTemplate = displayNameTemplate;
     }
 
     @Nullable
@@ -149,9 +163,6 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         this.shortRange = shortRange;
     }
 
-    @NotNull
-    protected abstract String getItemDisplayName();
-
     public void onDrop() {
         if (holder == null) {
             return;
@@ -178,7 +189,13 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         }
 
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(this.getItemDisplayName());
+
+        if (displayNameTemplate != null) {
+            Map<String, Object> values = this.getTemplateValues();
+            String displayName = displayNameTemplate.replace(values);
+
+            itemMeta.setDisplayName(displayName);
+        }
 
         itemStack.setItemMeta(itemMeta);
 
@@ -188,6 +205,15 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         }
 
         return false;
+    }
+
+    @NotNull
+    private Map<String, Object> getTemplateValues() {
+        return Map.of(
+                "name", name,
+                "magazine_ammo", this.getMagazineAmmo(),
+                "reserve_ammo", this.getReserveAmmo()
+        );
     }
 
     public void updateAmmoDisplay() {
