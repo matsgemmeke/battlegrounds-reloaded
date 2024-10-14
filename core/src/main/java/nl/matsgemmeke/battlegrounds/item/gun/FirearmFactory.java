@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
@@ -23,11 +24,7 @@ import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -157,7 +154,7 @@ public class FirearmFactory implements WeaponFactory {
             firearm.setRecoilProducer(recoilProducer);
         }
 
-        // ItemStack creation
+        // Item template creation
         Material material;
         String materialValue = section.getString("item.material");
 
@@ -170,22 +167,15 @@ public class FirearmFactory implements WeaponFactory {
         int damage = section.getInt("item.damage");
         String displayName = section.getString("item.display-name");
 
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        if (itemMeta instanceof Damageable) {
-            ((Damageable) itemMeta).setDamage(damage);
-            itemStack.setItemMeta(itemMeta);
-        }
+        ItemTemplate itemTemplate = new ItemTemplate(material);
+        itemTemplate.setDamage(damage);
 
         if (displayName != null) {
-            TextTemplate displayNameTemplate = new TextTemplate(ChatColor.translateAlternateColorCodes('&', displayName));
-
-            firearm.setDisplayNameTemplate(displayNameTemplate);
+            itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
         }
 
         // Set and update the item stack
-        firearm.setItemStack(itemStack);
+        firearm.setItemTemplate(itemTemplate);
         firearm.update();
 
         return firearm;

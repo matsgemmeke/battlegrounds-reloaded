@@ -15,7 +15,6 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFactory;
@@ -23,7 +22,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -104,6 +102,7 @@ public class FirearmFactoryTest {
         when(rootSection.getInt("ammo.magazine-size")).thenReturn(magazineSize);
         when(rootSection.getInt("ammo.max-magazine-amount")).thenReturn(maxMagazineAmount);
         when(rootSection.getInt("item.damage")).thenReturn(damage);
+        when(rootSection.getString("item.display-name")).thenReturn("%name%");
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
@@ -118,6 +117,7 @@ public class FirearmFactoryTest {
         assertEquals(reserveAmmo, firearm.getReserveAmmo());
 
         verify(itemMeta).setDamage(damage);
+        verify(itemMeta).setDisplayName("test");
         verify(registry).registerItem(firearm);
     }
 
@@ -305,21 +305,6 @@ public class FirearmFactoryTest {
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         firearmFactory.make(itemConfiguration, context);
-    }
-
-    @Test
-    public void createFirearmWithDisplayNameTemplate() {
-        when(rootSection.getString("item.display-name")).thenReturn("&f%name%");
-        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
-
-        ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
-        when(context.getGunRegistry()).thenReturn(registry);
-
-        FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, context);
-
-        assertTrue(firearm instanceof DefaultFirearm);
-        assertEquals("§f%name%", ((DefaultFirearm) firearm).getDisplayNameTemplate().getText());
     }
 
     @Test

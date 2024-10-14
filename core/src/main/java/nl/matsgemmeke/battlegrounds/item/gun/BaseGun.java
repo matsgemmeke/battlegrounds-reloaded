@@ -1,13 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,13 +28,13 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     @NotNull
     protected ItemControls<GunHolder> controls;
     @Nullable
+    protected ItemTemplate itemTemplate;
+    @Nullable
     protected RecoilProducer recoilProducer;
     @Nullable
     protected ReloadSystem reloadSystem;
     @Nullable
     protected ScopeAttachment scopeAttachment;
-    @Nullable
-    protected TextTemplate displayNameTemplate;
 
     public BaseGun() {
         this.controls = new ItemControls<>();
@@ -63,21 +62,21 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     }
 
     @Nullable
-    public TextTemplate getDisplayNameTemplate() {
-        return displayNameTemplate;
-    }
-
-    public void setDisplayNameTemplate(@Nullable TextTemplate displayNameTemplate) {
-        this.displayNameTemplate = displayNameTemplate;
-    }
-
-    @Nullable
     public GunHolder getHolder() {
         return holder;
     }
 
     public void setHolder(@Nullable GunHolder holder) {
         this.holder = holder;
+    }
+
+    @Nullable
+    public ItemTemplate getItemTemplate() {
+        return itemTemplate;
+    }
+
+    public void setItemTemplate(@Nullable ItemTemplate itemTemplate) {
+        this.itemTemplate = itemTemplate;
     }
 
     public double getLongDamage() {
@@ -184,27 +183,18 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     }
 
     public boolean update() {
-        if (itemStack == null || itemStack.getItemMeta() == null) {
+        if (itemTemplate == null) {
             return false;
         }
 
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        if (displayNameTemplate != null) {
-            Map<String, Object> values = this.getTemplateValues();
-            String displayName = displayNameTemplate.replace(values);
-
-            itemMeta.setDisplayName(displayName);
-        }
-
-        itemStack.setItemMeta(itemMeta);
+        Map<String, Object> values = this.getTemplateValues();
+        itemStack = itemTemplate.createItemStack(values);
 
         if (holder != null) {
             holder.setHeldItem(itemStack);
-            return true;
         }
 
-        return false;
+        return true;
     }
 
     @NotNull

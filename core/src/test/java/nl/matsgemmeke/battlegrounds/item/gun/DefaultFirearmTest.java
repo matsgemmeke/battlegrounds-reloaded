@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
@@ -467,17 +469,14 @@ public class DefaultFirearmTest {
 
     @Test
     public void shouldChangeDisplayNameWhenUpdatingAmmo() {
-        ItemStack itemStack = mock(ItemStack.class);
-        ItemMeta itemMeta = mock(ItemMeta.class);
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
-        when(itemStack.getItemMeta()).thenReturn(itemMeta);
-
-        TextTemplate displayNameTemplate = new TextTemplate("%name% %magazine_ammo% %reserve_ammo%");
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
-        firearm.setDisplayNameTemplate(displayNameTemplate);
         firearm.setHolder(holder);
-        firearm.setItemStack(itemStack);
+        firearm.setItemTemplate(itemTemplate);
         firearm.setMagazineAmmo(10);
         firearm.setName("name");
         firearm.setReserveAmmo(20);
@@ -485,6 +484,5 @@ public class DefaultFirearmTest {
         firearm.updateAmmoDisplay();
 
         verify(holder).setHeldItem(itemStack);
-        verify(itemMeta).setDisplayName("name 10 20");
     }
 }
