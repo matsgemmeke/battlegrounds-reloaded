@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.deployment.DroppedItem;
@@ -28,7 +29,7 @@ public class ThrowFunctionTest {
     private DeployableSource item;
     private double projectileSpeed;
     private ItemMechanismActivation mechanismActivation;
-    private ItemStack itemStack;
+    private ItemTemplate itemTemplate;
     private long delayAfterThrow;
     private TaskRunner taskRunner;
 
@@ -38,14 +39,14 @@ public class ThrowFunctionTest {
         item = mock(DeployableSource.class);
         projectileSpeed = 2.0;
         mechanismActivation = mock(ItemMechanismActivation.class);
-        itemStack = new ItemStack(Material.SHEARS);
+        itemTemplate = mock(ItemTemplate.class);
         delayAfterThrow = 1L;
         taskRunner = mock(TaskRunner.class);
     }
 
     @Test
     public void shouldNotBePerformingIfNoThrowsWereExecuted() {
-        ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -53,6 +54,9 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldBePerformingIfThrowsWereRecentlyExecuted() {
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+        when(itemTemplate.createItemStack()).thenReturn(itemStack);
+
         World world = mock(World.class);
         when(world.dropItem(any(Location.class), eq(itemStack))).thenReturn(mock(Item.class));
 
@@ -62,7 +66,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(throwingDirection);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
@@ -77,6 +81,9 @@ public class ThrowFunctionTest {
         Item itemEntity = mock(Item.class);
         when(itemEntity.getLocation()).thenReturn(location);
 
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+        when(itemTemplate.createItemStack()).thenReturn(itemStack);
+
         World world = mock(World.class);
         when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
 
@@ -88,7 +95,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
@@ -110,6 +117,9 @@ public class ThrowFunctionTest {
         Item itemEntity = mock(Item.class);
         when(itemEntity.getLocation()).thenReturn(location);
 
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+        when(itemTemplate.createItemStack()).thenReturn(itemStack);
+
         World world = mock(World.class);
         when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
 
@@ -121,7 +131,7 @@ public class ThrowFunctionTest {
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
         when(mechanismActivation.isPrimed()).thenReturn(true);
 
-        ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
@@ -143,7 +153,7 @@ public class ThrowFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(item, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         function.perform(holder);
 
         verifyNoInteractions(audioEmitter);

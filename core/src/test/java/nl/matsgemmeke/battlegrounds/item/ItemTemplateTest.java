@@ -57,7 +57,7 @@ public class ItemTemplateTest {
     @Test
     public void createItemStackWithDisplayNamesWithPlaceholders() {
         Map<String, Object> values = Map.of("item", "test item");
-        TextTemplate dislayNameTemplate = new TextTemplate("This is a %item%");
+        TextTemplate dislayNameTemplate = new TextTemplate("&fThis is a %item%");
 
         ItemMeta itemMeta = mock(ItemMeta.class);
         when(itemFactory.getItemMeta(material)).thenReturn(itemMeta);
@@ -69,6 +69,6 @@ public class ItemTemplateTest {
 
         assertEquals(material, itemStack.getType());
 
-        verify(itemMeta).setDisplayName("This is a test item");
+        verify(itemMeta).setDisplayName("§fThis is a test item");
     }
 }

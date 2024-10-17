@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item;
 
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -8,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class ItemTemplate {
@@ -40,6 +42,11 @@ public class ItemTemplate {
     }
 
     @NotNull
+    public ItemStack createItemStack() {
+        return this.createItemStack(Collections.emptyMap());
+    }
+
+    @NotNull
     public ItemStack createItemStack(@NotNull Map<String, Object> values) {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -49,7 +56,7 @@ public class ItemTemplate {
         }
 
         if (displayNameTemplate != null) {
-            String displayName = displayNameTemplate.replace(values);
+            String displayName = ChatColor.translateAlternateColorCodes('&', displayNameTemplate.replace(values));
             itemMeta.setDisplayName(displayName);
         }
 

@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
@@ -19,11 +20,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -90,22 +87,14 @@ public class EquipmentFactory implements WeaponFactory {
         int damage = section.getInt("item.damage");
         String displayName = section.getString("item.display-name");
 
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        if (itemMeta instanceof Damageable) {
-            ((Damageable) itemMeta).setDamage(damage);
-            itemStack.setItemMeta(itemMeta);
-        }
+        ItemTemplate itemTemplate = new ItemTemplate(material);
+        itemTemplate.setDamage(damage);
 
         if (displayName != null) {
-            TextTemplate displayNameTemplate = new TextTemplate(ChatColor.translateAlternateColorCodes('&', displayName));
-
-            equipment.setDisplayNameTemplate(displayNameTemplate);
+            itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
         }
 
-        equipment.setItemStack(itemStack);
-        equipment.update();
+        equipment.setItemTemplate(itemTemplate);
 
         // Setting the optional activator item
         Section activatorItemSection = section.getSection("item.activator");
@@ -123,21 +112,14 @@ public class EquipmentFactory implements WeaponFactory {
             int activatorDamage = activatorItemSection.getInt("damage");
             String activatorDisplayName = activatorItemSection.getString("display-name");
 
-            ItemStack activatorItemStack = new ItemStack(activatorMaterial);
-            ItemMeta activatorItemMeta = activatorItemStack.getItemMeta();
-
-            if (activatorItemMeta instanceof Damageable) {
-                ((Damageable) activatorItemMeta).setDamage(activatorDamage);
-            }
+            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorMaterial);
+            activatorItemTemplate.setDamage(activatorDamage);
 
             if (activatorDisplayName != null) {
-                TextTemplate activatorDisplayNameTemplate = new TextTemplate(ChatColor.translateAlternateColorCodes('&', activatorDisplayName));
-
-                activatorItemMeta.setDisplayName(activatorDisplayNameTemplate.getText());
+                activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorDisplayName));
             }
 
-            activatorItemStack.setItemMeta(activatorItemMeta);
-            equipment.setActivatorItemStack(activatorItemStack);
+            equipment.setActivatorItemTemplate(activatorItemTemplate);
         }
 
         // Read controls configuration
@@ -184,20 +166,17 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", throwing material " + materialValue + " is invalid");
             }
 
-            ItemStack itemStack = new ItemStack(material);
-            ItemMeta itemMeta = itemStack.getItemMeta();
+            int damage = section.getInt("item.throw-item.damage");
 
-            if (itemMeta instanceof Damageable) {
-                ((Damageable) itemMeta).setDamage(section.getInt("item.throw-item.damage"));
-                itemStack.setItemMeta(itemMeta);
-            }
+            ItemTemplate itemTemplate = new ItemTemplate(material);
+            itemTemplate.setDamage(damage);
 
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");
             double projectileSpeed = section.getDouble("throwing.projectile-speed");
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
-            ThrowFunction throwFunction = new ThrowFunction(equipment, itemStack, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+            ThrowFunction throwFunction = new ThrowFunction(equipment, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
             throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);

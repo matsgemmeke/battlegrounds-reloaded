@@ -73,9 +73,6 @@ public class EquipmentFactoryTest {
 
     @Test
     public void shouldCreateSimpleEquipmentItem() {
-        Damageable itemMeta = mock(Damageable.class);
-        when(itemFactory.getItemMeta(Material.SHEARS)).thenReturn(itemMeta);
-
         ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
         when(context.getEquipmentRegistry()).thenReturn(registry);
 
@@ -85,9 +82,7 @@ public class EquipmentFactoryTest {
         assertTrue(equipment instanceof DefaultEquipment);
         assertEquals("name", equipment.getName());
         assertEquals("description", equipment.getDescription());
-        assertEquals(Material.SHEARS, equipment.getItemStack().getType());
 
-        verify(itemMeta).setDamage(1);
         verify(registry).registerItem(equipment);
     }
 
@@ -102,7 +97,7 @@ public class EquipmentFactoryTest {
         Equipment equipment = factory.make(configuration, context);
 
         assertTrue(equipment instanceof DefaultEquipment);
-        assertEquals("§f%name%", ((DefaultEquipment) equipment).getDisplayNameTemplate().getText());
+        assertEquals("&f%name%", ((DefaultEquipment) equipment).getItemTemplate().getDisplayNameTemplate().getText());
     }
 
     @Test(expected = CreateEquipmentException.class)
@@ -116,6 +111,7 @@ public class EquipmentFactoryTest {
     @Test
     public void shouldCreateEquipmentItemWithActivatorItem() {
         int damage = 1;
+        String displayName = "&fActivator";
 
         Damageable itemMeta = mock(Damageable.class);
         when(itemFactory.getItemMeta(Material.FLINT)).thenReturn(itemMeta);
@@ -125,7 +121,7 @@ public class EquipmentFactoryTest {
 
         Section activatorItemSection = mock(Section.class);
         when(activatorItemSection.getInt("damage")).thenReturn(damage);
-        when(activatorItemSection.getString("display-name")).thenReturn("&fActivator");
+        when(activatorItemSection.getString("display-name")).thenReturn(displayName);
         when(activatorItemSection.getString("material")).thenReturn("FLINT");
 
         when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
@@ -133,10 +129,8 @@ public class EquipmentFactoryTest {
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
-        assertEquals(Material.FLINT, equipment.getActivatorItemStack().getType());
+        assertTrue(equipment instanceof DefaultEquipment);
 
-        verify(itemMeta).setDamage(damage);
-        verify(itemMeta).setDisplayName("§fActivator");
         verify(registry).registerItem(equipment);
     }
 
@@ -175,10 +169,8 @@ public class EquipmentFactoryTest {
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
-        assertNotNull(equipment);
         assertTrue(equipment instanceof DefaultEquipment);
 
-        verify(itemMeta).setDamage(1);
         verify(registry).registerItem(equipment, gamePlayer);
     }
 
