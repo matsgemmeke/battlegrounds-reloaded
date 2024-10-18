@@ -8,6 +8,22 @@ import org.jetbrains.annotations.Nullable;
 public interface Equipment extends Weapon, DeployableSource, Interactable<EquipmentHolder> {
 
     /**
+     * Gets the activator item used to activate the equipment. Returns null if the equipment does not utilize an
+     * activator.
+     *
+     * @return the equipment's activator item or null if it does not have one
+     */
+    @Nullable
+    Activator getActivator();
+
+    /**
+     * Sets the activator item used to activate the equipment.
+     *
+     * @param activator the equipment's activator item
+     */
+    void setActivator(@Nullable Activator activator);
+
+    /**
      * Gets the holder of the equipmemt item. Returns null if the equipment does not have a holder.
      *
      * @return the equipment holder or null if it does not have one

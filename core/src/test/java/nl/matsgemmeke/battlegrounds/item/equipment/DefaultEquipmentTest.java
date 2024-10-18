@@ -14,6 +14,88 @@ import static org.mockito.Mockito.*;
 public class DefaultEquipmentTest {
 
     @Test
+    public void matchesWithItemStackIfSimilar() {
+        ItemStack other = new ItemStack(Material.SHEARS);
+
+        ItemStack itemStack = mock(ItemStack.class);
+        when(itemStack.isSimilar(other)).thenReturn(true);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setItemStack(itemStack);
+
+        boolean matching = equipment.isMatching(other);
+
+        assertTrue(matching);
+    }
+
+    @Test
+    public void matchesWithItemStackIfSimilarToActivatorItemStack() {
+        ItemStack other = new ItemStack(Material.SHEARS);
+
+        ItemStack itemStack = mock(ItemStack.class);
+        when(itemStack.isSimilar(other)).thenReturn(true);
+
+        Activator activator = mock(Activator.class);
+        when(activator.getItemStack()).thenReturn(itemStack);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setActivator(activator);
+        equipment.setItemStack(null);
+
+        boolean matching = equipment.isMatching(other);
+
+        assertTrue(matching);
+    }
+
+    @Test
+    public void doesNotMatchIfEquipmentItemStackIsNullAndActivatorIsNull() {
+        ItemStack other = new ItemStack(Material.SHEARS);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setActivator(null);
+        equipment.setItemStack(null);
+
+        boolean matching = equipment.isMatching(other);
+
+        assertFalse(matching);
+    }
+
+    @Test
+    public void doesNotMatchIfEquipmentItemStackIsNullAndActivatorItemStackIsNull() {
+        ItemStack other = new ItemStack(Material.SHEARS);
+
+        Activator activator = mock(Activator.class);
+        when(activator.getItemStack()).thenReturn(null);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setActivator(activator);
+        equipment.setItemStack(null);
+
+        boolean matching = equipment.isMatching(other);
+
+        assertFalse(matching);
+    }
+
+    @Test
+    public void doesNotMatchIfEquipmentItemStackIsNullAndActivatorItemStackIsNotSimilar() {
+        ItemStack other = new ItemStack(Material.SHEARS);
+
+        ItemStack itemStack = mock(ItemStack.class);
+        when(itemStack.isSimilar(other)).thenReturn(false);
+
+        Activator activator = mock(Activator.class);
+        when(activator.getItemStack()).thenReturn(itemStack);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setActivator(activator);
+        equipment.setItemStack(null);
+
+        boolean matching = equipment.isMatching(other);
+
+        assertFalse(matching);
+    }
+
+    @Test
     public void shouldDoNothingIfHolderIsNullWhenDeploying() {
         Deployable object = mock(Deployable.class);
 
@@ -24,23 +106,40 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void shouldSetHolderHeldItemToActivatorItemStackWhenDeploying() {
+    public void prepareActivatorIfNotNullWhenDeployingObject() {
         Deployable object = mock(Deployable.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
         ItemStack activatorItemStack = new ItemStack(Material.SHEARS);
 
-        ItemTemplate activatorItemTemplate = mock(ItemTemplate.class);
-        when(activatorItemTemplate.createItemStack(any())).thenReturn(activatorItemStack);
+        Activator activator = mock(Activator.class);
+        when(activator.getItemStack()).thenReturn(activatorItemStack);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setActivatorItemTemplate(activatorItemTemplate);
+        equipment.setActivator(activator);
         equipment.setHolder(holder);
         equipment.onDeploy(object);
 
         assertEquals(1, equipment.getDeployedObjects().size());
         assertEquals(object, equipment.getDeployedObjects().get(0));
 
+        verify(activator).prepare(any());
         verify(holder).setHeldItem(activatorItemStack);
+    }
+
+    @Test
+    public void removeItemStackFromHolderIfActivatorIsNullWhenDeploying() {
+        Deployable object = mock(Deployable.class);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setActivator(null);
+        equipment.setHolder(holder);
+        equipment.onDeploy(object);
+
+        assertEquals(1, equipment.getDeployedObjects().size());
+        assertEquals(object, equipment.getDeployedObjects().get(0));
+
+        verify(holder).setHeldItem(null);
     }
 
     @Test

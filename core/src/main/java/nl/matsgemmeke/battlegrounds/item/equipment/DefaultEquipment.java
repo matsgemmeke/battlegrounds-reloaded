@@ -17,13 +17,11 @@ import java.util.Map;
 public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @Nullable
+    private Activator activator;
+    @Nullable
     private EquipmentHolder holder;
     @NotNull
     private ItemControls<EquipmentHolder> controls;
-    @Nullable
-    private ItemStack activatorItemStack;
-    @Nullable
-    private ItemTemplate activatorItemTemplate;
     @Nullable
     private ItemTemplate itemTemplate;
     @NotNull
@@ -34,13 +32,15 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.deployedObjects = new ArrayList<>();
     }
 
+    @Override
     @Nullable
-    public ItemTemplate getActivatorItemTemplate() {
-        return activatorItemTemplate;
+    public Activator getActivator() {
+        return activator;
     }
 
-    public void setActivatorItemTemplate(@Nullable ItemTemplate activatorItemTemplate) {
-        this.activatorItemTemplate = activatorItemTemplate;
+    @Override
+    public void setActivator(@Nullable Activator activator) {
+        this.activator = activator;
     }
 
     @NotNull
@@ -72,7 +72,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {
-        return super.isMatching(itemStack) || activatorItemStack != null && activatorItemStack.isSimilar(itemStack);
+        return super.isMatching(itemStack)
+                || activator != null && activator.getItemStack() != null && activator.getItemStack().isSimilar(itemStack);
     }
 
     public void onChangeFrom() {
@@ -88,13 +89,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
         deployedObjects.add(object);
 
-        if (activatorItemTemplate != null) {
-            Map<String, Object> values = this.getTemplateValues();
-            activatorItemStack = activatorItemTemplate.createItemStack(values);
+        if (activator != null) {
+            activator.prepare(this.getTemplateValues());
+            holder.setHeldItem(activator.getItemStack());
+        } else {
+            holder.setHeldItem(null);
         }
-
-        // Update the original item to the activator item. If the activator item is null it will set an empty item.
-        holder.setHeldItem(activatorItemStack);
     }
 
     public void onDrop() {

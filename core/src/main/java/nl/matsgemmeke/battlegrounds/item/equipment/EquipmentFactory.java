@@ -119,7 +119,8 @@ public class EquipmentFactory implements WeaponFactory {
                 activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorDisplayName));
             }
 
-            equipment.setActivatorItemTemplate(activatorItemTemplate);
+            DefaultActivator activator = new DefaultActivator(activatorItemTemplate);
+            equipment.setActivator(activator);
         }
 
         // Read controls configuration
