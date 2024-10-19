@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
@@ -34,6 +35,17 @@ public class ItemTemplateTest {
 
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+    }
+
+    @Test
+    public void createItemStackWithoutItemMeta() {
+        when(itemFactory.getItemMeta(material)).thenReturn(null);
+
+        ItemTemplate itemTemplate = new ItemTemplate(material);
+        ItemStack itemStack = itemTemplate.createItemStack(new HashMap<>());
+
+        assertEquals(material, itemStack.getType());
+        assertNull(itemStack.getItemMeta());
     }
 
     @Test

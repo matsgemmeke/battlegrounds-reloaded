@@ -95,6 +95,7 @@ public class EquipmentFactory implements WeaponFactory {
         }
 
         equipment.setItemTemplate(itemTemplate);
+        equipment.update();
 
         // Setting the optional activator item
         Section activatorItemSection = section.getSection("item.activator");

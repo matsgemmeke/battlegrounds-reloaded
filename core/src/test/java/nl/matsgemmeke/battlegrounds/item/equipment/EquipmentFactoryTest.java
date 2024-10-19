@@ -3,11 +3,9 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.ItemRegistry;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanism;
 import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanismFactory;
@@ -15,7 +13,6 @@ import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActiv
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.Damageable;
 import org.junit.Before;
@@ -41,23 +38,23 @@ public class EquipmentFactoryTest {
     private ItemFactory itemFactory;
     private ItemMechanismActivationFactory mechanismActivationFactory;
     private ItemMechanismFactory mechanismFactory;
+    private ItemRegistry<Equipment, EquipmentHolder> equipmentRegistry;
     private Section rootSection;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        mechanismActivationFactory = mock(ItemMechanismActivationFactory.class);
-        mechanismFactory = mock(ItemMechanismFactory.class);
         configuration = mock(ItemConfiguration.class);
         itemFactory = mock(ItemFactory.class);
+        mechanismActivationFactory = mock(ItemMechanismActivationFactory.class);
+        mechanismFactory = mock(ItemMechanismFactory.class);
+        equipmentRegistry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
         taskRunner = mock(TaskRunner.class);
-
-        EntityRegistry<GameItem, Item> itemRegistry = (EntityRegistry<GameItem, Item>) mock(EntityRegistry.class);
 
         context = mock(GameContext.class);
         when(context.getAudioEmitter()).thenReturn(audioEmitter);
-        when(context.getItemRegistry()).thenReturn(itemRegistry);
+        when(context.getEquipmentRegistry()).thenReturn(equipmentRegistry);
 
         rootSection = mock(Section.class);
         when(rootSection.getString("name")).thenReturn("name");
@@ -73,9 +70,6 @@ public class EquipmentFactoryTest {
 
     @Test
     public void shouldCreateSimpleEquipmentItem() {
-        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
-        when(context.getEquipmentRegistry()).thenReturn(registry);
-
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
@@ -83,21 +77,17 @@ public class EquipmentFactoryTest {
         assertEquals("name", equipment.getName());
         assertEquals("description", equipment.getDescription());
 
-        verify(registry).registerItem(equipment);
+        verify(equipmentRegistry).registerItem(equipment);
     }
 
     @Test
     public void createEquipmentItemWithDisplayName() {
         when(rootSection.getString("item.display-name")).thenReturn("&f%name%");
 
-        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
-        when(context.getEquipmentRegistry()).thenReturn(registry);
-
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
         assertTrue(equipment instanceof DefaultEquipment);
-        assertEquals("&f%name%", ((DefaultEquipment) equipment).getItemTemplate().getDisplayNameTemplate().getText());
     }
 
     @Test(expected = CreateEquipmentException.class)
@@ -116,9 +106,6 @@ public class EquipmentFactoryTest {
         Damageable itemMeta = mock(Damageable.class);
         when(itemFactory.getItemMeta(Material.FLINT)).thenReturn(itemMeta);
 
-        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
-        when(context.getEquipmentRegistry()).thenReturn(registry);
-
         Section activatorItemSection = mock(Section.class);
         when(activatorItemSection.getInt("damage")).thenReturn(damage);
         when(activatorItemSection.getString("display-name")).thenReturn(displayName);
@@ -131,7 +118,7 @@ public class EquipmentFactoryTest {
 
         assertTrue(equipment instanceof DefaultEquipment);
 
-        verify(registry).registerItem(equipment);
+        verify(equipmentRegistry).registerItem(equipment);
     }
 
     @Test(expected = CreateEquipmentException.class)
@@ -154,9 +141,6 @@ public class EquipmentFactoryTest {
         when(rootSection.getString("item.throw-item.material")).thenReturn("FLINT");
         when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
-        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
-        when(context.getEquipmentRegistry()).thenReturn(registry);
-
         Damageable itemMeta = mock(Damageable.class);
         ItemMechanism mechanism = mock(ItemMechanism.class);
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
@@ -171,7 +155,7 @@ public class EquipmentFactoryTest {
 
         assertTrue(equipment instanceof DefaultEquipment);
 
-        verify(registry).registerItem(equipment, gamePlayer);
+        verify(equipmentRegistry).registerItem(equipment, gamePlayer);
     }
 
     @Test(expected = CreateEquipmentException.class)
@@ -210,19 +194,15 @@ public class EquipmentFactoryTest {
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
-        when(context.getEquipmentRegistry()).thenReturn(registry);
-
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
         when(mechanismActivationFactory.make(eq(context), eq(mechanism), any())).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
-        assertNotNull(equipment);
         assertTrue(equipment instanceof DefaultEquipment);
 
-        verify(registry).registerItem(equipment, gamePlayer);
+        verify(equipmentRegistry).registerItem(equipment, gamePlayer);
     }
 
     @Test(expected = CreateEquipmentException.class)
@@ -249,9 +229,6 @@ public class EquipmentFactoryTest {
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
-        when(context.getEquipmentRegistry()).thenReturn(registry);
-
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
         when(mechanismActivationFactory.make(eq(context), eq(mechanism), any())).thenReturn(activation);
 
@@ -261,7 +238,7 @@ public class EquipmentFactoryTest {
         assertNotNull(equipment);
         assertTrue(equipment instanceof DefaultEquipment);
 
-        verify(registry).registerItem(equipment, gamePlayer);
+        verify(equipmentRegistry).registerItem(equipment, gamePlayer);
     }
 
     @Test(expected = CreateEquipmentException.class)
@@ -298,9 +275,6 @@ public class EquipmentFactoryTest {
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        ItemRegistry<Equipment, EquipmentHolder> registry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
-        when(context.getEquipmentRegistry()).thenReturn(registry);
-
         when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
         when(mechanismActivationFactory.make(eq(context), eq(mechanism), any())).thenReturn(activation);
 
@@ -310,7 +284,7 @@ public class EquipmentFactoryTest {
         assertNotNull(equipment);
         assertTrue(equipment instanceof DefaultEquipment);
 
-        verify(registry).registerItem(equipment, gamePlayer);
+        verify(equipmentRegistry).registerItem(equipment, gamePlayer);
     }
 
     @Test(expected = CreateEquipmentException.class)

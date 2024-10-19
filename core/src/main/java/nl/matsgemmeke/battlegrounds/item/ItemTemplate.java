@@ -51,6 +51,11 @@ public class ItemTemplate {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
 
+        // In case the item stack does not come with an item meta, only return the item stack as is
+        if (itemMeta == null) {
+            return itemStack;
+        }
+
         if (damage > 0 && itemMeta instanceof Damageable) {
             ((Damageable) itemMeta).setDamage(damage);
         }
