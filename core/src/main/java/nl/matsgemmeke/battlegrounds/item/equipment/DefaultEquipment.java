@@ -72,8 +72,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {
-        return super.isMatching(itemStack)
-                || activator != null && activator.getItemStack() != null && activator.getItemStack().isSimilar(itemStack);
+        return itemTemplate != null && itemTemplate.matchesTemplate(itemStack)
+                || activator != null && activator.isMatching(itemStack);
     }
 
     public void onChangeFrom() {
@@ -90,8 +90,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         deployedObjects.add(object);
 
         if (activator != null) {
-            activator.prepare(this.getTemplateValues());
-            holder.setHeldItem(activator.getItemStack());
+            activator.prepare(holder, this.getTemplateValues());
         } else {
             holder.setHeldItem(null);
         }

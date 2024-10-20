@@ -26,6 +26,8 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
+import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -209,14 +211,15 @@ public class BattlegroundsPlugin extends JavaPlugin {
     private void setUpWeaponProvider() throws StartupFailedException {
         FireModeFactory fireModeFactory = new FireModeFactory(taskRunner);
         RecoilProducerFactory recoilProducerFactory = new RecoilProducerFactory(config);
+        NamespacedKeyCreator keyCreator = new NamespacedKeyCreator(this);
         ReloadSystemFactory reloadSystemFactory = new ReloadSystemFactory(taskRunner);
         SpreadPatternFactory spreadPatternFactory = new SpreadPatternFactory();
-        FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
 
         MetadataValueCreator metadataValueCreator = new MetadataValueCreator(this);
         ItemMechanismFactory mechanismFactory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
         ItemMechanismActivationFactory mechanismActivationFactory = new ItemMechanismActivationFactory(taskRunner);
-        EquipmentFactory equipmentFactory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, taskRunner);
+        EquipmentFactory equipmentFactory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, keyCreator, taskRunner);
 
         File itemsDirectory = new File(this.getDataFolder() + "/items");
         WeaponProviderLoader loader = new WeaponProviderLoader(equipmentFactory, firearmFactory);

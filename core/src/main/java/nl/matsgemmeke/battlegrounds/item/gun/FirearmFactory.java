@@ -24,17 +24,25 @@ import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
+import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class FirearmFactory implements WeaponFactory {
 
+    private static final String NAMESPACED_KEY_NAME = "battlegrounds-gun";
+    private static final UUIDGenerator UUID_GENERATOR = new UUIDGenerator();
+
     @NotNull
     private BattlegroundsConfiguration config;
     @NotNull
     private FireModeFactory fireModeFactory;
+    @NotNull
+    private NamespacedKeyCreator keyCreator;
     @NotNull
     private RecoilProducerFactory recoilProducerFactory;
     @NotNull
@@ -45,12 +53,14 @@ public class FirearmFactory implements WeaponFactory {
     public FirearmFactory(
             @NotNull BattlegroundsConfiguration config,
             @NotNull FireModeFactory fireModeFactory,
+            @NotNull NamespacedKeyCreator keyCreator,
             @NotNull RecoilProducerFactory recoilProducerFactory,
             @NotNull ReloadSystemFactory reloadSystemFactory,
             @NotNull SpreadPatternFactory spreadPatternFactory
     ) {
         this.config = config;
         this.fireModeFactory = fireModeFactory;
+        this.keyCreator = keyCreator;
         this.recoilProducerFactory = recoilProducerFactory;
         this.reloadSystemFactory = reloadSystemFactory;
         this.spreadPatternFactory = spreadPatternFactory;
@@ -164,10 +174,11 @@ public class FirearmFactory implements WeaponFactory {
             throw new CreateFirearmException("Unable to create firearm " + name + "; item stack material " + materialValue + " is invalid");
         }
 
+        NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
         int damage = section.getInt("item.damage");
         String displayName = section.getString("item.display-name");
 
-        ItemTemplate itemTemplate = new ItemTemplate(material);
+        ItemTemplate itemTemplate = new ItemTemplate(key, material, UUID_GENERATOR);
         itemTemplate.setDamage(damage);
 
         if (displayName != null) {

@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -160,6 +161,10 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
 
     public void setShortRange(double shortRange) {
         this.shortRange = shortRange;
+    }
+
+    public boolean isMatching(@NotNull ItemStack itemStack) {
+        return itemTemplate != null && itemTemplate.matchesTemplate(itemStack);
     }
 
     public void onDrop() {

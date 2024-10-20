@@ -1,8 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item;
 
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import nl.matsgemmeke.battlegrounds.util.UUIDDataType;
+import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -11,17 +14,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 public class ItemTemplate {
 
     private int damage;
     @NotNull
     private Material material;
+    @NotNull
+    private NamespacedKey key;
     @Nullable
     private TextTemplate displayNameTemplate;
+    @NotNull
+    private UUID uuid;
 
-    public ItemTemplate(@NotNull Material material) {
+    public ItemTemplate(@NotNull NamespacedKey key, @NotNull Material material, @NotNull UUIDGenerator uuidGenerator) {
+        this.key = key;
         this.material = material;
+        this.uuid = uuidGenerator.generateRandom();
     }
 
     public int getDamage() {
@@ -65,7 +75,20 @@ public class ItemTemplate {
             itemMeta.setDisplayName(displayName);
         }
 
+        itemMeta.getPersistentDataContainer().set(key, new UUIDDataType(), uuid);
         itemStack.setItemMeta(itemMeta);
+
         return itemStack;
+    }
+
+    public boolean matchesTemplate(@NotNull ItemStack itemStack) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        if (itemMeta == null) {
+            return false;
+        }
+
+        UUID uuid = itemMeta.getPersistentDataContainer().get(key, new UUIDDataType());
+        return uuid != null && uuid.equals(this.uuid);
     }
 }

@@ -1,17 +1,14 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
-import org.bukkit.inventory.ItemStack;
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.Matchable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public interface Activator {
-
-    @Nullable
-    ItemStack getItemStack();
+public interface Activator extends Matchable {
 
     boolean isReady();
 
-    void prepare(@NotNull Map<String, Object> values);
+    void prepare(@NotNull ItemHolder holder, @NotNull Map<String, Object> values);
 }

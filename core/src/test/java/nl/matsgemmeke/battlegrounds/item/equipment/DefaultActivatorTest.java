@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -8,15 +9,41 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class DefaultActivatorTest {
 
     @Test
-    public void readiesTheActivatorAndCreatesItemStackWhenPreparing() {
+    public void matchesWithItemStackIfItMatchesWithTemplate() {
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.matchesTemplate(itemStack)).thenReturn(true);
+
+        DefaultActivator activator = new DefaultActivator(itemTemplate);
+        boolean matches = activator.isMatching(itemStack);
+
+        assertTrue(matches);
+    }
+
+    @Test
+    public void doesNotMatchWithItemStackIfItDoesNotMatchWithTemplate() {
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.matchesTemplate(itemStack)).thenReturn(false);
+
+        DefaultActivator activator = new DefaultActivator(itemTemplate);
+        boolean matches = activator.isMatching(itemStack);
+
+        assertFalse(matches);
+    }
+
+    @Test
+    public void readiesTheActivatorAndSetHolderHeldItemWhenPreparing() {
+        ItemHolder holder = mock(ItemHolder.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
         Map<String, Object> values = Collections.emptyMap();
 
@@ -24,9 +51,10 @@ public class DefaultActivatorTest {
         when(itemTemplate.createItemStack(values)).thenReturn(itemStack);
 
         DefaultActivator activator = new DefaultActivator(itemTemplate);
-        activator.prepare(values);
+        activator.prepare(holder, values);
 
-        assertEquals(itemStack, activator.getItemStack());
         assertTrue(activator.isReady());
+
+        verify(holder).setHeldItem(itemStack);
     }
 }

@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item;
 
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseItem implements Item {
@@ -38,9 +37,5 @@ public abstract class BaseItem implements Item {
 
     public void setName(@Nullable String name) {
         this.name = name;
-    }
-
-    public boolean isMatching(@NotNull ItemStack itemStack) {
-        return this.itemStack != null && this.itemStack.isSimilar(itemStack);
     }
 }

@@ -20,27 +20,37 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
+import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class EquipmentFactory implements WeaponFactory {
 
+    private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
+    private static final UUIDGenerator UUID_GENERATOR = new UUIDGenerator();
+
     @NotNull
     private ItemMechanismFactory mechanismFactory;
     @NotNull
     private ItemMechanismActivationFactory mechanismActivationFactory;
+    @NotNull
+    private NamespacedKeyCreator keyCreator;
     @NotNull
     private TaskRunner taskRunner;
 
     public EquipmentFactory(
             @NotNull ItemMechanismFactory mechanismFactory,
             @NotNull ItemMechanismActivationFactory mechanismActivationFactory,
+            @NotNull NamespacedKeyCreator keyCreator,
             @NotNull TaskRunner taskRunner
     ) {
         this.mechanismFactory = mechanismFactory;
         this.mechanismActivationFactory = mechanismActivationFactory;
+        this.keyCreator = keyCreator;
         this.taskRunner = taskRunner;
     }
 
@@ -84,10 +94,11 @@ public class EquipmentFactory implements WeaponFactory {
             throw new CreateEquipmentException("Unable to create equipment item " + name + "; item stack material " + materialValue + " is invalid");
         }
 
+        NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
         int damage = section.getInt("item.damage");
         String displayName = section.getString("item.display-name");
 
-        ItemTemplate itemTemplate = new ItemTemplate(material);
+        ItemTemplate itemTemplate = new ItemTemplate(key, material, UUID_GENERATOR);
         itemTemplate.setDamage(damage);
 
         if (displayName != null) {
@@ -110,10 +121,11 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + name + "; activator item stack material " + activatorMaterialValue + " is invalid");
             }
 
+            NamespacedKey activatorKey = keyCreator.create(NAMESPACED_KEY_NAME);
             int activatorDamage = activatorItemSection.getInt("damage");
             String activatorDisplayName = activatorItemSection.getString("display-name");
 
-            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorMaterial);
+            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorKey, activatorMaterial, UUID_GENERATOR);
             activatorItemTemplate.setDamage(activatorDamage);
 
             if (activatorDisplayName != null) {
@@ -168,9 +180,10 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", throwing material " + materialValue + " is invalid");
             }
 
+            NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
             int damage = section.getInt("item.throw-item.damage");
 
-            ItemTemplate itemTemplate = new ItemTemplate(material);
+            ItemTemplate itemTemplate = new ItemTemplate(key, material, UUID_GENERATOR);
             itemTemplate.setDamage(damage);
 
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");

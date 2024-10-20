@@ -10,15 +10,12 @@ import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,37 +39,45 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    public void shouldNotMatchIfItemStackIsNull() {
+    public void matchesIfItemTemplateMatchesWithGivenItemStack() {
         ItemStack other = new ItemStack(Material.IRON_HOE);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.matchesTemplate(other)).thenReturn(true);
 
-        assertFalse(firearm.isMatching(other));
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        firearm.setItemTemplate(itemTemplate);
+
+        boolean matches = firearm.isMatching(other);
+
+        assertTrue(matches);
     }
 
     @Test
-    public void shouldNotMatchIfItemStackIsNotSimilar() {
+    public void doesNotMatchIfItemTemplateIsNull() {
         ItemStack other = new ItemStack(Material.IRON_HOE);
 
-        ItemStack itemStack = mock(ItemStack.class);
-
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
-        firearm.setItemStack(itemStack);
+        firearm.setItemTemplate(null);
 
-        assertFalse(firearm.isMatching(other));
+        boolean matches = firearm.isMatching(other);
+
+        assertFalse(matches);
     }
 
     @Test
-    public void shouldMatchIfItemStackIsSimilar() {
+    public void doesNotMatchIfItemTemplateDoesNotMatchWithGivenItemStack() {
         ItemStack other = new ItemStack(Material.IRON_HOE);
 
-        ItemStack itemStack = mock(ItemStack.class);
-        when(itemStack.isSimilar(other)).thenReturn(true);
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.matchesTemplate(other)).thenReturn(false);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
-        firearm.setItemStack(itemStack);
+        firearm.setItemTemplate(itemTemplate);
 
-        assertTrue(firearm.isMatching(other));
+        boolean matches = firearm.isMatching(other);
+
+        assertFalse(matches);
     }
 
     @Test
