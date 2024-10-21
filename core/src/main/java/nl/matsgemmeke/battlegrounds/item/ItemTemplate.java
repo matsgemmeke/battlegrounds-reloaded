@@ -16,6 +16,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Class that defines a template for creating {@link ItemStack} instances for items.
+ */
 public class ItemTemplate {
 
     private int damage;
@@ -34,28 +37,59 @@ public class ItemTemplate {
         this.uuid = uuidGenerator.generateRandom();
     }
 
+    /**
+     * Gets the template damage value used to apply damage to the constructed {@link ItemStack} instances.
+     *
+     * @return the template damage
+     */
     public int getDamage() {
         return damage;
     }
 
+    /**
+     * Sets the template damage value used to apply damage to the constructed {@link ItemStack} instances.
+     *
+     * @param damage the template damage
+     */
     public void setDamage(int damage) {
         this.damage = damage;
     }
 
+    /**
+     * Gets the text template used to create the display name of the constructed {@link ItemStack} instances.
+     *
+     * @return the template display name text template
+     */
     @Nullable
     public TextTemplate getDisplayNameTemplate() {
         return displayNameTemplate;
     }
 
+    /**
+     * Sets the text template used to create the display name of the constructed {@link ItemStack} instances.
+     *
+     * @param displayNameTemplate the template display name text template
+     */
     public void setDisplayNameTemplate(@Nullable TextTemplate displayNameTemplate) {
         this.displayNameTemplate = displayNameTemplate;
     }
 
+    /**
+     * Constructs a new {@link ItemStack} instance.
+     *
+     * @return the constructed item stack
+     */
     @NotNull
     public ItemStack createItemStack() {
         return this.createItemStack(Collections.emptyMap());
     }
 
+    /**
+     * Constructs a new {@link ItemStack} instance while using template values.
+     *
+     * @param values the template values
+     * @return the constructed item stack
+     */
     @NotNull
     public ItemStack createItemStack(@NotNull Map<String, Object> values) {
         ItemStack itemStack = new ItemStack(material);
@@ -81,6 +115,13 @@ public class ItemTemplate {
         return itemStack;
     }
 
+    /**
+     * Checks whether a given {@link ItemStack} corresponds with the template. An item stack will only match with the
+     * item template it was created by.
+     *
+     * @param itemStack the item stack
+     * @return whether the item stack matches with the template
+     */
     public boolean matchesTemplate(@NotNull ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
 

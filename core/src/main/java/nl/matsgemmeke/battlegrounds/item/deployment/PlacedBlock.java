@@ -6,6 +6,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A deployed object in the form as a placed {@link Block}.
+ */
 public class PlacedBlock implements Deployable {
 
     @NotNull
