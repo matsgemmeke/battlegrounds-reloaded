@@ -31,14 +31,13 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
         }
 
         DamageProcessor damageProcessor;
-        GameContext otherContext;
+        GameContext otherContext = null;
 
         if (damagerContext != null) {
             damageProcessor = damagerContext.getDamageProcessor();
             otherContext = entityContext;
         } else {
             damageProcessor = entityContext.getDamageProcessor();
-            otherContext = damagerContext;
         }
 
         if (!damageProcessor.isDamageAllowed(otherContext)) {
