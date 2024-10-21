@@ -1,13 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item;
 
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * An item object that appears in game instances.
  */
-public interface Item {
+public interface Item extends Matchable {
 
     /**
      * Gets the description of the item.
@@ -53,13 +52,4 @@ public interface Item {
      * @param name the item name
      */
     void setName(@Nullable String name);
-
-    /**
-     * Gets whether a given {@link ItemStack} matches with the item. Always returns false if the item has no item stack
-     * assigned.
-     *
-     * @param itemStack the item stack
-     * @return whether it matches with the item's item stack
-     */
-    boolean isMatching(@NotNull ItemStack itemStack);
 }

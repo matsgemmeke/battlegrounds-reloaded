@@ -1,18 +1,66 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultEquipmentTest {
+
+    @Test
+    public void matchesWithItemStackIfItemTemplateIsNotNullAndMatchesWithItsTemplate() {
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.matchesTemplate(itemStack)).thenReturn(true);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setItemTemplate(itemTemplate);
+
+        boolean matches = equipment.isMatching(itemStack);
+
+        assertTrue(matches);
+    }
+
+    @Test
+    public void matchesWithItemStackIfActivatorIsNotNullAndMatchesWithTheItemStack() {
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+
+        Activator activator = mock(Activator.class);
+        when(activator.isMatching(itemStack)).thenReturn(true);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setActivator(activator);
+
+        boolean matches = equipment.isMatching(itemStack);
+
+        assertTrue(matches);
+    }
+
+    @Test
+    public void doesNotMatchWithItemStackIfItDoesNotMatchWithEitherTheItemTemplateOrTheActivator() {
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+
+        Activator activator = mock(Activator.class);
+        when(activator.isMatching(itemStack)).thenReturn(false);
+
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.matchesTemplate(itemStack)).thenReturn(false);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setActivator(activator);
+        equipment.setItemTemplate(itemTemplate);
+
+        boolean matches = equipment.isMatching(itemStack);
+
+        assertFalse(matches);
+    }
 
     @Test
     public void shouldDoNothingIfHolderIsNullWhenDeploying() {
@@ -25,19 +73,36 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void shouldSetHolderHeldItemToActivatorItemStackWhenDeploying() {
+    public void prepareActivatorIfNotNullWhenDeployingObject() {
+        Activator activator = mock(Activator.class);
         Deployable object = mock(Deployable.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
-        ItemStack activatorItemStack = new ItemStack(Material.SHEARS);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setActivatorItemStack(activatorItemStack);
+        equipment.setActivator(activator);
         equipment.setHolder(holder);
         equipment.onDeploy(object);
 
         assertEquals(1, equipment.getDeployedObjects().size());
+        assertEquals(object, equipment.getDeployedObjects().get(0));
 
-        verify(holder).setHeldItem(activatorItemStack);
+        verify(activator).prepare(eq(holder), any());
+    }
+
+    @Test
+    public void removeItemStackFromHolderIfActivatorIsNullWhenDeploying() {
+        Deployable object = mock(Deployable.class);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setActivator(null);
+        equipment.setHolder(holder);
+        equipment.onDeploy(object);
+
+        assertEquals(1, equipment.getDeployedObjects().size());
+        assertEquals(object, equipment.getDeployedObjects().get(0));
+
+        verify(holder).setHeldItem(null);
     }
 
     @Test
@@ -73,41 +138,31 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void doesNotUpdateIfItemStackIsNull() {
+    public void doesNotUpdateIfItemTemplateIsNull() {
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setItemStack(null);
+        equipment.setItemTemplate(null);
         boolean updated = equipment.update();
 
         assertFalse(updated);
     }
 
     @Test
-    public void doesNotUpdateIfItemMetaIsNull() {
-        ItemStack itemStack = mock(ItemStack.class);
-        when(itemStack.getItemMeta()).thenReturn(null);
+    public void createNewItemStackFromTemplateWhenUpdatingAndSetHeldItemOfHolder() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        ItemStack itemStack = new ItemStack(Material.SHEARS);
+
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setItemStack(itemStack);
-        boolean updated = equipment.update();
-
-        assertFalse(updated);
-    }
-
-    @Test
-    public void updateItemStackDisplayName() {
-        ItemMeta itemMeta = mock(ItemMeta.class);
-
-        ItemStack itemStack = mock(ItemStack.class);
-        when(itemStack.getItemMeta()).thenReturn(itemMeta);
-
-        TextTemplate displayNameTemplate = new TextTemplate("%name%");
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDisplayNameTemplate(displayNameTemplate);
+        equipment.setHolder(holder);
+        equipment.setItemTemplate(itemTemplate);
         equipment.setName("test");
         equipment.setItemStack(itemStack);
         boolean updated = equipment.update();
 
         assertTrue(updated);
+
+        verify(holder).setHeldItem(itemStack);
     }
 }

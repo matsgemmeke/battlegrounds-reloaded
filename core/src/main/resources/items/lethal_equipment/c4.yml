@@ -13,7 +13,7 @@ equipment-type: LETHAL
 item:
   activator:
     damage: 3
-    display-name: "&fActivator"
+    display-name: "&fDetonator"
     material: SHEARS
   damage: 2
   display-name: "&f%name%"

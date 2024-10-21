@@ -1,44 +1,46 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @Nullable
+    private Activator activator;
+    @Nullable
     private EquipmentHolder holder;
     @NotNull
     private ItemControls<EquipmentHolder> controls;
     @Nullable
-    private ItemStack activatorItemStack;
+    private ItemTemplate itemTemplate;
     @NotNull
     private List<Deployable> deployedObjects;
-    @Nullable
-    private TextTemplate displayNameTemplate;
 
     public DefaultEquipment() {
         this.controls = new ItemControls<>();
         this.deployedObjects = new ArrayList<>();
     }
 
+    @Override
     @Nullable
-    public ItemStack getActivatorItemStack() {
-        return activatorItemStack;
+    public Activator getActivator() {
+        return activator;
     }
 
-    public void setActivatorItemStack(@Nullable ItemStack activatorItemStack) {
-        this.activatorItemStack = activatorItemStack;
+    @Override
+    public void setActivator(@Nullable Activator activator) {
+        this.activator = activator;
     }
 
     @NotNull
@@ -52,15 +54,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     @Nullable
-    public TextTemplate getDisplayNameTemplate() {
-        return displayNameTemplate;
-    }
-
-    public void setDisplayNameTemplate(@Nullable TextTemplate displayNameTemplate) {
-        this.displayNameTemplate = displayNameTemplate;
-    }
-
-    @Nullable
     public EquipmentHolder getHolder() {
         return holder;
     }
@@ -69,8 +62,18 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.holder = holder;
     }
 
+    @Nullable
+    public ItemTemplate getItemTemplate() {
+        return itemTemplate;
+    }
+
+    public void setItemTemplate(@Nullable ItemTemplate itemTemplate) {
+        this.itemTemplate = itemTemplate;
+    }
+
     public boolean isMatching(@NotNull ItemStack itemStack) {
-        return super.isMatching(itemStack) || activatorItemStack != null && activatorItemStack.isSimilar(itemStack);
+        return itemTemplate != null && itemTemplate.matchesTemplate(itemStack)
+                || activator != null && activator.isMatching(itemStack);
     }
 
     public void onChangeFrom() {
@@ -86,8 +89,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
         deployedObjects.add(object);
 
-        // Update the original item to the activator item. If the activator item is null it will set an empty item.
-        holder.setHeldItem(activatorItemStack);
+        if (activator != null) {
+            activator.prepare(holder, this.getTemplateValues());
+        } else {
+            holder.setHeldItem(null);
+        }
     }
 
     public void onDrop() {
@@ -119,20 +125,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public boolean update() {
-        if (itemStack == null || itemStack.getItemMeta() == null) {
+        if (itemTemplate == null) {
             return false;
         }
 
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        if (displayNameTemplate != null) {
-            Map<String, Object> values = this.getTemplateValues();
-            String displayName = displayNameTemplate.replace(values);
-
-            itemMeta.setDisplayName(displayName);
-        }
-
-        itemStack.setItemMeta(itemMeta);
+        Map<String, Object> values = this.getTemplateValues();
+        itemStack = itemTemplate.createItemStack(values);
 
         if (holder != null) {
             holder.setHeldItem(itemStack);
@@ -143,6 +141,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @NotNull
     private Map<String, Object> getTemplateValues() {
-        return Map.of("name", name);
+        Map<String, Object> values = new HashMap<>();
+
+        if (name != null) {
+            values.put("name", name);
+        }
+
+        return values;
     }
 }

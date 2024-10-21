@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.deployment.DroppedItem;
@@ -32,7 +33,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private ItemMechanismActivation mechanismActivation;
     @NotNull
-    private ItemStack itemStack;
+    private ItemTemplate itemTemplate;
     @NotNull
     private Iterable<GameSound> sounds;
     private long delayAfterThrow;
@@ -41,7 +42,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
     public ThrowFunction(
             @NotNull DeployableSource item,
-            @NotNull ItemStack itemStack,
+            @NotNull ItemTemplate itemTemplate,
             @NotNull ItemMechanismActivation mechanismActivation,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
@@ -49,7 +50,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
             long delayAfterThrow
     ) {
         this.item = item;
-        this.itemStack = itemStack;
+        this.itemTemplate = itemTemplate;
         this.mechanismActivation = mechanismActivation;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
@@ -88,6 +89,8 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         World world = holder.getWorld();
         Location throwingDirection = holder.getThrowingDirection();
         Vector velocity = throwingDirection.getDirection().multiply(projectileSpeed);
+
+        ItemStack itemStack = itemTemplate.createItemStack();
 
         Item itemEntity = world.dropItem(throwingDirection, itemStack);
         itemEntity.setPickupDelay(DEFAULT_PICKUP_DELAY);

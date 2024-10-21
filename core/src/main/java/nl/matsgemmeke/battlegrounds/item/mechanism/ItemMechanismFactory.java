@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.mechanism;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
@@ -12,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.mechanism.flash.FlashMechanism;
 import nl.matsgemmeke.battlegrounds.item.mechanism.flash.FlashSettings;
+import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

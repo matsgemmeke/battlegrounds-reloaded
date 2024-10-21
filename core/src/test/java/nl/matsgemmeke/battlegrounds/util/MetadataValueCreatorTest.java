@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds;
+package nl.matsgemmeke.battlegrounds.util;
 
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;

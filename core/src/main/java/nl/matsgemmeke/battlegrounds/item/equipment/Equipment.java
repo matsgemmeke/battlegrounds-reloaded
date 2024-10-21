@@ -3,26 +3,25 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public interface Equipment extends Weapon, DeployableSource, Interactable<EquipmentHolder> {
 
     /**
-     * Gets the activator item stack used to manually activate the equipment. Returns null if the equipment has no
+     * Gets the activator item used to activate the equipment. Returns null if the equipment does not utilize an
      * activator.
      *
-     * @return the equipment's activator item stack or null if not present
+     * @return the equipment's activator item or null if it does not have one
      */
     @Nullable
-    ItemStack getActivatorItemStack();
+    Activator getActivator();
 
     /**
-     * Sets the activator item stack used to manually activate the equipment.
+     * Sets the activator item used to activate the equipment.
      *
-     * @param activatorItemStack the equipment's activator item stack
+     * @param activator the equipment's activator item
      */
-    void setActivatorItemStack(@Nullable ItemStack activatorItemStack);
+    void setActivator(@Nullable Activator activator);
 
     /**
      * Gets the holder of the equipmemt item. Returns null if the equipment does not have a holder.

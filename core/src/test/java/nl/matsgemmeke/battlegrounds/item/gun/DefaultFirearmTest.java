@@ -5,16 +5,15 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,37 +39,45 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    public void shouldNotMatchIfItemStackIsNull() {
+    public void matchesIfItemTemplateMatchesWithGivenItemStack() {
         ItemStack other = new ItemStack(Material.IRON_HOE);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.matchesTemplate(other)).thenReturn(true);
 
-        assertFalse(firearm.isMatching(other));
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        firearm.setItemTemplate(itemTemplate);
+
+        boolean matches = firearm.isMatching(other);
+
+        assertTrue(matches);
     }
 
     @Test
-    public void shouldNotMatchIfItemStackIsNotSimilar() {
+    public void doesNotMatchIfItemTemplateIsNull() {
         ItemStack other = new ItemStack(Material.IRON_HOE);
 
-        ItemStack itemStack = mock(ItemStack.class);
-
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
-        firearm.setItemStack(itemStack);
+        firearm.setItemTemplate(null);
 
-        assertFalse(firearm.isMatching(other));
+        boolean matches = firearm.isMatching(other);
+
+        assertFalse(matches);
     }
 
     @Test
-    public void shouldMatchIfItemStackIsSimilar() {
+    public void doesNotMatchIfItemTemplateDoesNotMatchWithGivenItemStack() {
         ItemStack other = new ItemStack(Material.IRON_HOE);
 
-        ItemStack itemStack = mock(ItemStack.class);
-        when(itemStack.isSimilar(other)).thenReturn(true);
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.matchesTemplate(other)).thenReturn(false);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
-        firearm.setItemStack(itemStack);
+        firearm.setItemTemplate(itemTemplate);
 
-        assertTrue(firearm.isMatching(other));
+        boolean matches = firearm.isMatching(other);
+
+        assertFalse(matches);
     }
 
     @Test
@@ -467,17 +474,14 @@ public class DefaultFirearmTest {
 
     @Test
     public void shouldChangeDisplayNameWhenUpdatingAmmo() {
-        ItemStack itemStack = mock(ItemStack.class);
-        ItemMeta itemMeta = mock(ItemMeta.class);
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
-        when(itemStack.getItemMeta()).thenReturn(itemMeta);
-
-        TextTemplate displayNameTemplate = new TextTemplate("%name% %magazine_ammo% %reserve_ammo%");
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
-        firearm.setDisplayNameTemplate(displayNameTemplate);
         firearm.setHolder(holder);
-        firearm.setItemStack(itemStack);
+        firearm.setItemTemplate(itemTemplate);
         firearm.setMagazineAmmo(10);
         firearm.setName("name");
         firearm.setReserveAmmo(20);
@@ -485,6 +489,5 @@ public class DefaultFirearmTest {
         firearm.updateAmmoDisplay();
 
         verify(holder).setHeldItem(itemStack);
-        verify(itemMeta).setDisplayName("name 10 20");
     }
 }
