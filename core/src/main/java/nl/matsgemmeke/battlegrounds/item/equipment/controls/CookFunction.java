@@ -4,8 +4,8 @@ import com.google.common.collect.Iterables;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

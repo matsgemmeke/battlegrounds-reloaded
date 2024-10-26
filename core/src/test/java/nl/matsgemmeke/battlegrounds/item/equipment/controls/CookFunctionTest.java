@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
