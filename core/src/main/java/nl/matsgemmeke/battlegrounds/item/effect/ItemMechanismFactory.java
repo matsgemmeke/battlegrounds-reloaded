@@ -9,6 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenMechanism;
@@ -85,7 +87,7 @@ public class ItemMechanismFactory {
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new ExplosionMechanism(settings, rangeProfile, targetFinder);
+                return new ExplosionEffect(settings, rangeProfile, targetFinder);
             }
             case FLASH -> {
                 double range = section.getDouble("range");

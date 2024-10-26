@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.junit.Before;
@@ -56,7 +57,7 @@ public class ItemMechanismFactoryTest {
         ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
         ItemMechanism mechanism = factory.make(section, context);
 
-        assertTrue(mechanism instanceof ExplosionMechanism);
+        assertTrue(mechanism instanceof ExplosionEffect);
     }
 
     @Test

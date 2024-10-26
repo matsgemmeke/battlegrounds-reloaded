@@ -1,10 +1,11 @@
-package nl.matsgemmeke.battlegrounds.item.effect;
+package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ExplosionMechanism implements ItemMechanism {
+public class ExplosionEffect implements ItemMechanism {
 
     @NotNull
     private ExplosionSettings settings;
@@ -21,7 +22,7 @@ public class ExplosionMechanism implements ItemMechanism {
     @NotNull
     private TargetFinder targetFinder;
 
-    public ExplosionMechanism(
+    public ExplosionEffect(
             @NotNull ExplosionSettings settings,
             @NotNull RangeProfile rangeProfile,
             @NotNull TargetFinder targetFinder

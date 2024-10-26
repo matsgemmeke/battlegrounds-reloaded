@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect;
+package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class ExplosionMechanismTest {
+public class ExplosionEffectTest {
 
     private static final double LONG_RANGE_DAMAGE = 25.0;
     private static final double LONG_RANGE_DISTANCE = 10.0;
@@ -55,8 +55,8 @@ public class ExplosionMechanismTest {
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, rangeProfile, targetFinder);
-        explosionMechanism.activate(holder, itemStack);
+        ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
+        effect.activate(holder, itemStack);
 
         verify(holder).removeItem(itemStack);
         verify(world).createExplosion(location, power, setFire, breakBlocks, entity);
@@ -77,8 +77,8 @@ public class ExplosionMechanismTest {
 
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
 
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, rangeProfile, targetFinder);
-        explosionMechanism.activate(holder, object);
+        ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
+        effect.activate(holder, object);
 
         verify(object).remove();
         verify(world).createExplosion(location, power, setFire, breakBlocks, entity);
@@ -111,8 +111,8 @@ public class ExplosionMechanismTest {
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        ExplosionMechanism explosionMechanism = new ExplosionMechanism(settings, rangeProfile, targetFinder);
-        explosionMechanism.activate(holder, itemStack);
+        ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
+        effect.activate(holder, itemStack);
 
         verify(holder).damage(SHORT_RANGE_DAMAGE);
         verify(target).damage(LONG_RANGE_DAMAGE);
