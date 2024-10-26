@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.deployment.PlacedBlock;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,7 +30,7 @@ public class PlaceFunctionTest {
 
     private AudioEmitter audioEmitter;
     private DeployableSource item;
-    private ItemMechanismActivation mechanismActivation;
+    private ItemEffectActivation effectActivation;
     private long delayAfterPlacement;
     private Material material;
     private TaskRunner taskRunner;
@@ -39,7 +39,7 @@ public class PlaceFunctionTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         item = mock(DeployableSource.class);
-        mechanismActivation = mock(ItemMechanismActivation.class);
+        effectActivation = mock(ItemEffectActivation.class);
         delayAfterPlacement = 10L;
         material = Material.WARPED_BUTTON;
         taskRunner = mock(TaskRunner.class);
@@ -49,7 +49,7 @@ public class PlaceFunctionTest {
     public void shouldBeAvailableIfItemHasNoDeployedObjectsYet() {
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
 
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean available = function.isAvailable();
 
         assertTrue(available);
@@ -59,7 +59,7 @@ public class PlaceFunctionTest {
     public void shouldNotBeAvailableIfItemHasDeployedObjects() {
         when(item.getDeployedObjects()).thenReturn(List.of(mock(Deployable.class)));
 
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean available = function.isAvailable();
 
         assertFalse(available);
@@ -67,7 +67,7 @@ public class PlaceFunctionTest {
 
     @Test
     public void shouldNotBePerformingIfNoBlocksWerePlaced() {
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -92,7 +92,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
@@ -105,13 +105,13 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
 
         verifyNoInteractions(item);
-        verifyNoInteractions(mechanismActivation);
+        verifyNoInteractions(effectActivation);
     }
 
     @Test
@@ -122,13 +122,13 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
 
         verifyNoInteractions(item);
-        verifyNoInteractions(mechanismActivation);
+        verifyNoInteractions(effectActivation);
     }
 
     @Test
@@ -142,13 +142,13 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
 
         verifyNoInteractions(item);
-        verifyNoInteractions(mechanismActivation);
+        verifyNoInteractions(effectActivation);
     }
 
     @Test
@@ -172,9 +172,9 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        when(mechanismActivation.isPrimed()).thenReturn(false);
+        when(effectActivation.isPrimed()).thenReturn(false);
 
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 
@@ -188,7 +188,7 @@ public class PlaceFunctionTest {
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(faceAttachable).setAttachedFace(AttachedFace.CEILING);
-        verify(mechanismActivation).primeDeployedObject(holder, captor.getValue());
+        verify(effectActivation).primeDeployedObject(holder, captor.getValue());
     }
 
     @Test
@@ -212,9 +212,9 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        when(mechanismActivation.isPrimed()).thenReturn(true);
+        when(effectActivation.isPrimed()).thenReturn(true);
 
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 
@@ -228,7 +228,7 @@ public class PlaceFunctionTest {
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(faceAttachable).setAttachedFace(AttachedFace.FLOOR);
-        verify(mechanismActivation).deploy(captor.getValue());
+        verify(effectActivation).deploy(captor.getValue());
     }
 
     @Test
@@ -253,9 +253,9 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        when(mechanismActivation.isPrimed()).thenReturn(true);
+        when(effectActivation.isPrimed()).thenReturn(true);
 
-        PlaceFunction function = new PlaceFunction(item, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+        PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
 
@@ -271,6 +271,6 @@ public class PlaceFunctionTest {
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(directional).setFacing(targetBlockFace);
         verify(faceAttachable).setAttachedFace(AttachedFace.WALL);
-        verify(mechanismActivation).deploy(captor.getValue());
+        verify(effectActivation).deploy(captor.getValue());
     }
 }

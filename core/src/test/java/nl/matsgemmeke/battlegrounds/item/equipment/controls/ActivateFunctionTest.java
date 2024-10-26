@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -22,7 +22,7 @@ public class ActivateFunctionTest {
 
     private AudioEmitter audioEmitter;
     private DeployableSource item;
-    private ItemMechanismActivation mechanismActivation;
+    private ItemEffectActivation effectActivation;
     private long delayUntilActivation;
     private TaskRunner taskRunner;
 
@@ -30,7 +30,7 @@ public class ActivateFunctionTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         item = mock(DeployableSource.class);
-        mechanismActivation = mock(ItemMechanismActivation.class);
+        effectActivation = mock(ItemEffectActivation.class);
         delayUntilActivation = 1L;
         taskRunner = mock(TaskRunner.class);
     }
@@ -39,7 +39,7 @@ public class ActivateFunctionTest {
     public void shouldNotBeAvailableIfItemHasNoDeployedObjects() {
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
 
-        ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
+        ActivateFunction function = new ActivateFunction(item, effectActivation, audioEmitter, taskRunner, delayUntilActivation);
         boolean available = function.isAvailable();
 
         assertFalse(available);
@@ -50,9 +50,9 @@ public class ActivateFunctionTest {
         Deployable object = mock(Deployable.class);
 
         when(item.getDeployedObjects()).thenReturn(List.of(object));
-        when(mechanismActivation.isPrimed()).thenReturn(true);
+        when(effectActivation.isPrimed()).thenReturn(true);
 
-        ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
+        ActivateFunction function = new ActivateFunction(item, effectActivation, audioEmitter, taskRunner, delayUntilActivation);
         boolean available = function.isAvailable();
 
         assertTrue(available);
@@ -73,11 +73,11 @@ public class ActivateFunctionTest {
             return null;
         });
 
-        ActivateFunction function = new ActivateFunction(item, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
+        ActivateFunction function = new ActivateFunction(item, effectActivation, audioEmitter, taskRunner, delayUntilActivation);
         function.perform(holder);
 
         verify(holder).setHeldItem(null);
-        verify(mechanismActivation).activateDeployedObjects(holder);
+        verify(effectActivation).activateDeployedObjects(holder);
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayUntilActivation));
     }
 }

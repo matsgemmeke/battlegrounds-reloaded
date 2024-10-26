@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Activation that initiates the mechanism after a specific delay.
  */
-public class DelayedActivation extends BaseItemMechanismActivation {
+public class DelayedActivation extends BaseItemEffectActivation {
 
     private long delayUntilActivation;
     @NotNull

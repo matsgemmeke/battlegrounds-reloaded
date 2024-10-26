@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
-public enum ItemMechanismActivationType {
+public enum ItemEffectActivationType {
 
     DELAYED,
     MANUAL,

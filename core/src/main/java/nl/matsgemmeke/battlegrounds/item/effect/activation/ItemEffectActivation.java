@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An interface for objects that control the activation of an {@link ItemEffect}.
  */
-public interface ItemMechanismActivation {
+public interface ItemEffectActivation {
 
     /**
      * Activates the mechanism instantly, overriding any other procedures.

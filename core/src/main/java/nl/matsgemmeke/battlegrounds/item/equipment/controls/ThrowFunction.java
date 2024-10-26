@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.deployment.DroppedItem;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -31,7 +31,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private DeployableSource item;
     private double projectileSpeed;
     @NotNull
-    private ItemMechanismActivation mechanismActivation;
+    private ItemEffectActivation effectActivation;
     @NotNull
     private ItemTemplate itemTemplate;
     @NotNull
@@ -43,7 +43,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     public ThrowFunction(
             @NotNull DeployableSource item,
             @NotNull ItemTemplate itemTemplate,
-            @NotNull ItemMechanismActivation mechanismActivation,
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             double projectileSpeed,
@@ -51,7 +51,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     ) {
         this.item = item;
         this.itemTemplate = itemTemplate;
-        this.mechanismActivation = mechanismActivation;
+        this.effectActivation = effectActivation;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.projectileSpeed = projectileSpeed;
@@ -107,10 +107,10 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
         // Check if the activation mechanism is priming its next deployment. If yes, deploy the dropped item. Otherwise,
         // prime and deploy like normally.
-        if (mechanismActivation.isPrimed()) {
-            mechanismActivation.deploy(droppedItem);
+        if (effectActivation.isPrimed()) {
+            effectActivation.deploy(droppedItem);
         } else {
-            mechanismActivation.primeDeployedObject(holder, droppedItem);
+            effectActivation.primeDeployedObject(holder, droppedItem);
         }
 
         return true;

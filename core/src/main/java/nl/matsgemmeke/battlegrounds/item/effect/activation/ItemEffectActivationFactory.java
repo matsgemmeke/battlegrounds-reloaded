@@ -11,40 +11,40 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 /**
- * Factory class responsible for instantiating {@link ItemMechanismActivation} implementation classes.
+ * Factory class responsible for instantiating {@link ItemEffectActivation} implementation classes.
  */
-public class ItemMechanismActivationFactory {
+public class ItemEffectActivationFactory {
 
     @NotNull
     private TaskRunner taskRunner;
 
-    public ItemMechanismActivationFactory(@NotNull TaskRunner taskRunner) {
+    public ItemEffectActivationFactory(@NotNull TaskRunner taskRunner) {
         this.taskRunner = taskRunner;
     }
 
     /**
-     * Creates a new {@link ItemMechanismActivation} instance based on configuration values.
+     * Creates a new {@link ItemEffectActivation} instance based on configuration values.
      *
      * @param section the configuration section
      * @param effect the item effect instance
      * @return a new activation instance
      */
-    public ItemMechanismActivation make(@NotNull GameContext context, @NotNull ItemEffect effect, @NotNull Section section) {
+    public ItemEffectActivation make(@NotNull GameContext context, @NotNull ItemEffect effect, @NotNull Section section) {
         String type = section.getString("type");
 
         if (type == null) {
             throw new InvalidItemConfigurationException("Equipment activation type must be defined!");
         }
 
-        ItemMechanismActivationType mechanismActivationType;
+        ItemEffectActivationType effectActivationType;
 
         try {
-            mechanismActivationType = ItemMechanismActivationType.valueOf(type);
+            effectActivationType = ItemEffectActivationType.valueOf(type);
         } catch (IllegalArgumentException e) {
             throw new InvalidItemConfigurationException("Equipment activation type \"" + type + "\" is invalid!");
         }
 
-        switch (mechanismActivationType) {
+        switch (effectActivationType) {
             case DELAYED -> {
                 long delayUntilActivation = section.getLong("delay-until-activation");
                 return new DelayedActivation(effect, taskRunner, delayUntilActivation);

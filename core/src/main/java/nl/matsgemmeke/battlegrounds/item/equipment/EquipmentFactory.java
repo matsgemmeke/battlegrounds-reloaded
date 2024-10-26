@@ -13,8 +13,8 @@ import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivationFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
@@ -36,7 +36,7 @@ public class EquipmentFactory implements WeaponFactory {
     @NotNull
     private ItemEffectFactory effectFactory;
     @NotNull
-    private ItemMechanismActivationFactory mechanismActivationFactory;
+    private ItemEffectActivationFactory effectActivationFactory;
     @NotNull
     private NamespacedKeyCreator keyCreator;
     @NotNull
@@ -44,12 +44,12 @@ public class EquipmentFactory implements WeaponFactory {
 
     public EquipmentFactory(
             @NotNull ItemEffectFactory effectFactory,
-            @NotNull ItemMechanismActivationFactory mechanismActivationFactory,
+            @NotNull ItemEffectActivationFactory effectActivationFactory,
             @NotNull NamespacedKeyCreator keyCreator,
             @NotNull TaskRunner taskRunner
     ) {
         this.effectFactory = effectFactory;
-        this.mechanismActivationFactory = mechanismActivationFactory;
+        this.effectActivationFactory = effectActivationFactory;
         this.keyCreator = keyCreator;
         this.taskRunner = taskRunner;
     }
@@ -155,7 +155,7 @@ public class EquipmentFactory implements WeaponFactory {
         String throwActionValue = controlsSection.getString("throw");
 
         ItemEffect effect = effectFactory.make(section.getSection("effect"), context);
-        ItemMechanismActivation mechanismActivation = mechanismActivationFactory.make(context, effect, section.getSection("activation"));
+        ItemEffectActivation activation = effectActivationFactory.make(context, effect, section.getSection("activation"));
 
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
@@ -165,7 +165,7 @@ public class EquipmentFactory implements WeaponFactory {
 
                 List<GameSound> cookSounds = DefaultGameSound.parseSounds(section.getString("throwing.cook-sound"));
 
-                CookFunction cookFunction = new CookFunction(mechanismActivation, audioEmitter);
+                CookFunction cookFunction = new CookFunction(activation, audioEmitter);
                 cookFunction.addSounds(cookSounds);
 
                 equipment.getControls().addControl(cookAction, cookFunction);
@@ -191,7 +191,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
-            ThrowFunction throwFunction = new ThrowFunction(equipment, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+            ThrowFunction throwFunction = new ThrowFunction(equipment, itemTemplate, activation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
             throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);
@@ -213,7 +213,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> placeSounds = DefaultGameSound.parseSounds(section.getString("placing.place-sound"));
 
-            PlaceFunction placeFunction = new PlaceFunction(equipment, mechanismActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
+            PlaceFunction placeFunction = new PlaceFunction(equipment, activation, material, audioEmitter, taskRunner, delayAfterPlacement);
             placeFunction.addSounds(placeSounds);
 
             equipment.getControls().addControl(placeAction, placeFunction);
@@ -226,7 +226,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> activateSounds = DefaultGameSound.parseSounds(section.getString("activation.activation-sound"));
 
-            ActivateFunction activateFunction = new ActivateFunction(equipment, mechanismActivation, audioEmitter, taskRunner, delayUntilActivation);
+            ActivateFunction activateFunction = new ActivateFunction(equipment, activation, audioEmitter, taskRunner, delayUntilActivation);
             activateFunction.addSounds(activateSounds);
 
             equipment.getControls().addControl(activateAction, activateFunction);

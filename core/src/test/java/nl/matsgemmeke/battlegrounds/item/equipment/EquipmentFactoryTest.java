@@ -9,8 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.ItemRegistry;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivationFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -38,9 +38,9 @@ public class EquipmentFactoryTest {
     private AudioEmitter audioEmitter;
     private GameContext context;
     private ItemConfiguration configuration;
+    private ItemEffectActivationFactory effectActivationFactory;
     private ItemEffectFactory effectFactory;
     private ItemFactory itemFactory;
-    private ItemMechanismActivationFactory mechanismActivationFactory;
     private ItemRegistry<Equipment, EquipmentHolder> equipmentRegistry;
     private NamespacedKeyCreator keyCreator;
     private Section rootSection;
@@ -50,9 +50,9 @@ public class EquipmentFactoryTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         configuration = mock(ItemConfiguration.class);
+        effectActivationFactory = mock(ItemEffectActivationFactory.class);
         effectFactory = mock(ItemEffectFactory.class);
         itemFactory = mock(ItemFactory.class);
-        mechanismActivationFactory = mock(ItemMechanismActivationFactory.class);
         equipmentRegistry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
         keyCreator = mock(NamespacedKeyCreator.class);
         taskRunner = mock(TaskRunner.class);
@@ -83,7 +83,7 @@ public class EquipmentFactoryTest {
 
     @Test
     public void shouldCreateSimpleEquipmentItem() {
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
         assertTrue(equipment instanceof DefaultEquipment);
@@ -97,7 +97,7 @@ public class EquipmentFactoryTest {
     public void createEquipmentItemWithDisplayName() {
         when(rootSection.getString("item.display-name")).thenReturn("&f%name%");
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
         assertTrue(equipment instanceof DefaultEquipment);
@@ -107,7 +107,7 @@ public class EquipmentFactoryTest {
     public void shouldThrowExceptionWhenCreatingEquipmentItemWithInvalidMaterial() {
         when(rootSection.getString("item.material")).thenReturn("fail");
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         factory.make(configuration, context);
     }
 
@@ -126,7 +126,7 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
         assertTrue(equipment instanceof DefaultEquipment);
@@ -140,7 +140,7 @@ public class EquipmentFactoryTest {
         when(activatorItemSection.getString("material")).thenReturn("fail");
         when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         factory.make(configuration, context);
     }
 
@@ -156,14 +156,14 @@ public class EquipmentFactoryTest {
 
         Damageable itemMeta = mock(Damageable.class);
         ItemEffect effect = mock(ItemEffect.class);
-        ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
+        ItemEffectActivation activation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
+        when(effectActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
         when(effectFactory.make(any(), eq(context))).thenReturn(effect);
         when(itemFactory.getItemMeta(Material.FLINT)).thenReturn(itemMeta);
-        when(mechanismActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
         assertTrue(equipment instanceof DefaultEquipment);
@@ -178,7 +178,7 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         factory.make(configuration, context);
     }
 
@@ -190,7 +190,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("item.throw-item.material")).thenReturn("fail");
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         factory.make(configuration, context);
     }
 
@@ -204,13 +204,13 @@ public class EquipmentFactoryTest {
         when(rootSection.getString("item.throw-item.material")).thenReturn("SHEARS");
 
         ItemEffect effect = mock(ItemEffect.class);
-        ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
+        ItemEffectActivation activation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
+        when(effectActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
         when(effectFactory.make(any(), eq(context))).thenReturn(effect);
-        when(mechanismActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
         assertTrue(equipment instanceof DefaultEquipment);
@@ -226,7 +226,7 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         factory.make(configuration, context);
     }
 
@@ -239,13 +239,13 @@ public class EquipmentFactoryTest {
         when(rootSection.getString("placing.material")).thenReturn("WARPED_BUTTON");
 
         ItemEffect effect = mock(ItemEffect.class);
-        ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
+        ItemEffectActivation activation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
+        when(effectActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
         when(effectFactory.make(any(), eq(context))).thenReturn(effect);
-        when(mechanismActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
         assertNotNull(equipment);
@@ -261,7 +261,7 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         factory.make(configuration, context);
     }
 
@@ -273,7 +273,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("placing.material")).thenReturn("fail");
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         factory.make(configuration, context);
     }
 
@@ -285,13 +285,13 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
         ItemEffect effect = mock(ItemEffect.class);
-        ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
+        ItemEffectActivation activation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
+        when(effectActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
         when(effectFactory.make(any(), eq(context))).thenReturn(effect);
-        when(mechanismActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
         assertNotNull(equipment);
@@ -307,7 +307,7 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         factory.make(configuration, context);
     }
 }

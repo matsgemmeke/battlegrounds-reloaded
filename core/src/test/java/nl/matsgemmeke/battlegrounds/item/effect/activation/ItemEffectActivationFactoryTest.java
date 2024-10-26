@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ItemMechanismActivationFactoryTest {
+public class ItemEffectActivationFactoryTest {
 
     private GameContext context;
     private ItemEffect effect;
@@ -34,8 +34,8 @@ public class ItemMechanismActivationFactoryTest {
     public void shouldCreateInstanceForDelayedActivationType() {
         when(section.getString("type")).thenReturn("DELAYED");
 
-        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
-        ItemMechanismActivation activation = factory.make(context, effect, section);
+        ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
+        ItemEffectActivation activation = factory.make(context, effect, section);
 
         assertTrue(activation instanceof DelayedActivation);
     }
@@ -44,8 +44,8 @@ public class ItemMechanismActivationFactoryTest {
     public void shouldCreateInstanceForManualActivationType() {
         when(section.getString("type")).thenReturn("MANUAL");
 
-        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
-        ItemMechanismActivation activation = factory.make(context, effect, section);
+        ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
+        ItemEffectActivation activation = factory.make(context, effect, section);
 
         assertTrue(activation instanceof ManualActivation);
     }
@@ -61,8 +61,8 @@ public class ItemMechanismActivationFactoryTest {
         when(section.get("triggers")).thenReturn(triggers);
         when(section.getString("type")).thenReturn("TRIGGER");
 
-        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
-        ItemMechanismActivation activation = factory.make(context, effect, section);
+        ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
+        ItemEffectActivation activation = factory.make(context, effect, section);
 
         assertTrue(activation instanceof TriggerActivation);
     }
@@ -71,7 +71,7 @@ public class ItemMechanismActivationFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsNotDefined() {
         when(section.getString("type")).thenReturn(null);
 
-        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
+        ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
         factory.make(context, effect, section);
     }
 
@@ -79,7 +79,7 @@ public class ItemMechanismActivationFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsIncorrect() {
         when(section.getString("type")).thenReturn("fail");
 
-        ItemMechanismActivationFactory factory = new ItemMechanismActivationFactory(taskRunner);
+        ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
         factory.make(context, effect, section);
     }
 }

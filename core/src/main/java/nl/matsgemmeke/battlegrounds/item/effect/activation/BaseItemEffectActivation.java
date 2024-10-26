@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseItemMechanismActivation implements ItemMechanismActivation {
+public abstract class BaseItemEffectActivation implements ItemEffectActivation {
 
     @NotNull
     protected ItemEffect effect;
@@ -18,7 +18,7 @@ public abstract class BaseItemMechanismActivation implements ItemMechanismActiva
     @NotNull
     protected List<Deployable> deployedObjects;
 
-    public BaseItemMechanismActivation(@NotNull ItemEffect effect) {
+    public BaseItemEffectActivation(@NotNull ItemEffect effect) {
         this.effect = effect;
         this.deployedObjects = new ArrayList<>();
         this.tasks = new ArrayList<>();

@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.deployment.DroppedItem;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,7 +28,7 @@ public class ThrowFunctionTest {
     private AudioEmitter audioEmitter;
     private DeployableSource item;
     private double projectileSpeed;
-    private ItemMechanismActivation mechanismActivation;
+    private ItemEffectActivation effectActivation;
     private ItemTemplate itemTemplate;
     private long delayAfterThrow;
     private TaskRunner taskRunner;
@@ -38,7 +38,7 @@ public class ThrowFunctionTest {
         audioEmitter = mock(AudioEmitter.class);
         item = mock(DeployableSource.class);
         projectileSpeed = 2.0;
-        mechanismActivation = mock(ItemMechanismActivation.class);
+        effectActivation = mock(ItemEffectActivation.class);
         itemTemplate = mock(ItemTemplate.class);
         delayAfterThrow = 1L;
         taskRunner = mock(TaskRunner.class);
@@ -46,7 +46,7 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldNotBePerformingIfNoThrowsWereExecuted() {
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -66,7 +66,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(throwingDirection);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
@@ -88,14 +88,14 @@ public class ThrowFunctionTest {
         when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
 
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
-        when(mechanismActivation.isPrimed()).thenReturn(false);
+        when(effectActivation.isPrimed()).thenReturn(false);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLocation()).thenReturn(location);
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
@@ -105,7 +105,7 @@ public class ThrowFunctionTest {
 
         assertEquals(location, captor.getValue().getLocation());
 
-        verify(mechanismActivation).primeDeployedObject(holder, captor.getValue());
+        verify(effectActivation).primeDeployedObject(holder, captor.getValue());
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
         verify(world).dropItem(location, itemStack);
     }
@@ -128,10 +128,10 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
+        when(effectActivation.isPrimed()).thenReturn(true);
         when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
-        when(mechanismActivation.isPrimed()).thenReturn(true);
 
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
@@ -139,7 +139,7 @@ public class ThrowFunctionTest {
         ArgumentCaptor<DroppedItem> captor = ArgumentCaptor.forClass(DroppedItem.class);
         verify(item).onDeploy(captor.capture());
 
-        verify(mechanismActivation).deploy(captor.getValue());
+        verify(effectActivation).deploy(captor.getValue());
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
         verify(world).dropItem(location, itemStack);
     }
@@ -153,11 +153,11 @@ public class ThrowFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, mechanismActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         function.perform(holder);
 
         verifyNoInteractions(audioEmitter);
-        verifyNoInteractions(mechanismActivation);
+        verifyNoInteractions(effectActivation);
         verifyNoInteractions(world);
     }
 }

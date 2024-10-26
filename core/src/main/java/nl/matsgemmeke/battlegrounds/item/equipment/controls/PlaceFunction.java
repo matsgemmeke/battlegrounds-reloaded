@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.deployment.PlacedBlock;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,7 +31,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private DeployableSource item;
     @NotNull
-    private ItemMechanismActivation mechanismActivation;
+    private ItemEffectActivation effectActivation;
     @NotNull
     private Iterable<GameSound> sounds;
     private long delayAfterPlacement;
@@ -42,14 +42,14 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
     public PlaceFunction(
             @NotNull DeployableSource item,
-            @NotNull ItemMechanismActivation mechanismActivation,
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull Material material,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             long delayAfterPlacement
     ) {
         this.item = item;
-        this.mechanismActivation = mechanismActivation;
+        this.effectActivation = effectActivation;
         this.material = material;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
@@ -104,10 +104,10 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
         taskRunner.runTaskLater(() -> performing = false, delayAfterPlacement);
 
-        if (mechanismActivation.isPrimed()) {
-            mechanismActivation.deploy(placedBlock);
+        if (effectActivation.isPrimed()) {
+            effectActivation.deploy(placedBlock);
         } else {
-            mechanismActivation.primeDeployedObject(holder, placedBlock);
+            effectActivation.primeDeployedObject(holder, placedBlock);
         }
 
         return true;

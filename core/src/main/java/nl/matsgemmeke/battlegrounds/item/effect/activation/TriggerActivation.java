@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Activation that initiates the mechanism based of an external trigger.
  */
-public class TriggerActivation extends BaseItemMechanismActivation {
+public class TriggerActivation extends BaseItemEffectActivation {
 
     @NotNull
     private List<Trigger> triggers;

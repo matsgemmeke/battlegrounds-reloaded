@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private DeployableSource item;
     @NotNull
-    private ItemMechanismActivation mechanismActivation;
+    private ItemEffectActivation effectActivation;
     @NotNull
     private Iterable<GameSound> sounds;
     private long delayUntilActivation;
@@ -28,13 +28,13 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
 
     public ActivateFunction(
             @NotNull DeployableSource item,
-            @NotNull ItemMechanismActivation mechanismActivation,
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             long delayUntilActivation
     ) {
         this.item = item;
-        this.mechanismActivation = mechanismActivation;
+        this.effectActivation = effectActivation;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.delayUntilActivation = delayUntilActivation;
@@ -64,7 +64,7 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     public boolean perform(@NotNull EquipmentHolder holder) {
         audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
 
-        taskRunner.runTaskLater(() -> mechanismActivation.activateDeployedObjects(holder), delayUntilActivation);
+        taskRunner.runTaskLater(() -> effectActivation.activateDeployedObjects(holder), delayUntilActivation);
 
         holder.setHeldItem(null);
 

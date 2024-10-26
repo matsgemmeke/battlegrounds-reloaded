@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Activation that initiates the mechanism by a manual operation by the item holder.
  */
-public class ManualActivation extends BaseItemMechanismActivation {
+public class ManualActivation extends BaseItemEffectActivation {
 
     public ManualActivation(@NotNull ItemEffect effect) {
         super(effect);
