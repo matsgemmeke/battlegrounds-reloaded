@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect;
+package nl.matsgemmeke.battlegrounds.item.effect.combustion;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect;
+package nl.matsgemmeke.battlegrounds.item.effect.combustion;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
@@ -88,8 +88,8 @@ public class CombustionMechanismTest {
 
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenFireSpread))).thenReturn(task);
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        mechanism.activate(holder, itemStack);
+        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
+        effect.activate(holder, itemStack);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -145,8 +145,8 @@ public class CombustionMechanismTest {
 
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenSpread))).thenReturn(task);
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        mechanism.activate(holder, object);
+        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
+        effect.activate(holder, object);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -183,8 +183,8 @@ public class CombustionMechanismTest {
 
         when(targetFinder.findTargets(holder, objectLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        mechanism.activate(holder, object);
+        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
+        effect.activate(holder, object);
 
         verify(holder).damage(MEDIUM_RANGE_DAMAGE);
         verify(target).damage(SHORT_RANGE_DAMAGE);
@@ -206,8 +206,8 @@ public class CombustionMechanismTest {
 
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        CombustionMechanism mechanism = new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        mechanism.activate(holder, itemStack);
+        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
+        effect.activate(holder, itemStack);
 
         verify(audioEmitter).playSounds(sounds, location);
     }

@@ -9,6 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
@@ -69,7 +71,7 @@ public class ItemMechanismFactory {
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new CombustionMechanism(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
+                return new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
             }
             case EXPLOSION -> {
                 float power = section.getFloat("power");
