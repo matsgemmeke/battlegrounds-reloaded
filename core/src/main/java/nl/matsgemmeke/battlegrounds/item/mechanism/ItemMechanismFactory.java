@@ -11,7 +11,10 @@ import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.mechanism.flash.FlashMechanism;
 import nl.matsgemmeke.battlegrounds.item.mechanism.flash.FlashSettings;
+import nl.matsgemmeke.battlegrounds.item.mechanism.smoke.SmokeScreenMechanism;
+import nl.matsgemmeke.battlegrounds.item.mechanism.smoke.SmokeScreenSettings;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
+import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -101,6 +104,31 @@ public class ItemMechanismFactory {
                 TargetFinder targetFinder = context.getTargetFinder();
 
                 return new FlashMechanism(settings, targetFinder);
+            }
+            case SMOKE_SCREEN -> {
+                Particle particle;
+                String particleValue = section.getString("particle.type");
+
+                try {
+                    particle = Particle.valueOf(particleValue);
+                } catch (IllegalArgumentException e) {
+                    throw new InvalidItemConfigurationException("Particle type \"" + particleValue + "\" is invalid!");
+                }
+
+                int count = section.getInt("particle.count");
+                double offsetX = section.getDouble("particle.offset-x");
+                double offsetY = section.getDouble("particle.offset-y");
+                double offsetZ = section.getDouble("particle.offset-z");
+                double extra = section.getDouble("particle.extra");
+
+                Iterable<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sound"));
+                int size = section.getInt("size");
+
+                SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(ignitionSounds, size);
+                ParticleSettings particleSettings = new ParticleSettings(particle, count, offsetX, offsetY, offsetZ, extra);
+                AudioEmitter audioEmitter = context.getAudioEmitter();
+
+                return new SmokeScreenMechanism(smokeScreenSettings, particleSettings, audioEmitter, taskRunner);
             }
         }
 

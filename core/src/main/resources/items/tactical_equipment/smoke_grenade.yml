@@ -1,33 +1,31 @@
-id: FLASHBANG
-name: Flashbang
+id: SMOKE_GRENADE
+name: Smoke Grenade
 activation:
   delay-until-activation: 60
   type: DELAYED
 controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
-description: Device that blinds the target when detonated.
+description: Device that creates a smoke screen when detonated.
 equipment-type: TACTICAL
 item:
-  damage: 6
+  damage: 7
   display-name: "&f%name%"
   material: SHEARS
   throw-item:
-    damage: 6
+    damage: 7
     material: SHEARS
 mechanism:
-  effect:
-    ambient: true
-    amplifier: 0
-    duration: 100
-    icon: false
-    particles: true
-  explosion:
-    break-blocks: false
-    power: 1
-    set-fire: false
-  range: 5.0
-  type: FLASH
+  ignition-sound: BLOCK_FIRE_EXTINGUISH-1-0-0
+  particle:
+    count: 3
+    extra: 0.0
+    offset-x: 0.5
+    offset-y: 0.5
+    offset-z: 0.5
+    type: CAMPFIRE_COSY_SMOKE
+  size: 5
+  type: SMOKE_SCREEN
 throwing:
   cook-sound: ENTITY_TNT_PRIMED-1-2-0
   delay-after-throw: 30
