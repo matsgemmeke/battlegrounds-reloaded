@@ -17,7 +17,7 @@ import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingModeFactory;
 import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
 import nl.matsgemmeke.battlegrounds.item.WeaponProviderLoader;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanismFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
@@ -217,9 +217,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
 
         MetadataValueCreator metadataValueCreator = new MetadataValueCreator(this);
-        ItemMechanismFactory mechanismFactory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory effectFactory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         ItemMechanismActivationFactory mechanismActivationFactory = new ItemMechanismActivationFactory(taskRunner);
-        EquipmentFactory equipmentFactory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        EquipmentFactory equipmentFactory = new EquipmentFactory(effectFactory, mechanismActivationFactory, keyCreator, taskRunner);
 
         File itemsDirectory = new File(this.getDataFolder() + "/items");
         WeaponProviderLoader loader = new WeaponProviderLoader(equipmentFactory, firearmFactory);

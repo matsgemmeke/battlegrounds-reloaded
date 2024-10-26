@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanismFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
@@ -34,7 +34,7 @@ public class EquipmentFactory implements WeaponFactory {
     private static final UUIDGenerator UUID_GENERATOR = new UUIDGenerator();
 
     @NotNull
-    private ItemMechanismFactory mechanismFactory;
+    private ItemEffectFactory effectFactory;
     @NotNull
     private ItemMechanismActivationFactory mechanismActivationFactory;
     @NotNull
@@ -43,12 +43,12 @@ public class EquipmentFactory implements WeaponFactory {
     private TaskRunner taskRunner;
 
     public EquipmentFactory(
-            @NotNull ItemMechanismFactory mechanismFactory,
+            @NotNull ItemEffectFactory effectFactory,
             @NotNull ItemMechanismActivationFactory mechanismActivationFactory,
             @NotNull NamespacedKeyCreator keyCreator,
             @NotNull TaskRunner taskRunner
     ) {
-        this.mechanismFactory = mechanismFactory;
+        this.effectFactory = effectFactory;
         this.mechanismActivationFactory = mechanismActivationFactory;
         this.keyCreator = keyCreator;
         this.taskRunner = taskRunner;
@@ -154,7 +154,7 @@ public class EquipmentFactory implements WeaponFactory {
         String placeActionValue = controlsSection.getString("place");
         String throwActionValue = controlsSection.getString("throw");
 
-        ItemEffect effect = mechanismFactory.make(section.getSection("mechanism"), context);
+        ItemEffect effect = effectFactory.make(section.getSection("effect"), context);
         ItemMechanismActivation mechanismActivation = mechanismActivationFactory.make(context, effect, section.getSection("activation"));
 
         if (throwActionValue != null) {

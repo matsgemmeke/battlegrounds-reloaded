@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-public enum ItemMechanismType {
+public enum ItemEffectType {
 
     COMBUSTION,
     DETECT_ENEMIES,

@@ -23,14 +23,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ItemMechanismFactory {
+public class ItemEffectFactory {
 
     @NotNull
     private MetadataValueCreator metadataValueCreator;
     @NotNull
     private TaskRunner taskRunner;
 
-    public ItemMechanismFactory(@NotNull MetadataValueCreator metadataValueCreator, @NotNull TaskRunner taskRunner) {
+    public ItemEffectFactory(@NotNull MetadataValueCreator metadataValueCreator, @NotNull TaskRunner taskRunner) {
         this.metadataValueCreator = metadataValueCreator;
         this.taskRunner = taskRunner;
     }
@@ -39,18 +39,18 @@ public class ItemMechanismFactory {
         String type = section.getString("type");
 
         if (type == null) {
-            throw new InvalidItemConfigurationException("Equipment mechanism type must be defined!");
+            throw new InvalidItemConfigurationException("Item effect type must be defined!");
         }
 
-        ItemMechanismType equipmentMechanismType;
+        ItemEffectType itemEffectType;
 
         try {
-            equipmentMechanismType = ItemMechanismType.valueOf(type);
+            itemEffectType = ItemEffectType.valueOf(type);
         } catch (IllegalArgumentException e) {
-            throw new InvalidItemConfigurationException("Equipment mechanism type \"" + type + "\" is invalid!");
+            throw new InvalidItemConfigurationException("Item effect type \"" + type + "\" is invalid!");
         }
 
-        switch (equipmentMechanismType) {
+        switch (itemEffectType) {
             case COMBUSTION -> {
                 int radius = section.getInt("radius");
                 long ticksBetweenSpread = section.getLong("ticks-between-spread");

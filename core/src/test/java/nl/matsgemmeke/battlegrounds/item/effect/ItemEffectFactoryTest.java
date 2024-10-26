@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ItemMechanismFactoryTest {
+public class ItemEffectFactoryTest {
 
     private GameContext context;
     private MetadataValueCreator metadataValueCreator;
@@ -42,7 +42,7 @@ public class ItemMechanismFactoryTest {
 
         when(section.getString("type")).thenReturn("COMBUSTION");
 
-        ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         ItemEffect effect = factory.make(section, context);
 
         assertTrue(effect instanceof CombustionEffect);
@@ -55,7 +55,7 @@ public class ItemMechanismFactoryTest {
 
         when(section.getString("type")).thenReturn("EXPLOSION");
 
-        ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         ItemEffect effect = factory.make(section, context);
 
         assertTrue(effect instanceof ExplosionEffect);
@@ -68,7 +68,7 @@ public class ItemMechanismFactoryTest {
 
         when(section.getString("type")).thenReturn("FLASH");
 
-        ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         ItemEffect effect = factory.make(section, context);
 
         assertTrue(effect instanceof FlashEffect);
@@ -78,7 +78,7 @@ public class ItemMechanismFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsNotDefined() {
         when(section.getString("type")).thenReturn(null);
 
-        ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         factory.make(section, context);
     }
 
@@ -86,7 +86,7 @@ public class ItemMechanismFactoryTest {
     public void shouldThrowExceptionIfGivenActivationTypeIsIncorrect() {
         when(section.getString("type")).thenReturn("fail");
 
-        ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         factory.make(section, context);
     }
 }
