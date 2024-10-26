@@ -15,7 +15,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashSettings;
-import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenSettings;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Particle;
@@ -132,7 +132,7 @@ public class ItemMechanismFactory {
                 ParticleSettings particleSettings = new ParticleSettings(particle, count, offsetX, offsetY, offsetZ, extra);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
 
-                return new SmokeScreenMechanism(smokeScreenSettings, particleSettings, audioEmitter, taskRunner);
+                return new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, taskRunner);
             }
         }
 

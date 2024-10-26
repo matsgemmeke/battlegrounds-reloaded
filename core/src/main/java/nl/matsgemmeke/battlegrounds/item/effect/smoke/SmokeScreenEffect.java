@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SmokeScreenMechanism implements ItemMechanism {
+public class SmokeScreenEffect implements ItemMechanism {
 
     private static final long RUNNABLE_DELAY = 0L;
     private static final long RUNNABLE_PERIOD = 1L;
@@ -32,7 +32,7 @@ public class SmokeScreenMechanism implements ItemMechanism {
     @NotNull
     private TaskRunner taskRunner;
 
-    public SmokeScreenMechanism(
+    public SmokeScreenEffect(
             @NotNull SmokeScreenSettings smokeScreenSettings,
             @NotNull ParticleSettings particleSettings,
             @NotNull AudioEmitter audioEmitter,
