@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenMechanism;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenSettings;
@@ -103,7 +103,7 @@ public class ItemMechanismFactory {
                 FlashSettings settings = new FlashSettings(range, effectDuration, effectAmplifier, effectAmbient, effectParticles, effectIcon, explosionPower, explosionBreakBlocks, explosionSetFire);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new FlashMechanism(settings, targetFinder);
+                return new FlashEffect(settings, targetFinder);
             }
             case SMOKE_SCREEN -> {
                 Particle particle;

@@ -13,14 +13,14 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-public class FlashMechanism implements ItemMechanism {
+public class FlashEffect implements ItemMechanism {
 
     @NotNull
     private FlashSettings settings;
     @NotNull
     private TargetFinder targetFinder;
 
-    public FlashMechanism(@NotNull FlashSettings settings, @NotNull TargetFinder targetFinder) {
+    public FlashEffect(@NotNull FlashSettings settings, @NotNull TargetFinder targetFinder) {
         this.settings = settings;
         this.targetFinder = targetFinder;
     }

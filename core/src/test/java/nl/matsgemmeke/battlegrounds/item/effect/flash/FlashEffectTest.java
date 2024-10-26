@@ -22,7 +22,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class FlashMechanismTest {
+public class FlashEffectTest {
 
     private static final boolean EFFECT_AMBIENT = true;
     private static final boolean EFFECT_ICON = false;
@@ -56,8 +56,8 @@ public class FlashMechanismTest {
         FlashSettings settings = new FlashSettings(RANGE, EFFECT_DURATION, EFFECT_AMPLIFIER, EFFECT_AMBIENT, EFFECT_PARTICLES, EFFECT_ICON, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        FlashMechanism mechanism = new FlashMechanism(settings, targetFinder);
-        mechanism.activate(holder, itemStack);
+        FlashEffect effect = new FlashEffect(settings, targetFinder);
+        effect.activate(holder, itemStack);
 
         verify(holder).removeItem(itemStack);
         verify(world).createExplosion(holderLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, entity);
@@ -79,8 +79,8 @@ public class FlashMechanismTest {
 
         FlashSettings settings = new FlashSettings(RANGE, EFFECT_DURATION, EFFECT_AMPLIFIER, EFFECT_AMBIENT, EFFECT_PARTICLES, EFFECT_ICON, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
 
-        FlashMechanism mechanism = new FlashMechanism(settings, targetFinder);
-        mechanism.activate(holder, object);
+        FlashEffect effect = new FlashEffect(settings, targetFinder);
+        effect.activate(holder, object);
 
         verify(world).createExplosion(objectLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, entity);
     }
@@ -108,8 +108,8 @@ public class FlashMechanismTest {
 
         FlashSettings settings = new FlashSettings(RANGE, EFFECT_DURATION, EFFECT_AMPLIFIER, EFFECT_AMBIENT, EFFECT_PARTICLES, EFFECT_ICON, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
 
-        FlashMechanism mechanism = new FlashMechanism(settings, targetFinder);
-        mechanism.activate(holder, object);
+        FlashEffect effect = new FlashEffect(settings, targetFinder);
+        effect.activate(holder, object);
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
         verify(livingEntity).addPotionEffect(potionEffectCaptor.capture());
