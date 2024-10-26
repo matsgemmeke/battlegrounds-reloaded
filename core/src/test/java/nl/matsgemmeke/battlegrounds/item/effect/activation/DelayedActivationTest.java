@@ -33,7 +33,7 @@ public class DelayedActivationTest {
     }
 
     @Test
-    public void shouldActivateMechanismForAllDeployedObjectsWhenActivating() {
+    public void shouldActivateEffectForAllDeployedObjectsWhenActivating() {
         Deployable object = mock(Deployable.class);
 
         when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(mock(BukkitTask.class));

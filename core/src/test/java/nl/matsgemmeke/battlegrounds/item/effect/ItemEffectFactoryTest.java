@@ -33,7 +33,7 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void shouldCreateInstanceForCombustionMechanismType() {
+    public void shouldCreateInstanceForCombustionEffectType() {
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(context.getAudioEmitter()).thenReturn(audioEmitter);
 
@@ -49,7 +49,7 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void shouldCreateInstanceForExplosionMechanismType() {
+    public void shouldCreateInstanceForExplosionEffectType() {
         TargetFinder targetFinder = mock(TargetFinder.class);
         when(context.getTargetFinder()).thenReturn(targetFinder);
 
@@ -62,7 +62,7 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void shouldCreateInstanceForFlashMechanismType() {
+    public void shouldCreateInstanceForFlashEffectType() {
         TargetFinder targetFinder = mock(TargetFinder.class);
         when(context.getTargetFinder()).thenReturn(targetFinder);
 

@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Activation that initiates the mechanism by a manual operation by the item holder.
+ * Activation that initiates the effect by a manual operation by the item holder.
  */
 public class ManualActivation extends BaseItemEffectActivation {
 
@@ -20,6 +20,6 @@ public class ManualActivation extends BaseItemEffectActivation {
     }
 
     public void primeInHand(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
-        throw new UnsupportedOperationException("Manual mechanism activation does not support priming an object in the holder's hand");
+        throw new UnsupportedOperationException("Manual effect activation does not support priming an object in the holder's hand");
     }
 }

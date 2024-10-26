@@ -9,7 +9,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Activation that initiates the mechanism after a specific delay.
+ * Activation that initiates the effect after a specific delay.
  */
 public class DelayedActivation extends BaseItemEffectActivation {
 

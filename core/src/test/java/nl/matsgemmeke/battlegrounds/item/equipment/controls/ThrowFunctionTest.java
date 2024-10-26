@@ -111,7 +111,7 @@ public class ThrowFunctionTest {
     }
 
     @Test
-    public void shouldDeployDroppedItemAndNotifyMechanismActivationOfDeferredDeployment() {
+    public void shouldDeployDroppedItemAndNotifyEffectActivationOfDeferredDeployment() {
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Item itemEntity = mock(Item.class);

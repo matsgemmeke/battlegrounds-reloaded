@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Activation that initiates the mechanism based of an external trigger.
+ * Activation that initiates the effect based on an external trigger.
  */
 public class TriggerActivation extends BaseItemEffectActivation {
 
@@ -38,6 +38,6 @@ public class TriggerActivation extends BaseItemEffectActivation {
     }
 
     public void primeInHand(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
-        throw new UnsupportedOperationException("Trigger mechanism activation does not support priming a deferred object");
+        throw new UnsupportedOperationException("Trigger effect activation does not support priming a deferred object");
     }
 }

@@ -136,6 +136,6 @@ public class ItemEffectFactory {
             }
         }
 
-        throw new InvalidItemConfigurationException("Unknown equipment mechanism type \"" + type + "\"!");
+        throw new InvalidItemConfigurationException("Unknown item effect type \"" + type + "\"!");
     }
 }

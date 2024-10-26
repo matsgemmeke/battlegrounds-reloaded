@@ -105,7 +105,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
         taskRunner.runTaskLater(() -> performing = false, delayAfterThrow);
 
-        // Check if the activation mechanism is priming its next deployment. If yes, deploy the dropped item. Otherwise,
+        // Check if the effect activation is priming its next deployment. If yes, deploy the dropped item. Otherwise,
         // prime and deploy like normally.
         if (effectActivation.isPrimed()) {
             effectActivation.deploy(droppedItem);

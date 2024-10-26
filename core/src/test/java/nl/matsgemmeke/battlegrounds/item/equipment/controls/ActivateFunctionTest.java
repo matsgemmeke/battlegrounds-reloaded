@@ -46,7 +46,7 @@ public class ActivateFunctionTest {
     }
 
     @Test
-    public void shouldBeAvailableIfItemHasDeployedObjectsAndMechanismActivationIsPrimed() {
+    public void shouldBeAvailableIfItemHasDeployedObjectsAndEffectActivationIsPrimed() {
         Deployable object = mock(Deployable.class);
 
         when(item.getDeployedObjects()).thenReturn(List.of(object));
@@ -59,7 +59,7 @@ public class ActivateFunctionTest {
     }
 
     @Test
-    public void shouldRemoveHeldItemAndPerformDelayedTaskThatActivatesMechanismActivationWhenPerforming() {
+    public void shouldRemoveHeldItemAndPerformDelayedTaskThatActivatesEffectActivationWhenPerforming() {
         Location location = new Location(null, 1, 1, 1);
 
         Entity entity = mock(Entity.class);

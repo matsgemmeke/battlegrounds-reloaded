@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class CombustionMechanismTest {
+public class CombustionEffectTest {
 
     private static final double LONG_RANGE_DAMAGE = 25.0;
     private static final double LONG_RANGE_DISTANCE = 10.0;

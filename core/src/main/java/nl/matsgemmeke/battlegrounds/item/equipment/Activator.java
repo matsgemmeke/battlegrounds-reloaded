@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 /**
- * A tool used by {@link Equipment} items to manually activate mechanisms.
+ * A tool used by {@link Equipment} items to manually activate effects.
  */
 public interface Activator extends Matchable {
 

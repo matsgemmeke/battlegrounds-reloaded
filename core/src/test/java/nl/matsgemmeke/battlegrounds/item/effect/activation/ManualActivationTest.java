@@ -23,7 +23,7 @@ public class ManualActivationTest {
     }
 
     @Test
-    public void shouldActivateMechanismForAllDeployedObjectsWhenActivating() {
+    public void shouldActivateEffectForAllDeployedObjectsWhenActivating() {
         Deployable object1 = mock(Deployable.class);
         Deployable object2 = mock(Deployable.class);
 
