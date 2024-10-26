@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.PotionEffectSettings;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -16,12 +17,15 @@ import org.jetbrains.annotations.NotNull;
 public class FlashEffect implements ItemEffect {
 
     @NotNull
-    private FlashSettings settings;
+    private FlashSettings flashSettings;
+    @NotNull
+    private PotionEffectSettings potionEffectSettings;
     @NotNull
     private TargetFinder targetFinder;
 
-    public FlashEffect(@NotNull FlashSettings settings, @NotNull TargetFinder targetFinder) {
-        this.settings = settings;
+    public FlashEffect(@NotNull FlashSettings flashSettings, @NotNull PotionEffectSettings potionEffectSettings, @NotNull TargetFinder targetFinder) {
+        this.flashSettings = flashSettings;
+        this.potionEffectSettings = potionEffectSettings;
         this.targetFinder = targetFinder;
     }
 
@@ -38,19 +42,23 @@ public class FlashEffect implements ItemEffect {
     }
 
     private void activate(@NotNull ItemHolder holder, @NotNull Location location, @NotNull World world) {
-        world.createExplosion(location, settings.explosionPower(), settings.explosionSetFire(), settings.explosionBreakBlocks(), holder.getEntity());
+        float power = flashSettings.explosionPower();
+        boolean setFire = flashSettings.explosionSetFire();
+        boolean breakBlocks = flashSettings.explosionBreakBlocks();
 
-        for (GameEntity target : targetFinder.findTargets(holder, location, settings.range())) {
+        world.createExplosion(location, power, setFire, breakBlocks, holder.getEntity());
+
+        for (GameEntity target : targetFinder.findTargets(holder, location, flashSettings.range())) {
             if (!(target.getEntity() instanceof LivingEntity entity)) {
                 continue;
             }
 
             PotionEffectType potionEffectType = PotionEffectType.BLINDNESS;
-            int duration = settings.effectDuration();
-            int amplifier = settings.effectAmplifier();
-            boolean ambient = settings.effectAmbient();
-            boolean particles = settings.effectParticles();
-            boolean icon = settings.effectIcon();
+            int duration = potionEffectSettings.duration();
+            int amplifier = potionEffectSettings.amplifier();
+            boolean ambient = potionEffectSettings.ambient();
+            boolean particles = potionEffectSettings.particles();
+            boolean icon = potionEffectSettings.icon();
 
             PotionEffect potionEffect = new PotionEffect(potionEffectType, duration, amplifier, ambient, particles, icon);
 

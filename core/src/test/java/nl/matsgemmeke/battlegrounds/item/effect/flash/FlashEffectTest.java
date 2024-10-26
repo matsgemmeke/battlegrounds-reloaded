@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.effect.PotionEffectSettings;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -24,20 +25,24 @@ import static org.mockito.Mockito.*;
 
 public class FlashEffectTest {
 
-    private static final boolean EFFECT_AMBIENT = true;
-    private static final boolean EFFECT_ICON = false;
-    private static final boolean EFFECT_PARTICLES = true;
     private static final boolean EXPLOSION_BREAK_BLOCKS = false;
     private static final boolean EXPLOSION_SET_FIRE = false;
+    private static final boolean POTION_EFFECT_AMBIENT = true;
+    private static final boolean POTION_EFFECT_ICON = false;
+    private static final boolean POTION_EFFECT_PARTICLES = true;
     private static final double RANGE = 5.0;
     private static final float EXPLOSION_POWER = 1.0f;
-    private static final int EFFECT_AMPLIFIER = 0;
-    private static final int EFFECT_DURATION = 100;
+    private static final int POTION_EFFECT_AMPLIFIER = 0;
+    private static final int POTION_EFFECT_DURATION = 100;
 
+    private FlashSettings flashSettings;
+    private PotionEffectSettings potionEffectSettings;
     private TargetFinder targetFinder;
 
     @Before
     public void setUp() {
+        flashSettings = new FlashSettings(RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
+        potionEffectSettings = new PotionEffectSettings(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
         targetFinder = mock(TargetFinder.class);
     }
 
@@ -53,10 +58,9 @@ public class FlashEffectTest {
         when(holder.getLocation()).thenReturn(holderLocation);
         when(holder.getWorld()).thenReturn(world);
 
-        FlashSettings settings = new FlashSettings(RANGE, EFFECT_DURATION, EFFECT_AMPLIFIER, EFFECT_AMBIENT, EFFECT_PARTICLES, EFFECT_ICON, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        FlashEffect effect = new FlashEffect(settings, targetFinder);
+        FlashEffect effect = new FlashEffect(flashSettings, potionEffectSettings, targetFinder);
         effect.activate(holder, itemStack);
 
         verify(holder).removeItem(itemStack);
@@ -77,9 +81,7 @@ public class FlashEffectTest {
         when(object.getLocation()).thenReturn(objectLocation);
         when(object.getWorld()).thenReturn(world);
 
-        FlashSettings settings = new FlashSettings(RANGE, EFFECT_DURATION, EFFECT_AMPLIFIER, EFFECT_AMBIENT, EFFECT_PARTICLES, EFFECT_ICON, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
-
-        FlashEffect effect = new FlashEffect(settings, targetFinder);
+        FlashEffect effect = new FlashEffect(flashSettings, potionEffectSettings, targetFinder);
         effect.activate(holder, object);
 
         verify(world).createExplosion(objectLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, entity);
@@ -106,9 +108,7 @@ public class FlashEffectTest {
 
         when(targetFinder.findTargets(holder, objectLocation, RANGE)).thenReturn(List.of(holder, gameEntity));
 
-        FlashSettings settings = new FlashSettings(RANGE, EFFECT_DURATION, EFFECT_AMPLIFIER, EFFECT_AMBIENT, EFFECT_PARTICLES, EFFECT_ICON, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
-
-        FlashEffect effect = new FlashEffect(settings, targetFinder);
+        FlashEffect effect = new FlashEffect(flashSettings, potionEffectSettings, targetFinder);
         effect.activate(holder, object);
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
@@ -117,11 +117,11 @@ public class FlashEffectTest {
         PotionEffect potionEffect = potionEffectCaptor.getValue();
 
         assertEquals(PotionEffectType.BLINDNESS, potionEffect.getType());
-        assertEquals(EFFECT_DURATION, potionEffect.getDuration());
-        assertEquals(EFFECT_AMPLIFIER, potionEffect.getAmplifier());
-        assertEquals(EFFECT_AMBIENT, potionEffect.isAmbient());
-        assertEquals(EFFECT_PARTICLES, potionEffect.hasParticles());
-        assertEquals(EFFECT_ICON, potionEffect.hasIcon());
+        assertEquals(POTION_EFFECT_DURATION, potionEffect.getDuration());
+        assertEquals(POTION_EFFECT_AMPLIFIER, potionEffect.getAmplifier());
+        assertEquals(POTION_EFFECT_AMBIENT, potionEffect.isAmbient());
+        assertEquals(POTION_EFFECT_PARTICLES, potionEffect.hasParticles());
+        assertEquals(POTION_EFFECT_ICON, potionEffect.hasIcon());
 
         verifyNoInteractions(arrow);
     }

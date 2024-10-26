@@ -7,15 +7,7 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
-equipment-type: LETHAL
-item:
-  damage: 1
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
-    damage: 1
-    material: SHEARS
-mechanism:
+effect:
   break-blocks: false
   power: 2.0
   range:
@@ -30,6 +22,14 @@ mechanism:
       distance: 2.5
   set-fire: false
   type: EXPLOSION
+equipment-type: LETHAL
+item:
+  damage: 1
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 1
+    material: SHEARS
 throwing:
   cook-sound: ENTITY_TNT_PRIMED-1-2-0
   delay-after-throw: 30

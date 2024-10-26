@@ -93,21 +93,21 @@ public class ItemEffectFactory {
             }
             case FLASH -> {
                 double range = section.getDouble("range");
-
-                int effectDuration = section.getInt("effect.duration");
-                int effectAmplifier = section.getInt("effect.amplifier");
-                boolean effectAmbient = section.getBoolean("effect.ambient");
-                boolean effectParticles = section.getBoolean("effect.particles");
-                boolean effectIcon = section.getBoolean("effect.icon");
-
                 float explosionPower = section.getFloat("explosion.power");
                 boolean explosionBreakBlocks = section.getBoolean("explosion.break-blocks");
                 boolean explosionSetFire = section.getBoolean("explosion.set-fire");
 
-                FlashSettings settings = new FlashSettings(range, effectDuration, effectAmplifier, effectAmbient, effectParticles, effectIcon, explosionPower, explosionBreakBlocks, explosionSetFire);
+                int duration = section.getInt("potion-effect.duration");
+                int amplifier = section.getInt("potion-effect.amplifier");
+                boolean ambient = section.getBoolean("potion-effect.ambient");
+                boolean particles = section.getBoolean("potion-effect.particles");
+                boolean icon = section.getBoolean("potion-effect.icon");
+
+                FlashSettings flashSettings = new FlashSettings(range, explosionPower, explosionBreakBlocks, explosionSetFire);
+                PotionEffectSettings potionEffectSettings = new PotionEffectSettings(duration, amplifier, ambient, particles, icon);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new FlashEffect(settings, targetFinder);
+                return new FlashEffect(flashSettings, potionEffectSettings, targetFinder);
             }
             case SMOKE_SCREEN -> {
                 Particle particle;

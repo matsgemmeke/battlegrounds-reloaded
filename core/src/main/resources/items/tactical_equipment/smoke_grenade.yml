@@ -7,15 +7,7 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 description: Device that creates a smoke screen when detonated.
-equipment-type: TACTICAL
-item:
-  damage: 7
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
-    damage: 7
-    material: SHEARS
-mechanism:
+effect:
   ignition-sound: BLOCK_FIRE_EXTINGUISH-1-0-0
   particle:
     count: 3
@@ -26,6 +18,14 @@ mechanism:
     type: CAMPFIRE_COSY_SMOKE
   size: 5
   type: SMOKE_SCREEN
+equipment-type: TACTICAL
+item:
+  damage: 7
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 7
+    material: SHEARS
 throwing:
   cook-sound: ENTITY_TNT_PRIMED-1-2-0
   delay-after-throw: 30
