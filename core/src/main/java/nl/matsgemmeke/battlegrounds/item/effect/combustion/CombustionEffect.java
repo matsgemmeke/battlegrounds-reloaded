@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CombustionEffect implements ItemMechanism {
+public class CombustionEffect implements ItemEffect {
 
     private static final long RUNNABLE_DELAY = 0L;
     private static final String BURN_BLOCKS_METADATA_KEY = "battlegrounds-burn-blocks";

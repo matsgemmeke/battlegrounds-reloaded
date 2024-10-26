@@ -2,12 +2,12 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An interface for objects that control the activation of an {@link ItemMechanism}.
+ * An interface for objects that control the activation of an {@link ItemEffect}.
  */
 public interface ItemMechanismActivation {
 

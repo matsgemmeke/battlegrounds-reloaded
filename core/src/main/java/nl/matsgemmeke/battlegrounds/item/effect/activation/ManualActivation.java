@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ManualActivation extends BaseItemMechanismActivation {
 
-    public ManualActivation(@NotNull ItemMechanism mechanism) {
-        super(mechanism);
+    public ManualActivation(@NotNull ItemEffect effect) {
+        super(effect);
     }
 
     public void primeDeployedObject(@NotNull ItemHolder holder, @NotNull Deployable object) {

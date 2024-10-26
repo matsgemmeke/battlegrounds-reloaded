@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +17,8 @@ public class DelayedActivation extends BaseItemMechanismActivation {
     @NotNull
     private TaskRunner taskRunner;
 
-    public DelayedActivation(@NotNull ItemMechanism mechanism, @NotNull TaskRunner taskRunner, long delayUntilActivation) {
-        super(mechanism);
+    public DelayedActivation(@NotNull ItemEffect effect, @NotNull TaskRunner taskRunner, long delayUntilActivation) {
+        super(effect);
         this.taskRunner = taskRunner;
         this.delayUntilActivation = delayUntilActivation;
     }
@@ -26,7 +26,7 @@ public class DelayedActivation extends BaseItemMechanismActivation {
     public void primeDeployedObject(@NotNull ItemHolder holder, @NotNull Deployable object) {
         deployedObjects.add(object);
 
-        BukkitTask task = taskRunner.runTaskLater(() -> mechanism.activate(holder, object), delayUntilActivation);
+        BukkitTask task = taskRunner.runTaskLater(() -> effect.activate(holder, object), delayUntilActivation);
 
         tasks.add(task);
     }
@@ -43,9 +43,9 @@ public class DelayedActivation extends BaseItemMechanismActivation {
         Deployable oldestObject = deployedObjects.get(0);
 
         if (oldestObject != null) {
-            mechanism.activate(holder, oldestObject);
+            effect.activate(holder, oldestObject);
         } else {
-            mechanism.activate(holder, itemStack);
+            effect.activate(holder, itemStack);
         }
     }
 }

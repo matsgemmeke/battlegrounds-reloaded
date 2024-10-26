@@ -4,7 +4,7 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,10 +26,10 @@ public class ItemMechanismActivationFactory {
      * Creates a new {@link ItemMechanismActivation} instance based on configuration values.
      *
      * @param section the configuration section
-     * @param mechanism the item mechanism instance
+     * @param effect the item effect instance
      * @return a new activation instance
      */
-    public ItemMechanismActivation make(@NotNull GameContext context, @NotNull ItemMechanism mechanism, @NotNull Section section) {
+    public ItemMechanismActivation make(@NotNull GameContext context, @NotNull ItemEffect effect, @NotNull Section section) {
         String type = section.getString("type");
 
         if (type == null) {
@@ -47,13 +47,13 @@ public class ItemMechanismActivationFactory {
         switch (mechanismActivationType) {
             case DELAYED -> {
                 long delayUntilActivation = section.getLong("delay-until-activation");
-                return new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+                return new DelayedActivation(effect, taskRunner, delayUntilActivation);
             }
             case MANUAL -> {
-                return new ManualActivation(mechanism);
+                return new ManualActivation(effect);
             }
             case TRIGGER -> {
-                TriggerActivation activation = new TriggerActivation(mechanism);
+                TriggerActivation activation = new TriggerActivation(effect);
                 TriggerFactory triggerFactory = new TriggerFactory(taskRunner);
                 Iterable<Map<String, Object>> triggers = (Iterable<Map<String, Object>>) section.get("triggers");
 

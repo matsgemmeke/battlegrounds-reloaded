@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.ItemRegistry;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanismFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivationFactory;
@@ -155,13 +155,13 @@ public class EquipmentFactoryTest {
         when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
         Damageable itemMeta = mock(Damageable.class);
-        ItemMechanism mechanism = mock(ItemMechanism.class);
+        ItemEffect effect = mock(ItemEffect.class);
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(itemFactory.getItemMeta(Material.FLINT)).thenReturn(itemMeta);
-        when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(eq(context), eq(mechanism), any())).thenReturn(activation);
+        when(mechanismFactory.make(any(), eq(context))).thenReturn(effect);
+        when(mechanismActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
@@ -203,12 +203,12 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("item.throw-item.material")).thenReturn("SHEARS");
 
-        ItemMechanism mechanism = mock(ItemMechanism.class);
+        ItemEffect effect = mock(ItemEffect.class);
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(eq(context), eq(mechanism), any())).thenReturn(activation);
+        when(mechanismFactory.make(any(), eq(context))).thenReturn(effect);
+        when(mechanismActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
@@ -238,12 +238,12 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("placing.material")).thenReturn("WARPED_BUTTON");
 
-        ItemMechanism mechanism = mock(ItemMechanism.class);
+        ItemEffect effect = mock(ItemEffect.class);
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(eq(context), eq(mechanism), any())).thenReturn(activation);
+        when(mechanismFactory.make(any(), eq(context))).thenReturn(effect);
+        when(mechanismActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
@@ -284,12 +284,12 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        ItemMechanism mechanism = mock(ItemMechanism.class);
+        ItemEffect effect = mock(ItemEffect.class);
         ItemMechanismActivation activation = mock(ItemMechanismActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(mechanismFactory.make(any(), eq(context))).thenReturn(mechanism);
-        when(mechanismActivationFactory.make(eq(context), eq(mechanism), any())).thenReturn(activation);
+        when(mechanismFactory.make(any(), eq(context))).thenReturn(effect);
+        when(mechanismActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
 
         EquipmentFactory factory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);

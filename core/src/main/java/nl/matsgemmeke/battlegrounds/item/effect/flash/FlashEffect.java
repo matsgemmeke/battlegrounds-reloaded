@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -13,7 +13,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-public class FlashEffect implements ItemMechanism {
+public class FlashEffect implements ItemEffect {
 
     @NotNull
     private FlashSettings settings;

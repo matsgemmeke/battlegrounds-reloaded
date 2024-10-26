@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -18,15 +18,15 @@ public class TriggerActivation extends BaseItemMechanismActivation {
     @NotNull
     private List<Trigger> triggers;
 
-    public TriggerActivation(@NotNull ItemMechanism mechanism) {
-        super(mechanism);
+    public TriggerActivation(@NotNull ItemEffect effect) {
+        super(effect);
         this.triggers = new ArrayList<>();
     }
 
     public void addTrigger(@NotNull Trigger trigger) {
         triggers.add(trigger);
 
-        trigger.addObserver(mechanism::activate);
+        trigger.addObserver(effect::activate);
     }
 
     public void primeDeployedObject(@NotNull ItemHolder holder, @NotNull Deployable object) {

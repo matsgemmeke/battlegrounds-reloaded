@@ -43,9 +43,9 @@ public class ItemMechanismFactoryTest {
         when(section.getString("type")).thenReturn("COMBUSTION");
 
         ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
-        ItemMechanism mechanism = factory.make(section, context);
+        ItemEffect effect = factory.make(section, context);
 
-        assertTrue(mechanism instanceof CombustionEffect);
+        assertTrue(effect instanceof CombustionEffect);
     }
 
     @Test
@@ -56,9 +56,9 @@ public class ItemMechanismFactoryTest {
         when(section.getString("type")).thenReturn("EXPLOSION");
 
         ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
-        ItemMechanism mechanism = factory.make(section, context);
+        ItemEffect effect = factory.make(section, context);
 
-        assertTrue(mechanism instanceof ExplosionEffect);
+        assertTrue(effect instanceof ExplosionEffect);
     }
 
     @Test
@@ -69,9 +69,9 @@ public class ItemMechanismFactoryTest {
         when(section.getString("type")).thenReturn("FLASH");
 
         ItemMechanismFactory factory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
-        ItemMechanism mechanism = factory.make(section, context);
+        ItemEffect effect = factory.make(section, context);
 
-        assertTrue(mechanism instanceof FlashEffect);
+        assertTrue(effect instanceof FlashEffect);
     }
 
     @Test(expected = InvalidItemConfigurationException.class)

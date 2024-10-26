@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ParticleSettings;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SmokeScreenEffect implements ItemMechanism {
+public class SmokeScreenEffect implements ItemEffect {
 
     private static final long RUNNABLE_DELAY = 0L;
     private static final long RUNNABLE_PERIOD = 1L;

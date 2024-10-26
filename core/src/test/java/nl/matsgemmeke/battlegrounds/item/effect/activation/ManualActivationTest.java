@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
@@ -13,13 +13,13 @@ import static org.mockito.Mockito.*;
 
 public class ManualActivationTest {
 
+    private ItemEffect effect;
     private ItemHolder holder;
-    private ItemMechanism mechanism;
 
     @Before
     public void setUp() {
+        effect = mock(ItemEffect.class);
         holder = mock(ItemHolder.class);
-        mechanism = mock(ItemMechanism.class);
     }
 
     @Test
@@ -27,19 +27,19 @@ public class ManualActivationTest {
         Deployable object1 = mock(Deployable.class);
         Deployable object2 = mock(Deployable.class);
 
-        ManualActivation activation = new ManualActivation(mechanism);
+        ManualActivation activation = new ManualActivation(effect);
         activation.primeDeployedObject(holder, object1);
         activation.primeDeployedObject(holder, object2);
         activation.activateDeployedObjects(holder);
 
-        verify(mechanism, times(2)).activate(eq(holder), any(Deployable.class));
+        verify(effect, times(2)).activate(eq(holder), any(Deployable.class));
     }
 
     @Test
     public void isPrimedReturnsFalseWhenMostRecentDeployedObjectIsNotNull() {
         Deployable object = mock(Deployable.class);
 
-        ManualActivation activation = new ManualActivation(mechanism);
+        ManualActivation activation = new ManualActivation(effect);
         activation.primeDeployedObject(holder, object);
 
         boolean primed = activation.isPrimed();
@@ -51,7 +51,7 @@ public class ManualActivationTest {
     public void throwErrorWhenDeployingDeferredObject() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        ManualActivation activation = new ManualActivation(mechanism);
+        ManualActivation activation = new ManualActivation(effect);
         activation.primeInHand(holder, itemStack);
     }
 }

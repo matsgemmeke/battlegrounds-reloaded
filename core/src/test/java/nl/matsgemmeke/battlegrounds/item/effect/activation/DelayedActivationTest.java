@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
@@ -19,15 +19,15 @@ import static org.mockito.Mockito.*;
 
 public class DelayedActivationTest {
 
+    private ItemEffect effect;
     private ItemHolder holder;
-    private ItemMechanism mechanism;
     private long delayUntilActivation;
     private TaskRunner taskRunner;
 
     @Before
     public void setUp() {
+        effect = mock(ItemEffect.class);
         holder = mock(ItemHolder.class);
-        mechanism = mock(ItemMechanism.class);
         taskRunner = mock(TaskRunner.class);
         delayUntilActivation = 1L;
     }
@@ -38,18 +38,18 @@ public class DelayedActivationTest {
 
         when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(mock(BukkitTask.class));
 
-        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
         activation.primeDeployedObject(holder, object);
         activation.activateDeployedObjects(holder);
 
-        verify(mechanism).activate(holder, object);
+        verify(effect).activate(holder, object);
     }
 
     @Test
     public void activateInHolderHandAfterDelay() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
         activation.primeInHand(holder, itemStack);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -58,7 +58,7 @@ public class DelayedActivationTest {
         Runnable runnable = runnableCaptor.getValue();
         runnable.run();
 
-        verify(mechanism).activate(holder, itemStack);
+        verify(effect).activate(holder, itemStack);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class DelayedActivationTest {
         Deployable object = mock(Deployable.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
         activation.primeInHand(holder, itemStack);
         activation.deploy(object);
 
@@ -76,14 +76,14 @@ public class DelayedActivationTest {
         Runnable runnable = runnableCaptor.getValue();
         runnable.run();
 
-        verify(mechanism).activate(holder, object);
+        verify(effect).activate(holder, object);
     }
 
     @Test
     public void isPrimedReturnsTrueWhenDeployedObjectsExistAndIsNull() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
         activation.primeInHand(holder, itemStack);
 
         boolean primed = activation.isPrimed();
@@ -93,7 +93,7 @@ public class DelayedActivationTest {
 
     @Test
     public void isPrimedReturnsFalseWhenActivationHasNoDeployedObjects() {
-        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
 
         boolean primed = activation.isPrimed();
 
@@ -104,7 +104,7 @@ public class DelayedActivationTest {
     public void isPrimedReturnsFalseWhenMostRecentDeployedObjectIsNotNull() {
         Deployable object = mock(Deployable.class);
 
-        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
         activation.primeDeployedObject(holder, object);
 
         boolean primed = activation.isPrimed();
@@ -119,12 +119,12 @@ public class DelayedActivationTest {
 
         when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(mock(BukkitTask.class));
 
-        DelayedActivation activation = new DelayedActivation(mechanism, taskRunner, delayUntilActivation);
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
         activation.primeInHand(holder, itemStack);
         activation.deploy(object);
         activation.activateDeployedObjects(holder);
 
-        verify(mechanism).activate(holder, object);
-        verify(mechanism, never()).activate(holder, itemStack);
+        verify(effect).activate(holder, object);
+        verify(effect, never()).activate(holder, itemStack);
     }
 }

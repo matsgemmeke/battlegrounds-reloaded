@@ -11,7 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanism;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemMechanismFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemMechanismActivationFactory;
@@ -154,8 +154,8 @@ public class EquipmentFactory implements WeaponFactory {
         String placeActionValue = controlsSection.getString("place");
         String throwActionValue = controlsSection.getString("throw");
 
-        ItemMechanism mechanism = mechanismFactory.make(section.getSection("mechanism"), context);
-        ItemMechanismActivation mechanismActivation = mechanismActivationFactory.make(context, mechanism, section.getSection("activation"));
+        ItemEffect effect = mechanismFactory.make(section.getSection("mechanism"), context);
+        ItemMechanismActivation mechanismActivation = mechanismActivationFactory.make(context, effect, section.getSection("activation"));
 
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);

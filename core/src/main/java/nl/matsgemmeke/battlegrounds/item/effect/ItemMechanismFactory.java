@@ -35,7 +35,7 @@ public class ItemMechanismFactory {
         this.taskRunner = taskRunner;
     }
 
-    public ItemMechanism make(@NotNull Section section, @NotNull GameContext context) {
+    public ItemEffect make(@NotNull Section section, @NotNull GameContext context) {
         String type = section.getString("type");
 
         if (type == null) {

@@ -6,9 +6,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A mechanism component of an item. Produces a certain effect when activated.
+ * An effect component of an item that produces a certain output when activated.
  */
-public interface ItemMechanism {
+public interface ItemEffect {
 
     /**
      * <p>Activates the mechanism in the holder's hand.</p>
