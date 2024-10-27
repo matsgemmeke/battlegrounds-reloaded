@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.Before;
@@ -36,7 +36,7 @@ public class EnemyProximityTriggerTest {
         BukkitTask task = mock(BukkitTask.class);
         ItemHolder holder = mock(ItemHolder.class);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(false);
 
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
@@ -59,7 +59,7 @@ public class EnemyProximityTriggerTest {
 
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
@@ -85,7 +85,7 @@ public class EnemyProximityTriggerTest {
 
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 

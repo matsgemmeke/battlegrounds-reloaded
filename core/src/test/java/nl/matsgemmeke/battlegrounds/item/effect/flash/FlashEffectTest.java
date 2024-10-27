@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.PotionEffectSettings;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Arrow;
@@ -57,7 +57,7 @@ public class FlashEffectTest {
         GameEntity gameEntity = mock(GameEntity.class);
         when(gameEntity.getEntity()).thenReturn(arrow);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 

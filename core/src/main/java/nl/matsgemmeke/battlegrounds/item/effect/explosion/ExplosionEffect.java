@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -40,7 +40,7 @@ public class ExplosionEffect implements ItemEffect {
         object.remove();
     }
 
-    public void activate(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+    public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         Location location = source.getLocation();
         World world = source.getWorld();
         Entity damageSource = holder.getEntity();

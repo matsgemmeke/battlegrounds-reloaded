@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A deployed object in the form as a placed {@link Block}.
  */
-public class PlacedBlock implements ActivationSource, Deployable {
+public class PlacedBlock implements EffectSource, Deployable {
 
     @NotNull
     private Block block;

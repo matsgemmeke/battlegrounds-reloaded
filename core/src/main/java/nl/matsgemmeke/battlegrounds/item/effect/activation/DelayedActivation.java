@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class DelayedActivation extends BaseItemEffectActivation {
         this.delayUntilActivation = delayUntilActivation;
     }
 
-    public void prime(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+    public void prime(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         sources.add(source);
 
         BukkitTask task = taskRunner.runTaskLater(() -> effect.activate(holder, source), delayUntilActivation);

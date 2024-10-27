@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ParticleSettings;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -54,7 +54,7 @@ public class SmokeScreenEffect implements ItemEffect {
         object.remove();
     }
 
-    public void activate(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+    public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         audioEmitter.playSounds(smokeScreenSettings.ignitionSounds(), source.getLocation());
 
         task = taskRunner.runTaskTimer(() -> {

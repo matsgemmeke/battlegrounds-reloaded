@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-public interface ActivationSource {
+public interface EffectSource {
 
     boolean exists();
 

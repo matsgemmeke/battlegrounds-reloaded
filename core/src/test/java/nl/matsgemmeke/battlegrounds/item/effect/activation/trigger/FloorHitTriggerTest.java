@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -32,7 +32,7 @@ public class FloorHitTriggerTest {
     public void stopsCheckingOnceSourceNoLongerExists() {
         ItemHolder holder = mock(ItemHolder.class);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(false);
 
         BukkitTask task = mock(BukkitTask.class);
@@ -54,7 +54,7 @@ public class FloorHitTriggerTest {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 

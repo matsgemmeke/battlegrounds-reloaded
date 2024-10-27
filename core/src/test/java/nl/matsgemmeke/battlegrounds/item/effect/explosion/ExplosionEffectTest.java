@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -45,7 +45,7 @@ public class ExplosionEffectTest {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
@@ -81,7 +81,7 @@ public class ExplosionEffectTest {
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 

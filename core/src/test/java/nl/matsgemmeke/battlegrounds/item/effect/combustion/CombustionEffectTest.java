@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -74,7 +74,7 @@ public class CombustionEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
@@ -140,7 +140,7 @@ public class CombustionEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getLocation()).thenReturn(holderLocation);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.getLocation()).thenReturn(objectLocation);
         when(source.getWorld()).thenReturn(world);
 
@@ -165,7 +165,7 @@ public class CombustionEffectTest {
 
         ItemHolder holder = mock(ItemHolder.class);
 
-        ActivationSource source = mock(ActivationSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.getLocation()).thenReturn(location);
         when(source.getWorld()).thenReturn(world);
 

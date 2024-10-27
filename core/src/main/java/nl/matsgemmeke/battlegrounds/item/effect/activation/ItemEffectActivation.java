@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,12 +35,12 @@ public interface ItemEffectActivation {
     boolean isPrimed();
 
     /**
-     * Primes the activation process with the provided {@link ItemHolder} and {@link ActivationSource}.
+     * Primes the activation process with the provided {@link ItemHolder} and {@link EffectSource}.
      *
      * @param holder the holder who primes the activation
      * @param source the source from where the effect will be activated
      */
-    void prime(@NotNull ItemHolder holder, @NotNull ActivationSource source);
+    void prime(@NotNull ItemHolder holder, @NotNull EffectSource source);
 
     /**
      * Prepares and deploys a {@link Deployable} object.

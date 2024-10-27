@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +30,7 @@ public class TriggerActivation extends BaseItemEffectActivation {
         trigger.addObserver(effect::activate);
     }
 
-    public void prime(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+    public void prime(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         sources.add(source);
 
         for (Trigger trigger : triggers) {

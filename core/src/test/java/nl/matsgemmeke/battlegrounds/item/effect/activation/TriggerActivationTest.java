@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
@@ -32,20 +32,20 @@ public class TriggerActivationTest {
 
     @Test
     public void startTriggerChecksAndActivateWhenReceivingResponse() {
-        Deployable object = mock(Deployable.class);
+        EffectSource source = mock(EffectSource.class);
 
         TriggerActivation activation = new TriggerActivation(effect);
 
         Trigger trigger = mock(Trigger.class);
         doAnswer(answer -> {
-            effect.activate(holder, object);
+            effect.activate(holder, source);
             return answer;
-        }).when(trigger).checkTriggerActivation(holder, object);
+        }).when(trigger).checkTriggerActivation(holder, source);
 
         activation.addTrigger(trigger);
-        activation.primeDeployedObject(holder, object);
+        activation.prime(holder, source);
 
-        verify(trigger).checkTriggerActivation(holder, object);
-        verify(effect).activate(holder, object);
+        verify(trigger).checkTriggerActivation(holder, source);
+        verify(effect).activate(holder, source);
     }
 }

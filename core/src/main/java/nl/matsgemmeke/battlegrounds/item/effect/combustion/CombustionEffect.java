@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -70,7 +70,7 @@ public class CombustionEffect implements ItemEffect {
         object.remove();
     }
 
-    public void activate(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+    public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         Location location = source.getLocation();
         World world = source.getWorld();
 

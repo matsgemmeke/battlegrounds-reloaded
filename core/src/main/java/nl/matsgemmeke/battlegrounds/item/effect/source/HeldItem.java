@@ -6,7 +6,7 @@ import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class HeldItem implements ActivationSource {
+public class HeldItem implements EffectSource {
 
     @NotNull
     private ItemHolder holder;

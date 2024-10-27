@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A deployed item in the form as a dropped {@link Item} entity.
  */
-public class DroppedItem implements ActivationSource, Deployable {
+public class DroppedItem implements EffectSource, Deployable {
 
     @NotNull
     private Item itemEntity;
