@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
@@ -33,16 +34,16 @@ public class DelayedActivationTest {
     }
 
     @Test
-    public void shouldActivateEffectForAllDeployedObjectsWhenActivating() {
-        Deployable object = mock(Deployable.class);
+    public void shouldActivateEffectAtAllSourcesWhenActivating() {
+        EffectSource source = mock(EffectSource.class);
 
         when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(mock(BukkitTask.class));
 
         DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
-        activation.primeDeployedObject(holder, object);
-        activation.activateDeployedObjects(holder);
+        activation.prime(holder, source);
+        activation.activateInstantly(holder);
 
-        verify(effect).activate(holder, object);
+        verify(effect).activate(holder, source);
     }
 
     @Test
@@ -122,7 +123,7 @@ public class DelayedActivationTest {
         DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
         activation.primeInHand(holder, itemStack);
         activation.deploy(object);
-        activation.activateDeployedObjects(holder);
+        activation.activateInstantly(holder);
 
         verify(effect).activate(holder, object);
         verify(effect, never()).activate(holder, itemStack);

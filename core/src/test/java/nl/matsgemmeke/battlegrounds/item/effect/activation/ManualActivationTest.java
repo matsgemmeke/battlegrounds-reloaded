@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
@@ -23,16 +24,18 @@ public class ManualActivationTest {
     }
 
     @Test
-    public void shouldActivateEffectForAllDeployedObjectsWhenActivating() {
-        Deployable object1 = mock(Deployable.class);
-        Deployable object2 = mock(Deployable.class);
+    public void shouldActivateEffectAtAllSourcesWhenActivating() {
+        EffectSource source1 = mock(EffectSource.class);
+        EffectSource source2 = mock(EffectSource.class);
 
         ManualActivation activation = new ManualActivation(effect);
-        activation.primeDeployedObject(holder, object1);
-        activation.primeDeployedObject(holder, object2);
-        activation.activateDeployedObjects(holder);
+        activation.prime(holder, source1);
+        activation.prime(holder, source2);
+        activation.activateInstantly(holder);
 
-        verify(effect, times(2)).activate(eq(holder), any(Deployable.class));
+        verify(effect, times(2)).activate(any(ItemHolder.class), any(EffectSource.class));
+        verify(effect).activate(holder, source1);
+        verify(effect).activate(holder, source2);
     }
 
     @Test

@@ -28,11 +28,9 @@ public abstract class BaseItemEffectActivation implements ItemEffectActivation {
         this.tasks = new ArrayList<>();
     }
 
-    public void activateDeployedObjects(@NotNull ItemHolder holder) {
-        for (Deployable object : deployedObjects) {
-            if (object != null) {
-                effect.activate(holder, object);
-            }
+    public void activateInstantly(@NotNull ItemHolder holder) {
+        for (EffectSource source : sources) {
+            effect.activate(holder, source);
         }
 
         for (BukkitTask task : tasks) {

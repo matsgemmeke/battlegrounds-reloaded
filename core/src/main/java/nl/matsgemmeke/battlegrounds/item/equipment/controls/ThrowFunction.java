@@ -107,12 +107,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
         // Check if the effect activation is priming its next deployment. If yes, deploy the dropped item. Otherwise,
         // prime and deploy like normally.
-        if (effectActivation.isPrimed()) {
-            effectActivation.deploy(droppedItem);
-        } else {
-            effectActivation.primeDeployedObject(holder, droppedItem);
-        }
-
+        effectActivation.prime(holder, droppedItem);
         return true;
     }
 }

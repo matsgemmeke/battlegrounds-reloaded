@@ -188,7 +188,7 @@ public class PlaceFunctionTest {
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(faceAttachable).setAttachedFace(AttachedFace.CEILING);
-        verify(effectActivation).primeDeployedObject(holder, captor.getValue());
+        verify(effectActivation).prime(holder, captor.getValue());
     }
 
     @Test

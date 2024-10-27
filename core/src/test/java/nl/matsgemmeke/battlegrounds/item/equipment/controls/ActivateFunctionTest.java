@@ -77,7 +77,7 @@ public class ActivateFunctionTest {
         function.perform(holder);
 
         verify(holder).setHeldItem(null);
-        verify(effectActivation).activateDeployedObjects(holder);
+        verify(effectActivation).activateInstantly(holder);
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayUntilActivation));
     }
 }

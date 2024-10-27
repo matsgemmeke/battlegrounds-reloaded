@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.source.HeldItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +48,7 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
 
     public boolean perform(@NotNull EquipmentHolder holder) {
         audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
-        effectActivation.primeInHand(holder, holder.getHeldItem());
+        effectActivation.prime(holder, new HeldItem(holder, holder.getHeldItem()));
         return true;
     }
 }

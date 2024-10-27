@@ -47,6 +47,8 @@ public class ExplosionEffect implements ItemEffect {
 
         world.createExplosion(location, settings.power(), settings.setFire(), settings.breakBlocks(), damageSource);
 
+        source.remove();
+
         for (GameEntity target : targetFinder.findTargets(holder, location, rangeProfile.getLongRangeDistance())) {
             Location targetLocation = target.getEntity().getLocation();
 
@@ -55,7 +57,5 @@ public class ExplosionEffect implements ItemEffect {
 
             target.damage(damage);
         }
-
-        source.remove();
     }
 }

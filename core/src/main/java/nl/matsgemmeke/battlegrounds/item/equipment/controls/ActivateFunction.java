@@ -64,7 +64,7 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     public boolean perform(@NotNull EquipmentHolder holder) {
         audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
 
-        taskRunner.runTaskLater(() -> effectActivation.activateDeployedObjects(holder), delayUntilActivation);
+        taskRunner.runTaskLater(() -> effectActivation.activateInstantly(holder), delayUntilActivation);
 
         holder.setHeldItem(null);
 

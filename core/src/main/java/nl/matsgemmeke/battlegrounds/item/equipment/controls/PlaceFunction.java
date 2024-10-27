@@ -104,12 +104,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
         taskRunner.runTaskLater(() -> performing = false, delayAfterPlacement);
 
-        if (effectActivation.isPrimed()) {
-            effectActivation.deploy(placedBlock);
-        } else {
-            effectActivation.prime(holder, placedBlock);
-        }
-
+        effectActivation.prime(holder, placedBlock);
         return true;
     }
 

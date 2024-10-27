@@ -17,7 +17,7 @@ public interface ItemEffectActivation {
      *
      * @param holder the holder who triggers the activation
      */
-    void activateDeployedObjects(@NotNull ItemHolder holder);
+    void activateInstantly(@NotNull ItemHolder holder);
 
     /**
      * Notifies the effect activation that a {@link Deployable} object was deployed whose activation had already
