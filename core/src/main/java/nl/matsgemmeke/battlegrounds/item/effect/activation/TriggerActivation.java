@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,12 +30,16 @@ public class TriggerActivation extends BaseItemEffectActivation {
         trigger.addObserver(effect::activate);
     }
 
-    public void primeDeployedObject(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        deployedObjects.add(object);
+    public void prime(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        sources.add(source);
 
         for (Trigger trigger : triggers) {
-            trigger.checkTriggerActivation(holder, object);
+            trigger.checkTriggerActivation(holder, source);
         }
+    }
+
+    public void primeDeployedObject(@NotNull ItemHolder holder, @NotNull Deployable object) {
+        deployedObjects.add(object);
     }
 
     public void primeInHand(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {

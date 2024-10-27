@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -33,29 +34,32 @@ public class FloorHitTrigger implements Trigger {
     }
 
     public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(holder, object), RUNNABLE_DELAY, periodBetweenChecks);
     }
 
-    private void runCheck(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        if (!object.exists()) {
+    public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        task = taskRunner.runTaskTimer(() -> this.runCheck(holder, source), RUNNABLE_DELAY, periodBetweenChecks);
+    }
+
+    private void runCheck(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        if (!source.exists()) {
             task.cancel();
             return;
         }
 
         // Subtract a minimal amount from the y coordinate to make the sure we get the block right below the object
-        Block blockBelowObject = object.getLocation().subtract(0, Y_SUBTRACTION, 0).getBlock();
+        Block blockBelowObject = source.getLocation().subtract(0, Y_SUBTRACTION, 0).getBlock();
 
         if (blockBelowObject.isPassable()) {
             return;
         }
 
-        this.notifyObservers(holder, object);
+        this.notifyObservers(holder, source);
         task.cancel();
     }
 
-    private void notifyObservers(@NotNull ItemHolder holder, @NotNull Deployable object) {
+    private void notifyObservers(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
         for (TriggerObserver observer : observers) {
-            observer.onTrigger(holder, object);
+            observer.onTrigger(holder, source);
         }
     }
 }

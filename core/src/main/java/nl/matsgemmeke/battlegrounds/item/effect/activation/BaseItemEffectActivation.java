@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,8 @@ public abstract class BaseItemEffectActivation implements ItemEffectActivation {
     @NotNull
     protected ItemEffect effect;
     @NotNull
+    protected List<ActivationSource> sources;
+    @NotNull
     protected List<BukkitTask> tasks;
     @NotNull
     protected List<Deployable> deployedObjects;
@@ -21,6 +24,7 @@ public abstract class BaseItemEffectActivation implements ItemEffectActivation {
     public BaseItemEffectActivation(@NotNull ItemEffect effect) {
         this.effect = effect;
         this.deployedObjects = new ArrayList<>();
+        this.sources = new ArrayList<>();
         this.tasks = new ArrayList<>();
     }
 

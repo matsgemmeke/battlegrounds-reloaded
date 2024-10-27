@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,28 +44,31 @@ public class EnemyProximityTrigger implements Trigger {
     }
 
     public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(holder, object), RUNNABLE_DELAY, periodBetweenChecks);
     }
 
-    private void runCheck(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        if (!object.exists()) {
+    public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        task = taskRunner.runTaskTimer(() -> this.runCheck(holder, source), RUNNABLE_DELAY, periodBetweenChecks);
+    }
+
+    private void runCheck(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        if (!source.exists()) {
             task.cancel();
             return;
         }
 
-        List<GameEntity> targets = targetFinder.findEnemyTargets(holder, object.getLocation(), checkingRange);
+        List<GameEntity> targets = targetFinder.findEnemyTargets(holder, source.getLocation(), checkingRange);
 
         if (targets.isEmpty()) {
             return;
         }
 
-        this.notifyObservers(holder, object);
+        this.notifyObservers(holder, source);
         task.cancel();
     }
 
-    private void notifyObservers(@NotNull ItemHolder holder, @NotNull Deployable object) {
+    private void notifyObservers(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
         for (TriggerObserver observer : observers) {
-            observer.onTrigger(holder, object);
+            observer.onTrigger(holder, source);
         }
     }
 }

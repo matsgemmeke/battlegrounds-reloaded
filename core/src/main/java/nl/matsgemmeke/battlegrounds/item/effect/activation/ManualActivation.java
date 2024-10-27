@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +14,10 @@ public class ManualActivation extends BaseItemEffectActivation {
 
     public ManualActivation(@NotNull ItemEffect effect) {
         super(effect);
+    }
+
+    public void prime(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        sources.add(source);
     }
 
     public void primeDeployedObject(@NotNull ItemHolder holder, @NotNull Deployable object) {

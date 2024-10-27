@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.Before;
@@ -32,17 +32,17 @@ public class EnemyProximityTriggerTest {
     }
 
     @Test
-    public void stopCheckOnceObjectIsRemoved() {
+    public void stopsCheckingOnceSourceNoLongerExists() {
         BukkitTask task = mock(BukkitTask.class);
         ItemHolder holder = mock(ItemHolder.class);
 
-        Deployable object = mock(Deployable.class);
-        when(object.exists()).thenReturn(false);
+        ActivationSource source = mock(ActivationSource.class);
+        when(source.exists()).thenReturn(false);
 
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(targetFinder, taskRunner, checkingRange, periodBetweenChecks);
-        trigger.checkTriggerActivation(holder, object);
+        trigger.checkTriggerActivation(holder, source);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -57,17 +57,17 @@ public class EnemyProximityTriggerTest {
         BukkitTask task = mock(BukkitTask.class);
         ItemHolder holder = mock(ItemHolder.class);
 
-        Location objectLocation = new Location(null, 1, 1, 1);
+        Location sourceLocation = new Location(null, 1, 1, 1);
 
-        Deployable object = mock(Deployable.class);
-        when(object.exists()).thenReturn(true);
-        when(object.getLocation()).thenReturn(objectLocation);
+        ActivationSource source = mock(ActivationSource.class);
+        when(source.exists()).thenReturn(true);
+        when(source.getLocation()).thenReturn(sourceLocation);
 
-        when(targetFinder.findEnemyTargets(holder, objectLocation, checkingRange)).thenReturn(Collections.emptyList());
+        when(targetFinder.findEnemyTargets(holder, sourceLocation, checkingRange)).thenReturn(Collections.emptyList());
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(targetFinder, taskRunner, checkingRange, periodBetweenChecks);
-        trigger.checkTriggerActivation(holder, object);
+        trigger.checkTriggerActivation(holder, source);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -83,25 +83,25 @@ public class EnemyProximityTriggerTest {
         ItemHolder holder = mock(ItemHolder.class);
         TriggerObserver observer = mock(TriggerObserver.class);
 
-        Location objectLocation = new Location(null, 1, 1, 1);
+        Location sourceLocation = new Location(null, 1, 1, 1);
 
-        Deployable object = mock(Deployable.class);
-        when(object.exists()).thenReturn(true);
-        when(object.getLocation()).thenReturn(objectLocation);
+        ActivationSource source = mock(ActivationSource.class);
+        when(source.exists()).thenReturn(true);
+        when(source.getLocation()).thenReturn(sourceLocation);
 
-        when(targetFinder.findEnemyTargets(holder, objectLocation, checkingRange)).thenReturn(List.of(mock(GameEntity.class)));
+        when(targetFinder.findEnemyTargets(holder, sourceLocation, checkingRange)).thenReturn(List.of(mock(GameEntity.class)));
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(targetFinder, taskRunner, checkingRange, periodBetweenChecks);
         trigger.addObserver(observer);
-        trigger.checkTriggerActivation(holder, object);
+        trigger.checkTriggerActivation(holder, source);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
 
         runnableCaptor.getValue().run();
 
-        verify(observer).onTrigger(holder, object);
+        verify(observer).onTrigger(holder, source);
         verify(task).cancel();
     }
 }
