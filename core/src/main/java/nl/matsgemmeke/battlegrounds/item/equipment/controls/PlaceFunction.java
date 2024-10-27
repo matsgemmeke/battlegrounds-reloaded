@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
-import nl.matsgemmeke.battlegrounds.item.deployment.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.source.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -107,7 +107,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
         if (effectActivation.isPrimed()) {
             effectActivation.deploy(placedBlock);
         } else {
-            effectActivation.primeDeployedObject(holder, placedBlock);
+            effectActivation.prime(holder, placedBlock);
         }
 
         return true;
