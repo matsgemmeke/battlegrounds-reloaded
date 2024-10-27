@@ -6,8 +6,10 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.PotionEffectSettings;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -31,23 +33,32 @@ public class FlashEffect implements ItemEffect {
 
     public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
         holder.removeItem(itemStack);
-
-        this.activate(holder, holder.getLocation(), holder.getWorld());
     }
 
     public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
         object.remove();
-
-        this.activate(holder, object.getLocation(), object.getWorld());
     }
 
-    private void activate(@NotNull ItemHolder holder, @NotNull Location location, @NotNull World world) {
+    public void activate(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        this.createExplosionEffect(holder, source);
+        this.applyPotionEffectToTargets(holder, source.getLocation());
+
+        source.remove();
+    }
+
+    private void createExplosionEffect(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
         float power = flashSettings.explosionPower();
         boolean setFire = flashSettings.explosionSetFire();
         boolean breakBlocks = flashSettings.explosionBreakBlocks();
 
-        world.createExplosion(location, power, setFire, breakBlocks, holder.getEntity());
+        World world = source.getWorld();
+        Location location = source.getLocation();
+        Entity damageSource = holder.getEntity();
 
+        world.createExplosion(location, power, setFire, breakBlocks, damageSource);
+    }
+
+    private void applyPotionEffectToTargets(@NotNull ItemHolder holder, @NotNull Location location) {
         for (GameEntity target : targetFinder.findTargets(holder, location, flashSettings.range())) {
             if (!(target.getEntity() instanceof LivingEntity entity)) {
                 continue;

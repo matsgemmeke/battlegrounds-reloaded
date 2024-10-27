@@ -7,13 +7,12 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +54,7 @@ public class CombustionEffectTest {
     }
 
     @Test
-    public void shouldCreateFireCircleAtHolderLocation() {
+    public void createFireCircleAtSourceLocation() {
         int radius = 2;
         long ticksBetweenFireSpread = 5L;
         boolean burnBlocks = false;
@@ -72,12 +71,12 @@ public class CombustionEffectTest {
         World world = mock(World.class);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(mock(Block.class));
 
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
-        Location location = new Location(world, 0, 0, 0);
-
         ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getLocation()).thenReturn(location);
-        when(holder.getWorld()).thenReturn(world);
+        Location sourceLocation = new Location(world, 0, 0, 0);
+
+        ActivationSource source = mock(ActivationSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getWorld()).thenReturn(world);
 
         Block middleBlock = this.createBlock(world, 0, 0, 0, Material.AIR, true);
         Block leftBlock = this.createBlock(world, -1, 0, 0, Material.AIR, true);
@@ -89,7 +88,7 @@ public class CombustionEffectTest {
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenFireSpread))).thenReturn(task);
 
         CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        effect.activate(holder, itemStack);
+        effect.activate(holder, source);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -122,43 +121,7 @@ public class CombustionEffectTest {
         verify(blockOutsideLineOfSight, never()).setType(Material.FIRE);
         verify(blockOutsideLineOfSight, never()).setMetadata(anyString(), any());
 
-        verify(holder).removeItem(itemStack);
-        verify(task).cancel();
-    }
-
-    @Test
-    public void shouldCreateFireCircleAtDeployableObjectLocationAndRemoveObject() {
-        int radius = 1;
-        long ticksBetweenSpread = 5L;
-
-        CombustionSettings settings = new CombustionSettings(Collections.emptyList(), radius, ticksBetweenSpread, false, false);
-
-        World world = mock(World.class);
-        when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(mock(Block.class));
-
-        ItemHolder holder = mock(ItemHolder.class);
-        Location location = new Location(world, 0, 0, 0);
-
-        Deployable object = mock(Deployable.class);
-        when(object.getLocation()).thenReturn(location);
-        when(object.getWorld()).thenReturn(world);
-
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenSpread))).thenReturn(task);
-
-        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        effect.activate(holder, object);
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
-
-        // Simulate the task running twice to exceed the radius
-        Runnable taskRunnable = runnableCaptor.getValue();
-        taskRunnable.run();
-        taskRunnable.run();
-        taskRunnable.run();
-
-        verify(object).remove();
-
+        verify(source).remove();
         verify(task).cancel();
     }
 
@@ -177,21 +140,21 @@ public class CombustionEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getLocation()).thenReturn(holderLocation);
 
-        Deployable object = mock(Deployable.class);
-        when(object.getLocation()).thenReturn(objectLocation);
-        when(object.getWorld()).thenReturn(world);
+        ActivationSource source = mock(ActivationSource.class);
+        when(source.getLocation()).thenReturn(objectLocation);
+        when(source.getWorld()).thenReturn(world);
 
         when(targetFinder.findTargets(holder, objectLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
         CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        effect.activate(holder, object);
+        effect.activate(holder, source);
 
         verify(holder).damage(MEDIUM_RANGE_DAMAGE);
         verify(target).damage(SHORT_RANGE_DAMAGE);
     }
 
     @Test
-    public void playCombustionSoundAtActivationLocation() {
+    public void playCombustionSoundAtSourceLocation() {
         GameSound sound = mock(GameSound.class);
         List<GameSound> sounds = List.of(sound);
 
@@ -201,13 +164,13 @@ public class CombustionEffectTest {
         Location location = new Location(world, 0, 0, 0);
 
         ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getLocation()).thenReturn(location);
-        when(holder.getWorld()).thenReturn(world);
 
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
+        ActivationSource source = mock(ActivationSource.class);
+        when(source.getLocation()).thenReturn(location);
+        when(source.getWorld()).thenReturn(world);
 
         CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
-        effect.activate(holder, itemStack);
+        effect.activate(holder, source);
 
         verify(audioEmitter).playSounds(sounds, location);
     }

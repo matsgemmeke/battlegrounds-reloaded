@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -63,17 +64,16 @@ public class CombustionEffect implements ItemEffect {
 
     public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
         holder.removeItem(itemStack);
-
-        this.activate(holder, holder.getLocation(), holder.getWorld());
     }
 
     public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
         object.remove();
-
-        this.activate(holder, object.getLocation(), object.getWorld());
     }
 
-    private void activate(@NotNull ItemHolder holder, @NotNull Location location, @NotNull World world) {
+    public void activate(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        Location location = source.getLocation();
+        World world = source.getWorld();
+
         audioEmitter.playSounds(settings.sounds(), location);
 
         this.inflictDamage(holder, location);
@@ -93,6 +93,8 @@ public class CombustionEffect implements ItemEffect {
                 }
             }
         }, RUNNABLE_DELAY, settings.ticksBetweenFireSpread());
+
+        source.remove();
     }
 
     private void inflictDamage(@NotNull ItemHolder holder, @NotNull Location location) {

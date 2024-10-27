@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ParticleSettings;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -47,25 +48,21 @@ public class SmokeScreenEffect implements ItemEffect {
 
     public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
         holder.removeItem(itemStack);
-
-        this.activate(holder.getLocation(), holder.getWorld());
     }
 
     public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
         object.remove();
-
-        this.activate(object.getLocation(), object.getWorld());
     }
 
-    private void activate(@NotNull Location location, @NotNull World world) {
-        audioEmitter.playSounds(smokeScreenSettings.ignitionSounds(), location);
+    public void activate(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        audioEmitter.playSounds(smokeScreenSettings.ignitionSounds(), source.getLocation());
 
         task = taskRunner.runTaskTimer(() -> {
             if (++currentSize > smokeScreenSettings.size()) {
                 task.cancel();
                 return;
             }
-            this.createSphere(location, world, currentSize);
+            this.createSphere(source.getLocation(), source.getWorld(), currentSize);
         }, RUNNABLE_DELAY, RUNNABLE_PERIOD);
     }
 

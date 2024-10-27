@@ -6,12 +6,12 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ExplosionEffect implements ItemEffect {
 
@@ -34,18 +34,18 @@ public class ExplosionEffect implements ItemEffect {
 
     public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
         holder.removeItem(itemStack);
-
-        this.activate(holder, holder.getLocation(), holder.getWorld(), holder.getEntity());
     }
 
     public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
         object.remove();
-
-        this.activate(holder, object.getLocation(), object.getWorld(), holder.getEntity());
     }
 
-    private void activate(@NotNull ItemHolder holder, @NotNull Location location, @NotNull World world, @Nullable Entity source) {
-        world.createExplosion(location, settings.power(), settings.setFire(), settings.breakBlocks(), source);
+    public void activate(@NotNull ItemHolder holder, @NotNull ActivationSource source) {
+        Location location = source.getLocation();
+        World world = source.getWorld();
+        Entity damageSource = holder.getEntity();
+
+        world.createExplosion(location, settings.power(), settings.setFire(), settings.breakBlocks(), damageSource);
 
         for (GameEntity target : targetFinder.findTargets(holder, location, rangeProfile.getLongRangeDistance())) {
             Location targetLocation = target.getEntity().getLocation();
@@ -55,5 +55,7 @@ public class ExplosionEffect implements ItemEffect {
 
             target.damage(damage);
         }
+
+        source.remove();
     }
 }

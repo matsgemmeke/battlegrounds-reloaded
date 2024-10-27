@@ -3,13 +3,11 @@ package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ActivationSource;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,35 +40,14 @@ public class ExplosionEffectTest {
     }
 
     @Test
-    public void shouldCreateExplosionAtLocationOfHolder() {
+    public void createExplosionAtSourceLocation() {
         Entity entity = mock(Entity.class);
         World world = mock(World.class);
-        Location location = new Location(world, 1, 1, 1);
+        Location sourceLocation = new Location(world, 1, 1, 1);
 
-        ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getEntity()).thenReturn(entity);
-        when(holder.getLocation()).thenReturn(location);
-        when(holder.getWorld()).thenReturn(world);
-
-        ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
-
-        ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
-        effect.activate(holder, itemStack);
-
-        verify(holder).removeItem(itemStack);
-        verify(world).createExplosion(location, power, setFire, breakBlocks, entity);
-    }
-
-    @Test
-    public void shouldCreateExplosionAtDeployedObjectLocation() {
-        Entity entity = mock(Entity.class);
-        World world = mock(World.class);
-        Location location = new Location(world, 1, 1, 1);
-
-        Deployable object = mock(Deployable.class);
-        when(object.getLocation()).thenReturn(location);
-        when(object.getWorld()).thenReturn(world);
+        ActivationSource source = mock(ActivationSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getWorld()).thenReturn(world);
 
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getEntity()).thenReturn(entity);
@@ -78,20 +55,20 @@ public class ExplosionEffectTest {
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
 
         ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
-        effect.activate(holder, object);
+        effect.activate(holder, source);
 
-        verify(object).remove();
-        verify(world).createExplosion(location, power, setFire, breakBlocks, entity);
+        verify(source).remove();
+        verify(world).createExplosion(sourceLocation, power, setFire, breakBlocks, entity);
     }
 
     @Test
     public void shouldInflictRangedDamageOnAllEntitiesInsideTheLongRangeDistance() {
         World world = mock(World.class);
-        Location holderLocation = new Location(world, 1, 1, 1);
+        Location sourceLocation = new Location(world, 1, 1, 1);
         Location targetLocation = new Location(world, 8, 1, 1);
 
         Entity holderEntity = mock(Entity.class);
-        when(holderEntity.getLocation()).thenReturn(holderLocation);
+        when(holderEntity.getLocation()).thenReturn(sourceLocation);
         when(holderEntity.getWorld()).thenReturn(world);
 
         Entity targetEntity = mock(Entity.class);
@@ -100,20 +77,22 @@ public class ExplosionEffectTest {
 
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getEntity()).thenReturn(holderEntity);
-        when(holder.getLocation()).thenReturn(holderLocation);
-        when(holder.getWorld()).thenReturn(world);
 
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        when(targetFinder.findTargets(holder, holderLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
+        ActivationSource source = mock(ActivationSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getWorld()).thenReturn(world);
+
+        when(targetFinder.findTargets(holder, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
-        effect.activate(holder, itemStack);
+        effect.activate(holder, source);
 
+        verify(source).remove();
         verify(holder).damage(SHORT_RANGE_DAMAGE);
         verify(target).damage(LONG_RANGE_DAMAGE);
     }
