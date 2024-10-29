@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.scheduler.BukkitTask;
@@ -17,13 +16,10 @@ public abstract class BaseItemEffectActivation implements ItemEffectActivation {
     @NotNull
     protected List<BukkitTask> tasks;
     @NotNull
-    protected List<Deployable> deployedObjects;
-    @NotNull
     protected List<EffectSource> sources;
 
     public BaseItemEffectActivation(@NotNull ItemEffect effect) {
         this.effect = effect;
-        this.deployedObjects = new ArrayList<>();
         this.sources = new ArrayList<>();
         this.tasks = new ArrayList<>();
     }
@@ -37,19 +33,11 @@ public abstract class BaseItemEffectActivation implements ItemEffectActivation {
             task.cancel();
         }
 
-        deployedObjects.clear();
+        sources.clear();
         tasks.clear();
     }
 
-    public void deploy(@NotNull Deployable object) {
-        for (int i = 0; i < deployedObjects.size(); i++) {
-            if (deployedObjects.get(i) == null) {
-                deployedObjects.set(i, object);
-            }
-        }
-    }
-
     public boolean isPrimed() {
-        return !deployedObjects.isEmpty() && deployedObjects.get(deployedObjects.size() - 1) == null;
+        return !sources.isEmpty() && !sources.get(sources.size() - 1).isDeployed();
     }
 }

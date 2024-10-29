@@ -43,9 +43,6 @@ public class EnemyProximityTrigger implements Trigger {
         observers.add(observer);
     }
 
-    public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull Deployable object) {
-    }
-
     public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         task = taskRunner.runTaskTimer(() -> this.runCheck(holder, source), RUNNABLE_DELAY, periodBetweenChecks);
     }

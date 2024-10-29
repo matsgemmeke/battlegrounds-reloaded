@@ -172,8 +172,6 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        when(effectActivation.isPrimed()).thenReturn(false);
-
         PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
@@ -181,14 +179,13 @@ public class PlaceFunctionTest {
         assertTrue(performed);
 
         ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
-        verify(item).onDeploy(captor.capture());
+        verify(effectActivation).prime(eq(holder), captor.capture());
 
         assertEquals(location, captor.getValue().getLocation());
 
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(faceAttachable).setAttachedFace(AttachedFace.CEILING);
-        verify(effectActivation).prime(holder, captor.getValue());
     }
 
     @Test
@@ -212,8 +209,6 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        when(effectActivation.isPrimed()).thenReturn(true);
-
         PlaceFunction function = new PlaceFunction(item, effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);
@@ -221,14 +216,13 @@ public class PlaceFunctionTest {
         assertTrue(performed);
 
         ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
-        verify(item).onDeploy(captor.capture());
+        verify(effectActivation).prime(eq(holder), captor.capture());
 
         assertEquals(location, captor.getValue().getLocation());
 
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(faceAttachable).setAttachedFace(AttachedFace.FLOOR);
-        verify(effectActivation).deploy(captor.getValue());
     }
 
     @Test
@@ -262,7 +256,7 @@ public class PlaceFunctionTest {
         assertTrue(performed);
 
         ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
-        verify(item).onDeploy(captor.capture());
+        verify(effectActivation).prime(eq(holder), captor.capture());
 
         assertEquals(location, captor.getValue().getLocation());
 
@@ -271,6 +265,5 @@ public class PlaceFunctionTest {
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(directional).setFacing(targetBlockFace);
         verify(faceAttachable).setAttachedFace(AttachedFace.WALL);
-        verify(effectActivation).deploy(captor.getValue());
     }
 }

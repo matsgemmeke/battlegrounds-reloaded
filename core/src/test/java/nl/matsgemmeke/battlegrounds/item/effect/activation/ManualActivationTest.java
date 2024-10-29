@@ -1,15 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
 public class ManualActivationTest {
@@ -36,25 +32,5 @@ public class ManualActivationTest {
         verify(effect, times(2)).activate(any(ItemHolder.class), any(EffectSource.class));
         verify(effect).activate(holder, source1);
         verify(effect).activate(holder, source2);
-    }
-
-    @Test
-    public void isPrimedReturnsFalseWhenMostRecentDeployedObjectIsNotNull() {
-        Deployable object = mock(Deployable.class);
-
-        ManualActivation activation = new ManualActivation(effect);
-        activation.primeDeployedObject(holder, object);
-
-        boolean primed = activation.isPrimed();
-
-        assertFalse(primed);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void throwErrorWhenDeployingDeferredObject() {
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
-
-        ManualActivation activation = new ManualActivation(effect);
-        activation.primeInHand(holder, itemStack);
     }
 }

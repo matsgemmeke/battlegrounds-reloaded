@@ -75,7 +75,7 @@ public class ThrowFunctionTest {
     }
 
     @Test
-    public void shouldDeployDroppedItemAndPrimeWhenPerforming() {
+    public void shouldPrimeDroppedItemWhenPerforming() {
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Item itemEntity = mock(Item.class);
@@ -101,45 +101,10 @@ public class ThrowFunctionTest {
         assertTrue(performed);
 
         ArgumentCaptor<DroppedItem> captor = ArgumentCaptor.forClass(DroppedItem.class);
-        verify(item).onDeploy(captor.capture());
+        verify(effectActivation).prime(eq(holder), captor.capture());
 
         assertEquals(location, captor.getValue().getLocation());
 
-        verify(effectActivation).primeDeployedObject(holder, captor.getValue());
-        verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
-        verify(world).dropItem(location, itemStack);
-    }
-
-    @Test
-    public void shouldDeployDroppedItemAndNotifyEffectActivationOfDeferredDeployment() {
-        Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
-
-        Item itemEntity = mock(Item.class);
-        when(itemEntity.getLocation()).thenReturn(location);
-
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
-        when(itemTemplate.createItemStack()).thenReturn(itemStack);
-
-        World world = mock(World.class);
-        when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
-
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.getLocation()).thenReturn(location);
-        when(holder.getThrowingDirection()).thenReturn(location);
-        when(holder.getWorld()).thenReturn(world);
-
-        when(effectActivation.isPrimed()).thenReturn(true);
-        when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
-
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
-        boolean performed = function.perform(holder);
-
-        assertTrue(performed);
-
-        ArgumentCaptor<DroppedItem> captor = ArgumentCaptor.forClass(DroppedItem.class);
-        verify(item).onDeploy(captor.capture());
-
-        verify(effectActivation).deploy(captor.getValue());
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
         verify(world).dropItem(location, itemStack);
     }

@@ -14,5 +14,7 @@ public interface EffectSource {
     @NotNull
     World getWorld();
 
+    boolean isDeployed();
+
     void remove();
 }

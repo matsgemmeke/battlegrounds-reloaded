@@ -36,6 +36,10 @@ public class PlacedBlock implements EffectSource, Deployable {
         return block.getWorld();
     }
 
+    public boolean isDeployed() {
+        return true;
+    }
+
     public void remove() {
         block.setType(Material.AIR);
     }

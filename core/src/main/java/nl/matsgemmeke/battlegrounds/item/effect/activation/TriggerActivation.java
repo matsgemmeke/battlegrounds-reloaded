@@ -1,11 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -36,13 +34,5 @@ public class TriggerActivation extends BaseItemEffectActivation {
         for (Trigger trigger : triggers) {
             trigger.checkTriggerActivation(holder, source);
         }
-    }
-
-    public void primeDeployedObject(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        deployedObjects.add(object);
-    }
-
-    public void primeInHand(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
-        throw new UnsupportedOperationException("Trigger effect activation does not support priming a deferred object");
     }
 }

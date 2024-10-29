@@ -4,8 +4,6 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,14 +18,6 @@ public class TriggerActivationTest {
     public void setUp() {
         effect = mock(ItemEffect.class);
         holder = mock(ItemHolder.class);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void throwErrorWhenAttemptingToStartWithDeferredObject() {
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
-
-        TriggerActivation activation = new TriggerActivation(effect);
-        activation.primeInHand(holder, itemStack);
     }
 
     @Test

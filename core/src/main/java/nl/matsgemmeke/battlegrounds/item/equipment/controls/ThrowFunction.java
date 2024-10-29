@@ -96,18 +96,13 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         itemEntity.setPickupDelay(DEFAULT_PICKUP_DELAY);
         itemEntity.setVelocity(velocity);
 
-        DroppedItem droppedItem = new DroppedItem(itemEntity);
-        item.onDeploy(droppedItem);
-
         audioEmitter.playSounds(sounds, location);
 
         performing = true;
 
         taskRunner.runTaskLater(() -> performing = false, delayAfterThrow);
 
-        // Check if the effect activation is priming its next deployment. If yes, deploy the dropped item. Otherwise,
-        // prime and deploy like normally.
-        effectActivation.prime(holder, droppedItem);
+        effectActivation.prime(holder, new DroppedItem(itemEntity));
         return true;
     }
 }

@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.source.HeldItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -49,7 +51,9 @@ public class CookFunctionTest {
         CookFunction function = new CookFunction(effectActivation, audioEmitter);
         function.perform(holder);
 
+        ArgumentCaptor<HeldItem> heldItemCaptor = ArgumentCaptor.forClass(HeldItem.class);
+        verify(effectActivation).prime(eq(holder), heldItemCaptor.capture());
+
         verify(audioEmitter).playSounds(any(), eq(location));
-        verify(effectActivation).primeInHand(holder, itemStack);
     }
 }

@@ -32,6 +32,10 @@ public class DroppedItem implements EffectSource, Deployable {
         return itemEntity.getWorld();
     }
 
+    public boolean isDeployed() {
+        return true;
+    }
+
     public void remove() {
         itemEntity.remove();
     }

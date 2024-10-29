@@ -32,6 +32,10 @@ public class HeldItem implements EffectSource {
         return holder.getWorld();
     }
 
+    public boolean isDeployed() {
+        return false;
+    }
+
     public void remove() {
         holder.removeItem(itemStack);
     }
