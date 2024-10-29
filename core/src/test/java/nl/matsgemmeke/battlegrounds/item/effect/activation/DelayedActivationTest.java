@@ -7,8 +7,10 @@ import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -42,11 +44,97 @@ public class DelayedActivationTest {
     }
 
     @Test
-    public void isPrimedReturnsFalseWhenActivationHasNoDeployedObjects() {
+    public void isPrimedReturnsFalseWhenActivationHasNoEffectSources() {
         DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
 
         boolean primed = activation.isPrimed();
 
         assertFalse(primed);
+    }
+
+    @Test
+    public void isPrimedReturnsFalseWhenTheLatestEffectSourceIsDeployed() {
+        EffectSource source = mock(EffectSource.class);
+        when(source.isDeployed()).thenReturn(true);
+
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
+        activation.prime(holder, source);
+
+        boolean primed = activation.isPrimed();
+
+        assertFalse(primed);
+    }
+
+    @Test
+    public void isPrimedReturnsTrueWhenTheLatestEffectSourceIsNotDeployed() {
+        EffectSource source = mock(EffectSource.class);
+        when(source.isDeployed()).thenReturn(false);
+
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
+        activation.prime(holder, source);
+
+        boolean primed = activation.isPrimed();
+
+        assertTrue(primed);
+    }
+
+    @Test
+    public void primeSourceAndActivateAfterDelay() {
+        EffectSource source = mock(EffectSource.class);
+        when(source.exists()).thenReturn(true);
+
+        BukkitTask task = mock(BukkitTask.class);
+        when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(task);
+
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
+        activation.prime(holder, source);
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(delayUntilActivation));
+
+        // Execute the runnable afterward to simulate the delay
+        runnableCaptor.getValue().run();
+
+        verify(effect).activate(holder, source);
+        verify(task, never()).cancel();
+    }
+
+    @Test
+    public void primeSourceButDoNotActivateIfTheSourceWasActivatedDuringTheDelay() {
+        EffectSource source = mock(EffectSource.class);
+        when(source.exists()).thenReturn(true);
+
+        BukkitTask task = mock(BukkitTask.class);
+        when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(task);
+
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
+        activation.prime(holder, source);
+        activation.activateInstantly(holder);
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(delayUntilActivation));
+
+        // Execute the runnable afterward to simulate the delay
+        runnableCaptor.getValue().run();
+
+        verify(effect, atMost(1)).activate(holder, source);
+        verify(task).cancel();
+    }
+
+    @Test
+    public void primeSourceButDoNotActivateIfTheSourceDoesNotExistAnymore() {
+        EffectSource source = mock(EffectSource.class);
+        when(source.exists()).thenReturn(false);
+
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
+        activation.prime(holder, source);
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(delayUntilActivation));
+
+        // Execute the runnable afterward to simulate the delay
+        runnableCaptor.getValue().run();
+
+        verify(effect, never()).activate(holder, source);
     }
 }
