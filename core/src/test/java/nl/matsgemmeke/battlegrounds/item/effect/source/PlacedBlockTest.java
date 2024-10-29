@@ -66,6 +66,14 @@ public class PlacedBlockTest {
     }
 
     @Test
+    public void isDeployedAlwaysReturnsTrue() {
+        PlacedBlock placedBlock = new PlacedBlock(block, material);
+        boolean deployed = placedBlock.isDeployed();
+
+        assertTrue(deployed);
+    }
+
+    @Test
     public void shouldRemoveBlockWhenRemovingObject() {
         PlacedBlock placedBlock = new PlacedBlock(block, material);
         placedBlock.remove();

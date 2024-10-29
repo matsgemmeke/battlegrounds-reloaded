@@ -61,6 +61,14 @@ public class DroppedItemTest {
     }
 
     @Test
+    public void isDeployedAlwaysReturnsTrue() {
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        boolean deployed = droppedItem.isDeployed();
+
+        assertTrue(deployed);
+    }
+
+    @Test
     public void removeItemEntityWhenRemovingObject() {
         DroppedItem droppedItem = new DroppedItem(itemEntity);
         droppedItem.remove();
