@@ -3,14 +3,12 @@ package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ParticleSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,14 +42,6 @@ public class SmokeScreenEffect implements ItemEffect {
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.currentSize = 0;
-    }
-
-    public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
-        holder.removeItem(itemStack);
-    }
-
-    public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        object.remove();
     }
 
     public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {

@@ -62,14 +62,6 @@ public class CombustionEffect implements ItemEffect {
         this.currentRadius = 0;
     }
 
-    public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
-        holder.removeItem(itemStack);
-    }
-
-    public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        object.remove();
-    }
-
     public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         Location location = source.getLocation();
         World world = source.getWorld();

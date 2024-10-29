@@ -3,14 +3,12 @@ package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class ExplosionEffect implements ItemEffect {
@@ -30,14 +28,6 @@ public class ExplosionEffect implements ItemEffect {
         this.settings = settings;
         this.targetFinder = targetFinder;
         this.rangeProfile = rangeProfile;
-    }
-
-    public void activate(@NotNull ItemHolder holder, @NotNull ItemStack itemStack) {
-        holder.removeItem(itemStack);
-    }
-
-    public void activate(@NotNull ItemHolder holder, @NotNull Deployable object) {
-        object.remove();
     }
 
     public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
