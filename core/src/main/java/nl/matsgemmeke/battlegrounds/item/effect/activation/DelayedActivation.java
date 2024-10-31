@@ -24,11 +24,21 @@ public class DelayedActivation extends BaseItemEffectActivation {
     }
 
     public void prime(@NotNull ItemHolder holder, @NotNull EffectSource source) {
-        sources.add(source);
+        this.addEffectSource(source);
 
         BukkitTask task = taskRunner.runTaskLater(() -> this.activateEffect(holder), delayUntilActivation);
 
         tasks.add(task);
+    }
+
+    private void addEffectSource(@NotNull EffectSource source) {
+        EffectSource mostRecentSource = sources.isEmpty() ? null : sources.get(sources.size() - 1);
+
+        if (mostRecentSource == null || mostRecentSource.isDeployed()) {
+            sources.add(source);
+        } else {
+            sources.set(sources.indexOf(mostRecentSource), source);
+        }
     }
 
     private void activateEffect(@NotNull ItemHolder holder) {

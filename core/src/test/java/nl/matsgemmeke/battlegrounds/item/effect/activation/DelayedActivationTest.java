@@ -100,6 +100,34 @@ public class DelayedActivationTest {
     }
 
     @Test
+    public void primeSourceAfterPrimingUndeployedSourceAndActivateAfterDelay() {
+        EffectSource deployedSource = mock(EffectSource.class);
+        when(deployedSource.exists()).thenReturn(true);
+        when(deployedSource.isDeployed()).thenReturn(true);
+
+        EffectSource undeployedSource = mock(EffectSource.class);
+        when(undeployedSource.exists()).thenReturn(true);
+        when(undeployedSource.isDeployed()).thenReturn(false);
+
+        BukkitTask task = mock(BukkitTask.class);
+        when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(task);
+
+        DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
+        activation.prime(holder, undeployedSource);
+        activation.prime(holder, deployedSource);
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskRunner, times(2)).runTaskLater(runnableCaptor.capture(), eq(delayUntilActivation));
+
+        // Execute the runnables afterward to simulate the delay
+        runnableCaptor.getAllValues().forEach(Runnable::run);
+
+        verify(effect, times(1)).activate(any(ItemHolder.class), any(EffectSource.class));
+        verify(effect).activate(holder, deployedSource);
+        verify(effect, never()).activate(holder, undeployedSource);
+    }
+
+    @Test
     public void primeSourceButDoNotActivateIfTheSourceWasActivatedDuringTheDelay() {
         EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(true);
