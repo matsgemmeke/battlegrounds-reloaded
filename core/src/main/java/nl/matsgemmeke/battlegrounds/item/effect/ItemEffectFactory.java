@@ -126,9 +126,10 @@ public class ItemEffectFactory {
                 double extra = section.getDouble("particle.extra");
 
                 Iterable<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sound"));
-                int size = section.getInt("size");
+                int duration = section.getInt("duration");
+                int maxSize = section.getInt("max-size");
 
-                SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(ignitionSounds, size);
+                SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(ignitionSounds, duration, maxSize);
                 ParticleSettings particleSettings = new ParticleSettings(particle, count, offsetX, offsetY, offsetZ, extra);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
 

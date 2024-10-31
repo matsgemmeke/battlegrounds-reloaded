@@ -5,5 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public record SmokeScreenSettings(
         @NotNull Iterable<GameSound> ignitionSounds,
-        int size
+        int duration,
+        int maxSize
 ) { }

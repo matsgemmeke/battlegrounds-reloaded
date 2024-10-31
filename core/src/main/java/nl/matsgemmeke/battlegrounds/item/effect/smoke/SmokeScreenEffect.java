@@ -11,6 +11,7 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,10 @@ public class SmokeScreenEffect implements ItemEffect {
     @NotNull
     private AudioEmitter audioEmitter;
     private BukkitTask task;
-    private int currentSize;
+    private int currentDuration;
+    private int currentSphereSize;
+    @Nullable
+    private Location previousLocation;
     @NotNull
     private ParticleSettings particleSettings;
     @NotNull
@@ -41,19 +45,32 @@ public class SmokeScreenEffect implements ItemEffect {
         this.particleSettings = particleSettings;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
-        this.currentSize = 0;
+        this.currentDuration = 0;
     }
 
     public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         audioEmitter.playSounds(smokeScreenSettings.ignitionSounds(), source.getLocation());
 
         task = taskRunner.runTaskTimer(() -> {
-            if (++currentSize > smokeScreenSettings.size()) {
+            if (++currentDuration >= smokeScreenSettings.duration()) {
                 task.cancel();
                 return;
             }
-            this.createSphere(source.getLocation(), source.getWorld(), currentSize);
+            this.createSmokeEffect(source.getLocation(), source.getWorld());
         }, RUNNABLE_DELAY, RUNNABLE_PERIOD);
+    }
+
+    private void createSmokeEffect(@NotNull Location location, @NotNull World world) {
+        boolean moving = !location.equals(previousLocation);
+
+        if (moving) {
+            this.spawnParticle(location, world);
+            // If the source moved location the smoke will no longer expand into a sphere, so it resets the size
+            currentSphereSize = 0;
+            previousLocation = location;
+        } else {
+            this.createSphere(location, world, ++currentSphereSize);
+        }
     }
 
     private void createSphere(@NotNull Location location, @NotNull World world, int size) {

@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void shouldCreateInstanceForCombustionEffectType() {
+    public void createInstanceForCombustionEffectType() {
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(context.getAudioEmitter()).thenReturn(audioEmitter);
 
@@ -49,7 +50,7 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void shouldCreateInstanceForExplosionEffectType() {
+    public void createInstanceForExplosionEffectType() {
         TargetFinder targetFinder = mock(TargetFinder.class);
         when(context.getTargetFinder()).thenReturn(targetFinder);
 
@@ -62,7 +63,7 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void shouldCreateInstanceForFlashEffectType() {
+    public void createInstanceForFlashEffectType() {
         TargetFinder targetFinder = mock(TargetFinder.class);
         when(context.getTargetFinder()).thenReturn(targetFinder);
 
@@ -74,8 +75,30 @@ public class ItemEffectFactoryTest {
         assertTrue(effect instanceof FlashEffect);
     }
 
+    @Test
+    public void createInstanceForSmokeScreenEffectType() {
+        AudioEmitter audioEmitter = mock(AudioEmitter.class);
+        when(context.getAudioEmitter()).thenReturn(audioEmitter);
+
+        when(section.getString("particle.type")).thenReturn("CAMPFIRE_COSY_SMOKE");
+        when(section.getString("type")).thenReturn("SMOKE_SCREEN");
+
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffect effect = factory.make(section, context);
+
+        assertTrue(effect instanceof SmokeScreenEffect);
+    }
+
     @Test(expected = InvalidItemConfigurationException.class)
-    public void shouldThrowExceptionIfGivenActivationTypeIsNotDefined() {
+    public void throwExceptionIfParticleTypeCannotBeDefined() {
+        when(section.getString("particle.type")).thenReturn("fail");
+
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        factory.make(section, context);
+    }
+
+    @Test(expected = InvalidItemConfigurationException.class)
+    public void throwExceptionIfGivenActivationTypeIsNotDefined() {
         when(section.getString("type")).thenReturn(null);
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
@@ -83,7 +106,7 @@ public class ItemEffectFactoryTest {
     }
 
     @Test(expected = InvalidItemConfigurationException.class)
-    public void shouldThrowExceptionIfGivenActivationTypeIsIncorrect() {
+    public void throwExceptionIfGivenActivationTypeIsIncorrect() {
         when(section.getString("type")).thenReturn("fail");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
