@@ -91,7 +91,17 @@ public class ItemEffectFactoryTest {
 
     @Test(expected = InvalidItemConfigurationException.class)
     public void throwExceptionIfParticleTypeCannotBeDefined() {
+        when(section.getString("particle.type")).thenReturn(null);
+        when(section.getString("type")).thenReturn("SMOKE_SCREEN");
+
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        factory.make(section, context);
+    }
+
+    @Test(expected = InvalidItemConfigurationException.class)
+    public void throwExceptionIfParticleTypeIsIncorrect() {
         when(section.getString("particle.type")).thenReturn("fail");
+        when(section.getString("type")).thenReturn("SMOKE_SCREEN");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         factory.make(section, context);
