@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;

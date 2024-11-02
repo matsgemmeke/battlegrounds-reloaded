@@ -191,7 +191,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
 
-            ThrowFunction throwFunction = new ThrowFunction(equipment, itemTemplate, activation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+            ThrowFunction throwFunction = new ThrowFunction(itemTemplate, activation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
             throwFunction.addSounds(throwSounds);
 
             equipment.getControls().addControl(throwAction, throwFunction);
@@ -213,7 +213,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> placeSounds = DefaultGameSound.parseSounds(section.getString("placing.place-sound"));
 
-            PlaceFunction placeFunction = new PlaceFunction(equipment, activation, material, audioEmitter, taskRunner, delayAfterPlacement);
+            PlaceFunction placeFunction = new PlaceFunction(activation, material, audioEmitter, taskRunner, delayAfterPlacement);
             placeFunction.addSounds(placeSounds);
 
             equipment.getControls().addControl(placeAction, placeFunction);
@@ -226,7 +226,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             List<GameSound> activateSounds = DefaultGameSound.parseSounds(section.getString("activation.activation-sound"));
 
-            ActivateFunction activateFunction = new ActivateFunction(equipment, activation, audioEmitter, taskRunner, delayUntilActivation);
+            ActivateFunction activateFunction = new ActivateFunction(activation, audioEmitter, taskRunner, delayUntilActivation);
             activateFunction.addSounds(activateSounds);
 
             equipment.getControls().addControl(activateAction, activateFunction);

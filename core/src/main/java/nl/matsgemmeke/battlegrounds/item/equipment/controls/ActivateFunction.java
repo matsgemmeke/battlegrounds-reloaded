@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +16,6 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
-    private DeployableSource item;
-    @NotNull
     private ItemEffectActivation effectActivation;
     @NotNull
     private Iterable<GameSound> sounds;
@@ -27,13 +24,11 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     private TaskRunner taskRunner;
 
     public ActivateFunction(
-            @NotNull DeployableSource item,
             @NotNull ItemEffectActivation effectActivation,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             long delayUntilActivation
     ) {
-        this.item = item;
         this.effectActivation = effectActivation;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
@@ -46,7 +41,7 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return !item.getDeployedObjects().isEmpty();
+        return true;
     }
 
     public boolean isBlocking() {

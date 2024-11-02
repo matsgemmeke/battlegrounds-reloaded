@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -27,8 +26,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private AudioEmitter audioEmitter;
     private boolean performing;
-    @NotNull
-    private DeployableSource item;
     private double projectileSpeed;
     @NotNull
     private ItemEffectActivation effectActivation;
@@ -41,7 +38,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private TaskRunner taskRunner;
 
     public ThrowFunction(
-            @NotNull DeployableSource item,
             @NotNull ItemTemplate itemTemplate,
             @NotNull ItemEffectActivation effectActivation,
             @NotNull AudioEmitter audioEmitter,
@@ -49,7 +45,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
             double projectileSpeed,
             long delayAfterThrow
     ) {
-        this.item = item;
         this.itemTemplate = itemTemplate;
         this.effectActivation = effectActivation;
         this.audioEmitter = audioEmitter;
@@ -81,10 +76,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        if (!item.getDeployedObjects().isEmpty()) {
-            return false;
-        }
-
         Location location = holder.getLocation();
         World world = holder.getWorld();
         Location throwingDirection = holder.getThrowingDirection();

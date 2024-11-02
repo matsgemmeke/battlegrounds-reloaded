@@ -6,9 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.Map;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -45,13 +42,12 @@ public class DefaultActivatorTest {
     public void readiesTheActivatorAndSetHolderHeldItemWhenPreparing() {
         ItemHolder holder = mock(ItemHolder.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
-        Map<String, Object> values = Collections.emptyMap();
 
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
-        when(itemTemplate.createItemStack(values)).thenReturn(itemStack);
+        when(itemTemplate.createItemStack()).thenReturn(itemStack);
 
         DefaultActivator activator = new DefaultActivator(itemTemplate);
-        activator.prepare(holder, values);
+        activator.prepare(holder);
 
         assertTrue(activator.isReady());
 

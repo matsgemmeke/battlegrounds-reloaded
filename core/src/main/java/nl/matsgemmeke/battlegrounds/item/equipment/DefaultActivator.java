@@ -5,8 +5,6 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 public class DefaultActivator implements Activator {
 
     private boolean ready;
@@ -26,8 +24,8 @@ public class DefaultActivator implements Activator {
         return itemTemplate.matchesTemplate(itemStack);
     }
 
-    public void prepare(@NotNull ItemHolder holder, @NotNull Map<String, Object> values) {
-        ItemStack itemStack = itemTemplate.createItemStack(values);
+    public void prepare(@NotNull ItemHolder holder) {
+        ItemStack itemStack = itemTemplate.createItemStack();
         holder.setHeldItem(itemStack);
 
         ready = true;

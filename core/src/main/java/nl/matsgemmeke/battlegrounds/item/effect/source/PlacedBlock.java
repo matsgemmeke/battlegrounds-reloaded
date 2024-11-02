@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.effect.source;
 
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -10,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A deployed object in the form as a placed {@link Block}.
  */
-public class PlacedBlock implements EffectSource, Deployable {
+public class PlacedBlock implements EffectSource {
 
     @NotNull
     private Block block;

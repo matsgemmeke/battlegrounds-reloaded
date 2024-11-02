@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Test;
@@ -60,49 +59,6 @@ public class DefaultEquipmentTest {
         boolean matches = equipment.isMatching(itemStack);
 
         assertFalse(matches);
-    }
-
-    @Test
-    public void shouldDoNothingIfHolderIsNullWhenDeploying() {
-        Deployable object = mock(Deployable.class);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.onDeploy(object);
-
-        assertTrue(equipment.getDeployedObjects().isEmpty());
-    }
-
-    @Test
-    public void prepareActivatorIfNotNullWhenDeployingObject() {
-        Activator activator = mock(Activator.class);
-        Deployable object = mock(Deployable.class);
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setActivator(activator);
-        equipment.setHolder(holder);
-        equipment.onDeploy(object);
-
-        assertEquals(1, equipment.getDeployedObjects().size());
-        assertEquals(object, equipment.getDeployedObjects().get(0));
-
-        verify(activator).prepare(eq(holder), any());
-    }
-
-    @Test
-    public void removeItemStackFromHolderIfActivatorIsNullWhenDeploying() {
-        Deployable object = mock(Deployable.class);
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setActivator(null);
-        equipment.setHolder(holder);
-        equipment.onDeploy(object);
-
-        assertEquals(1, equipment.getDeployedObjects().size());
-        assertEquals(object, equipment.getDeployedObjects().get(0));
-
-        verify(holder).setHeldItem(null);
     }
 
     @Test

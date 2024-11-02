@@ -4,14 +4,11 @@ import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DefaultEquipment extends BaseWeapon implements Equipment {
@@ -24,12 +21,9 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private ItemControls<EquipmentHolder> controls;
     @Nullable
     private ItemTemplate itemTemplate;
-    @NotNull
-    private List<Deployable> deployedObjects;
 
     public DefaultEquipment() {
         this.controls = new ItemControls<>();
-        this.deployedObjects = new ArrayList<>();
     }
 
     @Override
@@ -46,11 +40,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     public ItemControls<EquipmentHolder> getControls() {
         return controls;
-    }
-
-    @NotNull
-    public List<Deployable> getDeployedObjects() {
-        return deployedObjects;
     }
 
     @Nullable
@@ -80,20 +69,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onChangeTo() {
-    }
-
-    public void onDeploy(@NotNull Deployable object) {
-        if (holder == null) {
-            return;
-        }
-
-        deployedObjects.add(object);
-
-        if (activator != null) {
-            activator.prepare(holder, this.getTemplateValues());
-        } else {
-            holder.setHeldItem(null);
-        }
     }
 
     public void onDrop() {

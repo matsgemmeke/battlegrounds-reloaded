@@ -3,8 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -17,16 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.Collections;
-import java.util.List;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class ThrowFunctionTest {
 
     private AudioEmitter audioEmitter;
-    private DeployableSource item;
     private double projectileSpeed;
     private ItemEffectActivation effectActivation;
     private ItemTemplate itemTemplate;
@@ -36,7 +30,6 @@ public class ThrowFunctionTest {
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        item = mock(DeployableSource.class);
         projectileSpeed = 2.0;
         effectActivation = mock(ItemEffectActivation.class);
         itemTemplate = mock(ItemTemplate.class);
@@ -46,7 +39,7 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldNotBePerformingIfNoThrowsWereExecuted() {
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -66,7 +59,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(throwingDirection);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
@@ -87,7 +80,6 @@ public class ThrowFunctionTest {
         World world = mock(World.class);
         when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
 
-        when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
         when(effectActivation.isPrimed()).thenReturn(false);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
@@ -95,7 +87,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
@@ -107,22 +99,5 @@ public class ThrowFunctionTest {
 
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
         verify(world).dropItem(location, itemStack);
-    }
-
-    @Test
-    public void shouldNotThrowIfItemAlreadyHasDeployedObject() {
-        when(item.getDeployedObjects()).thenReturn(List.of(mock(Deployable.class)));
-
-        World world = mock(World.class);
-
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.getWorld()).thenReturn(world);
-
-        ThrowFunction function = new ThrowFunction(item, itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
-        function.perform(holder);
-
-        verifyNoInteractions(audioEmitter);
-        verifyNoInteractions(effectActivation);
-        verifyNoInteractions(world);
     }
 }

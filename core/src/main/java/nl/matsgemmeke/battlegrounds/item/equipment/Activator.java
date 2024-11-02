@@ -4,8 +4,6 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 /**
  * A tool used by {@link Equipment} items to manually activate effects.
  */
@@ -22,7 +20,6 @@ public interface Activator extends Matchable {
      * Prepares the activator by a specific item holder.
      *
      * @param holder the item holder who prepares the activator
-     * @param values the template values used to construct the activator
      */
-    void prepare(@NotNull ItemHolder holder, @NotNull Map<String, Object> values);
+    void prepare(@NotNull ItemHolder holder);
 }

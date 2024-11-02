@@ -2,8 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.deployment.Deployable;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
@@ -11,17 +9,11 @@ import org.bukkit.entity.Entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class ActivateFunctionTest {
 
     private AudioEmitter audioEmitter;
-    private DeployableSource item;
     private ItemEffectActivation effectActivation;
     private long delayUntilActivation;
     private TaskRunner taskRunner;
@@ -29,33 +21,9 @@ public class ActivateFunctionTest {
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        item = mock(DeployableSource.class);
         effectActivation = mock(ItemEffectActivation.class);
         delayUntilActivation = 1L;
         taskRunner = mock(TaskRunner.class);
-    }
-
-    @Test
-    public void shouldNotBeAvailableIfItemHasNoDeployedObjects() {
-        when(item.getDeployedObjects()).thenReturn(Collections.emptyList());
-
-        ActivateFunction function = new ActivateFunction(item, effectActivation, audioEmitter, taskRunner, delayUntilActivation);
-        boolean available = function.isAvailable();
-
-        assertFalse(available);
-    }
-
-    @Test
-    public void shouldBeAvailableIfItemHasDeployedObjectsAndEffectActivationIsPrimed() {
-        Deployable object = mock(Deployable.class);
-
-        when(item.getDeployedObjects()).thenReturn(List.of(object));
-        when(effectActivation.isPrimed()).thenReturn(true);
-
-        ActivateFunction function = new ActivateFunction(item, effectActivation, audioEmitter, taskRunner, delayUntilActivation);
-        boolean available = function.isAvailable();
-
-        assertTrue(available);
     }
 
     @Test
@@ -73,7 +41,7 @@ public class ActivateFunctionTest {
             return null;
         });
 
-        ActivateFunction function = new ActivateFunction(item, effectActivation, audioEmitter, taskRunner, delayUntilActivation);
+        ActivateFunction function = new ActivateFunction(effectActivation, audioEmitter, taskRunner, delayUntilActivation);
         function.perform(holder);
 
         verify(holder).setHeldItem(null);

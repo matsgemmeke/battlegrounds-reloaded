@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -29,8 +28,6 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     private AudioEmitter audioEmitter;
     private boolean performing;
     @NotNull
-    private DeployableSource item;
-    @NotNull
     private ItemEffectActivation effectActivation;
     @NotNull
     private Iterable<GameSound> sounds;
@@ -41,14 +38,12 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     private TaskRunner taskRunner;
 
     public PlaceFunction(
-            @NotNull DeployableSource item,
             @NotNull ItemEffectActivation effectActivation,
             @NotNull Material material,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             long delayAfterPlacement
     ) {
-        this.item = item;
         this.effectActivation = effectActivation;
         this.material = material;
         this.audioEmitter = audioEmitter;
@@ -63,7 +58,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return item.getDeployedObjects().isEmpty();
+        return true;
     }
 
     public boolean isBlocking() {

@@ -2,10 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
 import org.jetbrains.annotations.Nullable;
 
-public interface Equipment extends Weapon, DeployableSource, Interactable<EquipmentHolder> {
+public interface Equipment extends Weapon, Interactable<EquipmentHolder> {
 
     /**
      * Gets the activator item used to activate the equipment. Returns null if the equipment does not utilize an
