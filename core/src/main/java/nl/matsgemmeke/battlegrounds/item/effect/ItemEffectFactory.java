@@ -113,6 +113,10 @@ public class ItemEffectFactory {
                 Particle particle;
                 String particleValue = section.getString("particle.type");
 
+                if (particleValue == null) {
+                    throw new InvalidItemConfigurationException("Particle type must be defined!");
+                }
+
                 try {
                     particle = Particle.valueOf(particleValue);
                 } catch (IllegalArgumentException e) {
