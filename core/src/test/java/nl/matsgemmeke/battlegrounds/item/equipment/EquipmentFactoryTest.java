@@ -159,7 +159,7 @@ public class EquipmentFactoryTest {
         ItemEffectActivation activation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(effectActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
+        when(effectActivationFactory.make(eq(context), eq(effect), any(), any())).thenReturn(activation);
         when(effectFactory.make(any(), eq(context))).thenReturn(effect);
         when(itemFactory.getItemMeta(Material.FLINT)).thenReturn(itemMeta);
 
@@ -207,7 +207,7 @@ public class EquipmentFactoryTest {
         ItemEffectActivation activation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(effectActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
+        when(effectActivationFactory.make(eq(context), eq(effect), any(), any())).thenReturn(activation);
         when(effectFactory.make(any(), eq(context))).thenReturn(effect);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
@@ -242,7 +242,7 @@ public class EquipmentFactoryTest {
         ItemEffectActivation activation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(effectActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
+        when(effectActivationFactory.make(eq(context), eq(effect), any(), any())).thenReturn(activation);
         when(effectFactory.make(any(), eq(context))).thenReturn(effect);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
@@ -288,7 +288,7 @@ public class EquipmentFactoryTest {
         ItemEffectActivation activation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(effectActivationFactory.make(eq(context), eq(effect), any())).thenReturn(activation);
+        when(effectActivationFactory.make(eq(context), eq(effect), any(), any())).thenReturn(activation);
         when(effectFactory.make(any(), eq(context))).thenReturn(effect);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);

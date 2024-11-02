@@ -26,8 +26,11 @@ public class DelayedActivation extends BaseItemEffectActivation {
     public void prime(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         this.addEffectSource(source);
 
-        BukkitTask task = taskRunner.runTaskLater(() -> this.activateEffect(holder), delayUntilActivation);
+        if (source.isDeployed()) {
+            holder.setHeldItem(null);
+        }
 
+        BukkitTask task = taskRunner.runTaskLater(() -> this.activateEffect(holder), delayUntilActivation);
         tasks.add(task);
     }
 

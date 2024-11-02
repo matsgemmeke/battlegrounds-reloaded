@@ -82,6 +82,7 @@ public class DelayedActivationTest {
     public void primeSourceAndActivateAfterDelay() {
         EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(true);
+        when(source.isDeployed()).thenReturn(true);
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskLater(any(Runnable.class), eq(delayUntilActivation))).thenReturn(task);
@@ -96,6 +97,7 @@ public class DelayedActivationTest {
         runnableCaptor.getValue().run();
 
         verify(effect).activate(holder, source);
+        verify(holder).setHeldItem(null);
         verify(task, never()).cancel();
     }
 

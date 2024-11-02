@@ -31,6 +31,10 @@ public class TriggerActivation extends BaseItemEffectActivation {
     public void prime(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         sources.add(source);
 
+        if (source.isDeployed()) {
+            holder.setHeldItem(null);
+        }
+
         for (Trigger trigger : triggers) {
             trigger.checkTriggerActivation(holder, source);
         }

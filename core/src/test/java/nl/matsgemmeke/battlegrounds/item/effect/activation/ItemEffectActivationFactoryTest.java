@@ -35,19 +35,29 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn("DELAYED");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        ItemEffectActivation activation = factory.make(context, effect, section);
+        ItemEffectActivation activation = factory.make(context, effect, section, null);
 
         assertTrue(activation instanceof DelayedActivation);
     }
 
     @Test
     public void shouldCreateInstanceForManualActivationType() {
+        Activator activator = mock(Activator.class);
+
         when(section.getString("type")).thenReturn("MANUAL");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        ItemEffectActivation activation = factory.make(context, effect, section);
+        ItemEffectActivation activation = factory.make(context, effect, section, activator);
 
         assertTrue(activation instanceof ManualActivation);
+    }
+
+    @Test(expected = InvalidItemConfigurationException.class)
+    public void throwExceptionWhenCreatingManualActivationWithoutActivator() {
+        when(section.getString("type")).thenReturn("MANUAL");
+
+        ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
+        factory.make(context, effect, section, null);
     }
 
     @Test
@@ -62,7 +72,7 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn("TRIGGER");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        ItemEffectActivation activation = factory.make(context, effect, section);
+        ItemEffectActivation activation = factory.make(context, effect, section, null);
 
         assertTrue(activation instanceof TriggerActivation);
     }
@@ -72,7 +82,7 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn(null);
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        factory.make(context, effect, section);
+        factory.make(context, effect, section, null);
     }
 
     @Test(expected = InvalidItemConfigurationException.class)
@@ -80,6 +90,6 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn("fail");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        factory.make(context, effect, section);
+        factory.make(context, effect, section, null);
     }
 }

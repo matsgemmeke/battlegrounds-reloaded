@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import org.jetbrains.annotations.Nullable;
 
 public interface Equipment extends Weapon, Interactable<EquipmentHolder> {

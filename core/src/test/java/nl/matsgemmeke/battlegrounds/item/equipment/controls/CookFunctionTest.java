@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -27,7 +28,7 @@ public class CookFunctionTest {
     }
 
     @Test
-    public void shouldOnlyBeAvailableIfActivationIsNotPrimed() {
+    public void isAvailableReturnsTrueIfActivationIsNotPrimed() {
         when(effectActivation.isPrimed()).thenReturn(false);
 
         CookFunction function = new CookFunction(effectActivation, audioEmitter);
@@ -37,7 +38,17 @@ public class CookFunctionTest {
     }
 
     @Test
-    public void shouldPrimeActivationWhenPerforming() {
+    public void isAvailableReturnsFalseIfActivationIsPrimed() {
+        when(effectActivation.isPrimed()).thenReturn(true);
+
+        CookFunction function = new CookFunction(effectActivation, audioEmitter);
+        boolean available = function.isAvailable();
+
+        assertFalse(available);
+    }
+
+    @Test
+    public void primeEffectActivationAndPrepareActivatorWhenPerforming() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
         Location location = new Location(null, 1, 1, 1);
 

@@ -13,6 +13,8 @@ import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
@@ -155,7 +157,10 @@ public class EquipmentFactory implements WeaponFactory {
         String throwActionValue = controlsSection.getString("throw");
 
         ItemEffect effect = effectFactory.make(section.getSection("effect"), context);
-        ItemEffectActivation activation = effectActivationFactory.make(context, effect, section.getSection("activation"));
+        Section activationSection = section.getSection("activation");
+        Activator activator = equipment.getActivator();
+
+        ItemEffectActivation activation = effectActivationFactory.make(context, effect, activationSection, activator);
 
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);

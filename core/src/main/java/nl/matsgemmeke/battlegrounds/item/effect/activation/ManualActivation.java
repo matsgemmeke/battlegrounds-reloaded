@@ -10,11 +10,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ManualActivation extends BaseItemEffectActivation {
 
-    public ManualActivation(@NotNull ItemEffect effect) {
+    @NotNull
+    private Activator activator;
+
+    public ManualActivation(@NotNull ItemEffect effect, @NotNull Activator activator) {
         super(effect);
+        this.activator = activator;
     }
 
     public void prime(@NotNull ItemHolder holder, @NotNull EffectSource source) {
         sources.add(source);
+        activator.prepare(holder);
     }
 }

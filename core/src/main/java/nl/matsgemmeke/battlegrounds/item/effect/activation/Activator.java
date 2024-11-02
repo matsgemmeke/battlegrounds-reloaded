@@ -1,11 +1,11 @@
-package nl.matsgemmeke.battlegrounds.item.equipment;
+package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A tool used by {@link Equipment} items to manually activate effects.
+ * A tool used by items to manually activate effects.
  */
 public interface Activator extends Matchable {
 

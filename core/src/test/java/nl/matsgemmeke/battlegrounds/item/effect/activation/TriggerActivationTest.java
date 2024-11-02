@@ -23,6 +23,7 @@ public class TriggerActivationTest {
     @Test
     public void startTriggerChecksAndActivateWhenReceivingResponse() {
         EffectSource source = mock(EffectSource.class);
+        when(source.isDeployed()).thenReturn(true);
 
         TriggerActivation activation = new TriggerActivation(effect);
 
@@ -37,5 +38,6 @@ public class TriggerActivationTest {
 
         verify(trigger).checkTriggerActivation(holder, source);
         verify(effect).activate(holder, source);
+        verify(holder).setHeldItem(null);
     }
 }

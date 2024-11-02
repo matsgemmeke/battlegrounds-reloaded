@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -29,11 +30,16 @@ public class ItemEffectActivationFactory {
      * @param effect the item effect instance
      * @return a new activation instance
      */
-    public ItemEffectActivation make(@NotNull GameContext context, @NotNull ItemEffect effect, @NotNull Section section) {
+    public ItemEffectActivation make(
+            @NotNull GameContext context,
+            @NotNull ItemEffect effect,
+            @NotNull Section section,
+            @Nullable Activator activator
+    ) {
         String type = section.getString("type");
 
         if (type == null) {
-            throw new InvalidItemConfigurationException("Equipment activation type must be defined!");
+            throw new InvalidItemConfigurationException("Effect activation type must be defined!");
         }
 
         ItemEffectActivationType effectActivationType;
@@ -50,7 +56,11 @@ public class ItemEffectActivationFactory {
                 return new DelayedActivation(effect, taskRunner, delayUntilActivation);
             }
             case MANUAL -> {
-                return new ManualActivation(effect);
+                if (activator == null) {
+                    throw new InvalidItemConfigurationException("Manual effect activation requires an activator item!");
+                }
+
+                return new ManualActivation(effect, activator);
             }
             case TRIGGER -> {
                 TriggerActivation activation = new TriggerActivation(effect);
@@ -65,6 +75,6 @@ public class ItemEffectActivationFactory {
             }
         }
 
-        throw new InvalidItemConfigurationException("Unknown equipment activation type \"" + type + "\"!");
+        throw new InvalidItemConfigurationException("Unknown effect activation type \"" + type + "\"!");
     }
 }
