@@ -20,4 +20,6 @@ public interface ItemEffect {
      * @param source the source from where the effect is activated
      */
     void activate(@NotNull ItemHolder holder, @NotNull EffectSource source);
+
+    void activate(@NotNull ItemEffectContext context);
 }

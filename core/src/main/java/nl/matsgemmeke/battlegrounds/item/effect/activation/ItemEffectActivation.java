@@ -18,11 +18,13 @@ public interface ItemEffectActivation {
     void activateInstantly(@NotNull ItemHolder holder);
 
     /**
-     * Checks whether the activation is currently priming its next deployment.
+     * Checks whether the activation is awaiting deployment for its current process, meaning that it has primed an
+     * activation process for an {@link EffectSource} which was not deployed yet. This awaiting state blocks other
+     * activations until the pending deployment is finished.
      *
-     * @return true if the activation is currently priming, false otherwise
+     * @return true if the activation is awaiting a deployment, false otherwise
      */
-    boolean isPrimed();
+    boolean isAwaitingDeployment();
 
     /**
      * Primes the activation process with the provided {@link ItemHolder} and {@link EffectSource}.

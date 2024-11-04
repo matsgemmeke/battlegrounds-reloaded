@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.PotionEffectSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
@@ -34,6 +35,10 @@ public class FlashEffect implements ItemEffect {
         this.applyPotionEffectToTargets(holder, source.getLocation());
 
         source.remove();
+    }
+
+    public void activate(@NotNull ItemEffectContext context) {
+        this.activate(context.getHolder(), context.getSource());
     }
 
     private void createExplosionEffect(@NotNull ItemHolder holder, @NotNull EffectSource source) {

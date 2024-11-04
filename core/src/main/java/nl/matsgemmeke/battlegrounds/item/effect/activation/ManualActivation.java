@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,9 @@ public class ManualActivation extends BaseItemEffectActivation {
     }
 
     public void prime(@NotNull ItemHolder holder, @NotNull EffectSource source) {
-        sources.add(source);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+        contexts.add(context);
+
         activator.prepare(holder);
     }
 }

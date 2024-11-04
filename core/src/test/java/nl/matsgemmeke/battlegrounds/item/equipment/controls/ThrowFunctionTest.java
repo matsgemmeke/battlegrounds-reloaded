@@ -80,8 +80,6 @@ public class ThrowFunctionTest {
         World world = mock(World.class);
         when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
 
-        when(effectActivation.isPrimed()).thenReturn(false);
-
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLocation()).thenReturn(location);
         when(holder.getThrowingDirection()).thenReturn(location);

@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,28 +16,28 @@ public abstract class BaseItemEffectActivation implements ItemEffectActivation {
     @NotNull
     protected List<BukkitTask> tasks;
     @NotNull
-    protected List<EffectSource> sources;
+    protected List<ItemEffectContext> contexts;
 
     public BaseItemEffectActivation(@NotNull ItemEffect effect) {
         this.effect = effect;
-        this.sources = new ArrayList<>();
         this.tasks = new ArrayList<>();
+        this.contexts = new ArrayList<>();
     }
 
     public void activateInstantly(@NotNull ItemHolder holder) {
-        for (EffectSource source : sources) {
-            effect.activate(holder, source);
+        for (ItemEffectContext context : contexts) {
+            effect.activate(context);
         }
 
         for (BukkitTask task : tasks) {
             task.cancel();
         }
 
-        sources.clear();
+        contexts.clear();
         tasks.clear();
     }
 
-    public boolean isPrimed() {
-        return !sources.isEmpty() && !sources.get(sources.size() - 1).isDeployed();
+    public boolean isAwaitingDeployment() {
+        return !contexts.isEmpty() && !contexts.get(contexts.size() - 1).getSource().isDeployed();
     }
 }

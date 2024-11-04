@@ -31,7 +31,7 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return !effectActivation.isPrimed();
+        return !effectActivation.isAwaitingDeployment();
     }
 
     public boolean isBlocking() {

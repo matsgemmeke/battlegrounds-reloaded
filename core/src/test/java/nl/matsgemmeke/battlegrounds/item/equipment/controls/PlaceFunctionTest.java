@@ -220,8 +220,6 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        when(effectActivation.isPrimed()).thenReturn(true);
-
         PlaceFunction function = new PlaceFunction(effectActivation, material, audioEmitter, taskRunner, delayAfterPlacement);
         function.addSounds(sounds);
         boolean performed = function.perform(holder);

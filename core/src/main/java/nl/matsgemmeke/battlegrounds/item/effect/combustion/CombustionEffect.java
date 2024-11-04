@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Location;
@@ -85,6 +86,10 @@ public class CombustionEffect implements ItemEffect {
         }, RUNNABLE_DELAY, settings.ticksBetweenFireSpread());
 
         source.remove();
+    }
+
+    public void activate(@NotNull ItemEffectContext context) {
+        this.activate(context.getHolder(), context.getSource());
     }
 
     private void inflictDamage(@NotNull ItemHolder holder, @NotNull Location location) {

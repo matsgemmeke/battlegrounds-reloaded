@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -47,5 +48,9 @@ public class ExplosionEffect implements ItemEffect {
 
             target.damage(damage);
         }
+    }
+
+    public void activate(@NotNull ItemEffectContext context) {
+        this.activate(context.getHolder(), context.getSource());
     }
 }

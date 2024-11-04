@@ -28,8 +28,8 @@ public class CookFunctionTest {
     }
 
     @Test
-    public void isAvailableReturnsTrueIfActivationIsNotPrimed() {
-        when(effectActivation.isPrimed()).thenReturn(false);
+    public void isAvailableReturnsTrueIfActivationIsNotAwaitingDeployment() {
+        when(effectActivation.isAwaitingDeployment()).thenReturn(false);
 
         CookFunction function = new CookFunction(effectActivation, audioEmitter);
         boolean available = function.isAvailable();
@@ -38,8 +38,8 @@ public class CookFunctionTest {
     }
 
     @Test
-    public void isAvailableReturnsFalseIfActivationIsPrimed() {
-        when(effectActivation.isPrimed()).thenReturn(true);
+    public void isAvailableReturnsFalseIfActivationIsAwaitingDeployment() {
+        when(effectActivation.isAwaitingDeployment()).thenReturn(true);
 
         CookFunction function = new CookFunction(effectActivation, audioEmitter);
         boolean available = function.isAvailable();

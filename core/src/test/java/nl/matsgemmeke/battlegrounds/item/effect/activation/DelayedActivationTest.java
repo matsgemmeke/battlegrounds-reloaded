@@ -3,14 +3,14 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -40,42 +40,45 @@ public class DelayedActivationTest {
         activation.prime(holder, source);
         activation.activateInstantly(holder);
 
-        verify(effect).activate(holder, source);
+        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(effect).activate(contextCaptor.capture());
+
+        assertEquals(source, contextCaptor.getValue().getSource());
     }
 
     @Test
-    public void isPrimedReturnsFalseWhenActivationHasNoEffectSources() {
+    public void isAwaitingDeploymentReturnsFalseWhenActivationHasNoContexts() {
         DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
 
-        boolean primed = activation.isPrimed();
+        boolean awaitingDeployment = activation.isAwaitingDeployment();
 
-        assertFalse(primed);
+        assertFalse(awaitingDeployment);
     }
 
     @Test
-    public void isPrimedReturnsFalseWhenTheLatestEffectSourceIsDeployed() {
+    public void isAwaitingDeploymentReturnsFalseWhenTheLatestEffectSourceIsDeployed() {
         EffectSource source = mock(EffectSource.class);
         when(source.isDeployed()).thenReturn(true);
 
         DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
         activation.prime(holder, source);
 
-        boolean primed = activation.isPrimed();
+        boolean awaitingDeployment = activation.isAwaitingDeployment();
 
-        assertFalse(primed);
+        assertFalse(awaitingDeployment);
     }
 
     @Test
-    public void isPrimedReturnsTrueWhenTheLatestEffectSourceIsNotDeployed() {
+    public void isPendingDeploymentReturnsTrueWhenTheLatestEffectSourceIsNotDeployed() {
         EffectSource source = mock(EffectSource.class);
         when(source.isDeployed()).thenReturn(false);
 
         DelayedActivation activation = new DelayedActivation(effect, taskRunner, delayUntilActivation);
         activation.prime(holder, source);
 
-        boolean primed = activation.isPrimed();
+        boolean awaitingDeployment = activation.isAwaitingDeployment();
 
-        assertTrue(primed);
+        assertTrue(awaitingDeployment);
     }
 
     @Test
@@ -96,13 +99,17 @@ public class DelayedActivationTest {
         // Execute the runnable afterward to simulate the delay
         runnableCaptor.getValue().run();
 
-        verify(effect).activate(holder, source);
+        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(effect).activate(contextCaptor.capture());
+
+        assertEquals(source, contextCaptor.getValue().getSource());
+
         verify(holder).setHeldItem(null);
         verify(task, never()).cancel();
     }
 
     @Test
-    public void primeSourceAfterPrimingUndeployedSourceAndActivateAfterDelay() {
+    public void primeDeployedSourceAfterCreatingPendingDeploymentAndActivateAfterDelay() {
         EffectSource deployedSource = mock(EffectSource.class);
         when(deployedSource.exists()).thenReturn(true);
         when(deployedSource.isDeployed()).thenReturn(true);
@@ -119,14 +126,17 @@ public class DelayedActivationTest {
         activation.prime(holder, deployedSource);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner, times(2)).runTaskLater(runnableCaptor.capture(), eq(delayUntilActivation));
+        verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(delayUntilActivation));
 
         // Execute the runnables afterward to simulate the delay
         runnableCaptor.getAllValues().forEach(Runnable::run);
 
-        verify(effect, times(1)).activate(any(ItemHolder.class), any(EffectSource.class));
-        verify(effect).activate(holder, deployedSource);
-        verify(effect, never()).activate(holder, undeployedSource);
+        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(effect).activate(contextCaptor.capture());
+
+        assertEquals(deployedSource, contextCaptor.getValue().getSource());
+
+        verify(holder).setHeldItem(null);
     }
 
     @Test
@@ -147,7 +157,9 @@ public class DelayedActivationTest {
         // Execute the runnable afterward to simulate the delay
         runnableCaptor.getValue().run();
 
-        verify(effect, atMost(1)).activate(holder, source);
+        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(effect).activate(contextCaptor.capture());
+
         verify(task).cancel();
     }
 
