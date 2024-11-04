@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
@@ -39,10 +40,12 @@ public class EnemyProximityTriggerTest {
         EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(false);
 
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(targetFinder, taskRunner, checkingRange, periodBetweenChecks);
-        trigger.checkTriggerActivation(holder, source);
+        trigger.checkTriggerActivation(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -63,11 +66,13 @@ public class EnemyProximityTriggerTest {
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
         when(targetFinder.findEnemyTargets(holder, sourceLocation, checkingRange)).thenReturn(Collections.emptyList());
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(targetFinder, taskRunner, checkingRange, periodBetweenChecks);
-        trigger.checkTriggerActivation(holder, source);
+        trigger.checkTriggerActivation(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -89,19 +94,21 @@ public class EnemyProximityTriggerTest {
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
         when(targetFinder.findEnemyTargets(holder, sourceLocation, checkingRange)).thenReturn(List.of(mock(GameEntity.class)));
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(targetFinder, taskRunner, checkingRange, periodBetweenChecks);
         trigger.addObserver(observer);
-        trigger.checkTriggerActivation(holder, source);
+        trigger.checkTriggerActivation(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
 
         runnableCaptor.getValue().run();
 
-        verify(observer).onTrigger(holder, source);
+        verify(observer).onTrigger(context);
         verify(task).cancel();
     }
 }

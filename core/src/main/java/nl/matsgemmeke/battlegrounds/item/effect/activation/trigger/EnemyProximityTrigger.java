@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -42,29 +42,31 @@ public class EnemyProximityTrigger implements Trigger {
         observers.add(observer);
     }
 
-    public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull EffectSource source) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(holder, source), RUNNABLE_DELAY, periodBetweenChecks);
+    public void checkTriggerActivation(@NotNull ItemEffectContext context) {
+        task = taskRunner.runTaskTimer(() -> this.runCheck(context), RUNNABLE_DELAY, periodBetweenChecks);
     }
 
-    private void runCheck(@NotNull ItemHolder holder, @NotNull EffectSource source) {
+    private void runCheck(@NotNull ItemEffectContext context) {
+        EffectSource source = context.getSource();
+
         if (!source.exists()) {
             task.cancel();
             return;
         }
 
-        List<GameEntity> targets = targetFinder.findEnemyTargets(holder, source.getLocation(), checkingRange);
+        List<GameEntity> targets = targetFinder.findEnemyTargets(context.getHolder(), source.getLocation(), checkingRange);
 
         if (targets.isEmpty()) {
             return;
         }
 
-        this.notifyObservers(holder, source);
+        this.notifyObservers(context);
         task.cancel();
     }
 
-    private void notifyObservers(@NotNull ItemHolder holder, @NotNull EffectSource source) {
+    private void notifyObservers(@NotNull ItemEffectContext context) {
         for (TriggerObserver observer : observers) {
-            observer.onTrigger(holder, source);
+            observer.onTrigger(context);
         }
     }
 }

@@ -177,6 +177,6 @@ public class DelayedActivationTest {
         // Execute the runnable afterward to simulate the delay
         runnableCaptor.getValue().run();
 
-        verify(effect, never()).activate(holder, source);
+        verify(effect, never()).activate(any(ItemEffectContext.class));
     }
 }

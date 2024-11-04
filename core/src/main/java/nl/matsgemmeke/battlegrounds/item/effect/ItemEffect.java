@@ -16,10 +16,7 @@ public interface ItemEffect {
      * to indicate which entity is activating the effect and the {@link EffectSource} to specify the source from where
      * the effect will be activated.</p>
      *
-     * @param holder the entity or object that activates the effect
-     * @param source the source from where the effect is activated
+     * @param context the item effect context
      */
-    void activate(@NotNull ItemHolder holder, @NotNull EffectSource source);
-
     void activate(@NotNull ItemEffectContext context);
 }

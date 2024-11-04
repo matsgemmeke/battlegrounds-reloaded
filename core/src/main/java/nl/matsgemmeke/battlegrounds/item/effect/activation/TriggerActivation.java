@@ -38,7 +38,7 @@ public class TriggerActivation extends BaseItemEffectActivation {
         }
 
         for (Trigger trigger : triggers) {
-            trigger.checkTriggerActivation(holder, source);
+            trigger.checkTriggerActivation(context);
         }
     }
 }

@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -38,8 +39,10 @@ public class FloorHitTriggerTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
 
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
         FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, periodBetweenChecks);
-        trigger.checkTriggerActivation(holder, source);
+        trigger.checkTriggerActivation(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -62,15 +65,16 @@ public class FloorHitTriggerTest {
         when(blockBelowObject.isPassable()).thenReturn(true).thenReturn(false);
         when(world.getBlockAt(any(Location.class))).thenReturn(blockBelowObject);
 
-        BukkitTask task = mock(BukkitTask.class);
         ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
         TriggerObserver observer = mock(TriggerObserver.class);
 
+        BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
 
         FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, periodBetweenChecks);
         trigger.addObserver(observer);
-        trigger.checkTriggerActivation(holder, source);
+        trigger.checkTriggerActivation(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -79,7 +83,7 @@ public class FloorHitTriggerTest {
         runnable.run();
         runnable.run();
 
-        verify(observer).onTrigger(holder, source);
+        verify(observer).onTrigger(context);
         verify(task).cancel();
     }
 }

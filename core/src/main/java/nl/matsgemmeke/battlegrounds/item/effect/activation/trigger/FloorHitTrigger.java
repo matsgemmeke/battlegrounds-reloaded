@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
@@ -32,11 +32,13 @@ public class FloorHitTrigger implements Trigger {
         observers.add(observer);
     }
 
-    public void checkTriggerActivation(@NotNull ItemHolder holder, @NotNull EffectSource source) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(holder, source), RUNNABLE_DELAY, periodBetweenChecks);
+    public void checkTriggerActivation(@NotNull ItemEffectContext context) {
+        task = taskRunner.runTaskTimer(() -> this.runCheck(context), RUNNABLE_DELAY, periodBetweenChecks);
     }
 
-    private void runCheck(@NotNull ItemHolder holder, @NotNull EffectSource source) {
+    private void runCheck(@NotNull ItemEffectContext context) {
+        EffectSource source = context.getSource();
+
         if (!source.exists()) {
             task.cancel();
             return;
@@ -49,13 +51,13 @@ public class FloorHitTrigger implements Trigger {
             return;
         }
 
-        this.notifyObservers(holder, source);
+        this.notifyObservers(context);
         task.cancel();
     }
 
-    private void notifyObservers(@NotNull ItemHolder holder, @NotNull EffectSource source) {
+    private void notifyObservers(@NotNull ItemEffectContext context) {
         for (TriggerObserver observer : observers) {
-            observer.onTrigger(holder, source);
+            observer.onTrigger(context);
         }
     }
 }
