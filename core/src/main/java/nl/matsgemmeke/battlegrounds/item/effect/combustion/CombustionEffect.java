@@ -61,7 +61,9 @@ public class CombustionEffect implements ItemEffect {
         this.currentRadius = 0;
     }
 
-    public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
+    public void activate(@NotNull ItemEffectContext context) {
+        ItemHolder holder = context.getHolder();
+        EffectSource source = context.getSource();
         Location location = source.getLocation();
         World world = source.getWorld();
 
@@ -86,10 +88,6 @@ public class CombustionEffect implements ItemEffect {
         }, RUNNABLE_DELAY, settings.ticksBetweenFireSpread());
 
         source.remove();
-    }
-
-    public void activate(@NotNull ItemEffectContext context) {
-        this.activate(context.getHolder(), context.getSource());
     }
 
     private void inflictDamage(@NotNull ItemHolder holder, @NotNull Location location) {

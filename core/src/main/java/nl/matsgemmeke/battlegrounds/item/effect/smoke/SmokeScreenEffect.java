@@ -2,11 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ParticleSettings;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -47,18 +45,6 @@ public class SmokeScreenEffect implements ItemEffect {
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.currentDuration = 0;
-    }
-
-    public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
-        audioEmitter.playSounds(smokeScreenSettings.ignitionSounds(), source.getLocation());
-
-        task = taskRunner.runTaskTimer(() -> {
-            if (++currentDuration >= smokeScreenSettings.duration()) {
-                task.cancel();
-                return;
-            }
-            this.createSmokeEffect(source.getLocation(), source.getWorld());
-        }, RUNNABLE_DELAY, RUNNABLE_PERIOD);
     }
 
     public void activate(@NotNull ItemEffectContext context) {

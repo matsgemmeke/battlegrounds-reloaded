@@ -31,26 +31,24 @@ public class ExplosionEffect implements ItemEffect {
         this.rangeProfile = rangeProfile;
     }
 
-    public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
-        Location location = source.getLocation();
+    public void activate(@NotNull ItemEffectContext context) {
+        ItemHolder holder = context.getHolder();
+        EffectSource source = context.getSource();
+        Location sourceLocation = source.getLocation();
         World world = source.getWorld();
         Entity damageSource = holder.getEntity();
 
-        world.createExplosion(location, settings.power(), settings.setFire(), settings.breakBlocks(), damageSource);
+        world.createExplosion(sourceLocation, settings.power(), settings.setFire(), settings.breakBlocks(), damageSource);
 
         source.remove();
 
-        for (GameEntity target : targetFinder.findTargets(holder, location, rangeProfile.getLongRangeDistance())) {
+        for (GameEntity target : targetFinder.findTargets(holder, sourceLocation, rangeProfile.getLongRangeDistance())) {
             Location targetLocation = target.getEntity().getLocation();
 
-            double distance = location.distance(targetLocation);
+            double distance = sourceLocation.distance(targetLocation);
             double damage = rangeProfile.getDamageByDistance(distance);
 
             target.damage(damage);
         }
-    }
-
-    public void activate(@NotNull ItemEffectContext context) {
-        this.activate(context.getHolder(), context.getSource());
     }
 }

@@ -30,15 +30,14 @@ public class FlashEffect implements ItemEffect {
         this.targetFinder = targetFinder;
     }
 
-    public void activate(@NotNull ItemHolder holder, @NotNull EffectSource source) {
+    public void activate(@NotNull ItemEffectContext context) {
+        ItemHolder holder = context.getHolder();
+        EffectSource source = context.getSource();
+
         this.createExplosionEffect(holder, source);
         this.applyPotionEffectToTargets(holder, source.getLocation());
 
         source.remove();
-    }
-
-    public void activate(@NotNull ItemEffectContext context) {
-        this.activate(context.getHolder(), context.getSource());
     }
 
     private void createExplosionEffect(@NotNull ItemHolder holder, @NotNull EffectSource source) {
