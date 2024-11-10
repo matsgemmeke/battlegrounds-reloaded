@@ -106,14 +106,17 @@ public class SmokeScreenEffect implements ItemEffect {
         int particleAmount = (int) (radius * smokeScreenSettings.density());
 
         for (int i = 0; i < particleAmount; i++) {
+            // Generate a random distance within the current radius
+            double distance = radius * Math.cbrt(random.nextDouble());
+
             // Random angles for spherical coordinates
             double theta = 2 * Math.PI * random.nextDouble();
             double phi = Math.acos(2 * random.nextDouble() - 1);
 
             // Convert spherical coordinates to Cartesian coordinates
-            double x = radius * Math.sin(phi) * Math.cos(theta);
-            double y = radius * Math.cos(phi);
-            double z = radius * Math.sin(phi) * Math.sin(theta);
+            double x = distance * Math.sin(phi) * Math.cos(theta);
+            double y = distance * Math.cos(phi);
+            double z = distance * Math.sin(phi) * Math.sin(theta);
 
             Location particleLocation = location.clone().add(x, y, z);
             double offsetX = (particleLocation.getX() - location.getX()) * random.nextDouble();
