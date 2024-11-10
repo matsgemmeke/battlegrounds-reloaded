@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class HeldItem implements EffectSource {
 
+    private static final double HAND_HEIGHT_OFFSET = 1.0;
+
     @NotNull
     private ItemHolder holder;
     @NotNull
@@ -24,7 +26,7 @@ public class HeldItem implements EffectSource {
 
     @NotNull
     public Location getLocation() {
-        return holder.getLocation();
+        return holder.getLocation().add(0, HAND_HEIGHT_OFFSET, 0);
     }
 
     @NotNull

@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -53,9 +54,10 @@ public class ExplosionEffectTest {
         when(holder.getEntity()).thenReturn(entity);
 
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
 
         ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
-        effect.activate(holder, source);
+        effect.activate(context);
 
         verify(source).remove();
         verify(world).createExplosion(sourceLocation, power, setFire, breakBlocks, entity);
@@ -88,9 +90,10 @@ public class ExplosionEffectTest {
         when(targetFinder.findTargets(holder, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
         ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
 
         ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
-        effect.activate(holder, source);
+        effect.activate(context);
 
         verify(source).remove();
         verify(holder).damage(SHORT_RANGE_DAMAGE);

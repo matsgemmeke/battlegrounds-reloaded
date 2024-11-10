@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -131,13 +132,18 @@ public class ItemEffectFactory {
 
                 Iterable<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sound"));
                 int duration = section.getInt("duration");
-                int maxSize = section.getInt("max-size");
+                double density = section.getDouble("density");
+                double radiusMaxSize = section.getDouble("radius.max-size");
+                double radiusStartingSize = section.getDouble("radius.starting-size");
+                double growthIncrease = section.getDouble("growth-increase");
+                long growthPeriod = section.getLong("growth-period");
 
-                SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(ignitionSounds, duration, maxSize);
+                SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(ignitionSounds, duration, density, radiusMaxSize, radiusStartingSize, growthIncrease, growthPeriod);
                 ParticleSettings particleSettings = new ParticleSettings(particle, count, offsetX, offsetY, offsetZ, extra);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
+                CollisionDetector collisionDetector = context.getCollisionDetector();
 
-                return new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, taskRunner);
+                return new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
             }
         }
 

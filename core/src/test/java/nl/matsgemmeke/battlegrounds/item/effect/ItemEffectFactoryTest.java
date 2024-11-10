@@ -4,6 +4,7 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
@@ -79,6 +80,9 @@ public class ItemEffectFactoryTest {
     public void createInstanceForSmokeScreenEffectType() {
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(context.getAudioEmitter()).thenReturn(audioEmitter);
+
+        CollisionDetector collisionDetector = mock(CollisionDetector.class);
+        when(context.getCollisionDetector()).thenReturn(collisionDetector);
 
         when(section.getString("particle.type")).thenReturn("CAMPFIRE_COSY_SMOKE");
         when(section.getString("type")).thenReturn("SMOKE_SCREEN");

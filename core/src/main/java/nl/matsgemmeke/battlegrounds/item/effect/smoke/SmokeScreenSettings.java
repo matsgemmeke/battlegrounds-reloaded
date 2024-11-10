@@ -6,5 +6,9 @@ import org.jetbrains.annotations.NotNull;
 public record SmokeScreenSettings(
         @NotNull Iterable<GameSound> ignitionSounds,
         int duration,
-        int maxSize
+        double density,
+        double radiusMaxSize,
+        double radiusStartingSize,
+        double growthIncrease,
+        long growthPeriod
 ) { }

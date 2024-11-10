@@ -3,11 +3,13 @@ package nl.matsgemmeke.battlegrounds.item.effect.flash;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.PotionEffectSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -44,7 +46,29 @@ public class FlashEffectTest {
     }
 
     @Test
-    public void createExplosionEffectAtSourceLocationAndApplyBlindnessPotionEffectToAllLivingEntitiesInsideTheLongRangeDistance() {
+    public void activateCreatesExplosionAtSourceLocation() {
+        Entity holderEntity = mock(Entity.class);
+        World world = mock(World.class);
+        Location sourceLocation = new Location(world, 1, 1, 1);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        when(holder.getEntity()).thenReturn(holderEntity);
+
+        EffectSource source = mock(EffectSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getWorld()).thenReturn(world);
+
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        FlashEffect effect = new FlashEffect(flashSettings, potionEffectSettings, targetFinder);
+        effect.activate(context);
+
+        verify(source).remove();
+        verify(world).createExplosion(sourceLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, holderEntity);
+    }
+
+    @Test
+    public void activateAppliesBlindnessPotionEffectToAllLivingEntitiesInsideTheLongRangeDistance() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
@@ -61,10 +85,12 @@ public class FlashEffectTest {
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
         when(targetFinder.findTargets(holder, sourceLocation, RANGE)).thenReturn(List.of(holder, gameEntity));
 
         FlashEffect effect = new FlashEffect(flashSettings, potionEffectSettings, targetFinder);
-        effect.activate(holder, source);
+        effect.activate(context);
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
         verify(entity).addPotionEffect(potionEffectCaptor.capture());
@@ -79,7 +105,6 @@ public class FlashEffectTest {
         assertEquals(POTION_EFFECT_ICON, potionEffect.hasIcon());
 
         verify(source).remove();
-        verify(world).createExplosion(sourceLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, entity);
         verifyNoInteractions(arrow);
     }
 }

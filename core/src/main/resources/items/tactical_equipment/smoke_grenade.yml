@@ -8,16 +8,21 @@ controls:
   throw: LEFT_CLICK
 description: Device that creates a smoke screen when detonated.
 effect:
-  duration: 200
+  density: 5
+  duration: 400
+  growth-increase: 0.025
+  growth-period: 1
   ignition-sound: BLOCK_FIRE_EXTINGUISH-1-0-0
-  max-size: 5
   particle:
-    count: 3
-    extra: 0.0
-    offset-x: 0.5
-    offset-y: 0.5
-    offset-z: 0.5
-    type: CAMPFIRE_COSY_SMOKE
+    count: 1
+    extra: 0.01
+    offset-x: 0.1
+    offset-y: 0.1
+    offset-z: 0.1
+    type: CAMPFIRE_SIGNAL_SMOKE
+  radius:
+    max-size: 3.0
+    starting-size: 0.2
   type: SMOKE_SCREEN
 equipment-type: TACTICAL
 item:
