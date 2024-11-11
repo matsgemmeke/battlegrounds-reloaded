@@ -120,6 +120,7 @@ public class SmokeScreenEffectTest {
         SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5,0.0, GROWTH_PERIOD);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
+        when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
 
         SmokeScreenEffect effect = new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
         effect.activate(context);
@@ -135,7 +136,7 @@ public class SmokeScreenEffectTest {
     }
 
     @Test
-    public void activateDoesDisplaySphereParticleIfTheParticleLocationCausesCollision() {
+    public void activateDoesNotDisplaySphereParticleIfTheParticleLocationCausesCollision() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
 
@@ -149,6 +150,36 @@ public class SmokeScreenEffectTest {
         SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(true);
+
+        SmokeScreenEffect effect = new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
+        effect.activate(context);
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
+
+        Runnable runnable = runnableCaptor.getValue();
+        runnable.run();
+
+        verify(audioEmitter).playSounds(IGNITION_SOUNDS, sourceLocation);
+        verifyNoInteractions(world);
+    }
+
+    @Test
+    public void activateDoesNotDisplaySphereParticleIfTheParticleLocationHasNoLineOfSightToSource() {
+        World world = mock(World.class);
+        Location sourceLocation = new Location(world, 0, 0, 0);
+
+        ItemHolder holder = mock(ItemHolder.class);
+
+        EffectSource source = mock(EffectSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getWorld()).thenReturn(world);
+
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+        SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
+
+        when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
+        when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(false);
 
         SmokeScreenEffect effect = new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
         effect.activate(context);

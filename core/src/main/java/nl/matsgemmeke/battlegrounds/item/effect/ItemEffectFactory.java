@@ -70,9 +70,10 @@ public class ItemEffectFactory {
                 CombustionSettings settings = new CombustionSettings(sounds, radius, ticksBetweenSpread, burnBlocks, spreadFire);
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
+                CollisionDetector collisionDetector = context.getCollisionDetector();
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
+                return new CombustionEffect(settings, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
             }
             case EXPLOSION -> {
                 float power = section.getFloat("power");

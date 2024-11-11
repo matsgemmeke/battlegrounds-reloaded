@@ -37,9 +37,11 @@ public class ItemEffectFactoryTest {
     @Test
     public void createInstanceForCombustionEffectType() {
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        when(context.getAudioEmitter()).thenReturn(audioEmitter);
-
+        CollisionDetector collisionDetector = mock(CollisionDetector.class);
         TargetFinder targetFinder = mock(TargetFinder.class);
+
+        when(context.getAudioEmitter()).thenReturn(audioEmitter);
+        when(context.getCollisionDetector()).thenReturn(collisionDetector);
         when(context.getTargetFinder()).thenReturn(targetFinder);
 
         when(section.getString("type")).thenReturn("COMBUSTION");
@@ -79,9 +81,9 @@ public class ItemEffectFactoryTest {
     @Test
     public void createInstanceForSmokeScreenEffectType() {
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        when(context.getAudioEmitter()).thenReturn(audioEmitter);
-
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
+
+        when(context.getAudioEmitter()).thenReturn(audioEmitter);
         when(context.getCollisionDetector()).thenReturn(collisionDetector);
 
         when(section.getString("particle.type")).thenReturn("CAMPFIRE_COSY_SMOKE");

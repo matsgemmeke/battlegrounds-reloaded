@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.combustion;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -33,6 +34,8 @@ public class CombustionEffect implements ItemEffect {
     @Nullable
     private BukkitTask task;
     @NotNull
+    private CollisionDetector collisionDetector;
+    @NotNull
     private CombustionSettings settings;
     private int currentRadius;
     @NotNull
@@ -48,6 +51,7 @@ public class CombustionEffect implements ItemEffect {
             @NotNull CombustionSettings settings,
             @NotNull RangeProfile rangeProfile,
             @NotNull AudioEmitter audioEmitter,
+            @NotNull CollisionDetector collisionDetector,
             @NotNull MetadataValueCreator metadataValueCreator,
             @NotNull TargetFinder targetFinder,
             @NotNull TaskRunner taskRunner
@@ -55,6 +59,7 @@ public class CombustionEffect implements ItemEffect {
         this.settings = settings;
         this.rangeProfile = rangeProfile;
         this.audioEmitter = audioEmitter;
+        this.collisionDetector = collisionDetector;
         this.metadataValueCreator = metadataValueCreator;
         this.targetFinder = targetFinder;
         this.taskRunner = taskRunner;
@@ -81,7 +86,7 @@ public class CombustionEffect implements ItemEffect {
             }
 
             for (Block block : this.getBlocksInRadius(location, world, currentRadius)) {
-                if (block.getType() == Material.AIR && hasLineOfSight(world, block.getLocation(), location)) {
+                if (block.getType() == Material.AIR && collisionDetector.hasLineOfSight(block.getLocation(), location)) {
                     this.setOnFire(block);
                 }
             }
@@ -117,26 +122,6 @@ public class CombustionEffect implements ItemEffect {
         }
 
         return blocks;
-    }
-
-    private boolean hasLineOfSight(@NotNull World world, @NotNull Location from, @NotNull Location to) {
-        // Trace the blocks from the starting location to the destination location
-        double distance = from.distance(to);
-
-        for (int i = 0; i < distance; i++) {
-            double t = i / distance;
-
-            int x = (int) (from.getX() + t * (to.getX() - from.getX()));
-            int y = (int) (from.getY() + t * (to.getY() - from.getY()));
-            int z = (int) (from.getZ() + t * (to.getZ() - from.getZ()));
-
-            Block block = world.getBlockAt(x, y, z);
-
-            if (!block.isPassable()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private void setOnFire(@NotNull Block block) {

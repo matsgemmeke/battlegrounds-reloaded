@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -38,6 +39,7 @@ public class CombustionEffectTest {
     private static final double SHORT_RANGE_DISTANCE = 2.5;
 
     private AudioEmitter audioEmitter;
+    private CollisionDetector collisionDetector;
     private MetadataValueCreator metadataValueCreator;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
@@ -46,6 +48,7 @@ public class CombustionEffectTest {
     @Before
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
+        collisionDetector = mock(CollisionDetector.class);
         metadataValueCreator = mock(MetadataValueCreator.class);
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);
@@ -89,7 +92,10 @@ public class CombustionEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenFireSpread))).thenReturn(task);
 
-        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
+        when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
+        when(collisionDetector.hasLineOfSight(blockOutsideLineOfSight.getLocation(), sourceLocation)).thenReturn(false);
+
+        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -150,7 +156,7 @@ public class CombustionEffectTest {
 
         when(targetFinder.findTargets(holder, objectLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
-        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
+        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
         effect.activate(context);
 
         verify(holder).damage(MEDIUM_RANGE_DAMAGE);
@@ -175,7 +181,7 @@ public class CombustionEffectTest {
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, metadataValueCreator, targetFinder, taskRunner);
+        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
         effect.activate(context);
 
         verify(audioEmitter).playSounds(sounds, location);

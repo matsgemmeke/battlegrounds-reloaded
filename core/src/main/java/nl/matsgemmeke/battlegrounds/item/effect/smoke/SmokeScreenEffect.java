@@ -124,7 +124,8 @@ public class SmokeScreenEffect implements ItemEffect {
             double offsetZ = (particleLocation.getZ() - location.getZ()) * random.nextDouble();
 
             // Spawn particle at calculated location
-            if (!collisionDetector.producesBlockCollisionAt(particleLocation)) {
+            if (!collisionDetector.producesBlockCollisionAt(particleLocation)
+                    && collisionDetector.hasLineOfSight(particleLocation, location)) {
                 world.spawnParticle(particleSettings.type(), particleLocation, 0, offsetX, offsetY, offsetZ, particleSettings.extra());
             }
         }
