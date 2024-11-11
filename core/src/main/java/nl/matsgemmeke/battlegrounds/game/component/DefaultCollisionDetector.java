@@ -3,10 +3,12 @@ package nl.matsgemmeke.battlegrounds.game.component;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class DefaultCollisionDetector implements CollisionDetector {
+
+    private static final double STEP_SIZE = 0.5;
 
     @NotNull
     private BlockCollisionChecker blockCollisionChecker;
@@ -15,29 +17,37 @@ public class DefaultCollisionDetector implements CollisionDetector {
         this.blockCollisionChecker = blockCollisionChecker;
     }
 
-    public boolean hasLineOfSight(@NotNull Location from, @NotNull Location to) {
-        World world = from.getWorld();
+    public boolean hasLineOfSight(@NotNull Location start, @NotNull Location end) {
+        World world = start.getWorld();
 
-        if (world == null || world != to.getWorld()) {
+        // Ensure both locations are in the same world
+        if (world == null || world != end.getWorld()) {
             return false;
         }
 
-        // Trace the blocks from the starting location to the destination location
-        double distance = from.distance(to);
+        // Calculate direction vector and distance
+        Vector direction = end.toVector().subtract(start.toVector());
+        double distance = direction.length();
 
-        for (int i = 0; i < distance; i++) {
-            double t = i / distance;
+        // Normalize the direction to get unit steps
+        direction.normalize();
 
-            int x = (int) (from.getX() + t * (to.getX() - from.getX()));
-            int y = (int) (from.getY() + t * (to.getY() - from.getY()));
-            int z = (int) (from.getZ() + t * (to.getZ() - from.getZ()));
+        // Set the step size, e.g., 0.5 blocks per step for accuracy
+        Vector step = direction.multiply(STEP_SIZE);
+        // Iterate from start to end in steps along the vector
+        Location current = start.clone();
 
-            Block block = world.getBlockAt(x, y, z);
-
-            if (!block.isPassable()) {
-                return false;
+        for (double traveled = 0; traveled < distance; traveled += STEP_SIZE) {
+            // Check if the block at this location is solid
+            if (world.getBlockAt(current.getBlockX(), current.getBlockY(), current.getBlockZ()).getType().isSolid()) {
+                return false; // Line of sight is blocked
             }
+
+            // Move to the next step along the line
+            current.add(step);
         }
+
+        // If no solid blocks were found, line of sight is clear
         return true;
     }
 
