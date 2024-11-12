@@ -12,9 +12,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class GiveWeaponCommandTest {
@@ -24,7 +25,7 @@ public class GiveWeaponCommandTest {
     private Translator translator;
     private WeaponProvider weaponProvider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.context = mock(GameContext.class);
         this.player = mock(Player.class);
@@ -34,10 +35,11 @@ public class GiveWeaponCommandTest {
         when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn(new TextTemplate("test"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowErrorWhenGivenIncompatibleWeaponId() {
         GiveWeaponCommand command = new GiveWeaponCommand(context, translator, weaponProvider);
-        command.execute(player, "fail");
+
+        assertThrows(IllegalArgumentException.class, () -> command.execute(player, "fail"));
     }
 
     @Test

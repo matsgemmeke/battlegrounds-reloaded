@@ -9,9 +9,10 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,7 +23,7 @@ public class ExistentSessionIdConditionTest {
     private GameContextProvider contextProvider;
     private Translator translator;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() {
         execContext = mock(BukkitCommandExecutionContext.class);
@@ -43,7 +44,7 @@ public class ExistentSessionIdConditionTest {
         condition.validateCondition(conditionContext, execContext, sessionId);
     }
 
-    @Test(expected = ConditionFailedException.class)
+    @Test
     public void conditionShouldNotPassWhenSessionDoesNotExist() {
         int sessionId = 1;
 
@@ -51,6 +52,7 @@ public class ExistentSessionIdConditionTest {
         when(translator.translate(TranslationKey.SESSION_NOT_EXISTS.getPath())).thenReturn(new TextTemplate("message"));
 
         ExistentSessionIdCondition condition = new ExistentSessionIdCondition(contextProvider, translator);
-        condition.validateCondition(conditionContext, execContext, sessionId);
+
+        assertThrows(ConditionFailedException.class, () -> condition.validateCondition(conditionContext, execContext, sessionId));
     }
 }

@@ -9,8 +9,8 @@ import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
@@ -21,7 +21,7 @@ public class CreateSessionCommandTest {
     private SessionFactory sessionFactory;
     private Translator translator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.sender = mock(CommandSender.class);
         this.contextProvider = mock(GameContextProvider.class);
