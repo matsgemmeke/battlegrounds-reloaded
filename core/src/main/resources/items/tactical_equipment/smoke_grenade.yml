@@ -1,0 +1,39 @@
+id: SMOKE_GRENADE
+name: Smoke Grenade
+activation:
+  delay-until-activation: 60
+  type: DELAYED
+controls:
+  cook: RIGHT_CLICK
+  throw: LEFT_CLICK
+description: Device that creates a smoke screen when detonated.
+effect:
+  density: 5
+  duration: 400
+  growth-increase: 0.025
+  growth-period: 1
+  ignition-sound: BLOCK_FIRE_EXTINGUISH-1-0-0
+  particle:
+    count: 1
+    extra: 0.01
+    offset-x: 0.1
+    offset-y: 0.1
+    offset-z: 0.1
+    type: CAMPFIRE_SIGNAL_SMOKE
+  radius:
+    max-size: 3.0
+    starting-size: 0.2
+  type: SMOKE_SCREEN
+equipment-type: TACTICAL
+item:
+  damage: 7
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 7
+    material: SHEARS
+throwing:
+  cook-sound: ENTITY_TNT_PRIMED-1-2-0
+  delay-after-throw: 30
+  projectile-speed: 1.2
+  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0

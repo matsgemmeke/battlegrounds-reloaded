@@ -8,15 +8,7 @@ activation:
 controls:
   throw: LEFT_CLICK
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
-equipment-type: LETHAL
-item:
-  damage: 4
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
-    damage: 4
-    material: SHEARS
-mechanism:
+effect:
   burn-blocks: false
   combustion-sound: BLOCK_GLASS_BREAK-1-1-0
   radius: 3
@@ -33,6 +25,14 @@ mechanism:
   spread-fire: false
   ticks-between-spread: 5
   type: COMBUSTION
+equipment-type: LETHAL
+item:
+  damage: 4
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 4
+    material: SHEARS
 throwing:
   delay-after-throw: 30
   projectile-speed: 1.2

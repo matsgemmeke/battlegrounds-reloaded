@@ -5,10 +5,9 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
-import nl.matsgemmeke.battlegrounds.item.deployment.PlacedBlock;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.source.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -29,9 +28,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     private AudioEmitter audioEmitter;
     private boolean performing;
     @NotNull
-    private DeployableSource item;
-    @NotNull
-    private ItemMechanismActivation mechanismActivation;
+    private ItemEffectActivation effectActivation;
     @NotNull
     private Iterable<GameSound> sounds;
     private long delayAfterPlacement;
@@ -41,15 +38,13 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     private TaskRunner taskRunner;
 
     public PlaceFunction(
-            @NotNull DeployableSource item,
-            @NotNull ItemMechanismActivation mechanismActivation,
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull Material material,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             long delayAfterPlacement
     ) {
-        this.item = item;
-        this.mechanismActivation = mechanismActivation;
+        this.effectActivation = effectActivation;
         this.material = material;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
@@ -63,7 +58,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return item.getDeployedObjects().isEmpty();
+        return true;
     }
 
     public boolean isBlocking() {
@@ -95,21 +90,13 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
         this.placeBlock(adjacentBlock, targetBlockFace);
 
-        PlacedBlock placedBlock = new PlacedBlock(adjacentBlock, material);
-        item.onDeploy(placedBlock);
-
         audioEmitter.playSounds(sounds, adjacentBlock.getLocation());
 
         performing = true;
 
         taskRunner.runTaskLater(() -> performing = false, delayAfterPlacement);
 
-        if (mechanismActivation.isPrimed()) {
-            mechanismActivation.deploy(placedBlock);
-        } else {
-            mechanismActivation.primeDeployedObject(holder, placedBlock);
-        }
-
+        effectActivation.prime(holder, new PlacedBlock(adjacentBlock, material));
         return true;
     }
 

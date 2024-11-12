@@ -9,15 +9,7 @@ activation:
 controls:
   throw: LEFT_CLICK
 description: Anti-personnel mine that triggers a proximity-based explosion.
-equipment-type: LETHAL
-item:
-  damage: 5
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
-    damage: 5
-    material: SHEARS
-mechanism:
+effect:
   break-blocks: false
   power: 2.0
   range:
@@ -32,6 +24,14 @@ mechanism:
       distance: 2.5
   set-fire: false
   type: EXPLOSION
+equipment-type: LETHAL
+item:
+  damage: 5
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 5
+    material: SHEARS
 throwing:
   delay-after-throw: 30
   projectile-speed: 0.0

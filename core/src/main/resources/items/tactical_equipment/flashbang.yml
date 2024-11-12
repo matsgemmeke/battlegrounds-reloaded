@@ -7,27 +7,27 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 description: Device that blinds the target when detonated.
-equipment-type: TACTICAL
-item:
-  damage: 6
-  display-name: "%&fname%"
-  material: SHEARS
-  throw-item:
-    damage: 6
-    material: SHEARS
-mechanism:
-  effect:
+effect:
+  explosion:
+    break-blocks: false
+    power: 1
+    set-fire: false
+  potion-effect:
     ambient: true
     amplifier: 0
     duration: 100
     icon: false
     particles: true
-  explosion:
-    break-blocks: false
-    power: 1
-    set-fire: false
   range: 5.0
   type: FLASH
+equipment-type: TACTICAL
+item:
+  damage: 6
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 6
+    material: SHEARS
 throwing:
   cook-sound: ENTITY_TNT_PRIMED-1-2-0
   delay-after-throw: 30

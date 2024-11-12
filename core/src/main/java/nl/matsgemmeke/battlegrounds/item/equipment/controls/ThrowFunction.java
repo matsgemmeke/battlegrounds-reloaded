@@ -6,10 +6,9 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deployment.DeployableSource;
-import nl.matsgemmeke.battlegrounds.item.deployment.DroppedItem;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivation;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
@@ -27,11 +26,9 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private AudioEmitter audioEmitter;
     private boolean performing;
-    @NotNull
-    private DeployableSource item;
     private double projectileSpeed;
     @NotNull
-    private ItemMechanismActivation mechanismActivation;
+    private ItemEffectActivation effectActivation;
     @NotNull
     private ItemTemplate itemTemplate;
     @NotNull
@@ -41,17 +38,15 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private TaskRunner taskRunner;
 
     public ThrowFunction(
-            @NotNull DeployableSource item,
             @NotNull ItemTemplate itemTemplate,
-            @NotNull ItemMechanismActivation mechanismActivation,
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             double projectileSpeed,
             long delayAfterThrow
     ) {
-        this.item = item;
         this.itemTemplate = itemTemplate;
-        this.mechanismActivation = mechanismActivation;
+        this.effectActivation = effectActivation;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.projectileSpeed = projectileSpeed;
@@ -81,10 +76,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        if (!item.getDeployedObjects().isEmpty()) {
-            return false;
-        }
-
         Location location = holder.getLocation();
         World world = holder.getWorld();
         Location throwingDirection = holder.getThrowingDirection();
@@ -96,23 +87,13 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         itemEntity.setPickupDelay(DEFAULT_PICKUP_DELAY);
         itemEntity.setVelocity(velocity);
 
-        DroppedItem droppedItem = new DroppedItem(itemEntity);
-        item.onDeploy(droppedItem);
-
         audioEmitter.playSounds(sounds, location);
 
         performing = true;
 
         taskRunner.runTaskLater(() -> performing = false, delayAfterThrow);
 
-        // Check if the activation mechanism is priming its next deployment. If yes, deploy the dropped item. Otherwise,
-        // prime and deploy like normally.
-        if (mechanismActivation.isPrimed()) {
-            mechanismActivation.deploy(droppedItem);
-        } else {
-            mechanismActivation.primeDeployedObject(holder, droppedItem);
-        }
-
+        effectActivation.prime(holder, new DroppedItem(itemEntity));
         return true;
     }
 }

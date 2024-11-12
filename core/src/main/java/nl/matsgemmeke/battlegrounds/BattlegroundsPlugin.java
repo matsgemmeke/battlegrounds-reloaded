@@ -15,12 +15,12 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingModeFactory;
+import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
 import nl.matsgemmeke.battlegrounds.item.WeaponProviderLoader;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
-import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
-import nl.matsgemmeke.battlegrounds.item.mechanism.ItemMechanismFactory;
-import nl.matsgemmeke.battlegrounds.item.mechanism.activation.ItemMechanismActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
@@ -217,9 +217,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
 
         MetadataValueCreator metadataValueCreator = new MetadataValueCreator(this);
-        ItemMechanismFactory mechanismFactory = new ItemMechanismFactory(metadataValueCreator, taskRunner);
-        ItemMechanismActivationFactory mechanismActivationFactory = new ItemMechanismActivationFactory(taskRunner);
-        EquipmentFactory equipmentFactory = new EquipmentFactory(mechanismFactory, mechanismActivationFactory, keyCreator, taskRunner);
+        ItemEffectFactory effectFactory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectActivationFactory effectActivationFactory = new ItemEffectActivationFactory(taskRunner);
+        EquipmentFactory equipmentFactory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
 
         File itemsDirectory = new File(this.getDataFolder() + "/items");
         WeaponProviderLoader loader = new WeaponProviderLoader(equipmentFactory, firearmFactory);

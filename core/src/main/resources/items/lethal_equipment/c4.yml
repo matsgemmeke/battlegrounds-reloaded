@@ -9,19 +9,7 @@ controls:
   place: RIGHT_CLICK
   throw: LEFT_CLICK
 description: A plastic explosive device that is detonated remotely with the clacker.
-equipment-type: LETHAL
-item:
-  activator:
-    damage: 3
-    display-name: "&fDetonator"
-    material: SHEARS
-  damage: 2
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
-    damage: 2
-    material: SHEARS
-mechanism:
+effect:
   break-blocks: false
   power: 3.0
   range:
@@ -36,6 +24,18 @@ mechanism:
       distance: 2.5
   set-fire: false
   type: EXPLOSION
+equipment-type: LETHAL
+item:
+  activator:
+    damage: 3
+    display-name: "&fDetonator"
+    material: SHEARS
+  damage: 2
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 2
+    material: SHEARS
 placing:
   delay-after-placement: 10
   material: WARPED_BUTTON

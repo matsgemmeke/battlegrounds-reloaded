@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.*;
-import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeCollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -58,7 +57,7 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         CollisionDetector collisionDetector = context.getCollisionDetector();
 
-        assertTrue(collisionDetector instanceof TrainingModeCollisionDetector);
+        assertTrue(collisionDetector instanceof DefaultCollisionDetector);
     }
 
     @Test
