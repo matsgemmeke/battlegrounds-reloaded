@@ -2,33 +2,29 @@ package nl.matsgemmeke.battlegrounds.configuration;
 
 import nl.matsgemmeke.battlegrounds.game.session.DefaultSessionConfiguration;
 import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameDataConfigurationTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    private File dataFile;
 
-    private File dataFolder;
-
-    @Before
-    public void setUp() throws IOException {
-        this.dataFolder = folder.newFile("game_1.yml");
+    @BeforeEach
+    public void setUp(@TempDir File tempDir) throws IOException {
+        this.dataFile = new File(tempDir, "game_1.yml");
     }
 
     @Test
     public void shouldBeAbleToLoadSessionConfiguration() {
         SessionConfiguration sessionConfiguration = DefaultSessionConfiguration.getNewConfiguration();
 
-        SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFolder);
+        SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFile);
         dataConfiguration.load();
         dataConfiguration.saveConfiguration(sessionConfiguration);
 
@@ -42,7 +38,7 @@ public class GameDataConfigurationTest {
     public void shouldBeAbleToSaveSessionConfiguration() {
         SessionConfiguration sessionConfiguration = DefaultSessionConfiguration.getNewConfiguration();
 
-        SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFolder);
+        SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFile);
         dataConfiguration.load();
         dataConfiguration.saveConfiguration(sessionConfiguration);
 

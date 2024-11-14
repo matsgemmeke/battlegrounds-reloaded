@@ -2,36 +2,38 @@ package nl.matsgemmeke.battlegrounds.configuration;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Location;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class GeneralDataConfigurationTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
     private File generalDataFile;
+    @TempDir
+    private Path tempDir;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        this.generalDataFile = folder.newFile("general.yml");
+        generalDataFile = Files.createFile(tempDir.resolve("general.yml")).toFile();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        System.gc();
     }
 
     @Test
     public void shouldBeAbleToGetMainLobbyLocation() {
-        double x = 1.0;
-        double y = 2.0;
-        double z = 3.0;
-
-        Location location = new Location(null, x, y, z);
+        Location location = new Location(null, 1.0, 2.0, 3.0);
 
         GeneralDataConfiguration generalData = new GeneralDataConfiguration(generalDataFile);
         generalData.load();
