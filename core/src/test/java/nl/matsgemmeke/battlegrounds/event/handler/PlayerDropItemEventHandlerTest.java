@@ -8,11 +8,11 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class PlayerDropItemEventHandlerTest {
@@ -22,7 +22,7 @@ public class PlayerDropItemEventHandlerTest {
     private Player player;
     private PlayerDropItemEvent event;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         contextProvider = mock(GameContextProvider.class);
         item = mock(Item.class);

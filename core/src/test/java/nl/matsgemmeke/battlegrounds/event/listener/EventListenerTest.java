@@ -6,8 +6,8 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -16,7 +16,7 @@ public class EventListenerTest {
 
     private EventDispatcher eventDispatcher;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.eventDispatcher = mock(EventDispatcher.class);
     }
