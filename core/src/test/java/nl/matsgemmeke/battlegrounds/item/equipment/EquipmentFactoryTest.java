@@ -26,7 +26,6 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 @SuppressWarnings("unchecked")
 public class EquipmentFactoryTest {
