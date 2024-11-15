@@ -1,12 +1,13 @@
 package nl.matsgemmeke.battlegrounds.text;
 
 import nl.matsgemmeke.battlegrounds.configuration.LanguageConfiguration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,7 +15,7 @@ public class TranslatorTest {
 
     private LanguageConfiguration languageConfiguration;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.languageConfiguration = mock(LanguageConfiguration.class);
     }
@@ -29,7 +30,7 @@ public class TranslatorTest {
         assertEquals(newOne, translator.getLanguageConfiguration());
     }
 
-    @Test(expected = InvalidTranslationKeyException.class)
+    @Test
     public void shouldThrowExceptionWhenTranslatingInvalidKey() {
         Locale locale = Locale.ENGLISH;
         String invalidKey = "invalid";
@@ -38,7 +39,8 @@ public class TranslatorTest {
         when(languageConfiguration.getString(invalidKey)).thenReturn(null);
 
         Translator translator = new Translator(languageConfiguration);
-        translator.translate(invalidKey);
+
+        assertThrows(InvalidTranslationKeyException.class, () -> translator.translate(invalidKey));
     }
 
     @Test

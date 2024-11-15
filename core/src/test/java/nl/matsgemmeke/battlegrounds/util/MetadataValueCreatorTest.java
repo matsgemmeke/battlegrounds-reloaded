@@ -3,18 +3,17 @@ package nl.matsgemmeke.battlegrounds.util;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class MetadataValueCreatorTest {
 
     private Plugin plugin;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         plugin = mock(Plugin.class);
     }
@@ -26,7 +25,7 @@ public class MetadataValueCreatorTest {
         MetadataValueCreator metadataValueCreator = new MetadataValueCreator(plugin);
         MetadataValue metadataValue = metadataValueCreator.createFixedMetadataValue(value);
 
-        assertTrue(metadataValue instanceof FixedMetadataValue);
+        assertInstanceOf(FixedMetadataValue.class, metadataValue);
         assertEquals(value, metadataValue.asInt());
     }
 }
