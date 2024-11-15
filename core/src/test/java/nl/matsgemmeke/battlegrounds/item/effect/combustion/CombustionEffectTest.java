@@ -18,8 +18,8 @@ import org.bukkit.block.Block;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
@@ -45,7 +45,7 @@ public class CombustionEffectTest {
     private TargetFinder targetFinder;
     private TaskRunner taskRunner;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);

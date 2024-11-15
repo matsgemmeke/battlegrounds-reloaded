@@ -28,6 +28,7 @@ public class GeneralDataConfigurationTest {
 
     @AfterEach
     public void tearDown() {
+        // Activate garbage collector to release file lock
         System.gc();
     }
 

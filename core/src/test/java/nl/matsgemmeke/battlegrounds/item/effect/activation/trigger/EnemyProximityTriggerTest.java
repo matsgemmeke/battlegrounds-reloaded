@@ -8,8 +8,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class EnemyProximityTriggerTest {
     private TargetFinder targetFinder;
     private TaskRunner taskRunner;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         checkingRange = 2.5;
         periodBetweenChecks = 5L;

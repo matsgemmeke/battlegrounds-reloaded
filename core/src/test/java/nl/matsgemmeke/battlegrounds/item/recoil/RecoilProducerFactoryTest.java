@@ -3,13 +3,12 @@ package nl.matsgemmeke.battlegrounds.item.recoil;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,7 +16,7 @@ public class RecoilProducerFactoryTest {
 
     private BattlegroundsConfiguration config;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.config = mock(BattlegroundsConfiguration.class);
     }
@@ -32,8 +31,7 @@ public class RecoilProducerFactoryTest {
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
         RecoilProducer recoilProducer = factory.make(section);
 
-        assertNotNull(recoilProducer);
-        assertTrue(recoilProducer instanceof RandomSpreadRecoil);
+        assertInstanceOf(RandomSpreadRecoil.class, recoilProducer);
     }
 
     @Test
@@ -46,16 +44,16 @@ public class RecoilProducerFactoryTest {
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
         RecoilProducer recoilProducer = factory.make(section);
 
-        assertNotNull(recoilProducer);
-        assertTrue(recoilProducer instanceof CameraMovementRecoil);
+        assertInstanceOf(CameraMovementRecoil.class, recoilProducer);
     }
 
-    @Test(expected = WeaponFactoryCreationException.class)
+    @Test
     public void throwsExceptionWhenCreatingUnknownRecoilProducerType() {
         Section section = mock(Section.class);
         when(section.getString("type")).thenReturn("error");
 
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
-        factory.make(section);
+
+        assertThrows(WeaponFactoryCreationException.class, () -> factory.make(section));
     }
 }

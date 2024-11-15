@@ -5,11 +5,11 @@ import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class StopScopeFunctionTest {
@@ -17,7 +17,7 @@ public class StopScopeFunctionTest {
     private AudioEmitter audioEmitter;
     private ScopeAttachment scopeAttachment;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         scopeAttachment = mock(ScopeAttachment.class);

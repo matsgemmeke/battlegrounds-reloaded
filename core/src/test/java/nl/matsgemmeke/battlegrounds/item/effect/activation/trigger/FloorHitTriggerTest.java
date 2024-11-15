@@ -8,22 +8,20 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.*;
 
 public class FloorHitTriggerTest {
 
     private long periodBetweenChecks;
     private TaskRunner taskRunner;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         periodBetweenChecks = 5L;
         taskRunner = mock(TaskRunner.class);

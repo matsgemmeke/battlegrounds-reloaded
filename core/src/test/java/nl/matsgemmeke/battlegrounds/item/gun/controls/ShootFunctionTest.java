@@ -7,13 +7,13 @@ import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class ShootFunctionTest {
@@ -22,7 +22,7 @@ public class ShootFunctionTest {
     private AudioEmitter audioEmitter;
     private FireMode fireMode;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.ammunitionHolder = mock(AmmunitionHolder.class);
         this.audioEmitter = mock(AudioEmitter.class);

@@ -6,11 +6,11 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.scheduler.BukkitTask;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -22,7 +22,7 @@ public class DelayedActivationTest {
     private long delayUntilActivation;
     private TaskRunner taskRunner;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         effect = mock(ItemEffect.class);
         holder = mock(ItemHolder.class);

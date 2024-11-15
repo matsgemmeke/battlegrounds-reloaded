@@ -12,8 +12,8 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class SmokeScreenEffectTest {
     private ParticleSettings particleSettings;
     private TaskRunner taskRunner;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);

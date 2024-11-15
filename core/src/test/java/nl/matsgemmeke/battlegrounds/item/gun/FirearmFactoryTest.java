@@ -23,25 +23,19 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unchecked")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Bukkit.class)
 public class FirearmFactoryTest {
 
     private BattlegroundsConfiguration config;
@@ -49,13 +43,14 @@ public class FirearmFactoryTest {
     private FireModeFactory fireModeFactory;
     private ItemConfiguration itemConfiguration;
     private ItemFactory itemFactory;
+    private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
     private RecoilProducerFactory recoilProducerFactory;
     private ReloadSystemFactory reloadSystemFactory;
     private Section rootSection;
     private SpreadPatternFactory spreadPatternFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         config = mock(BattlegroundsConfiguration.class);
         fireModeFactory = mock(FireModeFactory.class);
@@ -90,8 +85,13 @@ public class FirearmFactoryTest {
         when(itemConfiguration.getItemId()).thenReturn("TEST_GUN");
         when(itemConfiguration.getRoot()).thenReturn(rootSection);
 
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        bukkit = mockStatic(Bukkit.class);
+        bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        bukkit.close();
     }
 
     @Test
@@ -124,7 +124,7 @@ public class FirearmFactoryTest {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
-        assertTrue(firearm instanceof DefaultFirearm);
+        assertInstanceOf(DefaultFirearm.class, firearm);
         assertEquals("test", firearm.getName());
         assertEquals(Material.IRON_HOE, firearm.getItemStack().getType());
         assertEquals(magazineSize, firearm.getMagazineAmmo());
@@ -137,12 +137,13 @@ public class FirearmFactoryTest {
         verify(registry).registerItem(firearm);
     }
 
-    @Test(expected = CreateFirearmException.class)
+    @Test
     public void shouldThrowExceptionWhenCreatingFirearmWithInvalidMaterial() {
         when(rootSection.getString("item.material")).thenReturn("fail");
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        firearmFactory.make(itemConfiguration, context);
+
+        assertThrows(CreateFirearmException.class, () -> firearmFactory.make(itemConfiguration, context));
     }
 
     @Test
@@ -164,7 +165,7 @@ public class FirearmFactoryTest {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
-        assertNotNull(firearm);
+        assertInstanceOf(DefaultFirearm.class, firearm);
 
         verify(fireModeFactory).make(eq(firearm), any());
         verify(registry).registerItem(firearm);
@@ -183,7 +184,7 @@ public class FirearmFactoryTest {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
-        assertNotNull(firearm);
+        assertInstanceOf(DefaultFirearm.class, firearm);
 
         verify(registry).registerItem(firearm);
         verify(spreadPatternFactory).make(patternSection);
@@ -202,7 +203,7 @@ public class FirearmFactoryTest {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
-        assertNotNull(firearm);
+        assertInstanceOf(DefaultFirearm.class, firearm);
 
         verify(recoilProducerFactory).make(recoilSection);
         verify(registry).registerItem(firearm);
@@ -225,7 +226,7 @@ public class FirearmFactoryTest {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
-        assertNotNull(firearm);
+        assertInstanceOf(DefaultFirearm.class, firearm);
 
         verify(reloadSystemFactory).make(eq(firearm), any(), any());
         verify(registry).registerItem(firearm);
@@ -252,7 +253,7 @@ public class FirearmFactoryTest {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
-        assertNotNull(firearm);
+        assertInstanceOf(DefaultFirearm.class, firearm);
         assertEquals("test", firearm.getName());
 
         verify(registry).registerItem(firearm);
@@ -281,13 +282,13 @@ public class FirearmFactoryTest {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
 
-        assertNotNull(firearm);
+        assertInstanceOf(DefaultFirearm.class, firearm);
         assertEquals("test", firearm.getName());
 
         verify(registry).registerItem(firearm);
     }
 
-    @Test(expected = CreateFirearmException.class)
+    @Test
     public void shouldThrowErrorWhenScopeUseActionConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("scope-use")).thenReturn("fail");
@@ -302,10 +303,11 @@ public class FirearmFactoryTest {
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        firearmFactory.make(itemConfiguration, context);
+
+        assertThrows(CreateFirearmException.class, () -> firearmFactory.make(itemConfiguration, context));
     }
 
-    @Test(expected = CreateFirearmException.class)
+    @Test
     public void shouldThrowErrorWhenScopeStopActionConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("scope-use")).thenReturn("RIGHT_CLICK");
@@ -320,7 +322,8 @@ public class FirearmFactoryTest {
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        firearmFactory.make(itemConfiguration, context);
+
+        assertThrows(CreateFirearmException.class, () -> firearmFactory.make(itemConfiguration, context));
     }
 
     @Test
@@ -336,6 +339,7 @@ public class FirearmFactoryTest {
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context, gamePlayer);
 
+        assertInstanceOf(DefaultFirearm.class, firearm);
         assertEquals(gamePlayer, firearm.getHolder());
 
         verify(registry).registerItem(firearm, gamePlayer);

@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.mockito.Mockito.*;
@@ -16,7 +16,7 @@ public class TriggerActivationTest {
     private ItemEffect effect;
     private ItemHolder holder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         effect = mock(ItemEffect.class);
         holder = mock(ItemHolder.class);

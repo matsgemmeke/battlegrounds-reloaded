@@ -14,13 +14,13 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultFirearmTest {
@@ -30,7 +30,7 @@ public class DefaultFirearmTest {
     private GunHolder holder;
     private TargetFinder targetFinder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);

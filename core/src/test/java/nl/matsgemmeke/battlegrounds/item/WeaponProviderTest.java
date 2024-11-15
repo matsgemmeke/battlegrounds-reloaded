@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

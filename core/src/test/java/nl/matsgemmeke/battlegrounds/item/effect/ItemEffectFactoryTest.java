@@ -12,10 +12,10 @@ import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +26,7 @@ public class ItemEffectFactoryTest {
     private Section section;
     private TaskRunner taskRunner;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         context = mock(GameContext.class);
         metadataValueCreator = mock(MetadataValueCreator.class);
@@ -49,7 +49,7 @@ public class ItemEffectFactoryTest {
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         ItemEffect effect = factory.make(section, context);
 
-        assertTrue(effect instanceof CombustionEffect);
+        assertInstanceOf(CombustionEffect.class, effect);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ItemEffectFactoryTest {
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         ItemEffect effect = factory.make(section, context);
 
-        assertTrue(effect instanceof ExplosionEffect);
+        assertInstanceOf(ExplosionEffect.class, effect);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ItemEffectFactoryTest {
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         ItemEffect effect = factory.make(section, context);
 
-        assertTrue(effect instanceof FlashEffect);
+        assertInstanceOf(FlashEffect.class, effect);
     }
 
     @Test
@@ -92,40 +92,44 @@ public class ItemEffectFactoryTest {
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
         ItemEffect effect = factory.make(section, context);
 
-        assertTrue(effect instanceof SmokeScreenEffect);
+        assertInstanceOf(SmokeScreenEffect.class, effect);
     }
 
-    @Test(expected = InvalidItemConfigurationException.class)
+    @Test
     public void throwExceptionIfParticleTypeCannotBeDefined() {
         when(section.getString("particle.type")).thenReturn(null);
         when(section.getString("type")).thenReturn("SMOKE_SCREEN");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        factory.make(section, context);
+
+        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(section, context));
     }
 
-    @Test(expected = InvalidItemConfigurationException.class)
+    @Test
     public void throwExceptionIfParticleTypeIsIncorrect() {
         when(section.getString("particle.type")).thenReturn("fail");
         when(section.getString("type")).thenReturn("SMOKE_SCREEN");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        factory.make(section, context);
+
+        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(section, context));
     }
 
-    @Test(expected = InvalidItemConfigurationException.class)
+    @Test
     public void throwExceptionIfGivenActivationTypeIsNotDefined() {
         when(section.getString("type")).thenReturn(null);
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        factory.make(section, context);
+
+        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(section, context));
     }
 
-    @Test(expected = InvalidItemConfigurationException.class)
+    @Test
     public void throwExceptionIfGivenActivationTypeIsIncorrect() {
         when(section.getString("type")).thenReturn("fail");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        factory.make(section, context);
+
+        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(section, context));
     }
 }

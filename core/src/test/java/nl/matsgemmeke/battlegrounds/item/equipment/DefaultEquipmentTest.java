@@ -6,9 +6,10 @@ import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class DefaultEquipmentTest {
