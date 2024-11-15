@@ -9,13 +9,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,10 +23,10 @@ public class TrainingModeTargetFinderTest {
 
     private EntityStorage<GamePlayer> playerStorage;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() {
-        playerStorage = mock(EntityStorage.class);
+        playerStorage = (EntityStorage<GamePlayer>) mock(EntityStorage.class);
     }
 
     @Test

@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
@@ -15,7 +15,7 @@ public class PlayerJoinEventHandlerTest {
     private BattlegroundsConfiguration config;
     private EntityRegistry<GamePlayer, Player> playerRegistry;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() {
         config = mock(BattlegroundsConfiguration.class);

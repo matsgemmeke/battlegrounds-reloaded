@@ -8,9 +8,10 @@ import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class BattlegroundsCommandTest {
@@ -18,13 +19,13 @@ public class BattlegroundsCommandTest {
     private Player player;
     private Translator translator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         player = mock(Player.class);
         translator = mock(Translator.class);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotBeAbleToGetSubcommandWhenItDoesNotExist() {
         when(translator.translate(TranslationKey.DESCRIPTION_CREATESESSION.getPath())).thenReturn(new TextTemplate("text"));
 
@@ -34,7 +35,7 @@ public class BattlegroundsCommandTest {
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
         bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
 
-        bgCommand.onReload(player);
+        assertThrows(IllegalArgumentException.class, () -> bgCommand.onReload(player));
     }
 
     @Test

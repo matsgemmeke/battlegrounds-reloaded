@@ -9,8 +9,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class ExplosionEffectTest {
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         breakBlocks = false;
         setFire = false;

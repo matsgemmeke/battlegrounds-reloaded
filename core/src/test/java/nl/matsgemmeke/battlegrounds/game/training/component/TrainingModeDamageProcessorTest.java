@@ -5,11 +5,11 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
 import org.bukkit.entity.Entity;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -17,7 +17,7 @@ public class TrainingModeDamageProcessorTest {
 
     private GameContext trainingModeContext;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         trainingModeContext = mock(GameContext.class);
     }

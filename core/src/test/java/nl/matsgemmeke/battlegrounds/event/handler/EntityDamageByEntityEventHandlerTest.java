@@ -8,14 +8,12 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class EntityDamageByEntityEventHandlerTest {
@@ -27,7 +25,7 @@ public class EntityDamageByEntityEventHandlerTest {
     private UUID damagerUUID;
     private UUID entityUUID;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         contextProvider = mock(GameContextProvider.class);
         damage = 10.0;

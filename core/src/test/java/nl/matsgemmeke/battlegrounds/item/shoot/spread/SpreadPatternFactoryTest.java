@@ -1,11 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.spread;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,16 +18,16 @@ public class SpreadPatternFactoryTest {
         SpreadPatternFactory factory = new SpreadPatternFactory();
         SpreadPattern result = factory.make(section);
 
-        assertNotNull(result);
-        assertThat(result, instanceOf(BuckshotSpreadPattern.class));
+        assertInstanceOf(BuckshotSpreadPattern.class, result);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowErrorWhenSectionHasInvalidType() {
         Section section = mock(Section.class);
         when(section.getString("type")).thenReturn("fail");
 
         SpreadPatternFactory factory = new SpreadPatternFactory();
-        factory.make(section);
+
+        assertThrows(IllegalArgumentException.class, () -> factory.make(section));
     }
 }

@@ -2,11 +2,10 @@ package nl.matsgemmeke.battlegrounds.item;
 
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,30 +13,31 @@ import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class WeaponProviderLoaderTest {
 
-    @Rule
-    public TemporaryFolder dataFolder = new TemporaryFolder();
-
     private EquipmentFactory equipmentFactory;
+    @TempDir
+    private File dataFolder;
     private FirearmFactory firearmFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         equipmentFactory = mock(EquipmentFactory.class);
         firearmFactory = mock(FirearmFactory.class);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
-        dataFolder.delete();
+        // Activate garbage collector to release file lock
+        System.gc();
     }
 
     @Test
     public void shouldCopyResourcesFilesIfItemsDirectoryDoesNotYetExist() throws IOException {
-        File itemsDirectory = new File(dataFolder.getRoot() + "/items");
+        File itemsDirectory = new File(dataFolder.getPath() + "/items");
 
         WeaponProviderLoader loader = new WeaponProviderLoader(equipmentFactory, firearmFactory);
         loader.loadWeaponProvider(itemsDirectory);
@@ -48,14 +48,14 @@ public class WeaponProviderLoaderTest {
         assertTrue(createdItemFile.exists());
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void shouldThrowErrorWhenResourceLocationIsInvalidURI() throws IOException, URISyntaxException {
-        File itemsDirectory = new File(dataFolder.getRoot() + "/items");
+    @Test
+    public void shouldThrowErrorWhenResourceLocationIsInvalidURI() throws URISyntaxException {
+        File itemsDirectory = new File(dataFolder.getPath() + "/items");
 
         WeaponProviderLoader loader = spy(new WeaponProviderLoader(equipmentFactory, firearmFactory));
         when(loader.createResourceURI()).thenThrow(new URISyntaxException("fail", "test"));
 
-        loader.loadWeaponProvider(itemsDirectory);
+        assertThrows(IllegalStateException.class, () -> loader.loadWeaponProvider(itemsDirectory));
     }
 
     @Test

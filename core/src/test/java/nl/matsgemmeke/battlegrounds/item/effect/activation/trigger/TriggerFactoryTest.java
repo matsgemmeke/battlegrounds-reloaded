@@ -4,12 +4,12 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,18 +18,19 @@ public class TriggerFactoryTest {
     private GameContext context;
     private TaskRunner taskRunner;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         context = mock(GameContext.class);
         taskRunner = mock(TaskRunner.class);
     }
 
-    @Test(expected = InvalidItemConfigurationException.class)
+    @Test
     public void throwExceptionWhenGivenTypeIsInvalid() {
         Map<String, Object> triggerConfig = Map.of("type", "fail");
 
         TriggerFactory factory = new TriggerFactory(taskRunner);
-        factory.make(context, triggerConfig);
+
+        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(context, triggerConfig));
     }
 
     @Test
@@ -46,7 +47,7 @@ public class TriggerFactoryTest {
         TriggerFactory factory = new TriggerFactory(taskRunner);
         Trigger trigger = factory.make(context, triggerConfig);
 
-        assertTrue(trigger instanceof EnemyProximityTrigger);
+        assertInstanceOf(EnemyProximityTrigger.class, trigger);
     }
 
     @Test
@@ -59,6 +60,6 @@ public class TriggerFactoryTest {
         TriggerFactory factory = new TriggerFactory(taskRunner);
         Trigger trigger = factory.make(context, triggerConfig);
 
-        assertTrue(trigger instanceof FloorHitTrigger);
+        assertInstanceOf(FloorHitTrigger.class, trigger);
     }
 }

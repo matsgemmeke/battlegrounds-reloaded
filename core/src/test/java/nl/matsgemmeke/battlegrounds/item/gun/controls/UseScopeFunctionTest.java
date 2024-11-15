@@ -6,11 +6,11 @@ import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class UseScopeFunctionTest {
@@ -20,7 +20,7 @@ public class UseScopeFunctionTest {
     @NotNull
     private ScopeAttachment scopeAttachment;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         scopeAttachment = mock(ScopeAttachment.class);

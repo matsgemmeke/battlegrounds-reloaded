@@ -10,9 +10,10 @@ import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,7 +26,7 @@ public class TrainingModePresenceConditionTest {
     private Player player;
     private Translator translator;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() {
         playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
@@ -50,12 +51,13 @@ public class TrainingModePresenceConditionTest {
         condition.validateCondition(conditionContext);
     }
 
-    @Test(expected = ConditionFailedException.class)
+    @Test
     public void shouldNotPassWhenPlayerIsNotInTrainingMode() {
         when(playerRegistry.isRegistered(player)).thenReturn(false);
         when(translator.translate(TranslationKey.NOT_IN_TRAINING_MODE.getPath())).thenReturn(new TextTemplate("message"));
 
         TrainingModePresenceCondition condition = new TrainingModePresenceCondition(gameContext, translator);
-        condition.validateCondition(conditionContext);
+
+        assertThrows(ConditionFailedException.class, () -> condition.validateCondition(conditionContext));
     }
 }

@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.game.component;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -13,7 +13,7 @@ public class DefaultGunRegistryTest {
 
     private ItemStorage<Gun, GunHolder> gunStorage;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() {
         gunStorage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);

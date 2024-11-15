@@ -3,11 +3,11 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls;
 import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class ReloadFunctionTest {
@@ -15,7 +15,7 @@ public class ReloadFunctionTest {
     private AmmunitionHolder ammunitionHolder;
     private ReloadSystem reloadSystem;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ammunitionHolder = mock(AmmunitionHolder.class);
         reloadSystem = mock(ReloadSystem.class);

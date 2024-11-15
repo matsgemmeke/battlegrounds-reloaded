@@ -1,31 +1,26 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BattlegroundsConfigurationTest {
-
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
 
     private File configFile;
     private InputStream resource;
 
-    @Before
-    public void setUp() throws IOException {
-        File bgFolder = folder.newFolder("Battlegrounds");
+    @BeforeEach
+    public void setUp(@TempDir File tempDir) throws IOException {
         File resourceFile = new File("src/main/resources/config.yml");
 
-        this.configFile = new File(bgFolder, "config.yml");
+        this.configFile = new File(tempDir, "config.yml");
         this.resource = new FileInputStream(resourceFile);
 
         configFile.delete();

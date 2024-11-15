@@ -5,9 +5,10 @@ import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,7 +17,7 @@ public class ExistentWeaponIdConditionTest {
     private Translator translator;
     private WeaponProvider weaponProvider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.translator = mock(Translator.class);
         this.weaponProvider = mock(WeaponProvider.class);
@@ -32,7 +33,7 @@ public class ExistentWeaponIdConditionTest {
         condition.validateCondition(null, null, weaponId);
     }
 
-    @Test(expected = ConditionFailedException.class)
+    @Test
     public void shouldNotPassWhenWeaponIdDoesNotExist() {
         String weaponId = "test";
 
@@ -40,6 +41,7 @@ public class ExistentWeaponIdConditionTest {
         when(weaponProvider.exists(weaponId)).thenReturn(false);
 
         ExistentWeaponIdCondition condition = new ExistentWeaponIdCondition(weaponProvider, translator);
-        condition.validateCondition(null, null, weaponId);
+
+        assertThrows(ConditionFailedException.class, () -> condition.validateCondition(null, null, weaponId));
     }
 }

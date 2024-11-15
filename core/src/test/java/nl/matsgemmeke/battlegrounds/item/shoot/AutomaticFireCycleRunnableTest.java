@@ -2,29 +2,31 @@ package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Bukkit.class)
 public class AutomaticFireCycleRunnableTest {
 
+    private MockedStatic<Bukkit> bukkit;
     private Procedure onCycleFinish;
     private Shootable item;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         onCycleFinish = () -> {};
         item = mock(Shootable.class);
 
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(mock(BukkitScheduler.class));
+        bukkit = mockStatic(Bukkit.class);
+        bukkit.when(Bukkit::getScheduler).thenReturn(mock(BukkitScheduler.class));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        bukkit.close();
     }
 
     @Test

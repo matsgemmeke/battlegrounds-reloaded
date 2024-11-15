@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,19 +10,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LanguageConfigurationTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
     private File langFile;
 
-    @Before
-    public void setUp() throws IOException {
-        File langFolder = folder.newFolder("Battlegrounds", "lang");
+    @BeforeEach
+    public void setUp(@TempDir File tempDir) throws IOException {
+        File langFolder = new File(tempDir.getPath() + "/Battlegrounds/lang");
 
         this.langFile = new File(langFolder, "lang_en.yml");
 

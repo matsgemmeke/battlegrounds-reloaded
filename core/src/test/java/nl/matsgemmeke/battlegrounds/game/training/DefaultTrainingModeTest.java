@@ -7,10 +7,10 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.*;
 
 public class DefaultTrainingModeTest {
@@ -19,7 +19,7 @@ public class DefaultTrainingModeTest {
     private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
     private ItemStorage<Gun, GunHolder> gunStorage;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         internals = mock(InternalsProvider.class);
         equipmentStorage = new ItemStorage<>();
@@ -32,6 +32,6 @@ public class DefaultTrainingModeTest {
 
         GameContext context = trainingMode.getContext();
 
-        assertTrue(context instanceof DefaultTrainingModeContext);
+        assertInstanceOf(DefaultTrainingModeContext.class, context);
     }
 }

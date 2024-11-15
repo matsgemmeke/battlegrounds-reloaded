@@ -6,10 +6,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class HeldItemTest {
@@ -17,7 +17,7 @@ public class HeldItemTest {
     private ItemHolder holder;
     private ItemStack itemStack;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         holder = mock(ItemHolder.class);
         itemStack = new ItemStack(Material.SHEARS);

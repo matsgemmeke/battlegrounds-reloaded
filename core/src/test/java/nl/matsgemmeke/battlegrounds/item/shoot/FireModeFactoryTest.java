@@ -3,10 +3,11 @@ package nl.matsgemmeke.battlegrounds.item.shoot;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,7 +17,7 @@ public class FireModeFactoryTest {
     private Shootable item;
     private TaskRunner taskRunner;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         section = mock(Section.class);
         item = mock(Shootable.class);
@@ -30,7 +31,7 @@ public class FireModeFactoryTest {
         FireModeFactory factory = new FireModeFactory(taskRunner);
         FireMode fireMode = factory.make(item, section);
 
-        assertNotNull(fireMode);
+        assertInstanceOf(BurstMode.class, fireMode);
     }
 
     @Test
@@ -40,7 +41,7 @@ public class FireModeFactoryTest {
         FireModeFactory factory = new FireModeFactory(taskRunner);
         FireMode fireMode = factory.make(item, section);
 
-        assertNotNull(fireMode);
+        assertInstanceOf(FullyAutomaticMode.class, fireMode);
     }
 
     @Test
@@ -50,14 +51,15 @@ public class FireModeFactoryTest {
         FireModeFactory factory = new FireModeFactory(taskRunner);
         FireMode fireMode = factory.make(item, section);
 
-        assertNotNull(fireMode);
+        assertInstanceOf(SemiAutomaticMode.class, fireMode);
     }
 
-    @Test(expected = WeaponFactoryCreationException.class)
+    @Test
     public void throwErrorWhenUnknownFireModeType() {
         when(section.getString("type")).thenReturn("error");
 
         FireModeFactory factory = new FireModeFactory(taskRunner);
-        factory.make(item, section);
+
+        assertThrows(WeaponFactoryCreationException.class, () -> factory.make(item, section));
     }
 }

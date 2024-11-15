@@ -4,11 +4,11 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class ManualActivationTest {
@@ -17,7 +17,7 @@ public class ManualActivationTest {
     private ItemEffect effect;
     private ItemHolder holder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         activator = mock(Activator.class);
         effect = mock(ItemEffect.class);

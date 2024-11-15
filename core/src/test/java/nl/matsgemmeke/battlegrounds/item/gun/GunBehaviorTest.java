@@ -4,10 +4,10 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class GunBehaviorTest {
@@ -17,7 +17,7 @@ public class GunBehaviorTest {
     private ItemStorage<Gun, GunHolder> storage;
     private ItemStack itemStack;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.gamePlayer = mock(GamePlayer.class);
         this.itemStack = new ItemStack(Material.IRON_HOE);

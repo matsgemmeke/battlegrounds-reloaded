@@ -2,11 +2,11 @@ package nl.matsgemmeke.battlegrounds.util;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.Plugin;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
 
 public class NamespacedKeyCreatorTest {
 

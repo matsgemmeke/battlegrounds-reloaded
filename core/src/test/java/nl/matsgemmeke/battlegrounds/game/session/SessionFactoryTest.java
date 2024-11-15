@@ -1,30 +1,25 @@
 package nl.matsgemmeke.battlegrounds.game.session;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class SessionFactoryTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
+    @TempDir
     private File dataFolder;
     private InternalsProvider internals;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         this.internals = mock(InternalsProvider.class);
-
-        this.dataFolder = folder.newFolder("data");
     }
 
     @Test

@@ -1,19 +1,19 @@
 package nl.matsgemmeke.battlegrounds.item.scope;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class DefaultScopeAttachmentTest {
 
     private Iterable<Float> magnificationSettings;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.magnificationSettings = List.of(-0.1f, -0.15f, -0.2f);
     }

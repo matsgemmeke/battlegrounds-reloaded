@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.game.session;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultSessionConfigurationTest {
 
@@ -12,7 +12,7 @@ public class DefaultSessionConfigurationTest {
     private int maxPlayers;
     private int minPlayers;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.lobbyCountdownDuration = 60;
         this.maxPlayers = 10;

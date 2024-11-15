@@ -9,10 +9,10 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class PlayerInteractEventHandlerTest {
@@ -20,7 +20,7 @@ public class PlayerInteractEventHandlerTest {
     private GameContextProvider contextProvider;
     private Player player;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         contextProvider = mock(GameContextProvider.class);
         player = mock(Player.class);

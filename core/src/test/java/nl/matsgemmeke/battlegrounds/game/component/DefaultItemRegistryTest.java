@@ -4,19 +4,19 @@ import nl.matsgemmeke.battlegrounds.entity.DefaultGameItem;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import org.bukkit.entity.Item;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultItemRegistryTest {
 
     private EntityStorage<GameItem> itemStorage;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         itemStorage = new EntityStorage<>();
     }

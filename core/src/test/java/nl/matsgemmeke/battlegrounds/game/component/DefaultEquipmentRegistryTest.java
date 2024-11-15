@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.game.component;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
@@ -12,7 +12,7 @@ public class DefaultEquipmentRegistryTest {
 
     private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() {
         equipmentStorage = (ItemStorage<Equipment, EquipmentHolder>) mock(ItemStorage.class);

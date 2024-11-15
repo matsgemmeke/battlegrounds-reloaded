@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class UUIDGeneratorTest {
 

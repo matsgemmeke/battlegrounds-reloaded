@@ -18,21 +18,17 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.plugin.Plugin;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @SuppressWarnings("unchecked")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Bukkit.class)
 public class EquipmentFactoryTest {
 
     private AudioEmitter audioEmitter;
@@ -42,11 +38,12 @@ public class EquipmentFactoryTest {
     private ItemEffectFactory effectFactory;
     private ItemFactory itemFactory;
     private ItemRegistry<Equipment, EquipmentHolder> equipmentRegistry;
+    private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
     private Section rootSection;
     private TaskRunner taskRunner;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         configuration = mock(ItemConfiguration.class);
@@ -77,8 +74,13 @@ public class EquipmentFactoryTest {
 
         when(configuration.getRoot()).thenReturn(rootSection);
 
-        PowerMockito.mockStatic(Bukkit.class);
-        Mockito.when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        bukkit = mockStatic(Bukkit.class);
+        bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        bukkit.close();
     }
 
     @Test
@@ -86,7 +88,7 @@ public class EquipmentFactoryTest {
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
-        assertTrue(equipment instanceof DefaultEquipment);
+        assertInstanceOf(DefaultEquipment.class, equipment);
         assertEquals("name", equipment.getName());
         assertEquals("description", equipment.getDescription());
 
@@ -100,15 +102,16 @@ public class EquipmentFactoryTest {
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
-        assertTrue(equipment instanceof DefaultEquipment);
+        assertInstanceOf(DefaultEquipment.class, equipment);
     }
 
-    @Test(expected = CreateEquipmentException.class)
+    @Test
     public void shouldThrowExceptionWhenCreatingEquipmentItemWithInvalidMaterial() {
         when(rootSection.getString("item.material")).thenReturn("fail");
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        factory.make(configuration, context);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
     }
 
     @Test
@@ -129,19 +132,20 @@ public class EquipmentFactoryTest {
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
-        assertTrue(equipment instanceof DefaultEquipment);
+        assertInstanceOf(DefaultEquipment.class, equipment);
 
         verify(equipmentRegistry).registerItem(equipment);
     }
 
-    @Test(expected = CreateEquipmentException.class)
+    @Test
     public void throwExceptionWhenCreatingEquipmentItemWithInvalidActivatorMaterial() {
         Section activatorItemSection = mock(Section.class);
         when(activatorItemSection.getString("material")).thenReturn("fail");
         when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        factory.make(configuration, context);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
     }
 
     @Test
@@ -166,12 +170,12 @@ public class EquipmentFactoryTest {
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
-        assertTrue(equipment instanceof DefaultEquipment);
+        assertInstanceOf(DefaultEquipment.class, equipment);
 
         verify(equipmentRegistry).registerItem(equipment, gamePlayer);
     }
 
-    @Test(expected = CreateEquipmentException.class)
+    @Test
     public void shouldThrowErrorWhenThrowActionConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("throw")).thenReturn("fail");
@@ -179,10 +183,11 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        factory.make(configuration, context);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
     }
 
-    @Test(expected = CreateEquipmentException.class)
+    @Test
     public void shouldThrowErrorWhenThrowItemMaterialConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
@@ -191,7 +196,8 @@ public class EquipmentFactoryTest {
         when(rootSection.getString("item.throw-item.material")).thenReturn("fail");
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        factory.make(configuration, context);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
     }
 
     @Test
@@ -213,12 +219,12 @@ public class EquipmentFactoryTest {
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
-        assertTrue(equipment instanceof DefaultEquipment);
+        assertInstanceOf(DefaultEquipment.class, equipment);
 
         verify(equipmentRegistry).registerItem(equipment, gamePlayer);
     }
 
-    @Test(expected = CreateEquipmentException.class)
+    @Test
     public void shouldThrowErrorWhenCookActionConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("cook")).thenReturn("fail");
@@ -227,7 +233,8 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        factory.make(configuration, context);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
     }
 
     @Test
@@ -248,13 +255,12 @@ public class EquipmentFactoryTest {
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
-        assertNotNull(equipment);
-        assertTrue(equipment instanceof DefaultEquipment);
+        assertInstanceOf(DefaultEquipment.class, equipment);
 
         verify(equipmentRegistry).registerItem(equipment, gamePlayer);
     }
 
-    @Test(expected = CreateEquipmentException.class)
+    @Test
     public void shouldThrowErrorWhenPlaceActionConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("place")).thenReturn("fail");
@@ -262,10 +268,11 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        factory.make(configuration, context);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
     }
 
-    @Test(expected = CreateEquipmentException.class)
+    @Test
     public void shouldThrowErrorWhenPlacingMaterialConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("place")).thenReturn("RIGHT_CLICK");
@@ -274,7 +281,8 @@ public class EquipmentFactoryTest {
         when(rootSection.getString("placing.material")).thenReturn("fail");
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        factory.make(configuration, context);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
     }
 
     @Test
@@ -294,13 +302,12 @@ public class EquipmentFactoryTest {
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
 
-        assertNotNull(equipment);
-        assertTrue(equipment instanceof DefaultEquipment);
+        assertInstanceOf(DefaultEquipment.class, equipment);
 
         verify(equipmentRegistry).registerItem(equipment, gamePlayer);
     }
 
-    @Test(expected = CreateEquipmentException.class)
+    @Test
     public void shouldThrowErrorWhenActivateActionConfigurationValueIsInvalid() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("activate")).thenReturn("fail");
@@ -308,6 +315,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        factory.make(configuration, context);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
     }
 }

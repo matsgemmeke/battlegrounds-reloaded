@@ -7,12 +7,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultGamePlayerTest {
@@ -20,7 +20,7 @@ public class DefaultGamePlayerTest {
     private InternalsProvider internals;
     private Player player;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.internals = mock(InternalsProvider.class);
         this.player = mock(Player.class);

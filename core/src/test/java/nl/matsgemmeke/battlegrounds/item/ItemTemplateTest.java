@@ -12,22 +12,18 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Bukkit.class)
 public class ItemTemplateTest {
 
     private static final long LEAST_SIG_BITS = -5938845633481916672L;
@@ -35,10 +31,11 @@ public class ItemTemplateTest {
 
     private ItemFactory itemFactory;
     private Material material;
+    private MockedStatic<Bukkit> bukkit;
     private NamespacedKey key;
     private UUIDGenerator uuidGenerator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         itemFactory = mock(ItemFactory.class);
         material = Material.IRON_HOE;
@@ -51,8 +48,13 @@ public class ItemTemplateTest {
 
         key = new NamespacedKey(plugin, "battlegrounds-test");
 
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        bukkit = mockStatic(Bukkit.class);
+        bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        bukkit.close();
     }
 
     @Test
