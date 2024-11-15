@@ -5,12 +5,12 @@ import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import org.bukkit.entity.Player;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultPlayerRegistryTest {
@@ -18,7 +18,7 @@ public class DefaultPlayerRegistryTest {
     private EntityStorage<GamePlayer> playerStorage;
     private InternalsProvider internals;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         playerStorage = new EntityStorage<>();
         internals = mock(InternalsProvider.class);

@@ -14,10 +14,10 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +27,7 @@ public class DefaultTrainingModeContextTest {
     private InternalsProvider internals;
     private TrainingMode trainingMode;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         internals = mock(InternalsProvider.class);
         trainingMode = mock(TrainingMode.class);
@@ -41,7 +41,7 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         ActionHandler actionHandler = context.getActionHandler();
 
-        assertTrue(actionHandler instanceof DefaultActionHandler);
+        assertInstanceOf(DefaultActionHandler.class, actionHandler);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         AudioEmitter audioEmitter = context.getAudioEmitter();
 
-        assertTrue(audioEmitter instanceof DefaultAudioEmitter);
+        assertInstanceOf(DefaultAudioEmitter.class, audioEmitter);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         CollisionDetector collisionDetector = context.getCollisionDetector();
 
-        assertTrue(collisionDetector instanceof DefaultCollisionDetector);
+        assertInstanceOf(DefaultCollisionDetector.class, collisionDetector);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         DamageProcessor damageProcessor = context.getDamageProcessor();
 
-        assertTrue(damageProcessor instanceof TrainingModeDamageProcessor);
+        assertInstanceOf(TrainingModeDamageProcessor.class, damageProcessor);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         ItemRegistry<Equipment, EquipmentHolder> equipmentRegistry = context.getEquipmentRegistry();
 
-        assertTrue(equipmentRegistry instanceof DefaultEquipmentRegistry);
+        assertInstanceOf(DefaultEquipmentRegistry.class, equipmentRegistry);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         EntityRegistry<GameItem, Item> itemRegistry = context.getItemRegistry();
 
-        assertTrue(itemRegistry instanceof DefaultItemRegistry);
+        assertInstanceOf(DefaultItemRegistry.class, itemRegistry);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         ItemRegistry<Gun, GunHolder> gunRegistry = context.getGunRegistry();
 
-        assertTrue(gunRegistry instanceof DefaultGunRegistry);
+        assertInstanceOf(DefaultGunRegistry.class, gunRegistry);
     }
 
     @Test
@@ -112,7 +112,7 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         EntityRegistry<GamePlayer, Player> playerRegistry = context.getPlayerRegistry();
 
-        assertTrue(playerRegistry instanceof DefaultPlayerRegistry);
+        assertInstanceOf(DefaultPlayerRegistry.class, playerRegistry);
     }
 
     @Test
@@ -120,6 +120,6 @@ public class DefaultTrainingModeContextTest {
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         TargetFinder targetFinder = context.getTargetFinder();
 
-        assertTrue(targetFinder instanceof TrainingModeTargetFinder);
+        assertInstanceOf(TrainingModeTargetFinder.class, targetFinder);
     }
 }

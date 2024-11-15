@@ -1,13 +1,12 @@
 package nl.matsgemmeke.battlegrounds.game.audio;
 
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import org.bukkit.Sound;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultGameSoundTest {
 
@@ -34,31 +33,31 @@ public class DefaultGameSoundTest {
         assertEquals(Sound.ENTITY_ARROW_HIT, sounds.get(1).getSound());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void detectsInvalidSoundName() {
         String arg = "TEST_TEST-3-2-0";
 
-        DefaultGameSound.parseSound(arg);
+        assertThrows(IllegalArgumentException.class, () -> DefaultGameSound.parseSound(arg));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void detectsInvalidVolumeValue() {
         String arg = "ENTITY_BLAZE_HURT-test-2-0";
 
-        DefaultGameSound.parseSound(arg);
+        assertThrows(IllegalArgumentException.class, () -> DefaultGameSound.parseSound(arg));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void detectsInvalidPitchValue() {
         String arg = "ENTITY_BLAZE_HURT-3-test-0";
 
-        DefaultGameSound.parseSound(arg);
+        assertThrows(IllegalArgumentException.class, () -> DefaultGameSound.parseSound(arg));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void detectsInvalidDelayValue() {
         String arg = "ENTITY_BLAZE_HURT-3-2-test";
 
-        DefaultGameSound.parseSound(arg);
+        assertThrows(IllegalArgumentException.class, () -> DefaultGameSound.parseSound(arg));
     }
 }

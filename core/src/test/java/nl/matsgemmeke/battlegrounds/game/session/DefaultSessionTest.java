@@ -4,10 +4,10 @@ import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class DefaultSessionTest {
@@ -17,8 +17,8 @@ public class DefaultSessionTest {
     private ItemStorage<Gun, GunHolder> gunStorage;
     private SessionConfiguration configuration;
 
+    @BeforeEach
     @SuppressWarnings("unchecked")
-    @Before
     public void setUp() {
         this.internals = mock(InternalsProvider.class);
         this.gunStorage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);

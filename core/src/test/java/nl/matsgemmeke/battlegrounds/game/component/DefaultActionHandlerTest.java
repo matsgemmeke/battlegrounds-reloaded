@@ -6,14 +6,14 @@ import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class DefaultActionHandlerTest {
@@ -24,7 +24,7 @@ public class DefaultActionHandlerTest {
     private Player player;
     private UUID uuid;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() {
         playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
