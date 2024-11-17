@@ -61,7 +61,6 @@ public class EnemyProximityTrigger implements Trigger {
         }
 
         this.notifyObservers(context);
-        task.cancel();
     }
 
     private void notifyObservers(@NotNull ItemEffectContext context) {

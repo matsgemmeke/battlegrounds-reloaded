@@ -18,6 +18,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenSettings;
+import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
@@ -145,6 +146,11 @@ public class ItemEffectFactory {
                 CollisionDetector collisionDetector = context.getCollisionDetector();
 
                 return new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
+            }
+            case SOUND_NOTIFICATION -> {
+                Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sound"));
+
+                return new SoundNotificationEffect(sounds);
             }
         }
 

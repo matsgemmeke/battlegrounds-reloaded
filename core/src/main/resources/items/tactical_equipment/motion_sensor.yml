@@ -1,0 +1,26 @@
+id: MOTION_SENSOR
+name: Motion Sensor
+activation:
+  triggers:
+    - checking-range: 2.5
+      period-between-checks: 10
+      type: ENEMY_PROXIMITY
+  type: TRIGGER
+controls:
+  throw: LEFT_CLICK
+description: Tactical ground-based sensor that detects enemy movement within its radius.
+effect:
+  sound: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
+  type: SOUND_NOTIFICATION
+equipment-type: TACTICAL
+item:
+  damage: 8
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 8
+    material: SHEARS
+throwing:
+  delay-after-throw: 30
+  projectile-speed: 0.5
+  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0

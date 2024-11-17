@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,6 +114,16 @@ public class ItemEffectFactoryTest {
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
 
         assertThrows(InvalidItemConfigurationException.class, () -> factory.make(section, context));
+    }
+
+    @Test
+    public void makeCreatesInstanceOfSoundNotificationEffect() {
+        when(section.getString("type")).thenReturn("SOUND_NOTIFICATION");
+
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffect effect = factory.make(section, context);
+
+        assertInstanceOf(SoundNotificationEffect.class, effect);
     }
 
     @Test
