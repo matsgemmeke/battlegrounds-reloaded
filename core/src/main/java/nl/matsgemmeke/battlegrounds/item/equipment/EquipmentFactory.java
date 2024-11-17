@@ -21,6 +21,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
+import nl.matsgemmeke.battlegrounds.item.projectile.Stickable;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
@@ -198,6 +199,17 @@ public class EquipmentFactory implements WeaponFactory {
 
             ThrowFunction throwFunction = new ThrowFunction(itemTemplate, activation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
             throwFunction.addSounds(throwSounds);
+
+            Section stickableSection = section.getSection("throwing.projectile.stickable");
+
+            if (stickableSection != null) {
+                long checkDelay = stickableSection.getLong("check-delay");
+                long checkPeriod = stickableSection.getLong("check-period");
+
+                Stickable stickable = new Stickable(taskRunner, checkDelay, checkPeriod);
+
+                throwFunction.addProjectileProperties(stickable);
+            }
 
             equipment.getControls().addControl(throwAction, throwFunction);
         }

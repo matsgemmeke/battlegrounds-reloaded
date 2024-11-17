@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperty;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
@@ -17,6 +18,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
@@ -35,6 +37,8 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private Iterable<GameSound> sounds;
     private long delayAfterThrow;
     @NotNull
+    private Set<ProjectileProperty> projectileProperties;
+    @NotNull
     private TaskRunner taskRunner;
 
     public ThrowFunction(
@@ -52,7 +56,12 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         this.projectileSpeed = projectileSpeed;
         this.delayAfterThrow = delayAfterThrow;
         this.performing = false;
+        this.projectileProperties = new HashSet<>();
         this.sounds = new HashSet<>();
+    }
+
+    public void addProjectileProperties(@NotNull ProjectileProperty projectileProperty) {
+        projectileProperties.add(projectileProperty);
     }
 
     public void addSounds(@NotNull Iterable<GameSound> sounds) {
@@ -93,7 +102,10 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
         taskRunner.runTaskLater(() -> performing = false, delayAfterThrow);
 
-        effectActivation.prime(holder, new DroppedItem(itemEntity));
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+
+        effectActivation.prime(holder, droppedItem);
+        projectileProperties.forEach(property -> property.onLaunch(droppedItem));
         return true;
     }
 }
