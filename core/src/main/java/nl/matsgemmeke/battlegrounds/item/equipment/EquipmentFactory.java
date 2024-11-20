@@ -17,10 +17,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.PlaceFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.Stickable;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -192,13 +189,12 @@ public class EquipmentFactory implements WeaponFactory {
             ItemTemplate itemTemplate = new ItemTemplate(key, material, UUID_GENERATOR);
             itemTemplate.setDamage(damage);
 
-            long delayAfterThrow = section.getLong("throwing.delay-after-throw");
-            double projectileSpeed = section.getDouble("throwing.projectile-speed");
-
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
+            double velocity = section.getDouble("throwing.velocity");
+            long delayAfterThrow = section.getLong("throwing.delay-after-throw");
 
-            ThrowFunction throwFunction = new ThrowFunction(itemTemplate, activation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
-            throwFunction.addSounds(throwSounds);
+            ThrowProperties throwProperties = new ThrowProperties(throwSounds, velocity, delayAfterThrow);
+            ThrowFunction throwFunction = new ThrowFunction(throwProperties, itemTemplate, activation, audioEmitter, taskRunner);
 
             Section stickableSection = section.getSection("throwing.projectile.stickable");
 

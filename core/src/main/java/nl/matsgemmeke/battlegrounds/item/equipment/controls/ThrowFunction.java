@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
-import com.google.common.collect.Iterables;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
@@ -28,44 +26,35 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private AudioEmitter audioEmitter;
     private boolean performing;
-    private double projectileSpeed;
     @NotNull
     private ItemEffectActivation effectActivation;
     @NotNull
     private ItemTemplate itemTemplate;
     @NotNull
-    private Iterable<GameSound> sounds;
-    private long delayAfterThrow;
-    @NotNull
     private Set<ProjectileProperty> projectileProperties;
     @NotNull
     private TaskRunner taskRunner;
+    @NotNull
+    private ThrowProperties properties;
 
     public ThrowFunction(
+            @NotNull ThrowProperties properties,
             @NotNull ItemTemplate itemTemplate,
             @NotNull ItemEffectActivation effectActivation,
             @NotNull AudioEmitter audioEmitter,
-            @NotNull TaskRunner taskRunner,
-            double projectileSpeed,
-            long delayAfterThrow
+            @NotNull TaskRunner taskRunner
     ) {
+        this.properties = properties;
         this.itemTemplate = itemTemplate;
         this.effectActivation = effectActivation;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
-        this.projectileSpeed = projectileSpeed;
-        this.delayAfterThrow = delayAfterThrow;
         this.performing = false;
         this.projectileProperties = new HashSet<>();
-        this.sounds = new HashSet<>();
     }
 
     public void addProjectileProperties(@NotNull ProjectileProperty projectileProperty) {
         projectileProperties.add(projectileProperty);
-    }
-
-    public void addSounds(@NotNull Iterable<GameSound> sounds) {
-        this.sounds = Iterables.concat(this.sounds, sounds);
     }
 
     public boolean isAvailable() {
@@ -88,7 +77,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         Location location = holder.getLocation();
         World world = holder.getWorld();
         Location throwingDirection = holder.getThrowingDirection();
-        Vector velocity = throwingDirection.getDirection().multiply(projectileSpeed);
+        Vector velocity = throwingDirection.getDirection().multiply(properties.velocity());
 
         ItemStack itemStack = itemTemplate.createItemStack();
 
@@ -96,11 +85,11 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         itemEntity.setPickupDelay(DEFAULT_PICKUP_DELAY);
         itemEntity.setVelocity(velocity);
 
-        audioEmitter.playSounds(sounds, location);
+        audioEmitter.playSounds(properties.throwSounds(), location);
 
         performing = true;
 
-        taskRunner.runTaskLater(() -> performing = false, delayAfterThrow);
+        taskRunner.runTaskLater(() -> performing = false, properties.delayAfterThrow());
 
         DroppedItem droppedItem = new DroppedItem(itemEntity);
 

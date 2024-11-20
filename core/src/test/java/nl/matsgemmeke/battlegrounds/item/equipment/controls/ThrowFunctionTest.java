@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
@@ -15,31 +16,35 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class ThrowFunctionTest {
 
+    private static final double VELOCITY = 2.0;
+    private static final Iterable<GameSound> THROW_SOUNDS = Collections.emptySet();
+    private static final long DELAY_AFTER_THROW = 1L;
+
     private AudioEmitter audioEmitter;
-    private double projectileSpeed;
     private ItemEffectActivation effectActivation;
     private ItemTemplate itemTemplate;
-    private long delayAfterThrow;
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        projectileSpeed = 2.0;
         effectActivation = mock(ItemEffectActivation.class);
         itemTemplate = mock(ItemTemplate.class);
-        delayAfterThrow = 1L;
         taskRunner = mock(TaskRunner.class);
     }
 
     @Test
     public void shouldNotBePerformingIfNoThrowsWereExecuted() {
-        ThrowFunction function = new ThrowFunction(itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
+
+        ThrowFunction function = new ThrowFunction(properties, itemTemplate, effectActivation, audioEmitter, taskRunner);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -47,6 +52,8 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldBePerformingIfThrowsWereRecentlyExecuted() {
+        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
+
         ItemStack itemStack = new ItemStack(Material.SHEARS);
         when(itemTemplate.createItemStack()).thenReturn(itemStack);
 
@@ -59,7 +66,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(throwingDirection);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(properties, itemTemplate, effectActivation, audioEmitter, taskRunner);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
@@ -69,6 +76,7 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldPrimeDroppedItemWhenPerforming() {
+        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Item itemEntity = mock(Item.class);
@@ -85,7 +93,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(itemTemplate, effectActivation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
+        ThrowFunction function = new ThrowFunction(properties, itemTemplate, effectActivation, audioEmitter, taskRunner);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
@@ -95,7 +103,7 @@ public class ThrowFunctionTest {
 
         assertEquals(location, captor.getValue().getLocation());
 
-        verify(taskRunner).runTaskLater(any(Runnable.class), eq(delayAfterThrow));
+        verify(taskRunner).runTaskLater(any(Runnable.class), eq(DELAY_AFTER_THROW));
         verify(world).dropItem(location, itemStack);
     }
 }
