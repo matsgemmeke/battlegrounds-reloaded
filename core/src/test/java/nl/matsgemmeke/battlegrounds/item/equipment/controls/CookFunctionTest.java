@@ -72,7 +72,7 @@ public class CookFunctionTest {
     }
 
     @Test
-    public void primeEffectThrowsExceptionIfEquipmentHasNoEffectActivation() {
+    public void performThrowsExceptionIfEquipmentHasNoEffectActivation() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
         when(equipment.getEffectActivation()).thenReturn(null);

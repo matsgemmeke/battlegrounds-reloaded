@@ -32,18 +32,18 @@ public class ThrowFunctionTest {
     private AudioEmitter audioEmitter;
     private Equipment equipment;
     private TaskRunner taskRunner;
+    private ThrowProperties properties;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         equipment = mock(Equipment.class);
         taskRunner = mock(TaskRunner.class);
+        properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
     }
 
     @Test
     public void shouldNotBePerformingIfNoThrowsWereExecuted() {
-        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
-
         ThrowFunction function = new ThrowFunction(properties, equipment, audioEmitter, taskRunner);
         boolean performing = function.isPerforming();
 
@@ -52,8 +52,6 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldBePerformingIfThrowsWereRecentlyExecuted() {
-        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
-
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         ItemTemplate throwItemTemplate = mock(ItemTemplate.class);
@@ -83,7 +81,6 @@ public class ThrowFunctionTest {
 
     @Test
     public void performThrowsExceptionIfEquipmentHasNoEffectActivation() {
-        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
         when(equipment.getEffectActivation()).thenReturn(null);
@@ -95,7 +92,6 @@ public class ThrowFunctionTest {
 
     @Test
     public void performThrowsExceptionIfEquipmentHasNoThrowItemTemplate() {
-        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
         EquipmentHolder holder = mock(EquipmentHolder.class);
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
 
@@ -109,7 +105,6 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldPrimeDroppedItemWhenPerforming() {
-        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Item itemEntity = mock(Item.class);
