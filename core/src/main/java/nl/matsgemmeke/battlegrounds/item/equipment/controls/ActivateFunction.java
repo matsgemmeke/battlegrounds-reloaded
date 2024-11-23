@@ -1,47 +1,42 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
-import com.google.common.collect.Iterables;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
 
 public class ActivateFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
+    private ActivationProperties properties;
+    @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
-    private ItemEffectActivation effectActivation;
-    @NotNull
-    private Iterable<GameSound> sounds;
-    private long delayUntilActivation;
+    private Equipment equipment;
     @NotNull
     private TaskRunner taskRunner;
 
     public ActivateFunction(
-            @NotNull ItemEffectActivation effectActivation,
+            @NotNull ActivationProperties properties,
+            @NotNull Equipment equipment,
             @NotNull AudioEmitter audioEmitter,
-            @NotNull TaskRunner taskRunner,
-            long delayUntilActivation
+            @NotNull TaskRunner taskRunner
     ) {
-        this.effectActivation = effectActivation;
+        this.properties = properties;
+        this.equipment = equipment;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
-        this.delayUntilActivation = delayUntilActivation;
-        this.sounds = new HashSet<>();
-    }
-
-    public void addSounds(@NotNull Iterable<GameSound> sounds) {
-        this.sounds = Iterables.concat(this.sounds, sounds);
     }
 
     public boolean isAvailable() {
-        return true;
+        Activator activator = equipment.getActivator();
+
+        return activator != null && activator.isReady();
     }
 
     public boolean isBlocking() {
@@ -57,9 +52,15 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
+        ItemEffectActivation effectActivation = equipment.getEffectActivation();
 
-        taskRunner.runTaskLater(() -> effectActivation.activateInstantly(holder), delayUntilActivation);
+        if (effectActivation == null) {
+            throw new ItemFunctionException("Cannot perform activate function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
+        }
+
+        audioEmitter.playSounds(properties.activationSounds(), holder.getEntity().getLocation());
+
+        taskRunner.runTaskLater(() -> effectActivation.activateInstantly(holder), properties.delayUntilActivation());
 
         holder.setHeldItem(null);
 
