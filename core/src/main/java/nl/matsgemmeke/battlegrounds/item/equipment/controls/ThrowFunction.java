@@ -4,8 +4,10 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
+import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperty;
 import org.bukkit.Location;
@@ -27,9 +29,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private AudioEmitter audioEmitter;
     private boolean performing;
     @NotNull
-    private ItemEffectActivation effectActivation;
-    @NotNull
-    private ItemTemplate itemTemplate;
+    private Equipment equipment;
     @NotNull
     private Set<ProjectileProperty> projectileProperties;
     @NotNull
@@ -39,14 +39,12 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
     public ThrowFunction(
             @NotNull ThrowProperties properties,
-            @NotNull ItemTemplate itemTemplate,
-            @NotNull ItemEffectActivation effectActivation,
+            @NotNull Equipment equipment,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner
     ) {
         this.properties = properties;
-        this.itemTemplate = itemTemplate;
-        this.effectActivation = effectActivation;
+        this.equipment = equipment;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.performing = false;
@@ -74,12 +72,23 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
+        ItemEffectActivation effectActivation = equipment.getEffectActivation();
+        ItemTemplate throwItemTemplate = equipment.getThrowItemTemplate();
+
+        if (effectActivation == null) {
+            throw new ItemFunctionException("Cannot perform a throw for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
+        }
+
+        if (throwItemTemplate == null) {
+            throw new ItemFunctionException("Cannot perform a throw for equipment item \"" + equipment.getName() + "\"; it has no throw item template!");
+        }
+
         Location location = holder.getLocation();
         World world = holder.getWorld();
         Location throwingDirection = holder.getThrowingDirection();
         Vector velocity = throwingDirection.getDirection().multiply(properties.velocity());
 
-        ItemStack itemStack = itemTemplate.createItemStack();
+        ItemStack itemStack = throwItemTemplate.createItemStack();
 
         Item itemEntity = world.dropItem(throwingDirection, itemStack);
         itemEntity.setPickupDelay(DEFAULT_PICKUP_DELAY);

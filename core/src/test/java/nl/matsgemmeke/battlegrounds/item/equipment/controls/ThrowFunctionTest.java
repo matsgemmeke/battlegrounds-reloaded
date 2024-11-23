@@ -4,8 +4,10 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
+import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,15 +30,13 @@ public class ThrowFunctionTest {
     private static final long DELAY_AFTER_THROW = 1L;
 
     private AudioEmitter audioEmitter;
-    private ItemEffectActivation effectActivation;
-    private ItemTemplate itemTemplate;
+    private Equipment equipment;
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        effectActivation = mock(ItemEffectActivation.class);
-        itemTemplate = mock(ItemTemplate.class);
+        equipment = mock(Equipment.class);
         taskRunner = mock(TaskRunner.class);
     }
 
@@ -44,7 +44,7 @@ public class ThrowFunctionTest {
     public void shouldNotBePerformingIfNoThrowsWereExecuted() {
         ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
 
-        ThrowFunction function = new ThrowFunction(properties, itemTemplate, effectActivation, audioEmitter, taskRunner);
+        ThrowFunction function = new ThrowFunction(properties, equipment, audioEmitter, taskRunner);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -55,7 +55,14 @@ public class ThrowFunctionTest {
         ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
 
         ItemStack itemStack = new ItemStack(Material.SHEARS);
-        when(itemTemplate.createItemStack()).thenReturn(itemStack);
+
+        ItemTemplate throwItemTemplate = mock(ItemTemplate.class);
+        when(throwItemTemplate.createItemStack()).thenReturn(itemStack);
+
+        when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
+
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+        when(equipment.getEffectActivation()).thenReturn(effectActivation);
 
         World world = mock(World.class);
         when(world.dropItem(any(Location.class), eq(itemStack))).thenReturn(mock(Item.class));
@@ -66,12 +73,38 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(throwingDirection);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(properties, itemTemplate, effectActivation, audioEmitter, taskRunner);
+        ThrowFunction function = new ThrowFunction(properties, equipment, audioEmitter, taskRunner);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
 
         assertTrue(performing);
+    }
+
+    @Test
+    public void performThrowsExceptionIfEquipmentHasNoEffectActivation() {
+        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        when(equipment.getEffectActivation()).thenReturn(null);
+
+        ThrowFunction function = new ThrowFunction(properties, equipment, audioEmitter, taskRunner);
+
+        assertThrows(ItemFunctionException.class, () -> function.perform(holder));
+    }
+
+    @Test
+    public void performThrowsExceptionIfEquipmentHasNoThrowItemTemplate() {
+        ThrowProperties properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+
+        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        when(equipment.getThrowItemTemplate()).thenReturn(null);
+
+        ThrowFunction function = new ThrowFunction(properties, equipment, audioEmitter, taskRunner);
+
+        assertThrows(ItemFunctionException.class, () -> function.perform(holder));
     }
 
     @Test
@@ -83,7 +116,14 @@ public class ThrowFunctionTest {
         when(itemEntity.getLocation()).thenReturn(location);
 
         ItemStack itemStack = new ItemStack(Material.SHEARS);
-        when(itemTemplate.createItemStack()).thenReturn(itemStack);
+
+        ItemTemplate throwItemTemplate = mock(ItemTemplate.class);
+        when(throwItemTemplate.createItemStack()).thenReturn(itemStack);
+
+        when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
+
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+        when(equipment.getEffectActivation()).thenReturn(effectActivation);
 
         World world = mock(World.class);
         when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
@@ -93,7 +133,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(properties, itemTemplate, effectActivation, audioEmitter, taskRunner);
+        ThrowFunction function = new ThrowFunction(properties, equipment, audioEmitter, taskRunner);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);

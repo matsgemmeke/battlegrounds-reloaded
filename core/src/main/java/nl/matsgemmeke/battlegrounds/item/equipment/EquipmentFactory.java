@@ -136,6 +136,41 @@ public class EquipmentFactory implements WeaponFactory {
             equipment.setActivator(activator);
         }
 
+        // Settings the effect activation
+        Section effectSection = section.getSection("effect");
+        Section effectActivationSection = section.getSection("activation");
+
+        if (effectSection != null && effectActivationSection != null) {
+            Activator activator = equipment.getActivator();
+
+            ItemEffect effect = effectFactory.make(effectSection, context);
+            ItemEffectActivation activation = effectActivationFactory.make(context, effect, effectActivationSection, activator);
+
+            equipment.setEffectActivation(activation);
+        }
+
+        // Setting the throw item template
+        Section throwItemSection = section.getSection("item.throw-item");
+
+        if (throwItemSection != null) {
+            Material throwItemMaterial;
+            String throwItemMaterialValue = throwItemSection.getString("material");
+
+            try {
+                throwItemMaterial = Material.valueOf(throwItemMaterialValue);
+            } catch (IllegalArgumentException e) {
+                throw new CreateEquipmentException("Unable to create equipment item " + name + ", throw item material " + throwItemMaterialValue + " is invalid");
+            }
+
+            NamespacedKey throwItemKey = keyCreator.create(NAMESPACED_KEY_NAME);
+            int throwItemDamage = throwItemSection.getInt("damage");
+
+            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemKey, throwItemMaterial, UUID_GENERATOR);
+            throwItemTemplate.setDamage(throwItemDamage);
+
+            equipment.setThrowItemTemplate(throwItemTemplate);
+        }
+
         // Read controls configuration
         Section controlsSection = section.getSection("controls");
 
@@ -174,27 +209,12 @@ public class EquipmentFactory implements WeaponFactory {
                 equipment.getControls().addControl(cookAction, cookFunction);
             }
 
-            Material material;
-            String materialValue = section.getString("item.throw-item.material");
-
-            try {
-                material = Material.valueOf(materialValue);
-            } catch (IllegalArgumentException e) {
-                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", throwing material " + materialValue + " is invalid");
-            }
-
-            NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-            int damage = section.getInt("item.throw-item.damage");
-
-            ItemTemplate itemTemplate = new ItemTemplate(key, material, UUID_GENERATOR);
-            itemTemplate.setDamage(damage);
-
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
             double velocity = section.getDouble("throwing.velocity");
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");
 
             ThrowProperties throwProperties = new ThrowProperties(throwSounds, velocity, delayAfterThrow);
-            ThrowFunction throwFunction = new ThrowFunction(throwProperties, itemTemplate, activation, audioEmitter, taskRunner);
+            ThrowFunction throwFunction = new ThrowFunction(throwProperties, equipment, audioEmitter, taskRunner);
 
             Section stickableSection = section.getSection("throwing.projectile.stickable");
 

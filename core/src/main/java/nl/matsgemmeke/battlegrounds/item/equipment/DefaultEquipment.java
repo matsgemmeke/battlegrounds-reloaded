@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,20 +21,22 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private EquipmentHolder holder;
     @NotNull
     private ItemControls<EquipmentHolder> controls;
+    @NotNull
+    private ItemEffectActivation effectActivation;
     @Nullable
     private ItemTemplate itemTemplate;
+    @Nullable
+    private ItemTemplate throwItemTemplate;
 
     public DefaultEquipment() {
         this.controls = new ItemControls<>();
     }
 
-    @Override
     @Nullable
     public Activator getActivator() {
         return activator;
     }
 
-    @Override
     public void setActivator(@Nullable Activator activator) {
         this.activator = activator;
     }
@@ -41,6 +44,15 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     public ItemControls<EquipmentHolder> getControls() {
         return controls;
+    }
+
+    @NotNull
+    public ItemEffectActivation getEffectActivation() {
+        return effectActivation;
+    }
+
+    public void setEffectActivation(@NotNull ItemEffectActivation effectActivation) {
+        this.effectActivation = effectActivation;
     }
 
     @Nullable
@@ -59,6 +71,15 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void setItemTemplate(@Nullable ItemTemplate itemTemplate) {
         this.itemTemplate = itemTemplate;
+    }
+
+    @Nullable
+    public ItemTemplate getThrowItemTemplate() {
+        return throwItemTemplate;
+    }
+
+    public void setThrowItemTemplate(@Nullable ItemTemplate throwItemTemplate) {
+        this.throwItemTemplate = throwItemTemplate;
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {
