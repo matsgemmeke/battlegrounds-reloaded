@@ -49,9 +49,6 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
             throw new ItemFunctionException("Cannot perform cook function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
         }
 
-        System.out.println(equipment);
-        System.out.println(effectActivation);
-
         audioEmitter.playSounds(properties.cookSounds(), holder.getEntity().getLocation());
         effectActivation.prime(holder, new HeldItem(holder, holder.getHeldItem()));
         return true;
