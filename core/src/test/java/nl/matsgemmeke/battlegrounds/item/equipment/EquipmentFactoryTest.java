@@ -137,6 +137,27 @@ public class EquipmentFactoryTest {
     }
 
     @Test
+    public void makeEquipmentItemWithEffectActivation() {
+        Section effectSection = mock(Section.class);
+        when(rootSection.getSection("effect")).thenReturn(effectSection);
+
+        Section effectActivationSection = mock(Section.class);
+        when(rootSection.getSection("effect.activation")).thenReturn(effectActivationSection);
+
+        ItemEffect effect = mock(ItemEffect.class);
+        when(effectFactory.make(effectSection, context)).thenReturn(effect);
+
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.make(context, effect, effectActivationSection, null)).thenReturn(effectActivation);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertEquals(effectActivation, equipment.getEffectActivation());
+    }
+
+    @Test
     public void throwExceptionWhenCreatingEquipmentItemWithInvalidActivatorMaterial() {
         Section activatorItemSection = mock(Section.class);
         when(activatorItemSection.getString("material")).thenReturn("fail");
