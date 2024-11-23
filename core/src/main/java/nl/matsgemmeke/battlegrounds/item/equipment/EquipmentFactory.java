@@ -257,7 +257,7 @@ public class EquipmentFactory implements WeaponFactory {
             List<GameSound> activationSounds = DefaultGameSound.parseSounds(section.getString("activation.activation-sound"));
             long delayUntilActivation = section.getLong("activation.delay-until-activation");
 
-            ActivationProperties properties = new ActivationProperties(activationSounds, delayUntilActivation);
+            ActivateProperties properties = new ActivateProperties(activationSounds, delayUntilActivation);
             ActivateFunction activateFunction = new ActivateFunction(properties, equipment, audioEmitter, taskRunner);
 
             equipment.getControls().addControl(activateAction, activateFunction);

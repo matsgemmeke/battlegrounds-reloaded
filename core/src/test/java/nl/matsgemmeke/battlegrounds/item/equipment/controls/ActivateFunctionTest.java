@@ -23,14 +23,14 @@ public class ActivateFunctionTest {
     private static final Iterable<GameSound> ACTIVATION_SOUNDS = Collections.emptySet();
     private static final long DELAY_UNTIL_ACTIVATION = 1L;
 
-    private ActivationProperties properties;
+    private ActivateProperties properties;
     private AudioEmitter audioEmitter;
     private Equipment equipment;
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
-        properties = new ActivationProperties(ACTIVATION_SOUNDS, DELAY_UNTIL_ACTIVATION);
+        properties = new ActivateProperties(ACTIVATION_SOUNDS, DELAY_UNTIL_ACTIVATION);
         audioEmitter = mock(AudioEmitter.class);
         equipment = mock(Equipment.class);
         taskRunner = mock(TaskRunner.class);

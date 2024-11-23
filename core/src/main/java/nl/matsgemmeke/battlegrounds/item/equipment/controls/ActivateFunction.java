@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class ActivateFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
-    private ActivationProperties properties;
+    private ActivateProperties properties;
     @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
@@ -22,7 +22,7 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     private TaskRunner taskRunner;
 
     public ActivateFunction(
-            @NotNull ActivationProperties properties,
+            @NotNull ActivateProperties properties,
             @NotNull Equipment equipment,
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner
