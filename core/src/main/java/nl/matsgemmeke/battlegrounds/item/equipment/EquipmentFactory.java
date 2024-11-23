@@ -203,8 +203,8 @@ public class EquipmentFactory implements WeaponFactory {
 
                 List<GameSound> cookSounds = DefaultGameSound.parseSounds(section.getString("throwing.cook-sound"));
 
-                CookFunction cookFunction = new CookFunction(activation, audioEmitter);
-                cookFunction.addSounds(cookSounds);
+                CookProperties cookProperties = new CookProperties(cookSounds);
+                CookFunction cookFunction = new CookFunction(cookProperties, equipment, audioEmitter);
 
                 equipment.getControls().addControl(cookAction, cookFunction);
             }

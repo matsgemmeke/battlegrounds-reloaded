@@ -76,12 +76,15 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         ItemTemplate throwItemTemplate = equipment.getThrowItemTemplate();
 
         if (effectActivation == null) {
-            throw new ItemFunctionException("Cannot perform a throw for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
+            throw new ItemFunctionException("Cannot perform throw function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
         }
 
         if (throwItemTemplate == null) {
-            throw new ItemFunctionException("Cannot perform a throw for equipment item \"" + equipment.getName() + "\"; it has no throw item template!");
+            throw new ItemFunctionException("Cannot perform throw function for equipment item \"" + equipment.getName() + "\"; it has no throw item template!");
         }
+
+        System.out.println(equipment);
+        System.out.println(effectActivation);
 
         Location location = holder.getLocation();
         World world = holder.getWorld();

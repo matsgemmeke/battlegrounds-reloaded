@@ -1,37 +1,33 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
-import com.google.common.collect.Iterables;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.HeldItem;
+import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
 
 public class CookFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
-    private ItemEffectActivation effectActivation;
+    private CookProperties properties;
     @NotNull
-    private Iterable<GameSound> sounds;
+    private Equipment equipment;
 
-    public CookFunction(@NotNull ItemEffectActivation effectActivation, @NotNull AudioEmitter audioEmitter) {
-        this.effectActivation = effectActivation;
+    public CookFunction(@NotNull CookProperties properties, @NotNull Equipment equipment, @NotNull AudioEmitter audioEmitter) {
+        this.properties = properties;
+        this.equipment = equipment;
         this.audioEmitter = audioEmitter;
-        this.sounds = new HashSet<>();
-    }
-
-    public void addSounds(@NotNull Iterable<GameSound> sounds) {
-        this.sounds = Iterables.concat(this.sounds, sounds);
     }
 
     public boolean isAvailable() {
-        return !effectActivation.isAwaitingDeployment();
+        ItemEffectActivation effectActivation = equipment.getEffectActivation();
+
+        return effectActivation != null && !effectActivation.isAwaitingDeployment();
     }
 
     public boolean isBlocking() {
@@ -47,7 +43,16 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
+        ItemEffectActivation effectActivation = equipment.getEffectActivation();
+
+        if (effectActivation == null) {
+            throw new ItemFunctionException("Cannot perform cook function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
+        }
+
+        System.out.println(equipment);
+        System.out.println(effectActivation);
+
+        audioEmitter.playSounds(properties.cookSounds(), holder.getEntity().getLocation());
         effectActivation.prime(holder, new HeldItem(holder, holder.getHeldItem()));
         return true;
     }
