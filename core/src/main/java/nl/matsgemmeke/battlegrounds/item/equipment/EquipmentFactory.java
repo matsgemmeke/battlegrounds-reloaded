@@ -138,7 +138,7 @@ public class EquipmentFactory implements WeaponFactory {
 
         // Settings the effect activation
         Section effectSection = section.getSection("effect");
-        Section effectActivationSection = section.getSection("activation");
+        Section effectActivationSection = section.getSection("effect.activation");
 
         if (effectSection != null && effectActivationSection != null) {
             Activator activator = equipment.getActivator();
@@ -188,12 +188,6 @@ public class EquipmentFactory implements WeaponFactory {
         String cookActionValue = controlsSection.getString("cook");
         String placeActionValue = controlsSection.getString("place");
         String throwActionValue = controlsSection.getString("throw");
-
-        ItemEffect effect = effectFactory.make(section.getSection("effect"), context);
-        Section activationSection = section.getSection("activation");
-        Activator activator = equipment.getActivator();
-
-        ItemEffectActivation activation = effectActivationFactory.make(context, effect, activationSection, activator);
 
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);

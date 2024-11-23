@@ -1,13 +1,13 @@
 id: SMOKE_GRENADE
 name: Smoke Grenade
-activation:
-  delay-until-activation: 60
-  type: DELAYED
 controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 description: Device that creates a smoke screen when detonated.
 effect:
+  activation:
+    delay-until-activation: 60
+    type: DELAYED
   density: 5
   duration: 400
   growth-increase: 0.025

@@ -1,13 +1,13 @@
 id: FLASHBANG
 name: Flashbang
-activation:
-  delay-until-activation: 60
-  type: DELAYED
 controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 description: Device that blinds the target when detonated.
 effect:
+  activation:
+    delay-until-activation: 60
+    type: DELAYED
   explosion:
     break-blocks: false
     power: 1

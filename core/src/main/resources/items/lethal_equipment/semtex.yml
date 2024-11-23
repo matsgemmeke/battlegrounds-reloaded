@@ -1,12 +1,12 @@
 id: SEMTEX
 name: Semtex
-activation:
-  delay-until-activation: 60
-  type: DELAYED
 controls:
   throw: LEFT_CLICK
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 effect:
+  activation:
+    delay-until-activation: 60
+    type: DELAYED
   break-blocks: false
   power: 2.0
   range:

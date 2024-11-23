@@ -1,15 +1,15 @@
 id: C4
 name: C4
-activation:
-  activation-sound: UI_BUTTON_CLICK-1-1.5-0
-  delay-until-activation: 5
-  type: MANUAL
 controls:
   activate: RIGHT_CLICK
   place: RIGHT_CLICK
   throw: LEFT_CLICK
 description: A plastic explosive device that is detonated remotely with the clacker.
 effect:
+  activation:
+    activation-sound: UI_BUTTON_CLICK-1-1.5-0
+    delay-until-activation: 5
+    type: MANUAL
   break-blocks: false
   power: 3.0
   range:

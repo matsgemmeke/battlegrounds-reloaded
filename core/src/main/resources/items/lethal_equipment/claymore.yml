@@ -1,15 +1,15 @@
 id: CLAYMORE
 name: Claymore
-activation:
-  triggers:
-    - checking-range: 2.5
-      period-between-checks: 2
-      type: ENEMY_PROXIMITY
-  type: TRIGGER
 controls:
   throw: LEFT_CLICK
 description: Anti-personnel mine that triggers a proximity-based explosion.
 effect:
+  activation:
+    triggers:
+      - checking-range: 2.5
+        period-between-checks: 2
+        type: ENEMY_PROXIMITY
+    type: TRIGGER
   break-blocks: false
   power: 2.0
   range:

@@ -1,13 +1,13 @@
 id: FRAG_GRENADE
 name: Frag Grenade
-activation:
-  delay-until-activation: 80
-  type: DELAYED
 controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 effect:
+  activation:
+    delay-until-activation: 80
+    type: DELAYED
   break-blocks: false
   power: 2.0
   range:
