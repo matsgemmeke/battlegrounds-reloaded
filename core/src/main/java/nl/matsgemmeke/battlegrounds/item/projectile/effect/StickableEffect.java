@@ -10,7 +10,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public class Stickable implements ProjectileEffect {
+public class StickableEffect implements ProjectileEffect {
 
     @NotNull
     private AudioEmitter audioEmitter;
@@ -22,7 +22,7 @@ public class Stickable implements ProjectileEffect {
     @NotNull
     private TaskRunner taskRunner;
 
-    public Stickable(
+    public StickableEffect(
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             @NotNull Iterable<GameSound> stickSounds,

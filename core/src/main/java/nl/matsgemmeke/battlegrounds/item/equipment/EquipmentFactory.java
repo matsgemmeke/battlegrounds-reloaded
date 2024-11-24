@@ -19,7 +19,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.Stickable;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.StickableEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundEffect;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
@@ -156,18 +157,29 @@ public class EquipmentFactory implements WeaponFactory {
         if (projectileSection != null) {
             ProjectileProperties projectileProperties = new ProjectileProperties();
 
+            Section soundSection = projectileSection.getSection("effects.sound");
             Section stickableSection = projectileSection.getSection("effects.stickable");
 
-            if (stickableSection != null) {
-                AudioEmitter audioEmitter = context.getAudioEmitter();
+            AudioEmitter audioEmitter = context.getAudioEmitter();
 
+            if (soundSection != null) {
+                List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sound"));
+                int interval = soundSection.getInt("interval");
+                double factor = soundSection.getDouble("factor");
+
+                SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, sounds, interval, factor);
+
+                projectileProperties.getEffects().add(effect);
+            }
+
+            if (stickableSection != null) {
                 List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickableSection.getString("stick-sound"));
                 long checkDelay = stickableSection.getLong("check-delay");
                 long checkPeriod = stickableSection.getLong("check-period");
 
-                Stickable stickable = new Stickable(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
+                StickableEffect effect = new StickableEffect(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
 
-                projectileProperties.getEffects().add(stickable);
+                projectileProperties.getEffects().add(effect);
             }
 
             equipment.setProjectileProperties(projectileProperties);

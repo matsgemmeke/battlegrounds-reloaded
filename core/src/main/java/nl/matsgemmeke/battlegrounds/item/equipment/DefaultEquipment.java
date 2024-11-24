@@ -22,7 +22,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private EquipmentHolder holder;
     @NotNull
     private ItemControls<EquipmentHolder> controls;
-    @NotNull
+    @Nullable
     private ItemEffectActivation effectActivation;
     @Nullable
     private ItemTemplate itemTemplate;

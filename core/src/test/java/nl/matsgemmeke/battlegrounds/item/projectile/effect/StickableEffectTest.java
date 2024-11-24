@@ -18,7 +18,7 @@ import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 
-public class StickableTest {
+public class StickableEffectTest {
 
     private static final Iterable<GameSound> STICK_SOUNDS = Collections.emptySet();
     private static final long CHECK_DELAY = 0L;
@@ -41,8 +41,8 @@ public class StickableTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        Stickable stickable = new Stickable(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
-        stickable.onLaunch(projectile);
+        StickableEffect effect = new StickableEffect(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
+        effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(CHECK_DELAY), eq(CHECK_PERIOD));
@@ -72,8 +72,8 @@ public class StickableTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        Stickable stickable = new Stickable(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
-        stickable.onLaunch(projectile);
+        StickableEffect effect = new StickableEffect(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
+        effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(CHECK_DELAY), eq(CHECK_PERIOD));
@@ -105,8 +105,8 @@ public class StickableTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        Stickable stickable = new Stickable(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
-        stickable.onLaunch(projectile);
+        StickableEffect effect = new StickableEffect(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
+        effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(CHECK_DELAY), eq(CHECK_PERIOD));
