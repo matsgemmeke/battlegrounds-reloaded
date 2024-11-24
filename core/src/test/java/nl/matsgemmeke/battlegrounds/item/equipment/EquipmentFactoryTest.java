@@ -137,6 +137,17 @@ public class EquipmentFactoryTest {
     }
 
     @Test
+    public void throwExceptionWhenCreatingEquipmentItemWithInvalidActivatorMaterial() {
+        Section activatorItemSection = mock(Section.class);
+        when(activatorItemSection.getString("material")).thenReturn("fail");
+        when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
+    }
+
+    @Test
     public void makeEquipmentItemWithEffectActivation() {
         Section effectSection = mock(Section.class);
         when(rootSection.getSection("effect")).thenReturn(effectSection);
@@ -158,14 +169,20 @@ public class EquipmentFactoryTest {
     }
 
     @Test
-    public void throwExceptionWhenCreatingEquipmentItemWithInvalidActivatorMaterial() {
-        Section activatorItemSection = mock(Section.class);
-        when(activatorItemSection.getString("material")).thenReturn("fail");
-        when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
+    public void makeEquipmentItemWithStickableEffect() {
+        Section stickableSection = mock(Section.class);
+
+        Section projectileSection = mock(Section.class);
+        when(projectileSection.getSection("effects.stickable")).thenReturn(stickableSection);
+
+        when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
 
-        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertNotNull(equipment.getProjectileProperties());
+        assertEquals(1, equipment.getProjectileProperties().getEffects().size());
     }
 
     @Test

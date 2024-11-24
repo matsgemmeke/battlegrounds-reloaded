@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.Nullable;
 
 public interface Equipment extends Weapon, Interactable<EquipmentHolder> {
@@ -55,6 +56,21 @@ public interface Equipment extends Weapon, Interactable<EquipmentHolder> {
      * @param holder the equipment holder
      */
     void setHolder(@Nullable EquipmentHolder holder);
+
+    /**
+     * Gets the projectile properties associated with this equipment item. Returns null if no properties are set.
+     *
+     * @return the projectile properties of the equipment item or null if not set
+     */
+    @Nullable
+    ProjectileProperties getProjectileProperties();
+
+    /**
+     * Sets the projectile properties associated with this equipment item.
+     *
+     * @param projectileProperties the projectile properties of the equipment item
+     */
+    void setProjectileProperties(@Nullable ProjectileProperties projectileProperties);
 
     /**
      * Gets the item template to be used for throwing the equipment. Returns null if no template is set for throwing.

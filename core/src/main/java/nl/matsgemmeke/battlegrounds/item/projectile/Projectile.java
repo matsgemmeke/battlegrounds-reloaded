@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Projectile {
 
+    boolean exists();
+
     @NotNull
     Location getLocation();
 

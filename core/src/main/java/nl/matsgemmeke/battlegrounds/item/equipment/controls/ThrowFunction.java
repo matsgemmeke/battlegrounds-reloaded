@@ -9,16 +9,13 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperty;
+import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
@@ -30,8 +27,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private boolean performing;
     @NotNull
     private Equipment equipment;
-    @NotNull
-    private Set<ProjectileProperty> projectileProperties;
     @NotNull
     private TaskRunner taskRunner;
     @NotNull
@@ -48,11 +43,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.performing = false;
-        this.projectileProperties = new HashSet<>();
-    }
-
-    public void addProjectileProperties(@NotNull ProjectileProperty projectileProperty) {
-        projectileProperties.add(projectileProperty);
     }
 
     public boolean isAvailable() {
@@ -101,9 +91,13 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         taskRunner.runTaskLater(() -> performing = false, properties.delayAfterThrow());
 
         DroppedItem droppedItem = new DroppedItem(itemEntity);
+        ProjectileProperties projectileProperties = equipment.getProjectileProperties();
+
+        if (projectileProperties != null) {
+            projectileProperties.getEffects().forEach(effect -> effect.onLaunch(droppedItem));
+        }
 
         effectActivation.prime(holder, droppedItem);
-        projectileProperties.forEach(property -> property.onLaunch(droppedItem));
         return true;
     }
 }

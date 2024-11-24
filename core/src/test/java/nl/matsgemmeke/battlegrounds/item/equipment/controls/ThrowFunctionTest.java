@@ -9,6 +9,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -104,13 +106,16 @@ public class ThrowFunctionTest {
     }
 
     @Test
-    public void shouldPrimeDroppedItemWhenPerforming() {
+    public void performReturnsTrueAndPrimesDroppedItem() {
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Item itemEntity = mock(Item.class);
         when(itemEntity.getLocation()).thenReturn(location);
 
         ItemStack itemStack = new ItemStack(Material.SHEARS);
+
+        World world = mock(World.class);
+        when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
 
         ItemTemplate throwItemTemplate = mock(ItemTemplate.class);
         when(throwItemTemplate.createItemStack()).thenReturn(itemStack);
@@ -120,8 +125,12 @@ public class ThrowFunctionTest {
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         when(equipment.getEffectActivation()).thenReturn(effectActivation);
 
-        World world = mock(World.class);
-        when(world.dropItem(location, itemStack)).thenReturn(itemEntity);
+        ProjectileEffect projectileEffect = mock(ProjectileEffect.class);
+
+        ProjectileProperties projectileProperties = new ProjectileProperties();
+        projectileProperties.getEffects().add(projectileEffect);
+
+        when(equipment.getProjectileProperties()).thenReturn(projectileProperties);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLocation()).thenReturn(location);
@@ -138,6 +147,7 @@ public class ThrowFunctionTest {
 
         assertEquals(location, captor.getValue().getLocation());
 
+        verify(projectileEffect).onLaunch(captor.getValue());
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(DELAY_AFTER_THROW));
         verify(world).dropItem(location, itemStack);
     }

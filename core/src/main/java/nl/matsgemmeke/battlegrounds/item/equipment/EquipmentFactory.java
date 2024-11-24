@@ -18,7 +18,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
-import nl.matsgemmeke.battlegrounds.item.projectile.Stickable;
+import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.Stickable;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
@@ -136,7 +137,7 @@ public class EquipmentFactory implements WeaponFactory {
             equipment.setActivator(activator);
         }
 
-        // Settings the effect activation
+        // Setting the effect activation
         Section effectSection = section.getSection("effect");
         Section effectActivationSection = section.getSection("effect.activation");
 
@@ -147,6 +148,29 @@ public class EquipmentFactory implements WeaponFactory {
             ItemEffectActivation activation = effectActivationFactory.make(context, effect, effectActivationSection, activator);
 
             equipment.setEffectActivation(activation);
+        }
+
+        // Setting the projectile properties
+        Section projectileSection = section.getSection("projectile");
+
+        if (projectileSection != null) {
+            ProjectileProperties projectileProperties = new ProjectileProperties();
+
+            Section stickableSection = projectileSection.getSection("effects.stickable");
+
+            if (stickableSection != null) {
+                AudioEmitter audioEmitter = context.getAudioEmitter();
+
+                List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickableSection.getString("stick-sound"));
+                long checkDelay = stickableSection.getLong("check-delay");
+                long checkPeriod = stickableSection.getLong("check-period");
+
+                Stickable stickable = new Stickable(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
+
+                projectileProperties.getEffects().add(stickable);
+            }
+
+            equipment.setProjectileProperties(projectileProperties);
         }
 
         // Setting the throw item template
@@ -209,17 +233,6 @@ public class EquipmentFactory implements WeaponFactory {
 
             ThrowProperties throwProperties = new ThrowProperties(throwSounds, velocity, delayAfterThrow);
             ThrowFunction throwFunction = new ThrowFunction(throwProperties, equipment, audioEmitter, taskRunner);
-
-            Section stickableSection = section.getSection("throwing.projectile.stickable");
-
-            if (stickableSection != null) {
-                long checkDelay = stickableSection.getLong("check-delay");
-                long checkPeriod = stickableSection.getLong("check-period");
-
-                Stickable stickable = new Stickable(taskRunner, checkDelay, checkPeriod);
-
-                throwFunction.addProjectileProperties(stickable);
-            }
 
             equipment.getControls().addControl(throwAction, throwFunction);
         }

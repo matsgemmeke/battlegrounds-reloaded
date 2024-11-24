@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +28,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private ItemTemplate itemTemplate;
     @Nullable
     private ItemTemplate throwItemTemplate;
+    @Nullable
+    private ProjectileProperties projectileProperties;
 
     public DefaultEquipment() {
         this.controls = new ItemControls<>();
@@ -71,6 +74,15 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void setItemTemplate(@Nullable ItemTemplate itemTemplate) {
         this.itemTemplate = itemTemplate;
+    }
+
+    @Nullable
+    public ProjectileProperties getProjectileProperties() {
+        return projectileProperties;
+    }
+
+    public void setProjectileProperties(@Nullable ProjectileProperties projectileProperties) {
+        this.projectileProperties = projectileProperties;
     }
 
     @Nullable
