@@ -7,6 +7,8 @@ import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class SoundEffect implements ProjectileEffect {
 
     private static final long TIMER_DELAY = 0L;
@@ -15,11 +17,11 @@ public class SoundEffect implements ProjectileEffect {
     @NotNull
     private AudioEmitter audioEmitter;
     private BukkitTask task;
-    private double factor;
-    private double interval;
     private int ticks;
     @NotNull
     private Iterable<GameSound> sounds;
+    @NotNull
+    private List<Integer> intervals;
     @NotNull
     private TaskRunner taskRunner;
 
@@ -27,14 +29,12 @@ public class SoundEffect implements ProjectileEffect {
             @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             @NotNull Iterable<GameSound> sounds,
-            int interval,
-            double factor
+            @NotNull List<Integer> intervals
     ) {
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.sounds = sounds;
-        this.interval = interval;
-        this.factor = factor;
+        this.intervals = intervals;
         this.ticks = 0;
     }
 
@@ -50,11 +50,9 @@ public class SoundEffect implements ProjectileEffect {
 
         ticks++;
 
-        if (ticks % (int) interval != 0) {
+        if (!intervals.contains(ticks)) {
             return;
         }
-
-        interval *= factor;
 
         audioEmitter.playSounds(sounds, projectile.getLocation());
     }

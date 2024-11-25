@@ -32,8 +32,7 @@ item:
 projectile:
   effects:
     sound:
-      factor: 0.9
-      interval: 10
+      intervals: [10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58]
       sound: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
     stickable:
       check-delay: 0
