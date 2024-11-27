@@ -30,6 +30,12 @@ item:
   throw-item:
     damage: 1
     material: SHEARS
+projectile:
+  effects:
+    bounce:
+      amount-of-bounces: 1
+      check-delay: 0
+      check-period: 1
 throwing:
   cook-sound: ENTITY_TNT_PRIMED-1-2-0
   delay-after-throw: 30

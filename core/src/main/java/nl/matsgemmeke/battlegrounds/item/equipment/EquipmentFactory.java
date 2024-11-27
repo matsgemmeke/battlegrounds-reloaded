@@ -19,6 +19,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.StickEffect;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -157,10 +158,21 @@ public class EquipmentFactory implements WeaponFactory {
         if (projectileSection != null) {
             ProjectileProperties projectileProperties = new ProjectileProperties();
 
+            Section bounceSection = projectileSection.getSection("effects.bounce");
             Section soundSection = projectileSection.getSection("effects.sound");
             Section stickableSection = projectileSection.getSection("effects.stickable");
 
             AudioEmitter audioEmitter = context.getAudioEmitter();
+
+            if (bounceSection != null) {
+                int amountOfBounces = bounceSection.getInt("amount-of-bounces");
+                long checkDelay = bounceSection.getLong("check-delay");
+                long checkPeriod = bounceSection.getLong("check-period");
+
+                BounceEffect effect = new BounceEffect(taskRunner, amountOfBounces, checkDelay, checkPeriod);
+
+                projectileProperties.getEffects().add(effect);
+            }
 
             if (soundSection != null) {
                 List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sound"));
