@@ -19,8 +19,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.StickableEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.StickEffect;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
@@ -176,7 +176,7 @@ public class EquipmentFactory implements WeaponFactory {
                 long checkDelay = stickableSection.getLong("check-delay");
                 long checkPeriod = stickableSection.getLong("check-period");
 
-                StickableEffect effect = new StickableEffect(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
+                StickEffect effect = new StickEffect(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
 
                 projectileProperties.getEffects().add(effect);
             }

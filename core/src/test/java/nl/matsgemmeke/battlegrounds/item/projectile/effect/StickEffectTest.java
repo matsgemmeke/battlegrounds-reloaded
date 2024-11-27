@@ -18,7 +18,7 @@ import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 
-public class StickableEffectTest {
+public class StickEffectTest {
 
     private static final Iterable<GameSound> STICK_SOUNDS = Collections.emptySet();
     private static final long CHECK_DELAY = 0L;
@@ -41,7 +41,7 @@ public class StickableEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        StickableEffect effect = new StickableEffect(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
+        StickEffect effect = new StickEffect(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -72,7 +72,7 @@ public class StickableEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        StickableEffect effect = new StickableEffect(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
+        StickEffect effect = new StickEffect(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -105,7 +105,7 @@ public class StickableEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        StickableEffect effect = new StickableEffect(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
+        StickEffect effect = new StickEffect(audioEmitter, taskRunner, STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
