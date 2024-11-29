@@ -10,23 +10,24 @@ import org.jetbrains.annotations.NotNull;
 
 public class BounceEffect implements ProjectileEffect {
 
+    private static final double MIN_Y_MOVEMENT = 0.01;
+    private static final double Y_SUBTRACTION = 0.1;
+
+    @NotNull
+    private BounceProperties properties;
     private BukkitTask task;
     private int bounces;
-    private int amountOfBounces;
-    private long checkDelay;
-    private long checkPeriod;
     @NotNull
     private TaskRunner taskRunner;
 
-    public BounceEffect(@NotNull TaskRunner taskRunner, int amountOfBounces, long checkDelay, long checkPeriod) {
+    public BounceEffect(@NotNull TaskRunner taskRunner, @NotNull BounceProperties properties) {
         this.taskRunner = taskRunner;
-        this.amountOfBounces = amountOfBounces;
-        this.checkDelay = checkDelay;
-        this.checkPeriod = checkPeriod;
+        this.properties = properties;
     }
 
     public void onLaunch(@NotNull Projectile projectile) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), checkDelay, checkPeriod);
+        bounces = 0;
+        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.checkDelay(), properties.checkPeriod());
     }
 
     private void runCheck(@NotNull Projectile projectile) {
@@ -35,21 +36,23 @@ public class BounceEffect implements ProjectileEffect {
             return;
         }
 
+        Location locationBelow = projectile.getLocation().subtract(0, Y_SUBTRACTION, 0);
+        Block blockBelow = locationBelow.getBlock();
         Vector velocity = projectile.getVelocity();
-        Vector direction = velocity.normalize();
-        Location locationInFront = projectile.getLocation().add(direction);
-        Block blockInFront = projectile.getWorld().getBlockAt(locationInFront);
 
-        if (!blockInFront.getType().isSolid()) {
+        if (!blockBelow.getType().isSolid() || velocity.getY() < MIN_Y_MOVEMENT) {
             return;
         }
 
         bounces++;
 
-        velocity.setY(velocity.getY() * -1);
+        velocity.setY(-velocity.getY() * properties.bounceFactor());
+        velocity.setX(velocity.getX() * properties.velocityRetention());
+        velocity.setZ(velocity.getZ() * properties.velocityRetention());
+
         projectile.setVelocity(velocity);
 
-        if (bounces < amountOfBounces) {
+        if (bounces < properties.amountOfBounces()) {
             return;
         }
 
