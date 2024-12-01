@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BounceEffect implements ProjectileEffect {
 
-    private static final double MIN_Y_MOVEMENT = 0.01;
-    private static final double Y_SUBTRACTION = 0.1;
+    private static final double CENTER_OFFSET = 0.5;
 
     @NotNull
     private BounceProperties properties;
@@ -36,26 +35,55 @@ public class BounceEffect implements ProjectileEffect {
             return;
         }
 
-        Location locationBelow = projectile.getLocation().subtract(0, Y_SUBTRACTION, 0);
-        Block blockBelow = locationBelow.getBlock();
         Vector velocity = projectile.getVelocity();
+        Location projectileLocation = projectile.getLocation();
+        Location locationInFront = projectileLocation.clone().add(velocity);
+        Block blockInFront = projectile.getWorld().getBlockAt(locationInFront);
 
-        if (!blockBelow.getType().isSolid() || velocity.getY() < MIN_Y_MOVEMENT) {
+        if (!blockInFront.getType().isSolid()) {
             return;
         }
 
         bounces++;
 
-        velocity.setY(-velocity.getY() * properties.bounceFactor());
-        velocity.setX(velocity.getX() * properties.velocityRetention());
-        velocity.setZ(velocity.getZ() * properties.velocityRetention());
-
-        projectile.setVelocity(velocity);
-
-        if (bounces < properties.amountOfBounces()) {
-            return;
+        if (bounces >= properties.amountOfBounces()) {
+            task.cancel();
         }
 
-        task.cancel();
+        // Create a reflection vector and add friction for the x and z movement
+        Vector reflection = this.reflectVector(blockInFront, projectileLocation, velocity);
+        reflection.setX(reflection.getX() * properties.frictionFactor());
+        reflection.setZ(reflection.getZ() * properties.frictionFactor());
+
+        projectile.setVelocity(reflection);
+    }
+
+    @NotNull
+    private Vector reflectVector(@NotNull Block block, @NotNull Location projectileLocation, @NotNull Vector projectileVelocity) {
+        Vector normal = new Vector(0, 0, 0);
+
+        double blockX = block.getX() + CENTER_OFFSET;
+        double blockY = block.getY() + CENTER_OFFSET;
+        double blockZ = block.getZ() + CENTER_OFFSET;
+
+        double projectileX = projectileLocation.getX();
+        double projectileY = projectileLocation.getY();
+        double projectileZ = projectileLocation.getZ();
+
+        if (projectileLocation.getBlockY() != block.getY()) {
+            normal.setY(projectileY < blockY ? -1 : 1);
+        } else {
+            if (Math.abs(projectileX - blockX) > Math.abs(projectileZ - blockZ)) {
+                // X-side collision (left/right wall)
+                normal.setX(projectileX < blockX ? -1 : 1);
+            } else {
+                // Z-side collision (front/back wall)
+                normal.setZ(projectileZ < blockZ ? -1 : 1);
+            }
+        }
+
+        double dotProduct = projectileVelocity.dot(normal);
+
+        return projectileVelocity.subtract(normal.multiply(dotProduct * 2));
     }
 }

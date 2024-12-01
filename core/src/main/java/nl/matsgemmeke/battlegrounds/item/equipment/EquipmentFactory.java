@@ -20,6 +20,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationF
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.StickEffect;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -166,10 +167,12 @@ public class EquipmentFactory implements WeaponFactory {
 
             if (bounceSection != null) {
                 int amountOfBounces = bounceSection.getInt("amount-of-bounces");
+                double frictionFactor = bounceSection.getDouble("friction-factor");
                 long checkDelay = bounceSection.getLong("check-delay");
                 long checkPeriod = bounceSection.getLong("check-period");
 
-                BounceEffect effect = new BounceEffect(taskRunner, amountOfBounces, checkDelay, checkPeriod);
+                BounceProperties properties = new BounceProperties(amountOfBounces, frictionFactor, checkDelay, checkPeriod);
+                BounceEffect effect = new BounceEffect(taskRunner, properties);
 
                 projectileProperties.getEffects().add(effect);
             }

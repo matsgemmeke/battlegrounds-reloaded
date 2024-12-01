@@ -2,8 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 
 public record BounceProperties(
         int amountOfBounces,
-        double bounceFactor,
-        double velocityRetention,
+        double frictionFactor,
         long checkDelay,
         long checkPeriod
 ) {}
