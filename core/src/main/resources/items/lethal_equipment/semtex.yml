@@ -34,7 +34,7 @@ projectile:
     sound:
       intervals: [10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58]
       sound: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
-    stickable:
+    stick:
       check-delay: 0
       check-period: 1
       stick-sound: ITEM_FLINTANDSTEEL_USE-0.5-2-0

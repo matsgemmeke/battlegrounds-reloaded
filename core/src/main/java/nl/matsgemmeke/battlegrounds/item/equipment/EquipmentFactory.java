@@ -161,7 +161,7 @@ public class EquipmentFactory implements WeaponFactory {
 
             Section bounceSection = projectileSection.getSection("effects.bounce");
             Section soundSection = projectileSection.getSection("effects.sound");
-            Section stickableSection = projectileSection.getSection("effects.stickable");
+            Section stickSection = projectileSection.getSection("effects.stick");
 
             AudioEmitter audioEmitter = context.getAudioEmitter();
 
@@ -187,10 +187,10 @@ public class EquipmentFactory implements WeaponFactory {
                 projectileProperties.getEffects().add(effect);
             }
 
-            if (stickableSection != null) {
-                List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickableSection.getString("stick-sound"));
-                long checkDelay = stickableSection.getLong("check-delay");
-                long checkPeriod = stickableSection.getLong("check-period");
+            if (stickSection != null) {
+                List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickSection.getString("stick-sound"));
+                long checkDelay = stickSection.getLong("check-delay");
+                long checkPeriod = stickSection.getLong("check-period");
 
                 StickEffect effect = new StickEffect(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
 

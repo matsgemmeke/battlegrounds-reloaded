@@ -186,11 +186,11 @@ public class EquipmentFactoryTest {
     }
 
     @Test
-    public void makeEquipmentItemWithStickableEffect() {
-        Section stickableSection = mock(Section.class);
+    public void makeEquipmentItemWithStickEffect() {
+        Section stickSection = mock(Section.class);
 
         Section projectileSection = mock(Section.class);
-        when(projectileSection.getSection("effects.stickable")).thenReturn(stickableSection);
+        when(projectileSection.getSection("effects.stick")).thenReturn(stickSection);
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
