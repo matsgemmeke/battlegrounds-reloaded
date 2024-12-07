@@ -167,11 +167,12 @@ public class EquipmentFactory implements WeaponFactory {
 
             if (bounceSection != null) {
                 int amountOfBounces = bounceSection.getInt("amount-of-bounces");
-                double frictionFactor = bounceSection.getDouble("friction-factor");
+                double horizontalFriction = bounceSection.getDouble("horizontal-friction");
+                double verticalFriction = bounceSection.getDouble("vertical-friction");
                 long checkDelay = bounceSection.getLong("check-delay");
                 long checkPeriod = bounceSection.getLong("check-period");
 
-                BounceProperties properties = new BounceProperties(amountOfBounces, frictionFactor, checkDelay, checkPeriod);
+                BounceProperties properties = new BounceProperties(amountOfBounces, horizontalFriction, verticalFriction, checkDelay, checkPeriod);
                 BounceEffect effect = new BounceEffect(taskRunner, properties);
 
                 projectileProperties.getEffects().add(effect);

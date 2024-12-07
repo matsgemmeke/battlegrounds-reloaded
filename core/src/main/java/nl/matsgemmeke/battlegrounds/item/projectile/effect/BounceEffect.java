@@ -3,14 +3,16 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
+import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class BounceEffect implements ProjectileEffect {
 
-    private static final double CENTER_OFFSET = 0.5;
+    private static final double RAY_TRACE_MAX_DISTANCE = 1.0;
 
     @NotNull
     private BounceProperties properties;
@@ -37,10 +39,14 @@ public class BounceEffect implements ProjectileEffect {
 
         Vector velocity = projectile.getVelocity();
         Location projectileLocation = projectile.getLocation();
-        Location locationInFront = projectileLocation.clone().add(velocity);
-        Block blockInFront = projectile.getWorld().getBlockAt(locationInFront);
 
-        if (!blockInFront.getType().isSolid()) {
+        World world = projectile.getWorld();
+        RayTraceResult rayTraceResult = world.rayTraceBlocks(projectileLocation, velocity, RAY_TRACE_MAX_DISTANCE);
+
+        if (rayTraceResult == null
+                || rayTraceResult.getHitBlock() == null
+                || rayTraceResult.getHitBlockFace() == null
+                || !rayTraceResult.getHitBlock().getType().isSolid()) {
             return;
         }
 
@@ -51,36 +57,17 @@ public class BounceEffect implements ProjectileEffect {
         }
 
         // Create a reflection vector and add friction for the x and z movement
-        Vector reflection = this.reflectVector(blockInFront, projectileLocation, velocity);
-        reflection.setX(reflection.getX() * properties.frictionFactor());
-        reflection.setZ(reflection.getZ() * properties.frictionFactor());
+        Vector reflection = this.reflectVector(rayTraceResult.getHitBlockFace(), velocity);
+        reflection.setX(reflection.getX() / properties.horizontalFriction());
+        reflection.setY(reflection.getY() / properties.verticalFriction());
+        reflection.setZ(reflection.getZ() / properties.horizontalFriction());
 
         projectile.setVelocity(reflection);
     }
 
     @NotNull
-    private Vector reflectVector(@NotNull Block block, @NotNull Location projectileLocation, @NotNull Vector projectileVelocity) {
-        Vector normal = new Vector(0, 0, 0);
-
-        double blockX = block.getX() + CENTER_OFFSET;
-        double blockY = block.getY() + CENTER_OFFSET;
-        double blockZ = block.getZ() + CENTER_OFFSET;
-
-        double projectileX = projectileLocation.getX();
-        double projectileY = projectileLocation.getY();
-        double projectileZ = projectileLocation.getZ();
-
-        if (projectileLocation.getBlockY() != block.getY()) {
-            normal.setY(projectileY < blockY ? -1 : 1);
-        } else {
-            if (Math.abs(projectileX - blockX) > Math.abs(projectileZ - blockZ)) {
-                // X-side collision (left/right wall)
-                normal.setX(projectileX < blockX ? -1 : 1);
-            } else {
-                // Z-side collision (front/back wall)
-                normal.setZ(projectileZ < blockZ ? -1 : 1);
-            }
-        }
+    private Vector reflectVector(@NotNull BlockFace hitBlockFace, @NotNull Vector projectileVelocity) {
+        Vector normal = new Vector(hitBlockFace.getModX(), hitBlockFace.getModY(), hitBlockFace.getModZ());
 
         double dotProduct = projectileVelocity.dot(normal);
 
