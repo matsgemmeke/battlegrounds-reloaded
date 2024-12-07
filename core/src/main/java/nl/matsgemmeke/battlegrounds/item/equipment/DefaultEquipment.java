@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,19 +23,23 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     private ItemControls<EquipmentHolder> controls;
     @Nullable
+    private ItemEffectActivation effectActivation;
+    @Nullable
     private ItemTemplate itemTemplate;
+    @Nullable
+    private ItemTemplate throwItemTemplate;
+    @Nullable
+    private ProjectileProperties projectileProperties;
 
     public DefaultEquipment() {
         this.controls = new ItemControls<>();
     }
 
-    @Override
     @Nullable
     public Activator getActivator() {
         return activator;
     }
 
-    @Override
     public void setActivator(@Nullable Activator activator) {
         this.activator = activator;
     }
@@ -41,6 +47,15 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     public ItemControls<EquipmentHolder> getControls() {
         return controls;
+    }
+
+    @NotNull
+    public ItemEffectActivation getEffectActivation() {
+        return effectActivation;
+    }
+
+    public void setEffectActivation(@NotNull ItemEffectActivation effectActivation) {
+        this.effectActivation = effectActivation;
     }
 
     @Nullable
@@ -59,6 +74,24 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void setItemTemplate(@Nullable ItemTemplate itemTemplate) {
         this.itemTemplate = itemTemplate;
+    }
+
+    @Nullable
+    public ProjectileProperties getProjectileProperties() {
+        return projectileProperties;
+    }
+
+    public void setProjectileProperties(@Nullable ProjectileProperties projectileProperties) {
+        this.projectileProperties = projectileProperties;
+    }
+
+    @Nullable
+    public ItemTemplate getThrowItemTemplate() {
+        return throwItemTemplate;
+    }
+
+    public void setThrowItemTemplate(@Nullable ItemTemplate throwItemTemplate) {
+        this.throwItemTemplate = throwItemTemplate;
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {

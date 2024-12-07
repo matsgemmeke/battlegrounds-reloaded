@@ -1,12 +1,11 @@
-id: FRAG_GRENADE
-name: Frag Grenade
+id: SEMTEX
+name: Semtex
 controls:
-  cook: RIGHT_CLICK
   throw: LEFT_CLICK
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 effect:
   activation:
-    delay-until-activation: 80
+    delay-until-activation: 60
     type: DELAYED
   break-blocks: false
   power: 2.0
@@ -24,20 +23,21 @@ effect:
   type: EXPLOSION
 equipment-type: LETHAL
 item:
-  damage: 1
+  damage: 9
   display-name: "&f%name%"
   material: SHEARS
   throw-item:
-    damage: 1
+    damage: 9
     material: SHEARS
 projectile:
   effects:
-    bounce:
-      amount-of-bounces: 1
+    sound:
+      intervals: [10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58]
+      sound: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
+    stick:
       check-delay: 0
       check-period: 1
-      horizontal-friction: 3.0
-      vertical-friction: 2.0
+      stick-sound: ITEM_FLINTANDSTEEL_USE-0.5-2-0
 throwing:
   cook-sound: ENTITY_TNT_PRIMED-1-2-0
   delay-after-throw: 30

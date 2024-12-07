@@ -63,7 +63,7 @@ public class EquipmentFactoryTest {
         NamespacedKey key = new NamespacedKey(plugin, "battlegrounds-equipment");
 
         keyCreator = mock(NamespacedKeyCreator.class);
-        Mockito.when(keyCreator.create("battlegrounds-equipment")).thenReturn(key);
+        when(keyCreator.create("battlegrounds-equipment")).thenReturn(key);
 
         rootSection = mock(Section.class);
         when(rootSection.getString("name")).thenReturn("name");
@@ -148,13 +148,98 @@ public class EquipmentFactoryTest {
     }
 
     @Test
+    public void makeEquipmentItemWithEffectActivation() {
+        Section effectSection = mock(Section.class);
+        when(rootSection.getSection("effect")).thenReturn(effectSection);
+
+        Section effectActivationSection = mock(Section.class);
+        when(rootSection.getSection("effect.activation")).thenReturn(effectActivationSection);
+
+        ItemEffect effect = mock(ItemEffect.class);
+        when(effectFactory.make(effectSection, context)).thenReturn(effect);
+
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.make(context, effect, effectActivationSection, null)).thenReturn(effectActivation);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertEquals(effectActivation, equipment.getEffectActivation());
+    }
+
+    @Test
+    public void makeEquipmentItemWithSoundEffect() {
+        Section soundSection = mock(Section.class);
+
+        Section projectileSection = mock(Section.class);
+        when(projectileSection.getSection("effects.sound")).thenReturn(soundSection);
+
+        when(rootSection.getSection("projectile")).thenReturn(projectileSection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertNotNull(equipment.getProjectileProperties());
+        assertEquals(1, equipment.getProjectileProperties().getEffects().size());
+    }
+
+    @Test
+    public void makeEquipmentItemWithStickEffect() {
+        Section stickSection = mock(Section.class);
+
+        Section projectileSection = mock(Section.class);
+        when(projectileSection.getSection("effects.stick")).thenReturn(stickSection);
+
+        when(rootSection.getSection("projectile")).thenReturn(projectileSection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertNotNull(equipment.getProjectileProperties());
+        assertEquals(1, equipment.getProjectileProperties().getEffects().size());
+    }
+
+    @Test
+    public void makeEquipmentItemWithThrowItemTemplate() {
+        int damage = 1;
+
+        Section throwItemSection = mock(Section.class);
+        when(throwItemSection.getInt("damage")).thenReturn(damage);
+        when(throwItemSection.getString("material")).thenReturn("SHEARS");
+
+        when(rootSection.getSection("item.throw-item")).thenReturn(throwItemSection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertNotNull(equipment.getThrowItemTemplate());
+        assertEquals(damage, equipment.getThrowItemTemplate().getDamage());
+
+        verify(equipmentRegistry).registerItem(equipment);
+    }
+
+    @Test
+    public void shouldThrowErrorWhenThrowItemMaterialConfigurationValueIsInvalid() {
+        Section throwItemSection = mock(Section.class);
+        when(throwItemSection.getString("material")).thenReturn("fail");
+
+        when(rootSection.getSection("item.throw-item")).thenReturn(throwItemSection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
+    }
+
+    @Test
     public void shouldCreateEquipmentItemWithThrowControls() {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
-        when(rootSection.getInt("item.throw-item.damage")).thenReturn(1);
-        when(rootSection.getString("item.throw-item.material")).thenReturn("FLINT");
         when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
         Damageable itemMeta = mock(Damageable.class);
@@ -180,19 +265,6 @@ public class EquipmentFactoryTest {
         when(controlsSection.getString("throw")).thenReturn("fail");
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
-
-        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
-
-        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
-    }
-
-    @Test
-    public void shouldThrowErrorWhenThrowItemMaterialConfigurationValueIsInvalid() {
-        Section controlsSection = mock(Section.class);
-        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
-
-        when(rootSection.getSection("controls")).thenReturn(controlsSection);
-        when(rootSection.getString("item.throw-item.material")).thenReturn("fail");
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
 

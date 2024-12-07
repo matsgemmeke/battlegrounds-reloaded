@@ -1,14 +1,14 @@
 id: MOLOTOV_COCKTAIL
 name: Molotov Cocktail
-activation:
-  triggers:
-    - period-between-checks: 2
-      type: FLOOR_HIT
-  type: TRIGGER
 controls:
   throw: LEFT_CLICK
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
 effect:
+  activation:
+    triggers:
+      - period-between-checks: 2
+        type: FLOOR_HIT
+    type: TRIGGER
   burn-blocks: false
   combustion-sound: BLOCK_GLASS_BREAK-1-1-0
   radius: 3
@@ -35,5 +35,5 @@ item:
     material: SHEARS
 throwing:
   delay-after-throw: 30
-  projectile-speed: 1.2
   throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
+  velocity: 1.2

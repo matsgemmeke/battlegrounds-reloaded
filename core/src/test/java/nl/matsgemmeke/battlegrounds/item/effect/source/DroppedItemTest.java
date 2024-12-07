@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.source;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
+import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +51,27 @@ public class DroppedItemTest {
     }
 
     @Test
+    public void getVelocityReturnsItemEntityVelocity() {
+        Vector velocity = new Vector(1, 1, 1);
+        when(itemEntity.getVelocity()).thenReturn(velocity);
+
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        Vector result = droppedItem.getVelocity();
+
+        assertEquals(velocity, result);
+    }
+
+    @Test
+    public void setVelocitySetsItemEntityVelocity() {
+        Vector velocity = new Vector(1, 1, 1);
+
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        droppedItem.setVelocity(velocity);
+
+        verify(itemEntity).setVelocity(velocity);
+    }
+
+    @Test
     public void returnSameWorldAsItemEntity() {
         World itemWorld = mock(World.class);
         when(itemEntity.getWorld()).thenReturn(itemWorld);
@@ -58,6 +80,24 @@ public class DroppedItemTest {
         World objectWorld = droppedItem.getWorld();
 
         assertEquals(itemWorld, objectWorld);
+    }
+
+    @Test
+    public void hasGravityReturnsItemEntityGravity() {
+        when(itemEntity.hasGravity()).thenReturn(true);
+
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        boolean result = droppedItem.hasGravity();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void setGravitySetsItemEntityGravity() {
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        droppedItem.setGravity(true);
+
+        verify(itemEntity).setGravity(true);
     }
 
     @Test

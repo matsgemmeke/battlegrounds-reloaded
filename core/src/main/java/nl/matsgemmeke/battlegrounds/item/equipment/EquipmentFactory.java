@@ -17,10 +17,12 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.ActivateFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.PlaceFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.CookFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.ThrowFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
+import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.StickEffect;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
@@ -138,6 +140,88 @@ public class EquipmentFactory implements WeaponFactory {
             equipment.setActivator(activator);
         }
 
+        // Setting the effect activation
+        Section effectSection = section.getSection("effect");
+        Section effectActivationSection = section.getSection("effect.activation");
+
+        if (effectSection != null && effectActivationSection != null) {
+            Activator activator = equipment.getActivator();
+
+            ItemEffect effect = effectFactory.make(effectSection, context);
+            ItemEffectActivation activation = effectActivationFactory.make(context, effect, effectActivationSection, activator);
+
+            equipment.setEffectActivation(activation);
+        }
+
+        // Setting the projectile properties
+        Section projectileSection = section.getSection("projectile");
+
+        if (projectileSection != null) {
+            ProjectileProperties projectileProperties = new ProjectileProperties();
+
+            Section bounceSection = projectileSection.getSection("effects.bounce");
+            Section soundSection = projectileSection.getSection("effects.sound");
+            Section stickSection = projectileSection.getSection("effects.stick");
+
+            AudioEmitter audioEmitter = context.getAudioEmitter();
+
+            if (bounceSection != null) {
+                int amountOfBounces = bounceSection.getInt("amount-of-bounces");
+                double horizontalFriction = bounceSection.getDouble("horizontal-friction");
+                double verticalFriction = bounceSection.getDouble("vertical-friction");
+                long checkDelay = bounceSection.getLong("check-delay");
+                long checkPeriod = bounceSection.getLong("check-period");
+
+                BounceProperties properties = new BounceProperties(amountOfBounces, horizontalFriction, verticalFriction, checkDelay, checkPeriod);
+                BounceEffect effect = new BounceEffect(taskRunner, properties);
+
+                projectileProperties.getEffects().add(effect);
+            }
+
+            if (soundSection != null) {
+                List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sound"));
+                List<Integer> intervals = soundSection.getIntList("intervals");
+
+                SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, sounds, intervals);
+
+                projectileProperties.getEffects().add(effect);
+            }
+
+            if (stickSection != null) {
+                List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickSection.getString("stick-sound"));
+                long checkDelay = stickSection.getLong("check-delay");
+                long checkPeriod = stickSection.getLong("check-period");
+
+                StickEffect effect = new StickEffect(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
+
+                projectileProperties.getEffects().add(effect);
+            }
+
+            equipment.setProjectileProperties(projectileProperties);
+        }
+
+        // Setting the throw item template
+        Section throwItemSection = section.getSection("item.throw-item");
+
+        if (throwItemSection != null) {
+            Material throwItemMaterial;
+            String throwItemMaterialValue = throwItemSection.getString("material");
+
+            try {
+                throwItemMaterial = Material.valueOf(throwItemMaterialValue);
+            } catch (IllegalArgumentException e) {
+                throw new CreateEquipmentException("Unable to create equipment item " + name + ", throw item material " + throwItemMaterialValue + " is invalid");
+            }
+
+            NamespacedKey throwItemKey = keyCreator.create(NAMESPACED_KEY_NAME);
+            int throwItemDamage = throwItemSection.getInt("damage");
+
+            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemKey, throwItemMaterial, UUID_GENERATOR);
+            throwItemTemplate.setDamage(throwItemDamage);
+
+            equipment.setThrowItemTemplate(throwItemTemplate);
+        }
+
         // Read controls configuration
         Section controlsSection = section.getSection("controls");
 
@@ -156,12 +240,6 @@ public class EquipmentFactory implements WeaponFactory {
         String placeActionValue = controlsSection.getString("place");
         String throwActionValue = controlsSection.getString("throw");
 
-        ItemEffect effect = effectFactory.make(section.getSection("effect"), context);
-        Section activationSection = section.getSection("activation");
-        Activator activator = equipment.getActivator();
-
-        ItemEffectActivation activation = effectActivationFactory.make(context, effect, activationSection, activator);
-
         if (throwActionValue != null) {
             Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
 
@@ -170,34 +248,18 @@ public class EquipmentFactory implements WeaponFactory {
 
                 List<GameSound> cookSounds = DefaultGameSound.parseSounds(section.getString("throwing.cook-sound"));
 
-                CookFunction cookFunction = new CookFunction(activation, audioEmitter);
-                cookFunction.addSounds(cookSounds);
+                CookProperties cookProperties = new CookProperties(cookSounds);
+                CookFunction cookFunction = new CookFunction(cookProperties, equipment, audioEmitter);
 
                 equipment.getControls().addControl(cookAction, cookFunction);
             }
 
-            Material material;
-            String materialValue = section.getString("item.throw-item.material");
-
-            try {
-                material = Material.valueOf(materialValue);
-            } catch (IllegalArgumentException e) {
-                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", throwing material " + materialValue + " is invalid");
-            }
-
-            NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-            int damage = section.getInt("item.throw-item.damage");
-
-            ItemTemplate itemTemplate = new ItemTemplate(key, material, UUID_GENERATOR);
-            itemTemplate.setDamage(damage);
-
-            long delayAfterThrow = section.getLong("throwing.delay-after-throw");
-            double projectileSpeed = section.getDouble("throwing.projectile-speed");
-
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
+            double velocity = section.getDouble("throwing.velocity");
+            long delayAfterThrow = section.getLong("throwing.delay-after-throw");
 
-            ThrowFunction throwFunction = new ThrowFunction(itemTemplate, activation, audioEmitter, taskRunner, projectileSpeed, delayAfterThrow);
-            throwFunction.addSounds(throwSounds);
+            ThrowProperties throwProperties = new ThrowProperties(throwSounds, velocity, delayAfterThrow);
+            ThrowFunction throwFunction = new ThrowFunction(throwProperties, equipment, audioEmitter, taskRunner);
 
             equipment.getControls().addControl(throwAction, throwFunction);
         }
@@ -214,12 +276,11 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", placing material " + materialValue + " is invalid");
             }
 
+            List<GameSound> placeSounds = DefaultGameSound.parseSounds(section.getString("placing.place-sound"));
             long delayAfterPlacement = section.getLong("placing.delay-after-placement");
 
-            List<GameSound> placeSounds = DefaultGameSound.parseSounds(section.getString("placing.place-sound"));
-
-            PlaceFunction placeFunction = new PlaceFunction(activation, material, audioEmitter, taskRunner, delayAfterPlacement);
-            placeFunction.addSounds(placeSounds);
+            PlaceProperties properties = new PlaceProperties(placeSounds, material, delayAfterPlacement);
+            PlaceFunction placeFunction = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
 
             equipment.getControls().addControl(placeAction, placeFunction);
         }
@@ -227,12 +288,11 @@ public class EquipmentFactory implements WeaponFactory {
         if (activateActionValue != null) {
             Action activateAction = this.getActionFromConfiguration("activate", activateActionValue);
 
+            List<GameSound> activationSounds = DefaultGameSound.parseSounds(section.getString("activation.activation-sound"));
             long delayUntilActivation = section.getLong("activation.delay-until-activation");
 
-            List<GameSound> activateSounds = DefaultGameSound.parseSounds(section.getString("activation.activation-sound"));
-
-            ActivateFunction activateFunction = new ActivateFunction(activation, audioEmitter, taskRunner, delayUntilActivation);
-            activateFunction.addSounds(activateSounds);
+            ActivateProperties properties = new ActivateProperties(activationSounds, delayUntilActivation);
+            ActivateFunction activateFunction = new ActivateFunction(properties, equipment, audioEmitter, taskRunner);
 
             equipment.getControls().addControl(activateAction, activateFunction);
         }
