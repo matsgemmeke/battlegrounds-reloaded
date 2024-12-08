@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
@@ -131,6 +132,7 @@ public class ItemEffectFactory {
                 double offsetY = section.getDouble("particle.offset-y");
                 double offsetZ = section.getDouble("particle.offset-z");
                 double extra = section.getDouble("particle.extra");
+                ParticleEffect particleEffect = new ParticleEffect(particle, count, offsetX, offsetY, offsetZ, extra);
 
                 List<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sound"));
                 int duration = section.getInt("duration");
@@ -140,12 +142,11 @@ public class ItemEffectFactory {
                 double growthIncrease = section.getDouble("growth-increase");
                 long growthPeriod = section.getLong("growth-period");
 
-                SmokeScreenProperties properties = new SmokeScreenProperties(ignitionSounds, duration, density, radiusMaxSize, radiusStartingSize, growthIncrease, growthPeriod);
-                ParticleSettings particleSettings = new ParticleSettings(particle, count, offsetX, offsetY, offsetZ, extra);
+                SmokeScreenProperties properties = new SmokeScreenProperties(ignitionSounds, particleEffect, duration, density, radiusMaxSize, radiusStartingSize, growthIncrease, growthPeriod);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 CollisionDetector collisionDetector = context.getCollisionDetector();
 
-                return new SmokeScreenEffect(properties, particleSettings, audioEmitter, collisionDetector, taskRunner);
+                return new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
             }
             case SOUND_NOTIFICATION -> {
                 Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sound"));

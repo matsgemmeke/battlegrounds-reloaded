@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ParticleSettings;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -27,8 +26,6 @@ public class SmokeScreenEffect implements ItemEffect {
     private int currentDuration;
     private Location currentLocation;
     @NotNull
-    private ParticleSettings particleSettings;
-    @NotNull
     private Random random;
     @NotNull
     private SmokeScreenProperties properties;
@@ -37,13 +34,11 @@ public class SmokeScreenEffect implements ItemEffect {
 
     public SmokeScreenEffect(
             @NotNull SmokeScreenProperties properties,
-            @NotNull ParticleSettings particleSettings,
             @NotNull AudioEmitter audioEmitter,
             @NotNull CollisionDetector collisionDetector,
             @NotNull TaskRunner taskRunner
     ) {
         this.properties = properties;
-        this.particleSettings = particleSettings;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
         this.taskRunner = taskRunner;
@@ -91,12 +86,12 @@ public class SmokeScreenEffect implements ItemEffect {
     }
 
     private void spawnParticle(@NotNull Location location, @NotNull World world) {
-        Particle particle = particleSettings.type();
-        int count = particleSettings.count();
-        double offsetX = particleSettings.offsetX();
-        double offsetY = particleSettings.offsetY();
-        double offsetZ = particleSettings.offsetZ();
-        double extra = particleSettings.extra();
+        Particle particle = properties.particleEffect().type();
+        int count = properties.particleEffect().count();
+        double offsetX = properties.particleEffect().offsetX();
+        double offsetY = properties.particleEffect().offsetY();
+        double offsetZ = properties.particleEffect().offsetZ();
+        double extra = properties.particleEffect().extra();
 
         world.spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra);
     }
@@ -126,7 +121,10 @@ public class SmokeScreenEffect implements ItemEffect {
             // Spawn particle at calculated location
             if (!collisionDetector.producesBlockCollisionAt(particleLocation)
                     && collisionDetector.hasLineOfSight(particleLocation, location)) {
-                world.spawnParticle(particleSettings.type(), particleLocation, 0, offsetX, offsetY, offsetZ, particleSettings.extra());
+                Particle particle = properties.particleEffect().type();
+                double extra = properties.particleEffect().extra();
+
+                world.spawnParticle(particle, particleLocation, 0, offsetX, offsetY, offsetZ, extra);
             }
         }
     }
