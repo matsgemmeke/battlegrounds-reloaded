@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.projectile.effect;
+package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;

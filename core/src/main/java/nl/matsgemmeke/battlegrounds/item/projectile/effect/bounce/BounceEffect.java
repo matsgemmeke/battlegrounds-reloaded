@@ -1,7 +1,8 @@
-package nl.matsgemmeke.battlegrounds.item.projectile.effect;
+package nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;

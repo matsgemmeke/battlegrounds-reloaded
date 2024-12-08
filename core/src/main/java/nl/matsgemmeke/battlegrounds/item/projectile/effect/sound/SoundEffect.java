@@ -1,8 +1,9 @@
-package nl.matsgemmeke.battlegrounds.item.projectile.effect;
+package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 

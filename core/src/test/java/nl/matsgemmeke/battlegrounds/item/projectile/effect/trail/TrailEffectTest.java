@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.projectile.effect;
+package nl.matsgemmeke.battlegrounds.item.projectile.effect.trail;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
