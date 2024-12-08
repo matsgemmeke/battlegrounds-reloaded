@@ -36,7 +36,7 @@ public class CombustionEffect implements ItemEffect {
     @NotNull
     private CollisionDetector collisionDetector;
     @NotNull
-    private CombustionSettings settings;
+    private CombustionProperties properties;
     private int currentRadius;
     @NotNull
     private MetadataValueCreator metadataValueCreator;
@@ -48,7 +48,7 @@ public class CombustionEffect implements ItemEffect {
     private TaskRunner taskRunner;
 
     public CombustionEffect(
-            @NotNull CombustionSettings settings,
+            @NotNull CombustionProperties properties,
             @NotNull RangeProfile rangeProfile,
             @NotNull AudioEmitter audioEmitter,
             @NotNull CollisionDetector collisionDetector,
@@ -56,7 +56,7 @@ public class CombustionEffect implements ItemEffect {
             @NotNull TargetFinder targetFinder,
             @NotNull TaskRunner taskRunner
     ) {
-        this.settings = settings;
+        this.properties = properties;
         this.rangeProfile = rangeProfile;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
@@ -72,11 +72,11 @@ public class CombustionEffect implements ItemEffect {
         Location location = source.getLocation();
         World world = source.getWorld();
 
-        audioEmitter.playSounds(settings.sounds(), location);
+        audioEmitter.playSounds(properties.combustionSounds(), location);
 
         this.inflictDamage(holder, location);
 
-        int maxRadiusSize = settings.radius();
+        int maxRadiusSize = properties.radius();
 
         task = taskRunner.runTaskTimer(() -> {
             if (++currentRadius > maxRadiusSize) {
@@ -90,7 +90,7 @@ public class CombustionEffect implements ItemEffect {
                     this.setOnFire(block);
                 }
             }
-        }, RUNNABLE_DELAY, settings.ticksBetweenFireSpread());
+        }, RUNNABLE_DELAY, properties.ticksBetweenFireSpread());
 
         source.remove();
     }
@@ -125,8 +125,8 @@ public class CombustionEffect implements ItemEffect {
     }
 
     private void setOnFire(@NotNull Block block) {
-        MetadataValue burnBlocksMetadata = metadataValueCreator.createFixedMetadataValue(settings.burnBlocks());
-        MetadataValue spreadFireMetadata = metadataValueCreator.createFixedMetadataValue(settings.spreadFire());
+        MetadataValue burnBlocksMetadata = metadataValueCreator.createFixedMetadataValue(properties.burnBlocks());
+        MetadataValue spreadFireMetadata = metadataValueCreator.createFixedMetadataValue(properties.spreadFire());
 
         block.setMetadata(BURN_BLOCKS_METADATA_KEY, burnBlocksMetadata);
         block.setMetadata(SPREAD_FIRE_METADATA_KEY, spreadFireMetadata);

@@ -15,18 +15,14 @@ import org.jetbrains.annotations.NotNull;
 public class ExplosionEffect implements ItemEffect {
 
     @NotNull
-    private ExplosionSettings settings;
+    private ExplosionProperties properties;
     @NotNull
     private RangeProfile rangeProfile;
     @NotNull
     private TargetFinder targetFinder;
 
-    public ExplosionEffect(
-            @NotNull ExplosionSettings settings,
-            @NotNull RangeProfile rangeProfile,
-            @NotNull TargetFinder targetFinder
-    ) {
-        this.settings = settings;
+    public ExplosionEffect(@NotNull ExplosionProperties properties, @NotNull RangeProfile rangeProfile, @NotNull TargetFinder targetFinder) {
+        this.properties = properties;
         this.targetFinder = targetFinder;
         this.rangeProfile = rangeProfile;
     }
@@ -38,7 +34,7 @@ public class ExplosionEffect implements ItemEffect {
         World world = source.getWorld();
         Entity damageSource = holder.getEntity();
 
-        world.createExplosion(sourceLocation, settings.power(), settings.setFire(), settings.breakBlocks(), damageSource);
+        world.createExplosion(sourceLocation, properties.power(), properties.setFire(), properties.breakBlocks(), damageSource);
 
         source.remove();
 

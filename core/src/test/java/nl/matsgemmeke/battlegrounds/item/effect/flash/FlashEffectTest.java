@@ -34,13 +34,13 @@ public class FlashEffectTest {
     private static final int POTION_EFFECT_AMPLIFIER = 0;
     private static final int POTION_EFFECT_DURATION = 100;
 
-    private FlashSettings flashSettings;
+    private FlashProperties properties;
     private PotionEffectSettings potionEffectSettings;
     private TargetFinder targetFinder;
 
     @BeforeEach
     public void setUp() {
-        flashSettings = new FlashSettings(RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
+        properties = new FlashProperties(RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
         potionEffectSettings = new PotionEffectSettings(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
         targetFinder = mock(TargetFinder.class);
     }
@@ -60,7 +60,7 @@ public class FlashEffectTest {
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        FlashEffect effect = new FlashEffect(flashSettings, potionEffectSettings, targetFinder);
+        FlashEffect effect = new FlashEffect(properties, potionEffectSettings, targetFinder);
         effect.activate(context);
 
         verify(source).remove();
@@ -89,7 +89,7 @@ public class FlashEffectTest {
 
         when(targetFinder.findTargets(holder, sourceLocation, RANGE)).thenReturn(List.of(holder, gameEntity));
 
-        FlashEffect effect = new FlashEffect(flashSettings, potionEffectSettings, targetFinder);
+        FlashEffect effect = new FlashEffect(properties, potionEffectSettings, targetFinder);
         effect.activate(context);
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);

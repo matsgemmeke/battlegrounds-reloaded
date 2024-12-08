@@ -31,18 +31,18 @@ public class SmokeScreenEffect implements ItemEffect {
     @NotNull
     private Random random;
     @NotNull
-    private SmokeScreenSettings smokeScreenSettings;
+    private SmokeScreenProperties properties;
     @NotNull
     private TaskRunner taskRunner;
 
     public SmokeScreenEffect(
-            @NotNull SmokeScreenSettings smokeScreenSettings,
+            @NotNull SmokeScreenProperties properties,
             @NotNull ParticleSettings particleSettings,
             @NotNull AudioEmitter audioEmitter,
             @NotNull CollisionDetector collisionDetector,
             @NotNull TaskRunner taskRunner
     ) {
-        this.smokeScreenSettings = smokeScreenSettings;
+        this.properties = properties;
         this.particleSettings = particleSettings;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
@@ -52,20 +52,20 @@ public class SmokeScreenEffect implements ItemEffect {
     }
 
     public void activate(@NotNull ItemEffectContext context) {
-        audioEmitter.playSounds(smokeScreenSettings.ignitionSounds(), context.getSource().getLocation());
+        audioEmitter.playSounds(properties.ignitionSounds(), context.getSource().getLocation());
 
         currentDuration = 0;
         currentLocation = context.getSource().getLocation();
-        currentRadius = smokeScreenSettings.radiusStartingSize();
+        currentRadius = properties.radiusStartingSize();
 
         task = taskRunner.runTaskTimer(() -> {
-            if (++currentDuration >= smokeScreenSettings.duration()) {
+            if (++currentDuration >= properties.duration()) {
                 context.getSource().remove();
                 task.cancel();
                 return;
             }
             this.createSmokeEffect(context.getSource().getLocation(), context.getSource().getWorld());
-        }, RUNNABLE_DELAY, smokeScreenSettings.growthPeriod());
+        }, RUNNABLE_DELAY, properties.growthPeriod());
     }
 
     private void createSmokeEffect(@NotNull Location location, @NotNull World world) {
@@ -74,11 +74,11 @@ public class SmokeScreenEffect implements ItemEffect {
         if (moving) {
             this.spawnParticle(location, world);
             // If the source moved location the smoke will no longer expand into a sphere, so it resets the size
-            currentRadius = smokeScreenSettings.radiusStartingSize();
+            currentRadius = properties.radiusStartingSize();
             currentLocation = location;
         } else {
-            currentRadius += smokeScreenSettings.growthIncrease();
-            double radius = Math.min(currentRadius, smokeScreenSettings.radiusMaxSize());
+            currentRadius += properties.growthIncrease();
+            double radius = Math.min(currentRadius, properties.radiusMaxSize());
 
             this.createSphere(location, world, radius);
         }
@@ -103,7 +103,7 @@ public class SmokeScreenEffect implements ItemEffect {
 
     private void createSphere(@NotNull Location location, @NotNull World world, double radius) {
         // Increase the amount of particles based on the radius of the sphere
-        int particleAmount = (int) (radius * smokeScreenSettings.density());
+        int particleAmount = (int) (radius * properties.density());
 
         for (int i = 0; i < particleAmount; i++) {
             // Generate a random distance within the current radius

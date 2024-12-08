@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -27,7 +28,7 @@ public class SmokeScreenEffectTest {
     private static final double PARTICLE_OFFSET_Y = 0.5;
     private static final double PARTICLE_OFFSET_Z = 0.5;
     private static final int PARTICLE_COUNT = 1;
-    private static final Iterable<GameSound> IGNITION_SOUNDS = Collections.emptyList();
+    private static final List<GameSound> IGNITION_SOUNDS = Collections.emptyList();
     private static final long GROWTH_PERIOD = 1L;
     private static final Particle PARTICLE_TYPE = Particle.CAMPFIRE_SIGNAL_SMOKE;
 
@@ -61,9 +62,9 @@ public class SmokeScreenEffectTest {
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_PERIOD))).thenReturn(task);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(IGNITION_SOUNDS, duration, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, duration, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
+        SmokeScreenEffect effect = new SmokeScreenEffect(properties, particleSettings, audioEmitter, collisionDetector, taskRunner);
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -90,9 +91,9 @@ public class SmokeScreenEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(IGNITION_SOUNDS, 100, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, 100, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
+        SmokeScreenEffect effect = new SmokeScreenEffect(properties, particleSettings, audioEmitter, collisionDetector, taskRunner);
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -117,12 +118,12 @@ public class SmokeScreenEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5,0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5,0.0, GROWTH_PERIOD);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
+        SmokeScreenEffect effect = new SmokeScreenEffect(properties, particleSettings, audioEmitter, collisionDetector, taskRunner);
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -147,11 +148,11 @@ public class SmokeScreenEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(true);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
+        SmokeScreenEffect effect = new SmokeScreenEffect(properties, particleSettings, audioEmitter, collisionDetector, taskRunner);
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -176,12 +177,12 @@ public class SmokeScreenEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(false);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
+        SmokeScreenEffect effect = new SmokeScreenEffect(properties, particleSettings, audioEmitter, collisionDetector, taskRunner);
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);

@@ -18,14 +18,14 @@ import org.jetbrains.annotations.NotNull;
 public class FlashEffect implements ItemEffect {
 
     @NotNull
-    private FlashSettings flashSettings;
+    private FlashProperties properties;
     @NotNull
     private PotionEffectSettings potionEffectSettings;
     @NotNull
     private TargetFinder targetFinder;
 
-    public FlashEffect(@NotNull FlashSettings flashSettings, @NotNull PotionEffectSettings potionEffectSettings, @NotNull TargetFinder targetFinder) {
-        this.flashSettings = flashSettings;
+    public FlashEffect(@NotNull FlashProperties properties, @NotNull PotionEffectSettings potionEffectSettings, @NotNull TargetFinder targetFinder) {
+        this.properties = properties;
         this.potionEffectSettings = potionEffectSettings;
         this.targetFinder = targetFinder;
     }
@@ -41,9 +41,9 @@ public class FlashEffect implements ItemEffect {
     }
 
     private void createExplosionEffect(@NotNull ItemHolder holder, @NotNull EffectSource source) {
-        float power = flashSettings.explosionPower();
-        boolean setFire = flashSettings.explosionSetFire();
-        boolean breakBlocks = flashSettings.explosionBreakBlocks();
+        float power = properties.explosionPower();
+        boolean setFire = properties.explosionSetFire();
+        boolean breakBlocks = properties.explosionBreakBlocks();
 
         World world = source.getWorld();
         Location location = source.getLocation();
@@ -53,7 +53,7 @@ public class FlashEffect implements ItemEffect {
     }
 
     private void applyPotionEffectToTargets(@NotNull ItemHolder holder, @NotNull Location location) {
-        for (GameEntity target : targetFinder.findTargets(holder, location, flashSettings.range())) {
+        for (GameEntity target : targetFinder.findTargets(holder, location, properties.range())) {
             if (!(target.getEntity() instanceof LivingEntity entity)) {
                 continue;
             }
