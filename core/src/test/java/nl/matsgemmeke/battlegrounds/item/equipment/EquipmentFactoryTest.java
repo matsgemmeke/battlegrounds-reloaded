@@ -203,6 +203,39 @@ public class EquipmentFactoryTest {
     }
 
     @Test
+    public void makeEquipmentItemWithTrailEffect() {
+        Section trailSection = mock(Section.class);
+        when(trailSection.getString("particle.type")).thenReturn("FLAME");
+
+        Section projectileSection = mock(Section.class);
+        when(projectileSection.getSection("effects.trail")).thenReturn(trailSection);
+
+        when(rootSection.getSection("projectile")).thenReturn(projectileSection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertNotNull(equipment.getProjectileProperties());
+        assertEquals(1, equipment.getProjectileProperties().getEffects().size());
+    }
+
+    @Test
+    public void throwExceptionWhenCreatingEquipmentItemWithInvalidTrailEffectType() {
+        Section trailSection = mock(Section.class);
+        when(trailSection.getString("particle.type")).thenReturn("fail");
+
+        Section projectileSection = mock(Section.class);
+        when(projectileSection.getSection("effects.trail")).thenReturn(trailSection);
+
+        when(rootSection.getSection("projectile")).thenReturn(projectileSection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+
+        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, context));
+    }
+
+    @Test
     public void makeEquipmentItemWithThrowItemTemplate() {
         int damage = 1;
 

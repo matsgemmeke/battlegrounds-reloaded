@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -19,15 +20,13 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.StickEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.*;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -162,6 +161,7 @@ public class EquipmentFactory implements WeaponFactory {
             Section bounceSection = projectileSection.getSection("effects.bounce");
             Section soundSection = projectileSection.getSection("effects.sound");
             Section stickSection = projectileSection.getSection("effects.stick");
+            Section trailSection = projectileSection.getSection("effects.trail");
 
             AudioEmitter audioEmitter = context.getAudioEmitter();
 
@@ -193,6 +193,32 @@ public class EquipmentFactory implements WeaponFactory {
                 long checkPeriod = stickSection.getLong("check-period");
 
                 StickEffect effect = new StickEffect(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
+
+                projectileProperties.getEffects().add(effect);
+            }
+
+            if (trailSection != null) {
+                String particleValue = trailSection.getString("particle.type");
+                Particle particle;
+
+                try {
+                    particle = Particle.valueOf(particleValue);
+                } catch (IllegalArgumentException e) {
+                    throw new CreateEquipmentException("Unable to create equipment item " + name + "; trail effect particle " + particleValue + " is invalid");
+                }
+
+                int count = trailSection.getInt("particle.count");
+                double offsetX = trailSection.getDouble("particle.offset-x");
+                double offsetY = trailSection.getDouble("particle.offset-y");
+                double offsetZ = trailSection.getDouble("particle.offset-z");
+                double extra = trailSection.getDouble("particle.extra");
+
+                ParticleEffect particleEffect = new ParticleEffect(particle, count, offsetX, offsetY, offsetZ, extra);
+                long checkDelay = trailSection.getLong("check-delay");
+                long checkPeriod = trailSection.getLong("check-period");
+
+                TrailProperties properties = new TrailProperties(particleEffect, checkDelay, checkPeriod);
+                TrailEffect effect = new TrailEffect(taskRunner, properties);
 
                 projectileProperties.getEffects().add(effect);
             }

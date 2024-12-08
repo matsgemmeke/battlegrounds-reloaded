@@ -33,6 +33,18 @@ item:
   throw-item:
     damage: 4
     material: SHEARS
+projectile:
+  effects:
+    trail:
+      check-delay: 5
+      check-period: 2
+      particle:
+        count: 1
+        extra: 0
+        offset-x: 0.1
+        offset-y: 0.1
+        offset-z: 0.1
+        type: FLAME
 throwing:
   delay-after-throw: 30
   throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
