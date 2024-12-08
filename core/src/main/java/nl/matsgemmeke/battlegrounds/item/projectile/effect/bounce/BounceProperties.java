@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.projectile.effect;
+package nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce;
 
 public record BounceProperties(
         int amountOfBounces,

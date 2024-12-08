@@ -1,45 +1,35 @@
-package nl.matsgemmeke.battlegrounds.item.projectile.effect;
+package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class SoundEffect implements ProjectileEffect {
 
-    private static final long TIMER_DELAY = 0L;
-    private static final long TIMER_PERIOD = 1L;
+    private static final long CHECK_DELAY = 0L;
+    private static final long CHECK_PERIOD = 1L;
 
     @NotNull
     private AudioEmitter audioEmitter;
     private BukkitTask task;
     private int ticks;
     @NotNull
-    private Iterable<GameSound> sounds;
-    @NotNull
-    private List<Integer> intervals;
+    private SoundProperties properties;
     @NotNull
     private TaskRunner taskRunner;
 
-    public SoundEffect(
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull TaskRunner taskRunner,
-            @NotNull Iterable<GameSound> sounds,
-            @NotNull List<Integer> intervals
-    ) {
+    public SoundEffect(@NotNull AudioEmitter audioEmitter, @NotNull TaskRunner taskRunner, @NotNull SoundProperties properties) {
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
-        this.sounds = sounds;
-        this.intervals = intervals;
+        this.properties = properties;
         this.ticks = 0;
     }
 
     public void onLaunch(@NotNull Projectile projectile) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), TIMER_DELAY, TIMER_PERIOD);
+        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), CHECK_DELAY, CHECK_PERIOD);
     }
 
     private void runCheck(@NotNull Projectile projectile) {
@@ -50,10 +40,10 @@ public class SoundEffect implements ProjectileEffect {
 
         ticks++;
 
-        if (!intervals.contains(ticks)) {
+        if (!properties.intervals().contains(ticks)) {
             return;
         }
 
-        audioEmitter.playSounds(sounds, projectile.getLocation());
+        audioEmitter.playSounds(properties.sounds(), projectile.getLocation());
     }
 }

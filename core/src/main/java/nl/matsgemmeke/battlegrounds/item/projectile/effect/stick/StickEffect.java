@@ -1,9 +1,9 @@
-package nl.matsgemmeke.battlegrounds.item.projectile.effect;
+package nl.matsgemmeke.battlegrounds.item.projectile.effect.stick;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
@@ -16,28 +16,18 @@ public class StickEffect implements ProjectileEffect {
     private AudioEmitter audioEmitter;
     private BukkitTask task;
     @NotNull
-    private Iterable<GameSound> stickSounds;
-    private long checkDelay;
-    private long checkPeriod;
+    private StickProperties properties;
     @NotNull
     private TaskRunner taskRunner;
 
-    public StickEffect(
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull TaskRunner taskRunner,
-            @NotNull Iterable<GameSound> stickSounds,
-            long checkDelay,
-            long checkPeriod
-    ) {
+    public StickEffect(@NotNull AudioEmitter audioEmitter, @NotNull TaskRunner taskRunner, @NotNull StickProperties properties) {
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
-        this.stickSounds = stickSounds;
-        this.checkDelay = checkDelay;
-        this.checkPeriod = checkPeriod;
+        this.properties = properties;
     }
 
     public void onLaunch(@NotNull Projectile projectile) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), checkDelay, checkPeriod);
+        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.checkDelay(), properties.checkPeriod());
     }
 
     private void runCheck(@NotNull Projectile projectile) {
@@ -54,7 +44,7 @@ public class StickEffect implements ProjectileEffect {
             return;
         }
 
-        audioEmitter.playSounds(stickSounds, projectile.getLocation());
+        audioEmitter.playSounds(properties.stickSounds(), projectile.getLocation());
 
         projectile.setGravity(false);
         projectile.setVelocity(new Vector(0, 0, 0));

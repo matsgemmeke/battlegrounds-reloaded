@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -19,15 +20,20 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.StickEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -162,6 +168,7 @@ public class EquipmentFactory implements WeaponFactory {
             Section bounceSection = projectileSection.getSection("effects.bounce");
             Section soundSection = projectileSection.getSection("effects.sound");
             Section stickSection = projectileSection.getSection("effects.stick");
+            Section trailSection = projectileSection.getSection("effects.trail");
 
             AudioEmitter audioEmitter = context.getAudioEmitter();
 
@@ -182,7 +189,8 @@ public class EquipmentFactory implements WeaponFactory {
                 List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sound"));
                 List<Integer> intervals = soundSection.getIntList("intervals");
 
-                SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, sounds, intervals);
+                SoundProperties properties = new SoundProperties(sounds, intervals);
+                SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, properties);
 
                 projectileProperties.getEffects().add(effect);
             }
@@ -192,7 +200,34 @@ public class EquipmentFactory implements WeaponFactory {
                 long checkDelay = stickSection.getLong("check-delay");
                 long checkPeriod = stickSection.getLong("check-period");
 
-                StickEffect effect = new StickEffect(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
+                StickProperties properties = new StickProperties(stickSounds, checkDelay, checkPeriod);
+                StickEffect effect = new StickEffect(audioEmitter, taskRunner, properties);
+
+                projectileProperties.getEffects().add(effect);
+            }
+
+            if (trailSection != null) {
+                String particleValue = trailSection.getString("particle.type");
+                Particle particle;
+
+                try {
+                    particle = Particle.valueOf(particleValue);
+                } catch (IllegalArgumentException e) {
+                    throw new CreateEquipmentException("Unable to create equipment item " + name + "; trail effect particle " + particleValue + " is invalid");
+                }
+
+                int count = trailSection.getInt("particle.count");
+                double offsetX = trailSection.getDouble("particle.offset-x");
+                double offsetY = trailSection.getDouble("particle.offset-y");
+                double offsetZ = trailSection.getDouble("particle.offset-z");
+                double extra = trailSection.getDouble("particle.extra");
+                ParticleEffectProperties particleEffect = new ParticleEffectProperties(particle, count, offsetX, offsetY, offsetZ, extra);
+
+                long checkDelay = trailSection.getLong("check-delay");
+                long checkPeriod = trailSection.getLong("check-period");
+
+                TrailProperties properties = new TrailProperties(particleEffect, checkDelay, checkPeriod);
+                TrailEffect effect = new TrailEffect(taskRunner, properties);
 
                 projectileProperties.getEffects().add(effect);
             }

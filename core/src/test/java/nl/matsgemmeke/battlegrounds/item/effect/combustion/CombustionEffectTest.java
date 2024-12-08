@@ -62,7 +62,7 @@ public class CombustionEffectTest {
         boolean burnBlocks = false;
         boolean spreadFire = true;
 
-        CombustionSettings settings = new CombustionSettings(Collections.emptyList(), radius, ticksBetweenFireSpread, burnBlocks, spreadFire);
+        CombustionProperties properties = new CombustionProperties(Collections.emptyList(), radius, ticksBetweenFireSpread, burnBlocks, spreadFire);
 
         MetadataValue metadataBurnBlocks = mock(MetadataValue.class);
         MetadataValue metadataSpreadFire = mock(MetadataValue.class);
@@ -95,7 +95,7 @@ public class CombustionEffectTest {
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
         when(collisionDetector.hasLineOfSight(blockOutsideLineOfSight.getLocation(), sourceLocation)).thenReturn(false);
 
-        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        CombustionEffect effect = new CombustionEffect(properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -135,7 +135,7 @@ public class CombustionEffectTest {
 
     @Test
     public void activateDamagesNearbyEntitiesInsideTheLongRangeDistance() {
-        CombustionSettings settings = new CombustionSettings(Collections.emptyList(), 0, 0, false, false);
+        CombustionProperties properties = new CombustionProperties(Collections.emptyList(), 0, 0, false, false);
 
         World world = mock(World.class);
         Location holderLocation = new Location(world, 4, 0, 0);
@@ -156,7 +156,7 @@ public class CombustionEffectTest {
 
         when(targetFinder.findTargets(holder, objectLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
-        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        CombustionEffect effect = new CombustionEffect(properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
         effect.activate(context);
 
         verify(holder).damage(MEDIUM_RANGE_DAMAGE);
@@ -168,7 +168,7 @@ public class CombustionEffectTest {
         GameSound sound = mock(GameSound.class);
         List<GameSound> sounds = List.of(sound);
 
-        CombustionSettings settings = new CombustionSettings(sounds, 0, 0, false, false);
+        CombustionProperties properties = new CombustionProperties(sounds, 0, 0, false, false);
 
         World world = mock(World.class);
         Location location = new Location(world, 0, 0, 0);
@@ -181,7 +181,7 @@ public class CombustionEffectTest {
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        CombustionEffect effect = new CombustionEffect(settings, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        CombustionEffect effect = new CombustionEffect(properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
         effect.activate(context);
 
         verify(audioEmitter).playSounds(sounds, location);

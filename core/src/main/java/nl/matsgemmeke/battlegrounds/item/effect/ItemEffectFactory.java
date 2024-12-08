@@ -9,15 +9,17 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
+import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionSettings;
+import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionSettings;
+import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashSettings;
+import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenSettings;
+import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Particle;
@@ -68,13 +70,13 @@ public class ItemEffectFactory {
 
                 List<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("combustion-sound"));
 
-                CombustionSettings settings = new CombustionSettings(sounds, radius, ticksBetweenSpread, burnBlocks, spreadFire);
+                CombustionProperties properties = new CombustionProperties(sounds, radius, ticksBetweenSpread, burnBlocks, spreadFire);
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 CollisionDetector collisionDetector = context.getCollisionDetector();
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new CombustionEffect(settings, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+                return new CombustionEffect(properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
             }
             case EXPLOSION -> {
                 float power = section.getFloat("power");
@@ -88,11 +90,11 @@ public class ItemEffectFactory {
                 double shortRangeDamage = section.getDouble("range.short-range.damage");
                 double shortRangeDistance = section.getDouble("range.short-range.distance");
 
-                ExplosionSettings settings = new ExplosionSettings(power, breakBlocks, setFire);
+                ExplosionProperties properties = new ExplosionProperties(power, breakBlocks, setFire);
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new ExplosionEffect(settings, rangeProfile, targetFinder);
+                return new ExplosionEffect(properties, rangeProfile, targetFinder);
             }
             case FLASH -> {
                 double range = section.getDouble("range");
@@ -105,12 +107,12 @@ public class ItemEffectFactory {
                 boolean ambient = section.getBoolean("potion-effect.ambient");
                 boolean particles = section.getBoolean("potion-effect.particles");
                 boolean icon = section.getBoolean("potion-effect.icon");
+                PotionEffectProperties potionEffect = new PotionEffectProperties(duration, amplifier, ambient, particles, icon);
 
-                FlashSettings flashSettings = new FlashSettings(range, explosionPower, explosionBreakBlocks, explosionSetFire);
-                PotionEffectSettings potionEffectSettings = new PotionEffectSettings(duration, amplifier, ambient, particles, icon);
+                FlashProperties properties = new FlashProperties(potionEffect, range, explosionPower, explosionBreakBlocks, explosionSetFire);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new FlashEffect(flashSettings, potionEffectSettings, targetFinder);
+                return new FlashEffect(properties, targetFinder);
             }
             case SMOKE_SCREEN -> {
                 Particle particle;
@@ -131,8 +133,9 @@ public class ItemEffectFactory {
                 double offsetY = section.getDouble("particle.offset-y");
                 double offsetZ = section.getDouble("particle.offset-z");
                 double extra = section.getDouble("particle.extra");
+                ParticleEffectProperties particleEffect = new ParticleEffectProperties(particle, count, offsetX, offsetY, offsetZ, extra);
 
-                Iterable<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sound"));
+                List<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sound"));
                 int duration = section.getInt("duration");
                 double density = section.getDouble("density");
                 double radiusMaxSize = section.getDouble("radius.max-size");
@@ -140,12 +143,11 @@ public class ItemEffectFactory {
                 double growthIncrease = section.getDouble("growth-increase");
                 long growthPeriod = section.getLong("growth-period");
 
-                SmokeScreenSettings smokeScreenSettings = new SmokeScreenSettings(ignitionSounds, duration, density, radiusMaxSize, radiusStartingSize, growthIncrease, growthPeriod);
-                ParticleSettings particleSettings = new ParticleSettings(particle, count, offsetX, offsetY, offsetZ, extra);
+                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ignitionSounds, duration, density, radiusMaxSize, radiusStartingSize, growthIncrease, growthPeriod);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 CollisionDetector collisionDetector = context.getCollisionDetector();
 
-                return new SmokeScreenEffect(smokeScreenSettings, particleSettings, audioEmitter, collisionDetector, taskRunner);
+                return new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
             }
             case SOUND_NOTIFICATION -> {
                 Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sound"));

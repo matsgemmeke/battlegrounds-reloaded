@@ -53,10 +53,10 @@ public class ExplosionEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getEntity()).thenReturn(entity);
 
-        ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+        ExplosionProperties properties = new ExplosionProperties(power, setFire, breakBlocks);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, rangeProfile, targetFinder);
         effect.activate(context);
 
         verify(source).remove();
@@ -89,10 +89,10 @@ public class ExplosionEffectTest {
 
         when(targetFinder.findTargets(holder, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
-        ExplosionSettings settings = new ExplosionSettings(power, setFire, breakBlocks);
+        ExplosionProperties properties = new ExplosionProperties(power, setFire, breakBlocks);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        ExplosionEffect effect = new ExplosionEffect(settings, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, rangeProfile, targetFinder);
         effect.activate(context);
 
         verify(source).remove();
