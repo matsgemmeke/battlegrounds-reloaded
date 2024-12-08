@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
@@ -133,7 +133,7 @@ public class ItemEffectFactory {
                 double offsetY = section.getDouble("particle.offset-y");
                 double offsetZ = section.getDouble("particle.offset-z");
                 double extra = section.getDouble("particle.extra");
-                ParticleEffect particleEffect = new ParticleEffect(particle, count, offsetX, offsetY, offsetZ, extra);
+                ParticleEffectProperties particleEffect = new ParticleEffectProperties(particle, count, offsetX, offsetY, offsetZ, extra);
 
                 List<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sound"));
                 int duration = section.getInt("duration");
@@ -143,7 +143,7 @@ public class ItemEffectFactory {
                 double growthIncrease = section.getDouble("growth-increase");
                 long growthPeriod = section.getLong("growth-period");
 
-                SmokeScreenProperties properties = new SmokeScreenProperties(ignitionSounds, particleEffect, duration, density, radiusMaxSize, radiusStartingSize, growthIncrease, growthPeriod);
+                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ignitionSounds, duration, density, radiusMaxSize, radiusStartingSize, growthIncrease, growthPeriod);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 CollisionDetector collisionDetector = context.getCollisionDetector();
 

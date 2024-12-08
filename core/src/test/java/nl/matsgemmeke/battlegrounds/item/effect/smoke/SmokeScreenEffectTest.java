@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
@@ -34,14 +34,14 @@ public class SmokeScreenEffectTest {
 
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
-    private ParticleEffect particleEffect;
+    private ParticleEffectProperties particleEffect;
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
-        particleEffect = new ParticleEffect(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
+        particleEffect = new ParticleEffectProperties(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
         taskRunner = mock(TaskRunner.class);
     }
 
@@ -62,7 +62,7 @@ public class SmokeScreenEffectTest {
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_PERIOD))).thenReturn(task);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, particleEffect, duration, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, duration, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
 
         SmokeScreenEffect effect = new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
         effect.activate(context);
@@ -91,7 +91,7 @@ public class SmokeScreenEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, particleEffect, 100, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, 100, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
 
         SmokeScreenEffect effect = new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
         effect.activate(context);
@@ -118,7 +118,7 @@ public class SmokeScreenEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, particleEffect, 100, 5.0, 5.0, 0.5,0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5,0.0, GROWTH_PERIOD);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
@@ -148,7 +148,7 @@ public class SmokeScreenEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, particleEffect, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(true);
 
@@ -177,7 +177,7 @@ public class SmokeScreenEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        SmokeScreenProperties properties = new SmokeScreenProperties(IGNITION_SOUNDS, particleEffect, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(false);

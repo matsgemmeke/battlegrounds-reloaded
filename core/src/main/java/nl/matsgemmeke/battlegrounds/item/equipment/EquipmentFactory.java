@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -221,8 +221,8 @@ public class EquipmentFactory implements WeaponFactory {
                 double offsetY = trailSection.getDouble("particle.offset-y");
                 double offsetZ = trailSection.getDouble("particle.offset-z");
                 double extra = trailSection.getDouble("particle.extra");
+                ParticleEffectProperties particleEffect = new ParticleEffectProperties(particle, count, offsetX, offsetY, offsetZ, extra);
 
-                ParticleEffect particleEffect = new ParticleEffect(particle, count, offsetX, offsetY, offsetZ, extra);
                 long checkDelay = trailSection.getLong("check-delay");
                 long checkPeriod = trailSection.getLong("check-period");
 

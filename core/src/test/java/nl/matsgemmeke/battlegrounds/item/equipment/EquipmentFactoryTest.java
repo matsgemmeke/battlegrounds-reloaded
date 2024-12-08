@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.ItemRegistry;
-import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
@@ -294,7 +294,7 @@ public class EquipmentFactoryTest {
         long checkDelay = 5;
         long checkPeriod = 2;
 
-        ParticleEffect particleEffect = new ParticleEffect(Particle.FLAME, particleCount, particleOffsetX, particleOffsetY, particleOffsetZ, particleExtra);
+        ParticleEffectProperties particleEffect = new ParticleEffectProperties(Particle.FLAME, particleCount, particleOffsetX, particleOffsetY, particleOffsetZ, particleExtra);
         TrailProperties expectedProperties = new TrailProperties(particleEffect, checkDelay, checkPeriod);
 
         Section trailSection = mock(Section.class);

@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.trail;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -33,7 +33,7 @@ public class TrailEffectTest {
     public void setUp() {
         taskRunner = mock(TaskRunner.class);
 
-        ParticleEffect particleEffect = new ParticleEffect(TYPE, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA);
+        ParticleEffectProperties particleEffect = new ParticleEffectProperties(TYPE, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA);
 
         properties = new TrailProperties(particleEffect, CHECK_DELAY, CHECK_PERIOD);
     }
