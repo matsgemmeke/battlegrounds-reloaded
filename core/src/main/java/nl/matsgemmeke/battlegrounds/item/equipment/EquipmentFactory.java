@@ -182,7 +182,8 @@ public class EquipmentFactory implements WeaponFactory {
                 List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sound"));
                 List<Integer> intervals = soundSection.getIntList("intervals");
 
-                SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, sounds, intervals);
+                SoundProperties properties = new SoundProperties(sounds, intervals);
+                SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, properties);
 
                 projectileProperties.getEffects().add(effect);
             }

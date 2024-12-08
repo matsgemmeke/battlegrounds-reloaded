@@ -19,15 +19,17 @@ import static org.mockito.Mockito.*;
 
 public class SoundEffectTest {
 
-    private static final Iterable<GameSound> SOUNDS = Collections.emptySet();
+    private static final List<GameSound> SOUNDS = Collections.emptyList();
     private static final List<Integer> INTERVALS = List.of(10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58);
 
     private AudioEmitter audioEmitter;
+    private SoundProperties properties;
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
+        properties = new SoundProperties(SOUNDS, INTERVALS);
         taskRunner = mock(TaskRunner.class);
     }
 
@@ -39,7 +41,7 @@ public class SoundEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
-        SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, SOUNDS, INTERVALS);
+        SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, properties);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -62,7 +64,7 @@ public class SoundEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
-        SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, SOUNDS, INTERVALS);
+        SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, properties);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);

@@ -11,6 +11,10 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundProperties;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,8 +25,12 @@ import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -170,36 +178,69 @@ public class EquipmentFactoryTest {
 
     @Test
     public void makeEquipmentItemWithBounceEffect() {
+        int amountOfBounces = 1;
+        double horizontalFriction = 2.0;
+        double verticalFriction = 2.0;
+        long checkDelay = 0;
+        long checkPeriod = 1;
+        BounceProperties expectedProperties = new BounceProperties(amountOfBounces, horizontalFriction, verticalFriction, checkDelay, checkPeriod);
+
         Section bounceSection = mock(Section.class);
+        when(bounceSection.getInt("amount-of-bounces")).thenReturn(amountOfBounces);
+        when(bounceSection.getDouble("horizontal-friction")).thenReturn(horizontalFriction);
+        when(bounceSection.getDouble("vertical-friction")).thenReturn(verticalFriction);
+        when(bounceSection.getLong("check-delay")).thenReturn(checkDelay);
+        when(bounceSection.getLong("check-period")).thenReturn(checkPeriod);
 
         Section projectileSection = mock(Section.class);
         when(projectileSection.getSection("effects.bounce")).thenReturn(bounceSection);
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        MockedConstruction<BounceEffect> bounceEffectConstructor = mockConstruction(BounceEffect.class, (mock, context) -> {
+            assertEquals(expectedProperties, context.arguments().get(1));
+        });
+
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
+
+        assertEquals(1, bounceEffectConstructor.constructed().size());
+        bounceEffectConstructor.close();
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertNotNull(equipment.getProjectileProperties());
         assertEquals(1, equipment.getProjectileProperties().getEffects().size());
+        assertInstanceOf(BounceEffect.class, equipment.getProjectileProperties().getEffects().get(0));
     }
 
     @Test
     public void makeEquipmentItemWithSoundEffect() {
+        List<Integer> intervals = List.of(10, 20, 30);
+        SoundProperties expectedProperties = new SoundProperties(Collections.emptyList(), intervals);
+
         Section soundSection = mock(Section.class);
+        when(soundSection.getIntList("intervals")).thenReturn(intervals);
+        when(soundSection.getString("sound")).thenReturn("");
 
         Section projectileSection = mock(Section.class);
         when(projectileSection.getSection("effects.sound")).thenReturn(soundSection);
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        MockedConstruction<SoundEffect> soundEffectConstructor = mockConstruction(SoundEffect.class, (mock, context) -> {
+            assertEquals(expectedProperties, context.arguments().get(2));
+        });
+
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
+
+        assertEquals(1, soundEffectConstructor.constructed().size());
+        soundEffectConstructor.close();
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertNotNull(equipment.getProjectileProperties());
         assertEquals(1, equipment.getProjectileProperties().getEffects().size());
+        assertInstanceOf(SoundEffect.class, equipment.getProjectileProperties().getEffects().get(0));
     }
 
     @Test

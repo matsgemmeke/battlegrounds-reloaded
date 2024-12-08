@@ -61,7 +61,7 @@ public class DefaultGameSound implements GameSound {
 
     @NotNull
     public static List<GameSound> parseSounds(@Nullable String arg) {
-        if (arg == null) {
+        if (arg == null || arg.isEmpty()) {
             return Collections.emptyList();
         }
 
