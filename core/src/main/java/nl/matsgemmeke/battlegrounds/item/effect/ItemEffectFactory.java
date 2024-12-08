@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
@@ -106,12 +107,12 @@ public class ItemEffectFactory {
                 boolean ambient = section.getBoolean("potion-effect.ambient");
                 boolean particles = section.getBoolean("potion-effect.particles");
                 boolean icon = section.getBoolean("potion-effect.icon");
+                PotionEffectProperties potionEffect = new PotionEffectProperties(duration, amplifier, ambient, particles, icon);
 
-                FlashProperties properties = new FlashProperties(range, explosionPower, explosionBreakBlocks, explosionSetFire);
-                PotionEffectSettings potionEffectSettings = new PotionEffectSettings(duration, amplifier, ambient, particles, icon);
+                FlashProperties properties = new FlashProperties(potionEffect, range, explosionPower, explosionBreakBlocks, explosionSetFire);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new FlashEffect(properties, potionEffectSettings, targetFinder);
+                return new FlashEffect(properties, targetFinder);
             }
             case SMOKE_SCREEN -> {
                 Particle particle;

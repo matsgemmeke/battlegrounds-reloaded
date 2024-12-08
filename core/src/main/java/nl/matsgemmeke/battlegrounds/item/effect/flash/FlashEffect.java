@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.PotionEffectSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,13 +19,10 @@ public class FlashEffect implements ItemEffect {
     @NotNull
     private FlashProperties properties;
     @NotNull
-    private PotionEffectSettings potionEffectSettings;
-    @NotNull
     private TargetFinder targetFinder;
 
-    public FlashEffect(@NotNull FlashProperties properties, @NotNull PotionEffectSettings potionEffectSettings, @NotNull TargetFinder targetFinder) {
+    public FlashEffect(@NotNull FlashProperties properties, @NotNull TargetFinder targetFinder) {
         this.properties = properties;
-        this.potionEffectSettings = potionEffectSettings;
         this.targetFinder = targetFinder;
     }
 
@@ -59,11 +55,11 @@ public class FlashEffect implements ItemEffect {
             }
 
             PotionEffectType potionEffectType = PotionEffectType.BLINDNESS;
-            int duration = potionEffectSettings.duration();
-            int amplifier = potionEffectSettings.amplifier();
-            boolean ambient = potionEffectSettings.ambient();
-            boolean particles = potionEffectSettings.particles();
-            boolean icon = potionEffectSettings.icon();
+            int duration = properties.potionEffect().duration();
+            int amplifier = properties.potionEffect().amplifier();
+            boolean ambient = properties.potionEffect().ambient();
+            boolean particles = properties.potionEffect().particles();
+            boolean icon = properties.potionEffect().icon();
 
             PotionEffect potionEffect = new PotionEffect(potionEffectType, duration, amplifier, ambient, particles, icon);
 

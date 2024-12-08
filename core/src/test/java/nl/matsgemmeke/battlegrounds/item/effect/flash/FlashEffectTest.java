@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.effect.flash;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.PotionEffectSettings;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -35,14 +35,15 @@ public class FlashEffectTest {
     private static final int POTION_EFFECT_DURATION = 100;
 
     private FlashProperties properties;
-    private PotionEffectSettings potionEffectSettings;
     private TargetFinder targetFinder;
 
     @BeforeEach
     public void setUp() {
-        properties = new FlashProperties(RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
-        potionEffectSettings = new PotionEffectSettings(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
         targetFinder = mock(TargetFinder.class);
+
+        PotionEffectProperties potionEffect = new PotionEffectProperties(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
+
+        properties = new FlashProperties(potionEffect, RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class FlashEffectTest {
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        FlashEffect effect = new FlashEffect(properties, potionEffectSettings, targetFinder);
+        FlashEffect effect = new FlashEffect(properties, targetFinder);
         effect.activate(context);
 
         verify(source).remove();
@@ -89,7 +90,7 @@ public class FlashEffectTest {
 
         when(targetFinder.findTargets(holder, sourceLocation, RANGE)).thenReturn(List.of(holder, gameEntity));
 
-        FlashEffect effect = new FlashEffect(properties, potionEffectSettings, targetFinder);
+        FlashEffect effect = new FlashEffect(properties, targetFinder);
         effect.activate(context);
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
