@@ -169,6 +169,23 @@ public class EquipmentFactoryTest {
     }
 
     @Test
+    public void makeEquipmentItemWithBounceEffect() {
+        Section bounceSection = mock(Section.class);
+
+        Section projectileSection = mock(Section.class);
+        when(projectileSection.getSection("effects.bounce")).thenReturn(bounceSection);
+
+        when(rootSection.getSection("projectile")).thenReturn(projectileSection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertNotNull(equipment.getProjectileProperties());
+        assertEquals(1, equipment.getProjectileProperties().getEffects().size());
+    }
+
+    @Test
     public void makeEquipmentItemWithSoundEffect() {
         Section soundSection = mock(Section.class);
 
