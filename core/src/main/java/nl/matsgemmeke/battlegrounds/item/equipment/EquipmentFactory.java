@@ -193,7 +193,8 @@ public class EquipmentFactory implements WeaponFactory {
                 long checkDelay = stickSection.getLong("check-delay");
                 long checkPeriod = stickSection.getLong("check-period");
 
-                StickEffect effect = new StickEffect(audioEmitter, taskRunner, stickSounds, checkDelay, checkPeriod);
+                StickProperties properties = new StickProperties(stickSounds, checkDelay, checkPeriod);
+                StickEffect effect = new StickEffect(audioEmitter, taskRunner, properties);
 
                 projectileProperties.getEffects().add(effect);
             }

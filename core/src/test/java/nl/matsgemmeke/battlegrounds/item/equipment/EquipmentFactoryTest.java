@@ -11,10 +11,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.BounceProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.SoundProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.*;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -245,19 +242,34 @@ public class EquipmentFactoryTest {
 
     @Test
     public void makeEquipmentItemWithStickEffect() {
+        long checkDelay = 0;
+        long checkPeriod = 1;
+        StickProperties expectedProperties = new StickProperties(Collections.emptyList(), checkDelay, checkPeriod);
+
         Section stickSection = mock(Section.class);
+        when(stickSection.getLong("check-delay")).thenReturn(checkDelay);
+        when(stickSection.getLong("check-period")).thenReturn(checkPeriod);
+        when(stickSection.getString("stick-sounds")).thenReturn("");
 
         Section projectileSection = mock(Section.class);
         when(projectileSection.getSection("effects.stick")).thenReturn(stickSection);
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        MockedConstruction<StickEffect> stickEffectConstructor = mockConstruction(StickEffect.class, (mock, context) -> {
+            assertEquals(expectedProperties, context.arguments().get(2));
+        });
+
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
+
+        assertEquals(1, stickEffectConstructor.constructed().size());
+        stickEffectConstructor.close();
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertNotNull(equipment.getProjectileProperties());
         assertEquals(1, equipment.getProjectileProperties().getEffects().size());
+        assertInstanceOf(StickEffect.class, equipment.getProjectileProperties().getEffects().get(0));
     }
 
     @Test
