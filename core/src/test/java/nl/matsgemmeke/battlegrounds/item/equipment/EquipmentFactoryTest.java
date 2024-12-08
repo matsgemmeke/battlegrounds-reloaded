@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.ItemRegistry;
+import nl.matsgemmeke.battlegrounds.item.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
@@ -16,6 +17,7 @@ import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.plugin.Plugin;
@@ -180,6 +182,7 @@ public class EquipmentFactoryTest {
         double verticalFriction = 2.0;
         long checkDelay = 0;
         long checkPeriod = 1;
+
         BounceProperties expectedProperties = new BounceProperties(amountOfBounces, horizontalFriction, verticalFriction, checkDelay, checkPeriod);
 
         Section bounceSection = mock(Section.class);
@@ -213,6 +216,7 @@ public class EquipmentFactoryTest {
     @Test
     public void makeEquipmentItemWithSoundEffect() {
         List<Integer> intervals = List.of(10, 20, 30);
+
         SoundProperties expectedProperties = new SoundProperties(Collections.emptyList(), intervals);
 
         Section soundSection = mock(Section.class);
@@ -244,6 +248,7 @@ public class EquipmentFactoryTest {
     public void makeEquipmentItemWithStickEffect() {
         long checkDelay = 0;
         long checkPeriod = 1;
+
         StickProperties expectedProperties = new StickProperties(Collections.emptyList(), checkDelay, checkPeriod);
 
         Section stickSection = mock(Section.class);
@@ -274,7 +279,25 @@ public class EquipmentFactoryTest {
 
     @Test
     public void makeEquipmentItemWithTrailEffect() {
+        int particleCount = 1;
+        double particleOffsetX = 0.1;
+        double particleOffsetY = 0.2;
+        double particleOffsetZ = 0.3;
+        double particleExtra = 0.0;
+        long checkDelay = 5;
+        long checkPeriod = 2;
+
+        ParticleEffect particleEffect = new ParticleEffect(Particle.FLAME, particleCount, particleOffsetX, particleOffsetY, particleOffsetZ, particleExtra);
+        TrailProperties expectedProperties = new TrailProperties(particleEffect, checkDelay, checkPeriod);
+
         Section trailSection = mock(Section.class);
+        when(trailSection.getLong("check-delay")).thenReturn(checkDelay);
+        when(trailSection.getLong("check-period")).thenReturn(checkPeriod);
+        when(trailSection.getInt("particle.count")).thenReturn(particleCount);
+        when(trailSection.getDouble("particle.offset-x")).thenReturn(particleOffsetX);
+        when(trailSection.getDouble("particle.offset-y")).thenReturn(particleOffsetY);
+        when(trailSection.getDouble("particle.offset-z")).thenReturn(particleOffsetZ);
+        when(trailSection.getDouble("particle.extra")).thenReturn(particleExtra);
         when(trailSection.getString("particle.type")).thenReturn("FLAME");
 
         Section projectileSection = mock(Section.class);
@@ -282,12 +305,20 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        MockedConstruction<TrailEffect> trailEffectConstructor = mockConstruction(TrailEffect.class, (mock, context) -> {
+            assertEquals(expectedProperties, context.arguments().get(1));
+        });
+
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
+
+        assertEquals(1, trailEffectConstructor.constructed().size());
+        trailEffectConstructor.close();
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertNotNull(equipment.getProjectileProperties());
         assertEquals(1, equipment.getProjectileProperties().getEffects().size());
+        assertInstanceOf(TrailEffect.class, equipment.getProjectileProperties().getEffects().get(0));
     }
 
     @Test
