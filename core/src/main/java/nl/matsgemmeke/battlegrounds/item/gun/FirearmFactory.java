@@ -141,6 +141,9 @@ public class FirearmFactory implements WeaponFactory {
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("shooting.shot-sound"));
         firearm.setShotSounds(shotSounds);
 
+        FireMode fireMode = fireModeFactory.make(firearm, section.getSection("shooting.fire-mode"));
+        firearm.setFireMode(fireMode);
+
         // Read controls configuration
         Section controlsSection = section.getSection("controls");
 
@@ -250,7 +253,7 @@ public class FirearmFactory implements WeaponFactory {
         }
 
         if (shootActionValue != null) {
-            FireMode fireMode = fireModeFactory.make(firearm, section.getSection("shooting.fire-mode"));
+            FireMode fireMode = firearm.getFireMode();
             List<GameSound> triggerSounds = DefaultGameSound.parseSounds(config.getGunTriggerSound());
 
             ShootFunction shootFunction = new ShootFunction(firearm, audioEmitter, fireMode);

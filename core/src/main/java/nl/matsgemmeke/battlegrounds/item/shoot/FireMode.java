@@ -17,6 +17,13 @@ public interface FireMode {
     boolean cancelCycle();
 
     /**
+     * Gets the rate of fire of the firemode in rounds per minute.
+     *
+     * @return the firemode's rate of fire
+     */
+    int getRateOfFire();
+
+    /**
      * Gets whether the fire mode is performing a cycle.
      *
      * @return whether the fire mode is cycling

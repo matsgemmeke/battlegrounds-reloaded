@@ -23,6 +23,10 @@ public class BurstMode implements FireMode {
         this.rateOfFire = rateOfFire;
     }
 
+    public int getRateOfFire() {
+        return rateOfFire;
+    }
+
     public boolean activateCycle() {
         int ticksPerSecond = 20;
         // Convert rate of fire to amount of rounds fired per second

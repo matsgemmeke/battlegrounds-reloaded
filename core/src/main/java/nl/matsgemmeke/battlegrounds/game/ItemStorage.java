@@ -6,9 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,13 +16,13 @@ import java.util.concurrent.ConcurrentMap;
 public class ItemStorage<T extends Item, U extends ItemHolder> {
 
     @NotNull
-    private ConcurrentMap<U, Set<T>> assignedItems;
+    private ConcurrentMap<U, List<T>> assignedItems;
     @NotNull
-    private Set<T> unassignedItems;
+    private List<T> unassignedItems;
 
     public ItemStorage() {
         this.assignedItems = new ConcurrentHashMap<>();
-        this.unassignedItems = new HashSet<>();
+        this.unassignedItems = new ArrayList<>();
     }
 
     /**
@@ -34,7 +32,7 @@ public class ItemStorage<T extends Item, U extends ItemHolder> {
      * @param holder the holder
      */
     public void addAssignedItem(@NotNull T item, @NotNull U holder) {
-        assignedItems.putIfAbsent(holder, new HashSet<>());
+        assignedItems.putIfAbsent(holder, new ArrayList<>());
         assignedItems.get(holder).add(item);
     }
 
@@ -62,6 +60,14 @@ public class ItemStorage<T extends Item, U extends ItemHolder> {
         }
 
         return this.getItemFromCollection(assignedItems.get(holder), itemStack);
+    }
+
+    @NotNull
+    public List<T> getAssignedItems(@NotNull U holder) {
+        for (T t : assignedItems.get(holder)) {
+            System.out.println(t);
+        }
+        return assignedItems.getOrDefault(holder, Collections.emptyList());
     }
 
     /**

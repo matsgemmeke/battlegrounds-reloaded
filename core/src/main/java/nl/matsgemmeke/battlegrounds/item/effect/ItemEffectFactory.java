@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
@@ -18,6 +19,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
@@ -113,6 +116,17 @@ public class ItemEffectFactory {
                 TargetFinder targetFinder = context.getTargetFinder();
 
                 return new FlashEffect(properties, targetFinder);
+            }
+            case GUN_FIRE_SIMULATION -> {
+                List<GameSound> genericSounds = DefaultGameSound.parseSounds(section.getString("generic-sound"));
+                int genericRateOfFire = section.getInt("generic-rate-of-fire");
+                int duration = section.getInt("duration");
+
+                AudioEmitter audioEmitter = context.getAudioEmitter();
+                GunInfoProvider gunInfoProvider = context.getGunInfoProvider();
+                GunFireSimulationProperties properties = new GunFireSimulationProperties(genericSounds, genericRateOfFire, duration);
+
+                return new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
             }
             case SMOKE_SCREEN -> {
                 Particle particle;

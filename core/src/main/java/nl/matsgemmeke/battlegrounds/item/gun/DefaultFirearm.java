@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
+import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
@@ -32,8 +33,9 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     private int magazineAmmo;
     private int magazineSize;
     private int reserveAmmo;
-    private Iterable<GameSound> shotSounds;
-    private Iterable<GameSound> triggerSounds;
+    private FireMode fireMode;
+    private List<GameSound> shotSounds;
+    private List<GameSound> triggerSounds;
     @Nullable
     private SpreadPattern spreadPattern;
     @NotNull
@@ -43,6 +45,15 @@ public class DefaultFirearm extends BaseGun implements Firearm {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
         this.targetFinder = targetFinder;
+    }
+
+    @NotNull
+    public FireMode getFireMode() {
+        return fireMode;
+    }
+
+    public void setFireMode(@NotNull FireMode fireMode) {
+        this.fireMode = fireMode;
     }
 
     public double getHeadshotDamageMultiplier() {
@@ -77,8 +88,13 @@ public class DefaultFirearm extends BaseGun implements Firearm {
         this.reserveAmmo = reserveAmmo;
     }
 
-    public Iterable<GameSound> getShotSounds() {
+    @NotNull
+    public List<GameSound> getShotSounds() {
         return shotSounds;
+    }
+
+    public void setShotSounds(@NotNull List<GameSound> shotSounds) {
+        this.shotSounds = shotSounds;
     }
 
     @Nullable
@@ -90,15 +106,11 @@ public class DefaultFirearm extends BaseGun implements Firearm {
         this.spreadPattern = spreadPattern;
     }
 
-    public void setShotSounds(Iterable<GameSound> shotSounds) {
-        this.shotSounds = shotSounds;
-    }
-
-    public Iterable<GameSound> getTriggerSounds() {
+    public List<GameSound> getTriggerSounds() {
         return triggerSounds;
     }
 
-    public void setTriggerSounds(Iterable<GameSound> triggerSounds) {
+    public void setTriggerSounds(List<GameSound> triggerSounds) {
         this.triggerSounds = triggerSounds;
     }
 
