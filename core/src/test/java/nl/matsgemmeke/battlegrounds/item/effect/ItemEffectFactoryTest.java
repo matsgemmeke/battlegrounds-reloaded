@@ -6,10 +6,12 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
@@ -17,8 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ItemEffectFactoryTest {
 
@@ -77,6 +78,22 @@ public class ItemEffectFactoryTest {
         ItemEffect effect = factory.make(section, context);
 
         assertInstanceOf(FlashEffect.class, effect);
+    }
+
+    @Test
+    public void makeCreatesInstanceOfGunFireSimulationEffect() {
+        AudioEmitter audioEmitter = mock(AudioEmitter.class);
+        GunInfoProvider gunInfoProvider = mock(GunInfoProvider.class);
+
+        when(context.getAudioEmitter()).thenReturn(audioEmitter);
+        when(context.getGunInfoProvider()).thenReturn(gunInfoProvider);
+
+        when(section.getString("type")).thenReturn("GUN_FIRE_SIMULATION");
+
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffect effect = factory.make(section, context);
+
+        assertInstanceOf(GunFireSimulationEffect.class, effect);
     }
 
     @Test

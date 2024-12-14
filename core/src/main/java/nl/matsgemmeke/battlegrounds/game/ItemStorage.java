@@ -62,11 +62,14 @@ public class ItemStorage<T extends Item, U extends ItemHolder> {
         return this.getItemFromCollection(assignedItems.get(holder), itemStack);
     }
 
+    /**
+     * Gets all items currently assigned to a given holder. Returns an empty list if the holder has no assigned items.
+     *
+     * @param holder the holder
+     * @return a list containing items assigned to the holder
+     */
     @NotNull
     public List<T> getAssignedItems(@NotNull U holder) {
-        for (T t : assignedItems.get(holder)) {
-            System.out.println(t);
-        }
         return assignedItems.getOrDefault(holder, Collections.emptyList());
     }
 

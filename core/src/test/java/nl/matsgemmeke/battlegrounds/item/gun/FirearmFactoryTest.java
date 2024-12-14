@@ -14,6 +14,7 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
@@ -81,9 +82,15 @@ public class FirearmFactoryTest {
         when(rootSection.getString("name")).thenReturn("test");
         when(rootSection.getString("shooting.shot-sound")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
 
-        this.itemConfiguration = mock(ItemConfiguration.class);
+        itemConfiguration = mock(ItemConfiguration.class);
         when(itemConfiguration.getItemId()).thenReturn("TEST_GUN");
         when(itemConfiguration.getRoot()).thenReturn(rootSection);
+
+        Section fireModeSection = mock(Section.class);
+        when(rootSection.getSection("shooting.fire-mode")).thenReturn(fireModeSection);
+
+        FireMode fireMode = mock(FireMode.class);
+        when(fireModeFactory.make(any(Shootable.class), eq(fireModeSection))).thenReturn(fireMode);
 
         bukkit = mockStatic(Bukkit.class);
         bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
@@ -148,8 +155,6 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmWithShootControlsConfiguration() {
-        FireMode fireMode = mock(FireMode.class);
-
         ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
@@ -160,7 +165,6 @@ public class FirearmFactoryTest {
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
 
         when(config.getGunTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
-        when(fireModeFactory.make(any(), any())).thenReturn(fireMode);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.make(itemConfiguration, context);
