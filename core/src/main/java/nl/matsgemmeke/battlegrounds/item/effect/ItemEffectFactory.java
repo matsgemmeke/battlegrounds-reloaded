@@ -120,11 +120,16 @@ public class ItemEffectFactory {
             case GUN_FIRE_SIMULATION -> {
                 List<GameSound> genericSounds = DefaultGameSound.parseSounds(section.getString("generic-sound"));
                 int genericRateOfFire = section.getInt("generic-rate-of-fire");
-                int duration = section.getInt("duration");
+                int maxBurstDuration = section.getInt("max-burst-duration");
+                int minBurstDuration = section.getInt("min-burst-duration");
+                int maxDelayBetweenBursts = section.getInt("max-delay-between-bursts");
+                int minDelayBetweenBursts = section.getInt("min-delay-between-bursts");
+                int maxTotalDuration = section.getInt("max-total-duration");
+                int minTotalDuration = section.getInt("min-total-duration");
 
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 GunInfoProvider gunInfoProvider = context.getGunInfoProvider();
-                GunFireSimulationProperties properties = new GunFireSimulationProperties(genericSounds, genericRateOfFire, duration);
+                GunFireSimulationProperties properties = new GunFireSimulationProperties(genericSounds, genericRateOfFire, maxBurstDuration, minBurstDuration, maxDelayBetweenBursts, minDelayBetweenBursts, maxTotalDuration, minTotalDuration);
 
                 return new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
             }

@@ -8,9 +8,14 @@ effect:
   activation:
     delay-until-activation: 60
     type: DELAYED
-  duration: 50
   generic-rate-of-fire: 600
   generic-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+  max-burst-duration: 100
+  min-burst-duration: 20
+  max-delay-between-bursts: 60
+  min-delay-between-bursts: 20
+  max-total-duration: 300
+  min-total-duration: 200
   type: GUN_FIRE_SIMULATION
 equipment-type: TACTICAL
 item:

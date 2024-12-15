@@ -8,5 +8,10 @@ import java.util.List;
 public record GunFireSimulationProperties(
         @NotNull List<GameSound> genericSounds,
         int genericRateOfFire,
-        int duration
+        int maxBurstDuration,
+        int minBurstDuration,
+        int maxDelayBetweenBursts,
+        int minDelayBetweenBursts,
+        int maxTotalDuration,
+        int minTotalDuration
 ) {}

@@ -23,8 +23,13 @@ import static org.mockito.Mockito.*;
 
 public class GunFireSimulationEffectTest {
 
-    private static final int DURATION = 20;
-    private static final int GENERIC_RATE_OF_FIRE = 600;
+    private static final int MAX_BURST_DURATION = 10;
+    private static final int MIN_BURST_DURATION = 5;
+    private static final int MAX_DELAY_BETWEEN_BURSTS = 10;
+    private static final int MIN_DELAY_BETWEEN_BURSTS = 5;
+    private static final int MAX_TOTAL_DURATION = 30;
+    private static final int MIN_TOTAL_DURATION = 20;
+    private static final int GENERIC_RATE_OF_FIRE = 1200;
     private static final List<GameSound> GENERIC_SHOTS_SOUNDS = Collections.emptyList();
 
     private AudioEmitter audioEmitter;
@@ -35,7 +40,7 @@ public class GunFireSimulationEffectTest {
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        properties = new GunFireSimulationProperties(GENERIC_SHOTS_SOUNDS, GENERIC_RATE_OF_FIRE, DURATION);
+        properties = new GunFireSimulationProperties(GENERIC_SHOTS_SOUNDS, GENERIC_RATE_OF_FIRE, MAX_BURST_DURATION, MIN_BURST_DURATION, MAX_DELAY_BETWEEN_BURSTS, MIN_DELAY_BETWEEN_BURSTS, MAX_TOTAL_DURATION, MIN_TOTAL_DURATION);
         gunInfoProvider = mock(GunInfoProvider.class);
         taskRunner = mock(TaskRunner.class);
     }
@@ -55,7 +60,7 @@ public class GunFireSimulationEffectTest {
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(2L));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
 
         runnableCaptor.getValue().run();
 
@@ -79,7 +84,7 @@ public class GunFireSimulationEffectTest {
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(2L));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
 
         runnableCaptor.getValue().run();
 
@@ -98,7 +103,7 @@ public class GunFireSimulationEffectTest {
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         List<GameSound> shotSounds = Collections.emptyList();
-        int rateOfFire = 1200;
+        int rateOfFire = 120;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 
         when(gunInfoProvider.getGunFireSimulationInfo(holder)).thenReturn(gunFireSimulationInfo);
@@ -130,25 +135,30 @@ public class GunFireSimulationEffectTest {
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         List<GameSound> shotSounds = Collections.emptyList();
-        int rateOfFire = 120;
+        int rateOfFire = 1200;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 
         when(gunInfoProvider.getGunFireSimulationInfo(holder)).thenReturn(gunFireSimulationInfo);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(10L))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
         GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
         effect.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(10L));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
 
-        runnableCaptor.getValue().run();
-        runnableCaptor.getValue().run();
+        for (int i = 0; i < MAX_TOTAL_DURATION; i++) {
+            runnableCaptor.getValue().run();
+        }
 
-        verify(audioEmitter, times(2)).playSounds(shotSounds, sourceLocation);
-        verify(source).remove();
-        verify(task).cancel();
+        // The implementation uses random variables, so check the max and min possible amount of executions
+        verify(audioEmitter, atLeast(10)).playSounds(shotSounds, sourceLocation);
+        verify(audioEmitter, atMost(20)).playSounds(shotSounds, sourceLocation);
+        verify(source, atLeast(1)).remove();
+        verify(source, atMost(10)).remove();
+        verify(task, atLeast(1)).cancel();
+        verify(task, atMost(10)).cancel();
     }
 }
