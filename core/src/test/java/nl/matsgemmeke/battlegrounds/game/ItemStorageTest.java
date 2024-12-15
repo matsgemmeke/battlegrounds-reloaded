@@ -6,6 +6,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -83,6 +85,30 @@ public class ItemStorageTest {
         Gun result = storage.getAssignedItem(holder, notAdded);
 
         assertNull(result);
+    }
+
+    @Test
+    public void getAssignedItemsReturnsEmptyListIfInstanceDoesNotContainRecordWithGivenHolder() {
+        GunHolder holder = mock(GunHolder.class);
+
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        List<Gun> assignedGuns = storage.getAssignedItems(holder);
+
+        assertEquals(0, assignedGuns.size());
+    }
+
+    @Test
+    public void getAssignedItemsReturnsListOfAssignedItemsToTheHolder() {
+        Gun gun = mock(Gun.class);
+        GunHolder holder = mock(GunHolder.class);
+
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        storage.addAssignedItem(gun, holder);
+
+        List<Gun> assignedGuns = storage.getAssignedItems(holder);
+
+        assertEquals(1, assignedGuns.size());
+        assertEquals(gun, assignedGuns.get(0));
     }
 
     @Test

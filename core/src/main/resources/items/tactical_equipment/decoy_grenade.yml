@@ -1,0 +1,40 @@
+id: DECOY_GRENADE
+name: Decoy Grenade
+controls:
+  cook: RIGHT_CLICK
+  throw: LEFT_CLICK
+description: Distraction device that simulates enemy gunfire.
+effect:
+  activation:
+    delay-until-activation: 60
+    type: DELAYED
+  generic-rate-of-fire: 600
+  generic-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+  max-burst-duration: 100
+  min-burst-duration: 20
+  max-delay-between-bursts: 60
+  min-delay-between-bursts: 20
+  max-total-duration: 300
+  min-total-duration: 200
+  type: GUN_FIRE_SIMULATION
+equipment-type: TACTICAL
+item:
+  damage: 10
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 10
+    material: SHEARS
+projectile:
+  effects:
+    bounce:
+      amount-of-bounces: 1
+      check-delay: 0
+      check-period: 1
+      horizontal-friction: 3.0
+      vertical-friction: 2.0
+throwing:
+  cook-sound: ENTITY_TNT_PRIMED-1-2-0
+  delay-after-throw: 30
+  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
+  velocity: 1.2

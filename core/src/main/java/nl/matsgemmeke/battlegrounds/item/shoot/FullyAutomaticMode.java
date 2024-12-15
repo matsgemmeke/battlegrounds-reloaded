@@ -21,6 +21,10 @@ public class FullyAutomaticMode implements FireMode {
         this.rateOfFire = rateOfFire;
     }
 
+    public int getRateOfFire() {
+        return rateOfFire;
+    }
+
     public boolean activateCycle() {
         // The amount of interaction events per second received when holding down the right mouse button
         int interactionsPerSecond = 5;

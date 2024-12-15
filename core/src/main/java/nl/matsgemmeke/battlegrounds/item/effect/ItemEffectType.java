@@ -5,8 +5,8 @@ public enum ItemEffectType {
     COMBUSTION,
     EXPLOSION,
     FLASH,
+    GUN_FIRE_SIMULATION,
     MARK_SPAWN_POINT,
-    PRODUCE_SOUND,
     SMOKE_SCREEN,
     SOUND_NOTIFICATION
 }

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.game;
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -34,10 +35,13 @@ public interface GameContext {
     ItemRegistry<Equipment, EquipmentHolder> getEquipmentRegistry();
 
     @NotNull
-    EntityRegistry<GameItem, Item> getItemRegistry();
+    GunInfoProvider getGunInfoProvider();
 
     @NotNull
     ItemRegistry<Gun, GunHolder> getGunRegistry();
+
+    @NotNull
+    EntityRegistry<GameItem, Item> getItemRegistry();
 
     @NotNull
     EntityRegistry<GamePlayer, Player> getPlayerRegistry();

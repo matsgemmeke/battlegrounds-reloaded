@@ -6,6 +6,8 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -72,13 +74,18 @@ public class DefaultTrainingModeContext implements GameContext {
     }
 
     @NotNull
-    public EntityRegistry<GameItem, Item> getItemRegistry() {
-        return new DefaultItemRegistry(trainingMode.getItemStorage());
+    public GunInfoProvider getGunInfoProvider() {
+        return new DefaultGunInfoProvider(trainingMode.getGunStorage());
     }
 
     @NotNull
     public ItemRegistry<Gun, GunHolder> getGunRegistry() {
         return new DefaultGunRegistry(trainingMode.getGunStorage());
+    }
+
+    @NotNull
+    public EntityRegistry<GameItem, Item> getItemRegistry() {
+        return new DefaultItemRegistry(trainingMode.getItemStorage());
     }
 
     @NotNull

@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class SemiAutomaticMode implements FireMode {
 
+    private static final int TICKS_PER_MINUTE = 1200;
+
     private boolean delaying;
     private long delayBetweenShots;
     @NotNull
@@ -37,6 +39,10 @@ public class SemiAutomaticMode implements FireMode {
 
         delaying = false;
         return true;
+    }
+
+    public int getRateOfFire() {
+        return Math.floorDiv(TICKS_PER_MINUTE, (int) delayBetweenShots + 1);
     }
 
     public boolean isCycling() {
