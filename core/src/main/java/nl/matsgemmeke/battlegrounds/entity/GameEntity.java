@@ -27,6 +27,14 @@ public interface GameEntity {
     Location getLocation();
 
     /**
+     * Gets the name of the entity.
+     *
+     * @return the entity name
+     */
+    @NotNull
+    String getName();
+
+    /**
      * Gets the world the entity is located in.
      *
      * @return the entity's world

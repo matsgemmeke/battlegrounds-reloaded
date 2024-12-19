@@ -8,8 +8,11 @@ import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
+import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -126,6 +129,17 @@ public class DefaultTrainingModeContextTest {
         EntityRegistry<GamePlayer, Player> playerRegistry = context.getPlayerRegistry();
 
         assertInstanceOf(DefaultPlayerRegistry.class, playerRegistry);
+    }
+
+    @Test
+    public void getSpawnPointProviderReturnsNewInstanceOfDefaultImplementation() {
+        SpawnPointStorage spawnPointStorage = new SpawnPointStorage();
+        when(trainingMode.getSpawnPointStorage()).thenReturn(spawnPointStorage);
+
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        SpawnPointProvider spawnPointProvider = context.getSpawnPointProvider();
+
+        assertInstanceOf(TrainingModeSpawnPointProvider.class, spawnPointProvider);
     }
 
     @Test

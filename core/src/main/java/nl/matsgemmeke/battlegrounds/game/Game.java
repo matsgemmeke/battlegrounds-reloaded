@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -71,4 +72,12 @@ public interface Game {
      */
     @NotNull
     EntityStorage<GamePlayer> getPlayerStorage();
+
+    /**
+     * Gets the spawn point storage of the game.
+     *
+     * @return the spawn point storage of the game
+     */
+    @NotNull
+    SpawnPointStorage getSpawnPointStorage();
 }

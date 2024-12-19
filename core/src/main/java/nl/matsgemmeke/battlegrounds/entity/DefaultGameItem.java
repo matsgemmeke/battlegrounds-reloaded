@@ -25,6 +25,11 @@ public class DefaultGameItem implements GameItem {
     }
 
     @NotNull
+    public String getName() {
+        return itemEntity.getName();
+    }
+
+    @NotNull
     public World getWorld() {
         return itemEntity.getWorld();
     }

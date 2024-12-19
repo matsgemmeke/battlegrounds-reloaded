@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -45,6 +46,9 @@ public interface GameContext {
 
     @NotNull
     EntityRegistry<GamePlayer, Player> getPlayerRegistry();
+
+    @NotNull
+    SpawnPointProvider getSpawnPointProvider();
 
     @NotNull
     TargetFinder getTargetFinder();

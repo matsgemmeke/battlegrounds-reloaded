@@ -25,6 +25,11 @@ public class TrainingModeEntity implements GameEntity {
     }
 
     @NotNull
+    public String getName() {
+        return entity.getName();
+    }
+
+    @NotNull
     public World getWorld() {
         return entity.getWorld();
     }

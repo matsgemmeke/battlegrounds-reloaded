@@ -8,8 +8,10 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
+import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -91,6 +93,11 @@ public class DefaultTrainingModeContext implements GameContext {
     @NotNull
     public EntityRegistry<GamePlayer, Player> getPlayerRegistry() {
         return new DefaultPlayerRegistry(trainingMode.getPlayerStorage(), internals);
+    }
+
+    @NotNull
+    public SpawnPointProvider getSpawnPointProvider() {
+        return new TrainingModeSpawnPointProvider(trainingMode.getSpawnPointStorage());
     }
 
     @NotNull

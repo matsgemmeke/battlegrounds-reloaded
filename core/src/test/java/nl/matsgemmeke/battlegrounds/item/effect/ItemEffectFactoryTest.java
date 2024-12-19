@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
@@ -14,6 +15,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,6 +96,19 @@ public class ItemEffectFactoryTest {
         ItemEffect effect = factory.make(section, context);
 
         assertInstanceOf(GunFireSimulationEffect.class, effect);
+    }
+
+    @Test
+    public void makeCreatesInstanceOfMarkSpawnPointEffect() {
+        SpawnPointProvider spawnPointProvider = mock(SpawnPointProvider.class);
+        when(context.getSpawnPointProvider()).thenReturn(spawnPointProvider);
+
+        when(section.getString("type")).thenReturn("MARK_SPAWN_POINT");
+
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffect effect = factory.make(section, context);
+
+        assertInstanceOf(MarkSpawnPointEffect.class, effect);
     }
 
     @Test

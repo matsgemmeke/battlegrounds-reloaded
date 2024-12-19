@@ -1,0 +1,22 @@
+id: TACTICAL_INSERTION
+name: Tactical Insertion
+controls:
+  throw: LEFT_CLICK
+description: Marks a location as your next spawn point.
+effect:
+  activation:
+    delay-until-activation: 1
+    type: DELAYED
+  type: MARK_SPAWN_POINT
+equipment-type: TACTICAL
+item:
+  damage: 11
+  display-name: "&f%name%"
+  material: SHEARS
+  throw-item:
+    damage: 11
+    material: SHEARS
+throwing:
+  delay-after-throw: 30
+  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
+  velocity: 0.0
