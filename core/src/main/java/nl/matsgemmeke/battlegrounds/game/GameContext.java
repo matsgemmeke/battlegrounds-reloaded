@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
@@ -9,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,9 +38,6 @@ public interface GameContext {
 
     @NotNull
     ItemRegistry<Gun, GunHolder> getGunRegistry();
-
-    @NotNull
-    EntityRegistry<GameItem, Item> getItemRegistry();
 
     @NotNull
     EntityRegistry<GamePlayer, Player> getPlayerRegistry();

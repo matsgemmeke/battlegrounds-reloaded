@@ -21,13 +21,13 @@ public class ItemEffectContext {
         return holder;
     }
 
+    public void setHolder(@NotNull ItemHolder holder) {
+        this.holder = holder;
+    }
+
     @NotNull
     public EffectSource getSource() {
         return source;
-    }
-
-    public void setHolder(@NotNull ItemHolder holder) {
-        this.holder = holder;
     }
 
     public void setSource(@NotNull EffectSource source) {

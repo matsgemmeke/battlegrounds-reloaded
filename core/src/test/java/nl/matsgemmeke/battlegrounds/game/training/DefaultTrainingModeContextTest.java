@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
@@ -10,14 +9,12 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvid
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
-import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,17 +63,6 @@ public class DefaultTrainingModeContextTest {
     }
 
     @Test
-    public void shouldReturnInstanceOfDamageProcessor() {
-        EntityStorage<GameItem> itemStorage = (EntityStorage<GameItem>) mock(EntityStorage.class);
-        when(trainingMode.getItemStorage()).thenReturn(itemStorage);
-
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
-        DamageProcessor damageProcessor = context.getDamageProcessor();
-
-        assertInstanceOf(TrainingModeDamageProcessor.class, damageProcessor);
-    }
-
-    @Test
     public void shouldReturnNewInstanceOfItemRegistryForEquipmentItems() {
         ItemStorage<Equipment, EquipmentHolder> equipmentStorage = (ItemStorage<Equipment, EquipmentHolder>) mock(ItemStorage.class);
         when(trainingMode.getEquipmentStorage()).thenReturn(equipmentStorage);
@@ -107,17 +93,6 @@ public class DefaultTrainingModeContextTest {
         ItemRegistry<Gun, GunHolder> gunRegistry = context.getGunRegistry();
 
         assertInstanceOf(DefaultGunRegistry.class, gunRegistry);
-    }
-
-    @Test
-    public void shouldReturnNewInstanceOfEntityRegisterForItemEntities() {
-        EntityStorage<GameItem> itemEntityStorage = (EntityStorage<GameItem>) mock(EntityStorage.class);
-        when(trainingMode.getItemStorage()).thenReturn(itemEntityStorage);
-
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
-        EntityRegistry<GameItem, Item> itemRegistry = context.getItemRegistry();
-
-        assertInstanceOf(DefaultItemRegistry.class, itemRegistry);
     }
 
     @Test

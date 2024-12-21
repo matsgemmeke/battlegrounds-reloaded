@@ -99,7 +99,7 @@ public class GameContextProvider {
 
     @NotNull
     private Iterable<EntityRegistry<?, ?>> getEntityRegistries(@NotNull GameContext context) {
-        return List.of(context.getItemRegistry(), context.getPlayerRegistry());
+        return List.of(context.getPlayerRegistry());
     }
 
     /**

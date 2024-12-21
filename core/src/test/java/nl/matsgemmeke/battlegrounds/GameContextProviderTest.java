@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds;
 
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
@@ -87,21 +86,16 @@ public class GameContextProviderTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldReturnContextWhoseEntityRegistriesContainsEntityWithMatchingUUID() {
         UUID uuid = UUID.randomUUID();
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
 
-        EntityRegistry<GameItem, Item> itemRegistry = (EntityRegistry<GameItem, Item>) mock(EntityRegistry.class);
-        when(itemRegistry.isRegistered(uuid)).thenReturn(false);
-
-        EntityRegistry<GamePlayer, Player> playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
+        EntityRegistry<GamePlayer, Player> playerRegistry = mock();
         when(playerRegistry.isRegistered(uuid)).thenReturn(true);
 
         GameContext context = mock(GameContext.class);
-        when(context.getItemRegistry()).thenReturn(itemRegistry);
         when(context.getPlayerRegistry()).thenReturn(playerRegistry);
 
         GameContextProvider contextProvider = new GameContextProvider();
@@ -113,18 +107,15 @@ public class GameContextProviderTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldReturnNullContextWhenEntityIsNotInAnyGame() {
         UUID uuid = UUID.randomUUID();
 
         Item item = mock(Item.class);
         when(item.getUniqueId()).thenReturn(uuid);
 
-        EntityRegistry<GameItem, Item> itemRegistry = (EntityRegistry<GameItem, Item>) mock(EntityRegistry.class);
-        EntityRegistry<GamePlayer, Player> playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
+        EntityRegistry<GamePlayer, Player> playerRegistry = mock();
 
         GameContext context = mock(GameContext.class);
-        when(context.getItemRegistry()).thenReturn(itemRegistry);
         when(context.getPlayerRegistry()).thenReturn(playerRegistry);
 
         GameContextProvider contextProvider = new GameContextProvider();
