@@ -10,14 +10,18 @@ public class MarkedSpawnPoint implements SpawnPoint {
 
     @NotNull
     private EffectSource source;
+    private float yaw;
 
-    public MarkedSpawnPoint(@NotNull EffectSource source) {
+    public MarkedSpawnPoint(@NotNull EffectSource source, float yaw) {
         this.source = source;
+        this.yaw = yaw;
     }
 
     @NotNull
     public Location getLocation() {
-        return source.getLocation();
+        Location location = source.getLocation();
+        location.setYaw(yaw);
+        return location;
     }
 
     public void onSpawn(@NotNull GameEntity gameEntity) {
