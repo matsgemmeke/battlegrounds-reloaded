@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.game.training.component;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
+import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -21,12 +23,40 @@ import static org.mockito.Mockito.when;
 
 public class TrainingModeTargetFinderTest {
 
+    private DeploymentObjectStorage deploymentObjectStorage;
     private EntityStorage<GamePlayer> playerStorage;
 
     @BeforeEach
-    @SuppressWarnings("unchecked")
     public void setUp() {
-        playerStorage = (EntityStorage<GamePlayer>) mock(EntityStorage.class);
+        deploymentObjectStorage = new DeploymentObjectStorage();
+        playerStorage = mock();
+    }
+
+    @Test
+    public void findDeploymentObjectsReturnsDeploymentObjectsLocatedWithinGivenLocationAndRange() {
+        GameEntity gameEntity = mock(GameEntity.class);
+        World world = mock(World.class);
+        Location location = new Location(world, 1, 1, 1);
+        double range = 0.5;
+
+        Location locationInsideRange = new Location(world, 1, 1, 1);
+        Location locationOutsideRange = new Location(world, 100, 100, 100);
+
+        DeploymentObject objectInsideRange = mock(DeploymentObject.class);
+        when(objectInsideRange.getLocation()).thenReturn(locationInsideRange);
+
+        DeploymentObject objectOutsideRange = mock(DeploymentObject.class);
+        when(objectOutsideRange.getLocation()).thenReturn(locationOutsideRange);
+
+        deploymentObjectStorage.addDeploymentObject(objectInsideRange);
+        deploymentObjectStorage.addDeploymentObject(objectOutsideRange);
+
+        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentObjectStorage, playerStorage);
+        List<DeploymentObject> deploymentObjects = targetFinder.findDeploymentObjects(gameEntity, location, range);
+
+        assertEquals(1, deploymentObjects.size());
+        assertTrue(deploymentObjects.contains(objectInsideRange));
+        assertFalse(deploymentObjects.contains(objectOutsideRange));
     }
 
     @Test
@@ -50,7 +80,7 @@ public class TrainingModeTargetFinderTest {
         when(playerStorage.getEntity(player)).thenReturn(gamePlayer);
         when(playerStorage.getEntity(targetEntity)).thenReturn(target);
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(playerStorage);
+        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentObjectStorage, playerStorage);
         Collection<GameEntity> targets = targetFinder.findEnemyTargets(gamePlayer, location, range);
 
         assertEquals(1, targets.size());
@@ -63,7 +93,7 @@ public class TrainingModeTargetFinderTest {
         GameEntity entity = mock(GameEntity.class);
         Location location = new Location(null, 1.0, 1.0, 1.0);
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(playerStorage);
+        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentObjectStorage, playerStorage);
         Collection<GameEntity> targets = targetFinder.findTargets(entity, location, 0.1);
 
         assertTrue(targets.isEmpty());
@@ -85,7 +115,7 @@ public class TrainingModeTargetFinderTest {
         when(playerStorage.getEntity(entity)).thenReturn(gamePlayer);
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(entity));
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(playerStorage);
+        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentObjectStorage, playerStorage);
         List<GameEntity> targets = targetFinder.findTargets(gameEntity, location, range);
 
         assertEquals(1, targets.size());
@@ -108,7 +138,7 @@ public class TrainingModeTargetFinderTest {
         when(playerStorage.getEntity(entity)).thenReturn(gamePlayer);
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(entity));
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(playerStorage);
+        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentObjectStorage, playerStorage);
         List<GameEntity> targets = targetFinder.findTargets(gameEntity, location, range);
 
         assertTrue(targets.isEmpty());
@@ -127,7 +157,7 @@ public class TrainingModeTargetFinderTest {
 
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(entity));
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(playerStorage);
+        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentObjectStorage, playerStorage);
         List<GameEntity> targets = targetFinder.findTargets(gameEntity, location, range);
 
         assertEquals(1, targets.size());

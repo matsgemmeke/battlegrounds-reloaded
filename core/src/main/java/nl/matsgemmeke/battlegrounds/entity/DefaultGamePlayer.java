@@ -43,6 +43,14 @@ public class DefaultGamePlayer implements GamePlayer {
         return player;
     }
 
+    public double getHealth() {
+        return player.getHealth();
+    }
+
+    public void setHealth(double health) {
+        player.setHealth(health);
+    }
+
     @NotNull
     public Location getLocation() {
         return player.getLocation();

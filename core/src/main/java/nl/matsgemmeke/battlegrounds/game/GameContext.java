@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -29,6 +30,9 @@ public interface GameContext {
     DamageProcessor getDamageProcessor();
 
     void setDamageProcessor(@NotNull DamageProcessor damageProcessor);
+
+    @NotNull
+    DeploymentObjectRegistry getDeploymentObjectRegistry();
 
     @NotNull
     ItemRegistry<Equipment, EquipmentHolder> getEquipmentRegistry();

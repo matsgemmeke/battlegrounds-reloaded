@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.*;
@@ -20,6 +21,7 @@ import java.util.List;
 
 public class DefaultFirearm extends BaseGun implements Firearm {
 
+    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.25;
     private static final double ENTITY_FINDING_RANGE = 0.1;
     private static final double PROJECTILE_DISTANCE_JUMP = 0.5;
     private static final double PROJECTILE_DISTANCE_START = 0.5;
@@ -155,6 +157,16 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
             double damage = this.getDamage(startingLocation, targetLocation, projectileLocation);
             target.damage(damage);
+            return true;
+        }
+
+        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(holder, projectileLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {
+            Location objectLocation = deploymentObject.getLocation();
+
+            double damageAmount = this.getDamage(startingLocation, objectLocation, projectileLocation);
+            deploymentObject.damage(damageAmount);
+            System.out.println("damaging " + deploymentObject + " by " + damageAmount);
+
             return true;
         }
 

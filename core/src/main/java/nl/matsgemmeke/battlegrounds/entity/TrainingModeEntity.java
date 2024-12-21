@@ -19,6 +19,14 @@ public class TrainingModeEntity implements GameEntity {
         return entity;
     }
 
+    public double getHealth() {
+        return entity.getHealth();
+    }
+
+    public void setHealth(double health) {
+        entity.setHealth(health);
+    }
+
     @NotNull
     public Location getLocation() {
         return entity.getLocation();

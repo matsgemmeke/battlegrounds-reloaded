@@ -5,10 +5,13 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
+import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -60,6 +63,17 @@ public class DefaultTrainingModeContextTest {
         CollisionDetector collisionDetector = context.getCollisionDetector();
 
         assertInstanceOf(DefaultCollisionDetector.class, collisionDetector);
+    }
+
+    @Test
+    public void getDeploymentObjectRegistryReturnsNewInstanceOfTheDefaultImplementation() {
+        DeploymentObjectStorage deploymentObjectStorage = new DeploymentObjectStorage();
+        when(trainingMode.getDeploymentObjectStorage()).thenReturn(deploymentObjectStorage);
+
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        DeploymentObjectRegistry deploymentObjectRegistry = context.getDeploymentObjectRegistry();
+
+        assertInstanceOf(DefaultDeploymentObjectRegistry.class, deploymentObjectRegistry);
     }
 
     @Test
@@ -119,6 +133,9 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfTrainingModeTargetFinder() {
+        DeploymentObjectStorage deploymentObjectStorage = new DeploymentObjectStorage();
+        when(trainingMode.getDeploymentObjectStorage()).thenReturn(deploymentObjectStorage);
+
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         TargetFinder targetFinder = context.getTargetFinder();
 

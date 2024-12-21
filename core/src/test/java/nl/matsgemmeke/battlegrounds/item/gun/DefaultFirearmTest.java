@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.*;
@@ -331,6 +332,35 @@ public class DefaultFirearmTest {
 
         verify(audioEmitter).playSounds(eq(shotSounds), any(Location.class));
         verify(target).damage(10.0);
+    }
+
+    @Test
+    public void shootInflictsDamageOnDeploymentObject() {
+        List<GameSound> shotSounds = Collections.emptyList();
+
+        World world = mock(World.class);
+        Location startingLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
+        Location deploymentObjectLocation = new Location(world, 1.0, 1.0, 2.0, 0.0F, 0.0F);
+
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        when(deploymentObject.getLocation()).thenReturn(deploymentObjectLocation);
+
+        List<DeploymentObject> deploymentObjects = Collections.singletonList(deploymentObject);
+
+        when(targetFinder.findDeploymentObjects(eq(holder), any(), eq(0.25))).thenReturn(deploymentObjects);
+
+        when(holder.getRelativeAccuracy()).thenReturn(2.0f);
+        when(holder.getShootingDirection()).thenReturn(startingLocation);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        firearm.setHolder(holder);
+        firearm.setShortDamage(10.0);
+        firearm.setShortRange(5.0);
+        firearm.setShotSounds(shotSounds);
+        firearm.shoot();
+
+        verify(audioEmitter).playSounds(shotSounds, startingLocation);
+        verify(deploymentObject).damage(10.0);
     }
 
     @Test

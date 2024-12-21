@@ -33,6 +33,8 @@ item:
     damage: 5
     material: SHEARS
 throwing:
+  damage:
+    health: 50.0
   delay-after-throw: 30
   throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
   velocity: 0.0

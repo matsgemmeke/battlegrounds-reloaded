@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
+import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -30,6 +31,8 @@ public interface Game {
      */
     @NotNull
     GameContext getContext();
+
+    DeploymentObjectStorage getDeploymentObjectStorage();
 
     /**
      * Gets the item storage for equipment items.

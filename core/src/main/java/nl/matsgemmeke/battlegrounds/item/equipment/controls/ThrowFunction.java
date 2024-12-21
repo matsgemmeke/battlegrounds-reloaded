@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
@@ -26,6 +27,8 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private AudioEmitter audioEmitter;
     private boolean performing;
     @NotNull
+    private DeploymentObjectRegistry deploymentObjectRegistry;
+    @NotNull
     private Equipment equipment;
     @NotNull
     private TaskRunner taskRunner;
@@ -33,15 +36,17 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private ThrowProperties properties;
 
     public ThrowFunction(
-            @NotNull ThrowProperties properties,
-            @NotNull Equipment equipment,
             @NotNull AudioEmitter audioEmitter,
-            @NotNull TaskRunner taskRunner
+            @NotNull DeploymentObjectRegistry deploymentObjectRegistry,
+            @NotNull TaskRunner taskRunner,
+            @NotNull Equipment equipment,
+            @NotNull ThrowProperties properties
     ) {
-        this.properties = properties;
-        this.equipment = equipment;
         this.audioEmitter = audioEmitter;
+        this.deploymentObjectRegistry = deploymentObjectRegistry;
         this.taskRunner = taskRunner;
+        this.equipment = equipment;
+        this.properties = properties;
         this.performing = false;
     }
 
@@ -91,6 +96,10 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         taskRunner.runTaskLater(() -> performing = false, properties.delayAfterThrow());
 
         DroppedItem droppedItem = new DroppedItem(itemEntity);
+        droppedItem.setHealth(properties.health());
+
+        deploymentObjectRegistry.registerDeploymentObject(droppedItem);
+
         ProjectileProperties projectileProperties = equipment.getProjectileProperties();
 
         if (projectileProperties != null) {

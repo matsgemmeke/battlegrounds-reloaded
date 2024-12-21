@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
@@ -69,6 +71,11 @@ public class DefaultTrainingModeContext implements GameContext {
     }
 
     @NotNull
+    public DeploymentObjectRegistry getDeploymentObjectRegistry() {
+        return new DefaultDeploymentObjectRegistry(trainingMode.getDeploymentObjectStorage());
+    }
+
+    @NotNull
     public ItemRegistry<Equipment, EquipmentHolder> getEquipmentRegistry() {
         return new DefaultEquipmentRegistry(trainingMode.getEquipmentStorage());
     }
@@ -95,6 +102,6 @@ public class DefaultTrainingModeContext implements GameContext {
 
     @NotNull
     public TargetFinder getTargetFinder() {
-        return new TrainingModeTargetFinder(trainingMode.getPlayerStorage());
+        return new TrainingModeTargetFinder(trainingMode.getDeploymentObjectStorage(), trainingMode.getPlayerStorage());
     }
 }
