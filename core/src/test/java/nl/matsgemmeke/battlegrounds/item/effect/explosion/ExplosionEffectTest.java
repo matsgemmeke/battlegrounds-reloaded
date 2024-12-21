@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +42,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void createExplosionAtSourceLocation() {
-        Entity entity = mock(Entity.class);
+        Player player = mock(Player.class);
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
@@ -51,7 +51,7 @@ public class ExplosionEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getEntity()).thenReturn(entity);
+        when(holder.getEntity()).thenReturn(player);
 
         ExplosionProperties properties = new ExplosionProperties(power, setFire, breakBlocks);
         ItemEffectContext context = new ItemEffectContext(holder, source);
@@ -60,7 +60,7 @@ public class ExplosionEffectTest {
         effect.activate(context);
 
         verify(source).remove();
-        verify(world).createExplosion(sourceLocation, power, setFire, breakBlocks, entity);
+        verify(world).createExplosion(sourceLocation, power, setFire, breakBlocks, player);
     }
 
     @Test
@@ -69,11 +69,11 @@ public class ExplosionEffectTest {
         Location sourceLocation = new Location(world, 1, 1, 1);
         Location targetLocation = new Location(world, 8, 1, 1);
 
-        Entity holderEntity = mock(Entity.class);
+        Player holderEntity = mock(Player.class);
         when(holderEntity.getLocation()).thenReturn(sourceLocation);
         when(holderEntity.getWorld()).thenReturn(world);
 
-        Entity targetEntity = mock(Entity.class);
+        Player targetEntity = mock(Player.class);
         when(targetEntity.getLocation()).thenReturn(targetLocation);
         when(targetEntity.getWorld()).thenReturn(world);
 

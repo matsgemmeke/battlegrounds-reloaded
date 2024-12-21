@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damageable;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +18,7 @@ public interface GameEntity extends Damageable {
      * @return the bukkit entity
      */
     @NotNull
-    Entity getEntity();
+    LivingEntity getEntity();
 
     /**
      * Gets the location of the entity.
