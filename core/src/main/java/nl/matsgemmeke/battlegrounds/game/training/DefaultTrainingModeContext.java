@@ -10,13 +10,13 @@ import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegist
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.DefaultEquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.DefaultGunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,7 +86,7 @@ public class DefaultTrainingModeContext implements GameContext {
     }
 
     @NotNull
-    public ItemRegistry<Gun, GunHolder> getGunRegistry() {
+    public GunRegistry getGunRegistry() {
         return new DefaultGunRegistry(trainingMode.getGunStorage());
     }
 

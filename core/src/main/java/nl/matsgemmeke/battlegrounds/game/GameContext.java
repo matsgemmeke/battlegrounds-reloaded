@@ -5,9 +5,8 @@ import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +39,7 @@ public interface GameContext {
     GunInfoProvider getGunInfoProvider();
 
     @NotNull
-    ItemRegistry<Gun, GunHolder> getGunRegistry();
+    GunRegistry getGunRegistry();
 
     @NotNull
     EntityRegistry<GamePlayer, Player> getPlayerRegistry();

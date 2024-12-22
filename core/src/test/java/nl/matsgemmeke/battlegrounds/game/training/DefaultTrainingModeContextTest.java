@@ -10,7 +10,9 @@ import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegist
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.DefaultEquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.DefaultGunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
 import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
@@ -106,7 +108,7 @@ public class DefaultTrainingModeContextTest {
         when(trainingMode.getGunStorage()).thenReturn(gunStorage);
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
-        ItemRegistry<Gun, GunHolder> gunRegistry = context.getGunRegistry();
+        GunRegistry gunRegistry = context.getGunRegistry();
 
         assertInstanceOf(DefaultGunRegistry.class, gunRegistry);
     }

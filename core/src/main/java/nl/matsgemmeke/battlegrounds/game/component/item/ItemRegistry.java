@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component;
+package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.Item;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
