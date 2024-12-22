@@ -27,4 +27,12 @@ public interface ItemRegistry<T extends Item, S extends ItemHolder> {
      * @param holder the holder associated with the item
      */
     void registerItem(@NotNull T item, @NotNull S holder);
+
+    /**
+     * Removes the assigned holder from the given item and registers it as an unassigned item. This method will do
+     * nothing if the given item has no assigned holder.
+     *
+     * @param item the item whose holder is to be unregistered
+     */
+    void unassignItem(@NotNull T item);
 }

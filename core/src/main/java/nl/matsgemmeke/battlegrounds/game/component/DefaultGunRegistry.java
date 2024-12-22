@@ -21,4 +21,15 @@ public class DefaultGunRegistry implements ItemRegistry<Gun, GunHolder> {
     public void registerItem(@NotNull Gun gun, @NotNull GunHolder holder) {
         gunStorage.addAssignedItem(gun, holder);
     }
+
+    public void unassignItem(@NotNull Gun gun) {
+        GunHolder holder = gun.getHolder();
+
+        if (holder == null) {
+            return;
+        }
+
+        gunStorage.removeAssignedItem(gun, holder);
+        gunStorage.addUnassignedItem(gun);
+    }
 }

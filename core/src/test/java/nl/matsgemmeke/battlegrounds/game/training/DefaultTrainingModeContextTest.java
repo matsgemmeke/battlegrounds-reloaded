@@ -9,6 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentObjec
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.item.DefaultEquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
 import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
@@ -78,11 +80,11 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfItemRegistryForEquipmentItems() {
-        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = (ItemStorage<Equipment, EquipmentHolder>) mock(ItemStorage.class);
+        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
         when(trainingMode.getEquipmentStorage()).thenReturn(equipmentStorage);
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
-        ItemRegistry<Equipment, EquipmentHolder> equipmentRegistry = context.getEquipmentRegistry();
+        EquipmentRegistry equipmentRegistry = context.getEquipmentRegistry();
 
         assertInstanceOf(DefaultEquipmentRegistry.class, equipmentRegistry);
     }

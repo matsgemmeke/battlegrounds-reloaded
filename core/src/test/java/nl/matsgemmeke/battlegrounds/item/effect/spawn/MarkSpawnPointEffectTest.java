@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -22,12 +23,15 @@ public class MarkSpawnPointEffectTest {
 
     @Test
     public void activateCreatesNewCustomSpawnPointAndAssignsToHolder() {
+        Location eyeLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+
+        LivingEntity entity = mock(LivingEntity.class);
+        when(entity.getEyeLocation()).thenReturn(eyeLocation);
+
         ItemHolder holder = mock(ItemHolder.class);
-        Location sourceLocation = new Location(null, 1, 1, 1);
+        when(holder.getEntity()).thenReturn(entity);
 
         EffectSource source = mock(EffectSource.class);
-        when(source.getLocation()).thenReturn(sourceLocation);
-
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);
