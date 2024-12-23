@@ -102,6 +102,16 @@ public class EventListenerTest {
     }
 
     @Test
+    public void onPlayerRespawnDispatchesEventToEventDispatcher() {
+        PlayerRespawnEvent event = mock(PlayerRespawnEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onPlayerRespawn(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
+    }
+
+    @Test
     public void callsEventDispatcherUponHandlingPlayerSwapHandItemsEvent() {
         PlayerSwapHandItemsEvent event = mock(PlayerSwapHandItemsEvent.class);
 

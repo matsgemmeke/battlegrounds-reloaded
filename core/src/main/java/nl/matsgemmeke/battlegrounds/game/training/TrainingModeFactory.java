@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.check.NegateDefaultExplosionDamageCheck;
-import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -40,10 +40,8 @@ public class TrainingModeFactory {
         trainingMode.addItemBehavior(new EquipmentBehavior(equipmentStorage));
         trainingMode.addItemBehavior(new GunBehavior(gunStorage));
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext);
+        DamageProcessor damageProcessor = trainingModeContext.getDamageProcessor();
         damageProcessor.addDamageCheck(new NegateDefaultExplosionDamageCheck());
-
-        trainingModeContext.setDamageProcessor(damageProcessor);
 
         this.registerPlayers(trainingModeContext);
 

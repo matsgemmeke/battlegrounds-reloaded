@@ -101,6 +101,32 @@ public class DroppedItemTest {
     }
 
     @Test
+    public void damageLowersHealthIfDamageAmountIsLowerThanHealth() {
+        double health = 30.0;
+        double damageAmount = 20.0;
+
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        droppedItem.setHealth(health);
+
+        double newHealth = droppedItem.damage(damageAmount);
+
+        assertEquals(10.0, newHealth, 0.0);
+    }
+
+    @Test
+    public void damageSetsHealthToZeroIfDamageAmountIsGreaterThanHealth() {
+        double health = 20.0;
+        double damageAmount = 30.0;
+
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        droppedItem.setHealth(health);
+
+        double newHealth = droppedItem.damage(damageAmount);
+
+        assertEquals(0.0, newHealth, 0.0);
+    }
+
+    @Test
     public void isDeployedAlwaysReturnsTrue() {
         DroppedItem droppedItem = new DroppedItem(itemEntity);
         boolean deployed = droppedItem.isDeployed();

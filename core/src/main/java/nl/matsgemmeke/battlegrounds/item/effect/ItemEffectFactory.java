@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
@@ -24,6 +25,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationProp
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
@@ -132,6 +134,11 @@ public class ItemEffectFactory {
                 GunFireSimulationProperties properties = new GunFireSimulationProperties(genericSounds, genericRateOfFire, maxBurstDuration, minBurstDuration, maxDelayBetweenBursts, minDelayBetweenBursts, maxTotalDuration, minTotalDuration);
 
                 return new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
+            }
+            case MARK_SPAWN_POINT -> {
+                SpawnPointProvider spawnPointProvider = context.getSpawnPointProvider();
+
+                return new MarkSpawnPointEffect(spawnPointProvider);
             }
             case SMOKE_SCREEN -> {
                 Particle particle;

@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,11 +58,6 @@ public class DefaultSession extends BaseGame implements Session {
 
     public int getId() {
         return id;
-    }
-
-    @NotNull
-    public GameItem addItem(@NotNull Item item) {
-        return new DefaultGameItem(item);
     }
 
     @NotNull

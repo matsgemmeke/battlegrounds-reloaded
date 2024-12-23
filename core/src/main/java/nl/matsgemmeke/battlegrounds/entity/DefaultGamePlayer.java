@@ -1,9 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.item.Item;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.Weapon;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -31,19 +29,13 @@ public class DefaultGamePlayer implements GamePlayer {
     @NotNull
     private Player player;
     @NotNull
-    private Set<Item> items;
-    @NotNull
     private Set<ItemEffect> effects;
-    @NotNull
-    private Set<Weapon> weapons;
 
     public DefaultGamePlayer(@NotNull Player player, @NotNull InternalsProvider internals) {
         this.player = player;
         this.internals = internals;
         this.effects = new HashSet<>();
-        this.items = new HashSet<>();
         this.passive = false;
-        this.weapons = new HashSet<>();
     }
 
     @NotNull
@@ -51,9 +43,22 @@ public class DefaultGamePlayer implements GamePlayer {
         return player;
     }
 
+    public double getHealth() {
+        return player.getHealth();
+    }
+
+    public void setHealth(double health) {
+        player.setHealth(health);
+    }
+
     @NotNull
     public Location getLocation() {
         return player.getLocation();
+    }
+
+    @NotNull
+    public String getName() {
+        return player.getName();
     }
 
     @NotNull

@@ -6,7 +6,8 @@ import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.ItemRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
@@ -41,16 +42,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings("unchecked")
 public class EquipmentFactoryTest {
 
     private AudioEmitter audioEmitter;
+    private EquipmentRegistry equipmentRegistry;
     private GameContext context;
     private ItemConfiguration configuration;
     private ItemEffectActivationFactory effectActivationFactory;
     private ItemEffectFactory effectFactory;
     private ItemFactory itemFactory;
-    private ItemRegistry<Equipment, EquipmentHolder> equipmentRegistry;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
     private Section rootSection;
@@ -59,11 +59,11 @@ public class EquipmentFactoryTest {
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
+        equipmentRegistry = mock(EquipmentRegistry.class);
         configuration = mock(ItemConfiguration.class);
         effectActivationFactory = mock(ItemEffectActivationFactory.class);
         effectFactory = mock(ItemEffectFactory.class);
         itemFactory = mock(ItemFactory.class);
-        equipmentRegistry = (ItemRegistry<Equipment, EquipmentHolder>) mock(ItemRegistry.class);
         keyCreator = mock(NamespacedKeyCreator.class);
         taskRunner = mock(TaskRunner.class);
 
@@ -383,6 +383,9 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
+        DeploymentObjectRegistry deploymentObjectRegistry = mock(DeploymentObjectRegistry.class);
+        when(context.getDeploymentObjectRegistry()).thenReturn(deploymentObjectRegistry);
+
         Damageable itemMeta = mock(Damageable.class);
         ItemEffect effect = mock(ItemEffect.class);
         ItemEffectActivation activation = mock(ItemEffectActivation.class);
@@ -420,6 +423,9 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("item.throw-item.material")).thenReturn("SHEARS");
+
+        DeploymentObjectRegistry deploymentObjectRegistry = mock(DeploymentObjectRegistry.class);
+        when(context.getDeploymentObjectRegistry()).thenReturn(deploymentObjectRegistry);
 
         ItemEffect effect = mock(ItemEffect.class);
         ItemEffectActivation activation = mock(ItemEffectActivation.class);

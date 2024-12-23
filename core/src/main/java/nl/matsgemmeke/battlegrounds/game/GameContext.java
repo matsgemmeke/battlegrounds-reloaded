@@ -1,14 +1,13 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.bukkit.entity.Item;
+import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,22 +28,23 @@ public interface GameContext {
     @NotNull
     DamageProcessor getDamageProcessor();
 
-    void setDamageProcessor(@NotNull DamageProcessor damageProcessor);
+    @NotNull
+    DeploymentObjectRegistry getDeploymentObjectRegistry();
 
     @NotNull
-    ItemRegistry<Equipment, EquipmentHolder> getEquipmentRegistry();
+    EquipmentRegistry getEquipmentRegistry();
 
     @NotNull
     GunInfoProvider getGunInfoProvider();
 
     @NotNull
-    ItemRegistry<Gun, GunHolder> getGunRegistry();
-
-    @NotNull
-    EntityRegistry<GameItem, Item> getItemRegistry();
+    GunRegistry getGunRegistry();
 
     @NotNull
     EntityRegistry<GamePlayer, Player> getPlayerRegistry();
+
+    @NotNull
+    SpawnPointProvider getSpawnPointProvider();
 
     @NotNull
     TargetFinder getTargetFinder();

@@ -61,6 +61,11 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerRespawn(@NotNull PlayerRespawnEvent event) {
+        this.dispatchEvent(event);
+    }
+
+    @EventHandler
     public void onPlayerSwapHandItems(@NotNull PlayerSwapHandItemsEvent event) {
         this.dispatchEvent(event);
     }

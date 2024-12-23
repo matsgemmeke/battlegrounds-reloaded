@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.training.component;
+package nl.matsgemmeke.battlegrounds.game.training.component.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;

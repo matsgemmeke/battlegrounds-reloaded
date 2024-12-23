@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.source;
 
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,8 +11,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A deployed item in the form as a dropped {@link Item} entity.
  */
-public class DroppedItem implements EffectSource, Projectile {
+public class DroppedItem implements DeploymentObject, EffectSource, Projectile {
 
+    private double health;
     @NotNull
     private Item itemEntity;
 
@@ -21,6 +23,14 @@ public class DroppedItem implements EffectSource, Projectile {
 
     public boolean exists() {
         return !itemEntity.isDead();
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
     }
 
     @NotNull
@@ -48,6 +58,14 @@ public class DroppedItem implements EffectSource, Projectile {
 
     public void setGravity(boolean gravity) {
         itemEntity.setGravity(gravity);
+    }
+
+    public double damage(double damageAmount) {
+        double healthAfterDamage = health - damageAmount;
+
+        health = Math.max(healthAfterDamage, 0);
+
+        return health;
     }
 
     public boolean isDeployed() {

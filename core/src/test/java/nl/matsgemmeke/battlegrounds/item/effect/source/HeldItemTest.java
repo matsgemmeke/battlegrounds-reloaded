@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,9 +25,9 @@ public class HeldItemTest {
 
     @Test
     public void existsReturnsTrueIfTheHolderEntityIsNotDead() {
-        Entity entity = mock(Entity.class);
-        when(entity.isDead()).thenReturn(false);
-        when(holder.getEntity()).thenReturn(entity);
+        Player player = mock(Player.class);
+        when(player.isDead()).thenReturn(false);
+        when(holder.getEntity()).thenReturn(player);
 
         HeldItem heldItem = new HeldItem(holder, itemStack);
         boolean exists = heldItem.exists();
@@ -37,9 +37,9 @@ public class HeldItemTest {
 
     @Test
     public void existsReturnsFalseIfTheHolderEntityIsDead() {
-        Entity entity = mock(Entity.class);
-        when(entity.isDead()).thenReturn(true);
-        when(holder.getEntity()).thenReturn(entity);
+        Player player = mock(Player.class);
+        when(player.isDead()).thenReturn(true);
+        when(holder.getEntity()).thenReturn(player);
 
         HeldItem heldItem = new HeldItem(holder, itemStack);
         boolean exists = heldItem.exists();

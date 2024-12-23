@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -87,11 +87,11 @@ public class ActivateFunctionTest {
     public void performReturnsTrueAndRemovesHeldItemAndPerformDelayedTaskForActivatingEffectActivation() {
         Location location = new Location(null, 1, 1, 1);
 
-        Entity entity = mock(Entity.class);
-        when(entity.getLocation()).thenReturn(location);
+        Player player = mock(Player.class);
+        when(player.getLocation()).thenReturn(location);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.getEntity()).thenReturn(entity);
+        when(holder.getEntity()).thenReturn(player);
 
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         when(equipment.getEffectActivation()).thenReturn(effectActivation);

@@ -1,7 +1,7 @@
-package nl.matsgemmeke.battlegrounds.game.training.component;
+package nl.matsgemmeke.battlegrounds.game.training.component.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
 import org.jetbrains.annotations.NotNull;

@@ -1,20 +1,23 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.item.DefaultEquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.DefaultGunRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.training.component.damage.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
-import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.bukkit.entity.Item;
+import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,12 +67,13 @@ public class DefaultTrainingModeContext implements GameContext {
         return damageProcessor;
     }
 
-    public void setDamageProcessor(@NotNull DamageProcessor damageProcessor) {
-        this.damageProcessor = damageProcessor;
+    @NotNull
+    public DeploymentObjectRegistry getDeploymentObjectRegistry() {
+        return new DefaultDeploymentObjectRegistry(trainingMode.getDeploymentObjectStorage());
     }
 
     @NotNull
-    public ItemRegistry<Equipment, EquipmentHolder> getEquipmentRegistry() {
+    public EquipmentRegistry getEquipmentRegistry() {
         return new DefaultEquipmentRegistry(trainingMode.getEquipmentStorage());
     }
 
@@ -79,13 +83,8 @@ public class DefaultTrainingModeContext implements GameContext {
     }
 
     @NotNull
-    public ItemRegistry<Gun, GunHolder> getGunRegistry() {
+    public GunRegistry getGunRegistry() {
         return new DefaultGunRegistry(trainingMode.getGunStorage());
-    }
-
-    @NotNull
-    public EntityRegistry<GameItem, Item> getItemRegistry() {
-        return new DefaultItemRegistry(trainingMode.getItemStorage());
     }
 
     @NotNull
@@ -94,7 +93,12 @@ public class DefaultTrainingModeContext implements GameContext {
     }
 
     @NotNull
+    public SpawnPointProvider getSpawnPointProvider() {
+        return new TrainingModeSpawnPointProvider(trainingMode.getSpawnPointStorage());
+    }
+
+    @NotNull
     public TargetFinder getTargetFinder() {
-        return new TrainingModeTargetFinder(trainingMode.getPlayerStorage());
+        return new TrainingModeTargetFinder(trainingMode.getDeploymentObjectStorage(), trainingMode.getPlayerStorage());
     }
 }

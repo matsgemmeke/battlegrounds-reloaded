@@ -1,11 +1,11 @@
-package nl.matsgemmeke.battlegrounds.game.component;
+package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.jetbrains.annotations.NotNull;
 
-public class DefaultGunRegistry implements ItemRegistry<Gun, GunHolder> {
+public class DefaultGunRegistry implements GunRegistry {
 
     @NotNull
     private ItemStorage<Gun, GunHolder> gunStorage;
@@ -20,5 +20,16 @@ public class DefaultGunRegistry implements ItemRegistry<Gun, GunHolder> {
 
     public void registerItem(@NotNull Gun gun, @NotNull GunHolder holder) {
         gunStorage.addAssignedItem(gun, holder);
+    }
+
+    public void unassignItem(@NotNull Gun gun) {
+        GunHolder holder = gun.getHolder();
+
+        if (holder == null) {
+            return;
+        }
+
+        gunStorage.removeAssignedItem(gun, holder);
+        gunStorage.addUnassignedItem(gun);
     }
 }

@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -50,10 +49,6 @@ public class FlashEffect implements ItemEffect {
 
     private void applyPotionEffectToTargets(@NotNull ItemHolder holder, @NotNull Location location) {
         for (GameEntity target : targetFinder.findTargets(holder, location, properties.range())) {
-            if (!(target.getEntity() instanceof LivingEntity entity)) {
-                continue;
-            }
-
             PotionEffectType potionEffectType = PotionEffectType.BLINDNESS;
             int duration = properties.potionEffect().duration();
             int amplifier = properties.potionEffect().amplifier();
@@ -63,7 +58,7 @@ public class FlashEffect implements ItemEffect {
 
             PotionEffect potionEffect = new PotionEffect(potionEffectType, duration, amplifier, ambient, particles, icon);
 
-            entity.addPotionEffect(potionEffect);
+            target.getEntity().addPotionEffect(potionEffect);
         }
     }
 }

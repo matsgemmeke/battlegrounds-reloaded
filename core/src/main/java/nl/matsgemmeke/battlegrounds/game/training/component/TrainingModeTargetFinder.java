@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.TrainingModeEntity;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -19,10 +21,31 @@ import java.util.List;
 public class TrainingModeTargetFinder implements TargetFinder {
 
     @NotNull
+    private DeploymentObjectStorage deploymentObjectStorage;
+    @NotNull
     private EntityStorage<GamePlayer> playerStorage;
 
-    public TrainingModeTargetFinder(@NotNull EntityStorage<GamePlayer> playerStorage) {
+    public TrainingModeTargetFinder(
+            @NotNull DeploymentObjectStorage deploymentObjectStorage,
+            @NotNull EntityStorage<GamePlayer> playerStorage
+    ) {
+        this.deploymentObjectStorage = deploymentObjectStorage;
         this.playerStorage = playerStorage;
+    }
+
+    @NotNull
+    public List<DeploymentObject> findDeploymentObjects(@NotNull GameEntity gameEntity, @NotNull Location location, double range) {
+        List<DeploymentObject> deploymentObjects = new ArrayList<>();
+
+        for (DeploymentObject deploymentObject : deploymentObjectStorage.getDeploymentObjects()) {
+            double distance = location.distance(deploymentObject.getLocation());
+
+            if (distance <= range) {
+                deploymentObjects.add(deploymentObject);
+            }
+        }
+
+        return deploymentObjects;
     }
 
     @NotNull

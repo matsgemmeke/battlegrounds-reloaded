@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import org.bukkit.entity.Entity;

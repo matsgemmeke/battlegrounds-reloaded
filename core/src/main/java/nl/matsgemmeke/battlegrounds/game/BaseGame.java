@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
+import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,16 +12,24 @@ import java.util.Set;
 public abstract class BaseGame implements Game {
 
     @NotNull
-    protected EntityStorage<GameItem> itemStorage;
+    protected DeploymentObjectStorage deploymentObjectStorage;
     @NotNull
     protected EntityStorage<GamePlayer> playerStorage;
     @NotNull
     protected Set<ItemBehavior> itemBehaviors;
+    @NotNull
+    protected SpawnPointStorage spawnPointStorage;
 
     public BaseGame() {
+        this.deploymentObjectStorage = new DeploymentObjectStorage();
         this.itemBehaviors = new HashSet<>();
-        this.itemStorage = new EntityStorage<>();
         this.playerStorage = new EntityStorage<>();
+        this.spawnPointStorage = new SpawnPointStorage();
+    }
+
+    @NotNull
+    public DeploymentObjectStorage getDeploymentObjectStorage() {
+        return deploymentObjectStorage;
     }
 
     @NotNull
@@ -29,13 +38,13 @@ public abstract class BaseGame implements Game {
     }
 
     @NotNull
-    public EntityStorage<GameItem> getItemStorage() {
-        return itemStorage;
+    public EntityStorage<GamePlayer> getPlayerStorage() {
+        return playerStorage;
     }
 
     @NotNull
-    public EntityStorage<GamePlayer> getPlayerStorage() {
-        return playerStorage;
+    public SpawnPointStorage getSpawnPointStorage() {
+        return spawnPointStorage;
     }
 
     public void addItemBehavior(@NotNull ItemBehavior itemBehavior) {

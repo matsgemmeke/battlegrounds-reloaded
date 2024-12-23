@@ -34,9 +34,10 @@ public class ExplosionEffect implements ItemEffect {
         World world = source.getWorld();
         Entity damageSource = holder.getEntity();
 
-        world.createExplosion(sourceLocation, properties.power(), properties.setFire(), properties.breakBlocks(), damageSource);
-
+        // Remove the source before creating the explosion to prevent calling an extra EntityDamageByEntityEvent
         source.remove();
+
+        world.createExplosion(sourceLocation, properties.power(), properties.setFire(), properties.breakBlocks(), damageSource);
 
         for (GameEntity target : targetFinder.findTargets(holder, sourceLocation, rangeProfile.getLongRangeDistance())) {
             Location targetLocation = target.getEntity().getLocation();

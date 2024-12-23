@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.entity.GameItem;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
+import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -31,6 +32,8 @@ public interface Game {
     @NotNull
     GameContext getContext();
 
+    DeploymentObjectStorage getDeploymentObjectStorage();
+
     /**
      * Gets the item storage for equipment items.
      *
@@ -56,19 +59,18 @@ public interface Game {
     Collection<ItemBehavior> getItemBehaviors();
 
     /**
-     * Gets the item entity storages of the game. Not to be confused with storage for held items, these have their own
-     * specific storages. See for example {@link #getGunStorage()}.
-     *
-     * @return the item entity storage of the game
-     */
-    @NotNull
-    EntityStorage<GameItem> getItemStorage();
-
-    /**
      * Gets the player storage of the game.
      *
      * @return the player storage of the game
      */
     @NotNull
     EntityStorage<GamePlayer> getPlayerStorage();
+
+    /**
+     * Gets the spawn point storage of the game.
+     *
+     * @return the spawn point storage of the game
+     */
+    @NotNull
+    SpawnPointStorage getSpawnPointStorage();
 }

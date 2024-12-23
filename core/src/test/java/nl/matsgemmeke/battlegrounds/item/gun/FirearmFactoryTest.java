@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.ItemRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -36,7 +36,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings("unchecked")
 public class FirearmFactoryTest {
 
     private BattlegroundsConfiguration config;
@@ -115,7 +114,7 @@ public class FirearmFactoryTest {
         Damageable itemMeta = mock(Damageable.class);
         when(itemMeta.getPersistentDataContainer()).thenReturn(dataContainer);
 
-        ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
+        GunRegistry registry = mock(GunRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
         when(itemConfiguration.getItemId()).thenReturn("TEST_GUN");
@@ -155,7 +154,7 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmWithShootControlsConfiguration() {
-        ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
+        GunRegistry registry = mock(GunRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
         Section controlsSection = mock(Section.class);
@@ -177,7 +176,7 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmWithSpreadPatternFromConfiguration() {
-        ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
+        GunRegistry registry = mock(GunRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
         Section patternSection = mock(Section.class);
@@ -196,7 +195,7 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmWithRecoilProducerFromConfiguration() {
-        ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
+        GunRegistry registry = mock(GunRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
         Section recoilSection = mock(Section.class);
@@ -218,7 +217,7 @@ public class FirearmFactoryTest {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("reload")).thenReturn("LEFT_CLICK");
 
-        ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
+        GunRegistry registry = mock(GunRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
@@ -247,7 +246,7 @@ public class FirearmFactoryTest {
         when(scopeSection.getString("stop-sound")).thenReturn("ENTITY_BLAZE_HURT-1-1-0");
         when(scopeSection.getString("use-sound")).thenReturn("ENTITY_BLAZE_HURT-1-1-0");
 
-        ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
+        GunRegistry registry = mock(GunRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
@@ -280,7 +279,7 @@ public class FirearmFactoryTest {
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
-        ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
+        GunRegistry registry = mock(GunRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
@@ -334,7 +333,7 @@ public class FirearmFactoryTest {
     public void createFirearmAndAssignPlayer() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        ItemRegistry<Gun, GunHolder> registry = (ItemRegistry<Gun, GunHolder>) mock(ItemRegistry.class);
+        GunRegistry registry = mock(GunRegistry.class);
         when(context.getGunRegistry()).thenReturn(registry);
 
         when(config.getGunTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");

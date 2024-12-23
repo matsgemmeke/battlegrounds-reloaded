@@ -1,11 +1,19 @@
-package nl.matsgemmeke.battlegrounds.game.component;
+package nl.matsgemmeke.battlegrounds.game.component.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface DamageProcessor {
+
+    /**
+     * Adds a {@link DamageCheck} to the DamageProcessor.
+     *
+     * @param damageCheck the damage check
+     */
+    void addDamageCheck(@NotNull DamageCheck damageCheck);
 
     /**
      * Determines whether damage is allowed between entities from different {@link GameContext} instances. This method
