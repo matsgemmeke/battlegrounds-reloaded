@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
@@ -14,7 +15,7 @@ import nl.matsgemmeke.battlegrounds.game.component.item.DefaultGunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
-import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.training.component.damage.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
 import org.bukkit.entity.Player;
@@ -64,10 +65,6 @@ public class DefaultTrainingModeContext implements GameContext {
     @NotNull
     public DamageProcessor getDamageProcessor() {
         return damageProcessor;
-    }
-
-    public void setDamageProcessor(@NotNull DamageProcessor damageProcessor) {
-        this.damageProcessor = damageProcessor;
     }
 
     @NotNull

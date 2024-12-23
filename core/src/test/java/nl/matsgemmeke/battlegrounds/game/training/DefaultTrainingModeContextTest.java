@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
@@ -16,6 +17,7 @@ import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
 import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
+import nl.matsgemmeke.battlegrounds.game.training.component.damage.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -30,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings("unchecked")
 public class DefaultTrainingModeContextTest {
 
     private InternalsProvider internals;
@@ -70,6 +71,14 @@ public class DefaultTrainingModeContextTest {
     }
 
     @Test
+    public void getDamageProcessorReturnsExistingInstanceOfTrainingModeDamageProcessor() {
+        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        DamageProcessor damageProcessor = context.getDamageProcessor();
+
+        assertInstanceOf(TrainingModeDamageProcessor.class, damageProcessor);
+    }
+
+    @Test
     public void getDeploymentObjectRegistryReturnsNewInstanceOfTheDefaultImplementation() {
         DeploymentObjectStorage deploymentObjectStorage = new DeploymentObjectStorage();
         when(trainingMode.getDeploymentObjectStorage()).thenReturn(deploymentObjectStorage);
@@ -93,7 +102,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void getGunInfoProviderReturnsNewInstanceOfTheDefaultImplementation() {
-        ItemStorage<Gun, GunHolder> gunStorage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
+        ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
         when(trainingMode.getGunStorage()).thenReturn(gunStorage);
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
@@ -104,7 +113,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfItemRegistryForGunItems() {
-        ItemStorage<Gun, GunHolder> gunStorage = (ItemStorage<Gun, GunHolder>) mock(ItemStorage.class);
+        ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
         when(trainingMode.getGunStorage()).thenReturn(gunStorage);
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
@@ -115,7 +124,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfEntityRegisterForPlayerEntities() {
-        EntityStorage<GamePlayer> playerStorage = (EntityStorage<GamePlayer>) mock(EntityStorage.class);
+        EntityStorage<GamePlayer> playerStorage = new EntityStorage<>();
         when(trainingMode.getPlayerStorage()).thenReturn(playerStorage);
 
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
