@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -383,9 +382,6 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
-        DeploymentObjectRegistry deploymentObjectRegistry = mock(DeploymentObjectRegistry.class);
-        when(context.getDeploymentObjectRegistry()).thenReturn(deploymentObjectRegistry);
-
         Damageable itemMeta = mock(Damageable.class);
         ItemEffect effect = mock(ItemEffect.class);
         ItemEffectActivation activation = mock(ItemEffectActivation.class);
@@ -423,9 +419,6 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("item.throw-item.material")).thenReturn("SHEARS");
-
-        DeploymentObjectRegistry deploymentObjectRegistry = mock(DeploymentObjectRegistry.class);
-        when(context.getDeploymentObjectRegistry()).thenReturn(deploymentObjectRegistry);
 
         ItemEffect effect = mock(ItemEffect.class);
         ItemEffectActivation activation = mock(ItemEffectActivation.class);

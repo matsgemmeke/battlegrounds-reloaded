@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
@@ -27,8 +26,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     private AudioEmitter audioEmitter;
     private boolean performing;
     @NotNull
-    private DeploymentObjectRegistry deploymentObjectRegistry;
-    @NotNull
     private Equipment equipment;
     @NotNull
     private TaskRunner taskRunner;
@@ -37,13 +34,11 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
     public ThrowFunction(
             @NotNull AudioEmitter audioEmitter,
-            @NotNull DeploymentObjectRegistry deploymentObjectRegistry,
             @NotNull TaskRunner taskRunner,
             @NotNull Equipment equipment,
             @NotNull ThrowProperties properties
     ) {
         this.audioEmitter = audioEmitter;
-        this.deploymentObjectRegistry = deploymentObjectRegistry;
         this.taskRunner = taskRunner;
         this.equipment = equipment;
         this.properties = properties;
@@ -98,14 +93,13 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         DroppedItem droppedItem = new DroppedItem(itemEntity);
         droppedItem.setHealth(properties.health());
 
-        deploymentObjectRegistry.registerDeploymentObject(droppedItem);
-
         ProjectileProperties projectileProperties = equipment.getProjectileProperties();
 
         if (projectileProperties != null) {
             projectileProperties.getEffects().forEach(effect -> effect.onLaunch(droppedItem));
         }
 
+        equipment.addDeploymentObject(droppedItem);
         effectActivation.prime(holder, droppedItem);
         return true;
     }

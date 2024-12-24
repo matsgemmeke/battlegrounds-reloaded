@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
@@ -34,7 +33,6 @@ public class ThrowFunctionTest {
     private static final long DELAY_AFTER_THROW = 1L;
 
     private AudioEmitter audioEmitter;
-    private DeploymentObjectRegistry deploymentObjectRegistry;
     private Equipment equipment;
     private TaskRunner taskRunner;
     private ThrowProperties properties;
@@ -42,7 +40,6 @@ public class ThrowFunctionTest {
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        deploymentObjectRegistry = mock(DeploymentObjectRegistry.class);
         equipment = mock(Equipment.class);
         taskRunner = mock(TaskRunner.class);
         properties = new ThrowProperties(THROW_SOUNDS, HEALTH, VELOCITY, DELAY_AFTER_THROW);
@@ -50,7 +47,7 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldNotBePerformingIfNoThrowsWereExecuted() {
-        ThrowFunction function = new ThrowFunction(audioEmitter, deploymentObjectRegistry, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -77,7 +74,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(throwingDirection);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(audioEmitter, deploymentObjectRegistry, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
@@ -91,7 +88,7 @@ public class ThrowFunctionTest {
 
         when(equipment.getEffectActivation()).thenReturn(null);
 
-        ThrowFunction function = new ThrowFunction(audioEmitter, deploymentObjectRegistry, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
 
         assertThrows(ItemFunctionException.class, () -> function.perform(holder));
     }
@@ -104,7 +101,7 @@ public class ThrowFunctionTest {
         when(equipment.getEffectActivation()).thenReturn(effectActivation);
         when(equipment.getThrowItemTemplate()).thenReturn(null);
 
-        ThrowFunction function = new ThrowFunction(audioEmitter, deploymentObjectRegistry, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
 
         assertThrows(ItemFunctionException.class, () -> function.perform(holder));
     }
@@ -141,7 +138,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(audioEmitter, deploymentObjectRegistry, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
         boolean performed = function.perform(holder);
 
         ArgumentCaptor<DroppedItem> droppedItemCaptor = ArgumentCaptor.forClass(DroppedItem.class);
@@ -153,7 +150,7 @@ public class ThrowFunctionTest {
         assertEquals(HEALTH, droppedItem.getHealth());
         assertEquals(location, droppedItem.getLocation());
 
-        verify(deploymentObjectRegistry).registerDeploymentObject(droppedItem);
+        verify(equipment).addDeploymentObject(droppedItem);
         verify(projectileEffect).onLaunch(droppedItem);
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(DELAY_AFTER_THROW));
         verify(world).dropItem(location, itemStack);

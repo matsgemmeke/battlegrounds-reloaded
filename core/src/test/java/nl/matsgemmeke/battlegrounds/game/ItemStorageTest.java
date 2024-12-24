@@ -15,6 +15,23 @@ import static org.mockito.Mockito.when;
 public class ItemStorageTest {
 
     @Test
+    public void getAllItemsReturnsListContainingAllEntriesFromAssignedAndUnassignedList() {
+        Gun assignedGun = mock(Gun.class);
+        Gun unassignedGun = mock(Gun.class);
+        GunHolder holder = mock(GunHolder.class);
+
+        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
+        storage.addUnassignedItem(unassignedGun);
+        storage.addAssignedItem(assignedGun, holder);
+
+        List<Gun> guns = storage.getAllItems();
+
+        assertEquals(2, guns.size());
+        assertEquals(assignedGun, guns.get(0));
+        assertEquals(unassignedGun, guns.get(1));
+    }
+
+    @Test
     public void shouldFindItemByItsCorrespondingItemStack() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 

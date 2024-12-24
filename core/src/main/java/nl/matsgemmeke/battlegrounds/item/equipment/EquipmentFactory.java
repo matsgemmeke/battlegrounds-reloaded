@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
@@ -295,10 +294,8 @@ public class EquipmentFactory implements WeaponFactory {
             double velocity = section.getDouble("throwing.velocity");
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");
 
-            DeploymentObjectRegistry deploymentObjectRegistry = context.getDeploymentObjectRegistry();
             ThrowProperties properties = new ThrowProperties(throwSounds, health, velocity, delayAfterThrow);
-
-            ThrowFunction throwFunction = new ThrowFunction(audioEmitter, deploymentObjectRegistry, taskRunner, equipment, properties);
+            ThrowFunction throwFunction = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
 
             equipment.getControls().addControl(throwAction, throwFunction);
         }

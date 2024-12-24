@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
@@ -11,7 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DefaultEquipment extends BaseWeapon implements Equipment {
@@ -28,11 +31,14 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private ItemTemplate itemTemplate;
     @Nullable
     private ItemTemplate throwItemTemplate;
+    @NotNull
+    private List<DeploymentObject> deploymentObjects;
     @Nullable
     private ProjectileProperties projectileProperties;
 
     public DefaultEquipment() {
         this.controls = new ItemControls<>();
+        this.deploymentObjects = new ArrayList<>();
     }
 
     @Nullable
@@ -47,6 +53,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     public ItemControls<EquipmentHolder> getControls() {
         return controls;
+    }
+
+    @NotNull
+    public List<DeploymentObject> getDeploymentObjects() {
+        return deploymentObjects;
     }
 
     @NotNull
@@ -92,6 +103,14 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void setThrowItemTemplate(@Nullable ItemTemplate throwItemTemplate) {
         this.throwItemTemplate = throwItemTemplate;
+    }
+
+    public void addDeploymentObject(@NotNull DeploymentObject deploymentObject) {
+        deploymentObjects.add(deploymentObject);
+    }
+
+    public void removeDeploymentObject(@NotNull DeploymentObject deploymentObject) {
+        deploymentObjects.remove(deploymentObject);
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {

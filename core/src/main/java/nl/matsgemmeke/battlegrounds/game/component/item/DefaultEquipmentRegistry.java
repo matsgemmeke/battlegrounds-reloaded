@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class DefaultEquipmentRegistry implements EquipmentRegistry {
 
     @NotNull
@@ -12,6 +14,11 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
 
     public DefaultEquipmentRegistry(@NotNull ItemStorage<Equipment, EquipmentHolder> equipmentStorage) {
         this.equipmentStorage = equipmentStorage;
+    }
+
+    @NotNull
+    public List<Equipment> findAll() {
+        return equipmentStorage.getAllItems();
     }
 
     public void registerItem(@NotNull Equipment equipment) {

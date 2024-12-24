@@ -3,16 +3,38 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultEquipmentTest {
+
+    @Test
+    public void addDeploymentObjectAddsDeploymentObjectToList() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.addDeploymentObject(deploymentObject);
+
+        assertEquals(1, equipment.getDeploymentObjects().size());
+        assertEquals(deploymentObject, equipment.getDeploymentObjects().get(0));
+    }
+
+    @Test
+    public void removeDeploymentObjectRemovesDeploymentObjectFromList() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.addDeploymentObject(deploymentObject);
+        equipment.removeDeploymentObject(deploymentObject);
+
+        assertTrue(equipment.getDeploymentObjects().isEmpty());
+    }
 
     @Test
     public void matchesWithItemStackIfItemTemplateIsNotNullAndMatchesWithItsTemplate() {
