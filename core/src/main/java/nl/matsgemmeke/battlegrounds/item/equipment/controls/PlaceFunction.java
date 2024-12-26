@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -84,13 +85,21 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
         this.placeBlock(adjacentBlock, targetBlockFace);
 
+        PlacedBlock placedBlock = new PlacedBlock(adjacentBlock, properties.material());
+        DeploymentProperties deploymentProperties = equipment.getDeploymentProperties();
+
+        if (deploymentProperties != null) {
+            placedBlock.setHealth(deploymentProperties.getHealth());
+        }
+
         audioEmitter.playSounds(properties.placeSounds(), adjacentBlock.getLocation());
 
         performing = true;
 
         taskRunner.runTaskLater(() -> performing = false, properties.delayAfterPlacement());
 
-        effectActivation.prime(holder, new PlacedBlock(adjacentBlock, properties.material()));
+        equipment.onDeployDeploymentObject(placedBlock);
+        effectActivation.prime(holder, placedBlock);
         return true;
     }
 

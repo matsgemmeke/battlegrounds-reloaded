@@ -42,14 +42,16 @@ public class PlacedBlockTest {
     }
 
     @Test
-    public void shouldReturnSameLocationAsBlockWhereObjectIsPlacedOn() {
+    public void getLocationReturnsCenterLocationOfBlock() {
         Location location = new Location(null, 1, 1, 1);
         when(block.getLocation()).thenReturn(location);
 
         PlacedBlock placedBlock = new PlacedBlock(block, material);
-        Location objectLocation = placedBlock.getLocation();
+        Location blockLocation = placedBlock.getLocation();
 
-        assertEquals(location, objectLocation);
+        assertEquals(1.5, blockLocation.getX());
+        assertEquals(1.5, blockLocation.getY());
+        assertEquals(1.5, blockLocation.getZ());
     }
 
     @Test
@@ -69,6 +71,40 @@ public class PlacedBlockTest {
         boolean deployed = placedBlock.isDeployed();
 
         assertTrue(deployed);
+    }
+
+    @Test
+    public void damageLowersHealthIfDamageAmountIsLowerThanHealth() {
+        double health = 30.0;
+        double damageAmount = 20.0;
+
+        PlacedBlock placedBlock = new PlacedBlock(block, material);
+        placedBlock.setHealth(health);
+
+        double newHealth = placedBlock.damage(damageAmount);
+
+        assertEquals(10.0, newHealth, 0.0);
+    }
+
+    @Test
+    public void damageSetsHealthToZeroIfDamageAmountIsGreaterThanHealth() {
+        double health = 20.0;
+        double damageAmount = 30.0;
+
+        PlacedBlock placedBlock = new PlacedBlock(block, material);
+        placedBlock.setHealth(health);
+
+        double newHealth = placedBlock.damage(damageAmount);
+
+        assertEquals(0.0, newHealth, 0.0);
+    }
+
+    @Test
+    public void destroyRemovesBlock() {
+        PlacedBlock placedBlock = new PlacedBlock(block, material);
+        placedBlock.destroy();
+
+        verify(block).setType(Material.AIR);
     }
 
     @Test

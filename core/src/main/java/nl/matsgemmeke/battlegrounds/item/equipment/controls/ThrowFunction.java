@@ -92,7 +92,6 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         taskRunner.runTaskLater(() -> performing = false, properties.delayAfterThrow());
 
         DroppedItem droppedItem = new DroppedItem(itemEntity);
-
         DeploymentProperties deploymentProperties = equipment.getDeploymentProperties();
         ProjectileProperties projectileProperties = equipment.getProjectileProperties();
 

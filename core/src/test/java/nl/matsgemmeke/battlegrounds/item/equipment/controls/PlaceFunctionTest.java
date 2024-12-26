@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -227,6 +228,8 @@ public class PlaceFunctionTest {
 
     @Test
     public void shouldPlaceBlockAgainstWallWhenPerforming() {
+        double health = 50.0;
+
         BlockFace targetBlockFace = BlockFace.NORTH;
         BlockState adjacentBlockState = mock(BlockState.class);
         Directional directional = mock(Directional.class);
@@ -245,6 +248,11 @@ public class PlaceFunctionTest {
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         when(equipment.getEffectActivation()).thenReturn(effectActivation);
 
+        DeploymentProperties deploymentProperties = new DeploymentProperties();
+        deploymentProperties.setHealth(health);
+
+        when(equipment.getDeploymentProperties()).thenReturn(deploymentProperties);
+
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
@@ -253,11 +261,14 @@ public class PlaceFunctionTest {
 
         assertTrue(performed);
 
-        ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
-        verify(effectActivation).prime(eq(holder), captor.capture());
+        ArgumentCaptor<PlacedBlock> placedBlockCaptor = ArgumentCaptor.forClass(PlacedBlock.class);
+        verify(effectActivation).prime(eq(holder), placedBlockCaptor.capture());
 
-        assertEquals(location, captor.getValue().getLocation());
+        PlacedBlock placedBlock = placedBlockCaptor.getValue();
+        assertEquals(health, placedBlock.getHealth());
+        assertEquals(location, placedBlock.getLocation());
 
+        verify(equipment).onDeployDeploymentObject(placedBlock);
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(adjacentBlockState).setBlockData(directional);
         verify(audioEmitter).playSounds(any(), eq(location));

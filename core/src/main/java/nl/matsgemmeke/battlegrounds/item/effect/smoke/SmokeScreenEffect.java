@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -53,13 +54,21 @@ public class SmokeScreenEffect implements ItemEffect {
         currentLocation = context.getSource().getLocation();
         currentRadius = properties.radiusStartingSize();
 
+        EffectSource source = context.getSource();
+
         task = taskRunner.runTaskTimer(() -> {
-            if (++currentDuration >= properties.duration()) {
-                context.getSource().remove();
+            if (!source.exists()) {
                 task.cancel();
                 return;
             }
-            this.createSmokeEffect(context.getSource().getLocation(), context.getSource().getWorld());
+
+            if (++currentDuration >= properties.duration()) {
+                source.remove();
+                task.cancel();
+                return;
+            }
+
+            this.createSmokeEffect(source.getLocation(), source.getWorld());
         }, RUNNABLE_DELAY, properties.growthPeriod());
     }
 
