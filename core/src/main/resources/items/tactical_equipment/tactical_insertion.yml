@@ -2,6 +2,10 @@ id: TACTICAL_INSERTION
 name: Tactical Insertion
 controls:
   throw: LEFT_CLICK
+deploy:
+  activated-on-destroy: false
+  damage:
+    health: 50.0
 description: Marks a location as your next spawn point.
 effect:
   activation:

@@ -2,6 +2,10 @@ id: MOLOTOV_COCKTAIL
 name: Molotov Cocktail
 controls:
   throw: LEFT_CLICK
+deploy:
+  activated-on-destroy: true
+  damage:
+    health: 10.0
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
 effect:
   activation:
