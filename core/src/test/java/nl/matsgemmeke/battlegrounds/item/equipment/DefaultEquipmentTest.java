@@ -4,7 +4,9 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
@@ -83,6 +85,94 @@ public class DefaultEquipmentTest {
         equipment.onDestroyDeploymentObject(deploymentObject);
 
         assertTrue(equipment.getDeploymentObjects().isEmpty());
+    }
+
+    @Test
+    public void onDestroyDeploymentObjectDoesNotActivateDeploymentIfEffectActivationIsNull() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setEffectActivation(null);
+        equipment.onDeployDeploymentObject(deploymentObject);
+        equipment.onDestroyDeploymentObject(deploymentObject);
+
+        assertTrue(equipment.getDeploymentObjects().isEmpty());
+    }
+
+    @Test
+    public void onDestroyDeploymentObjectDoesNotActivateDeploymentIfHolderIsNull() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setEffectActivation(effectActivation);
+        equipment.setHolder(null);
+        equipment.onDeployDeploymentObject(deploymentObject);
+        equipment.onDestroyDeploymentObject(deploymentObject);
+
+        assertTrue(equipment.getDeploymentObjects().isEmpty());
+
+        verify(effectActivation, never()).activateInstantly(any(EquipmentHolder.class));
+    }
+
+    @Test
+    public void onDestroyDeploymentObjectDoesNotActivateDeploymentIfDeploymentPropertiesIsNull() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentProperties(null);
+        equipment.setEffectActivation(effectActivation);
+        equipment.setHolder(holder);
+        equipment.onDeployDeploymentObject(deploymentObject);
+        equipment.onDestroyDeploymentObject(deploymentObject);
+
+        assertTrue(equipment.getDeploymentObjects().isEmpty());
+
+        verify(effectActivation, never()).activateInstantly(any(EquipmentHolder.class));
+    }
+
+    @Test
+    public void onDestroyDeploymentObjectDoesNotActivateDeploymentIfActivatedOnDestroyIsFalse() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+
+        DeploymentProperties deploymentProperties = new DeploymentProperties();
+        deploymentProperties.setActivatedOnDestroy(false);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentProperties(deploymentProperties);
+        equipment.setEffectActivation(effectActivation);
+        equipment.setHolder(holder);
+        equipment.onDeployDeploymentObject(deploymentObject);
+        equipment.onDestroyDeploymentObject(deploymentObject);
+
+        assertTrue(equipment.getDeploymentObjects().isEmpty());
+
+        verify(effectActivation, never()).activateInstantly(any(EquipmentHolder.class));
+    }
+
+    @Test
+    public void onDestroyDeploymentObjectActivatesDeploymentIfActivatedOnDestroyIsTrue() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+
+        DeploymentProperties deploymentProperties = new DeploymentProperties();
+        deploymentProperties.setActivatedOnDestroy(true);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentProperties(deploymentProperties);
+        equipment.setEffectActivation(effectActivation);
+        equipment.setHolder(holder);
+        equipment.onDeployDeploymentObject(deploymentObject);
+        equipment.onDestroyDeploymentObject(deploymentObject);
+
+        assertTrue(equipment.getDeploymentObjects().isEmpty());
+
+        verify(effectActivation).activateInstantly(holder);
     }
 
     @Test

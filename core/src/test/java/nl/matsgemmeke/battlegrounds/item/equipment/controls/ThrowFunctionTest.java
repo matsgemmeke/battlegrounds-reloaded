@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -27,7 +28,6 @@ import static org.mockito.Mockito.*;
 
 public class ThrowFunctionTest {
 
-    private static final double HEALTH = 50.0;
     private static final double VELOCITY = 2.0;
     private static final Iterable<GameSound> THROW_SOUNDS = Collections.emptySet();
     private static final long DELAY_AFTER_THROW = 1L;
@@ -42,7 +42,7 @@ public class ThrowFunctionTest {
         audioEmitter = mock(AudioEmitter.class);
         equipment = mock(Equipment.class);
         taskRunner = mock(TaskRunner.class);
-        properties = new ThrowProperties(THROW_SOUNDS, HEALTH, VELOCITY, DELAY_AFTER_THROW);
+        properties = new ThrowProperties(THROW_SOUNDS, VELOCITY, DELAY_AFTER_THROW);
     }
 
     @Test
@@ -108,6 +108,7 @@ public class ThrowFunctionTest {
 
     @Test
     public void performReturnsTrueAndPrimesDroppedItem() {
+        double droppedItemHealth = 10.0;
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Item itemEntity = mock(Item.class);
@@ -125,6 +126,11 @@ public class ThrowFunctionTest {
 
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         when(equipment.getEffectActivation()).thenReturn(effectActivation);
+
+        DeploymentProperties deploymentProperties = new DeploymentProperties();
+        deploymentProperties.setHealth(droppedItemHealth);
+
+        when(equipment.getDeploymentProperties()).thenReturn(deploymentProperties);
 
         ProjectileEffect projectileEffect = mock(ProjectileEffect.class);
 
@@ -147,7 +153,6 @@ public class ThrowFunctionTest {
         DroppedItem droppedItem = droppedItemCaptor.getValue();
 
         assertTrue(performed);
-        assertEquals(HEALTH, droppedItem.getHealth());
         assertEquals(location, droppedItem.getLocation());
 
         verify(equipment).onDeployDeploymentObject(droppedItem);

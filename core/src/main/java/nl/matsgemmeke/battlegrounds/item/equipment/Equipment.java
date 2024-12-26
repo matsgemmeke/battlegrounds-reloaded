@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
@@ -26,6 +27,21 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
      * @param activator the equipment's activator item
      */
     void setActivator(@Nullable Activator activator);
+
+    /**
+     * Gets the deployment properties associated with this equipment item. Returns null if no properties are set.
+     *
+     * @return the deployment properties of the equipment item or null if not set
+     */
+    @Nullable
+    DeploymentProperties getDeploymentProperties();
+
+    /**
+     * Sets the deployment properties associated with this equipment item.
+     *
+     * @param deploymentProperties the deployment properties of the equipment item
+     */
+    void setDeploymentProperties(@Nullable DeploymentProperties deploymentProperties);
 
     /**
      * Gets the effect activation system associated with the equipment.

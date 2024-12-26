@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
@@ -159,6 +160,20 @@ public class EquipmentFactory implements WeaponFactory {
             equipment.setEffectActivation(activation);
         }
 
+        // Setting the deployment properties
+        Section deploySection = section.getSection("deploy");
+
+        if (deploySection != null) {
+            boolean activatedOnDestroy = deploySection.getBoolean("activated-on-destroy");
+            double health = deploySection.getDouble("damage.health");
+
+            DeploymentProperties deploymentProperties = new DeploymentProperties();
+            deploymentProperties.setActivatedOnDestroy(activatedOnDestroy);
+            deploymentProperties.setHealth(health);
+
+            equipment.setDeploymentProperties(deploymentProperties);
+        }
+
         // Setting the projectile properties
         Section projectileSection = section.getSection("projectile");
 
@@ -290,11 +305,10 @@ public class EquipmentFactory implements WeaponFactory {
             }
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
-            double health = section.getDouble("throwing.damage.health");
             double velocity = section.getDouble("throwing.velocity");
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");
 
-            ThrowProperties properties = new ThrowProperties(throwSounds, health, velocity, delayAfterThrow);
+            ThrowProperties properties = new ThrowProperties(throwSounds, velocity, delayAfterThrow);
             ThrowFunction throwFunction = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
 
             equipment.getControls().addControl(throwAction, throwFunction);

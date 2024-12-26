@@ -182,6 +182,26 @@ public class EquipmentFactoryTest {
     }
 
     @Test
+    public void makeEquipmentItemWithDeploymentProperties() {
+        boolean activatedOnDestroy = true;
+        double health = 10.0;
+
+        Section deploySection = mock(Section.class);
+        when(deploySection.getBoolean("activated-on-destroy")).thenReturn(activatedOnDestroy);
+        when(deploySection.getDouble("damage.health")).thenReturn(health);
+
+        when(rootSection.getSection("deploy")).thenReturn(deploySection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertNotNull(equipment.getDeploymentProperties());
+        assertEquals(activatedOnDestroy, equipment.getDeploymentProperties().isActivatedOnDestroy());
+        assertEquals(health, equipment.getDeploymentProperties().getHealth());
+    }
+
+    @Test
     public void makeEquipmentItemWithBounceEffect() {
         int amountOfBounces = 1;
         double horizontalFriction = 2.0;

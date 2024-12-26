@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public record ThrowProperties(
         @NotNull Iterable<GameSound> throwSounds,
-        double health,
         double velocity,
         long delayAfterThrow
 ) { }

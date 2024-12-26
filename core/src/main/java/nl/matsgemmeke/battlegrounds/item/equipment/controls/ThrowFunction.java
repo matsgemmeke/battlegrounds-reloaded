@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -91,9 +92,13 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         taskRunner.runTaskLater(() -> performing = false, properties.delayAfterThrow());
 
         DroppedItem droppedItem = new DroppedItem(itemEntity);
-        droppedItem.setHealth(properties.health());
 
+        DeploymentProperties deploymentProperties = equipment.getDeploymentProperties();
         ProjectileProperties projectileProperties = equipment.getProjectileProperties();
+
+        if (deploymentProperties != null) {
+            droppedItem.setHealth(deploymentProperties.getHealth());
+        }
 
         if (projectileProperties != null) {
             projectileProperties.getEffects().forEach(effect -> effect.onLaunch(droppedItem));

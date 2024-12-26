@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
@@ -21,6 +22,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @Nullable
     private Activator activator;
+    @Nullable
+    private DeploymentProperties deploymentProperties;
     @Nullable
     private EquipmentHolder holder;
     @NotNull
@@ -60,12 +63,21 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         return deploymentObjects;
     }
 
-    @NotNull
+    @Nullable
+    public DeploymentProperties getDeploymentProperties() {
+        return deploymentProperties;
+    }
+
+    public void setDeploymentProperties(@Nullable DeploymentProperties deploymentProperties) {
+        this.deploymentProperties = deploymentProperties;
+    }
+
+    @Nullable
     public ItemEffectActivation getEffectActivation() {
         return effectActivation;
     }
 
-    public void setEffectActivation(@NotNull ItemEffectActivation effectActivation) {
+    public void setEffectActivation(@Nullable ItemEffectActivation effectActivation) {
         this.effectActivation = effectActivation;
     }
 
@@ -121,6 +133,14 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onDestroyDeploymentObject(@NotNull DeploymentObject deploymentObject) {
+        // Activate the effect if it's configured to do so and the item has a holder for the activation
+        if (effectActivation != null
+                && holder != null
+                && deploymentProperties != null
+                && deploymentProperties.isActivatedOnDestroy()) {
+            effectActivation.activateInstantly(holder);
+        }
+
         deploymentObjects.remove(deploymentObject);
     }
 
