@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.info.deploy;
 
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,5 +37,35 @@ public class DefaultDeploymentInfoProviderTest {
 
         assertEquals(1, deploymentObjects.size());
         assertEquals(deploymentObject, deploymentObjects.get(0));
+    }
+
+    @Test
+    public void getDeployableItemReturnsEquipmentItemIfFoundInstanceContainsGivenDeploymentObject() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getDeploymentObjects()).thenReturn(List.of(deploymentObject));
+
+        when(equipmentRegistry.findAll()).thenReturn(List.of(equipment));
+
+        DefaultDeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
+        DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(deploymentObject);
+
+        assertEquals(deployableItem, equipment);
+    }
+
+    @Test
+    public void getDeployableItemReturnsNullIfNoneOfTheDeployableItemContainsTheGivenDeploymentObject() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getDeploymentObjects()).thenReturn(List.of());
+
+        when(equipmentRegistry.findAll()).thenReturn(List.of(equipment));
+
+        DefaultDeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
+        DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(deploymentObject);
+
+        assertNull(deployableItem);
     }
 }

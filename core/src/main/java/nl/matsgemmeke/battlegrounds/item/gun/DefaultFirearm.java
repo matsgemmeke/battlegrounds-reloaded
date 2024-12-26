@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
@@ -31,6 +32,8 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     private AudioEmitter audioEmitter;
     @NotNull
     private CollisionDetector collisionDetector;
+    @NotNull
+    private DamageProcessor damageProcessor;
     private double headshotDamageMultiplier;
     private int magazineAmmo;
     private int magazineSize;
@@ -43,9 +46,10 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @NotNull
     private TargetFinder targetFinder;
 
-    public DefaultFirearm(@NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector, @NotNull TargetFinder targetFinder) {
+    public DefaultFirearm(@NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector, @NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder) {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
+        this.damageProcessor = damageProcessor;
         this.targetFinder = targetFinder;
     }
 
@@ -162,11 +166,9 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
         for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(holder, projectileLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {
             Location objectLocation = deploymentObject.getLocation();
-
             double damageAmount = this.getDamage(startingLocation, objectLocation, projectileLocation);
-            deploymentObject.damage(damageAmount);
-            System.out.println("damaging " + deploymentObject + " by " + damageAmount);
 
+            damageProcessor.processDeploymentObjectDamage(deploymentObject, damageAmount);
             return true;
         }
 

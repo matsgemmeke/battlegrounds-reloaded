@@ -36,13 +36,19 @@ public class DefaultTrainingModeContext implements GameContext {
         this.trainingMode = trainingMode;
         this.internals = internals;
         this.actionHandler = this.setUpActionHandlerInstance();
-        this.damageProcessor = new TrainingModeDamageProcessor(this);
+        this.damageProcessor = this.setUpDamageProcessorInstance();
     }
 
     private ActionHandler setUpActionHandlerInstance() {
         EntityRegistry<GamePlayer, Player> playerRegistry = new DefaultPlayerRegistry(trainingMode.getPlayerStorage(), internals);
 
         return new DefaultActionHandler(trainingMode, playerRegistry);
+    }
+
+    private DamageProcessor setUpDamageProcessorInstance() {
+        DeploymentInfoProvider deploymentInfoProvider = this.getDeploymentInfoProvider();
+
+        return new TrainingModeDamageProcessor(this, deploymentInfoProvider);
     }
 
     @NotNull

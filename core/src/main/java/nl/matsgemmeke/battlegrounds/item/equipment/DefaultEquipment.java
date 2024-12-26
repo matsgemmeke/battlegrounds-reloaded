@@ -105,14 +105,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.throwItemTemplate = throwItemTemplate;
     }
 
-    public void addDeploymentObject(@NotNull DeploymentObject deploymentObject) {
-        deploymentObjects.add(deploymentObject);
-    }
-
-    public void removeDeploymentObject(@NotNull DeploymentObject deploymentObject) {
-        deploymentObjects.remove(deploymentObject);
-    }
-
     public boolean isMatching(@NotNull ItemStack itemStack) {
         return itemTemplate != null && itemTemplate.matchesTemplate(itemStack)
                 || activator != null && activator.isMatching(itemStack);
@@ -122,6 +114,14 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onChangeTo() {
+    }
+
+    public void onDeployDeploymentObject(@NotNull DeploymentObject deploymentObject) {
+        deploymentObjects.add(deploymentObject);
+    }
+
+    public void onDestroyDeploymentObject(@NotNull DeploymentObject deploymentObject) {
+        deploymentObjects.remove(deploymentObject);
     }
 
     public void onDrop() {

@@ -99,7 +99,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
             projectileProperties.getEffects().forEach(effect -> effect.onLaunch(droppedItem));
         }
 
-        equipment.addDeploymentObject(droppedItem);
+        equipment.onDeployDeploymentObject(droppedItem);
         effectActivation.prime(holder, droppedItem);
         return true;
     }

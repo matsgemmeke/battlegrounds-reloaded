@@ -68,6 +68,10 @@ public class DroppedItem implements DeploymentObject, EffectSource, Projectile {
         return health;
     }
 
+    public void destroy() {
+        this.remove();
+    }
+
     public boolean isDeployed() {
         return true;
     }

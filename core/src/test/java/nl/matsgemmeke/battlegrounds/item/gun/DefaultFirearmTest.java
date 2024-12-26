@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
@@ -28,6 +29,7 @@ public class DefaultFirearmTest {
 
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
+    private DamageProcessor damageProcessor;
     private GunHolder holder;
     private TargetFinder targetFinder;
 
@@ -35,6 +37,7 @@ public class DefaultFirearmTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
+        damageProcessor = mock(DamageProcessor.class);
         holder = mock(GunHolder.class);
         targetFinder = mock(TargetFinder.class);
     }
@@ -46,7 +49,7 @@ public class DefaultFirearmTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.matchesTemplate(other)).thenReturn(true);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setItemTemplate(itemTemplate);
 
         boolean matches = firearm.isMatching(other);
@@ -58,7 +61,7 @@ public class DefaultFirearmTest {
     public void doesNotMatchIfItemTemplateIsNull() {
         ItemStack other = new ItemStack(Material.IRON_HOE);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setItemTemplate(null);
 
         boolean matches = firearm.isMatching(other);
@@ -73,7 +76,7 @@ public class DefaultFirearmTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.matchesTemplate(other)).thenReturn(false);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setItemTemplate(itemTemplate);
 
         boolean matches = firearm.isMatching(other);
@@ -89,7 +92,7 @@ public class DefaultFirearmTest {
 
         ItemFunction<GunHolder> function2 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.LEFT_CLICK, function1);
         firearm.getControls().addControl(Action.CHANGE_FROM, function2);
         firearm.onChangeFrom();
@@ -104,7 +107,7 @@ public class DefaultFirearmTest {
         ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function.isAvailable()).thenReturn(true);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.CHANGE_FROM, function);
         firearm.setHolder(holder);
         firearm.onChangeFrom();
@@ -117,7 +120,7 @@ public class DefaultFirearmTest {
     public void shouldNotInteractWithControlsWhenLeftClickedIfHolderIsNull() {
         ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.LEFT_CLICK, function);
         firearm.onLeftClick();
 
@@ -130,7 +133,7 @@ public class DefaultFirearmTest {
         ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function.isAvailable()).thenReturn(true);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.LEFT_CLICK, function);
         firearm.setHolder(holder);
         firearm.onLeftClick();
@@ -143,7 +146,7 @@ public class DefaultFirearmTest {
     public void shouldNotInteractWithControlsWhenRightClickedIfHolderIsNull() {
         ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.RIGHT_CLICK, function);
         firearm.onRightClick();
 
@@ -156,7 +159,7 @@ public class DefaultFirearmTest {
         ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function.isAvailable()).thenReturn(true);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.RIGHT_CLICK, function);
         firearm.setHolder(holder);
         firearm.onRightClick();
@@ -169,7 +172,7 @@ public class DefaultFirearmTest {
     public void shouldNotInteractWithControlsWhenSwappedFromIfHolderIsNull() {
         ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.SWAP_FROM, function);
         firearm.onSwapFrom();
 
@@ -182,7 +185,7 @@ public class DefaultFirearmTest {
         ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function.isAvailable()).thenReturn(true);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.SWAP_FROM, function);
         firearm.setHolder(holder);
         firearm.onSwapFrom();
@@ -192,7 +195,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void shouldOnlyBeAbleToShootIfMagazineHasAmmo() {
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setMagazineAmmo(1);
 
         boolean canShoot = firearm.canShoot();
@@ -211,7 +214,7 @@ public class DefaultFirearmTest {
 
         when(recoilProducer.produceRecoil(eq(holder), any(Location.class))).thenReturn(startingLocation);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setRecoilProducer(recoilProducer);
 
@@ -230,7 +233,7 @@ public class DefaultFirearmTest {
 
         when(targetFinder.findTargets(eq(holder), any(), eq(0.1))).thenReturn(List.of(holder));
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setShotSounds(Collections.emptyList());
         firearm.shoot();
@@ -259,7 +262,7 @@ public class DefaultFirearmTest {
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setShortDamage(100.0);
         firearm.setShortRange(10.0);
@@ -291,7 +294,7 @@ public class DefaultFirearmTest {
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setMediumDamage(50.0);
         firearm.setMediumRange(50.0);
@@ -323,7 +326,7 @@ public class DefaultFirearmTest {
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setLongDamage(10.0);
         firearm.setLongRange(100.0);
@@ -352,7 +355,7 @@ public class DefaultFirearmTest {
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setShortDamage(10.0);
         firearm.setShortRange(5.0);
@@ -360,7 +363,7 @@ public class DefaultFirearmTest {
         firearm.shoot();
 
         verify(audioEmitter).playSounds(shotSounds, startingLocation);
-        verify(deploymentObject).damage(10.0);
+        verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, 10.0);
     }
 
     @Test
@@ -372,7 +375,7 @@ public class DefaultFirearmTest {
         SpreadPattern pattern = mock(SpreadPattern.class);
         when(pattern.getProjectileDirections(shootingDirection)).thenReturn(List.of(shootingDirection, shootingDirection));
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setSpreadPattern(pattern);
         firearm.shoot();
@@ -401,7 +404,7 @@ public class DefaultFirearmTest {
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHeadshotDamageMultiplier(1.5);
         firearm.setHolder(holder);
         firearm.setShortDamage(100.0);
@@ -431,7 +434,7 @@ public class DefaultFirearmTest {
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
@@ -453,7 +456,7 @@ public class DefaultFirearmTest {
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
@@ -464,7 +467,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void canNotShootProjectilesWithoutHolder() {
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.shoot();
 
         verify(audioEmitter, never()).playSounds(any(), any());
@@ -476,7 +479,7 @@ public class DefaultFirearmTest {
         ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
         when(function.isPerforming()).thenReturn(true);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.LEFT_CLICK, function);
         firearm.setHolder(holder);
         firearm.onDrop();
@@ -488,7 +491,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void shouldSetHolderWhenPickedUp() {
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.onPickUp(holder);
 
         assertEquals(holder, firearm.getHolder());
@@ -496,7 +499,7 @@ public class DefaultFirearmTest {
 
     @Test
     public void doesNotUpdateIfFirearmHasNoItemStack() {
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         boolean updated = firearm.update();
 
         assertFalse(updated);
@@ -509,7 +512,7 @@ public class DefaultFirearmTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setHolder(holder);
         firearm.setItemTemplate(itemTemplate);
         firearm.setMagazineAmmo(10);

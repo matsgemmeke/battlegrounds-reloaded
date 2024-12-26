@@ -5,5 +5,7 @@ import org.bukkit.Location;
 
 public interface DeploymentObject extends Damageable {
 
+    void destroy();
+
     Location getLocation();
 }

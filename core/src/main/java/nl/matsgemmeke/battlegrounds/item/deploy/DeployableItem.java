@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface DeployableItem {
 
-    void addDeploymentObject(@NotNull DeploymentObject deploymentObject);
-
     @NotNull
     List<DeploymentObject> getDeploymentObjects();
 
-    void removeDeploymentObject(@NotNull DeploymentObject deploymentObject);
+    void onDeployDeploymentObject(@NotNull DeploymentObject deploymentObject);
+
+    void onDestroyDeploymentObject(@NotNull DeploymentObject deploymentObject);
 }

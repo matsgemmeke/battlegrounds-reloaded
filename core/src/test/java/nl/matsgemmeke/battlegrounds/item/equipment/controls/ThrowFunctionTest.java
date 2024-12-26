@@ -150,7 +150,7 @@ public class ThrowFunctionTest {
         assertEquals(HEALTH, droppedItem.getHealth());
         assertEquals(location, droppedItem.getLocation());
 
-        verify(equipment).addDeploymentObject(droppedItem);
+        verify(equipment).onDeployDeploymentObject(droppedItem);
         verify(projectileEffect).onLaunch(droppedItem);
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(DELAY_AFTER_THROW));
         verify(world).dropItem(location, itemStack);

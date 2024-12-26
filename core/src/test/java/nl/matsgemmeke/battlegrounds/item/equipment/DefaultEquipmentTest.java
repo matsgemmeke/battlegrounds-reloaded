@@ -15,28 +15,6 @@ import static org.mockito.Mockito.*;
 public class DefaultEquipmentTest {
 
     @Test
-    public void addDeploymentObjectAddsDeploymentObjectToList() {
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.addDeploymentObject(deploymentObject);
-
-        assertEquals(1, equipment.getDeploymentObjects().size());
-        assertEquals(deploymentObject, equipment.getDeploymentObjects().get(0));
-    }
-
-    @Test
-    public void removeDeploymentObjectRemovesDeploymentObjectFromList() {
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.addDeploymentObject(deploymentObject);
-        equipment.removeDeploymentObject(deploymentObject);
-
-        assertTrue(equipment.getDeploymentObjects().isEmpty());
-    }
-
-    @Test
     public void matchesWithItemStackIfItemTemplateIsNotNullAndMatchesWithItsTemplate() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
@@ -83,6 +61,28 @@ public class DefaultEquipmentTest {
         boolean matches = equipment.isMatching(itemStack);
 
         assertFalse(matches);
+    }
+
+    @Test
+    public void onDeployDeploymentObjectAddsDeploymentObjectToList() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.onDeployDeploymentObject(deploymentObject);
+
+        assertEquals(1, equipment.getDeploymentObjects().size());
+        assertEquals(deploymentObject, equipment.getDeploymentObjects().get(0));
+    }
+
+    @Test
+    public void onDestroyDeploymentObjectRemovesDeploymentObjectFromList() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.onDeployDeploymentObject(deploymentObject);
+        equipment.onDestroyDeploymentObject(deploymentObject);
+
+        assertTrue(equipment.getDeploymentObjects().isEmpty());
     }
 
     @Test

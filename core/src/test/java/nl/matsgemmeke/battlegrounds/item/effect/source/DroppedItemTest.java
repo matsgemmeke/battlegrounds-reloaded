@@ -127,6 +127,14 @@ public class DroppedItemTest {
     }
 
     @Test
+    public void destroyRemovesTheItemEntity() {
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        droppedItem.destroy();
+
+        verify(itemEntity).remove();
+    }
+
+    @Test
     public void isDeployedAlwaysReturnsTrue() {
         DroppedItem droppedItem = new DroppedItem(itemEntity);
         boolean deployed = droppedItem.isDeployed();
