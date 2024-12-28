@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -13,25 +13,22 @@ import java.util.List;
 /**
  * Activation that initiates the effect based on an external trigger.
  */
-public class TriggerActivation extends BaseItemEffectActivation {
+public class TriggerActivation implements ItemEffectActivationNew {
 
     @NotNull
     private List<Trigger> triggers;
 
-    public TriggerActivation(@NotNull ItemEffect effect) {
-        super(effect);
+    public TriggerActivation() {
         this.triggers = new ArrayList<>();
     }
 
     public void addTrigger(@NotNull Trigger trigger) {
         triggers.add(trigger);
-
-        trigger.addObserver(effect::activate);
     }
 
-    public void prime(@NotNull ItemHolder holder, @NotNull EffectSource source) {
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-        contexts.add(context);
+    public void prime(@NotNull ItemEffectContext context, @NotNull Procedure onActivate) {
+        ItemHolder holder = context.getHolder();
+        EffectSource source = context.getSource();
 
         if (source.isDeployed()) {
             holder.setHeldItem(null);

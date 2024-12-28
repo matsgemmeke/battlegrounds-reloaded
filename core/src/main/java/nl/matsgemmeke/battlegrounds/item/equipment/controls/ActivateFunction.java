@@ -4,8 +4,8 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.jetbrains.annotations.NotNull;
@@ -52,15 +52,15 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        ItemEffectActivation effectActivation = equipment.getEffectActivation();
+        ItemEffectNew effect = equipment.getEffect();
 
-        if (effectActivation == null) {
-            throw new ItemFunctionException("Cannot perform activate function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
+        if (effect == null) {
+            throw new ItemFunctionException("Cannot perform activate function for equipment item \"" + equipment.getName() + "\"; it has no effect!");
         }
 
         audioEmitter.playSounds(properties.activationSounds(), holder.getEntity().getLocation());
 
-        taskRunner.runTaskLater(() -> effectActivation.activateInstantly(holder), properties.delayUntilActivation());
+        taskRunner.runTaskLater(effect::activateInstantly, properties.delayUntilActivation());
 
         holder.setHeldItem(null);
 

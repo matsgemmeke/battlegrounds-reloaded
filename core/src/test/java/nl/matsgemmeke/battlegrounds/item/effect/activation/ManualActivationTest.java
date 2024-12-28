@@ -1,45 +1,35 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class ManualActivationTest {
 
     private Activator activator;
-    private ItemEffect effect;
+    private EffectSource source;
     private ItemHolder holder;
 
     @BeforeEach
     public void setUp() {
         activator = mock(Activator.class);
-        effect = mock(ItemEffect.class);
+        source = mock(EffectSource.class);
         holder = mock(ItemHolder.class);
     }
 
     @Test
-    public void shouldActivateEffectAtAllSourcesWhenActivating() {
-        EffectSource source1 = mock(EffectSource.class);
-        EffectSource source2 = mock(EffectSource.class);
+    public void activatePreparesActivatorAndFinishesActivationRightAway() {
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+        Procedure onActivate = mock(Procedure.class);
 
-        ManualActivation activation = new ManualActivation(effect, activator);
-        activation.prime(holder, source1);
-        activation.prime(holder, source2);
-        activation.activateInstantly(holder);
+        ManualActivation activation = new ManualActivation(activator);
+        activation.prime(context, onActivate);
 
-        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
-        verify(effect, times(2)).activate(contextCaptor.capture());
-
-        assertEquals(source1, contextCaptor.getAllValues().get(0).getSource());
-        assertEquals(source2, contextCaptor.getAllValues().get(1).getSource());
-
-        verify(activator, times(2)).prepare(holder);
+        verify(activator).prepare(holder);
     }
 }

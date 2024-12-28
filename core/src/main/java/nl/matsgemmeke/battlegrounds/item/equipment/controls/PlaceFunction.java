@@ -5,7 +5,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.source.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -63,10 +64,10 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        ItemEffectActivation effectActivation = equipment.getEffectActivation();
+        ItemEffectNew effect = equipment.getEffect();
 
-        if (effectActivation == null) {
-            throw new ItemFunctionException("Cannot perform place function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
+        if (effect == null) {
+            throw new ItemFunctionException("Cannot perform place function for equipment item \"" + equipment.getName() + "\"; it has no effect!");
         }
 
         List<Block> targetBlocks = holder.getLastTwoTargetBlocks(TARGET_BLOCK_SCAN_DISTANCE);
@@ -98,8 +99,15 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
         taskRunner.runTaskLater(() -> performing = false, properties.delayAfterPlacement());
 
+        holder.setHeldItem(null);
+
+        if (!effect.isPrimed()) {
+            effect.prime(new ItemEffectContext(holder, placedBlock));
+        } else {
+            effect.deploy(placedBlock);
+        }
+
         equipment.onDeployDeploymentObject(placedBlock);
-        effectActivation.prime(holder, placedBlock);
         return true;
     }
 

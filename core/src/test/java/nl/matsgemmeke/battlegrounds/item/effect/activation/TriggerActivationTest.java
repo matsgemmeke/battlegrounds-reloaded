@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -23,9 +24,12 @@ public class TriggerActivationTest {
     }
 
     @Test
-    public void startTriggerChecksAndActivateWhenReceivingResponse() {
+    public void activateRemovesHolderItemIfSourceIsDeployedAndInitiatesTrigger() {
         EffectSource source = mock(EffectSource.class);
         when(source.isDeployed()).thenReturn(true);
+
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+        Procedure onActivate = mock(Procedure.class);
 
         Trigger trigger = mock(Trigger.class);
         doAnswer(answer -> {
@@ -33,14 +37,12 @@ public class TriggerActivationTest {
             return answer;
         }).when(trigger).checkTriggerActivation(any(ItemEffectContext.class));
 
-        TriggerActivation activation = new TriggerActivation(effect);
+        TriggerActivation activation = new TriggerActivation();
         activation.addTrigger(trigger);
-        activation.prime(holder, source);
+        activation.prime(context, onActivate);
 
-        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
-        verify(trigger).checkTriggerActivation(contextCaptor.capture());
-
-        verify(effect).activate(contextCaptor.getValue());
+        verify(effect).activate(context);
         verify(holder).setHeldItem(null);
+        verify(trigger).checkTriggerActivation(context);
     }
 }

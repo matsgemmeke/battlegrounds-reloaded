@@ -6,7 +6,8 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -63,11 +64,11 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        ItemEffectActivation effectActivation = equipment.getEffectActivation();
+        ItemEffectNew effect = equipment.getEffect();
         ItemTemplate throwItemTemplate = equipment.getThrowItemTemplate();
 
-        if (effectActivation == null) {
-            throw new ItemFunctionException("Cannot perform throw function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
+        if (effect == null) {
+            throw new ItemFunctionException("Cannot perform throw function for equipment item \"" + equipment.getName() + "\"; it has no effect!");
         }
 
         if (throwItemTemplate == null) {
@@ -100,11 +101,18 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         }
 
         if (projectileProperties != null) {
-            projectileProperties.getEffects().forEach(effect -> effect.onLaunch(droppedItem));
+            projectileProperties.getEffects().forEach(e -> e.onLaunch(droppedItem));
+        }
+
+        holder.setHeldItem(null);
+
+        if (!effect.isPrimed()) {
+            effect.prime(new ItemEffectContext(holder, droppedItem));
+        } else {
+            effect.deploy(droppedItem);
         }
 
         equipment.onDeployDeploymentObject(droppedItem);
-        effectActivation.prime(holder, droppedItem);
         return true;
     }
 }

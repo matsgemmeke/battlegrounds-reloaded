@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,20 +44,20 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
     void setDeploymentProperties(@Nullable DeploymentProperties deploymentProperties);
 
     /**
-     * Gets the effect activation system associated with the equipment.
+     * Gets the effect system associated with the equipment.
      *
-     * @return the equipment's effect activation
+     * @return the equipment effect
      */
     @Nullable
-    ItemEffectActivation getEffectActivation();
+    ItemEffectNew getEffect();
 
     /**
-     * Sets the effect activation system associated with the equipment.
+     * Sets the effect system associated with the equipment.
      *
-     * @param effectActivation the equipment's effect activation
+     * @param effect the equipment effect
      *
      */
-    void setEffectActivation(@Nullable ItemEffectActivation effectActivation);
+    void setEffect(@Nullable ItemEffectNew effect);
 
     /**
      * Gets the holder of the equipmemt item. Returns null if the equipment does not have a holder.

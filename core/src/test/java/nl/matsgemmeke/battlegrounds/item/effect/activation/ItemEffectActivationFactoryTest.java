@@ -4,7 +4,6 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,14 +17,12 @@ import static org.mockito.Mockito.when;
 public class ItemEffectActivationFactoryTest {
 
     private GameContext context;
-    private ItemEffect effect;
     private Section section;
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
         context = mock(GameContext.class);
-        effect = mock(ItemEffect.class);
         section = mock(Section.class);
         taskRunner = mock(TaskRunner.class);
     }
@@ -35,9 +32,9 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn("DELAYED");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        ItemEffectActivation activation = factory.make(context, effect, section, null);
+        ItemEffectActivationNew effectActivation = factory.make(context, section, null);
 
-        assertInstanceOf(DelayedActivation.class, activation);
+        assertInstanceOf(DelayedActivation.class, effectActivation);
     }
 
     @Test
@@ -47,9 +44,9 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn("MANUAL");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        ItemEffectActivation activation = factory.make(context, effect, section, activator);
+        ItemEffectActivationNew effectActivation = factory.make(context, section, activator);
 
-        assertInstanceOf(ManualActivation.class, activation);
+        assertInstanceOf(ManualActivation.class, effectActivation);
     }
 
     @Test
@@ -58,7 +55,7 @@ public class ItemEffectActivationFactoryTest {
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
 
-        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(context, effect, section, null));
+        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(context, section, null));
     }
 
     @Test
@@ -73,9 +70,9 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn("TRIGGER");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        ItemEffectActivation activation = factory.make(context, effect, section, null);
+        ItemEffectActivationNew effectActivation = factory.make(context, section, null);
 
-        assertInstanceOf(TriggerActivation.class, activation);
+        assertInstanceOf(TriggerActivation.class, effectActivation);
     }
 
     @Test
@@ -84,7 +81,7 @@ public class ItemEffectActivationFactoryTest {
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
 
-        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(context, effect, section, null));
+        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(context, section, null));
     }
 
     @Test
@@ -93,6 +90,6 @@ public class ItemEffectActivationFactoryTest {
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
 
-        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(context, effect, section, null));
+        assertThrows(InvalidItemConfigurationException.class, () -> factory.make(context, section, null));
     }
 }

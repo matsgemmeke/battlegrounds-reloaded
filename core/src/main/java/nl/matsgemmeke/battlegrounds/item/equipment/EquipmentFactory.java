@@ -13,12 +13,9 @@ import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.DefaultActivator;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
@@ -154,10 +151,10 @@ public class EquipmentFactory implements WeaponFactory {
         if (effectSection != null && effectActivationSection != null) {
             Activator activator = equipment.getActivator();
 
-            ItemEffect effect = effectFactory.make(effectSection, context);
-            ItemEffectActivation activation = effectActivationFactory.make(context, effect, effectActivationSection, activator);
+            ItemEffectActivationNew effectActivation = effectActivationFactory.make(context, effectActivationSection, activator);
+            ItemEffectNew effect = effectFactory.make(effectSection, context, effectActivation);
 
-            equipment.setEffectActivation(activation);
+            equipment.setEffect(effect);
         }
 
         // Setting the deployment properties

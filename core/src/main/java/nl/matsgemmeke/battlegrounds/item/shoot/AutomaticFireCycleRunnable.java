@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +26,7 @@ public class AutomaticFireCycleRunnable extends BukkitRunnable {
         item.shoot();
 
         if (shots >= amountOfShots || !item.canShoot()) {
-            onCycleFinish.run();
+            onCycleFinish.apply();
             this.cancel();
         }
     }
