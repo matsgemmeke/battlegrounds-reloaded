@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationNew;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
@@ -33,14 +33,14 @@ public class ExplosionEffectTest {
     private static final float POWER = 1.0F;
 
     private ExplosionProperties properties;
-    private ItemEffectActivationNew effectActivation;
+    private ItemEffectActivation effectActivation;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
 
     @BeforeEach
     public void setUp() {
         properties = new ExplosionProperties(POWER, SET_FIRE, BREAK_BLOCKS);
-        effectActivation = mock(ItemEffectActivationNew.class);
+        effectActivation = mock(ItemEffectActivation.class);
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);
     }

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Activation that initiates the effect after a specific delay.
  */
-public class DelayedActivation implements ItemEffectActivationNew {
+public class DelayedActivation implements ItemEffectActivation {
 
     private long delayUntilActivation;
     @NotNull

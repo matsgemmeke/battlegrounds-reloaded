@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationNew;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
@@ -49,7 +49,7 @@ public class CombustionEffectTest {
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
     private CombustionProperties properties;
-    private ItemEffectActivationNew effectActivation;
+    private ItemEffectActivation effectActivation;
     private MetadataValueCreator metadataValueCreator;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
@@ -60,7 +60,7 @@ public class CombustionEffectTest {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
         properties = new CombustionProperties(COMBUSTION_SOUNDS, RADIUS, TICKS_BETWEEN_FIRE_SPREAD, BURN_BLOCKS, SPREAD_FIRE);
-        effectActivation = mock(ItemEffectActivationNew.class);
+        effectActivation = mock(ItemEffectActivation.class);
         metadataValueCreator = mock(MetadataValueCreator.class);
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);

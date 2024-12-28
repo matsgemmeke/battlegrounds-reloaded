@@ -28,7 +28,7 @@ public class ItemEffectActivationFactory {
      * @param section the configuration section
      * @return a new activation instance
      */
-    public ItemEffectActivationNew make(@NotNull GameContext context, @NotNull Section section, @Nullable Activator activator) {
+    public ItemEffectActivation make(@NotNull GameContext context, @NotNull Section section, @Nullable Activator activator) {
         String type = section.getString("type");
 
         if (type == null) {

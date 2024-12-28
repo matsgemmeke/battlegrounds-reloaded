@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationNew;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,11 +9,11 @@ public abstract class BaseItemEffect implements ItemEffectNew {
 
     private boolean primed;
     @NotNull
-    protected ItemEffectActivationNew effectActivation;
+    protected ItemEffectActivation effectActivation;
     @Nullable
     protected ItemEffectContext currentContext;
 
-    public BaseItemEffect(@NotNull ItemEffectActivationNew effectActivation) {
+    public BaseItemEffect(@NotNull ItemEffectActivation effectActivation) {
         this.effectActivation = effectActivation;
         this.primed = false;
     }

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Activation that initiates the effect based on an external trigger.
  */
-public class TriggerActivation implements ItemEffectActivationNew {
+public class TriggerActivation implements ItemEffectActivation {
 
     @NotNull
     private List<Trigger> triggers;

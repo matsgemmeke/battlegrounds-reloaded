@@ -151,7 +151,7 @@ public class EquipmentFactory implements WeaponFactory {
         if (effectSection != null && effectActivationSection != null) {
             Activator activator = equipment.getActivator();
 
-            ItemEffectActivationNew effectActivation = effectActivationFactory.make(context, effectActivationSection, activator);
+            ItemEffectActivation effectActivation = effectActivationFactory.make(context, effectActivationSection, activator);
             ItemEffectNew effect = effectFactory.make(effectSection, context, effectActivation);
 
             equipment.setEffect(effect);

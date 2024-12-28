@@ -14,7 +14,7 @@ import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationNew;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
@@ -45,7 +45,7 @@ public class ItemEffectFactory {
         this.taskRunner = taskRunner;
     }
 
-    public ItemEffectNew make(@NotNull Section section, @NotNull GameContext context, @NotNull ItemEffectActivationNew effectActivation) {
+    public ItemEffectNew make(@NotNull Section section, @NotNull GameContext context, @NotNull ItemEffectActivation effectActivation) {
         String type = section.getString("type");
 
         if (type == null) {

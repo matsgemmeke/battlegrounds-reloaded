@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Activation that initiates the effect by a manual operation by the item holder.
  */
-public class ManualActivation implements ItemEffectActivationNew {
+public class ManualActivation implements ItemEffectActivation {
 
     @NotNull
     private Activator activator;

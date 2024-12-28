@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationNew;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Location;
@@ -49,7 +49,7 @@ public class CombustionEffect extends BaseItemEffect {
     private TaskRunner taskRunner;
 
     public CombustionEffect(
-            @NotNull ItemEffectActivationNew effectActivation,
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull CombustionProperties properties,
             @NotNull RangeProfile rangeProfile,
             @NotNull AudioEmitter audioEmitter,

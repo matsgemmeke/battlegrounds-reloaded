@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationNew;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class ItemEffectFactoryTest {
 
     private GameContext context;
-    private ItemEffectActivationNew effectActivation;
+    private ItemEffectActivation effectActivation;
     private MetadataValueCreator metadataValueCreator;
     private Section section;
     private TaskRunner taskRunner;
@@ -35,7 +35,7 @@ public class ItemEffectFactoryTest {
     @BeforeEach
     public void setUp() {
         context = mock(GameContext.class);
-        effectActivation = mock(ItemEffectActivationNew.class);
+        effectActivation = mock(ItemEffectActivation.class);
         metadataValueCreator = mock(MetadataValueCreator.class);
         section = mock(Section.class);
         taskRunner = mock(TaskRunner.class);

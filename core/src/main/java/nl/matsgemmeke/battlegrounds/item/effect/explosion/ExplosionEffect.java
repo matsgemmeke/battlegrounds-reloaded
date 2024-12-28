@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationNew;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -23,7 +23,7 @@ public class ExplosionEffect extends BaseItemEffect {
     private TargetFinder targetFinder;
 
     public ExplosionEffect(
-            @NotNull ItemEffectActivationNew effectActivation,
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull ExplosionProperties properties,
             @NotNull RangeProfile rangeProfile,
             @NotNull TargetFinder targetFinder

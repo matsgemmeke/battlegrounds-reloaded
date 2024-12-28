@@ -32,7 +32,7 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn("DELAYED");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        ItemEffectActivationNew effectActivation = factory.make(context, section, null);
+        ItemEffectActivation effectActivation = factory.make(context, section, null);
 
         assertInstanceOf(DelayedActivation.class, effectActivation);
     }
@@ -44,7 +44,7 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn("MANUAL");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        ItemEffectActivationNew effectActivation = factory.make(context, section, activator);
+        ItemEffectActivation effectActivation = factory.make(context, section, activator);
 
         assertInstanceOf(ManualActivation.class, effectActivation);
     }
@@ -70,7 +70,7 @@ public class ItemEffectActivationFactoryTest {
         when(section.getString("type")).thenReturn("TRIGGER");
 
         ItemEffectActivationFactory factory = new ItemEffectActivationFactory(taskRunner);
-        ItemEffectActivationNew effectActivation = factory.make(context, section, null);
+        ItemEffectActivation effectActivation = factory.make(context, section, null);
 
         assertInstanceOf(TriggerActivation.class, effectActivation);
     }
