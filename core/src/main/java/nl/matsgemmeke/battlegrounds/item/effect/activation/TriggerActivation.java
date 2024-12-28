@@ -35,6 +35,7 @@ public class TriggerActivation implements ItemEffectActivationNew {
         }
 
         for (Trigger trigger : triggers) {
+            trigger.addObserver(onActivate::apply);
             trigger.checkTriggerActivation(context);
         }
     }

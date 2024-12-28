@@ -82,7 +82,7 @@ public class ItemEffectFactory {
                 CollisionDetector collisionDetector = context.getCollisionDetector();
                 TargetFinder targetFinder = context.getTargetFinder();
 
-//                return new CombustionEffect(properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+                return new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
             }
             case EXPLOSION -> {
                 float power = section.getFloat("power");

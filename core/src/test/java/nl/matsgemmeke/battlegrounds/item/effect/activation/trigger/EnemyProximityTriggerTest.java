@@ -108,6 +108,6 @@ public class EnemyProximityTriggerTest {
 
         runnableCaptor.getValue().run();
 
-        verify(observer).onTrigger(context);
+        verify(observer).onTrigger();
     }
 }

@@ -7,8 +7,9 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationNew;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
 import org.bukkit.Location;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CombustionEffect implements ItemEffect {
+public class CombustionEffect extends BaseItemEffect {
 
     private static final long RUNNABLE_DELAY = 0L;
     private static final String BURN_BLOCKS_METADATA_KEY = "battlegrounds-burn-blocks";
@@ -48,6 +49,7 @@ public class CombustionEffect implements ItemEffect {
     private TaskRunner taskRunner;
 
     public CombustionEffect(
+            @NotNull ItemEffectActivationNew effectActivation,
             @NotNull CombustionProperties properties,
             @NotNull RangeProfile rangeProfile,
             @NotNull AudioEmitter audioEmitter,
@@ -56,6 +58,7 @@ public class CombustionEffect implements ItemEffect {
             @NotNull TargetFinder targetFinder,
             @NotNull TaskRunner taskRunner
     ) {
+        super(effectActivation);
         this.properties = properties;
         this.rangeProfile = rangeProfile;
         this.audioEmitter = audioEmitter;
@@ -66,7 +69,7 @@ public class CombustionEffect implements ItemEffect {
         this.currentRadius = 0;
     }
 
-    public void activate(@NotNull ItemEffectContext context) {
+    public void perform(@NotNull ItemEffectContext context) {
         ItemHolder holder = context.getHolder();
         EffectSource source = context.getSource();
         Location location = source.getLocation();

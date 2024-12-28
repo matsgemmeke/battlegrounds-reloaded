@@ -51,13 +51,13 @@ public class FloorHitTrigger implements Trigger {
             return;
         }
 
-        this.notifyObservers(context);
+        this.notifyObservers();
         task.cancel();
     }
 
-    private void notifyObservers(@NotNull ItemEffectContext context) {
+    private void notifyObservers() {
         for (TriggerObserver observer : observers) {
-            observer.onTrigger(context);
+            observer.onTrigger();
         }
     }
 }

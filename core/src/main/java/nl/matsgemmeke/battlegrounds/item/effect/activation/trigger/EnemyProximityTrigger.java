@@ -60,12 +60,12 @@ public class EnemyProximityTrigger implements Trigger {
             return;
         }
 
-        this.notifyObservers(context);
+        this.notifyObservers();
     }
 
-    private void notifyObservers(@NotNull ItemEffectContext context) {
+    private void notifyObservers() {
         for (TriggerObserver observer : observers) {
-            observer.onTrigger(context);
+            observer.onTrigger();
         }
     }
 }

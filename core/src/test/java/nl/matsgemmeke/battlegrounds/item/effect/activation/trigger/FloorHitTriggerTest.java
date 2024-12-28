@@ -81,7 +81,7 @@ public class FloorHitTriggerTest {
         runnable.run();
         runnable.run();
 
-        verify(observer).onTrigger(context);
+        verify(observer).onTrigger();
         verify(task).cancel();
     }
 }

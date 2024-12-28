@@ -9,8 +9,10 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationNew;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -25,21 +27,29 @@ import org.mockito.ArgumentCaptor;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class CombustionEffectTest {
 
+    private static final boolean BURN_BLOCKS = false;
+    private static final boolean SPREAD_FIRE = true;
     private static final double LONG_RANGE_DAMAGE = 25.0;
     private static final double LONG_RANGE_DISTANCE = 10.0;
     private static final double MEDIUM_RANGE_DAMAGE = 75.0;
     private static final double MEDIUM_RANGE_DISTANCE = 5.0;
     private static final double SHORT_RANGE_DAMAGE = 150.0;
     private static final double SHORT_RANGE_DISTANCE = 2.5;
+    private static final int RADIUS = 2;
+    private static final List<GameSound> COMBUSTION_SOUNDS = Collections.emptyList();
+    private static final long TICKS_BETWEEN_FIRE_SPREAD = 5L;
 
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
+    private CombustionProperties properties;
+    private ItemEffectActivationNew effectActivation;
     private MetadataValueCreator metadataValueCreator;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
@@ -49,6 +59,8 @@ public class CombustionEffectTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
+        properties = new CombustionProperties(COMBUSTION_SOUNDS, RADIUS, TICKS_BETWEEN_FIRE_SPREAD, BURN_BLOCKS, SPREAD_FIRE);
+        effectActivation = mock(ItemEffectActivationNew.class);
         metadataValueCreator = mock(MetadataValueCreator.class);
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);
@@ -56,19 +68,114 @@ public class CombustionEffectTest {
     }
 
     @Test
+    public void activateInstantlyPerformsEffectIfContextIsNotNull() {
+        ItemHolder holder = mock(ItemHolder.class);
+        Location sourceLocation = new Location(null, 1, 1, 1);
+
+        EffectSource source = mock(EffectSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        effect.prime(context);
+        effect.activateInstantly();
+
+        verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, sourceLocation);
+        verify(source).remove();
+    }
+
+    @Test
+    public void deployChangesTheSourceOfTheContext() {
+        ItemHolder holder = mock(ItemHolder.class);
+        EffectSource oldSource = mock(EffectSource.class);
+        EffectSource newSource = mock(EffectSource.class);
+
+        ItemEffectContext context = new ItemEffectContext(holder, oldSource);
+
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        effect.prime(context);
+        effect.deploy(newSource);
+
+        assertEquals(newSource, context.getSource());
+    }
+
+    @Test
+    public void deployDoesNothingIfEffectIsNotPrimedYet() {
+        EffectSource source = mock(EffectSource.class);
+
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+
+        // This method currently has no side effects to verify, refactor later?
+        assertDoesNotThrow(() -> effect.deploy(source));
+    }
+
+    @Test
+    public void isAwaitingDeploymentReturnsFalseIfEffectIsNotPrimed() {
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        boolean awaitingDeployment = effect.isAwaitingDeployment();
+
+        assertFalse(awaitingDeployment);
+    }
+
+    @Test
+    public void isAwaitingDeploymentReturnsFalseIfContextSourceIsDeployed() {
+        EffectSource source = mock(EffectSource.class);
+        when(source.isDeployed()).thenReturn(true);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        effect.prime(context);
+        boolean awaitingDeployment = effect.isAwaitingDeployment();
+
+        assertFalse(awaitingDeployment);
+    }
+
+    @Test
+    public void isAwaitingDeploymentReturnsFalseIfContextSourceIsNotDeployed() {
+        EffectSource source = mock(EffectSource.class);
+        when(source.isDeployed()).thenReturn(false);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        effect.prime(context);
+        boolean awaitingDeployment = effect.isAwaitingDeployment();
+
+        assertTrue(awaitingDeployment);
+    }
+
+    @Test
+    public void isPrimedReturnsFalseIfEffectWasNotPrimed() {
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        boolean primed = effect.isPrimed();
+
+        assertFalse(primed);
+    }
+
+    @Test
+    public void isPrimedReturnsTrueIfEffectWasPrimed() {
+        ItemHolder holder = mock(ItemHolder.class);
+        EffectSource source = mock(EffectSource.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        effect.prime(context);
+        boolean primed = effect.isPrimed();
+
+        assertTrue(primed);
+    }
+
+    @Test
     public void activateCreatesFireCircleAtSourceLocation() {
-        int radius = 2;
-        long ticksBetweenFireSpread = 5L;
-        boolean burnBlocks = false;
-        boolean spreadFire = true;
-
-        CombustionProperties properties = new CombustionProperties(Collections.emptyList(), radius, ticksBetweenFireSpread, burnBlocks, spreadFire);
-
         MetadataValue metadataBurnBlocks = mock(MetadataValue.class);
         MetadataValue metadataSpreadFire = mock(MetadataValue.class);
 
-        when(metadataValueCreator.createFixedMetadataValue(burnBlocks)).thenReturn(metadataBurnBlocks);
-        when(metadataValueCreator.createFixedMetadataValue(spreadFire)).thenReturn(metadataSpreadFire);
+        when(metadataValueCreator.createFixedMetadataValue(BURN_BLOCKS)).thenReturn(metadataBurnBlocks);
+        when(metadataValueCreator.createFixedMetadataValue(SPREAD_FIRE)).thenReturn(metadataSpreadFire);
 
         World world = mock(World.class);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(mock(Block.class));
@@ -90,13 +197,18 @@ public class CombustionEffectTest {
         Block blockOutsideLineOfSight = this.createBlock(world, 0, 0, 2, Material.AIR, true);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(ticksBetweenFireSpread))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(TICKS_BETWEEN_FIRE_SPREAD))).thenReturn(task);
 
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
         when(collisionDetector.hasLineOfSight(blockOutsideLineOfSight.getLocation(), sourceLocation)).thenReturn(false);
 
-        CombustionEffect effect = new CombustionEffect(properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
-        effect.activate(context);
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -129,6 +241,7 @@ public class CombustionEffectTest {
         verify(blockOutsideLineOfSight, never()).setType(Material.FIRE);
         verify(blockOutsideLineOfSight, never()).setMetadata(anyString(), any());
 
+        verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, sourceLocation);
         verify(source).remove();
         verify(task).cancel();
     }
@@ -156,35 +269,16 @@ public class CombustionEffectTest {
 
         when(targetFinder.findTargets(holder, objectLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
-        CombustionEffect effect = new CombustionEffect(properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
-        effect.activate(context);
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         verify(holder).damage(MEDIUM_RANGE_DAMAGE);
         verify(target).damage(SHORT_RANGE_DAMAGE);
-    }
-
-    @Test
-    public void activatePlaysCombustionSoundAtSourceLocation() {
-        GameSound sound = mock(GameSound.class);
-        List<GameSound> sounds = List.of(sound);
-
-        CombustionProperties properties = new CombustionProperties(sounds, 0, 0, false, false);
-
-        World world = mock(World.class);
-        Location location = new Location(world, 0, 0, 0);
-
-        ItemHolder holder = mock(ItemHolder.class);
-
-        EffectSource source = mock(EffectSource.class);
-        when(source.getLocation()).thenReturn(location);
-        when(source.getWorld()).thenReturn(world);
-
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-
-        CombustionEffect effect = new CombustionEffect(properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
-        effect.activate(context);
-
-        verify(audioEmitter).playSounds(sounds, location);
     }
 
     @NotNull
