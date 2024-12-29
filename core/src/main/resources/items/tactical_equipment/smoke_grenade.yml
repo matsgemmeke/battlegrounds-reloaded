@@ -5,6 +5,7 @@ controls:
   throw: LEFT_CLICK
 deploy:
   activate-on-destroy: true
+  cancel-on-destroy: false
   damage:
     health: 50.0
 description: Device that creates a smoke screen when detonated.

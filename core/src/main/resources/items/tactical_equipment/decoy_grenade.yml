@@ -5,6 +5,7 @@ controls:
   throw: LEFT_CLICK
 deploy:
   activate-on-destroy: false
+  cancel-on-destroy: false
   damage:
     health: 50.0
 description: Distraction device that simulates enemy gunfire.
