@@ -179,7 +179,7 @@ public class ItemEffectFactory {
             case SOUND_NOTIFICATION -> {
                 Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sound"));
 
-//                return new SoundNotificationEffect(sounds);
+                return new SoundNotificationEffect(effectActivation, sounds);
             }
         }
 
