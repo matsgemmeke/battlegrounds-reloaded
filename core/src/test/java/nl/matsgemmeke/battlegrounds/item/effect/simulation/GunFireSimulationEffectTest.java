@@ -6,9 +6,11 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +37,7 @@ public class GunFireSimulationEffectTest {
     private AudioEmitter audioEmitter;
     private GunFireSimulationProperties properties;
     private GunInfoProvider gunInfoProvider;
+    private ItemEffectActivation effectActivation;
     private TaskRunner taskRunner;
 
     @BeforeEach
@@ -42,6 +45,7 @@ public class GunFireSimulationEffectTest {
         audioEmitter = mock(AudioEmitter.class);
         properties = new GunFireSimulationProperties(GENERIC_SHOTS_SOUNDS, GENERIC_RATE_OF_FIRE, MAX_BURST_DURATION, MIN_BURST_DURATION, MAX_DELAY_BETWEEN_BURSTS, MIN_DELAY_BETWEEN_BURSTS, MAX_TOTAL_DURATION, MIN_TOTAL_DURATION);
         gunInfoProvider = mock(GunInfoProvider.class);
+        effectActivation = mock(ItemEffectActivation.class);
         taskRunner = mock(TaskRunner.class);
     }
 
@@ -56,8 +60,13 @@ public class GunFireSimulationEffectTest {
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
-        effect.activate(context);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
@@ -80,8 +89,13 @@ public class GunFireSimulationEffectTest {
 
         when(gunInfoProvider.getGunFireSimulationInfo(holder)).thenReturn(null);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
-        effect.activate(context);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
@@ -111,8 +125,13 @@ public class GunFireSimulationEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
-        effect.activate(context);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
@@ -143,8 +162,13 @@ public class GunFireSimulationEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
-        effect.activate(context);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));

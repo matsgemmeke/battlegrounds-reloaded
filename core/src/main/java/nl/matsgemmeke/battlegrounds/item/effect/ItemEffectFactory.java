@@ -134,7 +134,7 @@ public class ItemEffectFactory {
                 GunInfoProvider gunInfoProvider = context.getGunInfoProvider();
                 GunFireSimulationProperties properties = new GunFireSimulationProperties(genericSounds, genericRateOfFire, maxBurstDuration, minBurstDuration, maxDelayBetweenBursts, minDelayBetweenBursts, maxTotalDuration, minTotalDuration);
 
-//                return new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
+                return new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
             }
             case MARK_SPAWN_POINT -> {
                 SpawnPointProvider spawnPointProvider = context.getSpawnPointProvider();
