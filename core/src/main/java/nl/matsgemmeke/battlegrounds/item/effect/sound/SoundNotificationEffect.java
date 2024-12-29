@@ -18,6 +18,10 @@ public class SoundNotificationEffect extends BaseItemEffect {
         this.sounds = sounds;
     }
 
+    public void cancel() {
+        throw new UnsupportedOperationException();
+    }
+
     public void perform(@NotNull ItemEffectContext context) {
         ItemHolder holder = context.getHolder();
 

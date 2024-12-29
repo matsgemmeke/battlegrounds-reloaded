@@ -183,11 +183,13 @@ public class EquipmentFactoryTest {
 
     @Test
     public void makeEquipmentItemWithDeploymentProperties() {
-        boolean activatedOnDestroy = true;
+        boolean activateOnDestroy = true;
+        boolean cancelOnDestroy = true;
         double health = 10.0;
 
         Section deploySection = mock(Section.class);
-        when(deploySection.getBoolean("activated-on-destroy")).thenReturn(activatedOnDestroy);
+        when(deploySection.getBoolean("activate-on-destroy")).thenReturn(activateOnDestroy);
+        when(deploySection.getBoolean("cancel-on-destroy")).thenReturn(cancelOnDestroy);
         when(deploySection.getDouble("damage.health")).thenReturn(health);
 
         when(rootSection.getSection("deploy")).thenReturn(deploySection);
@@ -197,7 +199,8 @@ public class EquipmentFactoryTest {
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertNotNull(equipment.getDeploymentProperties());
-        assertEquals(activatedOnDestroy, equipment.getDeploymentProperties().isActivatedOnDestroy());
+        assertEquals(activateOnDestroy, equipment.getDeploymentProperties().isActivatedOnDestroy());
+        assertEquals(cancelOnDestroy, equipment.getDeploymentProperties().isCancelledOnDestroy());
         assertEquals(health, equipment.getDeploymentProperties().getHealth());
     }
 

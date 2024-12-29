@@ -12,19 +12,43 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class FloorHitTriggerTest {
 
-    private long periodBetweenChecks;
+    private static final long PERIOD_BETWEEN_CHECKS = 5L;
+
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
-        periodBetweenChecks = 5L;
         taskRunner = mock(TaskRunner.class);
+    }
+
+    @Test
+    public void cancelDoesNotCancelTriggerCheckIfNotActivated() {
+        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
+
+        assertDoesNotThrow(trigger::cancel);
+    }
+
+    @Test
+    public void cancelCancelsTriggerCheck() {
+        ItemHolder holder = mock(ItemHolder.class);
+        EffectSource source = mock(EffectSource.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        BukkitTask task = mock(BukkitTask.class);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
+
+        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
+        trigger.checkTriggerActivation(context);
+        trigger.cancel();
+
+        verify(task).cancel();
     }
 
     @Test
@@ -35,11 +59,11 @@ public class FloorHitTriggerTest {
         when(source.exists()).thenReturn(false);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, periodBetweenChecks);
+        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
         trigger.checkTriggerActivation(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -68,9 +92,9 @@ public class FloorHitTriggerTest {
         TriggerObserver observer = mock(TriggerObserver.class);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, periodBetweenChecks);
+        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
         trigger.addObserver(observer);
         trigger.checkTriggerActivation(context);
 

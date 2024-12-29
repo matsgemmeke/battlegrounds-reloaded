@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
-import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,12 +22,41 @@ public class ManualActivationTest {
     }
 
     @Test
-    public void activatePreparesActivatorAndFinishesActivationRightAway() {
+    public void cancelDoesNotRemoveActivatorIfNotPrimed() {
+        ManualActivation activation = new ManualActivation(activator);
+        activation.cancel();
+
+        verify(activator, never()).remove();
+    }
+
+    @Test
+    public void cancelRemovesActivatorIfPrimed() {
         ItemEffectContext context = new ItemEffectContext(holder, source);
-        Procedure onActivate = mock(Procedure.class);
 
         ManualActivation activation = new ManualActivation(activator);
-        activation.prime(context, onActivate);
+        activation.prime(context, () -> {});
+        activation.cancel();
+
+        verify(activator).remove();
+    }
+
+    @Test
+    public void primeDoesNotPrepareActivatorAgainIfAlreadyPrimed() {
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        ManualActivation activation = new ManualActivation(activator);
+        activation.prime(context, () -> {});
+        activation.prime(context, () -> {});
+
+        verify(activator).prepare(holder);
+    }
+
+    @Test
+    public void primePreparesActivatorIfNotPrimed() {
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        ManualActivation activation = new ManualActivation(activator);
+        activation.prime(context, () -> {});
 
         verify(activator).prepare(holder);
     }

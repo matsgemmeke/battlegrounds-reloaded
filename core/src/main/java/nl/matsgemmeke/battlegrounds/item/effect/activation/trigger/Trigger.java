@@ -7,5 +7,7 @@ public interface Trigger {
 
     void addObserver(@NotNull TriggerObserver observer);
 
+    void cancel();
+
     void checkTriggerActivation(@NotNull ItemEffectContext context);
 }

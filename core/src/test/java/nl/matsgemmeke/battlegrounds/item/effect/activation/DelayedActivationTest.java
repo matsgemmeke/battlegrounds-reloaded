@@ -5,10 +5,12 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
+import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +30,42 @@ public class DelayedActivationTest {
     }
 
     @Test
-    public void activateFinishesActivationAfterDelayAndRemovesItemIfSourceIsDeployed() {
+    public void cancelDoesNotCancelTaskIfNotPrimed() {
+        DelayedActivation activation = new DelayedActivation(taskRunner, DELAY_UNTIL_ACTIVATION);
+        activation.cancel();
+
+        assertFalse(activation.isPrimed());
+    }
+
+    @Test
+    public void cancelCancelsTaskIfPrimed() {
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        BukkitTask task = mock(BukkitTask.class);
+        when(taskRunner.runTaskLater(any(Runnable.class), eq(DELAY_UNTIL_ACTIVATION))).thenReturn(task);
+
+        DelayedActivation activation = new DelayedActivation(taskRunner, DELAY_UNTIL_ACTIVATION);
+        activation.prime(context, () -> {});
+        activation.cancel();
+
+        assertFalse(activation.isPrimed());
+
+        verify(task).cancel();
+    }
+
+    @Test
+    public void primeDoesNotScheduleDelayedActivationTwiceIfAlreadyPrimed() {
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        DelayedActivation activation = new DelayedActivation(taskRunner, DELAY_UNTIL_ACTIVATION);
+        activation.prime(context, () -> {});
+        activation.prime(context, () -> {});
+
+        verify(taskRunner).runTaskLater(any(Runnable.class), eq(DELAY_UNTIL_ACTIVATION));
+    }
+
+    @Test
+    public void primeFinishesActivationAfterDelayAndRemovesItemIfSourceIsDeployed() {
         ItemEffectContext context = new ItemEffectContext(holder, source);
         Procedure onActivate = mock(Procedure.class);
 
@@ -47,7 +84,7 @@ public class DelayedActivationTest {
     }
 
     @Test
-    public void activateFinishesActivationAfterDelayAndDoesNotRemoveItemIfSourceIsNotDeployed() {
+    public void primeFinishesActivationAfterDelayAndDoesNotRemoveItemIfSourceIsNotDeployed() {
         ItemEffectContext context = new ItemEffectContext(holder, source);
         Procedure onActivate = mock(Procedure.class);
 

@@ -32,6 +32,14 @@ public class FloorHitTrigger implements Trigger {
         observers.add(observer);
     }
 
+    public void cancel() {
+        if (task == null) {
+            return;
+        }
+
+        task.cancel();
+    }
+
     public void checkTriggerActivation(@NotNull ItemEffectContext context) {
         task = taskRunner.runTaskTimer(() -> this.runCheck(context), RUNNABLE_DELAY, periodBetweenChecks);
     }

@@ -50,6 +50,10 @@ public class SmokeScreenEffect extends BaseItemEffect {
         this.random = new Random();
     }
 
+    public void cancel() {
+        throw new UnsupportedOperationException();
+    }
+
     public void perform(@NotNull ItemEffectContext context) {
         audioEmitter.playSounds(properties.ignitionSounds(), context.getSource().getLocation());
 

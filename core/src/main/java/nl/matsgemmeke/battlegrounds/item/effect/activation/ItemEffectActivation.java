@@ -7,6 +7,18 @@ import org.jetbrains.annotations.NotNull;
 public interface ItemEffectActivation {
 
     /**
+     * Cancels the effect activation.
+     */
+    void cancel();
+
+    /**
+     * Gets whether the effect activation system is primed.
+     *
+     * @return whether the activation is primed
+     */
+    boolean isPrimed();
+
+    /**
      * Activates the activation process with for provided {@link ItemEffectContext}.
      *
      * @param context the item effect context

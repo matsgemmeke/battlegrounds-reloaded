@@ -15,18 +15,42 @@ import java.util.List;
  */
 public class TriggerActivation implements ItemEffectActivation {
 
+    private boolean primed;
     @NotNull
     private List<Trigger> triggers;
 
     public TriggerActivation() {
         this.triggers = new ArrayList<>();
+        this.primed = false;
     }
 
     public void addTrigger(@NotNull Trigger trigger) {
         triggers.add(trigger);
     }
 
+    public void cancel() {
+        if (!primed) {
+            return;
+        }
+
+        primed = false;
+
+        for (Trigger trigger : triggers) {
+            trigger.cancel();
+        }
+    }
+
+    public boolean isPrimed() {
+        return primed;
+    }
+
     public void prime(@NotNull ItemEffectContext context, @NotNull Procedure onActivate) {
+        if (primed) {
+            return;
+        }
+
+        primed = true;
+
         ItemHolder holder = context.getHolder();
         EffectSource source = context.getSource();
 

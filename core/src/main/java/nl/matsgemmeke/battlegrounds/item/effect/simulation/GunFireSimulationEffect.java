@@ -53,6 +53,10 @@ public class GunFireSimulationEffect extends BaseItemEffect {
         this.random = new Random();
     }
 
+    public void cancel() {
+        throw new UnsupportedOperationException();
+    }
+
     public void perform(@NotNull ItemEffectContext context) {
         ItemHolder itemHolder = context.getHolder();
 

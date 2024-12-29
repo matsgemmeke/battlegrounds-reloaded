@@ -11,6 +11,11 @@ public interface ItemEffect {
     void activateInstantly();
 
     /**
+     * Cancels the effect, or the activation of the effect if it is still in progress.
+     */
+    void cancel();
+
+    /**
      * Deploys a {@link EffectSource} for an ongoing effect.
      *
      * @param source the source to deploy

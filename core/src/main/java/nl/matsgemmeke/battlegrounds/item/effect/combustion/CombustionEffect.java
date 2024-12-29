@@ -69,6 +69,10 @@ public class CombustionEffect extends BaseItemEffect {
         this.currentRadius = 0;
     }
 
+    public void cancel() {
+        throw new UnsupportedOperationException();
+    }
+
     public void perform(@NotNull ItemEffectContext context) {
         ItemHolder holder = context.getHolder();
         EffectSource source = context.getSource();
