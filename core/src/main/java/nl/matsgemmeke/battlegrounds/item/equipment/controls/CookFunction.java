@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.source.HeldItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -26,7 +26,7 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        ItemEffectNew effect = equipment.getEffect();
+        ItemEffect effect = equipment.getEffect();
 
         return effect != null && !effect.isAwaitingDeployment();
     }
@@ -44,7 +44,7 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        ItemEffectNew effect = equipment.getEffect();
+        ItemEffect effect = equipment.getEffect();
 
         if (effect == null) {
             throw new ItemFunctionException("Cannot perform cook function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");

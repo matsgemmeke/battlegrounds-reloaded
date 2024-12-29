@@ -13,8 +13,8 @@ import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
@@ -152,7 +152,7 @@ public class EquipmentFactory implements WeaponFactory {
             Activator activator = equipment.getActivator();
 
             ItemEffectActivation effectActivation = effectActivationFactory.make(context, effectActivationSection, activator);
-            ItemEffectNew effect = effectFactory.make(effectSection, context, effectActivation);
+            ItemEffect effect = effectFactory.make(effectSection, context, effectActivation);
 
             equipment.setEffect(effect);
         }

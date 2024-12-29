@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.source.DroppedItem;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -63,7 +63,7 @@ public class ThrowFunctionTest {
 
         when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(equipment.getEffect()).thenReturn(effect);
 
         World world = mock(World.class);
@@ -97,7 +97,7 @@ public class ThrowFunctionTest {
     @Test
     public void performThrowsExceptionIfEquipmentHasNoThrowItemTemplate() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
 
         when(equipment.getEffect()).thenReturn(effect);
         when(equipment.getThrowItemTemplate()).thenReturn(null);
@@ -125,7 +125,7 @@ public class ThrowFunctionTest {
 
         when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(effect.isPrimed()).thenReturn(false);
 
         when(equipment.getEffect()).thenReturn(effect);
@@ -187,7 +187,7 @@ public class ThrowFunctionTest {
 
         when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(effect.isPrimed()).thenReturn(true);
 
         when(equipment.getEffect()).thenReturn(effect);

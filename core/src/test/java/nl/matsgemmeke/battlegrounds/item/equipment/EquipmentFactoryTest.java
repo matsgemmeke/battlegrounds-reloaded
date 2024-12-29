@@ -8,8 +8,8 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
@@ -171,7 +171,7 @@ public class EquipmentFactoryTest {
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         when(effectActivationFactory.make(context, effectActivationSection, null)).thenReturn(effectActivation);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(effectFactory.make(effectSection, context, effectActivation)).thenReturn(effect);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
@@ -403,7 +403,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
         Damageable itemMeta = mock(Damageable.class);
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
@@ -440,7 +440,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("item.throw-item.material")).thenReturn("SHEARS");
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
@@ -476,7 +476,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("placing.material")).thenReturn("WARPED_BUTTON");
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
@@ -523,7 +523,7 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 

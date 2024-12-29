@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -93,7 +93,7 @@ public class ActivateFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getEntity()).thenReturn(player);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(equipment.getEffect()).thenReturn(effect);
 
         when(taskRunner.runTaskLater(any(Runnable.class), eq(DELAY_UNTIL_ACTIVATION))).then(answer -> {

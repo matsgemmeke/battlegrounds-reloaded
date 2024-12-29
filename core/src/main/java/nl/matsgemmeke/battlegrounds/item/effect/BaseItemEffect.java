@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseItemEffect implements ItemEffectNew {
+public abstract class BaseItemEffect implements ItemEffect {
 
     private boolean primed;
     @NotNull

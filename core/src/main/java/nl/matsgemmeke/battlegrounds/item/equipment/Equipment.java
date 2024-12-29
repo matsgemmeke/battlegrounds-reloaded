@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +49,7 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
      * @return the equipment effect
      */
     @Nullable
-    ItemEffectNew getEffect();
+    ItemEffect getEffect();
 
     /**
      * Sets the effect system associated with the equipment.
@@ -57,7 +57,7 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
      * @param effect the equipment effect
      *
      */
-    void setEffect(@Nullable ItemEffectNew effect);
+    void setEffect(@Nullable ItemEffect effect);
 
     /**
      * Gets the holder of the equipmemt item. Returns null if the equipment does not have a holder.

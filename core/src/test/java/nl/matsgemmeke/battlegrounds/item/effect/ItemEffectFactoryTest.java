@@ -54,7 +54,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("type")).thenReturn("COMBUSTION");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        ItemEffectNew effect = factory.make(section, context, effectActivation);
+        ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(CombustionEffect.class, effect);
     }
@@ -67,7 +67,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("type")).thenReturn("EXPLOSION");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        ItemEffectNew effect = factory.make(section, context, effectActivation);
+        ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(ExplosionEffect.class, effect);
     }
@@ -80,7 +80,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("type")).thenReturn("FLASH");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        ItemEffectNew effect = factory.make(section, context, effectActivation);
+        ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(FlashEffect.class, effect);
     }
@@ -96,7 +96,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("type")).thenReturn("GUN_FIRE_SIMULATION");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        ItemEffectNew effect = factory.make(section, context, effectActivation);
+        ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(GunFireSimulationEffect.class, effect);
     }
@@ -109,7 +109,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("type")).thenReturn("MARK_SPAWN_POINT");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        ItemEffectNew effect = factory.make(section, context, effectActivation);
+        ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(MarkSpawnPointEffect.class, effect);
     }
@@ -126,7 +126,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("type")).thenReturn("SMOKE_SCREEN");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        ItemEffectNew effect = factory.make(section, context, effectActivation);
+        ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(SmokeScreenEffect.class, effect);
     }
@@ -156,7 +156,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("type")).thenReturn("SOUND_NOTIFICATION");
 
         ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
-        ItemEffectNew effect = factory.make(section, context, effectActivation);
+        ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(SoundNotificationEffect.class, effect);
     }

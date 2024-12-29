@@ -45,7 +45,7 @@ public class ItemEffectFactory {
         this.taskRunner = taskRunner;
     }
 
-    public ItemEffectNew make(@NotNull Section section, @NotNull GameContext context, @NotNull ItemEffectActivation effectActivation) {
+    public ItemEffect make(@NotNull Section section, @NotNull GameContext context, @NotNull ItemEffectActivation effectActivation) {
         String type = section.getString("type");
 
         if (type == null) {

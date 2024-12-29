@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.source.PlacedBlock;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -71,7 +71,7 @@ public class PlaceFunctionTest {
         when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
         when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
@@ -98,7 +98,7 @@ public class PlaceFunctionTest {
 
     @Test
     public void performReturnsFalseIfHolderDoesNotReturnTwoTargetBlocks() {
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
@@ -114,7 +114,7 @@ public class PlaceFunctionTest {
 
     @Test
     public void performReturnsFalseIfHolderIsTargetingOccludingBlock() {
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(equipment.getEffect()).thenReturn(effect);
 
         Block targetBlock = mock(Block.class);
@@ -133,7 +133,7 @@ public class PlaceFunctionTest {
 
     @Test
     public void performReturnsFalseIfAdjacentBlockIsNotConnectedToTargetBlock() {
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(equipment.getEffect()).thenReturn(effect);
 
         Block adjacentBlock = mock(Block.class);
@@ -169,7 +169,7 @@ public class PlaceFunctionTest {
         when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
         when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(effect.isPrimed()).thenReturn(false);
 
         when(equipment.getEffect()).thenReturn(effect);
@@ -216,7 +216,7 @@ public class PlaceFunctionTest {
         when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
         when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(effect.isPrimed()).thenReturn(true);
 
         when(equipment.getEffect()).thenReturn(effect);
@@ -262,7 +262,7 @@ public class PlaceFunctionTest {
         when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
         when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(effect.isPrimed()).thenReturn(false);
 
         when(equipment.getEffect()).thenReturn(effect);

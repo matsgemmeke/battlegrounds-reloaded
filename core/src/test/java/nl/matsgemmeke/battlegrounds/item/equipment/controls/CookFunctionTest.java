@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
@@ -37,7 +37,7 @@ public class CookFunctionTest {
 
     @Test
     public void isAvailableReturnsTrueIfActivationIsNotAwaitingDeployment() {
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(effect.isAwaitingDeployment()).thenReturn(false);
 
         when(equipment.getEffect()).thenReturn(effect);
@@ -60,7 +60,7 @@ public class CookFunctionTest {
 
     @Test
     public void isAvailableReturnsFalseIfActivationIsAwaitingDeployment() {
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(effect.isAwaitingDeployment()).thenReturn(true);
 
         when(equipment.getEffect()).thenReturn(effect);
@@ -94,7 +94,7 @@ public class CookFunctionTest {
         when(holder.getEntity()).thenReturn(player);
         when(holder.getHeldItem()).thenReturn(itemStack);
 
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
         when(equipment.getEffect()).thenReturn(effect);
 
         CookFunction function = new CookFunction(properties, equipment, audioEmitter);

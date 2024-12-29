@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -91,7 +91,7 @@ public class DefaultEquipmentTest {
     public void onDestroyDeploymentObjectDoesNotActivateDeploymentIfDeploymentPropertiesIsNull() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDeploymentProperties(null);
@@ -109,7 +109,7 @@ public class DefaultEquipmentTest {
     public void onDestroyDeploymentObjectDoesNotActivateDeploymentIfActivatedOnDestroyIsFalse() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
 
         DeploymentProperties deploymentProperties = new DeploymentProperties();
         deploymentProperties.setActivatedOnDestroy(false);
@@ -142,7 +142,7 @@ public class DefaultEquipmentTest {
     public void onDestroyDeploymentObjectActivatesDeploymentIfActivatedOnDestroyIsTrue() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
-        ItemEffectNew effect = mock(ItemEffectNew.class);
+        ItemEffect effect = mock(ItemEffect.class);
 
         DeploymentProperties deploymentProperties = new DeploymentProperties();
         deploymentProperties.setActivatedOnDestroy(true);
