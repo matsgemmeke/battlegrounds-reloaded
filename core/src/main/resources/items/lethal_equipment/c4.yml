@@ -5,7 +5,7 @@ controls:
   place: RIGHT_CLICK
   throw: LEFT_CLICK
 deploy:
-  activated-on-destroy: false
+  activate-on-destroy: false
   damage:
     health: 50.0
 description: A plastic explosive device that is detonated remotely with the clacker.
