@@ -118,7 +118,7 @@ public class ItemEffectFactory {
                 FlashProperties properties = new FlashProperties(potionEffect, range, explosionPower, explosionBreakBlocks, explosionSetFire);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-//                return new FlashEffect(properties, targetFinder);
+                return new FlashEffect(effectActivation, properties, targetFinder);
             }
             case GUN_FIRE_SIMULATION -> {
                 List<GameSound> genericSounds = DefaultGameSound.parseSounds(section.getString("generic-sound"));

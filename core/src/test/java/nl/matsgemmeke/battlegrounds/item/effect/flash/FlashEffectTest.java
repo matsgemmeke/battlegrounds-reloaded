@@ -4,10 +4,12 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,10 +34,12 @@ public class FlashEffectTest {
     private static final int POTION_EFFECT_DURATION = 100;
 
     private FlashProperties properties;
+    private ItemEffectActivation effectActivation;
     private TargetFinder targetFinder;
 
     @BeforeEach
     public void setUp() {
+        effectActivation = mock(ItemEffectActivation.class);
         targetFinder = mock(TargetFinder.class);
 
         PotionEffectProperties potionEffect = new PotionEffectProperties(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
@@ -44,36 +48,14 @@ public class FlashEffectTest {
     }
 
     @Test
-    public void activateCreatesExplosionAtSourceLocation() {
-        LivingEntity holderEntity = mock(LivingEntity.class);
+    public void primePerformsEffectAndAppliesBlindnessPotionEffectToAllTargetsInsideTheLongRangeDistance() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
-        ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getEntity()).thenReturn(holderEntity);
-
-        EffectSource source = mock(EffectSource.class);
-        when(source.getLocation()).thenReturn(sourceLocation);
-        when(source.getWorld()).thenReturn(world);
-
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-
-        FlashEffect effect = new FlashEffect(properties, targetFinder);
-        effect.activate(context);
-
-        verify(source).remove();
-        verify(world).createExplosion(sourceLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, holderEntity);
-    }
-
-    @Test
-    public void activateAppliesBlindnessPotionEffectToAllTargetsInsideTheLongRangeDistance() {
-        World world = mock(World.class);
-        Location sourceLocation = new Location(world, 1, 1, 1);
-
-        LivingEntity entity = mock(LivingEntity.class);
+        Player player = mock(Player.class);
 
         ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getEntity()).thenReturn(entity);
+        when(holder.getEntity()).thenReturn(player);
 
         EffectSource source = mock(EffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
@@ -83,11 +65,16 @@ public class FlashEffectTest {
 
         when(targetFinder.findTargets(holder, sourceLocation, RANGE)).thenReturn(List.of(holder));
 
-        FlashEffect effect = new FlashEffect(properties, targetFinder);
-        effect.activate(context);
+        FlashEffect effect = new FlashEffect(effectActivation, properties, targetFinder);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureArgumentCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureArgumentCaptor.capture());
+
+        procedureArgumentCaptor.getValue().apply();
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
-        verify(entity).addPotionEffect(potionEffectCaptor.capture());
+        verify(player).addPotionEffect(potionEffectCaptor.capture());
 
         PotionEffect potionEffect = potionEffectCaptor.getValue();
 
@@ -99,5 +86,6 @@ public class FlashEffectTest {
         assertEquals(POTION_EFFECT_ICON, potionEffect.hasIcon());
 
         verify(source).remove();
+        verify(world).createExplosion(sourceLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, player);
     }
 }

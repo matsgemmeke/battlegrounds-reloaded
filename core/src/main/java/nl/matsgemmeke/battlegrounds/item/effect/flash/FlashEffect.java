@@ -3,8 +3,9 @@ package nl.matsgemmeke.battlegrounds.item.effect.flash;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,19 +14,20 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-public class FlashEffect implements ItemEffect {
+public class FlashEffect extends BaseItemEffect {
 
     @NotNull
     private FlashProperties properties;
     @NotNull
     private TargetFinder targetFinder;
 
-    public FlashEffect(@NotNull FlashProperties properties, @NotNull TargetFinder targetFinder) {
+    public FlashEffect(@NotNull ItemEffectActivation effectActivation, @NotNull FlashProperties properties, @NotNull TargetFinder targetFinder) {
+        super(effectActivation);
         this.properties = properties;
         this.targetFinder = targetFinder;
     }
 
-    public void activate(@NotNull ItemEffectContext context) {
+    public void perform(@NotNull ItemEffectContext context) {
         ItemHolder holder = context.getHolder();
         EffectSource source = context.getSource();
 
