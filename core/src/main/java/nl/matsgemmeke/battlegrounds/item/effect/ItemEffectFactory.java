@@ -139,7 +139,7 @@ public class ItemEffectFactory {
             case MARK_SPAWN_POINT -> {
                 SpawnPointProvider spawnPointProvider = context.getSpawnPointProvider();
 
-//                return new MarkSpawnPointEffect(spawnPointProvider);
+                return new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
             }
             case SMOKE_SCREEN -> {
                 Particle particle;

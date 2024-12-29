@@ -3,7 +3,9 @@ package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,10 +16,12 @@ import static org.mockito.Mockito.*;
 
 public class MarkSpawnPointEffectTest {
 
+    private ItemEffectActivation effectActivation;
     private SpawnPointProvider spawnPointProvider;
 
     @BeforeEach
     public void setUp() {
+        effectActivation = mock(ItemEffectActivation.class);
         spawnPointProvider = mock(SpawnPointProvider.class);
     }
 
@@ -34,8 +38,13 @@ public class MarkSpawnPointEffectTest {
         EffectSource source = mock(EffectSource.class);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);
-        effect.activate(context);
+        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<MarkedSpawnPoint> spawnPointCaptor = ArgumentCaptor.forClass(MarkedSpawnPoint.class);
         verify(spawnPointProvider).setCustomSpawnPoint(eq(holder), spawnPointCaptor.capture());
