@@ -174,7 +174,7 @@ public class ItemEffectFactory {
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 CollisionDetector collisionDetector = context.getCollisionDetector();
 
-//                return new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
+                return new SmokeScreenEffect(effectActivation, properties, audioEmitter, collisionDetector, taskRunner);
             }
             case SOUND_NOTIFICATION -> {
                 Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sound"));

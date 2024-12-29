@@ -7,7 +7,9 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -34,6 +36,7 @@ public class SmokeScreenEffectTest {
 
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
+    private ItemEffectActivation effectActivation;
     private ParticleEffectProperties particleEffect;
     private TaskRunner taskRunner;
 
@@ -41,6 +44,7 @@ public class SmokeScreenEffectTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
+        effectActivation = mock(ItemEffectActivation.class);
         particleEffect = new ParticleEffectProperties(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
         taskRunner = mock(TaskRunner.class);
     }
@@ -59,8 +63,13 @@ public class SmokeScreenEffectTest {
         ItemEffectContext context = new ItemEffectContext(holder, source);
         SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, duration, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
-        effect.activate(context);
+        SmokeScreenEffect effect = new SmokeScreenEffect(effectActivation, properties, audioEmitter, collisionDetector, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
@@ -90,8 +99,13 @@ public class SmokeScreenEffectTest {
         ItemEffectContext context = new ItemEffectContext(holder, source);
         SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, duration, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
-        effect.activate(context);
+        SmokeScreenEffect effect = new SmokeScreenEffect(effectActivation, properties, audioEmitter, collisionDetector, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
@@ -119,8 +133,13 @@ public class SmokeScreenEffectTest {
         ItemEffectContext context = new ItemEffectContext(holder, source);
         SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, 100, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
-        effect.activate(context);
+        SmokeScreenEffect effect = new SmokeScreenEffect(effectActivation, properties, audioEmitter, collisionDetector, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
@@ -149,8 +168,13 @@ public class SmokeScreenEffectTest {
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
-        effect.activate(context);
+        SmokeScreenEffect effect = new SmokeScreenEffect(effectActivation, properties, audioEmitter, collisionDetector, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
@@ -178,8 +202,13 @@ public class SmokeScreenEffectTest {
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(true);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
-        effect.activate(context);
+        SmokeScreenEffect effect = new SmokeScreenEffect(effectActivation, properties, audioEmitter, collisionDetector, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
@@ -208,8 +237,13 @@ public class SmokeScreenEffectTest {
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(false);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
-        effect.activate(context);
+        SmokeScreenEffect effect = new SmokeScreenEffect(effectActivation, properties, audioEmitter, collisionDetector, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
