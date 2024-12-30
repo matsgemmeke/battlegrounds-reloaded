@@ -10,14 +10,20 @@ import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FlashEffect extends BaseItemEffect {
 
     @NotNull
     private FlashProperties properties;
+    @NotNull
+    private Map<GameEntity, PotionEffect> appliedPotionEffects;
     @NotNull
     private TargetFinder targetFinder;
 
@@ -25,6 +31,7 @@ public class FlashEffect extends BaseItemEffect {
         super(effectActivation);
         this.properties = properties;
         this.targetFinder = targetFinder;
+        this.appliedPotionEffects = new HashMap<>();
     }
 
     public void perform(@NotNull ItemEffectContext context) {
@@ -61,6 +68,20 @@ public class FlashEffect extends BaseItemEffect {
             PotionEffect potionEffect = new PotionEffect(potionEffectType, duration, amplifier, ambient, particles, icon);
 
             target.getEntity().addPotionEffect(potionEffect);
+
+            appliedPotionEffects.put(target, potionEffect);
+        }
+    }
+
+    public void reset() {
+        for (GameEntity target : appliedPotionEffects.keySet()) {
+            LivingEntity entity = target.getEntity();
+            PotionEffect potionEffect = entity.getPotionEffect(PotionEffectType.BLINDNESS);
+
+            // Only remove the potion effect is it's the same instance that the flash effect caused
+            if (potionEffect != null && potionEffect == appliedPotionEffects.get(target)) {
+                entity.removePotionEffect(PotionEffectType.BLINDNESS);
+            }
         }
     }
 }

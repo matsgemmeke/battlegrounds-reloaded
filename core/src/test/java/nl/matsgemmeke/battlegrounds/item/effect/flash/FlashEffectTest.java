@@ -12,13 +12,19 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 public class FlashEffectTest {
@@ -51,7 +57,6 @@ public class FlashEffectTest {
     public void primePerformsEffectAndAppliesBlindnessPotionEffectToAllTargetsInsideTheLongRangeDistance() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
-
         Player player = mock(Player.class);
 
         ItemHolder holder = mock(ItemHolder.class);
@@ -87,5 +92,80 @@ public class FlashEffectTest {
 
         verify(source).remove();
         verify(world).createExplosion(sourceLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, player);
+    }
+
+    @NotNull
+    private static Stream<Arguments> potionEffectScenarios() {
+        return Stream.of(
+                arguments(new Object[] { null }),
+                arguments(new PotionEffect(PotionEffectType.BLINDNESS, 1, 1))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("potionEffectScenarios")
+    public void resetDoesNotRemovePotionEffectFromTarget(PotionEffect potionEffect) {
+        World world = mock(World.class);
+        Location sourceLocation = new Location(world, 1, 1, 1);
+
+        Player player = mock(Player.class);
+        when(player.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(potionEffect);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        when(holder.getEntity()).thenReturn(player);
+
+        EffectSource source = mock(EffectSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getWorld()).thenReturn(world);
+
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        when(targetFinder.findTargets(holder, sourceLocation, RANGE)).thenReturn(List.of(holder));
+
+        FlashEffect effect = new FlashEffect(effectActivation, properties, targetFinder);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureArgumentCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureArgumentCaptor.capture());
+
+        procedureArgumentCaptor.getValue().apply();
+        effect.reset();
+
+        verify(player, never()).removePotionEffect(any(PotionEffectType.class));
+    }
+
+    @Test
+    public void resetRemovesPotionEffectFromTargetIfItStillHasThePotionEffect() {
+        World world = mock(World.class);
+        Location sourceLocation = new Location(world, 1, 1, 1);
+        Player player = mock(Player.class);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        when(holder.getEntity()).thenReturn(player);
+
+        EffectSource source = mock(EffectSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getWorld()).thenReturn(world);
+
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        when(targetFinder.findTargets(holder, sourceLocation, RANGE)).thenReturn(List.of(holder));
+
+        FlashEffect effect = new FlashEffect(effectActivation, properties, targetFinder);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureArgumentCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureArgumentCaptor.capture());
+
+        procedureArgumentCaptor.getValue().apply();
+
+        ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
+        verify(player).addPotionEffect(potionEffectCaptor.capture());
+
+        when(player.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(potionEffectCaptor.getValue());
+
+        effect.reset();
+
+        verify(player).removePotionEffect(PotionEffectType.BLINDNESS);
     }
 }
