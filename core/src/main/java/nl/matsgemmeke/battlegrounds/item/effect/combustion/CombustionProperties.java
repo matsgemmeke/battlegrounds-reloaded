@@ -9,6 +9,7 @@ public record CombustionProperties(
         @NotNull List<GameSound> combustionSounds,
         int radius,
         long ticksBetweenFireSpread,
+        long maxDuration,
         boolean burnBlocks,
         boolean spreadFire
 ) {}

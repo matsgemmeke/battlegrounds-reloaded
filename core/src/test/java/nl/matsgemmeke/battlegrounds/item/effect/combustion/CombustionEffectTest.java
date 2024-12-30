@@ -43,6 +43,7 @@ public class CombustionEffectTest {
     private static final double SHORT_RANGE_DISTANCE = 2.5;
     private static final int RADIUS = 2;
     private static final List<GameSound> COMBUSTION_SOUNDS = Collections.emptyList();
+    private static final long MAX_DURATION = 600L;
     private static final long TICKS_BETWEEN_FIRE_SPREAD = 5L;
 
     private AudioEmitter audioEmitter;
@@ -58,7 +59,7 @@ public class CombustionEffectTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
-        properties = new CombustionProperties(COMBUSTION_SOUNDS, RADIUS, TICKS_BETWEEN_FIRE_SPREAD, BURN_BLOCKS, SPREAD_FIRE);
+        properties = new CombustionProperties(COMBUSTION_SOUNDS, RADIUS, TICKS_BETWEEN_FIRE_SPREAD, MAX_DURATION, BURN_BLOCKS, SPREAD_FIRE);
         effectActivation = mock(ItemEffectActivation.class);
         metadataValueEditor = mock(MetadataValueEditor.class);
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
@@ -169,7 +170,7 @@ public class CombustionEffectTest {
     }
 
     @Test
-    public void activateCreatesFireCircleAtSourceLocation() {
+    public void primeCreatesFireCircleAtSourceLocationAndResetsEffectAfterMaxDuration() {
         World world = mock(World.class);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(mock(Block.class));
 
@@ -212,27 +213,48 @@ public class CombustionEffectTest {
         runnable.run();
         runnable.run();
 
+        ArgumentCaptor<Runnable> resetRunnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskRunner).runTaskLater(resetRunnableCaptor.capture(), eq(MAX_DURATION));
+
+        resetRunnableCaptor.getValue().run();
+
         verify(middleBlock).setType(Material.FIRE);
+        verify(middleBlock).setType(Material.AIR);
         verify(metadataValueEditor).addFixedMetadataValue(middleBlock, "battlegrounds-burn-blocks", BURN_BLOCKS);
         verify(metadataValueEditor).addFixedMetadataValue(middleBlock, "battlegrounds-spread-fire", SPREAD_FIRE);
+        verify(metadataValueEditor).removeMetadata(middleBlock, "battlegrounds-spread-fire");
+        verify(metadataValueEditor).removeMetadata(middleBlock, "battlegrounds-spread-fire");
 
         verify(leftBlock).setType(Material.FIRE);
+        verify(leftBlock).setType(Material.AIR);
         verify(metadataValueEditor).addFixedMetadataValue(leftBlock, "battlegrounds-burn-blocks", BURN_BLOCKS);
         verify(metadataValueEditor).addFixedMetadataValue(leftBlock, "battlegrounds-spread-fire", SPREAD_FIRE);
+        verify(metadataValueEditor).removeMetadata(leftBlock, "battlegrounds-spread-fire");
+        verify(metadataValueEditor).removeMetadata(leftBlock, "battlegrounds-spread-fire");
 
         verify(rightBlock).setType(Material.FIRE);
+        verify(rightBlock).setType(Material.AIR);
         verify(metadataValueEditor).addFixedMetadataValue(rightBlock, "battlegrounds-burn-blocks", BURN_BLOCKS);
         verify(metadataValueEditor).addFixedMetadataValue(rightBlock, "battlegrounds-spread-fire", SPREAD_FIRE);
+        verify(metadataValueEditor).removeMetadata(rightBlock, "battlegrounds-spread-fire");
+        verify(metadataValueEditor).removeMetadata(rightBlock, "battlegrounds-spread-fire");
 
         verify(upperBlock).setType(Material.FIRE);
+        verify(upperBlock).setType(Material.AIR);
         verify(metadataValueEditor).addFixedMetadataValue(upperBlock, "battlegrounds-burn-blocks", BURN_BLOCKS);
         verify(metadataValueEditor).addFixedMetadataValue(upperBlock, "battlegrounds-spread-fire", SPREAD_FIRE);
+        verify(metadataValueEditor).removeMetadata(upperBlock, "battlegrounds-spread-fire");
+        verify(metadataValueEditor).removeMetadata(upperBlock, "battlegrounds-spread-fire");
 
         verify(lowerBlock, never()).setType(Material.FIRE);
+        verify(lowerBlock, never()).setType(Material.AIR);
         verify(metadataValueEditor, never()).addFixedMetadataValue(eq(lowerBlock), anyString(), any());
+        verify(metadataValueEditor, never()).removeMetadata(eq(lowerBlock), anyString());
 
         verify(blockOutsideLineOfSight, never()).setType(Material.FIRE);
+        verify(blockOutsideLineOfSight, never()).setType(Material.AIR);
         verify(metadataValueEditor, never()).addFixedMetadataValue(eq(blockOutsideLineOfSight), anyString(), any());
+        verify(metadataValueEditor, never()).removeMetadata(eq(blockOutsideLineOfSight), anyString());
 
         verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, sourceLocation);
         verify(source).remove();
@@ -240,12 +262,10 @@ public class CombustionEffectTest {
     }
 
     @Test
-    public void activateDamagesNearbyEntitiesInsideTheLongRangeDistance() {
-        CombustionProperties properties = new CombustionProperties(Collections.emptyList(), 0, 0, false, false);
-
+    public void primeDamagesNearbyEntitiesInsideTheLongRangeDistance() {
         World world = mock(World.class);
         Location holderLocation = new Location(world, 4, 0, 0);
-        Location objectLocation = new Location(world, 0, 0, 0);
+        Location sourceLocation = new Location(world, 0, 0, 0);
         Location targetLocation = new Location(world, 2, 0, 0);
 
         GameEntity target = mock(GameEntity.class);
@@ -255,12 +275,12 @@ public class CombustionEffectTest {
         when(holder.getLocation()).thenReturn(holderLocation);
 
         EffectSource source = mock(EffectSource.class);
-        when(source.getLocation()).thenReturn(objectLocation);
+        when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        when(targetFinder.findTargets(holder, objectLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
+        when(targetFinder.findTargets(holder, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
 
         CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
         effect.prime(context);

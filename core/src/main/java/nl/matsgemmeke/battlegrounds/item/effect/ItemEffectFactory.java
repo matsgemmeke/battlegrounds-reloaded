@@ -64,6 +64,7 @@ public class ItemEffectFactory {
             case COMBUSTION -> {
                 int radius = section.getInt("radius");
                 long ticksBetweenSpread = section.getLong("ticks-between-spread");
+                long maxDuration = section.getLong("max-duration");
                 boolean burnBlocks = section.getBoolean("burn-blocks");
                 boolean spreadFire = section.getBoolean("spread-fire");
 
@@ -76,7 +77,7 @@ public class ItemEffectFactory {
 
                 List<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("combustion-sound"));
 
-                CombustionProperties properties = new CombustionProperties(sounds, radius, ticksBetweenSpread, burnBlocks, spreadFire);
+                CombustionProperties properties = new CombustionProperties(sounds, radius, ticksBetweenSpread, maxDuration, burnBlocks, spreadFire);
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 CollisionDetector collisionDetector = context.getCollisionDetector();

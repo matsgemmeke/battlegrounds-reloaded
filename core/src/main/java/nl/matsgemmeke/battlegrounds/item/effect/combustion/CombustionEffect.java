@@ -97,6 +97,8 @@ public class CombustionEffect extends BaseItemEffect {
             }
         }, RUNNABLE_DELAY, properties.ticksBetweenFireSpread());
 
+        taskRunner.runTaskLater(this::reset, properties.maxDuration());
+
         source.remove();
     }
 
@@ -140,6 +142,10 @@ public class CombustionEffect extends BaseItemEffect {
 
     public void reset() {
         for (Block block : changedBlocks) {
+            if (block.getType() == Material.FIRE) {
+                block.setType(Material.AIR);
+            }
+
             metadataValueEditor.removeMetadata(block, BURN_BLOCKS_METADATA_KEY);
             metadataValueEditor.removeMetadata(block, SPREAD_FIRE_METADATA_KEY);
         }
