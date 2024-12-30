@@ -27,10 +27,6 @@ public class FlashEffect extends BaseItemEffect {
         this.targetFinder = targetFinder;
     }
 
-    public void cancel() {
-        throw new UnsupportedOperationException();
-    }
-
     public void perform(@NotNull ItemEffectContext context) {
         ItemHolder holder = context.getHolder();
         EffectSource source = context.getSource();

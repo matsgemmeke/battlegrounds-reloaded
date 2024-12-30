@@ -17,7 +17,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
-import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
+import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ public class ItemEffectFactoryTest {
 
     private GameContext context;
     private ItemEffectActivation effectActivation;
-    private MetadataValueCreator metadataValueCreator;
+    private MetadataValueEditor metadataValueEditor;
     private Section section;
     private TaskRunner taskRunner;
 
@@ -36,7 +36,7 @@ public class ItemEffectFactoryTest {
     public void setUp() {
         context = mock(GameContext.class);
         effectActivation = mock(ItemEffectActivation.class);
-        metadataValueCreator = mock(MetadataValueCreator.class);
+        metadataValueEditor = mock(MetadataValueEditor.class);
         section = mock(Section.class);
         taskRunner = mock(TaskRunner.class);
     }
@@ -53,7 +53,7 @@ public class ItemEffectFactoryTest {
 
         when(section.getString("type")).thenReturn("COMBUSTION");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
         ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(CombustionEffect.class, effect);
@@ -66,7 +66,7 @@ public class ItemEffectFactoryTest {
 
         when(section.getString("type")).thenReturn("EXPLOSION");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
         ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(ExplosionEffect.class, effect);
@@ -79,7 +79,7 @@ public class ItemEffectFactoryTest {
 
         when(section.getString("type")).thenReturn("FLASH");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
         ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(FlashEffect.class, effect);
@@ -95,7 +95,7 @@ public class ItemEffectFactoryTest {
 
         when(section.getString("type")).thenReturn("GUN_FIRE_SIMULATION");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
         ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(GunFireSimulationEffect.class, effect);
@@ -108,7 +108,7 @@ public class ItemEffectFactoryTest {
 
         when(section.getString("type")).thenReturn("MARK_SPAWN_POINT");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
         ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(MarkSpawnPointEffect.class, effect);
@@ -125,7 +125,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("particle.type")).thenReturn("CAMPFIRE_COSY_SMOKE");
         when(section.getString("type")).thenReturn("SMOKE_SCREEN");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
         ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(SmokeScreenEffect.class, effect);
@@ -136,7 +136,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("particle.type")).thenReturn(null);
         when(section.getString("type")).thenReturn("SMOKE_SCREEN");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
 
         assertThrows(InvalidItemConfigurationException.class, () -> factory.make(section, context, effectActivation));
     }
@@ -146,7 +146,7 @@ public class ItemEffectFactoryTest {
         when(section.getString("particle.type")).thenReturn("fail");
         when(section.getString("type")).thenReturn("SMOKE_SCREEN");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
 
         assertThrows(InvalidItemConfigurationException.class, () -> factory.make(section, context, effectActivation));
     }
@@ -155,7 +155,7 @@ public class ItemEffectFactoryTest {
     public void makeCreatesInstanceOfSoundNotificationEffect() {
         when(section.getString("type")).thenReturn("SOUND_NOTIFICATION");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
         ItemEffect effect = factory.make(section, context, effectActivation);
 
         assertInstanceOf(SoundNotificationEffect.class, effect);
@@ -165,7 +165,7 @@ public class ItemEffectFactoryTest {
     public void throwExceptionIfGivenActivationTypeIsNotDefined() {
         when(section.getString("type")).thenReturn(null);
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
 
         assertThrows(InvalidItemConfigurationException.class, () -> factory.make(section, context, effectActivation));
     }
@@ -174,7 +174,7 @@ public class ItemEffectFactoryTest {
     public void throwExceptionIfGivenActivationTypeIsIncorrect() {
         when(section.getString("type")).thenReturn("fail");
 
-        ItemEffectFactory factory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        ItemEffectFactory factory = new ItemEffectFactory(metadataValueEditor, taskRunner);
 
         assertThrows(InvalidItemConfigurationException.class, () -> factory.make(section, context, effectActivation));
     }

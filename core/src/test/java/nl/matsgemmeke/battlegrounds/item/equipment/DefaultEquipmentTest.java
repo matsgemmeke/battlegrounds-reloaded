@@ -147,7 +147,7 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void onDestroyDeploymentObjectDoesNotCancelEffectIfDeploymentPropertiesIsNull() {
+    public void onDestroyDeploymentObjectDoesNotResetEffectIfDeploymentPropertiesIsNull() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         ItemEffect effect = mock(ItemEffect.class);
 
@@ -156,16 +156,16 @@ public class DefaultEquipmentTest {
         equipment.setEffect(effect);
         equipment.onDestroyDeploymentObject(deploymentObject);
 
-        verify(effect, never()).cancel();
+        verify(effect, never()).reset();
     }
 
     @Test
-    public void onDestroyDeploymentObjectDoesNotCancelEffectIfCancelledOnDestroyIsFalse() {
+    public void onDestroyDeploymentObjectDoesNotResetEffectIfResetOnDestroyIsFalse() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         ItemEffect effect = mock(ItemEffect.class);
 
         DeploymentProperties deploymentProperties = new DeploymentProperties();
-        deploymentProperties.setCancelledOnDestroy(false);
+        deploymentProperties.setResetOnDestroy(false);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDeploymentProperties(deploymentProperties);
@@ -176,11 +176,11 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void onDestroyDeploymentObjectDoesNotCancelEffectIfEffectIsNull() {
+    public void onDestroyDeploymentObjectDoesNotResetEffectIfEffectIsNull() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
 
         DeploymentProperties deploymentProperties = new DeploymentProperties();
-        deploymentProperties.setCancelledOnDestroy(true);
+        deploymentProperties.setResetOnDestroy(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDeploymentProperties(deploymentProperties);
@@ -190,19 +190,19 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void onDestroyDeploymentObjectCancelsEffectIfCancelledOnDestroyIsTrueAndEffectIsNotNull() {
+    public void onDestroyDeploymentObjectResetsEffectIfResetOnDestroyIsTrueAndEffectIsNotNull() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         ItemEffect effect = mock(ItemEffect.class);
 
         DeploymentProperties deploymentProperties = new DeploymentProperties();
-        deploymentProperties.setCancelledOnDestroy(true);
+        deploymentProperties.setResetOnDestroy(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDeploymentProperties(deploymentProperties);
         equipment.setEffect(effect);
         equipment.onDestroyDeploymentObject(deploymentObject);
 
-        verify(effect).cancel();
+        verify(effect).reset();
     }
 
     @Test

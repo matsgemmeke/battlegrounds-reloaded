@@ -27,7 +27,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
-import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
+import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,12 +36,12 @@ import java.util.List;
 public class ItemEffectFactory {
 
     @NotNull
-    private MetadataValueCreator metadataValueCreator;
+    private MetadataValueEditor metadataValueEditor;
     @NotNull
     private TaskRunner taskRunner;
 
-    public ItemEffectFactory(@NotNull MetadataValueCreator metadataValueCreator, @NotNull TaskRunner taskRunner) {
-        this.metadataValueCreator = metadataValueCreator;
+    public ItemEffectFactory(@NotNull MetadataValueEditor metadataValueEditor, @NotNull TaskRunner taskRunner) {
+        this.metadataValueEditor = metadataValueEditor;
         this.taskRunner = taskRunner;
     }
 
@@ -82,7 +82,7 @@ public class ItemEffectFactory {
                 CollisionDetector collisionDetector = context.getCollisionDetector();
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+                return new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
             }
             case EXPLOSION -> {
                 float power = section.getFloat("power");

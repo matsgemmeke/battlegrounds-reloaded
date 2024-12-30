@@ -34,10 +34,6 @@ public class ExplosionEffect extends BaseItemEffect {
         this.rangeProfile = rangeProfile;
     }
 
-    public void cancel() {
-        throw new UnsupportedOperationException();
-    }
-
     public void perform(@NotNull ItemEffectContext context) {
         ItemHolder holder = context.getHolder();
         EffectSource source = context.getSource();

@@ -28,35 +28,7 @@ public class MarkSpawnPointEffectTest {
     }
 
     @Test
-    public void cancelDoesNotResetSpawnPointIfEffectIsNotPerformed() {
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
-        effect.cancel();
-
-        verify(spawnPointProvider, never()).setCustomSpawnPoint(any(GameEntity.class), any(SpawnPoint.class));
-    }
-
-    @Test
-    public void cancelResetsSpawnPointIfEffectIsPerformed() {
-        Location eyeLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
-
-        Player player = mock(Player.class);
-        when(player.getEyeLocation()).thenReturn(eyeLocation);
-
-        ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getEntity()).thenReturn(player);
-
-        EffectSource source = mock(EffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
-        effect.prime(context);
-        effect.cancel();
-
-        verify(spawnPointProvider).setCustomSpawnPoint(holder, null);
-    }
-
-    @Test
-    public void activateCreatesNewCustomSpawnPointAndAssignsToHolder() {
+    public void primeCreatesNewCustomSpawnPointAndAssignsToHolder() {
         Location eyeLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
 
         Player player = mock(Player.class);
@@ -78,5 +50,33 @@ public class MarkSpawnPointEffectTest {
 
         ArgumentCaptor<MarkedSpawnPoint> spawnPointCaptor = ArgumentCaptor.forClass(MarkedSpawnPoint.class);
         verify(spawnPointProvider).setCustomSpawnPoint(eq(holder), spawnPointCaptor.capture());
+    }
+
+    @Test
+    public void resetDoesNotResetSpawnPointIfEffectIsNotPerformed() {
+        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
+        effect.reset();
+
+        verify(spawnPointProvider, never()).setCustomSpawnPoint(any(GameEntity.class), any(SpawnPoint.class));
+    }
+
+    @Test
+    public void resetResetsSpawnPointIfEffectIsPerformed() {
+        Location eyeLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+
+        Player player = mock(Player.class);
+        when(player.getEyeLocation()).thenReturn(eyeLocation);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        when(holder.getEntity()).thenReturn(player);
+
+        EffectSource source = mock(EffectSource.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
+        effect.prime(context);
+        effect.reset();
+
+        verify(spawnPointProvider).setCustomSpawnPoint(holder, null);
     }
 }

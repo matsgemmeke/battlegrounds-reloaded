@@ -11,11 +11,6 @@ public interface ItemEffect {
     void activateInstantly();
 
     /**
-     * Cancels the effect, or the activation of the effect if it is still in progress.
-     */
-    void cancel();
-
-    /**
      * Deploys a {@link EffectSource} for an ongoing effect.
      *
      * @param source the source to deploy
@@ -44,4 +39,10 @@ public interface ItemEffect {
      * @param context the item effect context
      */
     void prime(@NotNull ItemEffectContext context);
+
+    /**
+     * Resets the performance of the effect. If the effect is still in activation phase the activation will be
+     * cancelled.
+     */
+    default void reset() { }
 }

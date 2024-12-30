@@ -18,18 +18,18 @@ public class MarkSpawnPointEffect extends BaseItemEffect {
         this.spawnPointProvider = spawnPointProvider;
     }
 
-    public void cancel() {
-        if (currentContext == null) {
-            return;
-        }
-
-        spawnPointProvider.setCustomSpawnPoint(currentContext.getHolder(), null);
-    }
-
     public void perform(@NotNull ItemEffectContext context) {
         Location eyeLocation = context.getHolder().getEntity().getEyeLocation();
         SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), eyeLocation.getYaw());
 
         spawnPointProvider.setCustomSpawnPoint(context.getHolder(), spawnPoint);
+    }
+
+    public void reset() {
+        if (currentContext == null) {
+            return;
+        }
+
+        spawnPointProvider.setCustomSpawnPoint(currentContext.getHolder(), null);
     }
 }

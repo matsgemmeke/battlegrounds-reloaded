@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 public class DeploymentProperties {
 
     private boolean activatedOnDestroy;
-    private boolean cancelledOnDestroy;
+    private boolean resetOnDestroy;
     private double health;
 
     public double getHealth() {
@@ -22,11 +22,11 @@ public class DeploymentProperties {
         this.activatedOnDestroy = activatedOnDestroy;
     }
 
-    public boolean isCancelledOnDestroy() {
-        return cancelledOnDestroy;
+    public boolean isResetOnDestroy() {
+        return resetOnDestroy;
     }
 
-    public void setCancelledOnDestroy(boolean cancelledOnDestroy) {
-        this.cancelledOnDestroy = cancelledOnDestroy;
+    public void setResetOnDestroy(boolean resetOnDestroy) {
+        this.resetOnDestroy = resetOnDestroy;
     }
 }

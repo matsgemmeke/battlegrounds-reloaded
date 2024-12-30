@@ -11,12 +11,11 @@ import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
-import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
+import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +39,9 @@ public class CombustionEffect extends BaseItemEffect {
     private CombustionProperties properties;
     private int currentRadius;
     @NotNull
-    private MetadataValueCreator metadataValueCreator;
+    private List<Block> changedBlocks;
+    @NotNull
+    private MetadataValueEditor metadataValueEditor;
     @NotNull
     private RangeProfile rangeProfile;
     @NotNull
@@ -54,7 +55,7 @@ public class CombustionEffect extends BaseItemEffect {
             @NotNull RangeProfile rangeProfile,
             @NotNull AudioEmitter audioEmitter,
             @NotNull CollisionDetector collisionDetector,
-            @NotNull MetadataValueCreator metadataValueCreator,
+            @NotNull MetadataValueEditor metadataValueEditor,
             @NotNull TargetFinder targetFinder,
             @NotNull TaskRunner taskRunner
     ) {
@@ -63,14 +64,11 @@ public class CombustionEffect extends BaseItemEffect {
         this.rangeProfile = rangeProfile;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
-        this.metadataValueCreator = metadataValueCreator;
+        this.metadataValueEditor = metadataValueEditor;
         this.targetFinder = targetFinder;
         this.taskRunner = taskRunner;
+        this.changedBlocks = new ArrayList<>();
         this.currentRadius = 0;
-    }
-
-    public void cancel() {
-        throw new UnsupportedOperationException();
     }
 
     public void perform(@NotNull ItemEffectContext context) {
@@ -132,11 +130,18 @@ public class CombustionEffect extends BaseItemEffect {
     }
 
     private void setOnFire(@NotNull Block block) {
-        MetadataValue burnBlocksMetadata = metadataValueCreator.createFixedMetadataValue(properties.burnBlocks());
-        MetadataValue spreadFireMetadata = metadataValueCreator.createFixedMetadataValue(properties.spreadFire());
+        metadataValueEditor.addFixedMetadataValue(block, BURN_BLOCKS_METADATA_KEY, properties.burnBlocks());
+        metadataValueEditor.addFixedMetadataValue(block, SPREAD_FIRE_METADATA_KEY, properties.spreadFire());
 
-        block.setMetadata(BURN_BLOCKS_METADATA_KEY, burnBlocksMetadata);
-        block.setMetadata(SPREAD_FIRE_METADATA_KEY, spreadFireMetadata);
         block.setType(Material.FIRE);
+
+        changedBlocks.add(block);
+    }
+
+    public void reset() {
+        for (Block block : changedBlocks) {
+            metadataValueEditor.removeMetadata(block, BURN_BLOCKS_METADATA_KEY);
+            metadataValueEditor.removeMetadata(block, SPREAD_FIRE_METADATA_KEY);
+        }
     }
 }

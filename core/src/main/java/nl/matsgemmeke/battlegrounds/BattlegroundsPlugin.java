@@ -26,7 +26,7 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
+import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
@@ -217,8 +217,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
         SpreadPatternFactory spreadPatternFactory = new SpreadPatternFactory();
         FirearmFactory firearmFactory = new FirearmFactory(config, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
 
-        MetadataValueCreator metadataValueCreator = new MetadataValueCreator(this);
-        ItemEffectFactory effectFactory = new ItemEffectFactory(metadataValueCreator, taskRunner);
+        MetadataValueEditor metadataValueEditor = new MetadataValueEditor(this);
+        ItemEffectFactory effectFactory = new ItemEffectFactory(metadataValueEditor, taskRunner);
         ItemEffectActivationFactory effectActivationFactory = new ItemEffectActivationFactory(taskRunner);
         EquipmentFactory equipmentFactory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
 

@@ -162,13 +162,13 @@ public class EquipmentFactory implements WeaponFactory {
 
         if (deploySection != null) {
             boolean activateOnDestroy = deploySection.getBoolean("activate-on-destroy");
-            boolean cancelOnDestroy = deploySection.getBoolean("cancel-on-destroy");
+            boolean resetOnDestroy = deploySection.getBoolean("reset-on-destroy");
             double health = deploySection.getDouble("damage.health");
 
             DeploymentProperties deploymentProperties = new DeploymentProperties();
             deploymentProperties.setActivatedOnDestroy(activateOnDestroy);
-            deploymentProperties.setCancelledOnDestroy(cancelOnDestroy);
             deploymentProperties.setHealth(health);
+            deploymentProperties.setResetOnDestroy(resetOnDestroy);
 
             equipment.setDeploymentProperties(deploymentProperties);
         }

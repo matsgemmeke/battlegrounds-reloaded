@@ -138,8 +138,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
             effect.activateInstantly();
         }
 
-        if (deploymentProperties != null && deploymentProperties.isCancelledOnDestroy() && effect != null) {
-            effect.cancel();
+        if (deploymentProperties != null && deploymentProperties.isResetOnDestroy() && effect != null) {
+            effect.reset();
         }
 
         deploymentObjects.remove(deploymentObject);
