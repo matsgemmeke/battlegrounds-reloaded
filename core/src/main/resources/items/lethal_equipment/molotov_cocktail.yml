@@ -4,8 +4,7 @@ controls:
   throw: LEFT_CLICK
 deploy:
   activate-on-destroy: true
-  damage:
-    health: 10.0
+  health: 10.0
   reset-on-destroy: false
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
 effect:

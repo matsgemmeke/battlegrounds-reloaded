@@ -4,8 +4,7 @@ controls:
   throw: LEFT_CLICK
 deploy:
   activate-on-destroy: true
-  damage:
-    health: 50.0
+  health: 50.0
   reset-on-destroy: false
 description: Anti-personnel mine that triggers a proximity-based explosion.
 effect:

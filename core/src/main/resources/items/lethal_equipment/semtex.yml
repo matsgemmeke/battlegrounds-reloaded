@@ -4,8 +4,7 @@ controls:
   throw: LEFT_CLICK
 deploy:
   activate-on-destroy: false
-  damage:
-    health: 50.0
+  health: 50.0
   reset-on-destroy: false
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 effect:

@@ -189,7 +189,7 @@ public class EquipmentFactoryTest {
 
         Section deploySection = mock(Section.class);
         when(deploySection.getBoolean("activate-on-destroy")).thenReturn(activateOnDestroy);
-        when(deploySection.getDouble("damage.health")).thenReturn(health);
+        when(deploySection.getDouble("health")).thenReturn(health);
         when(deploySection.getBoolean("reset-on-destroy")).thenReturn(cancelOnDestroy);
 
         when(rootSection.getSection("deploy")).thenReturn(deploySection);
