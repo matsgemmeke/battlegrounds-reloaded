@@ -4,35 +4,33 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.ElementType;
+public enum DamageType {
 
-public enum DamageCause {
-
-    /**
-     * Explosion damage caused by a normal world explosion (TNT, creeper, custom explosion etc.)
-     */
-    DEFAULT_EXPLOSION,
     /**
      * Damage caused by an entity physically attacking another
      */
-    ENTITY_ATTACK,
+    ATTACK_DAMAGE,
     /**
-     * Damage caused by direct impact from a gun projectile
+     * Damage caused by direct impact from a bullet projectile.
      */
-    GUN_PROJECTILE,
+    BULLET_DAMAGE,
+    /**
+     * Explosion damage caused by a normal world explosion (TNT, creeper, custom explosion etc.)
+     */
+    EXPLOSIVE_DAMAGE,
     /**
      * Explosion damage caused by an explosion originating from an item inside a game.
      */
-    ITEM_EXPLOSION;
+    EXPLOSIVE_ITEM_DAMAGE;
 
     @Nullable
-    public static DamageCause map(@NotNull EntityDamageEvent.DamageCause cause) {
+    public static DamageType map(@NotNull EntityDamageEvent.DamageCause cause) {
         switch (cause) {
             case ENTITY_ATTACK -> {
-                return ENTITY_ATTACK;
+                return ATTACK_DAMAGE;
             }
             case ENTITY_EXPLOSION -> {
-                return DEFAULT_EXPLOSION;
+                return EXPLOSIVE_DAMAGE;
             }
             default -> {
                 return null;

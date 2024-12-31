@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.game.training.component.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.info.deploy.DeploymentInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -60,7 +60,7 @@ public class TrainingModeDamageProcessorTest {
         Entity entity = mock(Entity.class);
 
         DamageCheck damageCheck = mock(DamageCheck.class);
-        DamageEvent damageEvent = new DamageEvent(damager, null, entity, null, DamageCause.GUN_PROJECTILE, 10.0);
+        DamageEvent damageEvent = new DamageEvent(damager, null, entity, null, DamageType.BULLET_DAMAGE, 10.0);
 
         TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
         damageProcessor.addDamageCheck(damageCheck);

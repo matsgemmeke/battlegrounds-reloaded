@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.damage.check;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ public class NegateDefaultExplosionDamageCheckTest {
 
         double damage = 10.0;
 
-        DamageEvent event = new DamageEvent(damager, damagerContext, entity, entityContext, DamageCause.GUN_PROJECTILE, damage);
+        DamageEvent event = new DamageEvent(damager, damagerContext, entity, entityContext, DamageType.BULLET_DAMAGE, damage);
 
         NegateDefaultExplosionDamageCheck check = new NegateDefaultExplosionDamageCheck();
         check.process(event);
@@ -35,7 +35,7 @@ public class NegateDefaultExplosionDamageCheckTest {
         Entity entity = mock(Entity.class);
         GameContext entityContext = mock(GameContext.class);
 
-        DamageEvent event = new DamageEvent(damager, damagerContext, entity, entityContext, DamageCause.DEFAULT_EXPLOSION, 100.0);
+        DamageEvent event = new DamageEvent(damager, damagerContext, entity, entityContext, DamageType.EXPLOSIVE_DAMAGE, 100.0);
 
         NegateDefaultExplosionDamageCheck check = new NegateDefaultExplosionDamageCheck();
         check.process(event);

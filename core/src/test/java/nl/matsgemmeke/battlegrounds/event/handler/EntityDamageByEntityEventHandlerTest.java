@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -122,7 +122,7 @@ public class EntityDamageByEntityEventHandlerTest {
 
         double modifiedDamage = 20.0;
 
-        DamageEvent damageEvent = new DamageEvent(damager, context, entity, context, DamageCause.ENTITY_ATTACK, modifiedDamage);
+        DamageEvent damageEvent = new DamageEvent(damager, context, entity, context, DamageType.ATTACK_DAMAGE, modifiedDamage);
 
         DamageProcessor damageProcessor = mock(DamageProcessor.class);
         when(damageProcessor.isDamageAllowed(context)).thenReturn(true);

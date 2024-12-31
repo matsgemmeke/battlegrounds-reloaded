@@ -6,25 +6,25 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DamageCauseTest {
+public class DamageTypeTest {
 
     @Test
     public void shouldMapEntityAttackToEntityAttack() {
-        DamageCause cause = DamageCause.map(EntityDamageEvent.DamageCause.ENTITY_ATTACK);
+        DamageType cause = DamageType.map(EntityDamageEvent.DamageCause.ENTITY_ATTACK);
 
-        assertEquals(DamageCause.ENTITY_ATTACK, cause);
+        assertEquals(DamageType.ATTACK_DAMAGE, cause);
     }
 
     @Test
     public void shouldMapEntityExplosionToNormalExplosion() {
-        DamageCause cause = DamageCause.map(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION);
+        DamageType cause = DamageType.map(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION);
 
-        assertEquals(DamageCause.DEFAULT_EXPLOSION, cause);
+        assertEquals(DamageType.EXPLOSIVE_DAMAGE, cause);
     }
 
     @Test
     public void shouldReturnNullForDamageCausesThatCannotBeMapped() {
-        DamageCause cause = DamageCause.map(EntityDamageEvent.DamageCause.VOID);
+        DamageType cause = DamageType.map(EntityDamageEvent.DamageCause.VOID);
 
         assertNull(cause);
     }
