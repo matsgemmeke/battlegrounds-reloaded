@@ -2,6 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
@@ -50,7 +52,8 @@ public class ExplosionEffect extends BaseItemEffect {
             Location targetLocation = target.getEntity().getLocation();
 
             double distance = sourceLocation.distance(targetLocation);
-            double damage = rangeProfile.getDamageByDistance(distance);
+            double damageAmount = rangeProfile.getDamageByDistance(distance);
+            Damage damage = new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE);
 
             target.damage(damage);
         }

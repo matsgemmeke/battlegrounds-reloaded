@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -99,20 +101,20 @@ public class DefaultGamePlayer implements GamePlayer {
         return player.isOnline() && !player.isDead();
     }
 
-    public double damage(double damageAmount) {
+    public double damage(@NotNull Damage damage) {
         if (player.isDead() || player.getHealth() <= 0.0) {
-            return player.getHealth();
+            return 0.0;
         }
 
         // Divide by 5 to convert to hearts value
-        double finalHealth = Math.max(player.getHealth() - damageAmount / 5, 0.0);
+        double finalHealth = Math.max(player.getHealth() - damage.amount() / 5, 0.0);
 
         // Create fake damage animation
         player.damage(DAMAGE_ANIMATION_DAMAGE);
         // Set the health to 0 if the damage is greater than the health
         player.setHealth(finalHealth);
 
-        return finalHealth;
+        return damage.amount();
     }
 
     @NotNull
@@ -154,6 +156,10 @@ public class DefaultGamePlayer implements GamePlayer {
         }
 
         return NORMAL_ACCURACY;
+    }
+
+    public boolean isImmuneTo(@NotNull DamageType damageType) {
+        return false;
     }
 
     public void modifyCameraRotation(float yaw, float pitch) {

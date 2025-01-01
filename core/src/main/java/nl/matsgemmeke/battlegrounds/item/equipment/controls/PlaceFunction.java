@@ -91,6 +91,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
         if (deploymentProperties != null) {
             placedBlock.setHealth(deploymentProperties.getHealth());
+            placedBlock.setResistances(deploymentProperties.getResistances());
         }
 
         audioEmitter.playSounds(properties.placeSounds(), adjacentBlock.getLocation());

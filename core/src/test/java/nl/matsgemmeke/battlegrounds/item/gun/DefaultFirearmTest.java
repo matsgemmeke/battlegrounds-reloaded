@@ -6,6 +6,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
@@ -238,7 +240,7 @@ public class DefaultFirearmTest {
         firearm.setShotSounds(Collections.emptyList());
         firearm.shoot();
 
-        verify(holder, never()).damage(anyDouble());
+        verify(holder, never()).damage(any(Damage.class));
     }
 
     @Test
@@ -270,7 +272,7 @@ public class DefaultFirearmTest {
         firearm.shoot();
 
         verify(audioEmitter).playSounds(eq(shotSounds), any(Location.class));
-        verify(target).damage(100.0);
+        verify(target).damage(new Damage(100.0, DamageType.BULLET_DAMAGE));
     }
 
     @Test
@@ -302,7 +304,7 @@ public class DefaultFirearmTest {
         firearm.shoot();
 
         verify(audioEmitter).playSounds(eq(shotSounds), any(Location.class));
-        verify(target).damage(50.0);
+        verify(target).damage(new Damage(50.0, DamageType.BULLET_DAMAGE));
     }
 
     @Test
@@ -334,7 +336,7 @@ public class DefaultFirearmTest {
         firearm.shoot();
 
         verify(audioEmitter).playSounds(eq(shotSounds), any(Location.class));
-        verify(target).damage(10.0);
+        verify(target).damage(new Damage(10.0, DamageType.BULLET_DAMAGE));
     }
 
     @Test
@@ -363,7 +365,7 @@ public class DefaultFirearmTest {
         firearm.shoot();
 
         verify(audioEmitter).playSounds(shotSounds, startingLocation);
-        verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, 10.0);
+        verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, new Damage(10.0, DamageType.BULLET_DAMAGE));
     }
 
     @Test
@@ -413,7 +415,7 @@ public class DefaultFirearmTest {
         firearm.shoot();
 
         verify(audioEmitter).playSounds(eq(shotSounds), any(Location.class));
-        verify(target).damage(150.0);
+        verify(target).damage(new Damage(150.0, DamageType.BULLET_DAMAGE));
     }
 
     @Test

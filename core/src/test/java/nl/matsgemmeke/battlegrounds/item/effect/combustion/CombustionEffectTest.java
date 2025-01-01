@@ -6,6 +6,8 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -290,8 +292,8 @@ public class CombustionEffectTest {
 
         procedureCaptor.getValue().apply();
 
-        verify(holder).damage(MEDIUM_RANGE_DAMAGE);
-        verify(target).damage(SHORT_RANGE_DAMAGE);
+        verify(holder).damage(new Damage(MEDIUM_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));
+        verify(target).damage(new Damage(SHORT_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));
     }
 
     @NotNull

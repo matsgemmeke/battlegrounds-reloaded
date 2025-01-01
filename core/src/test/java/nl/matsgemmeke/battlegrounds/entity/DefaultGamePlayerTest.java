@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -63,36 +65,65 @@ public class DefaultGamePlayerTest {
     }
 
     @Test
-    public void applyZeroDamageWhenPlayerIsDead() {
+    public void damageAppliesNoDamageWhenPlayerIsDead() {
         when(player.getHealth()).thenReturn(0.0);
         when(player.isDead()).thenReturn(true);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
-        double health = gamePlayer.damage(10.0);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
-        assertEquals(0.0, health, 0.0);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        double damageDealt = gamePlayer.damage(damage);
+
+        assertEquals(0.0, damageDealt);
+
+        verify(player, never()).setHealth(anyDouble());
     }
 
     @Test
-    public void applyZeroDamageWhenPlayerAlreadyHasNoHealth() {
+    public void damageAppliesNoDamageWhenPlayerHasNoHealth() {
         when(player.getHealth()).thenReturn(0.0);
         when(player.isDead()).thenReturn(false);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
-        double health = gamePlayer.damage(10.0);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
-        assertEquals(0.0, health, 0.0);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        double damageDealt = gamePlayer.damage(damage);
+
+        assertEquals(0.0, damageDealt);
+
+        verify(player, never()).setHealth(anyDouble());
     }
 
     @Test
-    public void convertDamageToHeartsAndApplyDamageToPlayer() {
+    public void damageReturnsDamageDealtAndAppliesHeartConvertedDamageToPlayer() {
         when(player.getHealth()).thenReturn(20.0);
         when(player.isDead()).thenReturn(false);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
-        double health = gamePlayer.damage(10.0);
+        double damageAmount = 10.0;
+        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
 
-        assertEquals(18.0, health, 0.0);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        double damageDealt = gamePlayer.damage(damage);
+
+        assertEquals(damageAmount, damageDealt);
+
+        verify(player).setHealth(18.0);
+    }
+
+    @Test
+    public void damageReturnsDamageDealtAndSetsPlayerHealthToZeroIfDamageIsGreaterThanHealth() {
+        when(player.getHealth()).thenReturn(20.0);
+        when(player.isDead()).thenReturn(false);
+
+        double damageAmount = 1000.0;
+        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        double damageDealt = gamePlayer.damage(damage);
+
+        assertEquals(damageAmount, damageDealt);
+
+        verify(player).setHealth(0.0);
     }
 
     @Test

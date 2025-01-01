@@ -21,7 +21,11 @@ public enum DamageType {
     /**
      * Explosion damage caused by an explosion originating from an item inside a game.
      */
-    EXPLOSIVE_ITEM_DAMAGE;
+    EXPLOSIVE_ITEM_DAMAGE,
+    /**
+     * Damages caused by fire created by items.
+     */
+    FIRE_DAMAGE;
 
     @Nullable
     public static DamageType map(@NotNull EntityDamageEvent.DamageCause cause) {

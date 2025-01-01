@@ -98,6 +98,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
 
         if (deploymentProperties != null) {
             droppedItem.setHealth(deploymentProperties.getHealth());
+            droppedItem.setResistances(deploymentProperties.getResistances());
         }
 
         if (projectileProperties != null) {

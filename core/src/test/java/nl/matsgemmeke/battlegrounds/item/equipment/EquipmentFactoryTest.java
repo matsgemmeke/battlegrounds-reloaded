@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
@@ -184,13 +185,19 @@ public class EquipmentFactoryTest {
     @Test
     public void makeEquipmentItemWithDeploymentProperties() {
         boolean activateOnDestroy = true;
-        boolean cancelOnDestroy = true;
+        boolean resetOnDestroy = true;
         double health = 10.0;
+        double resistanceBulletDamage = 0.0;
+        double resistanceExplosiveDamage = 0.5;
 
         Section deploySection = mock(Section.class);
+        when(deploySection.contains("resistances.bullet-damage")).thenReturn(true);
+        when(deploySection.contains("resistances.explosive-damage")).thenReturn(true);
         when(deploySection.getBoolean("activate-on-destroy")).thenReturn(activateOnDestroy);
         when(deploySection.getDouble("health")).thenReturn(health);
-        when(deploySection.getBoolean("reset-on-destroy")).thenReturn(cancelOnDestroy);
+        when(deploySection.getBoolean("reset-on-destroy")).thenReturn(resetOnDestroy);
+        when(deploySection.getDouble("resistances.bullet-damage")).thenReturn(resistanceBulletDamage);
+        when(deploySection.getDouble("resistances.explosive-damage")).thenReturn(resistanceExplosiveDamage);
 
         when(rootSection.getSection("deploy")).thenReturn(deploySection);
 
@@ -199,9 +206,12 @@ public class EquipmentFactoryTest {
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertNotNull(equipment.getDeploymentProperties());
+        assertNotNull(equipment.getDeploymentProperties().getResistances());
         assertEquals(activateOnDestroy, equipment.getDeploymentProperties().isActivatedOnDestroy());
-        assertEquals(cancelOnDestroy, equipment.getDeploymentProperties().isResetOnDestroy());
         assertEquals(health, equipment.getDeploymentProperties().getHealth());
+        assertEquals(resetOnDestroy, equipment.getDeploymentProperties().isResetOnDestroy());
+        assertEquals(resistanceBulletDamage, equipment.getDeploymentProperties().getResistances().get(DamageType.BULLET_DAMAGE));
+        assertEquals(resistanceExplosiveDamage, equipment.getDeploymentProperties().getResistances().get(DamageType.EXPLOSIVE_DAMAGE));
     }
 
     @Test

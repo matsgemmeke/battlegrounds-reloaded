@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.training.component.damage;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
@@ -47,10 +48,12 @@ public class TrainingModeDamageProcessor implements DamageProcessor {
         return event;
     }
 
-    public void processDeploymentObjectDamage(@NotNull DeploymentObject deploymentObject, double damageAmount) {
-        double remainingHealth = deploymentObject.damage(damageAmount);
+    public void processDeploymentObjectDamage(@NotNull DeploymentObject deploymentObject, @NotNull Damage damage) {
+        if (deploymentObject.isImmuneTo(damage.type())) {
+            return;
+        }
 
-        if (remainingHealth <= 0.0) {
+        if (deploymentObject.getHealth() <= 0.0) {
             deploymentObject.destroy();
 
             DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(deploymentObject);

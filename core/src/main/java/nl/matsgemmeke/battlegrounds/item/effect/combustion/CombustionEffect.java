@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
@@ -107,7 +109,8 @@ public class CombustionEffect extends BaseItemEffect {
             Location targetLocation = target.getLocation();
 
             double distance = location.distance(targetLocation);
-            double damage = rangeProfile.getDamageByDistance(distance);
+            double damageAmount = rangeProfile.getDamageByDistance(distance);
+            Damage damage = new Damage(damageAmount, DamageType.FIRE_DAMAGE);
 
             target.damage(damage);
         }

@@ -20,13 +20,13 @@ effect:
   range:
     long-range:
       damage: 10.0
-      distance: 3.0
+      distance: 1.5
     medium-range:
-      damage: 30.0
-      distance: 2.0
-    short-range:
-      damage: 50.0
+      damage: 20.0
       distance: 1.0
+    short-range:
+      damage: 30.0
+      distance: 0.5
   spread-fire: false
   ticks-between-spread: 5
   type: COMBUSTION

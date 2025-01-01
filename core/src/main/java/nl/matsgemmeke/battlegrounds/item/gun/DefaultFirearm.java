@@ -7,6 +7,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
@@ -159,16 +161,20 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
             Location targetLocation = target.getEntity().getLocation();
 
-            double damage = this.getDamage(startingLocation, targetLocation, projectileLocation);
+            double damageAmount = this.getDamage(startingLocation, targetLocation, projectileLocation);
+            Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
+
             target.damage(damage);
             return true;
         }
 
         for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(holder, projectileLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {
             Location objectLocation = deploymentObject.getLocation();
-            double damageAmount = this.getDamage(startingLocation, objectLocation, projectileLocation);
 
-            damageProcessor.processDeploymentObjectDamage(deploymentObject, damageAmount);
+            double damageAmount = this.getDamage(startingLocation, objectLocation, projectileLocation);
+            Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
+
+            damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
             return true;
         }
 

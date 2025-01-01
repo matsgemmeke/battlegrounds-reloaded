@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.training.component.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.info.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
@@ -70,47 +71,66 @@ public class TrainingModeDamageProcessorTest {
     }
 
     @Test
-    public void processDeploymentObjectDamageOnlyDamagesDeploymentObjectIfRemainingHealthIsAboveZero() {
-        double damageAmount = 10.0;
+    public void processDeploymentObjectDamageDoesNotApplyDamageIfDeploymentObjectIsResistantToDamageType() {
+        Damage damage = new Damage(10.0, DamageType.EXPLOSIVE_DAMAGE);
 
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
-        when(deploymentObject.damage(damageAmount)).thenReturn(20.0);
+        when(deploymentObject.isImmuneTo(DamageType.EXPLOSIVE_DAMAGE)).thenReturn(true);
 
         TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
-        damageProcessor.processDeploymentObjectDamage(deploymentObject, damageAmount);
+        damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
+        verify(deploymentObject, never()).damage(any(Damage.class));
+    }
+
+    @Test
+    public void processDeploymentObjectDamageOnlyDamagesDeploymentObjectIfRemainingHealthIsAboveZero() {
+        Damage damage = new Damage(100.0, DamageType.EXPLOSIVE_DAMAGE);
+
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        when(deploymentObject.getHealth()).thenReturn(10.0);
+        when(deploymentObject.isImmuneTo(DamageType.EXPLOSIVE_DAMAGE)).thenReturn(false);
+
+        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
+        damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
+
+        verify(deploymentObject).damage(damage);
         verify(deploymentObject, never()).destroy();
     }
 
     @Test
     public void processDeploymentObjectDamageDestroysDeploymentIfRemainingHealthEqualsOrIsBelowZero() {
-        double damageAmount = 10.0;
+        Damage damage = new Damage(100.0, DamageType.EXPLOSIVE_DAMAGE);
 
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
-        when(deploymentObject.damage(damageAmount)).thenReturn(0.0);
+        when(deploymentObject.getHealth()).thenReturn(0.0);
+        when(deploymentObject.isImmuneTo(DamageType.EXPLOSIVE_DAMAGE)).thenReturn(false);
 
         when(deploymentInfoProvider.getDeployableItem(deploymentObject)).thenReturn(null);
 
         TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
-        damageProcessor.processDeploymentObjectDamage(deploymentObject, damageAmount);
+        damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
+        verify(deploymentObject).damage(damage);
         verify(deploymentObject).destroy();
     }
 
     @Test
     public void processDeploymentObjectDamageDestroysDeploymentAndNotifiesParentItemIfRemainingHealthEqualsOrIsBelowZero() {
-        double damageAmount = 10.0;
+        Damage damage = new Damage(100.0, DamageType.EXPLOSIVE_DAMAGE);
 
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
-        when(deploymentObject.damage(damageAmount)).thenReturn(0.0);
+        when(deploymentObject.getHealth()).thenReturn(0.0);
+        when(deploymentObject.isImmuneTo(DamageType.EXPLOSIVE_DAMAGE)).thenReturn(false);
 
         DeployableItem deployableItem = mock(DeployableItem.class);
         when(deploymentInfoProvider.getDeployableItem(deploymentObject)).thenReturn(deployableItem);
 
         TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
-        damageProcessor.processDeploymentObjectDamage(deploymentObject, damageAmount);
+        damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
-        verify(deployableItem).onDestroyDeploymentObject(deploymentObject);
+        verify(deploymentObject).damage(damage);
         verify(deploymentObject).destroy();
+        verify(deployableItem).onDestroyDeploymentObject(deploymentObject);
     }
 }

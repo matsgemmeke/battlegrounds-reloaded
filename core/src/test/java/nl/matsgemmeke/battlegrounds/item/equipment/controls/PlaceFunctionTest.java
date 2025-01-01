@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -24,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -246,6 +248,7 @@ public class PlaceFunctionTest {
     @Test
     public void performReturnsTrueWhenPlacingBlockAgainstWall() {
         double health = 50.0;
+        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
 
         BlockFace targetBlockFace = BlockFace.NORTH;
         BlockState adjacentBlockState = mock(BlockState.class);
@@ -265,12 +268,12 @@ public class PlaceFunctionTest {
         ItemEffect effect = mock(ItemEffect.class);
         when(effect.isPrimed()).thenReturn(false);
 
-        when(equipment.getEffect()).thenReturn(effect);
-
         DeploymentProperties deploymentProperties = new DeploymentProperties();
         deploymentProperties.setHealth(health);
+        deploymentProperties.setResistances(resistances);
 
         when(equipment.getDeploymentProperties()).thenReturn(deploymentProperties);
+        when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
@@ -291,6 +294,7 @@ public class PlaceFunctionTest {
 
         assertEquals(health, placedBlock.getHealth());
         assertEquals(location, placedBlock.getLocation());
+        assertEquals(resistances, placedBlock.getResistances());
 
         verify(equipment).onDeployDeploymentObject(placedBlock);
         verify(adjacentBlockState).setBlockData(faceAttachable);

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -173,6 +175,7 @@ public class ThrowFunctionTest {
     public void performReturnsTrueAndDeploysDroppedItem() {
         double droppedItemHealth = 10.0;
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
+        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
 
         Item itemEntity = mock(Item.class);
         when(itemEntity.getLocation()).thenReturn(location);
@@ -185,24 +188,22 @@ public class ThrowFunctionTest {
         ItemTemplate throwItemTemplate = mock(ItemTemplate.class);
         when(throwItemTemplate.createItemStack()).thenReturn(itemStack);
 
-        when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
-
         ItemEffect effect = mock(ItemEffect.class);
         when(effect.isPrimed()).thenReturn(true);
 
-        when(equipment.getEffect()).thenReturn(effect);
-
         DeploymentProperties deploymentProperties = new DeploymentProperties();
         deploymentProperties.setHealth(droppedItemHealth);
-
-        when(equipment.getDeploymentProperties()).thenReturn(deploymentProperties);
+        deploymentProperties.setResistances(resistances);
 
         ProjectileEffect projectileEffect = mock(ProjectileEffect.class);
 
         ProjectileProperties projectileProperties = new ProjectileProperties();
         projectileProperties.getEffects().add(projectileEffect);
 
+        when(equipment.getDeploymentProperties()).thenReturn(deploymentProperties);
+        when(equipment.getEffect()).thenReturn(effect);
         when(equipment.getProjectileProperties()).thenReturn(projectileProperties);
+        when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLocation()).thenReturn(location);
@@ -218,7 +219,9 @@ public class ThrowFunctionTest {
         DroppedItem droppedItem = droppedItemCaptor.getValue();
 
         assertTrue(performed);
+        assertEquals(droppedItemHealth, droppedItem.getHealth());
         assertEquals(location, droppedItem.getLocation());
+        assertEquals(resistances, droppedItem.getResistances());
 
         verify(effect).deploy(droppedItem);
         verify(equipment).onDeployDeploymentObject(droppedItem);

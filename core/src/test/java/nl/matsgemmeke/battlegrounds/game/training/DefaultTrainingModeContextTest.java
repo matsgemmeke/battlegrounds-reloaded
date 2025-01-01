@@ -39,7 +39,10 @@ public class DefaultTrainingModeContextTest {
         internals = mock(InternalsProvider.class);
         trainingMode = mock(TrainingMode.class);
 
+        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
         EntityStorage<GamePlayer> playerStorage = new EntityStorage<>();
+
+        when(trainingMode.getEquipmentStorage()).thenReturn(equipmentStorage);
         when(trainingMode.getPlayerStorage()).thenReturn(playerStorage);
     }
 
@@ -77,9 +80,6 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfItemRegistryForEquipmentItems() {
-        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
-        when(trainingMode.getEquipmentStorage()).thenReturn(equipmentStorage);
-
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         EquipmentRegistry equipmentRegistry = context.getEquipmentRegistry();
 
@@ -110,9 +110,6 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfEntityRegisterForPlayerEntities() {
-        EntityStorage<GamePlayer> playerStorage = new EntityStorage<>();
-        when(trainingMode.getPlayerStorage()).thenReturn(playerStorage);
-
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         EntityRegistry<GamePlayer, Player> playerRegistry = context.getPlayerRegistry();
 
@@ -132,9 +129,6 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfTrainingModeTargetFinder() {
-        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
-        when(trainingMode.getEquipmentStorage()).thenReturn(equipmentStorage);
-
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         TargetFinder targetFinder = context.getTargetFinder();
 

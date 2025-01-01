@@ -1,11 +1,16 @@
 package nl.matsgemmeke.battlegrounds.item.effect.source;
 
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * A deployed object in the form as a placed {@link Block}.
@@ -17,6 +22,8 @@ public class PlacedBlock implements DeploymentObject, EffectSource {
     @NotNull
     private Block block;
     private double health;
+    @Nullable
+    private Map<DamageType, Double> resistances;
     @NotNull
     private Material material;
 
@@ -42,6 +49,15 @@ public class PlacedBlock implements DeploymentObject, EffectSource {
         return block.getLocation().add(BLOCK_CENTER_OFFSET, BLOCK_CENTER_OFFSET, BLOCK_CENTER_OFFSET);
     }
 
+    @Nullable
+    public Map<DamageType, Double> getResistances() {
+        return resistances;
+    }
+
+    public void setResistances(@Nullable Map<DamageType, Double> resistances) {
+        this.resistances = resistances;
+    }
+
     @NotNull
     public World getWorld() {
         return block.getWorld();
@@ -51,16 +67,24 @@ public class PlacedBlock implements DeploymentObject, EffectSource {
         return true;
     }
 
-    public double damage(double damageAmount) {
-        double healthAfterDamage = health - damageAmount;
+    public double damage(@NotNull Damage damage) {
+        double damageAmount = damage.amount();
 
-        health = Math.max(healthAfterDamage, 0);
+        if (resistances != null && resistances.containsKey(damage.type())) {
+            damageAmount *= resistances.get(damage.type());
+        }
 
-        return health;
+        health = Math.max(health - damageAmount, 0);
+
+        return damageAmount;
     }
 
     public void destroy() {
         this.remove();
+    }
+
+    public boolean isImmuneTo(@NotNull DamageType damageType) {
+        return resistances != null && resistances.get(damageType) == 0;
     }
 
     public void remove() {

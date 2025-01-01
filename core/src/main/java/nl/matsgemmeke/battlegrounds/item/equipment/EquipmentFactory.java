@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
@@ -34,7 +35,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EquipmentFactory implements WeaponFactory {
 
@@ -164,11 +167,20 @@ public class EquipmentFactory implements WeaponFactory {
             boolean activateOnDestroy = deploySection.getBoolean("activate-on-destroy");
             boolean resetOnDestroy = deploySection.getBoolean("reset-on-destroy");
             double health = deploySection.getDouble("health");
+            Map<DamageType, Double> resistances = new HashMap<>();
+
+            if (deploySection.contains("resistances.bullet-damage")) {
+                resistances.put(DamageType.BULLET_DAMAGE, deploySection.getDouble("resistances.bullet-damage"));
+            }
+            if (deploySection.contains("resistances.explosive-damage")) {
+                resistances.put(DamageType.EXPLOSIVE_DAMAGE, deploySection.getDouble("resistances.explosive-damage"));
+            }
 
             DeploymentProperties deploymentProperties = new DeploymentProperties();
             deploymentProperties.setActivatedOnDestroy(activateOnDestroy);
             deploymentProperties.setHealth(health);
             deploymentProperties.setResetOnDestroy(resetOnDestroy);
+            deploymentProperties.setResistances(resistances);
 
             equipment.setDeploymentProperties(deploymentProperties);
         }
