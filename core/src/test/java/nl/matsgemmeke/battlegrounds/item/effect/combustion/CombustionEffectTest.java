@@ -70,11 +70,12 @@ public class CombustionEffectTest {
     }
 
     @Test
-    public void activateInstantlyPerformsEffectIfContextIsNotNull() {
+    public void activateInstantlyPerformsEffectIfContextSourceExists() {
         ItemHolder holder = mock(ItemHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
         EffectSource source = mock(EffectSource.class);
+        when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);

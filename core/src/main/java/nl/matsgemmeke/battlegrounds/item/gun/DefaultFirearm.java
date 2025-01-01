@@ -24,7 +24,7 @@ import java.util.List;
 
 public class DefaultFirearm extends BaseGun implements Firearm {
 
-    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.25;
+    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.3;
     private static final double ENTITY_FINDING_RANGE = 0.1;
     private static final double PROJECTILE_DISTANCE_JUMP = 0.5;
     private static final double PROJECTILE_DISTANCE_START = 0.5;

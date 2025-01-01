@@ -352,7 +352,7 @@ public class DefaultFirearmTest {
 
         List<DeploymentObject> deploymentObjects = Collections.singletonList(deploymentObject);
 
-        when(targetFinder.findDeploymentObjects(eq(holder), any(), eq(0.25))).thenReturn(deploymentObjects);
+        when(targetFinder.findDeploymentObjects(eq(holder), any(), eq(0.3))).thenReturn(deploymentObjects);
 
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);

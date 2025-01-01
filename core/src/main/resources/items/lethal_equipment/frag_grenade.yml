@@ -7,6 +7,8 @@ deploy:
   activate-on-destroy: false
   health: 50.0
   reset-on-destroy: false
+  resistances:
+    bullet-damage: 0
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 effect:
   activation:

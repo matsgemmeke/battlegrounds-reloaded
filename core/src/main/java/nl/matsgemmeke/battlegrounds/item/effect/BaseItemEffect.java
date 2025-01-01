@@ -19,7 +19,7 @@ public abstract class BaseItemEffect implements ItemEffect {
     }
 
     public void activateInstantly() {
-        if (currentContext != null) {
+        if (currentContext != null && currentContext.getSource().exists()) {
             this.perform(currentContext);
         }
     }

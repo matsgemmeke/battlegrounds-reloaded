@@ -53,6 +53,8 @@ public class TrainingModeDamageProcessor implements DamageProcessor {
             return;
         }
 
+        deploymentObject.damage(damage);
+
         if (deploymentObject.getHealth() <= 0.0) {
             deploymentObject.destroy();
 

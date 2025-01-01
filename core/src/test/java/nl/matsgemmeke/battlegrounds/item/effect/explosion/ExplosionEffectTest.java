@@ -48,7 +48,7 @@ public class ExplosionEffectTest {
     }
 
     @Test
-    public void activateInstantlyPerformsEffectIfContextIsNotNull() {
+    public void activateInstantlyPerformsEffectIfContextSourceExists() {
         Player player = mock(Player.class);
         World sourceWorld = mock(World.class);
         Location sourceLocation = new Location(sourceWorld, 1, 1, 1);
@@ -57,6 +57,7 @@ public class ExplosionEffectTest {
         when(holder.getEntity()).thenReturn(player);
 
         EffectSource source = mock(EffectSource.class);
+        when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(sourceWorld);
 
