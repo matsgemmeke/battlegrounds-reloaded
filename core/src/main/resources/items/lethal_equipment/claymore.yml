@@ -6,6 +6,8 @@ deploy:
   activate-on-destroy: true
   health: 50.0
   reset-on-destroy: false
+  resistances:
+    fire-damage: 0
 description: Anti-personnel mine that triggers a proximity-based explosion.
 effect:
   activation:

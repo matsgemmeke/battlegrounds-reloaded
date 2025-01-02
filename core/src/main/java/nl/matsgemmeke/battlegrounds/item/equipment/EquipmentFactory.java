@@ -175,6 +175,9 @@ public class EquipmentFactory implements WeaponFactory {
             if (deploySection.contains("resistances.explosive-damage")) {
                 resistances.put(DamageType.EXPLOSIVE_DAMAGE, deploySection.getDouble("resistances.explosive-damage"));
             }
+            if (deploySection.contains("resistances.fire-damage")) {
+                resistances.put(DamageType.FIRE_DAMAGE, deploySection.getDouble("resistances.fire-damage"));
+            }
 
             DeploymentProperties deploymentProperties = new DeploymentProperties();
             deploymentProperties.setActivatedOnDestroy(activateOnDestroy);

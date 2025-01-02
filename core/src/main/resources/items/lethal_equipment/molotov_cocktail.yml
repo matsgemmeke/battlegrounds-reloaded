@@ -16,7 +16,7 @@ effect:
   burn-blocks: false
   combustion-sound: BLOCK_GLASS_BREAK-1-1-0
   max-duration: 600
-  radius: 3
+  max-radius: 3
   range:
     long-range:
       damage: 10.0

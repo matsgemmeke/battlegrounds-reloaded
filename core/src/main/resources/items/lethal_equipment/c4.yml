@@ -11,6 +11,7 @@ deploy:
   resistances:
     bullet-damage: 0
     explosive-damage: 0
+    fire-damage: 0
 description: A plastic explosive device that is detonated remotely with the clacker.
 effect:
   activation:

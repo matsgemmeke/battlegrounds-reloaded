@@ -7,7 +7,7 @@ import java.util.List;
 
 public record CombustionProperties(
         @NotNull List<GameSound> combustionSounds,
-        int radius,
+        int maxRadius,
         long ticksBetweenFireSpread,
         long maxDuration,
         boolean burnBlocks,

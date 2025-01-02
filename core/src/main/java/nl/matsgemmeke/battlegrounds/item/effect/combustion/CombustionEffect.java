@@ -83,10 +83,8 @@ public class CombustionEffect extends BaseItemEffect {
 
         this.inflictDamage(holder, location);
 
-        int maxRadiusSize = properties.radius();
-
         task = taskRunner.runTaskTimer(() -> {
-            if (++currentRadius > maxRadiusSize) {
+            if (++currentRadius > properties.maxRadius()) {
                 currentRadius = 0;
                 task.cancel();
                 return;
