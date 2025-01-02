@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseItemEffect implements ItemEffect {
 
+    private boolean activated;
     private boolean primed;
     @NotNull
     protected ItemEffectActivation effectActivation;
@@ -15,13 +16,18 @@ public abstract class BaseItemEffect implements ItemEffect {
 
     public BaseItemEffect(@NotNull ItemEffectActivation effectActivation) {
         this.effectActivation = effectActivation;
+        this.activated = false;
         this.primed = false;
     }
 
     public void activateInstantly() {
-        if (currentContext != null && currentContext.getSource().exists()) {
-            this.perform(currentContext);
+        if (activated || currentContext == null) {
+            return;
         }
+
+        activated = true;
+        effectActivation.cancel();
+        this.perform(currentContext);
     }
 
     public void deploy(@NotNull EffectSource source) {
@@ -48,7 +54,10 @@ public abstract class BaseItemEffect implements ItemEffect {
         currentContext = context;
         primed = true;
 
-        effectActivation.prime(context, () -> this.perform(currentContext));
+        effectActivation.prime(context, () -> {
+            activated = true;
+            this.perform(currentContext);
+        });
     }
 
     public abstract void perform(@NotNull ItemEffectContext context);

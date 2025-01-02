@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
@@ -98,10 +99,11 @@ public class ItemEffectFactory {
                 double shortRangeDistance = section.getDouble("range.short-range.distance");
 
                 ExplosionProperties properties = new ExplosionProperties(power, breakBlocks, setFire);
+                DamageProcessor damageProcessor = context.getDamageProcessor();
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                 return new ExplosionEffect(effectActivation, properties, rangeProfile, targetFinder);
+                return new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
             }
             case FLASH -> {
                 double range = section.getDouble("range");

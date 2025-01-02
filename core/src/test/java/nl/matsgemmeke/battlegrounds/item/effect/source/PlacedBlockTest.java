@@ -158,6 +158,17 @@ public class PlacedBlockTest {
     }
 
     @Test
+    public void isImmuneReturnsFalseIfResistancesDoesNotContainEntryForDamageType() {
+        Map<DamageType, Double> resistances = Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.0);
+
+        PlacedBlock placedBlock = new PlacedBlock(block, material);
+        placedBlock.setResistances(resistances);
+        boolean immune = placedBlock.isImmuneTo(DamageType.BULLET_DAMAGE);
+
+        assertFalse(immune);
+    }
+
+    @Test
     public void isImmuneReturnsFalseIfResistanceToDamageTypeIsLargerThanZero() {
         Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
 

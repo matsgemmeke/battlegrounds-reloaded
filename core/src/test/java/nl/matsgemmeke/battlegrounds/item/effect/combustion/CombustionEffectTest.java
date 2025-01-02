@@ -70,7 +70,30 @@ public class CombustionEffectTest {
     }
 
     @Test
-    public void activateInstantlyPerformsEffectIfContextSourceExists() {
+    public void activateInstantlyDoesNotPerformEffectIfItWasAlreadyActivated() {
+        ItemHolder holder = mock(ItemHolder.class);
+        Location sourceLocation = new Location(null, 1, 1, 1);
+
+        EffectSource source = mock(EffectSource.class);
+        when(source.exists()).thenReturn(true);
+        when(source.getLocation()).thenReturn(sourceLocation);
+
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
+        effect.activateInstantly();
+
+        verify(effectActivation, never()).cancel();
+    }
+
+    @Test
+    public void activateInstantlyPerformsEffect() {
         ItemHolder holder = mock(ItemHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
@@ -84,8 +107,8 @@ public class CombustionEffectTest {
         effect.prime(context);
         effect.activateInstantly();
 
-        verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, sourceLocation);
-        verify(source).remove();
+        verify(effectActivation, never()).cancel();
+        verify(source, never()).remove();
     }
 
     @Test

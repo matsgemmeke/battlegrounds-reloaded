@@ -194,6 +194,17 @@ public class DroppedItemTest {
     }
 
     @Test
+    public void isImmuneReturnsFalseIfResistancesDoesNotContainEntryForDamageType() {
+        Map<DamageType, Double> resistances = Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.0);
+
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        droppedItem.setResistances(resistances);
+        boolean immune = droppedItem.isImmuneTo(DamageType.BULLET_DAMAGE);
+
+        assertFalse(immune);
+    }
+
+    @Test
     public void isImmuneReturnsFalseIfResistanceToDamageTypeIsLargerThanZero() {
         Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
 

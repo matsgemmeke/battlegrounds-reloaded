@@ -97,7 +97,7 @@ public class DroppedItem implements DeploymentObject, EffectSource, Projectile {
     }
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {
-        return resistances != null && resistances.get(damageType) <= 0;
+        return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) <= 0;
     }
 
     public void remove() {

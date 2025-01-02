@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
@@ -61,7 +62,10 @@ public class ItemEffectFactoryTest {
 
     @Test
     public void createInstanceForExplosionEffectType() {
+        DamageProcessor damageProcessor = mock(DamageProcessor.class);
         TargetFinder targetFinder = mock(TargetFinder.class);
+
+        when(context.getDamageProcessor()).thenReturn(damageProcessor);
         when(context.getTargetFinder()).thenReturn(targetFinder);
 
         when(section.getString("type")).thenReturn("EXPLOSION");
