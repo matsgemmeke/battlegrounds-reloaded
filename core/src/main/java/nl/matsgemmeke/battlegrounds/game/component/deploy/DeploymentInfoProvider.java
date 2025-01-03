@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component.info.deploy;
+package nl.matsgemmeke.battlegrounds.game.component.deploy;
 
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;

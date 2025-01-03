@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.component.info.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.check.NegateDefaultExplosionDamageCheck;
 import nl.matsgemmeke.battlegrounds.game.training.event.EntityCombustEventHandler;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
