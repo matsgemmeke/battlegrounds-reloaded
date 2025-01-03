@@ -4,23 +4,33 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 public class EventDispatcher {
 
     @NotNull
-    private Map<Class<? extends Event>, EventBus<?>> eventBuses;
+    private Logger logger;
+    @NotNull
+    private Map<Class<? extends Event>, List<EventHandlerMethod>> eventMethods;
     @NotNull
     private PluginManager pluginManager;
 
-    public EventDispatcher(@NotNull PluginManager pluginManager) {
+    public EventDispatcher(@NotNull PluginManager pluginManager, @NotNull Logger logger) {
         this.pluginManager = pluginManager;
-        this.eventBuses = new HashMap<>();
+        this.logger = logger;
+        this.eventMethods = new HashMap<>();
     }
 
     /**
-     * Dispatches an event that gets sent to its corresponding {@link EventBus} and to the server as an outgoing event.
+     * Dispatches an event to be handled by its corresponding {@link EventHandler} instances as well as the server as
+     * an outgoing event.
      *
      * @param event the event to be dispatched
      */
@@ -32,57 +42,56 @@ public class EventDispatcher {
     }
 
     /**
-     * Dispatches an event that gets sent only to its corresponding {@link EventBus}.
+     * Dispatches an event to be handled by its corresponding {@link EventHandler} instances.
      *
      * @param event the event to be dispatched
      */
-    @SuppressWarnings("unchecked")
     public <T extends Event> void dispatchInternalEvent(@NotNull T event) {
-        if (!eventBuses.containsKey(event.getClass())) {
-            return;
-        }
+        for (Entry<Class<? extends Event>, List<EventHandlerMethod>> entry : eventMethods.entrySet()) {
+            Class<? extends Event> eventClass = entry.getKey();
 
-        EventBus<T> eventBus = (EventBus<T>) eventBuses.get(event.getClass());
-        eventBus.passEvent(event);
+            if (eventClass.isAssignableFrom(event.getClass())) {
+                for (EventHandlerMethod method : entry.getValue()) {
+                    try {
+                        method.invoke(event);
+                    } catch (IllegalAccessException e) {
+                        logger.severe("Cannot invoke inaccessible handle method for event " + eventClass.getSimpleName());
+                    } catch (IllegalArgumentException e) {
+                        logger.severe("Cannot invoke handle method for event " + eventClass.getSimpleName() + " with given arguments");
+                    } catch (InvocationTargetException e) {
+                        logger.severe("Error occurred while invoking handle method for event " + eventClass.getSimpleName());
+                    }
+                }
+            }
+        }
     }
 
     /**
-     * Gets whether the dispatcher has an {@link EventBus} registered for a specific event class.
+     * Registers a new event handler instance.
      *
      * @param eventClass the event class
-     * @return whether an {@link EventBus} is registered for the class
+     * @param eventHandler the event handler
+     * @param <T> the event type
      */
-    public boolean containsEventBusForClass(Class<? extends Event> eventClass) {
-        return eventBuses.containsKey(eventClass);
-    }
+    public <T extends Event> void registerEventHandler(@NotNull Class<T> eventClass, @NotNull EventHandler<T> eventHandler) {
+        Method method;
 
-    /**
-     * Registers an event channel.
-     *
-     * @param eventClass the event class that the event channel handles
-     * @param eventBus the event bus
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends Event> void registerEventBus(@NotNull Class<T> eventClass, @NotNull EventBus<T> eventBus) {
-        if (eventBuses.containsKey(eventClass)) {
-            // If an event channel for the event class already exists, add the event handlers to the existing channel
-            EventBus<T> existingBus = (EventBus<T>) eventBuses.get(eventClass);
-            existingBus.addEventBus(eventBus);
-        } else {
-            eventBuses.put(eventClass, eventBus);
-        }
-    }
-
-    /**
-     * Unregisters an event bus.
-     *
-     * @param eventClass the event class that the event bus handles
-     */
-    public void unregisterEventBus(@NotNull Class<? extends Event> eventClass) {
-        if (!eventBuses.containsKey(eventClass)) {
+        try {
+            method = eventHandler.getClass().getDeclaredMethod("handle", eventClass);
+        } catch (NoSuchMethodException e) {
+            logger.severe("Cannot register event handler for event " + eventClass.getSimpleName() + " without handle method");
             return;
         }
 
-        eventBuses.remove(eventClass);
+        EventHandlerMethod eventMethod = new EventHandlerMethod(eventHandler, method);
+
+        if (eventMethods.containsKey(eventClass)) {
+            eventMethods.get(eventClass).add(eventMethod);
+        } else {
+            List<EventHandlerMethod> list = new ArrayList<>();
+            list.add(eventMethod);
+
+            eventMethods.put(eventClass, list);
+        }
     }
 }

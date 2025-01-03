@@ -1,98 +1,76 @@
 package nl.matsgemmeke.battlegrounds.event;
 
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.Event;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.server.ServerLoadEvent.LoadType;
 import org.bukkit.plugin.PluginManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import java.util.logging.Logger;
+
+import static org.mockito.Mockito.*;
 
 public class EventDispatcherTest {
 
+    private Logger logger;
     private PluginManager pluginManager;
 
     @BeforeEach
     public void setUp() {
-        this.pluginManager = mock(PluginManager.class);
+        logger = mock(Logger.class);
+        pluginManager = mock(PluginManager.class);
     }
 
     @Test
-    public void canGetWhetherEventClassIsRegistered() {
-        EventBus<PlayerInteractEvent> eventBus = new EventBus<>();
-
-        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, eventBus);
-
-        assertTrue(eventDispatcher.containsEventBusForClass(PlayerInteractEvent.class));
-        assertFalse(eventDispatcher.containsEventBusForClass(PlayerMoveEvent.class));
-    }
-
-    @Test
-    public void canRegisterEventBusForUnregisteredEventClass() {
-        EventBus<PlayerInteractEvent> eventBus = new EventBus<>();
-
-        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, eventBus);
-
-        assertTrue(eventDispatcher.containsEventBusForClass(PlayerInteractEvent.class));
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void canRegisterEventBusForRegisteredEventClass() {
-        EventBus<PlayerInteractEvent> eventBus = (EventBus<PlayerInteractEvent>) mock(EventBus.class);
-        EventBus<PlayerInteractEvent> other = new EventBus<>();
-
-        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, eventBus);
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, other);
-
-        verify(eventBus).addEventBus(other);
-
-        assertTrue(eventDispatcher.containsEventBusForClass(PlayerInteractEvent.class));
-    }
-
-    @Test
-    public void canRemoveRegisteredEventBus() {
-        EventBus<PlayerInteractEvent> eventBus = new EventBus<>();
-
-        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, eventBus);
-        eventDispatcher.unregisterEventBus(PlayerInteractEvent.class);
-
-        assertFalse(eventDispatcher.containsEventBusForClass(PlayerInteractEvent.class));
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void canDispatchInternalEvent() {
+    public void dispatchInternalEventInvokesCorrespondingEventHandlers() {
         ServerLoadEvent event = new ServerLoadEvent(LoadType.RELOAD);
-        EventBus<ServerLoadEvent> eventBus = (EventBus<ServerLoadEvent>) mock(EventBus.class);
+        ServerLoadEventHandlerMock eventHandler = spy(new ServerLoadEventHandlerMock(() -> {}));
 
-        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
-        eventDispatcher.registerEventBus(ServerLoadEvent.class, eventBus);
+        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager, logger);
+        eventDispatcher.registerEventHandler(ServerLoadEvent.class, eventHandler);
         eventDispatcher.dispatchInternalEvent(event);
 
-        verify(eventBus).passEvent(event);
+        verify(eventHandler).handle(event);
+        verify(pluginManager, never()).callEvent(any(Event.class));
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void canDispatchExternalEvent() {
+    public void dispatchInternalEventLogsErrorMessageIfEventHandlerMethodFailedToExecute() {
         ServerLoadEvent event = new ServerLoadEvent(LoadType.RELOAD);
-        EventBus<ServerLoadEvent> eventBus = (EventBus<ServerLoadEvent>) mock(EventBus.class);
+        ServerLoadEventHandlerMock eventHandler = spy(new ServerLoadEventHandlerMock(() -> {
+            throw new Error();
+        }));
 
-        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
-        eventDispatcher.registerEventBus(ServerLoadEvent.class, eventBus);
+        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager, logger);
+        eventDispatcher.registerEventHandler(ServerLoadEvent.class, eventHandler);
+        eventDispatcher.dispatchInternalEvent(event);
+
+        verify(eventHandler).handle(event);
+        verify(logger).severe("Error occurred while invoking handle method for event ServerLoadEvent");
+    }
+
+    @Test
+    public void dispatchExternalEventInvokesCorrespondingEventHandlersAsWellAsPluginManager() {
+        ServerLoadEvent event = new ServerLoadEvent(LoadType.RELOAD);
+        ServerLoadEventHandlerMock eventHandler = spy(new ServerLoadEventHandlerMock(() -> {}));
+
+        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager, logger);
+        eventDispatcher.registerEventHandler(ServerLoadEvent.class, eventHandler);
         eventDispatcher.dispatchExternalEvent(event);
 
-        verify(eventBus).passEvent(event);
+        verify(eventHandler).handle(event);
         verify(pluginManager).callEvent(event);
+    }
+
+    @Test
+    public void registerEventHandlerLogsErrorMessageIfEventHandlerDoesNotContainCorrectHandleMethod() {
+        // Use a mock so the method signature uses org.bukkit.event.Event instead
+        EventHandler<ServerLoadEvent> eventHandler = mock();
+
+        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager, logger);
+        eventDispatcher.registerEventHandler(ServerLoadEvent.class, eventHandler);
+
+        verify(logger).severe("Cannot register event handler for event ServerLoadEvent without handle method");
     }
 }

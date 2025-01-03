@@ -6,8 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +26,11 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onBlockSpread(@NotNull BlockSpreadEvent event) {
+        this.dispatchEvent(event);
+    }
+
+    @EventHandler
+    public void onEntityCombust(@NotNull EntityCombustEvent event) {
         this.dispatchEvent(event);
     }
 

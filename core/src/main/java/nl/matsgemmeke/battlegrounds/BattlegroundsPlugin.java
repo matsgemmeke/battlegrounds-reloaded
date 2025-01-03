@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.command.condition.ExistentWeaponIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.TrainingModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.configuration.*;
-import nl.matsgemmeke.battlegrounds.event.EventBus;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
@@ -48,6 +47,7 @@ import java.util.logging.Logger;
 public class BattlegroundsPlugin extends JavaPlugin {
 
     private BattlegroundsConfiguration config;
+    private EventDispatcher eventDispatcher;
     private GameContext trainingModeContext;
     private GameContextProvider contextProvider;
     private InternalsProvider internals;
@@ -97,8 +97,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
         this.setUpInternalsProvider();
         this.setUpTaskRunner();
         this.setUpWeaponProvider();
+        this.setUpEventSystem();
         this.setUpTrainingMode();
-        this.setUpEvents();
+        this.setUpEventHandlers();
         this.setUpTranslator();
         this.setUpCommands();
     }
@@ -132,20 +133,23 @@ public class BattlegroundsPlugin extends JavaPlugin {
         commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-session-id", new NonexistentSessionIdCondition(contextProvider, translator));
     }
 
-    private void setUpEvents() {
+    private void setUpEventHandlers() {
+        eventDispatcher.registerEventHandler(BlockBurnEvent.class, new BlockBurnEventHandler());
+        eventDispatcher.registerEventHandler(BlockSpreadEvent.class, new BlockSpreadEventHandler());
+        eventDispatcher.registerEventHandler(EntityDamageByEntityEvent.class, new EntityDamageByEntityEventHandler(contextProvider));
+        eventDispatcher.registerEventHandler(EntityPickupItemEvent.class, new EntityPickupItemEventHandler(contextProvider));
+        eventDispatcher.registerEventHandler(PlayerDropItemEvent.class, new PlayerDropItemEventHandler(contextProvider));
+        eventDispatcher.registerEventHandler(PlayerInteractEvent.class, new PlayerInteractEventHandler(contextProvider));
+        eventDispatcher.registerEventHandler(PlayerItemHeldEvent.class, new PlayerItemHeldEventHandler(contextProvider));
+        eventDispatcher.registerEventHandler(PlayerJoinEvent.class, new PlayerJoinEventHandler(config, trainingModeContext.getPlayerRegistry()));
+        eventDispatcher.registerEventHandler(PlayerRespawnEvent.class, new PlayerRespawnEventHandler(contextProvider));
+        eventDispatcher.registerEventHandler(PlayerSwapHandItemsEvent.class, new PlayerSwapHandItemsEventHandler(contextProvider));
+    }
+
+    private void setUpEventSystem() {
         PluginManager pluginManager = this.getServer().getPluginManager();
 
-        EventDispatcher eventDispatcher = new EventDispatcher(pluginManager);
-        eventDispatcher.registerEventBus(BlockBurnEvent.class, new EventBus<>(new BlockBurnEventHandler()));
-        eventDispatcher.registerEventBus(BlockSpreadEvent.class, new EventBus<>(new BlockSpreadEventHandler()));
-        eventDispatcher.registerEventBus(EntityDamageByEntityEvent.class, new EventBus<>(new EntityDamageByEntityEventHandler(contextProvider)));
-        eventDispatcher.registerEventBus(EntityPickupItemEvent.class, new EventBus<>(new EntityPickupItemEventHandler(contextProvider)));
-        eventDispatcher.registerEventBus(PlayerDropItemEvent.class, new EventBus<>(new PlayerDropItemEventHandler(contextProvider)));
-        eventDispatcher.registerEventBus(PlayerInteractEvent.class, new EventBus<>(new PlayerInteractEventHandler(contextProvider)));
-        eventDispatcher.registerEventBus(PlayerItemHeldEvent.class, new EventBus<>(new PlayerItemHeldEventHandler(contextProvider)));
-        eventDispatcher.registerEventBus(PlayerJoinEvent.class, new EventBus<>(new PlayerJoinEventHandler(config, trainingModeContext.getPlayerRegistry())));
-        eventDispatcher.registerEventBus(PlayerRespawnEvent.class, new EventBus<>(new PlayerRespawnEventHandler(contextProvider)));
-        eventDispatcher.registerEventBus(PlayerSwapHandItemsEvent.class, new EventBus<>(new PlayerSwapHandItemsEventHandler(contextProvider)));
+        eventDispatcher = new EventDispatcher(pluginManager, logger);
 
         EventListener eventListener = new EventListener(eventDispatcher);
 
@@ -187,7 +191,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void setUpTrainingMode() {
-        TrainingModeFactory trainingModeFactory = new TrainingModeFactory(config, internals);
+        TrainingModeFactory trainingModeFactory = new TrainingModeFactory(config, eventDispatcher, internals);
         TrainingMode trainingMode = trainingModeFactory.make();
 
         trainingModeContext = trainingMode.getContext();
