@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.training.event;
+package nl.matsgemmeke.battlegrounds.game.event;
 
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;

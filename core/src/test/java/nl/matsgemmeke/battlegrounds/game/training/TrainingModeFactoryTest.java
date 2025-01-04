@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.training;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
-import nl.matsgemmeke.battlegrounds.game.training.event.EntityCombustEventHandler;
+import nl.matsgemmeke.battlegrounds.game.event.EntityCombustEventHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustEvent;
