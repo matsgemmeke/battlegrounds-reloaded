@@ -112,6 +112,49 @@ public class CombustionEffectTest {
     }
 
     @Test
+    public void cancelActivationDoesNotCancelActivationIfNotPrimed() {
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
+        effect.cancelActivation();
+
+        verify(effectActivation, never()).cancel();
+    }
+
+    @Test
+    public void cancelActivationDoesNotCancelActivationIfAlreadyActivated() {
+        Location sourceLocation = new Location(null, 1, 1, 1);
+
+        EffectSource source = mock(EffectSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
+        effect.cancelActivation();
+
+        verify(effectActivation, never()).cancel();
+    }
+
+    @Test
+    public void cancelActivationCancelsActivationIfPrimed() {
+        EffectSource source = mock(EffectSource.class);
+        ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
+        effect.prime(context);
+        effect.cancelActivation();
+
+        verify(effectActivation).cancel();
+    }
+
+    @Test
     public void deployChangesTheSourceOfTheContext() {
         ItemHolder holder = mock(ItemHolder.class);
         EffectSource oldSource = mock(EffectSource.class);

@@ -5,6 +5,7 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,16 @@ public class EventListenerTest {
 
         EventListener eventListener = new EventListener(eventDispatcher);
         eventListener.onEntityCombust(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
+    }
+
+    @Test
+    public void onEntityDamageDispatchesEventToEventDispatcher() {
+        EntityDamageEvent event = mock(EntityDamageEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onEntityDamage(event);
 
         verify(eventDispatcher).dispatchInternalEvent(event);
     }

@@ -22,6 +22,8 @@ public class PlacedBlock implements DeploymentObject, EffectSource {
 
     @NotNull
     private Block block;
+    @Nullable
+    private Damage lastDamage;
     private double health;
     @Nullable
     private Map<DamageType, Double> resistances;
@@ -43,6 +45,11 @@ public class PlacedBlock implements DeploymentObject, EffectSource {
 
     public void setHealth(double health) {
         this.health = health;
+    }
+
+    @Nullable
+    public Damage getLastDamage() {
+        return lastDamage;
     }
 
     @NotNull
@@ -69,6 +76,8 @@ public class PlacedBlock implements DeploymentObject, EffectSource {
     }
 
     public double damage(@NotNull Damage damage) {
+        lastDamage = damage;
+
         double damageAmount = damage.amount();
 
         if (resistances != null && resistances.containsKey(damage.type())) {

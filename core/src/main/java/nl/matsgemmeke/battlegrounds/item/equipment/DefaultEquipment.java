@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -133,13 +134,20 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onDestroyDeploymentObject(@NotNull DeploymentObject deploymentObject) {
-        // Activate the effect if it's configured to do so and the item has a holder for the activation
-        if (deploymentProperties != null && deploymentProperties.isActivatedOnDestroy() && effect != null) {
-            effect.activateInstantly();
-        }
+        if (effect != null) {
+            // Activate the effect if it's configured to do so and the item has a holder for the activation
+            if (deploymentProperties != null
+                    && deploymentProperties.isActivatedOnDestroy()
+                    && deploymentObject.getLastDamage() != null
+                    && deploymentObject.getLastDamage().type() != DamageType.ENVIRONMENTAL_DAMAGE) {
+                effect.activateInstantly();
+            }
 
-        if (deploymentProperties != null && deploymentProperties.isResetOnDestroy() && effect != null) {
-            effect.reset();
+            if (deploymentProperties != null && deploymentProperties.isResetOnDestroy()) {
+                effect.reset();
+            }
+
+            effect.cancelActivation();
         }
 
         deploymentObjects.remove(deploymentObject);

@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.check.NegateDefaultExplosionDamageCheck;
-import nl.matsgemmeke.battlegrounds.game.event.EntityCombustEventHandler;
+import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -18,7 +18,7 @@ import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class TrainingModeFactory {
@@ -57,9 +57,10 @@ public class TrainingModeFactory {
     }
 
     private void registerEventHandlers(@NotNull GameContext context) {
+        DamageProcessor damageProcessor = context.getDamageProcessor();
         DeploymentInfoProvider deploymentInfoProvider = context.getDeploymentInfoProvider();
 
-        eventDispatcher.registerEventHandler(EntityCombustEvent.class, new EntityCombustEventHandler(deploymentInfoProvider));
+        eventDispatcher.registerEventHandler(EntityDamageEvent.class, new EntityDamageEventHandler(damageProcessor, deploymentInfoProvider));
     }
 
     private void registerPlayers(@NotNull GameContext trainingModeContext) {

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.damage;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A game object that is able to take damage.
@@ -10,6 +11,9 @@ public interface Damageable {
     double getHealth();
 
     void setHealth(double health);
+
+    @Nullable
+    Damage getLastDamage();
 
     /**
      * Applies damage to the instance.

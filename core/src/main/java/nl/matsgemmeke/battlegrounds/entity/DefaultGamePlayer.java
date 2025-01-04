@@ -25,6 +25,8 @@ public class DefaultGamePlayer implements GamePlayer {
     private static final int OPERATING_FOOD_LEVEL = 6;
 
     private boolean passive;
+    @Nullable
+    private Damage lastDamage;
     private int previousFoodLevel;
     @NotNull
     private InternalsProvider internals;
@@ -51,6 +53,11 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public void setHealth(double health) {
         player.setHealth(health);
+    }
+
+    @Nullable
+    public Damage getLastDamage() {
+        return lastDamage;
     }
 
     @NotNull
@@ -105,6 +112,8 @@ public class DefaultGamePlayer implements GamePlayer {
         if (player.isDead() || player.getHealth() <= 0.0) {
             return 0.0;
         }
+
+        lastDamage = damage;
 
         // Divide by 5 to convert to hearts value
         double finalHealth = Math.max(player.getHealth() - damage.amount() / 5, 0.0);

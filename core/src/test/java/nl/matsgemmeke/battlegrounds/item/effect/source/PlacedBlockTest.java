@@ -7,12 +7,18 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 public class PlacedBlockTest {
@@ -47,6 +53,25 @@ public class PlacedBlockTest {
     }
 
     @Test
+    public void getLastDamageReturnsNullIfBlockHasNotTakenDamage() {
+        PlacedBlock placedBlock = new PlacedBlock(block, material);
+        Damage lastDamage = placedBlock.getLastDamage();
+
+        assertNull(lastDamage);
+    }
+
+    @Test
+    public void getLastDamageReturnsLastDamageDealtToBlock() {
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+
+        PlacedBlock placedBlock = new PlacedBlock(block, material);
+        placedBlock.damage(damage);
+        Damage lastDamage = placedBlock.getLastDamage();
+
+        assertEquals(damage, lastDamage);
+    }
+
+    @Test
     public void getLocationReturnsCenterLocationOfBlock() {
         Location location = new Location(null, 1, 1, 1);
         when(block.getLocation()).thenReturn(location);
@@ -78,27 +103,27 @@ public class PlacedBlockTest {
         assertTrue(deployed);
     }
 
-    @Test
-    public void damageReturnsDealtDamageAndLowersHealthIfDamageAmountIsLowerThanHealth() {
-        double health = 30.0;
-        double damageAmount = 20.0;
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
-
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.setHealth(health);
-
-        double damageDealt = placedBlock.damage(damage);
-
-        assertEquals(10.0, placedBlock.getHealth());
-        assertEquals(damageAmount, damageDealt);
+    @NotNull
+    private static Stream<Arguments> damageScenarios() {
+        return Stream.of(
+                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, null),
+                arguments(10.0, 5.0, 100.0, 95.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.BULLET_DAMAGE, 0.5)),
+                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.5)),
+                arguments(1000.0, 1000.0, 100.0, 0.0, DamageType.BULLET_DAMAGE, null)
+        );
     }
 
-    @Test
-    public void damageReturnsDealtDamageWithResistance() {
-        double health = 30.0;
-        double damageAmount = 20.0;
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
-        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
+    @ParameterizedTest
+    @MethodSource("damageScenarios")
+    public void damageReturnsDealtDamageAndLowersHealth(
+            double damageAmount,
+            double expectedDamageDealt,
+            double health,
+            double expectedHealth,
+            DamageType damageType,
+            Map<DamageType, Double> resistances
+    ) {
+        Damage damage = new Damage(damageAmount, damageType);
 
         PlacedBlock placedBlock = new PlacedBlock(block, material);
         placedBlock.setHealth(health);
@@ -106,40 +131,8 @@ public class PlacedBlockTest {
 
         double damageDealt = placedBlock.damage(damage);
 
-        assertEquals(20.0, placedBlock.getHealth());
-        assertEquals(10.0, damageDealt);
-    }
-
-    @Test
-    public void damageReturnsDealtDamageWithoutResistanceIfResistancesDoesNotContainEntryForDamageType() {
-        double health = 30.0;
-        double damageAmount = 20.0;
-        Damage damage = new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE);
-        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
-
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.setHealth(health);
-        placedBlock.setResistances(resistances);
-
-        double damageDealt = placedBlock.damage(damage);
-
-        assertEquals(10.0, placedBlock.getHealth());
-        assertEquals(damageAmount, damageDealt);
-    }
-
-    @Test
-    public void damageReturnsDamageDealtAndSetsHealthToZeroIfDamageAmountIsGreaterThanHealth() {
-        double health = 20.0;
-        double damageAmount = 30.0;
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
-
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.setHealth(health);
-
-        double damageDealt = placedBlock.damage(damage);
-
-        assertEquals(0.0, placedBlock.getHealth());
-        assertEquals(damageAmount, damageDealt);
+        assertEquals(expectedDamageDealt, damageDealt);
+        assertEquals(expectedHealth, placedBlock.getHealth());
     }
 
     @Test

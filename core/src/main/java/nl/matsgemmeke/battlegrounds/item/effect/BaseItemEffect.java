@@ -30,6 +30,14 @@ public abstract class BaseItemEffect implements ItemEffect {
         this.perform(currentContext);
     }
 
+    public void cancelActivation() {
+        if (!primed || activated) {
+            return;
+        }
+
+        effectActivation.cancel();
+    }
+
     public void deploy(@NotNull EffectSource source) {
         if (currentContext == null) {
             return;

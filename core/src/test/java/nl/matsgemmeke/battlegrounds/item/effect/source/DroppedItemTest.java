@@ -7,12 +7,18 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 public class DroppedItemTest {
@@ -42,6 +48,28 @@ public class DroppedItemTest {
         boolean exists = droppedItem.exists();
 
         assertFalse(exists);
+    }
+
+    @Test
+    public void getLastDamageReturnsNullIfItemHasNotTakenDamage() {
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        Damage lastDamage = droppedItem.getLastDamage();
+
+        assertNull(lastDamage);
+    }
+
+    @Test
+    public void getLastDamageReturnsLastDamageDealtToItem() {
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+
+        when(itemEntity.isDead()).thenReturn(false);
+        when(itemEntity.isValid()).thenReturn(true);
+
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        droppedItem.damage(damage);
+        Damage lastDamage = droppedItem.getLastDamage();
+
+        assertEquals(damage, lastDamage);
     }
 
     @Test
@@ -106,26 +134,56 @@ public class DroppedItemTest {
     }
 
     @Test
-    public void damageReturnsDealtDamageAndLowersHealthIfDamageAmountIsLowerThanHealth() {
-        double health = 30.0;
-        double damageAmount = 20.0;
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
+    public void damageReturnsZeroIfItemEntityDoesNotExist() {
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+
+        when(itemEntity.isDead()).thenReturn(true);
 
         DroppedItem droppedItem = new DroppedItem(itemEntity);
-        droppedItem.setHealth(health);
-
         double damageDealt = droppedItem.damage(damage);
 
-        assertEquals(10.0, droppedItem.getHealth());
-        assertEquals(damageAmount, damageDealt);
+        assertEquals(0.0, damageDealt);
     }
 
     @Test
-    public void damageReturnsDealtDamageWithResistance() {
-        double health = 30.0;
-        double damageAmount = 20.0;
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
-        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
+    public void damageReturnsZeroIfItemEntityIsNotValid() {
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+
+        when(itemEntity.isDead()).thenReturn(false);
+        when(itemEntity.isValid()).thenReturn(false);
+
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        double damageDealt = droppedItem.damage(damage);
+
+        assertEquals(0.0, damageDealt);
+    }
+
+    @NotNull
+    private static Stream<Arguments> damageScenarios() {
+        return Stream.of(
+                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, null),
+                arguments(10.0, 5.0, 100.0, 95.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.BULLET_DAMAGE, 0.5)),
+                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.5)),
+                arguments(1000.0, 1000.0, 100.0, 0.0, DamageType.BULLET_DAMAGE, null),
+                arguments(1.0, 1.0, 100.0, 100.0, DamageType.ENVIRONMENTAL_DAMAGE, null),
+                arguments(4.0, 4.0, 100.0, 0.0, DamageType.ENVIRONMENTAL_DAMAGE, null)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("damageScenarios")
+    public void damageReturnsDealtDamageAndLowersHealth(
+            double damageAmount,
+            double expectedDamageDealt,
+            double health,
+            double expectedHealth,
+            DamageType damageType,
+            Map<DamageType, Double> resistances
+    ) {
+        Damage damage = new Damage(damageAmount, damageType);
+
+        when(itemEntity.isDead()).thenReturn(false);
+        when(itemEntity.isValid()).thenReturn(true);
 
         DroppedItem droppedItem = new DroppedItem(itemEntity);
         droppedItem.setHealth(health);
@@ -133,40 +191,8 @@ public class DroppedItemTest {
 
         double damageDealt = droppedItem.damage(damage);
 
-        assertEquals(20.0, droppedItem.getHealth());
-        assertEquals(10.0, damageDealt);
-    }
-
-    @Test
-    public void damageReturnsDealtDamageWithoutResistanceIfResistancesDoesNotContainEntryForDamageType() {
-        double health = 30.0;
-        double damageAmount = 20.0;
-        Damage damage = new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE);
-        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
-
-        DroppedItem droppedItem = new DroppedItem(itemEntity);
-        droppedItem.setHealth(health);
-        droppedItem.setResistances(resistances);
-
-        double damageDealt = droppedItem.damage(damage);
-
-        assertEquals(10.0, droppedItem.getHealth());
-        assertEquals(damageAmount, damageDealt);
-    }
-
-    @Test
-    public void damageReturnsDamageDealtAndSetsHealthToZeroIfDamageAmountIsGreaterThanHealth() {
-        double health = 20.0;
-        double damageAmount = 30.0;
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
-
-        DroppedItem droppedItem = new DroppedItem(itemEntity);
-        droppedItem.setHealth(health);
-
-        double damageDealt = droppedItem.damage(damage);
-
-        assertEquals(0.0, droppedItem.getHealth());
-        assertEquals(damageAmount, damageDealt);
+        assertEquals(expectedDamageDealt, damageDealt);
+        assertEquals(expectedHealth, droppedItem.getHealth());
     }
 
     @Test

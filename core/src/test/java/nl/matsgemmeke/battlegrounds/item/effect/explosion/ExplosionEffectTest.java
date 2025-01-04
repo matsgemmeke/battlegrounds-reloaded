@@ -101,6 +101,51 @@ public class ExplosionEffectTest {
     }
 
     @Test
+    public void cancelActivationDoesNotCancelActivationIfNotPrimed() {
+        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        effect.cancelActivation();
+
+        verify(effectActivation, never()).cancel();
+    }
+
+    @Test
+    public void cancelActivationDoesNotCancelActivationIfAlreadyActivated() {
+        Location sourceLocation = new Location(null, 1, 1, 1);
+        World world = mock(World.class);
+
+        EffectSource source = mock(EffectSource.class);
+        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getWorld()).thenReturn(world);
+
+        ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        effect.prime(context);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+
+        procedureCaptor.getValue().apply();
+        effect.cancelActivation();
+
+        verify(effectActivation, never()).cancel();
+    }
+
+    @Test
+    public void cancelActivationCancelsActivationIfPrimed() {
+        EffectSource source = mock(EffectSource.class);
+        ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        effect.prime(context);
+        effect.cancelActivation();
+
+        verify(effectActivation).cancel();
+    }
+
+    @Test
     public void deployChangesTheSourceOfTheContext() {
         ItemHolder holder = mock(ItemHolder.class);
         EffectSource oldSource = mock(EffectSource.class);

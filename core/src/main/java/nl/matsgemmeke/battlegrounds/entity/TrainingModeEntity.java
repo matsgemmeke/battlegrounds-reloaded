@@ -6,9 +6,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TrainingModeEntity implements GameEntity {
 
+    @Nullable
+    private Damage lastDamage;
     @NotNull
     private LivingEntity entity;
 
@@ -27,6 +30,11 @@ public class TrainingModeEntity implements GameEntity {
 
     public void setHealth(double health) {
         entity.setHealth(health);
+    }
+
+    @Nullable
+    public Damage getLastDamage() {
+        return lastDamage;
     }
 
     @NotNull
@@ -48,6 +56,8 @@ public class TrainingModeEntity implements GameEntity {
         if (entity.isDead() || entity.getHealth() <= 0.0) {
             return 0.0;
         }
+
+        lastDamage = damage;
 
         // Divide by 5 to convert to hearts value
         double finalHealth = Math.max(entity.getHealth() - damage.amount() / 5, 0.0);

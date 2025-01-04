@@ -9,12 +9,18 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 public class DefaultGamePlayerTest {
@@ -33,6 +39,28 @@ public class DefaultGamePlayerTest {
         DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
 
         assertEquals(player, gamePlayer.getEntity());
+    }
+
+    @Test
+    public void getLastDamageReturnsNullIfPlayerHasNotTakenDamageYet() {
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        Damage lastDamage = gamePlayer.getLastDamage();
+
+        assertNull(lastDamage);
+    }
+
+    @Test
+    public void getLastDamageReturnsLastDamageDealtToPlayer() {
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+
+        when(player.getHealth()).thenReturn(20.0);
+        when(player.isDead()).thenReturn(false);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        gamePlayer.damage(damage);
+        Damage lastDamage = gamePlayer.getLastDamage();
+
+        assertEquals(damage, lastDamage);
     }
 
     @Test
@@ -94,36 +122,33 @@ public class DefaultGamePlayerTest {
         verify(player, never()).setHealth(anyDouble());
     }
 
-    @Test
-    public void damageReturnsDamageDealtAndAppliesHeartConvertedDamageToPlayer() {
-        when(player.getHealth()).thenReturn(20.0);
-        when(player.isDead()).thenReturn(false);
-
-        double damageAmount = 10.0;
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
-
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
-        double damageDealt = gamePlayer.damage(damage);
-
-        assertEquals(damageAmount, damageDealt);
-
-        verify(player).setHealth(18.0);
+    @NotNull
+    private static Stream<Arguments> damageScenarios() {
+        return Stream.of(
+                arguments(10.0, 10.0, 20.0, 18.0),
+                arguments(1000.0, 1000.0, 20.0, 0.0)
+        );
     }
 
-    @Test
-    public void damageReturnsDamageDealtAndSetsPlayerHealthToZeroIfDamageIsGreaterThanHealth() {
-        when(player.getHealth()).thenReturn(20.0);
+    @ParameterizedTest
+    @MethodSource("damageScenarios")
+    public void damageReturnsDealtDamageAndLowersHealth(
+            double damageAmount,
+            double expectedDamageDealt,
+            double health,
+            double expectedHealth
+    ) {
+        when(player.getHealth()).thenReturn(health);
         when(player.isDead()).thenReturn(false);
 
-        double damageAmount = 1000.0;
         Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
 
         DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
         double damageDealt = gamePlayer.damage(damage);
 
-        assertEquals(damageAmount, damageDealt);
+        assertEquals(expectedDamageDealt, damageDealt);
 
-        verify(player).setHealth(0.0);
+        verify(player).setHealth(expectedHealth);
     }
 
     @Test

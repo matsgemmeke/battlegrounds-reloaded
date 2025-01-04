@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
@@ -98,6 +100,7 @@ public class DefaultEquipmentTest {
         equipment.onDestroyDeploymentObject(deploymentObject);
 
         verify(effect, never()).activateInstantly();
+        verify(effect).cancelActivation();
     }
 
     @Test
@@ -114,6 +117,7 @@ public class DefaultEquipmentTest {
         equipment.onDestroyDeploymentObject(deploymentObject);
 
         verify(effect, never()).activateInstantly();
+        verify(effect).cancelActivation();
     }
 
     @Test
@@ -131,9 +135,51 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void onDestroyDeploymentObjectActivatesEffectIfActivatedOnDestroyIsTrueAndEffectIsNotNull() {
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+    public void onDestroyDeploymentObjectDoesNotActivateEffectIfDeploymentObjectWasNeverDamaged() {
         ItemEffect effect = mock(ItemEffect.class);
+
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        when(deploymentObject.getLastDamage()).thenReturn(null);
+
+        DeploymentProperties deploymentProperties = new DeploymentProperties();
+        deploymentProperties.setActivatedOnDestroy(true);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentProperties(deploymentProperties);
+        equipment.setEffect(effect);
+        equipment.onDestroyDeploymentObject(deploymentObject);
+
+        verify(effect, never()).activateInstantly();
+        verify(effect).cancelActivation();
+    }
+
+    @Test
+    public void onDestroyDeploymentObjectDoesNotActivateEffectIfDeploymentObjectWasLastDamagedByEnvironmentalCauses() {
+        Damage lastDamage = new Damage(0, DamageType.ENVIRONMENTAL_DAMAGE);
+        ItemEffect effect = mock(ItemEffect.class);
+
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
+
+        DeploymentProperties deploymentProperties = new DeploymentProperties();
+        deploymentProperties.setActivatedOnDestroy(true);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentProperties(deploymentProperties);
+        equipment.setEffect(effect);
+        equipment.onDestroyDeploymentObject(deploymentObject);
+
+        verify(effect, never()).activateInstantly();
+        verify(effect).cancelActivation();
+    }
+
+    @Test
+    public void onDestroyDeploymentObjectActivatesEffectIfActivatedOnDestroyIsTrueAndEffectIsNotNullAndDeploymentObjectWasDamagedByValidDamageCause() {
+        Damage lastDamage = new Damage(0, DamageType.BULLET_DAMAGE);
+        ItemEffect effect = mock(ItemEffect.class);
+
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
 
         DeploymentProperties deploymentProperties = new DeploymentProperties();
         deploymentProperties.setActivatedOnDestroy(true);
@@ -144,6 +190,7 @@ public class DefaultEquipmentTest {
         equipment.onDestroyDeploymentObject(deploymentObject);
 
         verify(effect).activateInstantly();
+        verify(effect).cancelActivation();
     }
 
     @Test
@@ -157,6 +204,7 @@ public class DefaultEquipmentTest {
         equipment.onDestroyDeploymentObject(deploymentObject);
 
         verify(effect, never()).reset();
+        verify(effect).cancelActivation();
     }
 
     @Test
@@ -173,6 +221,7 @@ public class DefaultEquipmentTest {
         equipment.onDestroyDeploymentObject(deploymentObject);
 
         verify(effect, never()).activateInstantly();
+        verify(effect).cancelActivation();
     }
 
     @Test
@@ -203,6 +252,7 @@ public class DefaultEquipmentTest {
         equipment.onDestroyDeploymentObject(deploymentObject);
 
         verify(effect).reset();
+        verify(effect).cancelActivation();
     }
 
     @Test

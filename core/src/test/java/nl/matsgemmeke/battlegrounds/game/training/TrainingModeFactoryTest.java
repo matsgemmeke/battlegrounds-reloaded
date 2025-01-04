@@ -3,10 +3,10 @@ package nl.matsgemmeke.battlegrounds.game.training;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
-import nl.matsgemmeke.battlegrounds.game.event.EntityCombustEventHandler;
+import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,8 +47,8 @@ public class TrainingModeFactoryTest {
         TrainingModeFactory factory = new TrainingModeFactory(config, eventDispatcher, internals);
         TrainingMode trainingMode = factory.make();
 
-        ArgumentCaptor<EntityCombustEventHandler> entityCombustEventHandlerCaptor = ArgumentCaptor.forClass(EntityCombustEventHandler.class);
-        verify(eventDispatcher).registerEventHandler(eq(EntityCombustEvent.class), entityCombustEventHandlerCaptor.capture());
+        ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);
+        verify(eventDispatcher).registerEventHandler(eq(EntityDamageEvent.class), entityDamageEventHandlerCaptor.capture());
 
         assertInstanceOf(DefaultTrainingMode.class, trainingMode);
         assertNotNull(trainingMode.getPlayerStorage().getEntity(player));

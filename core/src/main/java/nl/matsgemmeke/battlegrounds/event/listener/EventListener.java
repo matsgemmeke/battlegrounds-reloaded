@@ -35,6 +35,11 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
+    public void onEntityDamage(@NotNull EntityDamageEvent event) {
+        this.dispatchEvent(event);
+    }
+
+    @EventHandler
     public void onEntityDamageByEntity(@NotNull EntityDamageByEntityEvent event) {
         this.dispatchEvent(event);
     }

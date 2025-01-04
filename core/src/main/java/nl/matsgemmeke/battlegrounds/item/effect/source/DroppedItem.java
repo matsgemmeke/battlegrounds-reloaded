@@ -19,6 +19,12 @@ import java.util.Map;
  */
 public class DroppedItem implements DeploymentObject, EffectSource, Projectile {
 
+    // An item entity is no living entity, but it has 4 health before getting destroyed
+    private static final double ENTITY_HEALTH = 4.0;
+
+    @Nullable
+    private Damage lastDamage;
+    private double entityHealth;
     private double health;
     @NotNull
     private Item itemEntity;
@@ -27,6 +33,7 @@ public class DroppedItem implements DeploymentObject, EffectSource, Projectile {
 
     public DroppedItem(@NotNull Item itemEntity) {
         this.itemEntity = itemEntity;
+        this.entityHealth = ENTITY_HEALTH;
     }
 
     public boolean exists() {
@@ -39,6 +46,11 @@ public class DroppedItem implements DeploymentObject, EffectSource, Projectile {
 
     public void setHealth(double health) {
         this.health = health;
+    }
+
+    @Nullable
+    public Damage getLastDamage() {
+        return lastDamage;
     }
 
     @NotNull
@@ -78,10 +90,27 @@ public class DroppedItem implements DeploymentObject, EffectSource, Projectile {
     }
 
     public double damage(@NotNull Damage damage) {
-        double damageAmount = damage.amount();
+        if (itemEntity.isDead() || !itemEntity.isValid()) {
+            return 0.0;
+        }
 
-        if (resistances != null && resistances.containsKey(damage.type())) {
+        lastDamage = damage;
+
+        double damageAmount = damage.amount();
+        DamageType damageType = damage.type();
+
+        if (resistances != null && resistances.containsKey(damageType)) {
             damageAmount *= resistances.get(damage.type());
+        }
+
+        if (damageType == DamageType.ENVIRONMENTAL_DAMAGE) {
+            entityHealth -= damageAmount;
+
+            if (entityHealth <= 0) {
+                health = 0;
+            }
+
+            return damageAmount;
         }
 
         health = Math.max(health - damageAmount, 0);
