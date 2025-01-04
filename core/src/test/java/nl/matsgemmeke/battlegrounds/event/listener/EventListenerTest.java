@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.event.listener;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
@@ -37,6 +38,16 @@ public class EventListenerTest {
 
         EventListener eventListener = new EventListener(eventDispatcher);
         eventListener.onBlockSpread(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
+    }
+
+    @Test
+    public void onEntityCombustDispatchesEventToEventDispatcher() {
+        EntityCombustEvent event = mock(EntityCombustEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onEntityCombust(event);
 
         verify(eventDispatcher).dispatchInternalEvent(event);
     }

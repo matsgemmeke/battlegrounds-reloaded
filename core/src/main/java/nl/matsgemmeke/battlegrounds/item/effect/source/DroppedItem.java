@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -98,6 +99,10 @@ public class DroppedItem implements DeploymentObject, EffectSource, Projectile {
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {
         return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) <= 0;
+    }
+
+    public boolean matchesEntity(@NotNull Entity entity) {
+        return itemEntity == entity;
     }
 
     public void remove() {

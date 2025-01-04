@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,6 +86,11 @@ public class PlacedBlock implements DeploymentObject, EffectSource {
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {
         return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) == 0;
+    }
+
+    public boolean matchesEntity(@NotNull Entity entity) {
+        // A placed block is never an entity, so always return false
+        return false;
     }
 
     public void remove() {

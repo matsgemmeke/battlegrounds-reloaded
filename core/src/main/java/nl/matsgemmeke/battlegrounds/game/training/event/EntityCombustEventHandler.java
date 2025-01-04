@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.training.event;
 
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
-import nl.matsgemmeke.battlegrounds.game.component.info.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,10 @@ public class EntityCombustEventHandler implements EventHandler<EntityCombustEven
     }
 
     public void handle(@NotNull EntityCombustEvent event) {
-        System.out.println(deploymentInfoProvider);
+        for (DeploymentObject deploymentObject : deploymentInfoProvider.getAllDeploymentObjects()) {
+            if (deploymentObject.matchesEntity(event.getEntity())) {
+                event.setCancelled(true);
+            }
+        }
     }
 }

@@ -108,7 +108,7 @@ public class CombustionEffectTest {
         effect.activateInstantly();
 
         verify(effectActivation).cancel();
-        verify(source, never()).remove();
+        verify(source).remove();
     }
 
     @Test

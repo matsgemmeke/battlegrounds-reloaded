@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -188,6 +189,16 @@ public class PlacedBlockTest {
         boolean immune = placedBlock.isImmuneTo(DamageType.BULLET_DAMAGE);
 
         assertTrue(immune);
+    }
+
+    @Test
+    public void matchesEntityAlwaysReturnsFalse() {
+        Entity entity = mock(Entity.class);
+
+        PlacedBlock placedBlock = new PlacedBlock(block, material);
+        boolean matches = placedBlock.matchesEntity(entity);
+
+        assertFalse(matches);
     }
 
     @Test

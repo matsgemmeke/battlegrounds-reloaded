@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.effect.source;
 
-
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
@@ -224,6 +224,24 @@ public class DroppedItemTest {
         boolean immune = droppedItem.isImmuneTo(DamageType.BULLET_DAMAGE);
 
         assertTrue(immune);
+    }
+
+    @Test
+    public void matchesEntityReturnsTrueIfGivenEntityEqualsItemEntity() {
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        boolean matches = droppedItem.matchesEntity(itemEntity);
+
+        assertTrue(matches);
+    }
+
+    @Test
+    public void matchesEntityReturnsFalseIfGivenEntityDoesNotEqualItemEntity() {
+        Entity entity = mock(Entity.class);
+
+        DroppedItem droppedItem = new DroppedItem(itemEntity);
+        boolean matches = droppedItem.matchesEntity(entity);
+
+        assertFalse(matches);
     }
 
     @Test
