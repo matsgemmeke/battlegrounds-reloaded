@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.jetbrains.annotations.NotNull;
 
 public interface ItemEffect {

@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
