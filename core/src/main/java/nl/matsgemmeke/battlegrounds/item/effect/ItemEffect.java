@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.jetbrains.annotations.NotNull;
 
 public interface ItemEffect {
@@ -17,15 +17,15 @@ public interface ItemEffect {
     void cancelActivation();
 
     /**
-     * Deploys a {@link EffectSource} for an ongoing effect.
+     * Deploys a {@link ItemEffectSource} for an ongoing effect.
      *
      * @param source the source to deploy
      */
-    void deploy(@NotNull EffectSource source);
+    void deploy(@NotNull ItemEffectSource source);
 
     /**
      * Checks whether the effect is awaiting deployment for its current process, meaning that it has primed an
-     * activation process for an {@link EffectSource} which was not deployed yet. This awaiting state blocks other
+     * activation process for an {@link ItemEffectSource} which was not deployed yet. This awaiting state blocks other
      * activations until the pending deployment is finished.
      *
      * @return true if the effect is awaiting a deployment, false otherwise

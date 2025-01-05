@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ public class EnemyProximityTriggerTest {
     @Test
     public void cancelCancelsTriggerCheck() {
         ItemHolder holder = mock(ItemHolder.class);
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         BukkitTask task = mock(BukkitTask.class);
@@ -60,7 +60,7 @@ public class EnemyProximityTriggerTest {
         BukkitTask task = mock(BukkitTask.class);
         ItemHolder holder = mock(ItemHolder.class);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
@@ -85,7 +85,7 @@ public class EnemyProximityTriggerTest {
 
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
@@ -113,7 +113,7 @@ public class EnemyProximityTriggerTest {
 
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 

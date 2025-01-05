@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -58,7 +58,7 @@ public class SmokeScreenEffect extends BaseItemEffect {
         currentRadius = properties.radiusStartingSize();
 
         task = taskRunner.runTaskTimer(() -> {
-            EffectSource source = context.getSource();
+            ItemEffectSource source = context.getSource();
 
             if (!source.exists()) {
                 task.cancel();

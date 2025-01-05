@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
@@ -74,7 +74,7 @@ public class CombustionEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
@@ -97,7 +97,7 @@ public class CombustionEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
@@ -123,7 +123,7 @@ public class CombustionEffectTest {
     public void cancelActivationDoesNotCancelActivationIfAlreadyActivated() {
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
 
         ItemHolder holder = mock(ItemHolder.class);
@@ -143,8 +143,8 @@ public class CombustionEffectTest {
 
     @Test
     public void cancelActivationCancelsActivationIfPrimed() {
-        EffectSource source = mock(EffectSource.class);
         ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
@@ -157,8 +157,8 @@ public class CombustionEffectTest {
     @Test
     public void deployChangesTheSourceOfTheContext() {
         ItemHolder holder = mock(ItemHolder.class);
-        EffectSource oldSource = mock(EffectSource.class);
-        EffectSource newSource = mock(EffectSource.class);
+        ItemEffectSource oldSource = mock(ItemEffectSource.class);
+        ItemEffectSource newSource = mock(ItemEffectSource.class);
 
         ItemEffectContext context = new ItemEffectContext(holder, oldSource);
 
@@ -171,7 +171,7 @@ public class CombustionEffectTest {
 
     @Test
     public void deployDoesNothingIfEffectIsNotPrimedYet() {
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
 
         CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
 
@@ -189,7 +189,7 @@ public class CombustionEffectTest {
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfContextSourceIsDeployed() {
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.isDeployed()).thenReturn(true);
 
         ItemHolder holder = mock(ItemHolder.class);
@@ -204,7 +204,7 @@ public class CombustionEffectTest {
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfContextSourceIsNotDeployed() {
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.isDeployed()).thenReturn(false);
 
         ItemHolder holder = mock(ItemHolder.class);
@@ -228,7 +228,7 @@ public class CombustionEffectTest {
     @Test
     public void isPrimedReturnsTrueIfEffectWasPrimed() {
         ItemHolder holder = mock(ItemHolder.class);
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         CombustionEffect effect = new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
@@ -246,7 +246,7 @@ public class CombustionEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
@@ -343,7 +343,7 @@ public class CombustionEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getLocation()).thenReturn(holderLocation);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 

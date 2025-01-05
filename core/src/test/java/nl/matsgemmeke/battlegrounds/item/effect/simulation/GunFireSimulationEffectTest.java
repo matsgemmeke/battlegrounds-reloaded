@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
@@ -54,7 +54,7 @@ public class GunFireSimulationEffectTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
@@ -81,7 +81,7 @@ public class GunFireSimulationEffectTest {
         GunHolder holder = mock(GunHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
@@ -110,7 +110,7 @@ public class GunFireSimulationEffectTest {
         GunHolder holder = mock(GunHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
         when(source.getLocation()).thenReturn(sourceLocation);
 
@@ -147,7 +147,7 @@ public class GunFireSimulationEffectTest {
         GunHolder holder = mock(GunHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 

@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +86,7 @@ public class GunFireSimulationEffect extends BaseItemEffect {
         int interval = (int) (TICKS_PER_SECOND / roundsPerSecond);
 
         task = taskRunner.runTaskTimer(() -> {
-            EffectSource source = context.getSource();
+            ItemEffectSource source = context.getSource();
 
             // Stop simulation when source no longer exists
             if (!source.exists()) {

@@ -2,17 +2,17 @@ package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkedSpawnPoint implements SpawnPoint {
 
-    @NotNull
-    private EffectSource source;
     private float yaw;
+    @NotNull
+    private ItemEffectSource source;
 
-    public MarkedSpawnPoint(@NotNull EffectSource source, float yaw) {
+    public MarkedSpawnPoint(@NotNull ItemEffectSource source, float yaw) {
         this.source = source;
         this.yaw = yaw;
     }

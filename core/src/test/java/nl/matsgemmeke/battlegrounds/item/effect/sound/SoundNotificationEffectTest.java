@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -42,7 +42,7 @@ public class SoundNotificationEffectTest {
 
     @Test
     public void activatePlaysNoSoundsIfItemHolderEntityIsNoPlayer() {
-        EffectSource effectSource = mock(EffectSource.class);
+        ItemEffectSource effectSource = mock(ItemEffectSource.class);
         Zombie zombie = mock(Zombie.class);
 
         ItemHolder holder = mock(ItemHolder.class);
@@ -71,8 +71,7 @@ public class SoundNotificationEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getEntity()).thenReturn(player);
 
-        EffectSource effectSource = mock(EffectSource.class);
-
+        ItemEffectSource effectSource = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(holder, effectSource);
 
         SoundNotificationEffect effect = new SoundNotificationEffect(effectActivation, sounds);

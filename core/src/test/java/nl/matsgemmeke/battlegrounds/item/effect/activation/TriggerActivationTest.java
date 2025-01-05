@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerObserver;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -13,12 +13,12 @@ import static org.mockito.Mockito.*;
 
 public class TriggerActivationTest {
 
-    private EffectSource source;
+    private ItemEffectSource source;
     private ItemHolder holder;
 
     @BeforeEach
     public void setUp() {
-        source = mock(EffectSource.class);
+        source = mock(ItemEffectSource.class);
         holder = mock(ItemHolder.class);
     }
 

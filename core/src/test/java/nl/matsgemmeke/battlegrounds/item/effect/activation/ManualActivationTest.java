@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,13 +11,13 @@ import static org.mockito.Mockito.*;
 public class ManualActivationTest {
 
     private Activator activator;
-    private EffectSource source;
+    private ItemEffectSource source;
     private ItemHolder holder;
 
     @BeforeEach
     public void setUp() {
         activator = mock(Activator.class);
-        source = mock(EffectSource.class);
+        source = mock(ItemEffectSource.class);
         holder = mock(ItemHolder.class);
     }
 

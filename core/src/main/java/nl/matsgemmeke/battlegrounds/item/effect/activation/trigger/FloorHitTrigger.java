@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class FloorHitTrigger implements Trigger {
     }
 
     private void runCheck(@NotNull ItemEffectContext context) {
-        EffectSource source = context.getSource();
+        ItemEffectSource source = context.getSource();
 
         if (!source.exists()) {
             task.cancel();

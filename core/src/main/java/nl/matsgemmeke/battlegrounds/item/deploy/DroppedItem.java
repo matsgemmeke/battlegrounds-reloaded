@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * A deployed item in the form as a dropped {@link Item} entity.
  */
-public class DroppedItem implements DeploymentObject, EffectSource, Projectile {
+public class DroppedItem implements DeploymentObject, ItemEffectSource, Projectile {
 
     // An item entity is no living entity, but it has 4 health before getting destroyed
     private static final double ENTITY_HEALTH = 4.0;

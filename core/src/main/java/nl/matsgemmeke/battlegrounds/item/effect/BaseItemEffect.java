@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +38,7 @@ public abstract class BaseItemEffect implements ItemEffect {
         effectActivation.cancel();
     }
 
-    public void deploy(@NotNull EffectSource source) {
+    public void deploy(@NotNull ItemEffectSource source) {
         if (currentContext == null) {
             return;
         }

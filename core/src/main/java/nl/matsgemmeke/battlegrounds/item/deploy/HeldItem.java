@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * to reference to. Instead, it is supposed to be a temporary source for an {@link ItemEffect} before an actual
  * {@link DeploymentObject} is deployed to replace the held item.
  */
-public class HeldItem implements EffectSource {
+public class HeldItem implements ItemEffectSource {
 
     private static final double HAND_HEIGHT_OFFSET = 1.0;
 

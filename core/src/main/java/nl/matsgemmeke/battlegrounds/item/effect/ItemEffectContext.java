@@ -1,17 +1,17 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemEffectContext {
 
     @NotNull
-    private EffectSource source;
+    private ItemEffectSource source;
     @NotNull
     private ItemHolder holder;
 
-    public ItemEffectContext(@NotNull ItemHolder holder, @NotNull EffectSource source) {
+    public ItemEffectContext(@NotNull ItemHolder holder, @NotNull ItemEffectSource source) {
         this.holder = holder;
         this.source = source;
     }
@@ -26,11 +26,11 @@ public class ItemEffectContext {
     }
 
     @NotNull
-    public EffectSource getSource() {
+    public ItemEffectSource getSource() {
         return source;
     }
 
-    public void setSource(@NotNull EffectSource source) {
+    public void setSource(@NotNull ItemEffectSource source) {
         this.source = source;
     }
 }

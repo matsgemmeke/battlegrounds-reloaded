@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +55,7 @@ public class EnemyProximityTrigger implements Trigger {
     }
 
     private void runCheck(@NotNull ItemEffectContext context) {
-        EffectSource source = context.getSource();
+        ItemEffectSource source = context.getSource();
 
         if (!source.exists()) {
             task.cancel();

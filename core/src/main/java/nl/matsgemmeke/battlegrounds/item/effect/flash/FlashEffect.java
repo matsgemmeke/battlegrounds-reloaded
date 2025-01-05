@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -36,7 +36,7 @@ public class FlashEffect extends BaseItemEffect {
 
     public void perform(@NotNull ItemEffectContext context) {
         ItemHolder holder = context.getHolder();
-        EffectSource source = context.getSource();
+        ItemEffectSource source = context.getSource();
 
         this.createExplosionEffect(holder, source);
         this.applyPotionEffectToTargets(holder, source.getLocation());
@@ -44,7 +44,7 @@ public class FlashEffect extends BaseItemEffect {
         source.remove();
     }
 
-    private void createExplosionEffect(@NotNull ItemHolder holder, @NotNull EffectSource source) {
+    private void createExplosionEffect(@NotNull ItemHolder holder, @NotNull ItemEffectSource source) {
         float power = properties.explosionPower();
         boolean setFire = properties.explosionSetFire();
         boolean breakBlocks = properties.explosionBreakBlocks();

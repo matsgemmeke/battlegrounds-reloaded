@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -38,7 +38,7 @@ public class FloorHitTriggerTest {
     @Test
     public void cancelCancelsTriggerCheck() {
         ItemHolder holder = mock(ItemHolder.class);
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         BukkitTask task = mock(BukkitTask.class);
@@ -55,7 +55,7 @@ public class FloorHitTriggerTest {
     public void stopsCheckingOnceSourceNoLongerExists() {
         ItemHolder holder = mock(ItemHolder.class);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
 
         BukkitTask task = mock(BukkitTask.class);
@@ -79,7 +79,7 @@ public class FloorHitTriggerTest {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 

@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,13 +18,13 @@ public class DelayedActivationTest {
 
     private static final long DELAY_UNTIL_ACTIVATION = 1L;
 
-    private EffectSource source;
+    private ItemEffectSource source;
     private ItemHolder holder;
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
-        source = mock(EffectSource.class);
+        source = mock(ItemEffectSource.class);
         holder = mock(ItemHolder.class);
         taskRunner = mock(TaskRunner.class);
     }

@@ -10,7 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -57,7 +57,7 @@ public class ExplosionEffectTest {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
@@ -85,7 +85,7 @@ public class ExplosionEffectTest {
         ItemHolder holder = mock(ItemHolder.class);
         when(holder.getEntity()).thenReturn(player);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
@@ -113,7 +113,7 @@ public class ExplosionEffectTest {
         Location sourceLocation = new Location(null, 1, 1, 1);
         World world = mock(World.class);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
@@ -134,8 +134,8 @@ public class ExplosionEffectTest {
 
     @Test
     public void cancelActivationCancelsActivationIfPrimed() {
-        EffectSource source = mock(EffectSource.class);
         ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
@@ -148,8 +148,8 @@ public class ExplosionEffectTest {
     @Test
     public void deployChangesTheSourceOfTheContext() {
         ItemHolder holder = mock(ItemHolder.class);
-        EffectSource oldSource = mock(EffectSource.class);
-        EffectSource newSource = mock(EffectSource.class);
+        ItemEffectSource oldSource = mock(ItemEffectSource.class);
+        ItemEffectSource newSource = mock(ItemEffectSource.class);
 
         ItemEffectContext context = new ItemEffectContext(holder, oldSource);
 
@@ -162,7 +162,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void deployDoesNothingIfEffectIsNotPrimedYet() {
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
 
         ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
 
@@ -180,7 +180,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfContextSourceIsDeployed() {
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.isDeployed()).thenReturn(true);
 
         ItemHolder holder = mock(ItemHolder.class);
@@ -195,7 +195,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfContextSourceIsNotDeployed() {
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.isDeployed()).thenReturn(false);
 
         ItemHolder holder = mock(ItemHolder.class);
@@ -219,7 +219,7 @@ public class ExplosionEffectTest {
     @Test
     public void isPrimedReturnsTrueIfEffectWasPrimed() {
         ItemHolder holder = mock(ItemHolder.class);
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
@@ -232,7 +232,7 @@ public class ExplosionEffectTest {
     @Test
     public void primePrimesEffectActivationOnce() {
         ItemHolder holder = mock(ItemHolder.class);
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
         ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
@@ -263,7 +263,7 @@ public class ExplosionEffectTest {
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 

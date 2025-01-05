@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -75,7 +75,7 @@ public class CombustionEffect extends BaseItemEffect {
 
     public void perform(@NotNull ItemEffectContext context) {
         ItemHolder holder = context.getHolder();
-        EffectSource source = context.getSource();
+        ItemEffectSource source = context.getSource();
         Location location = source.getLocation();
         World world = source.getWorld();
 
