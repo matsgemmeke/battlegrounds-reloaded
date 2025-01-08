@@ -5,11 +5,16 @@ import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
+import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -148,6 +153,15 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
             }
 
             effect.cancelActivation();
+        }
+
+        if (deploymentProperties != null && deploymentProperties.getDestroyParticleEffect() != null) {
+            ParticleEffect particleEffect = deploymentProperties.getDestroyParticleEffect();
+            World world = deploymentObject.getWorld();
+            Location location = deploymentObject.getLocation();
+
+            ParticleEffectSpawner particleEffectSpawner = new ParticleEffectSpawner();
+            particleEffectSpawner.spawnParticleEffect(particleEffect, world, location);
         }
 
         deploymentObjects.remove(deploymentObject);

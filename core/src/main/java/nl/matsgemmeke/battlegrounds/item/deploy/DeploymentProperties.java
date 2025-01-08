@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -12,6 +13,17 @@ public class DeploymentProperties {
     private double health;
     @Nullable
     private Map<DamageType, Double> resistances;
+    @Nullable
+    private ParticleEffect destroyParticleEffect;
+
+    @Nullable
+    public ParticleEffect getDestroyParticleEffect() {
+        return destroyParticleEffect;
+    }
+
+    public void setDestroyParticleEffect(@Nullable ParticleEffect destroyParticleEffect) {
+        this.destroyParticleEffect = destroyParticleEffect;
+    }
 
     public double getHealth() {
         return health;

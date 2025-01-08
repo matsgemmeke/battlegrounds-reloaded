@@ -53,7 +53,6 @@ public class BattlegroundsPlugin extends JavaPlugin {
     private InternalsProvider internals;
     private Logger logger;
     private TaskRunner taskRunner;
-    private TrainingMode trainingMode;
     private Translator translator;
     private WeaponProvider weaponProvider;
 

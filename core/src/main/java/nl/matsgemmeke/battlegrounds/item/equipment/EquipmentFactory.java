@@ -3,6 +3,9 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.mapper.MappingException;
+import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
@@ -184,6 +187,20 @@ public class EquipmentFactory implements WeaponFactory {
             deploymentProperties.setHealth(health);
             deploymentProperties.setResetOnDestroy(resetOnDestroy);
             deploymentProperties.setResistances(resistances);
+
+            if (deploySection.contains("on-destroy.particle-effect")) {
+                Map<String, Object> particleEffectValues = deploySection.getSection("on-destroy.particle-effect").getStringRouteMappedValues(true);
+                ParticleEffectMapper mapper = new ParticleEffectMapper();
+                ParticleEffect particleEffect;
+
+                try {
+                    particleEffect = mapper.map(particleEffectValues);
+                } catch (MappingException e) {
+                    throw new CreateEquipmentException("Unable to create equipment item " + name + ": " + e.getMessage());
+                }
+
+                deploymentProperties.setDestroyParticleEffect(particleEffect);
+            }
 
             equipment.setDeploymentProperties(deploymentProperties);
         }

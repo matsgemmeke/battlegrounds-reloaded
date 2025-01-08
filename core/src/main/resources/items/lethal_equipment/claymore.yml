@@ -3,9 +3,17 @@ name: Claymore
 controls:
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: true
   health: 50.0
-  reset-on-destroy: false
+  on-destroy:
+    activate: true
+    particle-effect:
+      count: 1
+      extra: 0
+      offset-x: 0.1
+      offset-y: 0.1
+      offset-z: 0.1
+      type: LAVA
+    reset: false
   resistances:
     fire-damage: 0
 description: Anti-personnel mine that triggers a proximity-based explosion.
