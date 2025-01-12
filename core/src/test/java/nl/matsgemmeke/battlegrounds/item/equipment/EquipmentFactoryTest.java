@@ -193,9 +193,9 @@ public class EquipmentFactoryTest {
         Section deploySection = mock(Section.class);
         when(deploySection.contains("resistances.bullet-damage")).thenReturn(true);
         when(deploySection.contains("resistances.explosive-damage")).thenReturn(true);
-        when(deploySection.getBoolean("activate-on-destroy")).thenReturn(activateOnDestroy);
+        when(deploySection.getBoolean("on-destroy.activate")).thenReturn(activateOnDestroy);
+        when(deploySection.getBoolean("on-destroy.reset")).thenReturn(resetOnDestroy);
         when(deploySection.getDouble("health")).thenReturn(health);
-        when(deploySection.getBoolean("reset-on-destroy")).thenReturn(resetOnDestroy);
         when(deploySection.getDouble("resistances.bullet-damage")).thenReturn(resistanceBulletDamage);
         when(deploySection.getDouble("resistances.explosive-damage")).thenReturn(resistanceExplosiveDamage);
 

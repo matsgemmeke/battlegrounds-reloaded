@@ -167,8 +167,8 @@ public class EquipmentFactory implements WeaponFactory {
         Section deploySection = section.getSection("deploy");
 
         if (deploySection != null) {
-            boolean activateOnDestroy = deploySection.getBoolean("activate-on-destroy");
-            boolean resetOnDestroy = deploySection.getBoolean("reset-on-destroy");
+            boolean activateOnDestroy = deploySection.getBoolean("on-destroy.activate");
+            boolean resetOnDestroy = deploySection.getBoolean("on-destroy.reset");
             double health = deploySection.getDouble("health");
             Map<DamageType, Double> resistances = new HashMap<>();
 
