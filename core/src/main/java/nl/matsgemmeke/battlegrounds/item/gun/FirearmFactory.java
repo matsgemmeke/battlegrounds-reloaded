@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -89,6 +90,7 @@ public class FirearmFactory implements WeaponFactory {
     private Firearm createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
         AudioEmitter audioEmitter = context.getAudioEmitter();
         CollisionDetector collisionDetector = context.getCollisionDetector();
+        DamageProcessor damageProcessor = context.getDamageProcessor();
         TargetFinder targetFinder = context.getTargetFinder();
 
         Section section = configuration.getRoot();
@@ -97,7 +99,7 @@ public class FirearmFactory implements WeaponFactory {
         String name = section.getString("name");
         String description = section.getString("description");
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setDescription(description);
         firearm.setName(name);
 

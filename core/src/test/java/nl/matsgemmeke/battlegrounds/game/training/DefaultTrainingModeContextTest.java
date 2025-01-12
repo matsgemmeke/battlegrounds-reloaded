@@ -6,8 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentObjectRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.DefaultEquipmentRegistry;
@@ -16,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
-import nl.matsgemmeke.battlegrounds.game.storage.DeploymentObjectStorage;
 import nl.matsgemmeke.battlegrounds.game.training.component.damage.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
@@ -42,7 +39,10 @@ public class DefaultTrainingModeContextTest {
         internals = mock(InternalsProvider.class);
         trainingMode = mock(TrainingMode.class);
 
+        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
         EntityStorage<GamePlayer> playerStorage = new EntityStorage<>();
+
+        when(trainingMode.getEquipmentStorage()).thenReturn(equipmentStorage);
         when(trainingMode.getPlayerStorage()).thenReturn(playerStorage);
     }
 
@@ -79,21 +79,7 @@ public class DefaultTrainingModeContextTest {
     }
 
     @Test
-    public void getDeploymentObjectRegistryReturnsNewInstanceOfTheDefaultImplementation() {
-        DeploymentObjectStorage deploymentObjectStorage = new DeploymentObjectStorage();
-        when(trainingMode.getDeploymentObjectStorage()).thenReturn(deploymentObjectStorage);
-
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
-        DeploymentObjectRegistry deploymentObjectRegistry = context.getDeploymentObjectRegistry();
-
-        assertInstanceOf(DefaultDeploymentObjectRegistry.class, deploymentObjectRegistry);
-    }
-
-    @Test
     public void shouldReturnNewInstanceOfItemRegistryForEquipmentItems() {
-        ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
-        when(trainingMode.getEquipmentStorage()).thenReturn(equipmentStorage);
-
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         EquipmentRegistry equipmentRegistry = context.getEquipmentRegistry();
 
@@ -124,9 +110,6 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfEntityRegisterForPlayerEntities() {
-        EntityStorage<GamePlayer> playerStorage = new EntityStorage<>();
-        when(trainingMode.getPlayerStorage()).thenReturn(playerStorage);
-
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         EntityRegistry<GamePlayer, Player> playerRegistry = context.getPlayerRegistry();
 
@@ -146,9 +129,6 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfTrainingModeTargetFinder() {
-        DeploymentObjectStorage deploymentObjectStorage = new DeploymentObjectStorage();
-        when(trainingMode.getDeploymentObjectStorage()).thenReturn(deploymentObjectStorage);
-
         DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
         TargetFinder targetFinder = context.getTargetFinder();
 

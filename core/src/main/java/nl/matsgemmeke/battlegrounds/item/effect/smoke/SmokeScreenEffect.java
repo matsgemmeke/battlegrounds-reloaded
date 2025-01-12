@@ -3,8 +3,10 @@ package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -13,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public class SmokeScreenEffect implements ItemEffect {
+public class SmokeScreenEffect extends BaseItemEffect {
 
     private static final long RUNNABLE_DELAY = 0L;
 
@@ -33,11 +35,13 @@ public class SmokeScreenEffect implements ItemEffect {
     private TaskRunner taskRunner;
 
     public SmokeScreenEffect(
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull SmokeScreenProperties properties,
             @NotNull AudioEmitter audioEmitter,
             @NotNull CollisionDetector collisionDetector,
             @NotNull TaskRunner taskRunner
     ) {
+        super(effectActivation);
         this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
@@ -46,7 +50,7 @@ public class SmokeScreenEffect implements ItemEffect {
         this.random = new Random();
     }
 
-    public void activate(@NotNull ItemEffectContext context) {
+    public void perform(@NotNull ItemEffectContext context) {
         audioEmitter.playSounds(properties.ignitionSounds(), context.getSource().getLocation());
 
         currentDuration = 0;
@@ -54,12 +58,20 @@ public class SmokeScreenEffect implements ItemEffect {
         currentRadius = properties.radiusStartingSize();
 
         task = taskRunner.runTaskTimer(() -> {
-            if (++currentDuration >= properties.duration()) {
-                context.getSource().remove();
+            ItemEffectSource source = context.getSource();
+
+            if (!source.exists()) {
                 task.cancel();
                 return;
             }
-            this.createSmokeEffect(context.getSource().getLocation(), context.getSource().getWorld());
+
+            if (++currentDuration >= properties.duration()) {
+                source.remove();
+                task.cancel();
+                return;
+            }
+
+            this.createSmokeEffect(source.getLocation(), source.getWorld());
         }, RUNNABLE_DELAY, properties.growthPeriod());
     }
 

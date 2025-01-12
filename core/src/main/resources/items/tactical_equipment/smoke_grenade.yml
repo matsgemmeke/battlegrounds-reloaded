@@ -3,6 +3,10 @@ name: Smoke Grenade
 controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
+deploy:
+  activate-on-destroy: true
+  health: 50.0
+  reset-on-destroy: false
 description: Device that creates a smoke screen when detonated.
 effect:
   activation:

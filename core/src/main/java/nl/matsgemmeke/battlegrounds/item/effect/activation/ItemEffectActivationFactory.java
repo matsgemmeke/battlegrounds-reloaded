@@ -4,7 +4,6 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,15 +26,9 @@ public class ItemEffectActivationFactory {
      * Creates a new {@link ItemEffectActivation} instance based on configuration values.
      *
      * @param section the configuration section
-     * @param effect the item effect instance
      * @return a new activation instance
      */
-    public ItemEffectActivation make(
-            @NotNull GameContext context,
-            @NotNull ItemEffect effect,
-            @NotNull Section section,
-            @Nullable Activator activator
-    ) {
+    public ItemEffectActivation make(@NotNull GameContext context, @NotNull Section section, @Nullable Activator activator) {
         String type = section.getString("type");
 
         if (type == null) {
@@ -53,17 +46,17 @@ public class ItemEffectActivationFactory {
         switch (effectActivationType) {
             case DELAYED -> {
                 long delayUntilActivation = section.getLong("delay-until-activation");
-                return new DelayedActivation(effect, taskRunner, delayUntilActivation);
+                return new DelayedActivation(taskRunner, delayUntilActivation);
             }
             case MANUAL -> {
                 if (activator == null) {
                     throw new InvalidItemConfigurationException("Manual effect activation requires an activator item!");
                 }
 
-                return new ManualActivation(effect, activator);
+                return new ManualActivation(activator);
             }
             case TRIGGER -> {
-                TriggerActivation activation = new TriggerActivation(effect);
+                TriggerActivation activation = new TriggerActivation();
                 TriggerFactory triggerFactory = new TriggerFactory(taskRunner);
                 Iterable<Map<String, Object>> triggers = (Iterable<Map<String, Object>>) section.get("triggers");
 

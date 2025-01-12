@@ -4,8 +4,8 @@ import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageCause;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
@@ -45,14 +45,14 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
             return;
         }
 
-        DamageCause cause = DamageCause.map(event.getCause());
+        DamageType type = DamageType.map(event.getCause());
 
-        if (cause == null) {
+        if (type == null) {
             // Do not handle events whose damage cause does not map to damage causes the plugin handles
             return;
         }
 
-        DamageEvent damageEvent = new DamageEvent(damager, damagerContext, entity, entityContext, cause, event.getDamage());
+        DamageEvent damageEvent = new DamageEvent(damager, damagerContext, entity, entityContext, type, event.getDamage());
         DamageEvent result = damageProcessor.processDamage(damageEvent);
 
         // Only set the event damage so the damage animation and physics are kept

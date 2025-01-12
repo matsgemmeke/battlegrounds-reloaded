@@ -3,6 +3,10 @@ name: Flashbang
 controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
+deploy:
+  activate-on-destroy: false
+  health: 50.0
+  reset-on-destroy: false
 description: Device that blinds the target when detonated.
 effect:
   activation:

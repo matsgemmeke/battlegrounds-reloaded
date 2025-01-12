@@ -4,8 +4,8 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
@@ -73,8 +73,8 @@ public class ActivateFunctionTest {
     }
 
     @Test
-    public void performThrowsExceptionIfEquipmentHasNoEffectActivation() {
-        when(equipment.getEffectActivation()).thenReturn(null);
+    public void performThrowsExceptionIfEquipmentHasNoEffect() {
+        when(equipment.getEffect()).thenReturn(null);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
@@ -93,8 +93,8 @@ public class ActivateFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getEntity()).thenReturn(player);
 
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(equipment.getEffect()).thenReturn(effect);
 
         when(taskRunner.runTaskLater(any(Runnable.class), eq(DELAY_UNTIL_ACTIVATION))).then(answer -> {
             answer.getArgument(0, Runnable.class).run();
@@ -105,7 +105,7 @@ public class ActivateFunctionTest {
         function.perform(holder);
 
         verify(holder).setHeldItem(null);
-        verify(effectActivation).activateInstantly(holder);
+        verify(effect).activateInstantly();
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(DELAY_UNTIL_ACTIVATION));
     }
 }

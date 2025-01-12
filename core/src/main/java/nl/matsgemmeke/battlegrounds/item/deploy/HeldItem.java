@@ -1,12 +1,19 @@
-package nl.matsgemmeke.battlegrounds.item.effect.source;
+package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class HeldItem implements EffectSource {
+/**
+ * An item that is still held by the holder. A held item is not a {@link DeploymentObject} as it has no physical object
+ * to reference to. Instead, it is supposed to be a temporary source for an {@link ItemEffect} before an actual
+ * {@link DeploymentObject} is deployed to replace the held item.
+ */
+public class HeldItem implements ItemEffectSource {
 
     private static final double HAND_HEIGHT_OFFSET = 1.0;
 

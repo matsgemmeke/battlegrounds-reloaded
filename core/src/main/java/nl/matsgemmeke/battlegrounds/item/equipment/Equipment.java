@@ -3,12 +3,14 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.Nullable;
 
-public interface Equipment extends Weapon, Interactable<EquipmentHolder> {
+public interface Equipment extends Weapon, DeployableItem, Interactable<EquipmentHolder> {
 
     /**
      * Gets the activator item used to activate the equipment. Returns null if the equipment does not utilize an
@@ -27,20 +29,35 @@ public interface Equipment extends Weapon, Interactable<EquipmentHolder> {
     void setActivator(@Nullable Activator activator);
 
     /**
-     * Gets the effect activation system associated with the equipment.
+     * Gets the deployment properties associated with this equipment item. Returns null if no properties are set.
      *
-     * @return the equipment's effect activation
+     * @return the deployment properties of the equipment item or null if not set
      */
     @Nullable
-    ItemEffectActivation getEffectActivation();
+    DeploymentProperties getDeploymentProperties();
 
     /**
-     * Sets the effect activation system associated with the equipment.
+     * Sets the deployment properties associated with this equipment item.
      *
-     * @param effectActivation the equipment's effect activation
+     * @param deploymentProperties the deployment properties of the equipment item
+     */
+    void setDeploymentProperties(@Nullable DeploymentProperties deploymentProperties);
+
+    /**
+     * Gets the effect system associated with the equipment.
+     *
+     * @return the equipment effect
+     */
+    @Nullable
+    ItemEffect getEffect();
+
+    /**
+     * Sets the effect system associated with the equipment.
+     *
+     * @param effect the equipment effect
      *
      */
-    void setEffectActivation(@Nullable ItemEffectActivation effectActivation);
+    void setEffect(@Nullable ItemEffect effect);
 
     /**
      * Gets the holder of the equipmemt item. Returns null if the equipment does not have a holder.

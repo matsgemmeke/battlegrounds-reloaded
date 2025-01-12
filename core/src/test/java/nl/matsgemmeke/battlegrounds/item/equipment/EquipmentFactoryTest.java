@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
@@ -169,17 +169,49 @@ public class EquipmentFactoryTest {
         Section effectActivationSection = mock(Section.class);
         when(rootSection.getSection("effect.activation")).thenReturn(effectActivationSection);
 
-        ItemEffect effect = mock(ItemEffect.class);
-        when(effectFactory.make(effectSection, context)).thenReturn(effect);
-
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(effectActivationFactory.make(context, effect, effectActivationSection, null)).thenReturn(effectActivation);
+        when(effectActivationFactory.make(context, effectActivationSection, null)).thenReturn(effectActivation);
+
+        ItemEffect effect = mock(ItemEffect.class);
+        when(effectFactory.make(effectSection, context, effectActivation)).thenReturn(effect);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context);
 
         assertInstanceOf(DefaultEquipment.class, equipment);
-        assertEquals(effectActivation, equipment.getEffectActivation());
+        assertEquals(effect, equipment.getEffect());
+    }
+
+    @Test
+    public void makeEquipmentItemWithDeploymentProperties() {
+        boolean activateOnDestroy = true;
+        boolean resetOnDestroy = true;
+        double health = 10.0;
+        double resistanceBulletDamage = 0.0;
+        double resistanceExplosiveDamage = 0.5;
+
+        Section deploySection = mock(Section.class);
+        when(deploySection.contains("resistances.bullet-damage")).thenReturn(true);
+        when(deploySection.contains("resistances.explosive-damage")).thenReturn(true);
+        when(deploySection.getBoolean("on-destroy.activate")).thenReturn(activateOnDestroy);
+        when(deploySection.getBoolean("on-destroy.reset")).thenReturn(resetOnDestroy);
+        when(deploySection.getDouble("health")).thenReturn(health);
+        when(deploySection.getDouble("resistances.bullet-damage")).thenReturn(resistanceBulletDamage);
+        when(deploySection.getDouble("resistances.explosive-damage")).thenReturn(resistanceExplosiveDamage);
+
+        when(rootSection.getSection("deploy")).thenReturn(deploySection);
+
+        EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
+        Equipment equipment = factory.make(configuration, context);
+
+        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertNotNull(equipment.getDeploymentProperties());
+        assertNotNull(equipment.getDeploymentProperties().getResistances());
+        assertEquals(activateOnDestroy, equipment.getDeploymentProperties().isActivatedOnDestroy());
+        assertEquals(health, equipment.getDeploymentProperties().getHealth());
+        assertEquals(resetOnDestroy, equipment.getDeploymentProperties().isResetOnDestroy());
+        assertEquals(resistanceBulletDamage, equipment.getDeploymentProperties().getResistances().get(DamageType.BULLET_DAMAGE));
+        assertEquals(resistanceExplosiveDamage, equipment.getDeploymentProperties().getResistances().get(DamageType.EXPLOSIVE_DAMAGE));
     }
 
     @Test
@@ -383,16 +415,13 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
 
-        DeploymentObjectRegistry deploymentObjectRegistry = mock(DeploymentObjectRegistry.class);
-        when(context.getDeploymentObjectRegistry()).thenReturn(deploymentObjectRegistry);
-
         Damageable itemMeta = mock(Damageable.class);
         ItemEffect effect = mock(ItemEffect.class);
-        ItemEffectActivation activation = mock(ItemEffectActivation.class);
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(effectActivationFactory.make(eq(context), eq(effect), any(), any())).thenReturn(activation);
-        when(effectFactory.make(any(), eq(context))).thenReturn(effect);
+        when(effectActivationFactory.make(eq(context), any(), any())).thenReturn(effectActivation);
+        when(effectFactory.make(any(), eq(context), eq(effectActivation))).thenReturn(effect);
         when(itemFactory.getItemMeta(Material.FLINT)).thenReturn(itemMeta);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
@@ -424,15 +453,12 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("item.throw-item.material")).thenReturn("SHEARS");
 
-        DeploymentObjectRegistry deploymentObjectRegistry = mock(DeploymentObjectRegistry.class);
-        when(context.getDeploymentObjectRegistry()).thenReturn(deploymentObjectRegistry);
-
         ItemEffect effect = mock(ItemEffect.class);
-        ItemEffectActivation activation = mock(ItemEffectActivation.class);
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(effectActivationFactory.make(eq(context), eq(effect), any(), any())).thenReturn(activation);
-        when(effectFactory.make(any(), eq(context))).thenReturn(effect);
+        when(effectActivationFactory.make(eq(context), any(), any())).thenReturn(effectActivation);
+        when(effectFactory.make(any(), eq(context), eq(effectActivation))).thenReturn(effect);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
@@ -464,11 +490,11 @@ public class EquipmentFactoryTest {
         when(rootSection.getString("placing.material")).thenReturn("WARPED_BUTTON");
 
         ItemEffect effect = mock(ItemEffect.class);
-        ItemEffectActivation activation = mock(ItemEffectActivation.class);
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(effectActivationFactory.make(eq(context), eq(effect), any(), any())).thenReturn(activation);
-        when(effectFactory.make(any(), eq(context))).thenReturn(effect);
+        when(effectActivationFactory.make(eq(context), any(), any())).thenReturn(effectActivation);
+        when(effectFactory.make(any(), eq(context), eq(effectActivation))).thenReturn(effect);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);
@@ -511,11 +537,11 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
         ItemEffect effect = mock(ItemEffect.class);
-        ItemEffectActivation activation = mock(ItemEffectActivation.class);
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(effectActivationFactory.make(eq(context), eq(effect), any(), any())).thenReturn(activation);
-        when(effectFactory.make(any(), eq(context))).thenReturn(effect);
+        when(effectActivationFactory.make(eq(context), any(), any())).thenReturn(effectActivation);
+        when(effectFactory.make(any(), eq(context), eq(effectActivation))).thenReturn(effect);
 
         EquipmentFactory factory = new EquipmentFactory(effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.make(configuration, context, gamePlayer);

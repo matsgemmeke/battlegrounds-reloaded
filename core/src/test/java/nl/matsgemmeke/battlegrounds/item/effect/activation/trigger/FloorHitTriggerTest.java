@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -12,34 +12,58 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class FloorHitTriggerTest {
 
-    private long periodBetweenChecks;
+    private static final long PERIOD_BETWEEN_CHECKS = 5L;
+
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
-        periodBetweenChecks = 5L;
         taskRunner = mock(TaskRunner.class);
+    }
+
+    @Test
+    public void cancelDoesNotCancelTriggerCheckIfNotActivated() {
+        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
+
+        assertDoesNotThrow(trigger::cancel);
+    }
+
+    @Test
+    public void cancelCancelsTriggerCheck() {
+        ItemHolder holder = mock(ItemHolder.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        BukkitTask task = mock(BukkitTask.class);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
+
+        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
+        trigger.checkTriggerActivation(context);
+        trigger.cancel();
+
+        verify(task).cancel();
     }
 
     @Test
     public void stopsCheckingOnceSourceNoLongerExists() {
         ItemHolder holder = mock(ItemHolder.class);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, periodBetweenChecks);
+        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
         trigger.checkTriggerActivation(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -55,7 +79,7 @@ public class FloorHitTriggerTest {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
-        EffectSource source = mock(EffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
@@ -68,9 +92,9 @@ public class FloorHitTriggerTest {
         TriggerObserver observer = mock(TriggerObserver.class);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(periodBetweenChecks))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, periodBetweenChecks);
+        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
         trigger.addObserver(observer);
         trigger.checkTriggerActivation(context);
 
@@ -81,7 +105,7 @@ public class FloorHitTriggerTest {
         runnable.run();
         runnable.run();
 
-        verify(observer).onTrigger(context);
+        verify(observer).onTrigger();
         verify(task).cancel();
     }
 }

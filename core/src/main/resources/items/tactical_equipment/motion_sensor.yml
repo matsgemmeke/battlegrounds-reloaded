@@ -2,6 +2,10 @@ id: MOTION_SENSOR
 name: Motion Sensor
 controls:
   throw: LEFT_CLICK
+deploy:
+  activate-on-destroy: false
+  health: 50.0
+  reset-on-destroy: false
 description: Tactical ground-based sensor that detects enemy movement within its radius.
 effect:
   activation:

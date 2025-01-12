@@ -6,9 +6,10 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Random;
 
-public class GunFireSimulationEffect implements ItemEffect {
+public class GunFireSimulationEffect extends BaseItemEffect {
 
     private static final int TICKS_PER_SECOND = 20;
     private static final long TIMER_DELAY = 0L;
@@ -38,11 +39,13 @@ public class GunFireSimulationEffect implements ItemEffect {
     private TaskRunner taskRunner;
 
     public GunFireSimulationEffect(
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull AudioEmitter audioEmitter,
             @NotNull GunInfoProvider gunInfoProvider,
             @NotNull TaskRunner taskRunner,
             @NotNull GunFireSimulationProperties properties
     ) {
+        super(effectActivation);
         this.audioEmitter = audioEmitter;
         this.gunInfoProvider = gunInfoProvider;
         this.taskRunner = taskRunner;
@@ -50,30 +53,29 @@ public class GunFireSimulationEffect implements ItemEffect {
         this.random = new Random();
     }
 
-    public void activate(@NotNull ItemEffectContext context) {
+    public void perform(@NotNull ItemEffectContext context) {
         ItemHolder itemHolder = context.getHolder();
-        EffectSource source = context.getSource();
 
         if (!(itemHolder instanceof GunHolder holder)) {
-            this.simulateGenericGunFire(source);
+            this.simulateGenericGunFire(context);
             return;
         }
 
         GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(holder);
 
         if (gunFireSimulationInfo == null) {
-            this.simulateGenericGunFire(source);
+            this.simulateGenericGunFire(context);
             return;
         }
 
-        this.simulateGunFire(source, gunFireSimulationInfo.shotSounds(), gunFireSimulationInfo.rateOfFire());
+        this.simulateGunFire(context, gunFireSimulationInfo.shotSounds(), gunFireSimulationInfo.rateOfFire());
     }
 
-    private void simulateGenericGunFire(@NotNull EffectSource source) {
-        this.simulateGunFire(source, properties.genericSounds(), properties.genericRateOfFire());
+    private void simulateGenericGunFire(@NotNull ItemEffectContext context) {
+        this.simulateGunFire(context, properties.genericSounds(), properties.genericRateOfFire());
     }
 
-    private void simulateGunFire(@NotNull EffectSource source, @NotNull List<GameSound> sounds, int rateOfFire) {
+    private void simulateGunFire(@NotNull ItemEffectContext context, @NotNull List<GameSound> sounds, int rateOfFire) {
         int totalDuration = random.nextInt(properties.minTotalDuration(), properties.maxTotalDuration());
 
         elapsedTicks = 0;
@@ -84,6 +86,8 @@ public class GunFireSimulationEffect implements ItemEffect {
         int interval = (int) (TICKS_PER_SECOND / roundsPerSecond);
 
         task = taskRunner.runTaskTimer(() -> {
+            ItemEffectSource source = context.getSource();
+
             // Stop simulation when source no longer exists
             if (!source.exists()) {
                 task.cancel();

@@ -4,6 +4,8 @@ import nl.matsgemmeke.battlegrounds.item.Item;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * The {@code ItemRegistry} interface provides methods for registering items to a game. It allows for registering an
  * item either directly or with an associated holder.
@@ -12,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
  * @param <S> the type of item holder
  */
 public interface ItemRegistry<T extends Item, S extends ItemHolder> {
+
+    @NotNull
+    List <T> findAll();
 
     /**
      * Registers an item to the game.

@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.HeldItem;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
@@ -37,10 +37,10 @@ public class CookFunctionTest {
 
     @Test
     public void isAvailableReturnsTrueIfActivationIsNotAwaitingDeployment() {
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(effectActivation.isAwaitingDeployment()).thenReturn(false);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(effect.isAwaitingDeployment()).thenReturn(false);
 
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        when(equipment.getEffect()).thenReturn(effect);
 
         CookFunction function = new CookFunction(properties, equipment, audioEmitter);
         boolean available = function.isAvailable();
@@ -50,7 +50,7 @@ public class CookFunctionTest {
 
     @Test
     public void isAvailableReturnsFalseIfEquipmentHasNoEffectActivation() {
-        when(equipment.getEffectActivation()).thenReturn(null);
+        when(equipment.getEffect()).thenReturn(null);
 
         CookFunction function = new CookFunction(properties, equipment, audioEmitter);
         boolean available = function.isAvailable();
@@ -60,10 +60,10 @@ public class CookFunctionTest {
 
     @Test
     public void isAvailableReturnsFalseIfActivationIsAwaitingDeployment() {
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(effectActivation.isAwaitingDeployment()).thenReturn(true);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(effect.isAwaitingDeployment()).thenReturn(true);
 
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        when(equipment.getEffect()).thenReturn(effect);
 
         CookFunction function = new CookFunction(properties, equipment, audioEmitter);
         boolean available = function.isAvailable();
@@ -75,7 +75,7 @@ public class CookFunctionTest {
     public void performThrowsExceptionIfEquipmentHasNoEffectActivation() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
-        when(equipment.getEffectActivation()).thenReturn(null);
+        when(equipment.getEffect()).thenReturn(null);
 
         CookFunction function = new CookFunction(properties, equipment, audioEmitter);
 
@@ -94,14 +94,14 @@ public class CookFunctionTest {
         when(holder.getEntity()).thenReturn(player);
         when(holder.getHeldItem()).thenReturn(itemStack);
 
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(equipment.getEffect()).thenReturn(effect);
 
         CookFunction function = new CookFunction(properties, equipment, audioEmitter);
         function.perform(holder);
 
-        ArgumentCaptor<HeldItem> heldItemCaptor = ArgumentCaptor.forClass(HeldItem.class);
-        verify(effectActivation).prime(eq(holder), heldItemCaptor.capture());
+        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(effect).prime(contextCaptor.capture());
 
         verify(audioEmitter).playSounds(any(), eq(location));
     }

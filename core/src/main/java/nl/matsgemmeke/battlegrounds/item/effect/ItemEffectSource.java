@@ -1,10 +1,10 @@
-package nl.matsgemmeke.battlegrounds.item.effect.source;
+package nl.matsgemmeke.battlegrounds.item.effect;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-public interface EffectSource {
+public interface ItemEffectSource {
 
     boolean exists();
 

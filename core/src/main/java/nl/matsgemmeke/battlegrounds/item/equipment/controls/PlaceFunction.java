@@ -4,8 +4,10 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.PlacedBlock;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
+import nl.matsgemmeke.battlegrounds.item.deploy.PlacedBlock;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.block.Block;
@@ -62,10 +64,10 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        ItemEffectActivation effectActivation = equipment.getEffectActivation();
+        ItemEffect effect = equipment.getEffect();
 
-        if (effectActivation == null) {
-            throw new ItemFunctionException("Cannot perform place function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
+        if (effect == null) {
+            throw new ItemFunctionException("Cannot perform place function for equipment item \"" + equipment.getName() + "\"; it has no effect!");
         }
 
         List<Block> targetBlocks = holder.getLastTwoTargetBlocks(TARGET_BLOCK_SCAN_DISTANCE);
@@ -84,13 +86,29 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
 
         this.placeBlock(adjacentBlock, targetBlockFace);
 
+        PlacedBlock placedBlock = new PlacedBlock(adjacentBlock, properties.material());
+        DeploymentProperties deploymentProperties = equipment.getDeploymentProperties();
+
+        if (deploymentProperties != null) {
+            placedBlock.setHealth(deploymentProperties.getHealth());
+            placedBlock.setResistances(deploymentProperties.getResistances());
+        }
+
         audioEmitter.playSounds(properties.placeSounds(), adjacentBlock.getLocation());
 
         performing = true;
 
         taskRunner.runTaskLater(() -> performing = false, properties.delayAfterPlacement());
 
-        effectActivation.prime(holder, new PlacedBlock(adjacentBlock, properties.material()));
+        holder.setHeldItem(null);
+
+        if (!effect.isPrimed()) {
+            effect.prime(new ItemEffectContext(holder, placedBlock));
+        } else {
+            effect.deploy(placedBlock);
+        }
+
+        equipment.onDeployDeploymentObject(placedBlock);
         return true;
     }
 

@@ -8,6 +8,8 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
@@ -19,6 +21,18 @@ public class DefaultEquipmentRegistryTest {
     @BeforeEach
     public void setUp() {
         equipmentStorage = new ItemStorage<>();
+    }
+
+    @Test
+    public void findAllReturnsAllEquipmentItemsFromTheStorage() {
+        Equipment equipment = mock(Equipment.class);
+        equipmentStorage.addUnassignedItem(equipment);
+
+        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentStorage);
+        List<Equipment> equipmentList = equipmentRegistry.findAll();
+
+        assertEquals(1, equipmentList.size());
+        assertEquals(equipment, equipmentList.get(0));
     }
 
     @Test

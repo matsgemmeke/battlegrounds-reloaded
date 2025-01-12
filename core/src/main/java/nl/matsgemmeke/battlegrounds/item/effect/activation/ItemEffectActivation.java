@@ -1,36 +1,27 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * An interface for objects that control the activation of an {@link ItemEffect}.
- */
 public interface ItemEffectActivation {
 
     /**
-     * Activates the effect instantly, overriding any other procedures.
-     *
-     * @param holder the holder who triggers the activation
+     * Cancels the effect activation.
      */
-    void activateInstantly(@NotNull ItemHolder holder);
+    void cancel();
 
     /**
-     * Checks whether the activation is awaiting deployment for its current process, meaning that it has primed an
-     * activation process for an {@link EffectSource} which was not deployed yet. This awaiting state blocks other
-     * activations until the pending deployment is finished.
+     * Gets whether the effect activation system is primed.
      *
-     * @return true if the activation is awaiting a deployment, false otherwise
+     * @return whether the activation is primed
      */
-    boolean isAwaitingDeployment();
+    boolean isPrimed();
 
     /**
-     * Primes the activation process with the provided {@link ItemHolder} and {@link EffectSource}.
+     * Activates the activation process with for provided {@link ItemEffectContext}.
      *
-     * @param holder the holder who primes the activation
-     * @param source the source from where the effect will be activated
+     * @param context the item effect context
      */
-    void prime(@NotNull ItemHolder holder, @NotNull EffectSource source);
+    void prime(@NotNull ItemEffectContext context, @NotNull Procedure onActivate);
 }

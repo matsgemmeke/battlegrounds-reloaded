@@ -3,8 +3,9 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.HeldItem;
+import nl.matsgemmeke.battlegrounds.item.deploy.HeldItem;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +26,9 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        ItemEffectActivation effectActivation = equipment.getEffectActivation();
+        ItemEffect effect = equipment.getEffect();
 
-        return effectActivation != null && !effectActivation.isAwaitingDeployment();
+        return effect != null && !effect.isAwaitingDeployment();
     }
 
     public boolean isBlocking() {
@@ -43,14 +44,18 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        ItemEffectActivation effectActivation = equipment.getEffectActivation();
+        ItemEffect effect = equipment.getEffect();
 
-        if (effectActivation == null) {
+        if (effect == null) {
             throw new ItemFunctionException("Cannot perform cook function for equipment item \"" + equipment.getName() + "\"; it has no effect activation!");
         }
 
         audioEmitter.playSounds(properties.cookSounds(), holder.getEntity().getLocation());
-        effectActivation.prime(holder, new HeldItem(holder, holder.getHeldItem()));
+
+        HeldItem heldItem = new HeldItem(holder, holder.getHeldItem());
+        ItemEffectContext context = new ItemEffectContext(holder, heldItem);
+
+        effect.prime(context);
         return true;
     }
 }

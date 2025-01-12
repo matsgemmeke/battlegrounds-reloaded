@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 
 /**
  * Stores and handles states of a specific subtype of item.
@@ -43,6 +44,20 @@ public class ItemStorage<T extends Item, U extends ItemHolder> {
      */
     public void addUnassignedItem(@NotNull T item) {
         unassignedItems.add(item);
+    }
+
+    /**
+     * Gathers all item instance in the storage and returns the result in a list. The list contain both assigned and
+     * unassigned items.
+     *
+     * @return a list containing all item instances
+     */
+    @NotNull
+    public List<T> getAllItems() {
+        Stream<T> assignedItemsStream = assignedItems.values().stream().flatMap(List::stream);
+        Stream<T> unassignedItemsStream = unassignedItems.stream();
+
+        return Stream.concat(assignedItemsStream, unassignedItemsStream).toList();
     }
 
     /**

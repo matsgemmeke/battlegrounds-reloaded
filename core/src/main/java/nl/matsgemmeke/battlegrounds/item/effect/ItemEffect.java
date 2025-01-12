@@ -1,22 +1,52 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * An effect component of an item that produces a certain output when activated.
- */
 public interface ItemEffect {
 
     /**
-     * <p>Activates the effect with the specified item holder and source.</p>
+     * Activates the effect instantly, overriding any other procedures.
+     */
+    void activateInstantly();
+
+    /**
+     * Cancels the current activation process of the effect. This method not do anything if the effect was already
+     * activated.
+     */
+    void cancelActivation();
+
+    /**
+     * Deploys a {@link ItemEffectSource} for an ongoing effect.
      *
-     * <p>This method triggers the specific behavior associated with the effect, using the provided {@link ItemHolder}
-     * to indicate which entity is activating the effect and the {@link EffectSource} to specify the source from where
-     * the effect will be activated.</p>
+     * @param source the source to deploy
+     */
+    void deploy(@NotNull ItemEffectSource source);
+
+    /**
+     * Checks whether the effect is awaiting deployment for its current process, meaning that it has primed an
+     * activation process for an {@link ItemEffectSource} which was not deployed yet. This awaiting state blocks other
+     * activations until the pending deployment is finished.
+     *
+     * @return true if the effect is awaiting a deployment, false otherwise
+     */
+    boolean isAwaitingDeployment();
+
+    /**
+     * Gets whether the effect's activation system has been initiated.
+     *
+     * @return whether the effect is primed
+     */
+    boolean isPrimed();
+
+    /**
+     * Primes the effect with the provided for a specific {@link ItemEffectContext}.
      *
      * @param context the item effect context
      */
-    void activate(@NotNull ItemEffectContext context);
+    void prime(@NotNull ItemEffectContext context);
+
+    /**
+     * Resets the performance of the effect.
+     */
+    default void reset() { }
 }

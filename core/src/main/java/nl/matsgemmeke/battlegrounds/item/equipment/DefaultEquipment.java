@@ -1,17 +1,26 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
+import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DefaultEquipment extends BaseWeapon implements Equipment {
@@ -19,20 +28,25 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @Nullable
     private Activator activator;
     @Nullable
+    private DeploymentProperties deploymentProperties;
+    @Nullable
     private EquipmentHolder holder;
     @NotNull
     private ItemControls<EquipmentHolder> controls;
     @Nullable
-    private ItemEffectActivation effectActivation;
+    private ItemEffect effect;
     @Nullable
     private ItemTemplate itemTemplate;
     @Nullable
     private ItemTemplate throwItemTemplate;
+    @NotNull
+    private List<DeploymentObject> deploymentObjects;
     @Nullable
     private ProjectileProperties projectileProperties;
 
     public DefaultEquipment() {
         this.controls = new ItemControls<>();
+        this.deploymentObjects = new ArrayList<>();
     }
 
     @Nullable
@@ -50,12 +64,26 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     @NotNull
-    public ItemEffectActivation getEffectActivation() {
-        return effectActivation;
+    public List<DeploymentObject> getDeploymentObjects() {
+        return deploymentObjects;
     }
 
-    public void setEffectActivation(@NotNull ItemEffectActivation effectActivation) {
-        this.effectActivation = effectActivation;
+    @Nullable
+    public DeploymentProperties getDeploymentProperties() {
+        return deploymentProperties;
+    }
+
+    public void setDeploymentProperties(@Nullable DeploymentProperties deploymentProperties) {
+        this.deploymentProperties = deploymentProperties;
+    }
+
+    @Nullable
+    public ItemEffect getEffect() {
+        return effect;
+    }
+
+    public void setEffect(@Nullable ItemEffect effect) {
+        this.effect = effect;
     }
 
     @Nullable
@@ -103,6 +131,39 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onChangeTo() {
+    }
+
+    public void onDeployDeploymentObject(@NotNull DeploymentObject deploymentObject) {
+        deploymentObjects.add(deploymentObject);
+    }
+
+    public void onDestroyDeploymentObject(@NotNull DeploymentObject deploymentObject) {
+        if (effect != null) {
+            // Activate the effect if it's configured to do so and the item has a holder for the activation
+            if (deploymentProperties != null
+                    && deploymentProperties.isActivatedOnDestroy()
+                    && deploymentObject.getLastDamage() != null
+                    && deploymentObject.getLastDamage().type() != DamageType.ENVIRONMENTAL_DAMAGE) {
+                effect.activateInstantly();
+            }
+
+            if (deploymentProperties != null && deploymentProperties.isResetOnDestroy()) {
+                effect.reset();
+            }
+
+            effect.cancelActivation();
+        }
+
+        if (deploymentProperties != null && deploymentProperties.getDestroyParticleEffect() != null) {
+            ParticleEffect particleEffect = deploymentProperties.getDestroyParticleEffect();
+            World world = deploymentObject.getWorld();
+            Location location = deploymentObject.getLocation();
+
+            ParticleEffectSpawner particleEffectSpawner = new ParticleEffectSpawner();
+            particleEffectSpawner.spawnParticleEffect(particleEffect, world, location);
+        }
+
+        deploymentObjects.remove(deploymentObject);
     }
 
     public void onDrop() {

@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.jupiter.api.AfterEach;

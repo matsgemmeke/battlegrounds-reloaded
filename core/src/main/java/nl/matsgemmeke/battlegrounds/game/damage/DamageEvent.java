@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 public class DamageEvent {
 
     @NotNull
-    private DamageCause cause;
+    private DamageType type;
     private double damage;
     @NotNull
     private Entity damager;
@@ -24,24 +24,24 @@ public class DamageEvent {
             @Nullable GameContext damagerContext,
             @NotNull Entity entity,
             @Nullable GameContext entityContext,
-            @NotNull DamageCause cause,
+            @NotNull DamageType type,
             double damage
     ) {
         this.damager = damager;
         this.entity = entity;
-        this.cause = cause;
+        this.type = type;
         this.damagerContext = damagerContext;
         this.entityContext = entityContext;
         this.damage = damage;
     }
 
-    @NotNull
-    public DamageCause getCause() {
-        return cause;
-    }
-
     public double getDamage() {
         return damage;
+    }
+
+    @NotNull
+    public DamageType getDamageType() {
+        return type;
     }
 
     public void setDamage(double damage) {

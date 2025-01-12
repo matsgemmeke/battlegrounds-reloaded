@@ -6,6 +6,9 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
@@ -21,7 +24,7 @@ import java.util.List;
 
 public class DefaultFirearm extends BaseGun implements Firearm {
 
-    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.25;
+    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.3;
     private static final double ENTITY_FINDING_RANGE = 0.1;
     private static final double PROJECTILE_DISTANCE_JUMP = 0.5;
     private static final double PROJECTILE_DISTANCE_START = 0.5;
@@ -31,6 +34,8 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     private AudioEmitter audioEmitter;
     @NotNull
     private CollisionDetector collisionDetector;
+    @NotNull
+    private DamageProcessor damageProcessor;
     private double headshotDamageMultiplier;
     private int magazineAmmo;
     private int magazineSize;
@@ -43,9 +48,10 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @NotNull
     private TargetFinder targetFinder;
 
-    public DefaultFirearm(@NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector, @NotNull TargetFinder targetFinder) {
+    public DefaultFirearm(@NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector, @NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder) {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
+        this.damageProcessor = damageProcessor;
         this.targetFinder = targetFinder;
     }
 
@@ -155,7 +161,9 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
             Location targetLocation = target.getEntity().getLocation();
 
-            double damage = this.getDamage(startingLocation, targetLocation, projectileLocation);
+            double damageAmount = this.getDamage(startingLocation, targetLocation, projectileLocation);
+            Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
+
             target.damage(damage);
             return true;
         }
@@ -164,9 +172,9 @@ public class DefaultFirearm extends BaseGun implements Firearm {
             Location objectLocation = deploymentObject.getLocation();
 
             double damageAmount = this.getDamage(startingLocation, objectLocation, projectileLocation);
-            deploymentObject.damage(damageAmount);
-            System.out.println("damaging " + deploymentObject + " by " + damageAmount);
+            Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
 
+            damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
             return true;
         }
 

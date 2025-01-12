@@ -8,12 +8,14 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
@@ -26,7 +28,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
-import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
+import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,16 +37,16 @@ import java.util.List;
 public class ItemEffectFactory {
 
     @NotNull
-    private MetadataValueCreator metadataValueCreator;
+    private MetadataValueEditor metadataValueEditor;
     @NotNull
     private TaskRunner taskRunner;
 
-    public ItemEffectFactory(@NotNull MetadataValueCreator metadataValueCreator, @NotNull TaskRunner taskRunner) {
-        this.metadataValueCreator = metadataValueCreator;
+    public ItemEffectFactory(@NotNull MetadataValueEditor metadataValueEditor, @NotNull TaskRunner taskRunner) {
+        this.metadataValueEditor = metadataValueEditor;
         this.taskRunner = taskRunner;
     }
 
-    public ItemEffect make(@NotNull Section section, @NotNull GameContext context) {
+    public ItemEffect make(@NotNull Section section, @NotNull GameContext context, @NotNull ItemEffectActivation effectActivation) {
         String type = section.getString("type");
 
         if (type == null) {
@@ -61,8 +63,9 @@ public class ItemEffectFactory {
 
         switch (itemEffectType) {
             case COMBUSTION -> {
-                int radius = section.getInt("radius");
+                int maxRadius = section.getInt("max-radius");
                 long ticksBetweenSpread = section.getLong("ticks-between-spread");
+                long maxDuration = section.getLong("max-duration");
                 boolean burnBlocks = section.getBoolean("burn-blocks");
                 boolean spreadFire = section.getBoolean("spread-fire");
 
@@ -75,13 +78,13 @@ public class ItemEffectFactory {
 
                 List<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("combustion-sound"));
 
-                CombustionProperties properties = new CombustionProperties(sounds, radius, ticksBetweenSpread, burnBlocks, spreadFire);
+                CombustionProperties properties = new CombustionProperties(sounds, maxRadius, ticksBetweenSpread, maxDuration, burnBlocks, spreadFire);
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 CollisionDetector collisionDetector = context.getCollisionDetector();
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new CombustionEffect(properties, rangeProfile, audioEmitter, collisionDetector, metadataValueCreator, targetFinder, taskRunner);
+                return new CombustionEffect(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, metadataValueEditor, targetFinder, taskRunner);
             }
             case EXPLOSION -> {
                 float power = section.getFloat("power");
@@ -96,10 +99,11 @@ public class ItemEffectFactory {
                 double shortRangeDistance = section.getDouble("range.short-range.distance");
 
                 ExplosionProperties properties = new ExplosionProperties(power, breakBlocks, setFire);
+                DamageProcessor damageProcessor = context.getDamageProcessor();
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new ExplosionEffect(properties, rangeProfile, targetFinder);
+                return new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
             }
             case FLASH -> {
                 double range = section.getDouble("range");
@@ -117,7 +121,7 @@ public class ItemEffectFactory {
                 FlashProperties properties = new FlashProperties(potionEffect, range, explosionPower, explosionBreakBlocks, explosionSetFire);
                 TargetFinder targetFinder = context.getTargetFinder();
 
-                return new FlashEffect(properties, targetFinder);
+                return new FlashEffect(effectActivation, properties, targetFinder);
             }
             case GUN_FIRE_SIMULATION -> {
                 List<GameSound> genericSounds = DefaultGameSound.parseSounds(section.getString("generic-sound"));
@@ -133,12 +137,12 @@ public class ItemEffectFactory {
                 GunInfoProvider gunInfoProvider = context.getGunInfoProvider();
                 GunFireSimulationProperties properties = new GunFireSimulationProperties(genericSounds, genericRateOfFire, maxBurstDuration, minBurstDuration, maxDelayBetweenBursts, minDelayBetweenBursts, maxTotalDuration, minTotalDuration);
 
-                return new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
+                return new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
             }
             case MARK_SPAWN_POINT -> {
                 SpawnPointProvider spawnPointProvider = context.getSpawnPointProvider();
 
-                return new MarkSpawnPointEffect(spawnPointProvider);
+                return new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
             }
             case SMOKE_SCREEN -> {
                 Particle particle;
@@ -173,12 +177,12 @@ public class ItemEffectFactory {
                 AudioEmitter audioEmitter = context.getAudioEmitter();
                 CollisionDetector collisionDetector = context.getCollisionDetector();
 
-                return new SmokeScreenEffect(properties, audioEmitter, collisionDetector, taskRunner);
+                return new SmokeScreenEffect(effectActivation, properties, audioEmitter, collisionDetector, taskRunner);
             }
             case SOUND_NOTIFICATION -> {
                 Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sound"));
 
-                return new SoundNotificationEffect(sounds);
+                return new SoundNotificationEffect(effectActivation, sounds);
             }
         }
 

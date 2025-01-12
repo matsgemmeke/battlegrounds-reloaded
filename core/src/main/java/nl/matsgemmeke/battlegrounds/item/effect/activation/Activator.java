@@ -22,4 +22,11 @@ public interface Activator extends Matchable {
      * @param holder the item holder who prepares the activator
      */
     void prepare(@NotNull ItemHolder holder);
+
+    /**
+     * Removes the activator item from the current holder.
+     *
+     * @return whether the activator was removed
+     */
+    boolean remove();
 }

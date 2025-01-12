@@ -3,22 +3,23 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.mapper.MappingException;
+import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.DefaultActivator;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
@@ -37,7 +38,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EquipmentFactory implements WeaponFactory {
 
@@ -154,10 +157,52 @@ public class EquipmentFactory implements WeaponFactory {
         if (effectSection != null && effectActivationSection != null) {
             Activator activator = equipment.getActivator();
 
-            ItemEffect effect = effectFactory.make(effectSection, context);
-            ItemEffectActivation activation = effectActivationFactory.make(context, effect, effectActivationSection, activator);
+            ItemEffectActivation effectActivation = effectActivationFactory.make(context, effectActivationSection, activator);
+            ItemEffect effect = effectFactory.make(effectSection, context, effectActivation);
 
-            equipment.setEffectActivation(activation);
+            equipment.setEffect(effect);
+        }
+
+        // Setting the deployment properties
+        Section deploySection = section.getSection("deploy");
+
+        if (deploySection != null) {
+            boolean activateOnDestroy = deploySection.getBoolean("on-destroy.activate");
+            boolean resetOnDestroy = deploySection.getBoolean("on-destroy.reset");
+            double health = deploySection.getDouble("health");
+            Map<DamageType, Double> resistances = new HashMap<>();
+
+            if (deploySection.contains("resistances.bullet-damage")) {
+                resistances.put(DamageType.BULLET_DAMAGE, deploySection.getDouble("resistances.bullet-damage"));
+            }
+            if (deploySection.contains("resistances.explosive-damage")) {
+                resistances.put(DamageType.EXPLOSIVE_DAMAGE, deploySection.getDouble("resistances.explosive-damage"));
+            }
+            if (deploySection.contains("resistances.fire-damage")) {
+                resistances.put(DamageType.FIRE_DAMAGE, deploySection.getDouble("resistances.fire-damage"));
+            }
+
+            DeploymentProperties deploymentProperties = new DeploymentProperties();
+            deploymentProperties.setActivatedOnDestroy(activateOnDestroy);
+            deploymentProperties.setHealth(health);
+            deploymentProperties.setResetOnDestroy(resetOnDestroy);
+            deploymentProperties.setResistances(resistances);
+
+            if (deploySection.contains("on-destroy.particle-effect")) {
+                Map<String, Object> particleEffectValues = deploySection.getSection("on-destroy.particle-effect").getStringRouteMappedValues(true);
+                ParticleEffectMapper mapper = new ParticleEffectMapper();
+                ParticleEffect particleEffect;
+
+                try {
+                    particleEffect = mapper.map(particleEffectValues);
+                } catch (MappingException e) {
+                    throw new CreateEquipmentException("Unable to create equipment item " + name + ": " + e.getMessage());
+                }
+
+                deploymentProperties.setDestroyParticleEffect(particleEffect);
+            }
+
+            equipment.setDeploymentProperties(deploymentProperties);
         }
 
         // Setting the projectile properties
@@ -291,14 +336,11 @@ public class EquipmentFactory implements WeaponFactory {
             }
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
-            double health = section.getDouble("throwing.damage.health");
             double velocity = section.getDouble("throwing.velocity");
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");
 
-            DeploymentObjectRegistry deploymentObjectRegistry = context.getDeploymentObjectRegistry();
-            ThrowProperties properties = new ThrowProperties(throwSounds, health, velocity, delayAfterThrow);
-
-            ThrowFunction throwFunction = new ThrowFunction(audioEmitter, deploymentObjectRegistry, taskRunner, equipment, properties);
+            ThrowProperties properties = new ThrowProperties(throwSounds, velocity, delayAfterThrow);
+            ThrowFunction throwFunction = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
 
             equipment.getControls().addControl(throwAction, throwFunction);
         }
@@ -327,8 +369,8 @@ public class EquipmentFactory implements WeaponFactory {
         if (activateActionValue != null) {
             Action activateAction = this.getActionFromConfiguration("activate", activateActionValue);
 
-            List<GameSound> activationSounds = DefaultGameSound.parseSounds(section.getString("activation.activation-sound"));
-            long delayUntilActivation = section.getLong("activation.delay-until-activation");
+            List<GameSound> activationSounds = DefaultGameSound.parseSounds(section.getString("effect.activation.activation-sound"));
+            long delayUntilActivation = section.getLong("effect.activation.delay-until-activation");
 
             ActivateProperties properties = new ActivateProperties(activationSounds, delayUntilActivation);
             ActivateFunction activateFunction = new ActivateFunction(properties, equipment, audioEmitter, taskRunner);

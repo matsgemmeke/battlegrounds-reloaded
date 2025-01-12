@@ -5,17 +5,19 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
-import nl.matsgemmeke.battlegrounds.util.MetadataValueCreator;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CombustionEffect implements ItemEffect {
+public class CombustionEffect extends BaseItemEffect {
 
     private static final long RUNNABLE_DELAY = 0L;
     private static final String BURN_BLOCKS_METADATA_KEY = "battlegrounds-burn-blocks";
@@ -39,7 +41,9 @@ public class CombustionEffect implements ItemEffect {
     private CombustionProperties properties;
     private int currentRadius;
     @NotNull
-    private MetadataValueCreator metadataValueCreator;
+    private List<Block> changedBlocks;
+    @NotNull
+    private MetadataValueEditor metadataValueEditor;
     @NotNull
     private RangeProfile rangeProfile;
     @NotNull
@@ -48,27 +52,30 @@ public class CombustionEffect implements ItemEffect {
     private TaskRunner taskRunner;
 
     public CombustionEffect(
+            @NotNull ItemEffectActivation effectActivation,
             @NotNull CombustionProperties properties,
             @NotNull RangeProfile rangeProfile,
             @NotNull AudioEmitter audioEmitter,
             @NotNull CollisionDetector collisionDetector,
-            @NotNull MetadataValueCreator metadataValueCreator,
+            @NotNull MetadataValueEditor metadataValueEditor,
             @NotNull TargetFinder targetFinder,
             @NotNull TaskRunner taskRunner
     ) {
+        super(effectActivation);
         this.properties = properties;
         this.rangeProfile = rangeProfile;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
-        this.metadataValueCreator = metadataValueCreator;
+        this.metadataValueEditor = metadataValueEditor;
         this.targetFinder = targetFinder;
         this.taskRunner = taskRunner;
+        this.changedBlocks = new ArrayList<>();
         this.currentRadius = 0;
     }
 
-    public void activate(@NotNull ItemEffectContext context) {
+    public void perform(@NotNull ItemEffectContext context) {
         ItemHolder holder = context.getHolder();
-        EffectSource source = context.getSource();
+        ItemEffectSource source = context.getSource();
         Location location = source.getLocation();
         World world = source.getWorld();
 
@@ -76,10 +83,8 @@ public class CombustionEffect implements ItemEffect {
 
         this.inflictDamage(holder, location);
 
-        int maxRadiusSize = properties.radius();
-
         task = taskRunner.runTaskTimer(() -> {
-            if (++currentRadius > maxRadiusSize) {
+            if (++currentRadius > properties.maxRadius()) {
                 currentRadius = 0;
                 task.cancel();
                 return;
@@ -92,6 +97,8 @@ public class CombustionEffect implements ItemEffect {
             }
         }, RUNNABLE_DELAY, properties.ticksBetweenFireSpread());
 
+        taskRunner.runTaskLater(this::reset, properties.maxDuration());
+
         source.remove();
     }
 
@@ -100,7 +107,8 @@ public class CombustionEffect implements ItemEffect {
             Location targetLocation = target.getLocation();
 
             double distance = location.distance(targetLocation);
-            double damage = rangeProfile.getDamageByDistance(distance);
+            double damageAmount = rangeProfile.getDamageByDistance(distance);
+            Damage damage = new Damage(damageAmount, DamageType.FIRE_DAMAGE);
 
             target.damage(damage);
         }
@@ -125,11 +133,22 @@ public class CombustionEffect implements ItemEffect {
     }
 
     private void setOnFire(@NotNull Block block) {
-        MetadataValue burnBlocksMetadata = metadataValueCreator.createFixedMetadataValue(properties.burnBlocks());
-        MetadataValue spreadFireMetadata = metadataValueCreator.createFixedMetadataValue(properties.spreadFire());
+        metadataValueEditor.addFixedMetadataValue(block, BURN_BLOCKS_METADATA_KEY, properties.burnBlocks());
+        metadataValueEditor.addFixedMetadataValue(block, SPREAD_FIRE_METADATA_KEY, properties.spreadFire());
 
-        block.setMetadata(BURN_BLOCKS_METADATA_KEY, burnBlocksMetadata);
-        block.setMetadata(SPREAD_FIRE_METADATA_KEY, spreadFireMetadata);
         block.setType(Material.FIRE);
+
+        changedBlocks.add(block);
+    }
+
+    public void reset() {
+        for (Block block : changedBlocks) {
+            if (block.getType() == Material.FIRE) {
+                block.setType(Material.AIR);
+            }
+
+            metadataValueEditor.removeMetadata(block, BURN_BLOCKS_METADATA_KEY);
+            metadataValueEditor.removeMetadata(block, SPREAD_FIRE_METADATA_KEY);
+        }
     }
 }

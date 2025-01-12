@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,12 +42,20 @@ public class EnemyProximityTrigger implements Trigger {
         observers.add(observer);
     }
 
+    public void cancel() {
+        if (task == null) {
+            return;
+        }
+
+        task.cancel();
+    }
+
     public void checkTriggerActivation(@NotNull ItemEffectContext context) {
         task = taskRunner.runTaskTimer(() -> this.runCheck(context), RUNNABLE_DELAY, periodBetweenChecks);
     }
 
     private void runCheck(@NotNull ItemEffectContext context) {
-        EffectSource source = context.getSource();
+        ItemEffectSource source = context.getSource();
 
         if (!source.exists()) {
             task.cancel();
@@ -60,12 +68,12 @@ public class EnemyProximityTrigger implements Trigger {
             return;
         }
 
-        this.notifyObservers(context);
+        this.notifyObservers();
     }
 
-    private void notifyObservers(@NotNull ItemEffectContext context) {
+    private void notifyObservers() {
         for (TriggerObserver observer : observers) {
-            observer.onTrigger(context);
+            observer.onTrigger();
         }
     }
 }

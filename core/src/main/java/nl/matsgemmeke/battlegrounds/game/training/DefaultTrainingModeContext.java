@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentObjectRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.DefaultEquipmentRegistry;
@@ -36,13 +36,19 @@ public class DefaultTrainingModeContext implements GameContext {
         this.trainingMode = trainingMode;
         this.internals = internals;
         this.actionHandler = this.setUpActionHandlerInstance();
-        this.damageProcessor = new TrainingModeDamageProcessor(this);
+        this.damageProcessor = this.setUpDamageProcessorInstance();
     }
 
     private ActionHandler setUpActionHandlerInstance() {
         EntityRegistry<GamePlayer, Player> playerRegistry = new DefaultPlayerRegistry(trainingMode.getPlayerStorage(), internals);
 
         return new DefaultActionHandler(trainingMode, playerRegistry);
+    }
+
+    private DamageProcessor setUpDamageProcessorInstance() {
+        DeploymentInfoProvider deploymentInfoProvider = this.getDeploymentInfoProvider();
+
+        return new TrainingModeDamageProcessor(this, deploymentInfoProvider);
     }
 
     @NotNull
@@ -68,8 +74,10 @@ public class DefaultTrainingModeContext implements GameContext {
     }
 
     @NotNull
-    public DeploymentObjectRegistry getDeploymentObjectRegistry() {
-        return new DefaultDeploymentObjectRegistry(trainingMode.getDeploymentObjectStorage());
+    public DeploymentInfoProvider getDeploymentInfoProvider() {
+        EquipmentRegistry equipmentRegistry = this.getEquipmentRegistry();
+
+        return new DefaultDeploymentInfoProvider(equipmentRegistry);
     }
 
     @NotNull
@@ -99,6 +107,8 @@ public class DefaultTrainingModeContext implements GameContext {
 
     @NotNull
     public TargetFinder getTargetFinder() {
-        return new TrainingModeTargetFinder(trainingMode.getDeploymentObjectStorage(), trainingMode.getPlayerStorage());
+        DeploymentInfoProvider deploymentInfoProvider = this.getDeploymentInfoProvider();
+
+        return new TrainingModeTargetFinder(deploymentInfoProvider, trainingMode.getPlayerStorage());
     }
 }

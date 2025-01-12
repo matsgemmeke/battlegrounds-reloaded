@@ -4,10 +4,15 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DefaultActivator implements Activator {
 
     private boolean ready;
+    @Nullable
+    private ItemHolder currentHolder;
+    @Nullable
+    private ItemStack heldItemStack;
     @NotNull
     private ItemTemplate itemTemplate;
 
@@ -25,9 +30,27 @@ public class DefaultActivator implements Activator {
     }
 
     public void prepare(@NotNull ItemHolder holder) {
+        // Do not prepare the activator again as it can only be held by one holder
+        if (currentHolder != null || heldItemStack != null) {
+            return;
+        }
+
         ItemStack itemStack = itemTemplate.createItemStack();
         holder.setHeldItem(itemStack);
 
+        currentHolder = holder;
+        heldItemStack = itemStack;
         ready = true;
+    }
+
+    public boolean remove() {
+        if (currentHolder == null || heldItemStack == null) {
+            return false;
+        }
+
+        currentHolder.removeItem(heldItemStack);
+        currentHolder = null;
+        heldItemStack = null;
+        return true;
     }
 }

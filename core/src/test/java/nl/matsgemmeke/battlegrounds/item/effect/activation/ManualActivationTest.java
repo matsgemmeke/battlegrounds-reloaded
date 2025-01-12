@@ -1,45 +1,63 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class ManualActivationTest {
 
     private Activator activator;
-    private ItemEffect effect;
+    private ItemEffectSource source;
     private ItemHolder holder;
 
     @BeforeEach
     public void setUp() {
         activator = mock(Activator.class);
-        effect = mock(ItemEffect.class);
+        source = mock(ItemEffectSource.class);
         holder = mock(ItemHolder.class);
     }
 
     @Test
-    public void shouldActivateEffectAtAllSourcesWhenActivating() {
-        EffectSource source1 = mock(EffectSource.class);
-        EffectSource source2 = mock(EffectSource.class);
+    public void cancelDoesNotRemoveActivatorIfNotPrimed() {
+        ManualActivation activation = new ManualActivation(activator);
+        activation.cancel();
 
-        ManualActivation activation = new ManualActivation(effect, activator);
-        activation.prime(holder, source1);
-        activation.prime(holder, source2);
-        activation.activateInstantly(holder);
+        verify(activator, never()).remove();
+    }
 
-        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
-        verify(effect, times(2)).activate(contextCaptor.capture());
+    @Test
+    public void cancelRemovesActivatorIfPrimed() {
+        ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        assertEquals(source1, contextCaptor.getAllValues().get(0).getSource());
-        assertEquals(source2, contextCaptor.getAllValues().get(1).getSource());
+        ManualActivation activation = new ManualActivation(activator);
+        activation.prime(context, () -> {});
+        activation.cancel();
 
-        verify(activator, times(2)).prepare(holder);
+        verify(activator).remove();
+    }
+
+    @Test
+    public void primeDoesNotPrepareActivatorAgainIfAlreadyPrimed() {
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        ManualActivation activation = new ManualActivation(activator);
+        activation.prime(context, () -> {});
+        activation.prime(context, () -> {});
+
+        verify(activator).prepare(holder);
+    }
+
+    @Test
+    public void primePreparesActivatorIfNotPrimed() {
+        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        ManualActivation activation = new ManualActivation(activator);
+        activation.prime(context, () -> {});
+
+        verify(activator).prepare(holder);
     }
 }

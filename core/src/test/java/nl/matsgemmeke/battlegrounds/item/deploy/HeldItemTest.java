@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect.source;
+package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.bukkit.Location;

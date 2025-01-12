@@ -3,9 +3,12 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunctionException;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.source.PlacedBlock;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
+import nl.matsgemmeke.battlegrounds.item.deploy.PlacedBlock;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Location;
@@ -22,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -69,8 +73,8 @@ public class PlaceFunctionTest {
         when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
         when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
 
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
@@ -87,7 +91,7 @@ public class PlaceFunctionTest {
     public void performThrowsExceptionIfEquipmentHasNoEffectActivation() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
-        when(equipment.getEffectActivation()).thenReturn(null);
+        when(equipment.getEffect()).thenReturn(null);
 
         PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
 
@@ -96,8 +100,8 @@ public class PlaceFunctionTest {
 
     @Test
     public void performReturnsFalseIfHolderDoesNotReturnTwoTargetBlocks() {
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
@@ -107,13 +111,13 @@ public class PlaceFunctionTest {
 
         assertFalse(performed);
 
-        verifyNoInteractions(effectActivation);
+        verifyNoInteractions(effect);
     }
 
     @Test
     public void performReturnsFalseIfHolderIsTargetingOccludingBlock() {
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(equipment.getEffect()).thenReturn(effect);
 
         Block targetBlock = mock(Block.class);
         when(targetBlock.getType()).thenReturn(Material.OAK_FENCE);
@@ -126,13 +130,13 @@ public class PlaceFunctionTest {
 
         assertFalse(performed);
 
-        verifyNoInteractions(effectActivation);
+        verifyNoInteractions(effect);
     }
 
     @Test
     public void performReturnsFalseIfAdjacentBlockIsNotConnectedToTargetBlock() {
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(equipment.getEffect()).thenReturn(effect);
 
         Block adjacentBlock = mock(Block.class);
 
@@ -148,7 +152,7 @@ public class PlaceFunctionTest {
 
         assertFalse(performed);
 
-        verifyNoInteractions(effectActivation);
+        verifyNoInteractions(effect);
     }
 
     @Test
@@ -167,8 +171,10 @@ public class PlaceFunctionTest {
         when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
         when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
 
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(effect.isPrimed()).thenReturn(false);
+
+        when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
@@ -178,18 +184,26 @@ public class PlaceFunctionTest {
 
         assertTrue(performed);
 
-        ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
-        verify(effectActivation).prime(eq(holder), captor.capture());
+        ArgumentCaptor<PlacedBlock> placedBlockCaptor = ArgumentCaptor.forClass(PlacedBlock.class);
+        verify(equipment).onDeployDeploymentObject(placedBlockCaptor.capture());
 
-        assertEquals(location, captor.getValue().getLocation());
+        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(effect).prime(contextCaptor.capture());
+
+        PlacedBlock placedBlock = placedBlockCaptor.getValue();
+        ItemEffectContext context = contextCaptor.getValue();
+
+        assertEquals(location, placedBlock.getLocation());
 
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(PLACE_SOUNDS, location);
+        verify(effect).prime(context);
         verify(faceAttachable).setAttachedFace(AttachedFace.CEILING);
+        verify(holder).setHeldItem(null);
     }
 
     @Test
-    public void performReturnsTrueWhenPlacingBlockAgainstFloor() {
+    public void performReturnsTrueWhenDeployingBlockAgainstFloor() {
         BlockFace targetBlockFace = BlockFace.UP;
         BlockState adjacentBlockState = mock(BlockState.class);
         FaceAttachable faceAttachable = mock(FaceAttachable.class);
@@ -204,8 +218,10 @@ public class PlaceFunctionTest {
         when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
         when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
 
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(effect.isPrimed()).thenReturn(true);
+
+        when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
@@ -215,18 +231,25 @@ public class PlaceFunctionTest {
 
         assertTrue(performed);
 
-        ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
-        verify(effectActivation).prime(eq(holder), captor.capture());
+        ArgumentCaptor<PlacedBlock> placedBlockCaptor = ArgumentCaptor.forClass(PlacedBlock.class);
+        verify(equipment).onDeployDeploymentObject(placedBlockCaptor.capture());
 
-        assertEquals(location, captor.getValue().getLocation());
+        PlacedBlock placedBlock = placedBlockCaptor.getValue();
+
+        assertEquals(location, placedBlock.getLocation());
 
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(audioEmitter).playSounds(any(), eq(location));
+        verify(effect).deploy(placedBlock);
         verify(faceAttachable).setAttachedFace(AttachedFace.FLOOR);
+        verify(holder).setHeldItem(null);
     }
 
     @Test
-    public void shouldPlaceBlockAgainstWallWhenPerforming() {
+    public void performReturnsTrueWhenPlacingBlockAgainstWall() {
+        double health = 50.0;
+        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
+
         BlockFace targetBlockFace = BlockFace.NORTH;
         BlockState adjacentBlockState = mock(BlockState.class);
         Directional directional = mock(Directional.class);
@@ -242,8 +265,15 @@ public class PlaceFunctionTest {
         when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
         when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
 
-        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
-        when(equipment.getEffectActivation()).thenReturn(effectActivation);
+        ItemEffect effect = mock(ItemEffect.class);
+        when(effect.isPrimed()).thenReturn(false);
+
+        DeploymentProperties deploymentProperties = new DeploymentProperties();
+        deploymentProperties.setHealth(health);
+        deploymentProperties.setResistances(resistances);
+
+        when(equipment.getDeploymentProperties()).thenReturn(deploymentProperties);
+        when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
@@ -253,15 +283,26 @@ public class PlaceFunctionTest {
 
         assertTrue(performed);
 
-        ArgumentCaptor<PlacedBlock> captor = ArgumentCaptor.forClass(PlacedBlock.class);
-        verify(effectActivation).prime(eq(holder), captor.capture());
+        ArgumentCaptor<PlacedBlock> placedBlockCaptor = ArgumentCaptor.forClass(PlacedBlock.class);
+        verify(equipment).onDeployDeploymentObject(placedBlockCaptor.capture());
 
-        assertEquals(location, captor.getValue().getLocation());
+        ArgumentCaptor<ItemEffectContext> contextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(effect).prime(contextCaptor.capture());
 
+        PlacedBlock placedBlock = placedBlockCaptor.getValue();
+        ItemEffectContext context = contextCaptor.getValue();
+
+        assertEquals(health, placedBlock.getHealth());
+        assertEquals(location, placedBlock.getLocation());
+        assertEquals(resistances, placedBlock.getResistances());
+
+        verify(equipment).onDeployDeploymentObject(placedBlock);
         verify(adjacentBlockState).setBlockData(faceAttachable);
         verify(adjacentBlockState).setBlockData(directional);
         verify(audioEmitter).playSounds(any(), eq(location));
         verify(directional).setFacing(targetBlockFace);
+        verify(effect).prime(context);
         verify(faceAttachable).setAttachedFace(AttachedFace.WALL);
+        verify(holder).setHeldItem(null);
     }
 }

@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,63 +12,48 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Activation that initiates the effect after a specific delay.
  */
-public class DelayedActivation extends BaseItemEffectActivation {
+public class DelayedActivation implements ItemEffectActivation {
 
+    private boolean primed;
+    @Nullable
+    private BukkitTask currentTask;
     private long delayUntilActivation;
     @NotNull
     private TaskRunner taskRunner;
 
-    public DelayedActivation(@NotNull ItemEffect effect, @NotNull TaskRunner taskRunner, long delayUntilActivation) {
-        super(effect);
+    public DelayedActivation(@NotNull TaskRunner taskRunner, long delayUntilActivation) {
         this.taskRunner = taskRunner;
         this.delayUntilActivation = delayUntilActivation;
+        this.primed = false;
     }
 
-    public void prime(@NotNull ItemHolder holder, @NotNull EffectSource source) {
-        ItemEffectContext mostRecentContext = this.getMostRecentContext();
+    public void cancel() {
+        if (!primed || currentTask == null) {
+            return;
+        }
+
+        primed = false;
+        currentTask.cancel();
+    }
+
+    public boolean isPrimed() {
+        return primed;
+    }
+
+    public void prime(@NotNull ItemEffectContext context, @NotNull Procedure onActivate) {
+        if (primed) {
+            return;
+        }
+
+        primed = true;
+
+        ItemHolder holder = context.getHolder();
+        ItemEffectSource source = context.getSource();
 
         if (source.isDeployed()) {
             holder.setHeldItem(null);
         }
 
-        // If the most recent context is a pending deployment, do not schedule a new delay and only replace the source
-        if (mostRecentContext != null && !mostRecentContext.getSource().isDeployed()) {
-            mostRecentContext.setSource(source);
-            return;
-        }
-
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-        contexts.add(context);
-
-        BukkitTask task = taskRunner.runTaskLater(this::activateEffect, delayUntilActivation);
-        tasks.add(task);
-    }
-
-    @Nullable
-    private ItemEffectContext getMostRecentContext() {
-        if (contexts.isEmpty()) {
-            return null;
-        }
-
-        return contexts.get(contexts.size() - 1);
-    }
-
-    private void activateEffect() {
-        ItemEffectContext context = this.getOldestContext();
-
-        if (context == null || !context.getSource().exists()) {
-            return;
-        }
-
-        effect.activate(context);
-    }
-
-    @Nullable
-    private ItemEffectContext getOldestContext() {
-        if (contexts.isEmpty()) {
-            return null;
-        }
-
-        return contexts.get(0);
+        currentTask = taskRunner.runTaskLater(onActivate::apply, delayUntilActivation);
     }
 }
