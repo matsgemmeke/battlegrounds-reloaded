@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration;
+package nl.matsgemmeke.battlegrounds.configuration.lang;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

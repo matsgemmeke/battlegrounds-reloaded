@@ -1,5 +1,6 @@
-package nl.matsgemmeke.battlegrounds.configuration;
+package nl.matsgemmeke.battlegrounds.configuration.lang;
 
+import nl.matsgemmeke.battlegrounds.configuration.BasePluginConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

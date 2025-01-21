@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration;
+package nl.matsgemmeke.battlegrounds.configuration.data;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Location;
@@ -15,15 +15,15 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class GeneralDataConfigurationTest {
+public class DataConfigurationTest {
 
-    private File generalDataFile;
+    private File dataFile;
     @TempDir
     private Path tempDir;
 
     @BeforeEach
     public void setUp() throws IOException {
-        generalDataFile = Files.createFile(tempDir.resolve("general.yml")).toFile();
+        dataFile = Files.createFile(tempDir.resolve("data.yml")).toFile();
     }
 
     @AfterEach
@@ -36,23 +36,23 @@ public class GeneralDataConfigurationTest {
     public void shouldBeAbleToGetMainLobbyLocation() {
         Location location = new Location(null, 1.0, 2.0, 3.0);
 
-        GeneralDataConfiguration generalData = new GeneralDataConfiguration(generalDataFile);
-        generalData.load();
-        generalData.setMainLobbyLocation(location);
-        generalData.save();
-        generalData.load();
+        DataConfiguration dataConfiguration = new DataConfiguration(dataFile);
+        dataConfiguration.load();
+        dataConfiguration.setMainLobbyLocation(location);
+        dataConfiguration.save();
+        dataConfiguration.load();
 
-        Location result = generalData.getMainLobbyLocation();
+        Location result = dataConfiguration.getMainLobbyLocation();
 
         assertEquals(location, result);
     }
 
     @Test
     public void returnsNullIfMainLobbyIsNotSet() {
-        GeneralDataConfiguration generalData = new GeneralDataConfiguration(generalDataFile);
-        generalData.load();
+        DataConfiguration dataConfiguration = new DataConfiguration(dataFile);
+        dataConfiguration.load();
 
-        Location result = generalData.getMainLobbyLocation();
+        Location result = dataConfiguration.getMainLobbyLocation();
 
         assertNull(result);
     }
@@ -65,11 +65,11 @@ public class GeneralDataConfigurationTest {
 
         Location location = new Location(null, x, y, z);
 
-        GeneralDataConfiguration generalData = new GeneralDataConfiguration(generalDataFile);
-        generalData.load();
-        generalData.setMainLobbyLocation(location);
+        DataConfiguration dataConfiguration = new DataConfiguration(dataFile);
+        dataConfiguration.load();
+        dataConfiguration.setMainLobbyLocation(location);
 
-        Section section = generalData.getSection("main-lobby");
+        Section section = dataConfiguration.getSection("main-lobby");
 
         assertEquals(x, section.getDouble("x"), 0.0);
         assertEquals(y, section.getDouble("y"), 0.0);

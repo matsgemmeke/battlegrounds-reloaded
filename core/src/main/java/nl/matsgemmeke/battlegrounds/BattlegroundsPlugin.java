@@ -1,12 +1,15 @@
 package nl.matsgemmeke.battlegrounds;
 
 import co.aikar.commands.PaperCommandManager;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import nl.matsgemmeke.battlegrounds.command.*;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentWeaponIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.TrainingModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.configuration.*;
+import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
@@ -50,6 +53,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
     private EventDispatcher eventDispatcher;
     private GameContext trainingModeContext;
     private GameContextProvider contextProvider;
+    private Injector injector;
     private InternalsProvider internals;
     private Logger logger;
     private TaskRunner taskRunner;
@@ -83,6 +87,14 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void startPlugin() throws StartupFailedException {
+        this.setUpInternalsProvider();
+
+        File dataFolder = this.getDataFolder();
+        PluginManager pluginManager = this.getServer().getPluginManager();
+        BattlegroundsModule module = new BattlegroundsModule(dataFolder, internals, this, pluginManager);
+
+        injector = Guice.createInjector(module);
+
         contextProvider = new GameContextProvider();
 
         // Make sure the configuration folders are created
@@ -93,10 +105,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
         config = new BattlegroundsConfiguration(configFile, configResource);
         config.load();
 
-        this.setUpInternalsProvider();
         this.setUpTaskRunner();
-        this.setUpWeaponProvider();
         this.setUpEventSystem();
+        this.setUpWeaponProvider();
         this.setUpTrainingMode();
         this.setUpEventHandlers();
         this.setUpTranslator();
@@ -105,21 +116,17 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     private void setUpCommands() {
         File dataFolder = new File(this.getDataFolder().getPath() + "/data");
-        File generalDataFile = new File(dataFolder.getPath() + "/general.yml");
 
         SessionFactory sessionFactory = new SessionFactory(dataFolder, internals);
-
-        GeneralDataConfiguration generalData = new GeneralDataConfiguration(generalDataFile);
-        generalData.load();
 
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
 
         // Add all subcommands to the battlegrounds command
         bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
         bgCommand.addSubcommand(new GiveWeaponCommand(trainingModeContext, translator, weaponProvider));
-        bgCommand.addSubcommand(new ReloadCommand(config, translator));
+        bgCommand.addSubcommand(injector.getInstance(ReloadCommand.class));
         bgCommand.addSubcommand(new RemoveSessionCommand(contextProvider, taskRunner, translator));
-        bgCommand.addSubcommand(new SetMainLobbyCommand(generalData, translator));
+        bgCommand.addSubcommand(injector.getInstance(SetMainLobbyCommand.class));
 
         // Register the command to ACF
         PaperCommandManager commandManager = new PaperCommandManager(this);

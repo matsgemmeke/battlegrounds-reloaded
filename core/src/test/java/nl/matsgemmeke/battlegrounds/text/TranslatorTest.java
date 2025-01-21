@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.text;
 
-import nl.matsgemmeke.battlegrounds.configuration.LanguageConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,16 +18,6 @@ public class TranslatorTest {
     @BeforeEach
     public void setUp() {
         this.languageConfiguration = mock(LanguageConfiguration.class);
-    }
-
-    @Test
-    public void shouldBeAbleToSetLanguageConfiguration() {
-        LanguageConfiguration newOne = mock(LanguageConfiguration.class);
-
-        Translator translator = new Translator(languageConfiguration);
-        translator.setLanguageConfiguration(newOne);
-
-        assertEquals(newOne, translator.getLanguageConfiguration());
     }
 
     @Test
