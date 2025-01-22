@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
@@ -25,6 +26,7 @@ public class RemoveSessionCommand extends CommandSource {
     @NotNull
     private Translator translator;
 
+    @Inject
     public RemoveSessionCommand(
             @NotNull GameContextProvider contextProvider,
             @NotNull TaskRunner taskRunner,

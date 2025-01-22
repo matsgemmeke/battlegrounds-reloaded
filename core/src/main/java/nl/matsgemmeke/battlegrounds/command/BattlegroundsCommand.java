@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import com.google.inject.Inject;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -25,6 +26,7 @@ public class BattlegroundsCommand extends BaseCommand {
     @NotNull
     private Translator translator;
 
+    @Inject
     public BattlegroundsCommand(@NotNull Translator translator) {
         this.translator = translator;
         this.subcommands = new ArrayList<>();

@@ -14,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingModeFactory;
 import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
@@ -37,8 +36,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -115,17 +112,13 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void setUpCommands() {
-        File dataFolder = new File(this.getDataFolder().getPath() + "/data");
-
-        SessionFactory sessionFactory = new SessionFactory(dataFolder, internals);
-
-        BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
+        BattlegroundsCommand bgCommand = injector.getInstance(BattlegroundsCommand.class);
 
         // Add all subcommands to the battlegrounds command
-        bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
+        bgCommand.addSubcommand(injector.getInstance(CreateSessionCommand.class));
         bgCommand.addSubcommand(new GiveWeaponCommand(trainingModeContext, translator, weaponProvider));
         bgCommand.addSubcommand(injector.getInstance(ReloadCommand.class));
-        bgCommand.addSubcommand(new RemoveSessionCommand(contextProvider, taskRunner, translator));
+        bgCommand.addSubcommand(injector.getInstance(RemoveSessionCommand.class));
         bgCommand.addSubcommand(injector.getInstance(SetMainLobbyCommand.class));
 
         // Register the command to ACF
@@ -173,27 +166,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void setUpTaskRunner() {
-        this.taskRunner = new TaskRunner() {
-            @NotNull
-            public BukkitTask runTaskLater(@NotNull BukkitRunnable runnable, long delay) {
-                return runnable.runTaskLater(BattlegroundsPlugin.this, delay);
-            }
-
-            @NotNull
-            public BukkitTask runTaskLater(@NotNull Runnable runnable, long delay) {
-                return getServer().getScheduler().runTaskLater(BattlegroundsPlugin.this, runnable, delay);
-            }
-
-            @NotNull
-            public BukkitTask runTaskTimer(@NotNull BukkitRunnable runnable, long delay, long period) {
-                return runnable.runTaskTimer(BattlegroundsPlugin.this, delay, period);
-            }
-
-            @NotNull
-            public BukkitTask runTaskTimer(@NotNull Runnable runnable, long delay, long period) {
-                return getServer().getScheduler().runTaskTimer(BattlegroundsPlugin.this, runnable, delay, period);
-            }
-        };
+        this.taskRunner = new TaskRunner(this);
     }
 
     private void setUpTrainingMode() {

@@ -28,8 +28,7 @@ public class DefaultSession extends BaseGame implements Session {
     public DefaultSession(
             int id,
             @NotNull SessionConfiguration configuration,
-            @NotNull InternalsProvider internals,
-            @NotNull ItemStorage<Gun, GunHolder> gunStorage
+            @NotNull InternalsProvider internals
     ) {
         this.id = id;
         this.configuration = configuration;

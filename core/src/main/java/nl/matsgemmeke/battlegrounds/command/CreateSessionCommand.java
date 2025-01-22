@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.session.DefaultSessionConfiguration;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
@@ -21,6 +22,7 @@ public class CreateSessionCommand extends CommandSource {
     @NotNull
     private Translator translator;
 
+    @Inject
     public CreateSessionCommand(
             @NotNull GameContextProvider contextProvider,
             @NotNull SessionFactory sessionFactory,

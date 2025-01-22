@@ -43,6 +43,7 @@ public class BattlegroundsModule implements Module {
 
         // Singleton bindings
         binder.bind(GameContextProvider.class).in(Singleton.class);
+        binder.bind(TaskRunner.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
 
         // Provider bindings
@@ -53,5 +54,6 @@ public class BattlegroundsModule implements Module {
         // File bindings
         binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);
         binder.bind(File.class).annotatedWith(Names.named("LangFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "lang"));
+        binder.bind(File.class).annotatedWith(Names.named("SetupFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "setup"));
     }
 }
