@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
@@ -15,6 +16,7 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
     @NotNull
     private GameContextProvider contextProvider;
 
+    @Inject
     public EntityDamageByEntityEventHandler(@NotNull GameContextProvider contextProvider) {
         this.contextProvider = contextProvider;
     }

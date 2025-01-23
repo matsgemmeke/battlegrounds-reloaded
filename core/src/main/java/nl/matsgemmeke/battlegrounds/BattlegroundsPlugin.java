@@ -53,6 +53,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
     private Injector injector;
     private InternalsProvider internals;
     private Logger logger;
+    private PluginManager pluginManager;
     private TaskRunner taskRunner;
     private Translator translator;
     private WeaponProvider weaponProvider;
@@ -70,13 +71,14 @@ public class BattlegroundsPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         logger = this.getLogger();
+        pluginManager = this.getServer().getPluginManager();
 
         try {
             this.startPlugin();
         } catch (StartupFailedException e) {
             logger.severe("An error occurred while enabling Battlegrounds v" + this.getDescription().getVersion());
             logger.severe(e.getMessage());
-            this.getServer().getPluginManager().disablePlugin(this);
+            pluginManager.disablePlugin(this);
             return;
         }
 
@@ -87,7 +89,6 @@ public class BattlegroundsPlugin extends JavaPlugin {
         this.setUpInternalsProvider();
 
         File dataFolder = this.getDataFolder();
-        PluginManager pluginManager = this.getServer().getPluginManager();
         BattlegroundsModule module = new BattlegroundsModule(dataFolder, internals, this, pluginManager);
 
         injector = Guice.createInjector(module);
@@ -133,24 +134,22 @@ public class BattlegroundsPlugin extends JavaPlugin {
     }
 
     private void setUpEventHandlers() {
-        eventDispatcher.registerEventHandler(BlockBurnEvent.class, new BlockBurnEventHandler());
-        eventDispatcher.registerEventHandler(BlockSpreadEvent.class, new BlockSpreadEventHandler());
-        eventDispatcher.registerEventHandler(EntityDamageByEntityEvent.class, new EntityDamageByEntityEventHandler(contextProvider));
-        eventDispatcher.registerEventHandler(EntityPickupItemEvent.class, new EntityPickupItemEventHandler(contextProvider));
-        eventDispatcher.registerEventHandler(PlayerDropItemEvent.class, new PlayerDropItemEventHandler(contextProvider));
-        eventDispatcher.registerEventHandler(PlayerInteractEvent.class, new PlayerInteractEventHandler(contextProvider));
-        eventDispatcher.registerEventHandler(PlayerItemHeldEvent.class, new PlayerItemHeldEventHandler(contextProvider));
+        eventDispatcher.registerEventHandler(BlockBurnEvent.class, injector.getInstance(BlockBurnEventHandler.class));
+        eventDispatcher.registerEventHandler(BlockSpreadEvent.class, injector.getInstance(BlockSpreadEventHandler.class));
+        eventDispatcher.registerEventHandler(EntityDamageByEntityEvent.class, injector.getInstance(EntityDamageByEntityEventHandler.class));
+        eventDispatcher.registerEventHandler(EntityPickupItemEvent.class, injector.getInstance(EntityPickupItemEventHandler.class));
+        eventDispatcher.registerEventHandler(PlayerDropItemEvent.class, injector.getInstance(PlayerDropItemEventHandler.class));
+        eventDispatcher.registerEventHandler(PlayerInteractEvent.class, injector.getInstance(PlayerInteractEventHandler.class));
+        eventDispatcher.registerEventHandler(PlayerItemHeldEvent.class, injector.getInstance(PlayerItemHeldEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerJoinEvent.class, new PlayerJoinEventHandler(config, trainingModeContext.getPlayerRegistry()));
-        eventDispatcher.registerEventHandler(PlayerRespawnEvent.class, new PlayerRespawnEventHandler(contextProvider));
-        eventDispatcher.registerEventHandler(PlayerSwapHandItemsEvent.class, new PlayerSwapHandItemsEventHandler(contextProvider));
+        eventDispatcher.registerEventHandler(PlayerRespawnEvent.class, injector.getInstance(PlayerRespawnEventHandler.class));
+        eventDispatcher.registerEventHandler(PlayerSwapHandItemsEvent.class, injector.getInstance(PlayerSwapHandItemsEventHandler.class));
     }
 
     private void setUpEventSystem() {
-        PluginManager pluginManager = this.getServer().getPluginManager();
+        eventDispatcher = injector.getInstance(EventDispatcher.class);
 
-        eventDispatcher = new EventDispatcher(pluginManager, logger);
-
-        EventListener eventListener = new EventListener(eventDispatcher);
+        EventListener eventListener = injector.getInstance(EventListener.class);
 
         pluginManager.registerEvents(eventListener, this);
     }

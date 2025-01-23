@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.event;
 
+import com.google.inject.Inject;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ public class EventDispatcher {
     @NotNull
     private PluginManager pluginManager;
 
+    @Inject
     public EventDispatcher(@NotNull PluginManager pluginManager, @NotNull Logger logger) {
         this.pluginManager = pluginManager;
         this.logger = logger;

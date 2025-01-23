@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
@@ -15,6 +16,7 @@ public class PlayerRespawnEventHandler implements EventHandler<PlayerRespawnEven
     @NotNull
     private GameContextProvider contextProvider;
 
+    @Inject
     public PlayerRespawnEventHandler(@NotNull GameContextProvider contextProvider) {
         this.contextProvider = contextProvider;
     }
