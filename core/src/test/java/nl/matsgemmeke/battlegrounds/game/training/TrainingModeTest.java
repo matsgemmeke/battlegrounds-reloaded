@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.*;
 
-public class DefaultTrainingModeTest {
+public class TrainingModeTest {
 
     private InternalsProvider internals;
     private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
@@ -28,10 +28,10 @@ public class DefaultTrainingModeTest {
 
     @Test
     public void shouldReturnInstanceOfGameContext() {
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
+        TrainingMode trainingMode = new TrainingMode(internals, equipmentStorage, gunStorage);
 
         GameContext context = trainingMode.getContext();
 
-        assertInstanceOf(DefaultTrainingModeContext.class, context);
+        assertInstanceOf(TrainingModeContext.class, context);
     }
 }

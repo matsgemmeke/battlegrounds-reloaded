@@ -21,7 +21,7 @@ import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSp
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class DefaultTrainingModeContext implements GameContext {
+public class TrainingModeContext implements GameContext {
 
     @NotNull
     private ActionHandler actionHandler;
@@ -32,7 +32,7 @@ public class DefaultTrainingModeContext implements GameContext {
     @NotNull
     private TrainingMode trainingMode;
 
-    public DefaultTrainingModeContext(@NotNull TrainingMode trainingMode, @NotNull InternalsProvider internals) {
+    public TrainingModeContext(@NotNull TrainingMode trainingMode, @NotNull InternalsProvider internals) {
         this.trainingMode = trainingMode;
         this.internals = internals;
         this.actionHandler = this.setUpActionHandlerInstance();

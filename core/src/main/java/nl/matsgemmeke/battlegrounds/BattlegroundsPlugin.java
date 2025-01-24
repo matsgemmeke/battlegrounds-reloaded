@@ -127,10 +127,11 @@ public class BattlegroundsPlugin extends JavaPlugin {
         commandManager.registerCommand(bgCommand);
 
         // Register custom conditions to ACF
-        commandManager.getCommandConditions().addCondition("training-mode-presence", new TrainingModePresenceCondition(trainingModeContext, translator));
-        commandManager.getCommandConditions().addCondition(Integer.class, "existent-session-id", new ExistentSessionIdCondition(contextProvider, translator));
-        commandManager.getCommandConditions().addCondition(String.class, "existent-weapon-id", new ExistentWeaponIdCondition(weaponProvider, translator));
-        commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-session-id", new NonexistentSessionIdCondition(contextProvider, translator));
+        var commandConditions = commandManager.getCommandConditions();
+        commandConditions.addCondition("training-mode-presence", injector.getInstance(TrainingModePresenceCondition.class));
+        commandConditions.addCondition(Integer.class, "existent-session-id", injector.getInstance(ExistentSessionIdCondition.class));
+        commandConditions.addCondition(String.class, "existent-weapon-id", new ExistentWeaponIdCondition(weaponProvider, translator));
+        commandConditions.addCondition(Integer.class, "nonexistent-session-id", injector.getInstance(NonexistentSessionIdCondition.class));
     }
 
     private void setUpEventHandlers() {
@@ -141,7 +142,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         eventDispatcher.registerEventHandler(PlayerDropItemEvent.class, injector.getInstance(PlayerDropItemEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerInteractEvent.class, injector.getInstance(PlayerInteractEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerItemHeldEvent.class, injector.getInstance(PlayerItemHeldEventHandler.class));
-        eventDispatcher.registerEventHandler(PlayerJoinEvent.class, new PlayerJoinEventHandler(config, trainingModeContext.getPlayerRegistry()));
+        eventDispatcher.registerEventHandler(PlayerJoinEvent.class, injector.getInstance(PlayerJoinEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerRespawnEvent.class, injector.getInstance(PlayerRespawnEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerSwapHandItemsEvent.class, injector.getInstance(PlayerSwapHandItemsEventHandler.class));
     }
@@ -174,7 +175,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         trainingModeContext = trainingMode.getContext();
 
-        contextProvider.assignTrainingModeContext(trainingModeContext);
+//        contextProvider.assignTrainingModeContext(trainingModeContext);
     }
 
     private void setUpTranslator() {

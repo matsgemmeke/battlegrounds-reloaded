@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
@@ -14,6 +15,7 @@ public class PlayerSwapHandItemsEventHandler implements EventHandler<PlayerSwapH
     @NotNull
     private GameContextProvider contextProvider;
 
+    @Inject
     public PlayerSwapHandItemsEventHandler(@NotNull GameContextProvider contextProvider) {
         this.contextProvider = contextProvider;
     }

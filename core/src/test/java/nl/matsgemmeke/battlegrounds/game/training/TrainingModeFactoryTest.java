@@ -50,7 +50,7 @@ public class TrainingModeFactoryTest {
         ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);
         verify(eventDispatcher).registerEventHandler(eq(EntityDamageEvent.class), entityDamageEventHandlerCaptor.capture());
 
-        assertInstanceOf(DefaultTrainingMode.class, trainingMode);
+        assertInstanceOf(TrainingMode.class, trainingMode);
         assertNotNull(trainingMode.getPlayerStorage().getEntity(player));
     }
 }

@@ -5,6 +5,8 @@ import co.aikar.commands.CommandConditions.Condition;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -18,7 +20,8 @@ public class TrainingModePresenceCondition implements Condition<BukkitCommandIss
     @NotNull
     private Translator translator;
 
-    public TrainingModePresenceCondition(@NotNull GameContext gameContext, @NotNull Translator translator) {
+    @Inject
+    public TrainingModePresenceCondition(@Named("TrainingMode") @NotNull GameContext gameContext, @NotNull Translator translator) {
         this.gameContext = gameContext;
         this.translator = translator;
     }

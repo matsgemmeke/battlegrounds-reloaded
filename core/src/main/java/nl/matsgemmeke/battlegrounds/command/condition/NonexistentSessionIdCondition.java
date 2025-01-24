@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.command.condition;
 
 import co.aikar.commands.*;
 import co.aikar.commands.CommandConditions.ParameterCondition;
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -16,6 +17,7 @@ public class NonexistentSessionIdCondition implements ParameterCondition<Integer
     @NotNull
     private Translator translator;
 
+    @Inject
     public NonexistentSessionIdCondition(@NotNull GameContextProvider contextProvider, @NotNull Translator translator) {
         this.contextProvider = contextProvider;
         this.translator = translator;

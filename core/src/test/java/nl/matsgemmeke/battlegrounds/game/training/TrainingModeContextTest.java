@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DefaultTrainingModeContextTest {
+public class TrainingModeContextTest {
 
     private InternalsProvider internals;
     private TrainingMode trainingMode;
@@ -48,7 +48,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnInstanceOfActionHandler() {
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         ActionHandler actionHandler = context.getActionHandler();
 
         assertInstanceOf(DefaultActionHandler.class, actionHandler);
@@ -56,7 +56,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfAudioEmitter() {
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         AudioEmitter audioEmitter = context.getAudioEmitter();
 
         assertInstanceOf(DefaultAudioEmitter.class, audioEmitter);
@@ -64,7 +64,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfCollisionDetector() {
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         CollisionDetector collisionDetector = context.getCollisionDetector();
 
         assertInstanceOf(DefaultCollisionDetector.class, collisionDetector);
@@ -72,7 +72,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void getDamageProcessorReturnsExistingInstanceOfTrainingModeDamageProcessor() {
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         DamageProcessor damageProcessor = context.getDamageProcessor();
 
         assertInstanceOf(TrainingModeDamageProcessor.class, damageProcessor);
@@ -80,7 +80,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfItemRegistryForEquipmentItems() {
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         EquipmentRegistry equipmentRegistry = context.getEquipmentRegistry();
 
         assertInstanceOf(DefaultEquipmentRegistry.class, equipmentRegistry);
@@ -91,7 +91,7 @@ public class DefaultTrainingModeContextTest {
         ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
         when(trainingMode.getGunStorage()).thenReturn(gunStorage);
 
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         GunInfoProvider gunInfoProvider = context.getGunInfoProvider();
 
         assertInstanceOf(DefaultGunInfoProvider.class, gunInfoProvider);
@@ -102,7 +102,7 @@ public class DefaultTrainingModeContextTest {
         ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
         when(trainingMode.getGunStorage()).thenReturn(gunStorage);
 
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         GunRegistry gunRegistry = context.getGunRegistry();
 
         assertInstanceOf(DefaultGunRegistry.class, gunRegistry);
@@ -110,7 +110,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfEntityRegisterForPlayerEntities() {
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         EntityRegistry<GamePlayer, Player> playerRegistry = context.getPlayerRegistry();
 
         assertInstanceOf(DefaultPlayerRegistry.class, playerRegistry);
@@ -121,7 +121,7 @@ public class DefaultTrainingModeContextTest {
         SpawnPointStorage spawnPointStorage = new SpawnPointStorage();
         when(trainingMode.getSpawnPointStorage()).thenReturn(spawnPointStorage);
 
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         SpawnPointProvider spawnPointProvider = context.getSpawnPointProvider();
 
         assertInstanceOf(TrainingModeSpawnPointProvider.class, spawnPointProvider);
@@ -129,7 +129,7 @@ public class DefaultTrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfTrainingModeTargetFinder() {
-        DefaultTrainingModeContext context = new DefaultTrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
         TargetFinder targetFinder = context.getTargetFinder();
 
         assertInstanceOf(TrainingModeTargetFinder.class, targetFinder);

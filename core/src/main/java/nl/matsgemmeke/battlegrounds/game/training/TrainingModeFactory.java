@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -30,6 +31,7 @@ public class TrainingModeFactory {
     @NotNull
     private InternalsProvider internals;
 
+    @Inject
     public TrainingModeFactory(@NotNull BattlegroundsConfiguration config, @NotNull EventDispatcher eventDispatcher, @NotNull InternalsProvider internals) {
         this.config = config;
         this.eventDispatcher = eventDispatcher;
@@ -41,7 +43,7 @@ public class TrainingModeFactory {
         ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
         ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
 
-        DefaultTrainingMode trainingMode = new DefaultTrainingMode(internals, equipmentStorage, gunStorage);
+        TrainingMode trainingMode = new TrainingMode(internals, equipmentStorage, gunStorage);
         GameContext trainingModeContext = trainingMode.getContext();
 
         trainingMode.addItemBehavior(new EquipmentBehavior(equipmentStorage));
