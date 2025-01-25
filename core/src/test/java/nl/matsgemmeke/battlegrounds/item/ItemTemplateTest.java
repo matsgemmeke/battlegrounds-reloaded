@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item;
 
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.UUIDDataType;
-import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -33,15 +32,13 @@ public class ItemTemplateTest {
     private Material material;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKey key;
-    private UUIDGenerator uuidGenerator;
+    private UUID uuid;
 
     @BeforeEach
     public void setUp() {
         itemFactory = mock(ItemFactory.class);
         material = Material.IRON_HOE;
-
-        uuidGenerator = mock(UUIDGenerator.class);
-        when(uuidGenerator.generateRandom()).thenReturn(new UUID(MOST_SIG_BITS, LEAST_SIG_BITS));
+        uuid = UUID.randomUUID();
 
         Plugin plugin = mock(Plugin.class);
         when(plugin.getName()).thenReturn("battlegrounds");
@@ -61,7 +58,7 @@ public class ItemTemplateTest {
     public void createItemStackWithoutItemMeta() {
         when(itemFactory.getItemMeta(material)).thenReturn(null);
 
-        ItemTemplate itemTemplate = new ItemTemplate(key, material, uuidGenerator);
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         ItemStack itemStack = itemTemplate.createItemStack(new HashMap<>());
 
         assertEquals(material, itemStack.getType());
@@ -78,7 +75,7 @@ public class ItemTemplateTest {
         when(itemMeta.getPersistentDataContainer()).thenReturn(dataContainer);
         when(itemFactory.getItemMeta(material)).thenReturn(itemMeta);
 
-        ItemTemplate itemTemplate = new ItemTemplate(key, material, uuidGenerator);
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDamage(damage);
 
         ItemStack itemStack = itemTemplate.createItemStack(new HashMap<>());
@@ -101,7 +98,7 @@ public class ItemTemplateTest {
         when(itemMeta.getPersistentDataContainer()).thenReturn(dataContainer);
         when(itemFactory.getItemMeta(material)).thenReturn(itemMeta);
 
-        ItemTemplate itemTemplate = new ItemTemplate(key, material, uuidGenerator);
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDisplayNameTemplate(dislayNameTemplate);
 
         ItemStack itemStack = itemTemplate.createItemStack(values);
@@ -115,7 +112,6 @@ public class ItemTemplateTest {
     @Test
     public void matchesWithItemStackIfKeyInItemMetaEqualsUUID() {
         ItemStack itemStack = new ItemStack(material);
-        UUID uuid = new UUID(MOST_SIG_BITS, LEAST_SIG_BITS);
 
         PersistentDataContainer dataContainer = mock(PersistentDataContainer.class);
         when(dataContainer.get(eq(key), any(UUIDDataType.class))).thenReturn(uuid);
@@ -125,7 +121,7 @@ public class ItemTemplateTest {
 
         when(itemFactory.getItemMeta(material)).thenReturn(itemMeta);
 
-        ItemTemplate itemTemplate = new ItemTemplate(key, material, uuidGenerator);
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         boolean matches = itemTemplate.matchesTemplate(itemStack);
 
         assertTrue(matches);
@@ -137,7 +133,7 @@ public class ItemTemplateTest {
 
         when(itemFactory.getItemMeta(material)).thenReturn(null);
 
-        ItemTemplate itemTemplate = new ItemTemplate(key, material, uuidGenerator);
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         boolean matches = itemTemplate.matchesTemplate(itemStack);
 
         assertFalse(matches);
@@ -155,7 +151,7 @@ public class ItemTemplateTest {
 
         when(itemFactory.getItemMeta(material)).thenReturn(itemMeta);
 
-        ItemTemplate itemTemplate = new ItemTemplate(key, material, uuidGenerator);
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         boolean matches = itemTemplate.matchesTemplate(itemStack);
 
         assertFalse(matches);
@@ -164,17 +160,17 @@ public class ItemTemplateTest {
     @Test
     public void doesNotMatchWithIitemStackIfValueInKeyDoesNotEqualUUID() {
         ItemStack itemStack = new ItemStack(material);
-        UUID uuid = new UUID(MOST_SIG_BITS + 1000, LEAST_SIG_BITS + 1000);
+        UUID otherUUID = UUID.randomUUID();
 
         PersistentDataContainer dataContainer = mock(PersistentDataContainer.class);
-        when(dataContainer.get(eq(key), any(UUIDDataType.class))).thenReturn(uuid);
+        when(dataContainer.get(eq(key), any(UUIDDataType.class))).thenReturn(otherUUID);
 
         ItemMeta itemMeta = mock(ItemMeta.class);
         when(itemMeta.getPersistentDataContainer()).thenReturn(dataContainer);
 
         when(itemFactory.getItemMeta(material)).thenReturn(itemMeta);
 
-        ItemTemplate itemTemplate = new ItemTemplate(key, material, uuidGenerator);
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         boolean matches = itemTemplate.matchesTemplate(itemStack);
 
         assertFalse(matches);

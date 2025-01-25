@@ -27,17 +27,16 @@ import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 public class FirearmFactory implements WeaponFactory {
 
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-gun";
-    private static final UUIDGenerator UUID_GENERATOR = new UUIDGenerator();
 
     @NotNull
     private BattlegroundsConfiguration config;
@@ -181,11 +180,12 @@ public class FirearmFactory implements WeaponFactory {
             throw new CreateFirearmException("Unable to create firearm " + name + "; item stack material " + materialValue + " is invalid");
         }
 
+        UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
         int damage = section.getInt("item.damage");
         String displayName = section.getString("item.display-name");
 
-        ItemTemplate itemTemplate = new ItemTemplate(key, material, UUID_GENERATOR);
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDamage(damage);
 
         if (displayName != null) {

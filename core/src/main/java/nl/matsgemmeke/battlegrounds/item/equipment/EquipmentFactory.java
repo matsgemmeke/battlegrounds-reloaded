@@ -33,7 +33,6 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -42,11 +41,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class EquipmentFactory implements WeaponFactory {
 
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
-    private static final UUIDGenerator UUID_GENERATOR = new UUIDGenerator();
 
     @NotNull
     private ItemEffectFactory effectFactory;
@@ -110,11 +109,12 @@ public class EquipmentFactory implements WeaponFactory {
             throw new CreateEquipmentException("Unable to create equipment item " + name + "; item stack material " + materialValue + " is invalid");
         }
 
+        UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
         int damage = section.getInt("item.damage");
         String displayName = section.getString("item.display-name");
 
-        ItemTemplate itemTemplate = new ItemTemplate(key, material, UUID_GENERATOR);
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDamage(damage);
 
         if (displayName != null) {
@@ -137,11 +137,12 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + name + "; activator item stack material " + activatorMaterialValue + " is invalid");
             }
 
+            UUID activatorUUID = UUID.randomUUID();
             NamespacedKey activatorKey = keyCreator.create(NAMESPACED_KEY_NAME);
             int activatorDamage = activatorItemSection.getInt("damage");
             String activatorDisplayName = activatorItemSection.getString("display-name");
 
-            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorKey, activatorMaterial, UUID_GENERATOR);
+            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorMaterial);
             activatorItemTemplate.setDamage(activatorDamage);
 
             if (activatorDisplayName != null) {
@@ -296,10 +297,11 @@ public class EquipmentFactory implements WeaponFactory {
                 throw new CreateEquipmentException("Unable to create equipment item " + name + ", throw item material " + throwItemMaterialValue + " is invalid");
             }
 
+            UUID throwItemUUID = UUID.randomUUID();
             NamespacedKey throwItemKey = keyCreator.create(NAMESPACED_KEY_NAME);
             int throwItemDamage = throwItemSection.getInt("damage");
 
-            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemKey, throwItemMaterial, UUID_GENERATOR);
+            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemUUID, throwItemKey, throwItemMaterial);
             throwItemTemplate.setDamage(throwItemDamage);
 
             equipment.setThrowItemTemplate(throwItemTemplate);
