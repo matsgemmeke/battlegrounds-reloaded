@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
@@ -51,6 +52,7 @@ public class FirearmFactory implements WeaponFactory {
     @NotNull
     private SpreadPatternFactory spreadPatternFactory;
 
+    @Inject
     public FirearmFactory(
             @NotNull BattlegroundsConfiguration config,
             @NotNull FireModeFactory fireModeFactory,

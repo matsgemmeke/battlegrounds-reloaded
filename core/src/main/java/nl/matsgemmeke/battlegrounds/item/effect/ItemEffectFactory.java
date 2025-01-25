@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
@@ -41,6 +42,7 @@ public class ItemEffectFactory {
     @NotNull
     private TaskRunner taskRunner;
 
+    @Inject
     public ItemEffectFactory(@NotNull MetadataValueEditor metadataValueEditor, @NotNull TaskRunner taskRunner) {
         this.metadataValueEditor = metadataValueEditor;
         this.taskRunner = taskRunner;

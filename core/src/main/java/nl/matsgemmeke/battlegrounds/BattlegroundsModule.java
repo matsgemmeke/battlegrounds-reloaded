@@ -13,6 +13,8 @@ import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProv
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingModeContextProvider;
+import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
+import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -58,9 +60,11 @@ public class BattlegroundsModule implements Module {
                 .in(Singleton.class);
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
+        binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class);
 
         // File bindings
         binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);
+        binder.bind(File.class).annotatedWith(Names.named("ItemsFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "items"));
         binder.bind(File.class).annotatedWith(Names.named("LangFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "lang"));
         binder.bind(File.class).annotatedWith(Names.named("SetupFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "setup"));
     }

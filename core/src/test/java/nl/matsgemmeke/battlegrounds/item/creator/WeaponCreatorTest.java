@@ -1,21 +1,22 @@
-package nl.matsgemmeke.battlegrounds.item;
+package nl.matsgemmeke.battlegrounds.item.creator;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WeaponProviderTest {
+public class WeaponCreatorTest {
 
     @Test
     public void shouldBeAbleToAddConfigurationAndFactory() {
         ItemConfiguration configuration = mock(ItemConfiguration.class);
         WeaponFactory factory = mock(WeaponFactory.class);
 
-        WeaponProvider provider = new WeaponProvider();
-        boolean result = provider.addConfigurationFactory(configuration, factory);
+        WeaponCreator weaponCreator = new WeaponCreator();
+        boolean result = weaponCreator.addConfigurationFactory(configuration, factory);
 
         assertTrue(result);
     }
@@ -29,10 +30,10 @@ public class WeaponProviderTest {
 
         WeaponFactory factory = mock(WeaponFactory.class);
 
-        WeaponProvider provider = new WeaponProvider();
-        provider.addConfigurationFactory(configuration, factory);
+        WeaponCreator weaponCreator = new WeaponCreator();
+        weaponCreator.addConfigurationFactory(configuration, factory);
 
-        boolean result = provider.exists(weaponId);
+        boolean result = weaponCreator.exists(weaponId);
 
         assertTrue(result);
     }
@@ -44,10 +45,10 @@ public class WeaponProviderTest {
         ItemConfiguration configuration = mock(ItemConfiguration.class);
         WeaponFactory factory = mock(WeaponFactory.class);
 
-        WeaponProvider provider = new WeaponProvider();
-        provider.addConfigurationFactory(configuration, factory);
+        WeaponCreator weaponCreator = new WeaponCreator();
+        weaponCreator.addConfigurationFactory(configuration, factory);
 
-        boolean result = provider.exists(weaponId);
+        boolean result = weaponCreator.exists(weaponId);
 
         assertFalse(result);
     }
@@ -57,10 +58,10 @@ public class WeaponProviderTest {
         ItemConfiguration configuration = mock(ItemConfiguration.class);
         WeaponFactory factory = mock(WeaponFactory.class);
 
-        WeaponProvider provider = new WeaponProvider();
-        provider.addConfigurationFactory(configuration, factory);
+        WeaponCreator weaponCreator = new WeaponCreator();
+        weaponCreator.addConfigurationFactory(configuration, factory);
 
-        WeaponFactory result = provider.getFactory(configuration);
+        WeaponFactory result = weaponCreator.getFactory(configuration);
 
         assertEquals(factory, result);
     }
@@ -70,10 +71,10 @@ public class WeaponProviderTest {
         ItemConfiguration configuration = mock(ItemConfiguration.class);
         WeaponFactory factory = mock(WeaponFactory.class);
 
-        WeaponProvider provider = new WeaponProvider();
-        provider.addConfigurationFactory(mock(ItemConfiguration.class), factory);
+        WeaponCreator weaponCreator = new WeaponCreator();
+        weaponCreator.addConfigurationFactory(mock(ItemConfiguration.class), factory);
 
-        WeaponFactory result = provider.getFactory(configuration);
+        WeaponFactory result = weaponCreator.getFactory(configuration);
 
         assertNull(result);
     }

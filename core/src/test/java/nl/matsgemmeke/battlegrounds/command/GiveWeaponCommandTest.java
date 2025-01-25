@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.item.*;
+import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -23,21 +24,21 @@ public class GiveWeaponCommandTest {
     private GameContext context;
     private Player player;
     private Translator translator;
-    private WeaponProvider weaponProvider;
+    private WeaponCreator weaponCreator;
 
     @BeforeEach
     public void setUp() {
         this.context = mock(GameContext.class);
         this.player = mock(Player.class);
         this.translator = mock(Translator.class);
-        this.weaponProvider = mock(WeaponProvider.class);
+        this.weaponCreator = mock(WeaponCreator.class);
 
         when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn(new TextTemplate("test"));
     }
 
     @Test
     public void shouldThrowErrorWhenGivenIncompatibleWeaponId() {
-        GiveWeaponCommand command = new GiveWeaponCommand(context, translator, weaponProvider);
+        GiveWeaponCommand command = new GiveWeaponCommand(context, translator, weaponCreator);
 
         assertThrows(IllegalArgumentException.class, () -> command.execute(player, "fail"));
     }
@@ -53,7 +54,7 @@ public class GiveWeaponCommandTest {
         when(player.getInventory()).thenReturn(inventory);
 
         ItemConfiguration configuration = mock(ItemConfiguration.class);
-        when(weaponProvider.getItemConfiguration(weaponId)).thenReturn(configuration);
+        when(weaponCreator.getItemConfiguration(weaponId)).thenReturn(configuration);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
@@ -69,9 +70,9 @@ public class GiveWeaponCommandTest {
         when(factory.make(eq(configuration), eq(context), any())).thenReturn(weapon);
 
         when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
-        when(weaponProvider.getFactory(configuration)).thenReturn(factory);
+        when(weaponCreator.getFactory(configuration)).thenReturn(factory);
 
-        GiveWeaponCommand command = new GiveWeaponCommand(context, translator, weaponProvider);
+        GiveWeaponCommand command = new GiveWeaponCommand(context, translator, weaponCreator);
         command.execute(player, weaponId);
 
         verify(inventory).addItem(itemStack);

@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
@@ -15,6 +16,7 @@ public class RecoilProducerFactory {
     @NotNull
     private BattlegroundsConfiguration config;
 
+    @Inject
     public RecoilProducerFactory(@NotNull BattlegroundsConfiguration config) {
         this.config = config;
     }

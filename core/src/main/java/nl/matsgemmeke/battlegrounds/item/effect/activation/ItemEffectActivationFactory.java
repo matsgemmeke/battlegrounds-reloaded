@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
@@ -18,6 +19,7 @@ public class ItemEffectActivationFactory {
     @NotNull
     private TaskRunner taskRunner;
 
+    @Inject
     public ItemEffectActivationFactory(@NotNull TaskRunner taskRunner) {
         this.taskRunner = taskRunner;
     }

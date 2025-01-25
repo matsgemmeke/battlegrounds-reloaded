@@ -28,12 +28,10 @@ public class PlayerJoinEventHandlerTest {
 
     @Test
     public void addsPlayerToTrainingModeUponJoiningAndSetsPassiveBasedOnConfiguration() {
-        when(config.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
-
         Player player = mock(Player.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        EntityRegistry<GamePlayer, Player> playerRegistry = mock();
+        when(config.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
         when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
 
         PlayerJoinEvent event = new PlayerJoinEvent(player, "test");

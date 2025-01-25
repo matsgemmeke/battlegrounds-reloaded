@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
@@ -16,6 +17,7 @@ public class ReloadSystemFactory {
     @NotNull
     private TaskRunner taskRunner;
 
+    @Inject
     public ReloadSystemFactory(@NotNull TaskRunner taskRunner) {
         this.taskRunner = taskRunner;
     }

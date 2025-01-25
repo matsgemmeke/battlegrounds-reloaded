@@ -1,11 +1,13 @@
 package nl.matsgemmeke.battlegrounds.command;
 
+import com.google.inject.Inject;
+import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
-import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
+import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
@@ -20,21 +22,22 @@ public class GiveWeaponCommand extends CommandSource {
     @NotNull
     private Translator translator;
     @NotNull
-    private WeaponProvider weaponProvider;
+    private WeaponCreator weaponCreator;
 
+    @Inject
     public GiveWeaponCommand(
-            @NotNull GameContext context,
+            @Named("TrainingMode") @NotNull GameContext context,
             @NotNull Translator translator,
-            @NotNull WeaponProvider weaponProvider
+            @NotNull WeaponCreator weaponCreator
     ) {
         super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText(), "bg giveweapon <weapon>");
         this.context = context;
         this.translator = translator;
-        this.weaponProvider = weaponProvider;
+        this.weaponCreator = weaponCreator;
     }
 
     public void execute(@NotNull Player player, @NotNull String weaponId) {
-        ItemConfiguration configuration = weaponProvider.getItemConfiguration(weaponId);
+        ItemConfiguration configuration = weaponCreator.getItemConfiguration(weaponId);
 
         // This shouldn't be null because of the condition on this command, but validate it again in case something
         // might change in the future
@@ -44,7 +47,7 @@ public class GiveWeaponCommand extends CommandSource {
 
         GamePlayer gamePlayer = context.getPlayerRegistry().findByEntity(player);
 
-        WeaponFactory factory = weaponProvider.getFactory(configuration);
+        WeaponFactory factory = weaponCreator.getFactory(configuration);
         Weapon weapon = factory.make(configuration, context, gamePlayer);
 
         player.getInventory().addItem(weapon.getItemStack());

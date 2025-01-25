@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
@@ -56,6 +57,7 @@ public class EquipmentFactory implements WeaponFactory {
     @NotNull
     private TaskRunner taskRunner;
 
+    @Inject
     public EquipmentFactory(
             @NotNull ItemEffectFactory effectFactory,
             @NotNull ItemEffectActivationFactory effectActivationFactory,

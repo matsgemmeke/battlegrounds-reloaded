@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
@@ -13,6 +14,7 @@ public class FireModeFactory {
     @NotNull
     private TaskRunner taskRunner;
 
+    @Inject
     public FireModeFactory(@NotNull TaskRunner taskRunner) {
         this.taskRunner = taskRunner;
     }

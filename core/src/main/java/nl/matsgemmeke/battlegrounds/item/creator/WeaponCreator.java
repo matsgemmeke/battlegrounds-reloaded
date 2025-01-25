@@ -1,6 +1,7 @@
-package nl.matsgemmeke.battlegrounds.item;
+package nl.matsgemmeke.battlegrounds.item.creator;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,14 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Responsible for keeping track of factory instances and providing them to outside classes.
+ * Object that is able to create new weapon instances of various types.
  */
-public class WeaponProvider {
+public class WeaponCreator {
 
     @NotNull
     private Map<ItemConfiguration, WeaponFactory> configurations;
 
-    public WeaponProvider() {
+    public WeaponCreator() {
         this.configurations = new HashMap<>();
     }
 
