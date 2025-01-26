@@ -1,9 +1,7 @@
 package nl.matsgemmeke.battlegrounds;
 
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;

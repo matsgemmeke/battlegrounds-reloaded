@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.command;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.*;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;

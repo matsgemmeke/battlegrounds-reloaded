@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,18 +19,17 @@ import static org.mockito.Mockito.*;
 
 public class DefaultActionHandlerTest {
 
-    private EntityRegistry<GamePlayer, Player> playerRegistry;
     private Game game;
     private ItemStack itemStack;
     private Player player;
+    private PlayerRegistry playerRegistry;
     private UUID uuid;
 
     @BeforeEach
-    @SuppressWarnings("unchecked")
     public void setUp() {
-        playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
         game = mock(Game.class);
         itemStack = new ItemStack(Material.IRON_HOE);
+        playerRegistry = mock(PlayerRegistry.class);
         uuid = UUID.randomUUID();
 
         player = mock(Player.class);

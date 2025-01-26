@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.game.component.item.DefaultEquipmentRegistry
 import nl.matsgemmeke.battlegrounds.game.component.item.DefaultGunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.training.component.damage.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;

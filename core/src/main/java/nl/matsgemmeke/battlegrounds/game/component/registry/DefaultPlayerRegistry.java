@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component;
+package nl.matsgemmeke.battlegrounds.game.component.registry;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;

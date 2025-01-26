@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import org.bukkit.Location;
 import org.bukkit.World;
