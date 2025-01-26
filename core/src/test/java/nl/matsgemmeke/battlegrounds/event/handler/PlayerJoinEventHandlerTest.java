@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.PlayerRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +14,8 @@ import static org.mockito.Mockito.*;
 public class PlayerJoinEventHandlerTest {
 
     private BattlegroundsConfiguration config;
-    private EntityRegistry<GamePlayer, Player> playerRegistry;
     private GameContext trainingModeContext;
+    private PlayerRegistry playerRegistry;
 
     @BeforeEach
     public void setUp() {

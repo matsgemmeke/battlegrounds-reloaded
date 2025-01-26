@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import nl.matsgemmeke.battlegrounds.game.session.DefaultSessionConfiguration;
 import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

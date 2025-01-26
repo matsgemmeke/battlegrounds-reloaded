@@ -41,12 +41,12 @@ public class CreateSessionCommand extends CommandSource {
         Map<String, Object> values = Map.of("bg_session", id);
         String message;
 
-        if (!contextProvider.addSessionContext(id, session.getContext())) {
-            message = translator.translate(TranslationKey.SESSION_CREATION_FAILED.getPath()).replace(values);
-        } else {
-            message = translator.translate(TranslationKey.SESSION_CREATED.getPath()).replace(values);
-        }
-
-        sender.sendMessage(message);
+//        if (!contextProvider.addSessionContext(id, session.getContext())) {
+//            message = translator.translate(TranslationKey.SESSION_CREATION_FAILED.getPath()).replace(values);
+//        } else {
+//            message = translator.translate(TranslationKey.SESSION_CREATED.getPath()).replace(values);
+//        }
+//
+//        sender.sendMessage(message);
     }
 }

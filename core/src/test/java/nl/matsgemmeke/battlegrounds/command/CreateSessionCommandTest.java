@@ -39,7 +39,7 @@ public class CreateSessionCommandTest {
         GameContext context = mock(GameContext.class);
 
         Session session = mock(Session.class);
-        when(session.getContext()).thenReturn(context);
+//        when(session.getContext()).thenReturn(context);
         when(sessionFactory.make(eq(sessionId), any(SessionConfiguration.class))).thenReturn(session);
 
         when(contextProvider.addSessionContext(sessionId, context)).thenReturn(true);
@@ -59,7 +59,7 @@ public class CreateSessionCommandTest {
         GameContext context = mock(GameContext.class);
 
         Session session = mock(Session.class);
-        when(session.getContext()).thenReturn(context);
+//        when(session.getContext()).thenReturn(context);
         when(sessionFactory.make(eq(sessionId), any(SessionConfiguration.class))).thenReturn(session);
 
         when(contextProvider.addSessionContext(sessionId, context)).thenReturn(false);

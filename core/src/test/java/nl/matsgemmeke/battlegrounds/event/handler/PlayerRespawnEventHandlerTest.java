@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -50,7 +50,7 @@ public class PlayerRespawnEventHandlerTest {
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        EntityRegistry<GamePlayer, Player> playerRegistry = mock();
+        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.findByEntity(player)).thenReturn(gamePlayer);
 
         SpawnPointProvider spawnPointProvider = mock(SpawnPointProvider.class);
@@ -78,7 +78,7 @@ public class PlayerRespawnEventHandlerTest {
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        EntityRegistry<GamePlayer, Player> playerRegistry = mock();
+        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.findByEntity(player)).thenReturn(gamePlayer);
 
         SpawnPointProvider spawnPointProvider = mock(SpawnPointProvider.class);

@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.training.component.spawn;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
@@ -15,7 +17,8 @@ public class TrainingModeSpawnPointProvider implements SpawnPointProvider {
     @NotNull
     private SpawnPointStorage spawnPointStorage;
 
-    public TrainingModeSpawnPointProvider(@NotNull SpawnPointStorage spawnPointStorage) {
+    @Inject
+    public TrainingModeSpawnPointProvider(@Assisted @NotNull SpawnPointStorage spawnPointStorage) {
         this.spawnPointStorage = spawnPointStorage;
     }
 

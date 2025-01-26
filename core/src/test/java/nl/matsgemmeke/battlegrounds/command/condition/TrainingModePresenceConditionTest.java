@@ -3,9 +3,8 @@ package nl.matsgemmeke.battlegrounds.command.condition;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -21,15 +20,15 @@ public class TrainingModePresenceConditionTest {
 
     private BukkitCommandIssuer issuer;
     private ConditionContext<BukkitCommandIssuer> conditionContext;
-    private EntityRegistry<GamePlayer, Player> playerRegistry;
     private GameContext gameContext;
     private Player player;
+    private PlayerRegistry playerRegistry;
     private Translator translator;
 
     @BeforeEach
     @SuppressWarnings("unchecked")
     public void setUp() {
-        playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
+        playerRegistry = mock(PlayerRegistry.class);
         player = mock(Player.class);
         translator = mock(Translator.class);
 

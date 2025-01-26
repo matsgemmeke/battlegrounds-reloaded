@@ -24,14 +24,6 @@ public interface Game {
     void addItemBehavior(@NotNull ItemBehavior behavior);
 
     /**
-     * Gets the context of the game instance which holds the instances to component interfaces.
-     *
-     * @return the game context
-     */
-    @NotNull
-    GameContext getContext();
-
-    /**
      * Gets the item storage for equipment items.
      *
      * @return the equipment storage

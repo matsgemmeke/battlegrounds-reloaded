@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.command;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.component.EntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.*;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -58,7 +58,7 @@ public class GiveWeaponCommandTest {
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        EntityRegistry<GamePlayer, Player> playerRegistry = (EntityRegistry<GamePlayer, Player>) mock(EntityRegistry.class);
+        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.findByEntity(player)).thenReturn(gamePlayer);
         when(context.getPlayerRegistry()).thenReturn(playerRegistry);
 

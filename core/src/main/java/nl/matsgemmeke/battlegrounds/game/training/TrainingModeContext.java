@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.component.*;
@@ -17,8 +15,6 @@ import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.training.component.damage.TrainingModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
-import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class TrainingModeContext implements GameContext {
@@ -28,20 +24,25 @@ public class TrainingModeContext implements GameContext {
     @NotNull
     private DamageProcessor damageProcessor;
     @NotNull
-    private InternalsProvider internals;
+    private PlayerRegistry playerRegistry;
+    @NotNull
+    private SpawnPointProvider spawnPointProvider;
     @NotNull
     private TrainingMode trainingMode;
 
-    public TrainingModeContext(@NotNull TrainingMode trainingMode, @NotNull InternalsProvider internals) {
+    public TrainingModeContext(
+            @NotNull TrainingMode trainingMode,
+            @NotNull PlayerRegistry playerRegistry,
+            @NotNull SpawnPointProvider spawnPointProvider
+    ) {
         this.trainingMode = trainingMode;
-        this.internals = internals;
+        this.playerRegistry = playerRegistry;
+        this.spawnPointProvider = spawnPointProvider;
         this.actionHandler = this.setUpActionHandlerInstance();
         this.damageProcessor = this.setUpDamageProcessorInstance();
     }
 
     private ActionHandler setUpActionHandlerInstance() {
-        EntityRegistry<GamePlayer, Player> playerRegistry = new DefaultPlayerRegistry(trainingMode.getPlayerStorage(), internals);
-
         return new DefaultActionHandler(trainingMode, playerRegistry);
     }
 
@@ -96,13 +97,13 @@ public class TrainingModeContext implements GameContext {
     }
 
     @NotNull
-    public EntityRegistry<GamePlayer, Player> getPlayerRegistry() {
-        return new DefaultPlayerRegistry(trainingMode.getPlayerStorage(), internals);
+    public PlayerRegistry getPlayerRegistry() {
+        return playerRegistry;
     }
 
     @NotNull
     public SpawnPointProvider getSpawnPointProvider() {
-        return new TrainingModeSpawnPointProvider(trainingMode.getSpawnPointStorage());
+        return spawnPointProvider;
     }
 
     @NotNull

@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds;
 
-import com.google.inject.Binder;
+import com.google.inject.*;
 import com.google.inject.Module;
-import com.google.inject.Singleton;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
@@ -12,7 +12,13 @@ import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.component.DefaultPlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.DefaultPlayerRegistryFactory;
+import nl.matsgemmeke.battlegrounds.game.component.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingModeContextProvider;
+import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProviderFactory;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -61,6 +67,14 @@ public class BattlegroundsModule implements Module {
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class);
+
+        // Factory bindings
+        binder.install(new FactoryModuleBuilder()
+                .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
+                .build(DefaultPlayerRegistryFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(SpawnPointProvider.class, TrainingModeSpawnPointProvider.class)
+                .build(TrainingModeSpawnPointProviderFactory.class));
 
         // File bindings
         binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);

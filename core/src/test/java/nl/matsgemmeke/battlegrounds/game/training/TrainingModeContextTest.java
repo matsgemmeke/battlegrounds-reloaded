@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.ItemStorage;
@@ -31,13 +30,15 @@ import static org.mockito.Mockito.when;
 
 public class TrainingModeContextTest {
 
-    private InternalsProvider internals;
     private TrainingMode trainingMode;
+    private PlayerRegistry playerRegistry;
+    private SpawnPointProvider spawnPointProvider;
 
     @BeforeEach
     public void setUp() {
-        internals = mock(InternalsProvider.class);
         trainingMode = mock(TrainingMode.class);
+        playerRegistry = mock(PlayerRegistry.class);
+        spawnPointProvider = mock(SpawnPointProvider.class);
 
         ItemStorage<Equipment, EquipmentHolder> equipmentStorage = new ItemStorage<>();
         EntityStorage<GamePlayer> playerStorage = new EntityStorage<>();
@@ -48,7 +49,7 @@ public class TrainingModeContextTest {
 
     @Test
     public void shouldReturnInstanceOfActionHandler() {
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         ActionHandler actionHandler = context.getActionHandler();
 
         assertInstanceOf(DefaultActionHandler.class, actionHandler);
@@ -56,7 +57,7 @@ public class TrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfAudioEmitter() {
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         AudioEmitter audioEmitter = context.getAudioEmitter();
 
         assertInstanceOf(DefaultAudioEmitter.class, audioEmitter);
@@ -64,7 +65,7 @@ public class TrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfCollisionDetector() {
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         CollisionDetector collisionDetector = context.getCollisionDetector();
 
         assertInstanceOf(DefaultCollisionDetector.class, collisionDetector);
@@ -72,7 +73,7 @@ public class TrainingModeContextTest {
 
     @Test
     public void getDamageProcessorReturnsExistingInstanceOfTrainingModeDamageProcessor() {
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         DamageProcessor damageProcessor = context.getDamageProcessor();
 
         assertInstanceOf(TrainingModeDamageProcessor.class, damageProcessor);
@@ -80,7 +81,7 @@ public class TrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfItemRegistryForEquipmentItems() {
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         EquipmentRegistry equipmentRegistry = context.getEquipmentRegistry();
 
         assertInstanceOf(DefaultEquipmentRegistry.class, equipmentRegistry);
@@ -91,7 +92,7 @@ public class TrainingModeContextTest {
         ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
         when(trainingMode.getGunStorage()).thenReturn(gunStorage);
 
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         GunInfoProvider gunInfoProvider = context.getGunInfoProvider();
 
         assertInstanceOf(DefaultGunInfoProvider.class, gunInfoProvider);
@@ -102,7 +103,7 @@ public class TrainingModeContextTest {
         ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
         when(trainingMode.getGunStorage()).thenReturn(gunStorage);
 
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         GunRegistry gunRegistry = context.getGunRegistry();
 
         assertInstanceOf(DefaultGunRegistry.class, gunRegistry);
@@ -110,7 +111,7 @@ public class TrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfEntityRegisterForPlayerEntities() {
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         EntityRegistry<GamePlayer, Player> playerRegistry = context.getPlayerRegistry();
 
         assertInstanceOf(DefaultPlayerRegistry.class, playerRegistry);
@@ -121,7 +122,7 @@ public class TrainingModeContextTest {
         SpawnPointStorage spawnPointStorage = new SpawnPointStorage();
         when(trainingMode.getSpawnPointStorage()).thenReturn(spawnPointStorage);
 
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         SpawnPointProvider spawnPointProvider = context.getSpawnPointProvider();
 
         assertInstanceOf(TrainingModeSpawnPointProvider.class, spawnPointProvider);
@@ -129,7 +130,7 @@ public class TrainingModeContextTest {
 
     @Test
     public void shouldReturnNewInstanceOfTrainingModeTargetFinder() {
-        TrainingModeContext context = new TrainingModeContext(trainingMode, internals);
+        TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
         TargetFinder targetFinder = context.getTargetFinder();
 
         assertInstanceOf(TrainingModeTargetFinder.class, targetFinder);

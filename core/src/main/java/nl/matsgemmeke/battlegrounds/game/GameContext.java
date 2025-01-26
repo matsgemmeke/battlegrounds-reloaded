@@ -41,7 +41,7 @@ public interface GameContext {
     GunRegistry getGunRegistry();
 
     @NotNull
-    EntityRegistry<GamePlayer, Player> getPlayerRegistry();
+    PlayerRegistry getPlayerRegistry();
 
     @NotNull
     SpawnPointProvider getSpawnPointProvider();

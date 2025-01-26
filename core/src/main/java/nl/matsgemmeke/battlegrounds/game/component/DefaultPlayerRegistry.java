@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -10,14 +12,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class DefaultPlayerRegistry implements EntityRegistry<GamePlayer, Player> {
+public class DefaultPlayerRegistry implements PlayerRegistry {
 
     @NotNull
     private EntityStorage<GamePlayer> playerStorage;
     @NotNull
     private InternalsProvider internals;
 
-    public DefaultPlayerRegistry(@NotNull EntityStorage<GamePlayer> playerStorage, @NotNull InternalsProvider internals) {
+    @Inject
+    public DefaultPlayerRegistry(@Assisted @NotNull EntityStorage<GamePlayer> playerStorage, @NotNull InternalsProvider internals) {
         this.playerStorage = playerStorage;
         this.internals = internals;
     }
