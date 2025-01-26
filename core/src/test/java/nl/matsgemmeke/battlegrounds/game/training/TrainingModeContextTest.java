@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -112,20 +112,20 @@ public class TrainingModeContextTest {
     @Test
     public void shouldReturnNewInstanceOfEntityRegisterForPlayerEntities() {
         TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
-        EntityRegistry<GamePlayer, Player> playerRegistry = context.getPlayerRegistry();
+        PlayerRegistry result = context.getPlayerRegistry();
 
-        assertInstanceOf(DefaultPlayerRegistry.class, playerRegistry);
+        assertEquals(playerRegistry, result);
     }
 
     @Test
-    public void getSpawnPointProviderReturnsNewInstanceOfDefaultImplementation() {
+    public void getSpawnPointProviderReturnsInstance() {
         SpawnPointStorage spawnPointStorage = new SpawnPointStorage();
         when(trainingMode.getSpawnPointStorage()).thenReturn(spawnPointStorage);
 
         TrainingModeContext context = new TrainingModeContext(trainingMode, playerRegistry, spawnPointProvider);
-        SpawnPointProvider spawnPointProvider = context.getSpawnPointProvider();
+        SpawnPointProvider result = context.getSpawnPointProvider();
 
-        assertInstanceOf(TrainingModeSpawnPointProvider.class, spawnPointProvider);
+        assertEquals(spawnPointProvider, result);
     }
 
     @Test

@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.game.session;
 
 import com.google.inject.Inject;
 import jakarta.inject.Named;
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.configuration.SessionDataConfiguration;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,17 +10,14 @@ import java.io.File;
 /**
  * Factory class for creating {@link Session} instances.
  */
-public class SessionFactory {
+public class SessionContextFactory {
 
     @NotNull
     private File setupFolder;
-    @NotNull
-    private InternalsProvider internals;
 
     @Inject
-    public SessionFactory(@Named("SetupFolder") @NotNull File setupFolder, @NotNull InternalsProvider internals) {
+    public SessionContextFactory(@Named("SetupFolder") @NotNull File setupFolder) {
         this.setupFolder = setupFolder;
-        this.internals = internals;
     }
 
     /**
@@ -32,13 +28,13 @@ public class SessionFactory {
      * @return a new session instance
      */
     @NotNull
-    public Session make(int id, SessionConfiguration configuration) {
+    public SessionContext make(int id, SessionConfiguration configuration) {
         File sessionConfigFile = new File(setupFolder.getPath() + "/session-" + id + "/config.yml");
 
         SessionDataConfiguration dataConfig = new SessionDataConfiguration(sessionConfigFile);
         dataConfig.load();
         dataConfig.saveConfiguration(configuration);
 
-        return new DefaultSession(id, configuration, internals);
+        return new SessionContext();
     }
 }

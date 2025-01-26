@@ -21,7 +21,7 @@ public class GameDataConfigurationTest {
 
     @Test
     public void shouldBeAbleToLoadSessionConfiguration() {
-        SessionConfiguration sessionConfiguration = DefaultSessionConfiguration.getNewConfiguration();
+        SessionConfiguration sessionConfiguration = SessionConfiguration.getNewConfiguration();
 
         SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFile);
         dataConfiguration.load();
@@ -35,7 +35,7 @@ public class GameDataConfigurationTest {
 
     @Test
     public void shouldBeAbleToSaveSessionConfiguration() {
-        SessionConfiguration sessionConfiguration = DefaultSessionConfiguration.getNewConfiguration();
+        SessionConfiguration sessionConfiguration = SessionConfiguration.getNewConfiguration();
 
         SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFile);
         dataConfiguration.load();

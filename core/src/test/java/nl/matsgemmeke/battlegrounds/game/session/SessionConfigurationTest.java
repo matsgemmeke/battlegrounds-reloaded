@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DefaultSessionConfigurationTest {
+public class SessionConfigurationTest {
 
     private int lobbyCountdownDuration;
     private int maxPlayers;
@@ -21,7 +21,7 @@ public class DefaultSessionConfigurationTest {
 
     @Test
     public void shouldBeAbleToGetDefaultSessionConfigurationInstance() {
-        DefaultSessionConfiguration configuration = DefaultSessionConfiguration.getNewConfiguration();
+        SessionConfiguration configuration = SessionConfiguration.getNewConfiguration();
 
         assertTrue(configuration.getLobbyCountdownDuration() > 0);
         assertTrue(configuration.getMaxPlayers() > 0);
@@ -30,21 +30,21 @@ public class DefaultSessionConfigurationTest {
 
     @Test
     public void shouldBeAbleToGetLobbyCountdownDuration() {
-        DefaultSessionConfiguration configuration = new DefaultSessionConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+        SessionConfiguration configuration = new SessionConfiguration(lobbyCountdownDuration, minPlayers, maxPlayers);
 
         assertEquals(lobbyCountdownDuration, configuration.getLobbyCountdownDuration());
     }
 
     @Test
     public void shouldBeAbleToGetMaxPlayers() {
-        DefaultSessionConfiguration configuration = new DefaultSessionConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+        SessionConfiguration configuration = new SessionConfiguration(lobbyCountdownDuration, minPlayers, maxPlayers);
 
         assertEquals(maxPlayers, configuration.getMaxPlayers());
     }
 
     @Test
     public void shouldBeAbleToGetMinPlayers() {
-        DefaultSessionConfiguration configuration = new DefaultSessionConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+        SessionConfiguration configuration = new SessionConfiguration(lobbyCountdownDuration, minPlayers, maxPlayers);
 
         assertEquals(minPlayers, configuration.getMinPlayers());
     }

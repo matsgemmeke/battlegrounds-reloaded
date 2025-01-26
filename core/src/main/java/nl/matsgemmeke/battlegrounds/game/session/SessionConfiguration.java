@@ -3,27 +3,41 @@ package nl.matsgemmeke.battlegrounds.game.session;
 /**
  * Holds configurable variables for a {@link Session} instance.
  */
-public interface SessionConfiguration {
+public class SessionConfiguration {
+
+    private static final int DEFAULT_LOBBY_COUNTDOWN_DURATION = 60;
+    private static final int DEFAULT_MIN_PLAYERS = 2;
+    private static final int DEFAULT_MAX_PLAYERS = 12;
+
+    private int lobbyCountdownDuration;
+    private int maxPlayers;
+    private int minPlayers;
+
+    public SessionConfiguration(int lobbyCountdownDuration, int minPlayers, int maxPlayers) {
+        this.lobbyCountdownDuration = lobbyCountdownDuration;
+        this.minPlayers = minPlayers;
+        this.maxPlayers = maxPlayers;
+    }
 
     /**
-     * Gets the duration of the lobby countdown in seconds.
+     * Makes a new configuration with default configuration values.
      *
-     * @return the lobby countdown duration
+     * @return a new default configuration
      */
-    int getLobbyCountdownDuration();
+    public static SessionConfiguration getNewConfiguration() {
+        return new SessionConfiguration(DEFAULT_LOBBY_COUNTDOWN_DURATION, DEFAULT_MAX_PLAYERS, DEFAULT_MIN_PLAYERS);
+    }
 
-    /**
-     * Gets the maximum amount of players allowed in the session.
-     *
-     * @return the maximum allowed amount of players
-     */
-    int getMaxPlayers();
+    public int getLobbyCountdownDuration() {
+        return lobbyCountdownDuration;
+    }
 
-    /**
-     * Gets the minimum amount of players allowed in the session.
-     *
-     * @return the minimum allowed amount of players
-     */
-    int getMinPlayers();
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
 }
 

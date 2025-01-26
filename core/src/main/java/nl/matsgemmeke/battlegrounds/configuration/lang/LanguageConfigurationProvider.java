@@ -36,7 +36,7 @@ public class LanguageConfigurationProvider implements Provider<LanguageConfigura
         String fileName = "lang_" + language + ".yml";
 
         File langFile = langFolder.toPath().resolve(fileName).toFile();
-        InputStream resource = plugin.getResource(fileName);
+        InputStream resource = plugin.getResource("lang/" + fileName);
         Locale locale = Locale.forLanguageTag(language);
 
         LanguageConfiguration languageConfiguration = new LanguageConfiguration(langFile, resource, locale);

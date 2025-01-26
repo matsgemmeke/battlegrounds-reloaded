@@ -40,10 +40,12 @@ public class RemoveSessionCommand extends CommandSource {
     }
 
     public void execute(@NotNull CommandSender sender, int id) {
+        Map<String, Object> values = Map.of("bg_session", id);
+
         if (!confirmList.contains(sender)) {
             confirmList.add(sender);
 
-            String confirmMessage = translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath()).getText();
+            String confirmMessage = translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath()).replace(values);
             sender.sendMessage(confirmMessage);
 
             taskRunner.runTaskLater(() -> confirmList.remove(sender), CONFIRM_LIST_COOLDOWN);
@@ -51,7 +53,6 @@ public class RemoveSessionCommand extends CommandSource {
         }
 
         GameContext sessionContext = contextProvider.getSessionContext(id);
-        Map<String, Object> values = Map.of("bg_session", id);
         String message;
 
         if (sessionContext == null || !contextProvider.removeSessionContext(id)) {
