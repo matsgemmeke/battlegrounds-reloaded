@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
 import nl.matsgemmeke.battlegrounds.game.session.SessionContext;
 import nl.matsgemmeke.battlegrounds.game.session.SessionContextFactory;

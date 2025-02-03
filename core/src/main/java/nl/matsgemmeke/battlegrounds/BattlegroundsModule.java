@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.component.registry.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.registry.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;

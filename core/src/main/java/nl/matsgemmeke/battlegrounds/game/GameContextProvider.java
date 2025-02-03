@@ -1,6 +1,5 @@
-package nl.matsgemmeke.battlegrounds;
+package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.registry.EntityRegistry;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

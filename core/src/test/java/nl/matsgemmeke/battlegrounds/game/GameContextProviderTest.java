@@ -1,6 +1,5 @@
-package nl.matsgemmeke.battlegrounds;
+package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import org.bukkit.entity.Item;

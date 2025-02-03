@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

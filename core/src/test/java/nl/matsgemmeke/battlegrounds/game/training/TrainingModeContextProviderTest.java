@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.component.registry.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;

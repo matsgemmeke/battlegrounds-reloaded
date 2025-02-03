@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.command.condition;
 import co.aikar.commands.*;
 import co.aikar.commands.CommandConditions.ParameterCondition;
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.jetbrains.annotations.NotNull;
