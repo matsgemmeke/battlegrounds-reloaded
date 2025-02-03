@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.*;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -44,6 +45,41 @@ public class GameContextProviderTest {
         boolean assigned = contextProvider.assignTrainingModeContext(mock(GameContext.class));
 
         assertFalse(assigned);
+    }
+
+    @Test
+    public void getComponentThrowsGameKeyNotFoundExceptionIfGivenGameKeyIsNotRegistered() {
+        GameKey gameKey = GameKey.ofSession(1);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+
+        assertThrows(GameKeyNotFoundException.class, () -> contextProvider.getComponent(gameKey, TargetFinder.class));
+    }
+
+    @Test
+    public void getComponentThrowsGameComponentNotFoundExceptionIfComponentIsNotRegistered() {
+        GameKey gameKey = GameKey.ofSession(1);
+        Game game = mock(Game.class);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.registerGame(gameKey, game);
+
+        assertThrows(GameComponentNotFoundException.class, () -> contextProvider.getComponent(gameKey, TargetFinder.class));
+    }
+
+    @Test
+    public void getComponentReturnsComponentInstanceCorrespondingWithGivenComponentClass() {
+        GameKey gameKey = GameKey.ofSession(1);
+        Game game = mock(Game.class);
+        TargetFinder targetFinder = mock(TargetFinder.class);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.registerGame(gameKey, game);
+        contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
+
+        TargetFinder result = contextProvider.getComponent(gameKey, TargetFinder.class);
+
+        assertEquals(targetFinder, result);
     }
 
     @Test
@@ -136,6 +172,16 @@ public class GameContextProviderTest {
         GameContext result = contextProvider.getSessionContext(sessionId);
 
         assertEquals(sessionContext, result);
+    }
+
+    @Test
+    public void registerComponentThrowsGameKeyNotFoundExceptionWhenRegisteringComponentWithGameKeyThatIsNotRegistered() {
+        GameKey gameKey = GameKey.ofSession(1);
+        TargetFinder targetFinder = mock(TargetFinder.class);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+
+        assertThrows(GameKeyNotFoundException.class, () -> contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder));
     }
 
     @Test

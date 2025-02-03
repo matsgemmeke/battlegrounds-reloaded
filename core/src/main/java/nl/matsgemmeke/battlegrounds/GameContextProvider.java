@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.registry.EntityRegistry;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -15,11 +15,17 @@ import java.util.stream.Stream;
 public class GameContextProvider {
 
     @NotNull
+    private Map<GameKey, Game> games;
+    @NotNull
+    private Map<GameKey, Map<Class<?>, Object>> gameComponents;
+    @NotNull
     private Map<Integer, GameContext> sessionContexts;
     @Nullable
     private GameContext trainingModeContext;
 
     public GameContextProvider() {
+        this.games = new HashMap<>();
+        this.gameComponents = new HashMap<>();
         this.sessionContexts = new HashMap<>();
     }
 
@@ -48,6 +54,23 @@ public class GameContextProvider {
 
         this.trainingModeContext = trainingModeContext;
         return true;
+    }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public <T> T getComponent(@NotNull GameKey gameKey, @NotNull Class<T> componentClass) {
+        if (!gameComponents.containsKey(gameKey)) {
+            throw new GameKeyNotFoundException("Cannot get component for %s because given game key %s was not found".formatted(componentClass, gameKey));
+        }
+
+        Map<Class<?>, Object> components = gameComponents.get(gameKey);
+        T component = (T) components.get(componentClass);
+
+        if (component == null) {
+            throw new GameComponentNotFoundException("Given game key %s has no registered components for %s".formatted(gameKey, componentClass));
+        }
+
+        return component;
     }
 
     /**
@@ -112,6 +135,20 @@ public class GameContextProvider {
     @Nullable
     public GameContext getSessionContext(int id) {
         return sessionContexts.get(id);
+    }
+
+    public <T> void registerComponent(@NotNull GameKey gameKey, @NotNull Class<T> componentClass, @NotNull T componentInstance) {
+        if (!gameComponents.containsKey(gameKey)) {
+            throw new GameKeyNotFoundException("Cannot register component because given game key" + gameKey + " was not found");
+        }
+
+        Map<Class<?>, Object> components = gameComponents.get(gameKey);
+        components.put(componentClass, componentInstance);
+    }
+
+    public void registerGame(@NotNull GameKey gameKey, @NotNull Game game) {
+        games.put(gameKey, game);
+        gameComponents.put(gameKey, new HashMap<>());
     }
 
     /**
