@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -17,11 +19,12 @@ public class DelayedActivation implements ItemEffectActivation {
     private boolean primed;
     @Nullable
     private BukkitTask currentTask;
-    private long delayUntilActivation;
+    private final long delayUntilActivation;
     @NotNull
-    private TaskRunner taskRunner;
+    private final TaskRunner taskRunner;
 
-    public DelayedActivation(@NotNull TaskRunner taskRunner, long delayUntilActivation) {
+    @Inject
+    public DelayedActivation(@NotNull TaskRunner taskRunner, @Assisted long delayUntilActivation) {
         this.taskRunner = taskRunner;
         this.delayUntilActivation = delayUntilActivation;
         this.primed = false;

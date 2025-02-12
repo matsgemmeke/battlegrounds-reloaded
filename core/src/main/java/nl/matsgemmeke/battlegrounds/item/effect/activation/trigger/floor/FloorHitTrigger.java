@@ -1,8 +1,12 @@
-package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
+package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerObserver;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +26,8 @@ public class FloorHitTrigger implements Trigger {
     @NotNull
     private TaskRunner taskRunner;
 
-    public FloorHitTrigger(@NotNull TaskRunner taskRunner, long periodBetweenChecks) {
+    @Inject
+    public FloorHitTrigger(@NotNull TaskRunner taskRunner, @Assisted long periodBetweenChecks) {
         this.taskRunner = taskRunner;
         this.periodBetweenChecks = periodBetweenChecks;
         this.observers = new ArrayList<>();

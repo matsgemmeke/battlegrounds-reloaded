@@ -1,9 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.enemy.EnemyProximityTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor.FloorHitTriggerFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -11,14 +14,25 @@ import java.util.Map;
 public class TriggerFactory {
 
     @NotNull
-    private TaskRunner taskRunner;
+    private final EnemyProximityTriggerFactory enemyProximityTriggerFactory;
+    @NotNull
+    private final FloorHitTriggerFactory floorHitTriggerFactory;
+    @NotNull
+    private final GameContextProvider contextProvider;
 
-    public TriggerFactory(@NotNull TaskRunner taskRunner) {
-        this.taskRunner = taskRunner;
+    @Inject
+    public TriggerFactory(
+            @NotNull GameContextProvider contextProvider,
+            @NotNull EnemyProximityTriggerFactory enemyProximityTriggerFactory,
+            @NotNull FloorHitTriggerFactory floorHitTriggerFactory
+    ) {
+        this.contextProvider = contextProvider;
+        this.enemyProximityTriggerFactory = enemyProximityTriggerFactory;
+        this.floorHitTriggerFactory = floorHitTriggerFactory;
     }
 
     @NotNull
-    public Trigger make(@NotNull GameContext context, @NotNull Map<String, Object> triggerConfig) {
+    public Trigger create(@NotNull GameKey gameKey, @NotNull Map<String, Object> triggerConfig) {
         String triggerTypeValue = (String) triggerConfig.get("type");
         TriggerType triggerType;
 
@@ -30,17 +44,17 @@ public class TriggerFactory {
 
         switch (triggerType) {
             case ENEMY_PROXIMITY -> {
-                TargetFinder targetFinder = context.getTargetFinder();
+                TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
                 double checkingRange = (double) triggerConfig.get("checking-range");
                 long periodBetweenChecks = (int) triggerConfig.get("period-between-checks");
 
-                return new EnemyProximityTrigger(targetFinder, taskRunner, checkingRange, periodBetweenChecks);
+                return enemyProximityTriggerFactory.create(targetFinder, checkingRange, periodBetweenChecks);
             }
             case FLOOR_HIT -> {
                 long periodBetweenChecks = (int) triggerConfig.get("period-between-checks");
 
-                return new FloorHitTrigger(taskRunner, periodBetweenChecks);
+                return floorHitTriggerFactory.create(periodBetweenChecks);
             }
         }
 

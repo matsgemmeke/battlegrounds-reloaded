@@ -4,12 +4,14 @@ import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.MappingException;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -48,21 +50,25 @@ public class EquipmentFactory implements WeaponFactory {
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
 
     @NotNull
-    private ItemEffectFactory effectFactory;
+    private final GameContextProvider contextProvider;
     @NotNull
-    private ItemEffectActivationFactory effectActivationFactory;
+    private final ItemEffectFactory effectFactory;
     @NotNull
-    private NamespacedKeyCreator keyCreator;
+    private final ItemEffectActivationFactory effectActivationFactory;
     @NotNull
-    private TaskRunner taskRunner;
+    private final NamespacedKeyCreator keyCreator;
+    @NotNull
+    private final TaskRunner taskRunner;
 
     @Inject
     public EquipmentFactory(
+            @NotNull GameContextProvider contextProvider,
             @NotNull ItemEffectFactory effectFactory,
             @NotNull ItemEffectActivationFactory effectActivationFactory,
             @NotNull NamespacedKeyCreator keyCreator,
             @NotNull TaskRunner taskRunner
     ) {
+        this.contextProvider = contextProvider;
         this.effectFactory = effectFactory;
         this.effectActivationFactory = effectActivationFactory;
         this.keyCreator = keyCreator;
@@ -70,26 +76,28 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
-        Equipment equipment = this.createInstance(configuration, context);
+    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+        Equipment equipment = this.createInstance(configuration, gameKey);
 
-        context.getEquipmentRegistry().registerItem(equipment);
+        EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
+        equipmentRegistry.registerItem(equipment);
 
         return equipment;
     }
 
     @NotNull
-    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull GameContext context, @NotNull GamePlayer gamePlayer) {
-        Equipment equipment = this.createInstance(configuration, context);
+    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+        Equipment equipment = this.createInstance(configuration, gameKey);
         equipment.setHolder(gamePlayer);
 
-        context.getEquipmentRegistry().registerItem(equipment, gamePlayer);
+        EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
+        equipmentRegistry.registerItem(equipment, gamePlayer);
 
         return equipment;
     }
 
     @NotNull
-    private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
+    private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
         Section section = configuration.getRoot();
 
         String name = section.getString("name");
@@ -160,8 +168,8 @@ public class EquipmentFactory implements WeaponFactory {
         if (effectSection != null && effectActivationSection != null) {
             Activator activator = equipment.getActivator();
 
-            ItemEffectActivation effectActivation = effectActivationFactory.make(context, effectActivationSection, activator);
-            ItemEffect effect = effectFactory.make(effectSection, context, effectActivation);
+            ItemEffectActivation effectActivation = effectActivationFactory.create(gameKey, effectActivationSection, activator);
+            ItemEffect effect = effectFactory.create(effectSection, gameKey, effectActivation);
 
             equipment.setEffect(effect);
         }
@@ -219,7 +227,7 @@ public class EquipmentFactory implements WeaponFactory {
             Section stickSection = projectileSection.getSection("effects.stick");
             Section trailSection = projectileSection.getSection("effects.trail");
 
-            AudioEmitter audioEmitter = context.getAudioEmitter();
+            AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
             if (bounceSection != null) {
                 int amountOfBounces = bounceSection.getInt("amount-of-bounces");
@@ -311,14 +319,14 @@ public class EquipmentFactory implements WeaponFactory {
         Section controlsSection = section.getSection("controls");
 
         if (controlsSection != null) {
-            this.addControls(equipment, context, section, controlsSection);
+            this.addControls(equipment, gameKey, section, controlsSection);
         }
 
         return equipment;
     }
 
-    private void addControls(@NotNull DefaultEquipment equipment, @NotNull GameContext context, @NotNull Section section, @NotNull Section controlsSection) {
-        AudioEmitter audioEmitter = context.getAudioEmitter();
+    private void addControls(@NotNull DefaultEquipment equipment, @NotNull GameKey gameKey, @NotNull Section section, @NotNull Section controlsSection) {
+        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
         String activateActionValue = controlsSection.getString("activate");
         String cookActionValue = controlsSection.getString("cook");

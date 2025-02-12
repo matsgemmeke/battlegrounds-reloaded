@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.training.component.damage;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
@@ -19,37 +19,37 @@ import static org.mockito.Mockito.*;
 public class TrainingModeDamageProcessorTest {
 
     private DeploymentInfoProvider deploymentInfoProvider;
-    private GameContext trainingModeContext;
+    private GameKey trainingModeGameKey;
 
     @BeforeEach
     public void setUp() {
         deploymentInfoProvider = mock(DeploymentInfoProvider.class);
-        trainingModeContext = mock(GameContext.class);
+        trainingModeGameKey = GameKey.ofTrainingMode();
     }
 
     @Test
     public void shouldNotAllowDamageFromDifferentContext() {
-        GameContext otherContext = mock(GameContext.class);
+        GameKey otherGameKey = GameKey.ofSession(1);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
-        boolean allowed = damageProcessor.isDamageAllowed(otherContext);
+        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        boolean allowed = damageProcessor.isDamageAllowed(otherGameKey);
 
         assertFalse(allowed);
     }
 
     @Test
     public void shouldAllowDamageInSameContext() {
-        GameContext otherContext = trainingModeContext;
+        GameKey otherGameKey = trainingModeGameKey;
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
-        boolean allowed = damageProcessor.isDamageAllowed(otherContext);
+        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        boolean allowed = damageProcessor.isDamageAllowed(otherGameKey);
 
         assertTrue(allowed);
     }
 
     @Test
     public void shouldAllowDamageFromNullContext() {
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
+        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
         boolean allowed = damageProcessor.isDamageAllowed(null);
 
         assertTrue(allowed);
@@ -63,7 +63,7 @@ public class TrainingModeDamageProcessorTest {
         DamageCheck damageCheck = mock(DamageCheck.class);
         DamageEvent damageEvent = new DamageEvent(damager, null, entity, null, DamageType.BULLET_DAMAGE, 10.0);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
+        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
         damageProcessor.addDamageCheck(damageCheck);
         damageProcessor.processDamage(damageEvent);
 
@@ -77,7 +77,7 @@ public class TrainingModeDamageProcessorTest {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         when(deploymentObject.isImmuneTo(DamageType.EXPLOSIVE_DAMAGE)).thenReturn(true);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
+        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject, never()).damage(any(Damage.class));
@@ -91,7 +91,7 @@ public class TrainingModeDamageProcessorTest {
         when(deploymentObject.getHealth()).thenReturn(10.0);
         when(deploymentObject.isImmuneTo(DamageType.EXPLOSIVE_DAMAGE)).thenReturn(false);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
+        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject).damage(damage);
@@ -108,7 +108,7 @@ public class TrainingModeDamageProcessorTest {
 
         when(deploymentInfoProvider.getDeployableItem(deploymentObject)).thenReturn(null);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
+        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject).damage(damage);
@@ -126,7 +126,7 @@ public class TrainingModeDamageProcessorTest {
         DeployableItem deployableItem = mock(DeployableItem.class);
         when(deploymentInfoProvider.getDeployableItem(deploymentObject)).thenReturn(deployableItem);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeContext, deploymentInfoProvider);
+        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject).damage(damage);

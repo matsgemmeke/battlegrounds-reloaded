@@ -5,13 +5,15 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -39,21 +41,24 @@ public class FirearmFactory implements WeaponFactory {
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-gun";
 
     @NotNull
-    private BattlegroundsConfiguration config;
+    private final BattlegroundsConfiguration config;
     @NotNull
-    private FireModeFactory fireModeFactory;
+    private final GameContextProvider contextProvider;
     @NotNull
-    private NamespacedKeyCreator keyCreator;
+    private final FireModeFactory fireModeFactory;
     @NotNull
-    private RecoilProducerFactory recoilProducerFactory;
+    private final NamespacedKeyCreator keyCreator;
     @NotNull
-    private ReloadSystemFactory reloadSystemFactory;
+    private final RecoilProducerFactory recoilProducerFactory;
     @NotNull
-    private SpreadPatternFactory spreadPatternFactory;
+    private final ReloadSystemFactory reloadSystemFactory;
+    @NotNull
+    private final SpreadPatternFactory spreadPatternFactory;
 
     @Inject
     public FirearmFactory(
             @NotNull BattlegroundsConfiguration config,
+            @NotNull GameContextProvider contextProvider,
             @NotNull FireModeFactory fireModeFactory,
             @NotNull NamespacedKeyCreator keyCreator,
             @NotNull RecoilProducerFactory recoilProducerFactory,
@@ -61,6 +66,7 @@ public class FirearmFactory implements WeaponFactory {
             @NotNull SpreadPatternFactory spreadPatternFactory
     ) {
         this.config = config;
+        this.contextProvider = contextProvider;
         this.fireModeFactory = fireModeFactory;
         this.keyCreator = keyCreator;
         this.recoilProducerFactory = recoilProducerFactory;
@@ -69,30 +75,32 @@ public class FirearmFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
-        Firearm firearm = this.createInstance(configuration, context);
+    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+        Firearm firearm = this.createInstance(configuration, gameKey);
 
-        context.getGunRegistry().registerItem(firearm);
+        GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
+        gunRegistry.registerItem(firearm);
 
         return firearm;
     }
 
     @NotNull
-    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull GameContext context, @NotNull GamePlayer gamePlayer) {
-        Firearm firearm = this.createInstance(configuration, context);
+    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+        Firearm firearm = this.createInstance(configuration, gameKey);
         firearm.setHolder(gamePlayer);
 
-        context.getGunRegistry().registerItem(firearm, gamePlayer);
+        GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
+        gunRegistry.registerItem(firearm, gamePlayer);
 
         return firearm;
     }
 
     @NotNull
-    private Firearm createInstance(@NotNull ItemConfiguration configuration, @NotNull GameContext context) {
-        AudioEmitter audioEmitter = context.getAudioEmitter();
-        CollisionDetector collisionDetector = context.getCollisionDetector();
-        DamageProcessor damageProcessor = context.getDamageProcessor();
-        TargetFinder targetFinder = context.getTargetFinder();
+    private Firearm createInstance(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
+        CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
+        DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
+        TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
         Section section = configuration.getRoot();
 
@@ -151,7 +159,7 @@ public class FirearmFactory implements WeaponFactory {
         Section controlsSection = section.getSection("controls");
 
         if (controlsSection != null) {
-            this.addControls(firearm, context, section, controlsSection);
+            this.addControls(firearm, gameKey, section, controlsSection);
         }
 
         // Handle the pattern section if it's there
@@ -199,8 +207,8 @@ public class FirearmFactory implements WeaponFactory {
         return firearm;
     }
 
-    private void addControls(@NotNull DefaultFirearm firearm, @NotNull GameContext context, @NotNull Section section, @NotNull Section controlsSection) {
-        AudioEmitter audioEmitter = context.getAudioEmitter();
+    private void addControls(@NotNull DefaultFirearm firearm, @NotNull GameKey gameKey, @NotNull Section section, @NotNull Section controlsSection) {
+        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
         String reloadActionValue = controlsSection.getString("reload");
         String changeScopeMagnificationActionValue = controlsSection.getString("scope-change-magnification");

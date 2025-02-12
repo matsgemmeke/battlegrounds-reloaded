@@ -11,10 +11,12 @@ public class GameKey {
         this.value = value;
     }
 
+    @NotNull
     public static GameKey ofSession(int id) {
         return new GameKey("SESSION-" + id);
     }
 
+    @NotNull
     public static GameKey ofTrainingMode() {
         return new GameKey("TRAINING-MODE");
     }

@@ -1,10 +1,14 @@
-package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
+package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.enemy;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerObserver;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,11 +29,12 @@ public class EnemyProximityTrigger implements Trigger {
     @NotNull
     private TaskRunner taskRunner;
 
+    @Inject
     public EnemyProximityTrigger(
-            @NotNull TargetFinder targetFinder,
             @NotNull TaskRunner taskRunner,
-            double checkingRange,
-            long periodBetweenChecks
+            @Assisted @NotNull TargetFinder targetFinder,
+            @Assisted double checkingRange,
+            @Assisted long periodBetweenChecks
     ) {
         this.targetFinder = targetFinder;
         this.taskRunner = taskRunner;

@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.training;
 
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
@@ -50,7 +51,7 @@ public class TrainingModeContext implements GameContext {
     private DamageProcessor setUpDamageProcessorInstance() {
         DeploymentInfoProvider deploymentInfoProvider = this.getDeploymentInfoProvider();
 
-        return new TrainingModeDamageProcessor(this, deploymentInfoProvider);
+        return new TrainingModeDamageProcessor(GameKey.ofTrainingMode(), deploymentInfoProvider);
     }
 
     @NotNull

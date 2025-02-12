@@ -3,14 +3,11 @@ package nl.matsgemmeke.battlegrounds.game.training;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.registry.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
-import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
-import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProviderFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -22,25 +19,23 @@ import org.mockito.MockedStatic;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class TrainingModeContextProviderTest {
+public class TrainingModeGameKeyProviderTest {
 
     private BattlegroundsConfiguration configuration;
     private EventDispatcher eventDispatcher;
     private GameContextProvider contextProvider;
     private DefaultPlayerRegistryFactory playerRegistryFactory;
-    private TrainingModeSpawnPointProviderFactory spawnPointProviderFactory;
     private MockedStatic<Bukkit> bukkit;
 
     @BeforeEach
     public void setUp() {
         configuration = mock(BattlegroundsConfiguration.class);
         eventDispatcher = mock(EventDispatcher.class);
-        contextProvider = mock(GameContextProvider.class);
+        contextProvider = new GameContextProvider();
         playerRegistryFactory = mock(DefaultPlayerRegistryFactory.class);
-        spawnPointProviderFactory = mock(TrainingModeSpawnPointProviderFactory.class);
         bukkit = mockStatic(Bukkit.class);
     }
 
@@ -60,21 +55,16 @@ public class TrainingModeContextProviderTest {
         when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
 
         when(playerRegistryFactory.make(any())).thenReturn(playerRegistry);
-
-        SpawnPointProvider spawnPointProvider = mock(SpawnPointProvider.class);
-        when(spawnPointProviderFactory.make(any(SpawnPointStorage.class))).thenReturn(spawnPointProvider);
-
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
-        TrainingModeContextProvider provider = new TrainingModeContextProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory, spawnPointProviderFactory);
-        GameContext context = provider.get();
+        TrainingModeGameKeyProvider provider = new TrainingModeGameKeyProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory);
+        GameKey gameKey = provider.get();
 
         ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);
         verify(eventDispatcher).registerEventHandler(eq(EntityDamageEvent.class), entityDamageEventHandlerCaptor.capture());
 
-        assertInstanceOf(TrainingModeContext.class, context);
+        assertEquals("TRAINING-MODE", gameKey.toString());
 
-        verify(contextProvider).assignTrainingModeContext(context);
         verify(gamePlayer).setPassive(true);
     }
 }

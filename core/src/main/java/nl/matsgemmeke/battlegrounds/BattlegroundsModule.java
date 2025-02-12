@@ -11,17 +11,25 @@ import nl.matsgemmeke.battlegrounds.configuration.data.DataConfigurationProvider
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.registry.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.registry.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
-import nl.matsgemmeke.battlegrounds.game.training.TrainingModeContextProvider;
-import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
-import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProviderFactory;
+import nl.matsgemmeke.battlegrounds.game.training.TrainingModeGameKeyProvider;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.DelayedActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.DelayedActivationFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.enemy.EnemyProximityTrigger;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.enemy.EnemyProximityTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor.FloorHitTrigger;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor.FloorHitTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -61,9 +69,9 @@ public class BattlegroundsModule implements Module {
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
-        binder.bind(GameContext.class)
+        binder.bind(GameKey.class)
                 .annotatedWith(Names.named("TrainingMode"))
-                .toProvider(TrainingModeContextProvider.class)
+                .toProvider(TrainingModeGameKeyProvider.class)
                 .in(Singleton.class);
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
@@ -71,11 +79,20 @@ public class BattlegroundsModule implements Module {
 
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffect.class, CombustionEffect.class)
+                .build(CombustionEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffectActivation.class, DelayedActivation.class)
+                .build(DelayedActivationFactory.class));
+        binder.install(new FactoryModuleBuilder()
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
                 .build(DefaultPlayerRegistryFactory.class));
         binder.install(new FactoryModuleBuilder()
-                .implement(SpawnPointProvider.class, TrainingModeSpawnPointProvider.class)
-                .build(TrainingModeSpawnPointProviderFactory.class));
+                .implement(Trigger.class, EnemyProximityTrigger.class)
+                .build(EnemyProximityTriggerFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(Trigger.class, FloorHitTrigger.class)
+                .build(FloorHitTriggerFactory.class));
 
         // File bindings
         binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);

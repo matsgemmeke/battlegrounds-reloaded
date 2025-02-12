@@ -18,7 +18,7 @@ public class TrainingModeSpawnPointProvider implements SpawnPointProvider {
     private SpawnPointStorage spawnPointStorage;
 
     @Inject
-    public TrainingModeSpawnPointProvider(@Assisted @NotNull SpawnPointStorage spawnPointStorage) {
+    public TrainingModeSpawnPointProvider(@NotNull SpawnPointStorage spawnPointStorage) {
         this.spawnPointStorage = spawnPointStorage;
     }
 

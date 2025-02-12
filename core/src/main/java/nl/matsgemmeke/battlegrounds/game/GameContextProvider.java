@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.component.registry.EntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,6 +118,25 @@ public class GameContextProvider {
         }
 
         return Stream.concat(Stream.of(trainingModeContext), sessionContexts.values().stream()).toList();
+    }
+
+    @Nullable
+    public GameKey getGameKey(@NotNull UUID uuid) {
+        for (GameKey gameKey : games.keySet()) {
+            for (EntityRegistry<?, ?> entityRegistry : this.getEntityRegistries(gameKey)) {
+                if (entityRegistry.isRegistered(uuid)) {
+                    return gameKey;
+                }
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    private Iterable<EntityRegistry<?, ?>> getEntityRegistries(@NotNull GameKey gameKey) {
+        PlayerRegistry playerRegistry = this.getComponent(gameKey, PlayerRegistry.class);
+
+        return List.of(playerRegistry);
     }
 
     @NotNull
