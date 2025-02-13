@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -24,31 +26,32 @@ public class GunFireSimulationEffect extends BaseItemEffect {
     private static final long TIMER_PERIOD = 1L;
 
     @NotNull
-    private AudioEmitter audioEmitter;
+    private final AudioEmitter audioEmitter;
     private boolean playingSounds;
     private BukkitTask task;
     @NotNull
-    private GunFireSimulationProperties properties;
+    private final GunFireSimulationProperties properties;
     @NotNull
-    private GunInfoProvider gunInfoProvider;
+    private final GunInfoProvider gunInfoProvider;
     private int elapsedTicks;
     private int remainingTicks;
     @NotNull
-    private Random random;
+    private final Random random;
     @NotNull
-    private TaskRunner taskRunner;
+    private final TaskRunner taskRunner;
 
+    @Inject
     public GunFireSimulationEffect(
-            @NotNull ItemEffectActivation effectActivation,
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull GunInfoProvider gunInfoProvider,
             @NotNull TaskRunner taskRunner,
-            @NotNull GunFireSimulationProperties properties
+            @Assisted @NotNull ItemEffectActivation effectActivation,
+            @Assisted @NotNull AudioEmitter audioEmitter,
+            @Assisted @NotNull GunInfoProvider gunInfoProvider,
+            @Assisted @NotNull GunFireSimulationProperties properties
     ) {
         super(effectActivation);
+        this.taskRunner = taskRunner;
         this.audioEmitter = audioEmitter;
         this.gunInfoProvider = gunInfoProvider;
-        this.taskRunner = taskRunner;
         this.properties = properties;
         this.random = new Random();
     }

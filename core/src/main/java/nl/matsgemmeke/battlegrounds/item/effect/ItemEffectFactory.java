@@ -25,6 +25,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
@@ -42,17 +43,21 @@ public class ItemEffectFactory {
     @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
+    private final GunFireSimulationEffectFactory gunFireSimulationEffectFactory;
+    @NotNull
     private final TaskRunner taskRunner;
 
     @Inject
     public ItemEffectFactory(
             @NotNull GameContextProvider contextProvider,
             @NotNull TaskRunner taskRunner,
-            @NotNull CombustionEffectFactory combustionEffectFactory
+            @NotNull CombustionEffectFactory combustionEffectFactory,
+            @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory
     ) {
         this.contextProvider = contextProvider;
         this.taskRunner = taskRunner;
         this.combustionEffectFactory = combustionEffectFactory;
+        this.gunFireSimulationEffectFactory = gunFireSimulationEffectFactory;
     }
 
     public ItemEffect create(@NotNull Section section, @NotNull GameKey gameKey, @NotNull ItemEffectActivation effectActivation) {
@@ -147,7 +152,7 @@ public class ItemEffectFactory {
                 GunInfoProvider gunInfoProvider = contextProvider.getComponent(gameKey, GunInfoProvider.class);
                 GunFireSimulationProperties properties = new GunFireSimulationProperties(genericSounds, genericRateOfFire, maxBurstDuration, minBurstDuration, maxDelayBetweenBursts, minDelayBetweenBursts, maxTotalDuration, minTotalDuration);
 
-                return new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
+                return gunFireSimulationEffectFactory.create(effectActivation, audioEmitter, gunInfoProvider, properties);
             }
             case MARK_SPAWN_POINT -> {
                 SpawnPointProvider spawnPointProvider = contextProvider.getComponent(gameKey, SpawnPointProvider.class);

@@ -30,6 +30,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor.FloorHi
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor.FloorHitTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -82,11 +84,17 @@ public class BattlegroundsModule implements Module {
                 .implement(ItemEffect.class, CombustionEffect.class)
                 .build(CombustionEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffect.class, GunFireSimulationEffect.class)
+                .build(GunFireSimulationEffectFactory.class));
+
+        binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffectActivation.class, DelayedActivation.class)
                 .build(DelayedActivationFactory.class));
+
         binder.install(new FactoryModuleBuilder()
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
                 .build(DefaultPlayerRegistryFactory.class));
+
         binder.install(new FactoryModuleBuilder()
                 .implement(Trigger.class, EnemyProximityTrigger.class)
                 .build(EnemyProximityTriggerFactory.class));
