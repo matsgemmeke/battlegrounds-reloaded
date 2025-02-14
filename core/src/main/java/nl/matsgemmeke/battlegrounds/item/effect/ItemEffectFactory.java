@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 
 import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
@@ -24,10 +23,9 @@ import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
@@ -45,19 +43,19 @@ public class ItemEffectFactory {
     @NotNull
     private final GunFireSimulationEffectFactory gunFireSimulationEffectFactory;
     @NotNull
-    private final TaskRunner taskRunner;
+    private final SmokeScreenEffectFactory smokeScreenEffectFactory;
 
     @Inject
     public ItemEffectFactory(
             @NotNull GameContextProvider contextProvider,
-            @NotNull TaskRunner taskRunner,
             @NotNull CombustionEffectFactory combustionEffectFactory,
-            @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory
+            @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory,
+            @NotNull SmokeScreenEffectFactory smokeScreenEffectFactory
     ) {
         this.contextProvider = contextProvider;
-        this.taskRunner = taskRunner;
         this.combustionEffectFactory = combustionEffectFactory;
         this.gunFireSimulationEffectFactory = gunFireSimulationEffectFactory;
+        this.smokeScreenEffectFactory = smokeScreenEffectFactory;
     }
 
     public ItemEffect create(@NotNull Section section, @NotNull GameKey gameKey, @NotNull ItemEffectActivation effectActivation) {
@@ -192,7 +190,7 @@ public class ItemEffectFactory {
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
                 CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
 
-                return new SmokeScreenEffect(effectActivation, properties, audioEmitter, collisionDetector, taskRunner);
+                return smokeScreenEffectFactory.create(effectActivation, properties, audioEmitter, collisionDetector);
             }
             case SOUND_NOTIFICATION -> {
                 Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sound"));

@@ -32,6 +32,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -86,6 +88,9 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffect.class, GunFireSimulationEffect.class)
                 .build(GunFireSimulationEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffect.class, SmokeScreenEffect.class)
+                .build(SmokeScreenEffectFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffectActivation.class, DelayedActivation.class)
