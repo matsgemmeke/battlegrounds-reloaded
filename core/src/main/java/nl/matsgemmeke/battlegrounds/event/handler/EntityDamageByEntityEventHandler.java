@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class EntityDamageByEntityEventHandler implements EventHandler<EntityDamageByEntityEvent> {
 
     @NotNull
-    private GameContextProvider contextProvider;
+    private final GameContextProvider contextProvider;
 
     @Inject
     public EntityDamageByEntityEventHandler(@NotNull GameContextProvider contextProvider) {

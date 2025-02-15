@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.ActionHandler;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,10 +26,10 @@ public class PlayerSwapHandItemsEventHandlerTest {
     }
 
     @Test
-    public void shouldDoNothingIfPlayerIsNotInAnyContext() {
+    public void handleShouldDoNothingIfPlayerIsNotInAnyGame() {
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, null, null);
 
-        when(contextProvider.getContext(player)).thenReturn(null);
+        when(contextProvider.getGameKey(player)).thenReturn(null);
 
         PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -38,16 +38,16 @@ public class PlayerSwapHandItemsEventHandlerTest {
     }
 
     @Test
-    public void shouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
+    public void handleShouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
+        GameKey gameKey = GameKey.ofTrainingMode();
         ItemStack swapFrom = new ItemStack(Material.IRON_HOE);
         ItemStack swapTo = new ItemStack(Material.IRON_HOE);
 
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemSwap(player, swapFrom, swapTo)).thenReturn(false);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getActionHandler()).thenReturn(actionHandler);
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
 
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, swapTo, swapFrom);
 
@@ -60,16 +60,16 @@ public class PlayerSwapHandItemsEventHandlerTest {
     }
 
     @Test
-    public void shouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
+    public void handleShouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
+        GameKey gameKey = GameKey.ofTrainingMode();
         ItemStack swapFrom = new ItemStack(Material.IRON_HOE);
         ItemStack swapTo = new ItemStack(Material.IRON_HOE);
 
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemSwap(player, swapFrom, swapTo)).thenReturn(true);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getActionHandler()).thenReturn(actionHandler);
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
 
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, swapTo, swapFrom);
         event.setCancelled(true);

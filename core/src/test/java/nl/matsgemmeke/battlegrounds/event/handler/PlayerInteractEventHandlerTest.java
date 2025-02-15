@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.ActionHandler;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ public class PlayerInteractEventHandlerTest {
     }
 
     @Test
-    public void shouldDoNothingIfClickedItemIsNull() {
+    public void handleShouldDoNothingIfClickedItemIsNull() {
         PlayerInteractEvent event = new PlayerInteractEvent(player, null, null, null, null);
 
         PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
@@ -37,11 +37,11 @@ public class PlayerInteractEventHandlerTest {
     }
 
     @Test
-    public void shouldDoNothingIfPlayerIsNotInAnyContext() {
+    public void handleShouldDoNothingIfPlayerIsNotInAnyGame() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(player, null, itemStack, null, null);
 
-        when(contextProvider.getContext(player)).thenReturn(null);
+        when(contextProvider.getGameKey(player)).thenReturn(null);
 
         PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -50,16 +50,16 @@ public class PlayerInteractEventHandlerTest {
     }
 
     @Test
-    public void shouldCallLeftClickFunctionAndCancelEventBasedOnResult() {
+    public void handleShouldCallLeftClickFunctionAndCancelEventBasedOnResult() {
+        GameKey gameKey = GameKey.ofTrainingMode();
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, itemStack, null, null);
 
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemLeftClick(player, itemStack)).thenReturn(false);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getActionHandler()).thenReturn(actionHandler);
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
 
         PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -70,16 +70,16 @@ public class PlayerInteractEventHandlerTest {
     }
 
     @Test
-    public void shouldCallRightClickFunctionAndCancelEventBasedOnResult() {
+    public void handleShouldCallRightClickFunctionAndCancelEventBasedOnResult() {
+        GameKey gameKey = GameKey.ofTrainingMode();
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, itemStack, null, null);
 
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemRightClick(player, itemStack)).thenReturn(true);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getActionHandler()).thenReturn(actionHandler);
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
 
         PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
         eventHandler.handle(event);

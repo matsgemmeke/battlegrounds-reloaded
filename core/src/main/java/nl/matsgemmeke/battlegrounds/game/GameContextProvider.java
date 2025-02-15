@@ -121,6 +121,18 @@ public class GameContextProvider {
     }
 
     @Nullable
+    public GameKey getGameKey(@NotNull Player player) {
+        for (GameKey gameKey : games.keySet()) {
+
+            PlayerRegistry playerRegistry = this.getComponent(gameKey, PlayerRegistry.class);
+            if (playerRegistry.isRegistered(player)) {
+                return gameKey;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
     public GameKey getGameKey(@NotNull UUID uuid) {
         for (GameKey gameKey : games.keySet()) {
             for (EntityRegistry<?, ?> entityRegistry : this.getEntityRegistries(gameKey)) {

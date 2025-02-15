@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import org.bukkit.Location;
@@ -33,7 +33,7 @@ public class PlayerRespawnEventHandlerTest {
 
         PlayerRespawnEvent event = new PlayerRespawnEvent(player, respawnLocation, false, false, RespawnReason.DEATH);
 
-        when(contextProvider.getContext(player)).thenReturn(null);
+        when(contextProvider.getGameKey(player)).thenReturn(null);
 
         PlayerRespawnEventHandler eventHandler = new PlayerRespawnEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -43,12 +43,12 @@ public class PlayerRespawnEventHandlerTest {
 
     @Test
     public void handleDoesNotAlterEventIfThereIsNoSpawnPointForThePlayer() {
+        GameKey gameKey = GameKey.ofTrainingMode();
         Player player = mock(Player.class);
         Location respawnLocation = new Location(null, 1, 1, 1);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
 
         PlayerRespawnEvent event = new PlayerRespawnEvent(player, respawnLocation, false, false, RespawnReason.DEATH);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.findByEntity(player)).thenReturn(gamePlayer);
@@ -56,11 +56,9 @@ public class PlayerRespawnEventHandlerTest {
         SpawnPointProvider spawnPointProvider = mock(SpawnPointProvider.class);
         when(spawnPointProvider.hasSpawnPoint(gamePlayer)).thenReturn(false);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getPlayerRegistry()).thenReturn(playerRegistry);
-        when(context.getSpawnPointProvider()).thenReturn(spawnPointProvider);
-
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
+        when(contextProvider.getComponent(gameKey, SpawnPointProvider.class)).thenReturn(spawnPointProvider);
 
         PlayerRespawnEventHandler eventHandler = new PlayerRespawnEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -70,13 +68,13 @@ public class PlayerRespawnEventHandlerTest {
 
     @Test
     public void handleSetsRespawnLocationIfPlayerHasSpawnPoint() {
+        GameKey gameKey = GameKey.ofTrainingMode();
         Player player = mock(Player.class);
         Location respawnLocation = new Location(null, 1, 1, 1);
         Location spawnPointLocation = new Location(mock(World.class), 2, 2, 2);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
 
         PlayerRespawnEvent event = new PlayerRespawnEvent(player, respawnLocation, false, false, RespawnReason.DEATH);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.findByEntity(player)).thenReturn(gamePlayer);
@@ -85,11 +83,9 @@ public class PlayerRespawnEventHandlerTest {
         when(spawnPointProvider.hasSpawnPoint(gamePlayer)).thenReturn(true);
         when(spawnPointProvider.respawnEntity(gamePlayer)).thenReturn(spawnPointLocation);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getPlayerRegistry()).thenReturn(playerRegistry);
-        when(context.getSpawnPointProvider()).thenReturn(spawnPointProvider);
-
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
+        when(contextProvider.getComponent(gameKey, SpawnPointProvider.class)).thenReturn(spawnPointProvider);
 
         PlayerRespawnEventHandler eventHandler = new PlayerRespawnEventHandler(contextProvider);
         eventHandler.handle(event);

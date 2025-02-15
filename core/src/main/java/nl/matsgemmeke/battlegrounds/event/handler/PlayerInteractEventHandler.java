@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.ActionHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEvent> {
 
     @NotNull
-    private GameContextProvider contextProvider;
+    private final GameContextProvider contextProvider;
 
     @Inject
     public PlayerInteractEventHandler(@NotNull GameContextProvider contextProvider) {
@@ -30,16 +30,16 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
         }
 
         Player player = event.getPlayer();
-        GameContext context = contextProvider.getContext(player);
+        GameKey gameKey = contextProvider.getGameKey(player);
 
-        if (context == null) {
+        if (gameKey == null) {
             return;
         }
 
         boolean performAction = true;
 
         Action action = event.getAction();
-        ActionHandler actionHandler = context.getActionHandler();
+        ActionHandler actionHandler = contextProvider.getComponent(gameKey, ActionHandler.class);
 
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             performAction = actionHandler.handleItemLeftClick(player, itemStack);

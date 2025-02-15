@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.ActionHandler;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,7 +27,9 @@ public class PlayerItemHeldEventHandlerTest {
     }
 
     @Test
-    public void shouldDoNothingIfPlayerIsNotInAnyGame() {
+    public void handleShouldDoNothingIfPlayerIsNotInAnyGame() {
+        when(contextProvider.getGameKey(player)).thenReturn(null);
+
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
         PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(contextProvider);
@@ -37,7 +39,8 @@ public class PlayerItemHeldEventHandlerTest {
     }
 
     @Test
-    public void shouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
+    public void handleShouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
+        GameKey gameKey = GameKey.ofTrainingMode();
         ItemStack changeFrom = new ItemStack(Material.IRON_HOE);
         ItemStack changeTo = new ItemStack(Material.IRON_HOE);
 
@@ -49,9 +52,8 @@ public class PlayerItemHeldEventHandlerTest {
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemChange(player, changeFrom, changeTo)).thenReturn(false);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getActionHandler()).thenReturn(actionHandler);
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
 
@@ -64,7 +66,8 @@ public class PlayerItemHeldEventHandlerTest {
     }
 
     @Test
-    public void shouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
+    public void handleShouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
+        GameKey gameKey = GameKey.ofTrainingMode();
         ItemStack changeFrom = new ItemStack(Material.IRON_HOE);
         ItemStack changeTo = new ItemStack(Material.IRON_HOE);
 
@@ -76,9 +79,8 @@ public class PlayerItemHeldEventHandlerTest {
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemChange(player, changeFrom, changeTo)).thenReturn(true);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getActionHandler()).thenReturn(actionHandler);
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, 0, 1);
         event.setCancelled(true);
