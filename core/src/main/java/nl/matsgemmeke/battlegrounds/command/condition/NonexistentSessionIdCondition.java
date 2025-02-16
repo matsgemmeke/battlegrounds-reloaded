@@ -24,7 +24,7 @@ public class NonexistentSessionIdCondition implements ParameterCondition<Integer
     }
 
     public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, Integer value) throws InvalidCommandArgument {
-        if (contextProvider.getSessionContext(value) == null) {
+        if (!contextProvider.sessionExists(value)) {
             return;
         }
 

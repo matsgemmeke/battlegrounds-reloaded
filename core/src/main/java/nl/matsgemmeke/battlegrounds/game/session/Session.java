@@ -8,21 +8,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Session extends BaseGame {
 
-    private final int id;
     @NotNull
     private SessionConfiguration configuration;
 
-    public Session(int id, @NotNull SessionConfiguration configuration) {
-        this.id = id;
+    public Session(@NotNull SessionConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @NotNull
     public SessionConfiguration getConfiguration() {
         return configuration;
-    }
-
-    public int getId() {
-        return id;
     }
 }

@@ -10,13 +10,13 @@ import java.io.File;
 /**
  * Factory class for creating {@link Session} instances.
  */
-public class SessionContextFactory {
+public class SessionFactory {
 
     @NotNull
-    private File setupFolder;
+    private final File setupFolder;
 
     @Inject
-    public SessionContextFactory(@Named("SetupFolder") @NotNull File setupFolder) {
+    public SessionFactory(@Named("SetupFolder") @NotNull File setupFolder) {
         this.setupFolder = setupFolder;
     }
 
@@ -28,13 +28,13 @@ public class SessionContextFactory {
      * @return a new session instance
      */
     @NotNull
-    public SessionContext make(int id, SessionConfiguration configuration) {
+    public Session create(int id, SessionConfiguration configuration) {
         File sessionConfigFile = new File(setupFolder.getPath() + "/session-" + id + "/config.yml");
 
         SessionDataConfiguration dataConfig = new SessionDataConfiguration(sessionConfigFile);
         dataConfig.load();
         dataConfig.saveConfiguration(configuration);
 
-        return new SessionContext();
+        return new Session(configuration);
     }
 }

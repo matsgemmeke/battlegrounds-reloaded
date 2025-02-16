@@ -21,6 +21,21 @@ public class GameKey {
         return new GameKey("TRAINING-MODE");
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        GameKey gameKey = (GameKey) obj;
+        return value.equals(gameKey.value);
+    }
+
+    @Override
     public String toString() {
         return value;
     }

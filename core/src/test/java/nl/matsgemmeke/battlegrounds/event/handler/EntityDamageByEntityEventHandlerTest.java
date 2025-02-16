@@ -43,8 +43,8 @@ public class EntityDamageByEntityEventHandlerTest {
     public void shouldNotProcessEventIfEntityAndDamagerAreNotInGames() {
         EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, DamageCause.CUSTOM, damage);
 
-        when(contextProvider.getContext(entityUUID)).thenReturn(null);
-        when(contextProvider.getContext(damagerUUID)).thenReturn(null);
+        when(contextProvider.getGameKey(entityUUID)).thenReturn(null);
+        when(contextProvider.getGameKey(damagerUUID)).thenReturn(null);
 
         EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);

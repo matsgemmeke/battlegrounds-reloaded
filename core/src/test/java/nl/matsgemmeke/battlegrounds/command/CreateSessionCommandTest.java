@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.session.Session;
 import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
-import nl.matsgemmeke.battlegrounds.game.session.SessionContext;
-import nl.matsgemmeke.battlegrounds.game.session.SessionContextFactory;
+import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -17,48 +18,50 @@ public class CreateSessionCommandTest {
 
     private CommandSender sender;
     private GameContextProvider contextProvider;
-    private SessionContextFactory sessionContextFactory;
+    private SessionFactory sessionFactory;
     private Translator translator;
 
     @BeforeEach
     public void setUp() {
         this.sender = mock(CommandSender.class);
         this.contextProvider = mock(GameContextProvider.class);
-        this.sessionContextFactory = mock(SessionContextFactory.class);
+        this.sessionFactory = mock(SessionFactory.class);
         this.translator = mock(Translator.class);
 
         when(translator.translate(TranslationKey.DESCRIPTION_CREATESESSION.getPath())).thenReturn(new TextTemplate("description"));
     }
 
     @Test
-    public void shouldBeAbleToCreateSession() {
+    public void executeCreatesSessionAndSendsSuccessMessage() {
         int sessionId = 1;
+        GameKey gameKey = GameKey.ofSession(sessionId);
         String message = "test";
 
-        SessionContext context = mock(SessionContext.class);
-        when(sessionContextFactory.make(eq(sessionId), any(SessionConfiguration.class))).thenReturn(context);
+        Session session = mock(Session.class);
+        when(sessionFactory.create(eq(sessionId), any(SessionConfiguration.class))).thenReturn(session);
 
-        when(contextProvider.addSessionContext(sessionId, context)).thenReturn(true);
+        when(contextProvider.addSession(gameKey, session)).thenReturn(true);
         when(translator.translate(eq(TranslationKey.SESSION_CREATED.getPath()))).thenReturn(new TextTemplate(message));
 
-        CreateSessionCommand command = new CreateSessionCommand(contextProvider, sessionContextFactory, translator);
+        CreateSessionCommand command = new CreateSessionCommand(contextProvider, sessionFactory, translator);
         command.execute(sender, sessionId);
 
         verify(sender).sendMessage(message);
     }
 
     @Test
-    public void shouldCancelSessionCreationIfProviderCanNotAddSession() {
+    public void executeDoesNotAddSessionAndSendsFailedMessage() {
         int sessionId = 1;
+        GameKey gameKey = GameKey.ofSession(sessionId);
         String message = "test";
 
-        SessionContext context = mock(SessionContext.class);
-        when(sessionContextFactory.make(eq(sessionId), any(SessionConfiguration.class))).thenReturn(context);
+        Session session = mock(Session.class);
+        when(sessionFactory.create(eq(sessionId), any(SessionConfiguration.class))).thenReturn(session);
 
-        when(contextProvider.addSessionContext(sessionId, context)).thenReturn(false);
+        when(contextProvider.addSession(gameKey, session)).thenReturn(false);
         when(translator.translate(eq(TranslationKey.SESSION_CREATION_FAILED.getPath()))).thenReturn(new TextTemplate(message));
 
-        CreateSessionCommand command = new CreateSessionCommand(contextProvider, sessionContextFactory, translator);
+        CreateSessionCommand command = new CreateSessionCommand(contextProvider, sessionFactory, translator);
         command.execute(sender, sessionId);
 
         verify(sender).sendMessage(message);

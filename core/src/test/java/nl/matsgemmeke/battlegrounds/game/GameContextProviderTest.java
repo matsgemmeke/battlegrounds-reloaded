@@ -2,7 +2,8 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
-import org.bukkit.entity.Item;
+import nl.matsgemmeke.battlegrounds.game.session.Session;
+import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
@@ -15,33 +16,35 @@ import static org.mockito.Mockito.when;
 public class GameContextProviderTest {
 
     @Test
-    public void shouldAddSessionContextAndReturnAddedInstance() {
-        GameContext sessionContext = mock(GameContext.class);
+    public void addSessionAddsSessionAndReturnsTrue() {
+        GameKey gameKey = GameKey.ofSession(1);
+        Session session = mock(Session.class);
 
         GameContextProvider contextProvider = new GameContextProvider();
-        boolean added = contextProvider.addSessionContext(1, sessionContext);
+        boolean added = contextProvider.addSession(gameKey, session);
 
         assertTrue(added);
     }
 
     @Test
-    public void shouldAssignTrainingModeContext() {
-        GameContext trainingModeContext = mock(GameContext.class);
+    public void assignTrainingModeAddsTrainingModeAndReturnsTrue() {
+        TrainingMode trainingMode = mock(TrainingMode.class);
 
         GameContextProvider contextProvider = new GameContextProvider();
-        boolean assigned = contextProvider.assignTrainingModeContext(trainingModeContext);
+        boolean assigned = contextProvider.assignTrainingMode(trainingMode);
 
         assertTrue(assigned);
     }
 
     @Test
-    public void shouldOnlyBeAbleToSetTrainingModeContextOnce() {
-        GameContext trainingModeContext = mock(GameContext.class);
+    public void assignTrainingModeDoesNotAddTrainingModeAndReturnsFalseIfAlreadyAssigned() {
+        TrainingMode trainingMode = mock(TrainingMode.class);
+        TrainingMode otherTrainingMode = mock(TrainingMode.class);
 
         GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.assignTrainingModeContext(trainingModeContext);
+        contextProvider.assignTrainingMode(trainingMode);
 
-        boolean assigned = contextProvider.assignTrainingModeContext(mock(GameContext.class));
+        boolean assigned = contextProvider.assignTrainingMode(otherTrainingMode);
 
         assertFalse(assigned);
     }
@@ -82,95 +85,76 @@ public class GameContextProviderTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void shouldReturnContextWhosePlayerRegistryHasPlayer() {
+    public void getGameKeyReturnsCorrespondingGameKeyForGivenPlayer() {
+        Game game = mock(Game.class);
+        GameKey gameKey = GameKey.ofTrainingMode();
         Player player = mock(Player.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.isRegistered(player)).thenReturn(true);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getPlayerRegistry()).thenReturn(playerRegistry);
-
         GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.assignTrainingModeContext(context);
+        contextProvider.registerGame(gameKey, game);
+        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
 
-        GameContext result = contextProvider.getContext(player);
+        GameKey result = contextProvider.getGameKey(player);
 
-        assertEquals(context, result);
+        assertEquals(gameKey, result);
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldReturnNullContextWhenPlayerIsNotInAnyGame() {
+    public void getGameKeyReturnsNullIfGivenPlayerIsNotInAnyGame() {
+        Game game = mock(Game.class);
+        GameKey gameKey = GameKey.ofTrainingMode();
         Player player = mock(Player.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.isRegistered(player)).thenReturn(false);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getPlayerRegistry()).thenReturn(playerRegistry);
-
         GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.addSessionContext(1, context);
+        contextProvider.registerGame(gameKey, game);
+        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
 
-        GameContext result = contextProvider.getContext(player);
+        GameKey result = contextProvider.getGameKey(player);
 
         assertNull(result);
     }
 
     @Test
-    public void shouldReturnContextWhoseEntityRegistriesContainsEntityWithMatchingUUID() {
+    public void getGameKeyReturnsCorrespondingGameKeyForGivenUUID() {
+        Game game = mock(Game.class);
+        GameKey gameKey = GameKey.ofTrainingMode();
         UUID uuid = UUID.randomUUID();
-
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.isRegistered(uuid)).thenReturn(true);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getPlayerRegistry()).thenReturn(playerRegistry);
-
         GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.addSessionContext(1, context);
+        contextProvider.registerGame(gameKey, game);
+        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
 
-        GameContext result = contextProvider.getContext(uuid);
+        GameKey result = contextProvider.getGameKey(uuid);
 
-        assertEquals(context, result);
+        assertEquals(gameKey, result);
     }
 
     @Test
-    public void shouldReturnNullContextWhenEntityIsNotInAnyGame() {
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
+    public void getGameKeyReturnsNullIfGivenUUIDIsNotRegisteredInAnyGame() {
+        Game game = mock(Game.class);
+        GameKey gameKey = GameKey.ofTrainingMode();
         UUID uuid = UUID.randomUUID();
 
-        Item item = mock(Item.class);
-        when(item.getUniqueId()).thenReturn(uuid);
-
-        GameContext context = mock(GameContext.class);
-        when(context.getPlayerRegistry()).thenReturn(playerRegistry);
+        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
+        when(playerRegistry.isRegistered(uuid)).thenReturn(false);
 
         GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.addSessionContext(1, context);
+        contextProvider.registerGame(gameKey, game);
+        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
 
-        GameContext result = contextProvider.getContext(uuid);
+        GameKey result = contextProvider.getGameKey(uuid);
 
         assertNull(result);
-    }
-
-    @Test
-    public void shouldGetSessionById() {
-        int sessionId = 1;
-
-        GameContext sessionContext = mock(GameContext.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.addSessionContext(sessionId, sessionContext);
-
-        GameContext result = contextProvider.getSessionContext(sessionId);
-
-        assertEquals(sessionContext, result);
     }
 
     @Test
@@ -184,14 +168,65 @@ public class GameContextProviderTest {
     }
 
     @Test
-    public void shouldRemoveSession() {
-        int sessionId = 1;
+    public void registerComponentAddsGivenComponentToProvider() {
+        Game game = mock(Game.class);
+        GameKey gameKey = GameKey.ofSession(1);
+        TargetFinder targetFinder = mock(TargetFinder.class);
 
-        GameContext sessionContext = mock(GameContext.class);
         GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.registerGame(gameKey, game);
+        contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
 
-        assertFalse(contextProvider.removeSessionContext(sessionId));
-        assertTrue(contextProvider.addSessionContext(sessionId, sessionContext));
-        assertTrue(contextProvider.removeSessionContext(sessionId));
+        TargetFinder result = contextProvider.getComponent(gameKey, TargetFinder.class);
+
+        assertEquals(targetFinder, result);
+    }
+
+    @Test
+    public void removeSessionReturnsFalseWhenRemovingSessionThatIsNotRegistered() {
+        int id = 1;
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        boolean removed = contextProvider.removeSession(id);
+
+        assertFalse(removed);
+    }
+
+    @Test
+    public void removeSessionReturnsTrueWhenRemovingRegisteredSession() {
+        int id = 1;
+        GameKey gameKey = GameKey.ofSession(id);
+        Game game = mock(Game.class);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.registerGame(gameKey, game);
+
+        boolean removed = contextProvider.removeSession(id);
+
+        assertTrue(removed);
+    }
+
+    @Test
+    public void sessionExistsReturnsFalseIfNoSessionsWithTheGivenIdAreRegistered() {
+        int id = 1;
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        boolean sessionExists = contextProvider.sessionExists(id);
+
+        assertFalse(sessionExists);
+    }
+
+    @Test
+    public void sessionExistsReturnsTrueIfSessionWithGivenIdIsRegistered() {
+        int id = 1;
+        GameKey gameKey = GameKey.ofSession(id);
+        Game game = mock(Game.class);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.registerGame(gameKey, game);
+
+        boolean sessionExists = contextProvider.sessionExists(id);
+
+        assertTrue(sessionExists);
     }
 }

@@ -8,25 +8,16 @@ import static org.mockito.Mockito.mock;
 
 public class SessionTest {
 
-    private int id;
     private SessionConfiguration configuration;
 
     @BeforeEach
     public void setUp() {
         this.configuration = mock(SessionConfiguration.class);
-        this.id = 1;
-    }
-
-    @Test
-    public void shouldBeAbleToGetId() {
-        Session session = new Session(id, configuration);
-
-        assertEquals(id, session.getId());
     }
 
     @Test
     public void shouldBeAbleToGetConfiguration() {
-        Session session = new Session(id, configuration);
+        Session session = new Session(configuration);
 
         assertEquals(configuration, session.getConfiguration());
     }

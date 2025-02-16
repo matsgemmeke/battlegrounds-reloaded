@@ -80,7 +80,7 @@ public class TrainingModeGameKeyProvider implements Provider<GameKey> {
         DamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeKey, deploymentInfoProvider);
         TargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, trainingMode.getPlayerStorage());
 
-        contextProvider.registerGame(trainingModeKey, trainingMode);
+        contextProvider.assignTrainingMode(trainingMode);
 
         contextProvider.registerComponent(trainingModeKey, AudioEmitter.class, audioEmitter);
         contextProvider.registerComponent(trainingModeKey, CollisionDetector.class, collisionDetector);
