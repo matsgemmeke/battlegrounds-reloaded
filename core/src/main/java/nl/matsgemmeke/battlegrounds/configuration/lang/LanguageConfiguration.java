@@ -13,7 +13,7 @@ public class LanguageConfiguration extends BasePluginConfiguration {
     private static final boolean READ_ONLY = true;
 
     @NotNull
-    private Locale locale;
+    private final Locale locale;
 
     public LanguageConfiguration(@NotNull File file, @Nullable InputStream resource, @NotNull Locale locale) {
         super(file, resource, READ_ONLY);

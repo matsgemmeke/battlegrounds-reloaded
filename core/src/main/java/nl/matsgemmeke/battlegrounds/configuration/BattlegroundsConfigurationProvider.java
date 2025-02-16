@@ -12,9 +12,9 @@ import java.io.InputStream;
 public class BattlegroundsConfigurationProvider implements Provider<BattlegroundsConfiguration> {
 
     @NotNull
-    private File dataFolder;
+    private final File dataFolder;
     @NotNull
-    private Plugin plugin;
+    private final Plugin plugin;
 
     @Inject
     public BattlegroundsConfigurationProvider(@Named("DataFolder") @NotNull File dataFolder, @NotNull Plugin plugin) {

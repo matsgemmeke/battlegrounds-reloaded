@@ -10,7 +10,7 @@ import java.io.File;
 public class DataConfigurationProvider implements Provider<DataConfiguration> {
 
     @NotNull
-    private File dataFolder;
+    private final File dataFolder;
 
     @Inject
     public DataConfigurationProvider(@Named("DataFolder") @NotNull File dataFolder) {

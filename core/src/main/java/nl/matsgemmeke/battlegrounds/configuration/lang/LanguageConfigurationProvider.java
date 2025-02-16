@@ -14,11 +14,11 @@ import java.util.Locale;
 public class LanguageConfigurationProvider implements Provider<LanguageConfiguration> {
 
     @NotNull
-    private BattlegroundsConfiguration configuration;
+    private final BattlegroundsConfiguration configuration;
     @NotNull
-    private File langFolder;
+    private final File langFolder;
     @NotNull
-    private Plugin plugin;
+    private final Plugin plugin;
 
     @Inject
     public LanguageConfigurationProvider(
