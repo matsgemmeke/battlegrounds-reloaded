@@ -22,9 +22,9 @@ public class BattlegroundsCommand extends BaseCommand {
     private static final String EMPTY_MESSAGE = " ";
 
     @NotNull
-    private List<CommandSource> subcommands;
+    private final List<CommandSource> subcommands;
     @NotNull
-    private Translator translator;
+    private final Translator translator;
 
     @Inject
     public BattlegroundsCommand(@NotNull Translator translator) {

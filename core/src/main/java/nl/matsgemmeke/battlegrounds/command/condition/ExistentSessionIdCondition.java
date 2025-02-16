@@ -13,9 +13,9 @@ import java.util.Map;
 public class ExistentSessionIdCondition implements ParameterCondition<Integer, BukkitCommandExecutionContext, BukkitCommandIssuer> {
 
     @NotNull
-    private GameContextProvider contextProvider;
+    private final GameContextProvider contextProvider;
     @NotNull
-    private Translator translator;
+    private final Translator translator;
 
     @Inject
     public ExistentSessionIdCondition(@NotNull GameContextProvider contextProvider, @NotNull Translator translator) {

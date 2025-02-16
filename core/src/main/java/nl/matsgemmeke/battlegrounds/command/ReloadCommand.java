@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 public class ReloadCommand extends CommandSource {
 
     @NotNull
-    private BattlegroundsConfiguration config;
+    private final BattlegroundsConfiguration config;
     @NotNull
-    private Translator translator;
+    private final Translator translator;
 
     @Inject
     public ReloadCommand(@NotNull BattlegroundsConfiguration config, @NotNull Translator translator) {

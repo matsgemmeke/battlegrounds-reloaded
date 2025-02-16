@@ -13,9 +13,9 @@ import java.util.Map;
 public class ExistentWeaponIdCondition implements ParameterCondition<String, BukkitCommandExecutionContext, BukkitCommandIssuer> {
 
     @NotNull
-    private Translator translator;
+    private final Translator translator;
     @NotNull
-    private WeaponCreator weaponCreator;
+    private final WeaponCreator weaponCreator;
 
     @Inject
     public ExistentWeaponIdCondition(@NotNull WeaponCreator weaponCreator, @NotNull Translator translator) {

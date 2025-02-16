@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
 public class SetMainLobbyCommand extends CommandSource {
 
     @NotNull
-    private DataConfiguration dataConfiguration;
+    private final DataConfiguration dataConfiguration;
     @NotNull
-    private Translator translator;
+    private final Translator translator;
 
     @Inject
     public SetMainLobbyCommand(@NotNull DataConfiguration dataConfiguration, @NotNull Translator translator) {
