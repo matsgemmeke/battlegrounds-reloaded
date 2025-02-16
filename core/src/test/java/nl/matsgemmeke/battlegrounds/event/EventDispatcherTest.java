@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.logging.Logger;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class EventDispatcherTest {
@@ -36,7 +37,7 @@ public class EventDispatcherTest {
     }
 
     @Test
-    public void dispatchInternalEventLogsErrorMessageIfEventHandlerMethodFailedToExecute() {
+    public void dispatchInternalEventThrowsEventHandlingExceptionIfEventHandlerMethodFailedToExecute() {
         ServerLoadEvent event = new ServerLoadEvent(LoadType.RELOAD);
         ServerLoadEventHandlerMock eventHandler = spy(new ServerLoadEventHandlerMock(() -> {
             throw new Error();
@@ -44,10 +45,10 @@ public class EventDispatcherTest {
 
         EventDispatcher eventDispatcher = new EventDispatcher(pluginManager, logger);
         eventDispatcher.registerEventHandler(ServerLoadEvent.class, eventHandler);
-        eventDispatcher.dispatchInternalEvent(event);
+
+        assertThrows(EventHandlingException.class, () -> eventDispatcher.dispatchInternalEvent(event));
 
         verify(eventHandler).handle(event);
-        verify(logger).severe("Error occurred while invoking handle method for event ServerLoadEvent");
     }
 
     @Test

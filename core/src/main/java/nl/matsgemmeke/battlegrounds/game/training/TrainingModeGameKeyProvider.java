@@ -73,6 +73,7 @@ public class TrainingModeGameKeyProvider implements Provider<GameKey> {
         GunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(trainingMode.getGunStorage());
 
         // All other components
+        ActionHandler actionHandler = new DefaultActionHandler(trainingMode, playerRegistry);
         AudioEmitter audioEmitter = new DefaultAudioEmitter();
         CollisionDetector collisionDetector = new DefaultCollisionDetector(new BlockCollisionChecker());
         SpawnPointProvider spawnPointProvider = new TrainingModeSpawnPointProvider(trainingMode.getSpawnPointStorage());
@@ -82,6 +83,7 @@ public class TrainingModeGameKeyProvider implements Provider<GameKey> {
 
         contextProvider.assignTrainingMode(trainingMode);
 
+        contextProvider.registerComponent(trainingModeKey, ActionHandler.class, actionHandler);
         contextProvider.registerComponent(trainingModeKey, AudioEmitter.class, audioEmitter);
         contextProvider.registerComponent(trainingModeKey, CollisionDetector.class, collisionDetector);
         contextProvider.registerComponent(trainingModeKey, DamageProcessor.class, damageProcessor);

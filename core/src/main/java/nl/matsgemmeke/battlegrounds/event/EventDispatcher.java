@@ -57,11 +57,11 @@ public class EventDispatcher {
                     try {
                         method.invoke(event);
                     } catch (IllegalAccessException e) {
-                        logger.severe("Cannot invoke inaccessible handle method for event " + eventClass.getSimpleName());
+                        throw new EventHandlingException("Cannot invoke inaccessible handle method for event " + eventClass.getSimpleName());
                     } catch (IllegalArgumentException e) {
-                        logger.severe("Cannot invoke handle method for event " + eventClass.getSimpleName() + " with given arguments");
+                        throw new EventHandlingException("Cannot invoke handle method for event " + eventClass.getSimpleName() + " with given arguments");
                     } catch (InvocationTargetException e) {
-                        logger.severe("Error occurred while invoking handle method for event " + eventClass.getSimpleName());
+                        throw new EventHandlingException("Error occurred while invoking handle method for event " + eventClass.getSimpleName(), e);
                     }
                 }
             }
