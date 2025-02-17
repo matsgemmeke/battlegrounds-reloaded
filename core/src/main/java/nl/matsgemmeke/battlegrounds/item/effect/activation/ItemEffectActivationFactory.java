@@ -32,6 +32,7 @@ public class ItemEffectActivationFactory {
      * @param section the configuration section
      * @return a new activation instance
      */
+    @NotNull
     public ItemEffectActivation create(@NotNull GameKey gameKey, @NotNull Section section, @Nullable Activator activator) {
         String type = section.getString("type");
 

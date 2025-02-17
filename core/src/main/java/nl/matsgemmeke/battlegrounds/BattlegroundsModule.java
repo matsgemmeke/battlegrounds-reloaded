@@ -10,6 +10,9 @@ import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProvider;
+import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -82,6 +85,10 @@ public class BattlegroundsModule implements Module {
         binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class);
 
         // Factory bindings
+        binder.install(new FactoryModuleBuilder()
+                .implement(GamePlayer.class, DefaultGamePlayer.class)
+                .build(DefaultGamePlayerFactory.class));
+
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffect.class, CombustionEffect.class)
                 .build(CombustionEffectFactory.class));

@@ -2,8 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component.registry;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import org.bukkit.entity.Player;
@@ -15,14 +14,14 @@ import java.util.UUID;
 public class DefaultPlayerRegistry implements PlayerRegistry {
 
     @NotNull
-    private EntityStorage<GamePlayer> playerStorage;
+    private DefaultGamePlayerFactory gamePlayerFactory;
     @NotNull
-    private InternalsProvider internals;
+    private EntityStorage<GamePlayer> playerStorage;
 
     @Inject
-    public DefaultPlayerRegistry(@Assisted @NotNull EntityStorage<GamePlayer> playerStorage, @NotNull InternalsProvider internals) {
+    public DefaultPlayerRegistry(@NotNull DefaultGamePlayerFactory gamePlayerFactory, @Assisted @NotNull EntityStorage<GamePlayer> playerStorage) {
+        this.gamePlayerFactory = gamePlayerFactory;
         this.playerStorage = playerStorage;
-        this.internals = internals;
     }
 
     @Nullable
@@ -50,7 +49,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
 
     @NotNull
     public GamePlayer registerEntity(@NotNull Player player) {
-        GamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        GamePlayer gamePlayer = gamePlayerFactory.create(player);
 
         playerStorage.addEntity(gamePlayer);
 

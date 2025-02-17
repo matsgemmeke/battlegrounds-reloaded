@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -35,7 +37,8 @@ public class DefaultGamePlayer implements GamePlayer {
     @NotNull
     private Set<ItemEffect> effects;
 
-    public DefaultGamePlayer(@NotNull Player player, @NotNull InternalsProvider internals) {
+    @Inject
+    public DefaultGamePlayer(@NotNull InternalsProvider internals, @Assisted @NotNull Player player) {
         this.player = player;
         this.internals = internals;
         this.effects = new HashSet<>();
