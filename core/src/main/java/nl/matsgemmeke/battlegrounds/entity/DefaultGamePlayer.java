@@ -31,11 +31,11 @@ public class DefaultGamePlayer implements GamePlayer {
     private Damage lastDamage;
     private int previousFoodLevel;
     @NotNull
-    private InternalsProvider internals;
+    private final InternalsProvider internals;
     @NotNull
-    private Player player;
+    private final Player player;
     @NotNull
-    private Set<ItemEffect> effects;
+    private final Set<ItemEffect> effects;
 
     @Inject
     public DefaultGamePlayer(@NotNull InternalsProvider internals, @Assisted @NotNull Player player) {

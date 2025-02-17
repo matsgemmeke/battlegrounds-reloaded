@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component.registry;
+package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import org.bukkit.entity.Entity;

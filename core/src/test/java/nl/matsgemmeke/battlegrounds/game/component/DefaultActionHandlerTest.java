@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
-import nl.matsgemmeke.battlegrounds.game.component.registry.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
