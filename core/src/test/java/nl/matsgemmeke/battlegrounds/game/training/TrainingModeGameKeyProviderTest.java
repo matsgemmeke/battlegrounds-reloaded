@@ -1,10 +1,12 @@
 package nl.matsgemmeke.battlegrounds.game.training;
 
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
@@ -28,6 +30,7 @@ public class TrainingModeGameKeyProviderTest {
     private EventDispatcher eventDispatcher;
     private GameContextProvider contextProvider;
     private DefaultPlayerRegistryFactory playerRegistryFactory;
+    private Provider<CollisionDetector> collisionDetectorProvider;
     private MockedStatic<Bukkit> bukkit;
 
     @BeforeEach
@@ -36,6 +39,7 @@ public class TrainingModeGameKeyProviderTest {
         eventDispatcher = mock(EventDispatcher.class);
         contextProvider = new GameContextProvider();
         playerRegistryFactory = mock(DefaultPlayerRegistryFactory.class);
+        collisionDetectorProvider = mock();
         bukkit = mockStatic(Bukkit.class);
     }
 
@@ -54,10 +58,13 @@ public class TrainingModeGameKeyProviderTest {
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
 
+        CollisionDetector collisionDetector = mock(CollisionDetector.class);
+        when(collisionDetectorProvider.get()).thenReturn(collisionDetector);
+
         when(playerRegistryFactory.make(any())).thenReturn(playerRegistry);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
-        TrainingModeGameKeyProvider provider = new TrainingModeGameKeyProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory);
+        TrainingModeGameKeyProvider provider = new TrainingModeGameKeyProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory, collisionDetectorProvider);
         GameKey gameKey = provider.get();
 
         ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);

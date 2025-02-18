@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.controls;
+package nl.matsgemmeke.battlegrounds.item.equipment.controls.activate;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
@@ -40,7 +40,7 @@ public class ActivateFunctionTest {
     public void isAvailableReturnsFalseIfEquipmentHasNoActivator() {
         when(equipment.getActivator()).thenReturn(null);
 
-        ActivateFunction function = new ActivateFunction(properties, equipment, audioEmitter, taskRunner);
+        ActivateFunction function = new ActivateFunction(taskRunner, properties, equipment, audioEmitter);
         boolean available = function.isAvailable();
 
         assertFalse(available);
@@ -53,7 +53,7 @@ public class ActivateFunctionTest {
 
         when(equipment.getActivator()).thenReturn(activator);
 
-        ActivateFunction function = new ActivateFunction(properties, equipment, audioEmitter, taskRunner);
+        ActivateFunction function = new ActivateFunction(taskRunner, properties, equipment, audioEmitter);
         boolean available = function.isAvailable();
 
         assertFalse(available);
@@ -66,7 +66,7 @@ public class ActivateFunctionTest {
 
         when(equipment.getActivator()).thenReturn(activator);
 
-        ActivateFunction function = new ActivateFunction(properties, equipment, audioEmitter, taskRunner);
+        ActivateFunction function = new ActivateFunction(taskRunner, properties, equipment, audioEmitter);
         boolean available = function.isAvailable();
 
         assertTrue(available);
@@ -78,7 +78,7 @@ public class ActivateFunctionTest {
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
-        ActivateFunction function = new ActivateFunction(properties, equipment, audioEmitter, taskRunner);
+        ActivateFunction function = new ActivateFunction(taskRunner, properties, equipment, audioEmitter);
 
         assertThrows(ItemFunctionException.class, () -> function.perform(holder));
     }
@@ -101,7 +101,7 @@ public class ActivateFunctionTest {
             return null;
         });
 
-        ActivateFunction function = new ActivateFunction(properties, equipment, audioEmitter, taskRunner);
+        ActivateFunction function = new ActivateFunction(taskRunner, properties, equipment, audioEmitter);
         function.perform(holder);
 
         verify(holder).setHeldItem(null);

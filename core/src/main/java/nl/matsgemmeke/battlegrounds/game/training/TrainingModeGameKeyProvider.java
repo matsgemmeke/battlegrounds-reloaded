@@ -5,7 +5,6 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
-import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.*;
@@ -42,18 +41,22 @@ public class TrainingModeGameKeyProvider implements Provider<GameKey> {
     private final GameContextProvider contextProvider;
     @NotNull
     private final DefaultPlayerRegistryFactory playerRegistryFactory;
+    @NotNull
+    private final Provider<CollisionDetector> collisionDetectorProvider;
 
     @Inject
     public TrainingModeGameKeyProvider(
             @NotNull BattlegroundsConfiguration configuration,
             @NotNull EventDispatcher eventDispatcher,
             @NotNull GameContextProvider contextProvider,
-            @NotNull DefaultPlayerRegistryFactory playerRegistryFactory
+            @NotNull DefaultPlayerRegistryFactory playerRegistryFactory,
+            @NotNull Provider<CollisionDetector> collisionDetectorProvider
     ) {
         this.configuration = configuration;
         this.eventDispatcher = eventDispatcher;
         this.contextProvider = contextProvider;
         this.playerRegistryFactory = playerRegistryFactory;
+        this.collisionDetectorProvider = collisionDetectorProvider;
     }
 
     public GameKey get() {
@@ -75,7 +78,7 @@ public class TrainingModeGameKeyProvider implements Provider<GameKey> {
         // All other components
         ActionHandler actionHandler = new DefaultActionHandler(trainingMode, playerRegistry);
         AudioEmitter audioEmitter = new DefaultAudioEmitter();
-        CollisionDetector collisionDetector = new DefaultCollisionDetector(new BlockCollisionChecker());
+        CollisionDetector collisionDetector = collisionDetectorProvider.get();
         SpawnPointProvider spawnPointProvider = new TrainingModeSpawnPointProvider(trainingMode.getSpawnPointStorage());
 
         DamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeKey, deploymentInfoProvider);

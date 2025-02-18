@@ -63,6 +63,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         return controls;
     }
 
+    public void setControls(@NotNull ItemControls<EquipmentHolder> controls) {
+        this.controls = controls;
+    }
+
     @NotNull
     public List<DeploymentObject> getDeploymentObjects() {
         return deploymentObjects;
@@ -128,6 +132,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onChangeFrom() {
+        controls.cancelAllFunctions();
     }
 
     public void onChangeTo() {

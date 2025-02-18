@@ -7,7 +7,9 @@ import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.MappingException;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -18,12 +20,10 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.*;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
@@ -50,6 +50,8 @@ public class EquipmentFactory implements WeaponFactory {
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
 
     @NotNull
+    private final EquipmentControlsFactory controlsFactory;
+    @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
     private final ItemEffectFactory effectFactory;
@@ -63,12 +65,14 @@ public class EquipmentFactory implements WeaponFactory {
     @Inject
     public EquipmentFactory(
             @NotNull GameContextProvider contextProvider,
+            @NotNull EquipmentControlsFactory controlsFactory,
             @NotNull ItemEffectFactory effectFactory,
             @NotNull ItemEffectActivationFactory effectActivationFactory,
             @NotNull NamespacedKeyCreator keyCreator,
             @NotNull TaskRunner taskRunner
     ) {
         this.contextProvider = contextProvider;
+        this.controlsFactory = controlsFactory;
         this.effectFactory = effectFactory;
         this.effectActivationFactory = effectActivationFactory;
         this.keyCreator = keyCreator;
@@ -319,85 +323,10 @@ public class EquipmentFactory implements WeaponFactory {
         Section controlsSection = section.getSection("controls");
 
         if (controlsSection != null) {
-            this.addControls(equipment, gameKey, section, controlsSection);
+            ItemControls<EquipmentHolder> controls = controlsFactory.create(section, equipment, gameKey);
+            equipment.setControls(controls);
         }
 
         return equipment;
-    }
-
-    private void addControls(@NotNull DefaultEquipment equipment, @NotNull GameKey gameKey, @NotNull Section section, @NotNull Section controlsSection) {
-        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-
-        String activateActionValue = controlsSection.getString("activate");
-        String cookActionValue = controlsSection.getString("cook");
-        String placeActionValue = controlsSection.getString("place");
-        String throwActionValue = controlsSection.getString("throw");
-
-        if (throwActionValue != null) {
-            Action throwAction = this.getActionFromConfiguration("throw", throwActionValue);
-
-            if (cookActionValue != null) {
-                Action cookAction = this.getActionFromConfiguration("cook", cookActionValue);
-
-                List<GameSound> cookSounds = DefaultGameSound.parseSounds(section.getString("throwing.cook-sound"));
-
-                CookProperties cookProperties = new CookProperties(cookSounds);
-                CookFunction cookFunction = new CookFunction(cookProperties, equipment, audioEmitter);
-
-                equipment.getControls().addControl(cookAction, cookFunction);
-            }
-
-            List<GameSound> throwSounds = DefaultGameSound.parseSounds(section.getString("throwing.throw-sound"));
-            double velocity = section.getDouble("throwing.velocity");
-            long delayAfterThrow = section.getLong("throwing.delay-after-throw");
-
-            ThrowProperties properties = new ThrowProperties(throwSounds, velocity, delayAfterThrow);
-            ThrowFunction throwFunction = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
-
-            equipment.getControls().addControl(throwAction, throwFunction);
-        }
-
-        if (placeActionValue != null) {
-            Action placeAction = this.getActionFromConfiguration("place", placeActionValue);
-
-            Material material;
-            String materialValue = section.getString("placing.material");
-
-            try {
-                material = Material.valueOf(materialValue);
-            } catch (IllegalArgumentException e) {
-                throw new CreateEquipmentException("Unable to create equipment item " + equipment.getName() + ", placing material " + materialValue + " is invalid");
-            }
-
-            List<GameSound> placeSounds = DefaultGameSound.parseSounds(section.getString("placing.place-sound"));
-            long delayAfterPlacement = section.getLong("placing.delay-after-placement");
-
-            PlaceProperties properties = new PlaceProperties(placeSounds, material, delayAfterPlacement);
-            PlaceFunction placeFunction = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
-
-            equipment.getControls().addControl(placeAction, placeFunction);
-        }
-
-        if (activateActionValue != null) {
-            Action activateAction = this.getActionFromConfiguration("activate", activateActionValue);
-
-            List<GameSound> activationSounds = DefaultGameSound.parseSounds(section.getString("effect.activation.activation-sound"));
-            long delayUntilActivation = section.getLong("effect.activation.delay-until-activation");
-
-            ActivateProperties properties = new ActivateProperties(activationSounds, delayUntilActivation);
-            ActivateFunction activateFunction = new ActivateFunction(properties, equipment, audioEmitter, taskRunner);
-
-            equipment.getControls().addControl(activateAction, activateFunction);
-        }
-    }
-
-    @NotNull
-    private Action getActionFromConfiguration(@NotNull String functionName, @NotNull String value) {
-        try {
-            return Action.valueOf(value);
-        } catch (IllegalArgumentException e) {
-            throw new CreateEquipmentException("Error while getting controls for " + functionName + ": \""
-                    + value + "\" is not a valid action type!");
-        }
     }
 }

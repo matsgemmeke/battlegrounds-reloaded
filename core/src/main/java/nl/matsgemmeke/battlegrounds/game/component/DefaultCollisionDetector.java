@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,8 +12,9 @@ public class DefaultCollisionDetector implements CollisionDetector {
     private static final double STEP_SIZE = 0.5;
 
     @NotNull
-    private BlockCollisionChecker blockCollisionChecker;
+    private final BlockCollisionChecker blockCollisionChecker;
 
+    @Inject
     public DefaultCollisionDetector(@NotNull BlockCollisionChecker blockCollisionChecker) {
         this.blockCollisionChecker = blockCollisionChecker;
     }

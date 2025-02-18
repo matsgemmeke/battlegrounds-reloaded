@@ -1,5 +1,7 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.controls;
+package nl.matsgemmeke.battlegrounds.item.equipment.controls.activate;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
@@ -13,19 +15,20 @@ import org.jetbrains.annotations.NotNull;
 public class ActivateFunction implements ItemFunction<EquipmentHolder> {
 
     @NotNull
-    private ActivateProperties properties;
+    private final ActivateProperties properties;
     @NotNull
-    private AudioEmitter audioEmitter;
+    private final AudioEmitter audioEmitter;
     @NotNull
-    private Equipment equipment;
+    private final Equipment equipment;
     @NotNull
-    private TaskRunner taskRunner;
+    private final TaskRunner taskRunner;
 
+    @Inject
     public ActivateFunction(
-            @NotNull ActivateProperties properties,
-            @NotNull Equipment equipment,
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull TaskRunner taskRunner
+            @NotNull TaskRunner taskRunner,
+            @Assisted @NotNull ActivateProperties properties,
+            @Assisted @NotNull Equipment equipment,
+            @Assisted @NotNull AudioEmitter audioEmitter
     ) {
         this.properties = properties;
         this.equipment = equipment;
