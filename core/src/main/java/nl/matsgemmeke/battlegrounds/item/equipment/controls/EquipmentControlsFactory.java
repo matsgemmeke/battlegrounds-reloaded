@@ -15,6 +15,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateProperties;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookProperties;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;

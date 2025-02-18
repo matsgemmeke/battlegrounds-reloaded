@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.controls;
+package nl.matsgemmeke.battlegrounds.item.equipment.controls.cook;
 
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
