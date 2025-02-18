@@ -131,7 +131,7 @@ public class EquipmentFactoryTest {
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
 
-        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, gameKey));
+        assertThrows(EquipmentCreationException.class, () -> factory.make(configuration, gameKey));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class EquipmentFactoryTest {
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
 
-        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, gameKey));
+        assertThrows(EquipmentCreationException.class, () -> factory.make(configuration, gameKey));
     }
 
     @Test
@@ -379,7 +379,7 @@ public class EquipmentFactoryTest {
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
 
-        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, gameKey));
+        assertThrows(EquipmentCreationException.class, () -> factory.make(configuration, gameKey));
     }
 
     @Test
@@ -411,7 +411,7 @@ public class EquipmentFactoryTest {
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
 
-        assertThrows(CreateEquipmentException.class, () -> factory.make(configuration, gameKey));
+        assertThrows(EquipmentCreationException.class, () -> factory.make(configuration, gameKey));
     }
 
     @Test

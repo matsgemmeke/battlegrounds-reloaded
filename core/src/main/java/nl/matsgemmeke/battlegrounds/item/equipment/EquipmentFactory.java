@@ -118,7 +118,7 @@ public class EquipmentFactory implements WeaponFactory {
         try {
             material = Material.valueOf(materialValue);
         } catch (IllegalArgumentException e) {
-            throw new CreateEquipmentException("Unable to create equipment item " + name + "; item stack material " + materialValue + " is invalid");
+            throw new EquipmentCreationException("Unable to create equipment item " + name + "; item stack material " + materialValue + " is invalid");
         }
 
         UUID uuid = UUID.randomUUID();
@@ -146,7 +146,7 @@ public class EquipmentFactory implements WeaponFactory {
             try {
                 activatorMaterial = Material.valueOf(activatorMaterialValue);
             } catch (IllegalArgumentException e) {
-                throw new CreateEquipmentException("Unable to create equipment item " + name + "; activator item stack material " + activatorMaterialValue + " is invalid");
+                throw new EquipmentCreationException("Unable to create equipment item " + name + "; activator item stack material " + activatorMaterialValue + " is invalid");
             }
 
             UUID activatorUUID = UUID.randomUUID();
@@ -211,7 +211,7 @@ public class EquipmentFactory implements WeaponFactory {
                 try {
                     particleEffect = mapper.map(particleEffectValues);
                 } catch (MappingException e) {
-                    throw new CreateEquipmentException("Unable to create equipment item " + name + ": " + e.getMessage());
+                    throw new EquipmentCreationException("Unable to create equipment item " + name + ": " + e.getMessage());
                 }
 
                 deploymentProperties.setDestroyParticleEffect(particleEffect);
@@ -274,7 +274,7 @@ public class EquipmentFactory implements WeaponFactory {
                 try {
                     particle = Particle.valueOf(particleValue);
                 } catch (IllegalArgumentException e) {
-                    throw new CreateEquipmentException("Unable to create equipment item " + name + "; trail effect particle " + particleValue + " is invalid");
+                    throw new EquipmentCreationException("Unable to create equipment item " + name + "; trail effect particle " + particleValue + " is invalid");
                 }
 
                 int count = trailSection.getInt("particle.count");
@@ -306,7 +306,7 @@ public class EquipmentFactory implements WeaponFactory {
             try {
                 throwItemMaterial = Material.valueOf(throwItemMaterialValue);
             } catch (IllegalArgumentException e) {
-                throw new CreateEquipmentException("Unable to create equipment item " + name + ", throw item material " + throwItemMaterialValue + " is invalid");
+                throw new EquipmentCreationException("Unable to create equipment item " + name + ", throw item material " + throwItemMaterialValue + " is invalid");
             }
 
             UUID throwItemUUID = UUID.randomUUID();
