@@ -1,5 +1,7 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.controls;
+package nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
@@ -34,11 +36,12 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private ThrowProperties properties;
 
+    @Inject
     public ThrowFunction(
-            @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
-            @NotNull Equipment equipment,
-            @NotNull ThrowProperties properties
+            @Assisted @NotNull ThrowProperties properties,
+            @Assisted @NotNull Equipment equipment,
+            @Assisted @NotNull AudioEmitter audioEmitter
     ) {
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;

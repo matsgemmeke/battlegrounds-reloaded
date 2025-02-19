@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.place;
 
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -35,6 +36,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     @NotNull
     private final TaskRunner taskRunner;
 
+    @Inject
     public PlaceFunction(
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull PlaceProperties properties,

@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
@@ -19,6 +18,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceProperties;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunctionFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowProperties;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -35,19 +36,19 @@ public class EquipmentControlsFactory {
     @NotNull
     private final PlaceFunctionFactory placeFunctionFactory;
     @NotNull
-    private final TaskRunner taskRunner;
+    private final ThrowFunctionFactory throwFunctionFactory;
 
     @Inject
     public EquipmentControlsFactory(
-            @NotNull ActivateFunctionFactory activateFunctionFactory,
             @NotNull GameContextProvider contextProvider,
+            @NotNull ActivateFunctionFactory activateFunctionFactory,
             @NotNull PlaceFunctionFactory placeFunctionFactory,
-            @NotNull TaskRunner taskRunner
+            @NotNull ThrowFunctionFactory throwFunctionFactory
     ) {
         this.activateFunctionFactory = activateFunctionFactory;
         this.contextProvider = contextProvider;
         this.placeFunctionFactory = placeFunctionFactory;
-        this.taskRunner = taskRunner;
+        this.throwFunctionFactory = throwFunctionFactory;
     }
 
     @NotNull
@@ -81,7 +82,7 @@ public class EquipmentControlsFactory {
             long delayAfterThrow = section.getLong("throwing.delay-after-throw");
 
             ThrowProperties properties = new ThrowProperties(throwSounds, velocity, delayAfterThrow);
-            ThrowFunction throwFunction = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
+            ItemFunction<EquipmentHolder> throwFunction = throwFunctionFactory.create(properties, equipment, audioEmitter);
 
             controls.addControl(throwAction, throwFunction);
         }

@@ -12,6 +12,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.Location;
@@ -50,7 +52,7 @@ public class ThrowFunctionTest {
 
     @Test
     public void shouldNotBePerformingIfNoThrowsWereExecuted() {
-        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -77,7 +79,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(throwingDirection);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(taskRunner, properties, equipment, audioEmitter);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
@@ -91,7 +93,7 @@ public class ThrowFunctionTest {
 
         when(equipment.getEffect()).thenReturn(null);
 
-        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(taskRunner, properties, equipment, audioEmitter);
 
         assertThrows(ItemFunctionException.class, () -> function.perform(holder));
     }
@@ -104,7 +106,7 @@ public class ThrowFunctionTest {
         when(equipment.getEffect()).thenReturn(effect);
         when(equipment.getThrowItemTemplate()).thenReturn(null);
 
-        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(taskRunner, properties, equipment, audioEmitter);
 
         assertThrows(ItemFunctionException.class, () -> function.perform(holder));
     }
@@ -149,7 +151,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performed = function.perform(holder);
 
         ArgumentCaptor<DroppedItem> droppedItemCaptor = ArgumentCaptor.forClass(DroppedItem.class);
@@ -210,7 +212,7 @@ public class ThrowFunctionTest {
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);
 
-        ThrowFunction function = new ThrowFunction(audioEmitter, taskRunner, equipment, properties);
+        ThrowFunction function = new ThrowFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performed = function.perform(holder);
 
         ArgumentCaptor<DroppedItem> droppedItemCaptor = ArgumentCaptor.forClass(DroppedItem.class);
