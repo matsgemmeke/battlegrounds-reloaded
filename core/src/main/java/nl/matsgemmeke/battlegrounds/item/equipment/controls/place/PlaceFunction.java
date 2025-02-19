@@ -1,5 +1,6 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.controls;
+package nl.matsgemmeke.battlegrounds.item.equipment.controls.place;
 
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
@@ -25,20 +26,20 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     private static final int TARGET_BLOCK_SCAN_DISTANCE = 4;
 
     @NotNull
-    private AudioEmitter audioEmitter;
+    private final AudioEmitter audioEmitter;
     private boolean performing;
     @NotNull
-    private Equipment equipment;
+    private final Equipment equipment;
     @NotNull
-    private PlaceProperties properties;
+    private final PlaceProperties properties;
     @NotNull
-    private TaskRunner taskRunner;
+    private final TaskRunner taskRunner;
 
     public PlaceFunction(
-            @NotNull PlaceProperties properties,
-            @NotNull Equipment equipment,
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull TaskRunner taskRunner
+            @NotNull TaskRunner taskRunner,
+            @Assisted @NotNull PlaceProperties properties,
+            @Assisted @NotNull Equipment equipment,
+            @Assisted @NotNull AudioEmitter audioEmitter
     ) {
         this.properties = properties;
         this.equipment = equipment;

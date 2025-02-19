@@ -17,6 +17,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFun
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookProperties;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunctionFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceProperties;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -31,16 +33,20 @@ public class EquipmentControlsFactory {
     @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
+    private final PlaceFunctionFactory placeFunctionFactory;
+    @NotNull
     private final TaskRunner taskRunner;
 
     @Inject
     public EquipmentControlsFactory(
             @NotNull ActivateFunctionFactory activateFunctionFactory,
             @NotNull GameContextProvider contextProvider,
+            @NotNull PlaceFunctionFactory placeFunctionFactory,
             @NotNull TaskRunner taskRunner
     ) {
         this.activateFunctionFactory = activateFunctionFactory;
         this.contextProvider = contextProvider;
+        this.placeFunctionFactory = placeFunctionFactory;
         this.taskRunner = taskRunner;
     }
 
@@ -88,7 +94,7 @@ public class EquipmentControlsFactory {
             long delayAfterPlacement = section.getLong("placing.delay-after-placement");
 
             PlaceProperties properties = new PlaceProperties(placeSounds, material, delayAfterPlacement);
-            PlaceFunction placeFunction = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+            ItemFunction<EquipmentHolder> placeFunction = placeFunctionFactory.create(properties, equipment, audioEmitter);
 
             controls.addControl(placeAction, placeFunction);
         }

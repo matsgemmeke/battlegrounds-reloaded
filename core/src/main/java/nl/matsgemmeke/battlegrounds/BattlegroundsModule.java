@@ -42,6 +42,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunctionFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunctionFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -114,6 +116,9 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemFunction.class, ActivateFunction.class)
                 .build(ActivateFunctionFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ItemFunction.class, PlaceFunction.class)
+                .build(PlaceFunctionFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)

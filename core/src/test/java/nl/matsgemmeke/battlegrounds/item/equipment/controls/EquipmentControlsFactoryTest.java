@@ -10,6 +10,9 @@ import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateProperties;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunctionFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceProperties;
+import org.bukkit.Material;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +27,7 @@ public class EquipmentControlsFactoryTest {
     private Equipment equipment;
     private GameContextProvider contextProvider;
     private GameKey gameKey;
+    private PlaceFunctionFactory placeFunctionFactory;
     private Section controlsSection;
     private Section rootSection;
     private TaskRunner taskRunner;
@@ -33,6 +37,7 @@ public class EquipmentControlsFactoryTest {
         activateFunctionFactory = mock(ActivateFunctionFactory.class);
         contextProvider = mock(GameContextProvider.class);
         gameKey = GameKey.ofTrainingMode();
+        placeFunctionFactory = mock(PlaceFunctionFactory.class);
         controlsSection = mock(Section.class);
         taskRunner = mock(TaskRunner.class);
 
@@ -51,7 +56,7 @@ public class EquipmentControlsFactoryTest {
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, taskRunner);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, placeFunctionFactory, taskRunner);
         ItemControls<EquipmentHolder> controls = factory.create(rootSection, equipment, gameKey);
 
         assertNotNull(controls);
@@ -61,7 +66,7 @@ public class EquipmentControlsFactoryTest {
     public void createThrowsEquipmentControlsCreationExceptionWhenThrowActionConfigurationValueIsInvalid() {
         when(controlsSection.getString("throw")).thenReturn("fail");
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, taskRunner);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, placeFunctionFactory, taskRunner);
 
         Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
         assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for function \"throw\" is not a valid action type!", exception.getMessage());
@@ -76,7 +81,7 @@ public class EquipmentControlsFactoryTest {
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, taskRunner);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, placeFunctionFactory, taskRunner);
         ItemControls<EquipmentHolder> controls = factory.create(rootSection, equipment, gameKey);
 
         assertNotNull(controls);
@@ -87,7 +92,7 @@ public class EquipmentControlsFactoryTest {
         when(controlsSection.getString("cook")).thenReturn("fail");
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, taskRunner);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, placeFunctionFactory, taskRunner);
 
         Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
         assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for function \"cook\" is not a valid action type!", exception.getMessage());
@@ -95,14 +100,27 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithPlaceFunction() {
+        long delayAfterPlacement = 10L;
+
         when(controlsSection.getString("place")).thenReturn("RIGHT_CLICK");
         when(rootSection.getString("placing.material")).thenReturn("WARPED_BUTTON");
+        when(rootSection.getLong("placing.delay-after-placement")).thenReturn(delayAfterPlacement);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, taskRunner);
+        ItemFunction<EquipmentHolder> activateFunction = mock();
+        when(placeFunctionFactory.create(any(PlaceProperties.class), eq(equipment), eq(audioEmitter))).thenReturn(activateFunction);
+
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, placeFunctionFactory, taskRunner);
         ItemControls<EquipmentHolder> controls = factory.create(rootSection, equipment, gameKey);
+
+        ArgumentCaptor<PlaceProperties> propertiesCaptor = ArgumentCaptor.forClass(PlaceProperties.class);
+        verify(placeFunctionFactory).create(propertiesCaptor.capture(), eq(equipment), eq(audioEmitter));
+
+        PlaceProperties properties = propertiesCaptor.getValue();
+        assertEquals(delayAfterPlacement, properties.delayAfterPlacement());
+        assertEquals(Material.WARPED_BUTTON, properties.material());
 
         assertNotNull(controls);
     }
@@ -111,7 +129,7 @@ public class EquipmentControlsFactoryTest {
     public void createThrowsEquipmentControlsCreationExceptionWhenPlaceActionConfigurationValueIsInvalid() {
         when(controlsSection.getString("place")).thenReturn("fail");
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, taskRunner);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, placeFunctionFactory, taskRunner);
 
         Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
         assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for function \"place\" is not a valid action type!", exception.getMessage());
@@ -122,7 +140,7 @@ public class EquipmentControlsFactoryTest {
         when(controlsSection.getString("place")).thenReturn("RIGHT_CLICK");
         when(rootSection.getString("placing.material")).thenReturn("fail");
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, taskRunner);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, placeFunctionFactory, taskRunner);
 
         Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
         assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for the place material is not a valid material type!", exception.getMessage());
@@ -142,7 +160,7 @@ public class EquipmentControlsFactoryTest {
         ItemFunction<EquipmentHolder> activateFunction = mock();
         when(activateFunctionFactory.create(any(ActivateProperties.class), eq(equipment), eq(audioEmitter))).thenReturn(activateFunction);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, taskRunner);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, placeFunctionFactory, taskRunner);
         ItemControls<EquipmentHolder> controls = factory.create(rootSection, equipment, gameKey);
 
         ArgumentCaptor<ActivateProperties> propertiesCaptor = ArgumentCaptor.forClass(ActivateProperties.class);
@@ -158,7 +176,7 @@ public class EquipmentControlsFactoryTest {
     public void createThrowsEquipmentControlsCreationExceptionWhenActivateActionConfigurationValueIsInvalid() {
         when(controlsSection.getString("activate")).thenReturn("fail");
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, taskRunner);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(activateFunctionFactory, contextProvider, placeFunctionFactory, taskRunner);
 
         Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
         assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for function \"activate\" is not a valid action type!", exception.getMessage());

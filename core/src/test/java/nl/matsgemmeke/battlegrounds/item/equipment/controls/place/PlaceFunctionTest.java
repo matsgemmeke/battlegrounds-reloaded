@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.equipment.controls;
+package nl.matsgemmeke.battlegrounds.item.equipment.controls.place;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
@@ -51,7 +51,7 @@ public class PlaceFunctionTest {
 
     @Test
     public void isPerformingReturnsFalseIfNoBlocksWerePlaced() {
-        PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+        PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performing = function.isPerforming();
 
         assertFalse(performing);
@@ -79,7 +79,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+        PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
         function.perform(holder);
 
         boolean performing = function.isPerforming();
@@ -93,7 +93,7 @@ public class PlaceFunctionTest {
 
         when(equipment.getEffect()).thenReturn(null);
 
-        PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+        PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
 
         assertThrows(ItemFunctionException.class, () -> function.perform(holder));
     }
@@ -106,7 +106,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
-        PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+        PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -125,7 +125,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
-        PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+        PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -147,7 +147,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+        PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
@@ -179,7 +179,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+        PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
@@ -226,7 +226,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+        PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
@@ -278,7 +278,7 @@ public class PlaceFunctionTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceFunction function = new PlaceFunction(properties, equipment, audioEmitter, taskRunner);
+        PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
