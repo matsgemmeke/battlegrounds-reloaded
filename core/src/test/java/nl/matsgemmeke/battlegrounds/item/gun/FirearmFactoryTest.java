@@ -135,7 +135,7 @@ public class FirearmFactoryTest {
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, gameKey);
+        Firearm firearm = firearmFactory.create(itemConfiguration, gameKey);
 
         assertInstanceOf(DefaultFirearm.class, firearm);
         assertEquals("test", firearm.getName());
@@ -156,7 +156,7 @@ public class FirearmFactoryTest {
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
 
-        assertThrows(FirearmCreationException.class, () -> firearmFactory.make(itemConfiguration, gameKey));
+        assertThrows(FirearmCreationException.class, () -> firearmFactory.create(itemConfiguration, gameKey));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class FirearmFactoryTest {
         when(rootSection.getSection("shooting.pattern")).thenReturn(patternSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, gameKey);
+        Firearm firearm = firearmFactory.create(itemConfiguration, gameKey);
 
         assertInstanceOf(DefaultFirearm.class, firearm);
 
@@ -183,7 +183,7 @@ public class FirearmFactoryTest {
         when(rootSection.getSection("shooting.recoil")).thenReturn(recoilSection);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, gameKey);
+        Firearm firearm = firearmFactory.create(itemConfiguration, gameKey);
 
         assertInstanceOf(DefaultFirearm.class, firearm);
 
@@ -199,7 +199,7 @@ public class FirearmFactoryTest {
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, gameKey, gamePlayer);
+        Firearm firearm = firearmFactory.create(itemConfiguration, gameKey, gamePlayer);
 
         assertInstanceOf(DefaultFirearm.class, firearm);
         assertEquals(gamePlayer, firearm.getHolder());
@@ -220,7 +220,7 @@ public class FirearmFactoryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.make(itemConfiguration, gameKey, gamePlayer);
+        Firearm firearm = firearmFactory.create(itemConfiguration, gameKey, gamePlayer);
         firearm.onChangeFrom();
 
         assertInstanceOf(DefaultFirearm.class, firearm);

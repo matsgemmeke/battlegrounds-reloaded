@@ -71,7 +71,7 @@ public class GiveWeaponCommandTest {
         when(weapon.getName()).thenReturn("test");
 
         WeaponFactory factory = mock(WeaponFactory.class);
-        when(factory.make(eq(configuration), eq(gameKey), any())).thenReturn(weapon);
+        when(factory.create(eq(configuration), eq(gameKey), any())).thenReturn(weapon);
 
         when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
         when(weaponCreator.getFactory(configuration)).thenReturn(factory);

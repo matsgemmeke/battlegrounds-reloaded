@@ -106,7 +106,7 @@ public class EquipmentFactoryTest {
     @Test
     public void shouldCreateSimpleEquipmentItem() {
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertEquals("name", equipment.getName());
@@ -120,7 +120,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getString("item.display-name")).thenReturn("&f%name%");
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertInstanceOf(DefaultEquipment.class, equipment);
     }
@@ -131,7 +131,7 @@ public class EquipmentFactoryTest {
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
 
-        assertThrows(EquipmentCreationException.class, () -> factory.make(configuration, gameKey));
+        assertThrows(EquipmentCreationException.class, () -> factory.create(configuration, gameKey));
     }
 
     @Test
@@ -150,7 +150,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertInstanceOf(DefaultEquipment.class, equipment);
 
@@ -165,7 +165,7 @@ public class EquipmentFactoryTest {
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
 
-        assertThrows(EquipmentCreationException.class, () -> factory.make(configuration, gameKey));
+        assertThrows(EquipmentCreationException.class, () -> factory.create(configuration, gameKey));
     }
 
     @Test
@@ -183,7 +183,7 @@ public class EquipmentFactoryTest {
         when(effectFactory.create(effectSection, gameKey, effectActivation)).thenReturn(effect);
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertEquals(effect, equipment.getEffect());
@@ -209,7 +209,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("deploy")).thenReturn(deploySection);
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertNotNull(equipment.getDeploymentProperties());
@@ -248,7 +248,7 @@ public class EquipmentFactoryTest {
         });
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertEquals(1, bounceEffectConstructor.constructed().size());
         bounceEffectConstructor.close();
@@ -279,7 +279,7 @@ public class EquipmentFactoryTest {
         });
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertEquals(1, soundEffectConstructor.constructed().size());
         soundEffectConstructor.close();
@@ -312,7 +312,7 @@ public class EquipmentFactoryTest {
         });
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertEquals(1, stickEffectConstructor.constructed().size());
         stickEffectConstructor.close();
@@ -356,7 +356,7 @@ public class EquipmentFactoryTest {
         });
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertEquals(1, trailEffectConstructor.constructed().size());
         trailEffectConstructor.close();
@@ -379,7 +379,7 @@ public class EquipmentFactoryTest {
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
 
-        assertThrows(EquipmentCreationException.class, () -> factory.make(configuration, gameKey));
+        assertThrows(EquipmentCreationException.class, () -> factory.create(configuration, gameKey));
     }
 
     @Test
@@ -393,7 +393,7 @@ public class EquipmentFactoryTest {
         when(rootSection.getSection("item.throw-item")).thenReturn(throwItemSection);
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey);
+        Equipment equipment = factory.create(configuration, gameKey);
 
         assertInstanceOf(DefaultEquipment.class, equipment);
         assertNotNull(equipment.getThrowItemTemplate());
@@ -411,7 +411,7 @@ public class EquipmentFactoryTest {
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
 
-        assertThrows(EquipmentCreationException.class, () -> factory.make(configuration, gameKey));
+        assertThrows(EquipmentCreationException.class, () -> factory.create(configuration, gameKey));
     }
 
     @Test
@@ -425,7 +425,7 @@ public class EquipmentFactoryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         EquipmentFactory factory = new EquipmentFactory(contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
-        Equipment equipment = factory.make(configuration, gameKey, gamePlayer);
+        Equipment equipment = factory.create(configuration, gameKey, gamePlayer);
         equipment.onChangeFrom();
 
         assertInstanceOf(DefaultEquipment.class, equipment);

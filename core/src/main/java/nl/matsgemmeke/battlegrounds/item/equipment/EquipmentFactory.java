@@ -80,7 +80,7 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+    public Equipment create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
         Equipment equipment = this.createInstance(configuration, gameKey);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
@@ -90,7 +90,7 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+    public Equipment create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
         Equipment equipment = this.createInstance(configuration, gameKey);
         equipment.setHolder(gamePlayer);
 

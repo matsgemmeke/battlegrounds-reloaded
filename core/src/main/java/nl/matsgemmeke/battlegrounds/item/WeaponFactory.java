@@ -19,7 +19,7 @@ public interface WeaponFactory {
      * @return a new instance of the corresponding item
      */
     @NotNull
-    Weapon make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey);
+    Weapon create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey);
 
     /**
      * Makes a new weapon based on the given id and adds it to a game instance while also assigning it to a player. The
@@ -31,5 +31,5 @@ public interface WeaponFactory {
      * @return a new instance of the corresponding item
      */
     @NotNull
-    Weapon make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer);
+    Weapon create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer);
 }

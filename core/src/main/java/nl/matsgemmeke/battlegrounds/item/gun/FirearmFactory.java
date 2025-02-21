@@ -77,7 +77,7 @@ public class FirearmFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+    public Firearm create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
         Firearm firearm = this.createInstance(configuration, gameKey);
 
         GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
@@ -87,7 +87,7 @@ public class FirearmFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Firearm make(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+    public Firearm create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
         Firearm firearm = this.createInstance(configuration, gameKey);
         firearm.setHolder(gamePlayer);
 
