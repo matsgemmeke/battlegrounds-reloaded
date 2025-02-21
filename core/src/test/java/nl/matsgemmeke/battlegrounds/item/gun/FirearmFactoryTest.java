@@ -14,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.FirearmControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
@@ -157,7 +156,7 @@ public class FirearmFactoryTest {
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
 
-        assertThrows(CreateFirearmException.class, () -> firearmFactory.make(itemConfiguration, gameKey));
+        assertThrows(FirearmCreationException.class, () -> firearmFactory.make(itemConfiguration, gameKey));
     }
 
     @Test

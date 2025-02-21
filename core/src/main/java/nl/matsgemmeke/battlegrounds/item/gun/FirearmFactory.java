@@ -188,7 +188,7 @@ public class FirearmFactory implements WeaponFactory {
         try {
             material = Material.valueOf(materialValue);
         } catch (IllegalArgumentException e) {
-            throw new CreateFirearmException("Unable to create firearm " + name + "; item stack material " + materialValue + " is invalid");
+            throw new FirearmCreationException("Unable to create firearm " + name + "; item stack material " + materialValue + " is invalid");
         }
 
         UUID uuid = UUID.randomUUID();
