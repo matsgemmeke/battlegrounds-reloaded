@@ -54,6 +54,10 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         return controls;
     }
 
+    public void setControls(@NotNull ItemControls<GunHolder> controls) {
+        this.controls = controls;
+    }
+
     public double getDamageAmplifier() {
         return damageAmplifier;
     }

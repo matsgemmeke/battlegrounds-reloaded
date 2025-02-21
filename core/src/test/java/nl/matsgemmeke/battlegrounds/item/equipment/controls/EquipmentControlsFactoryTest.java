@@ -39,12 +39,12 @@ public class EquipmentControlsFactoryTest {
         contextProvider = mock(GameContextProvider.class);
         gameKey = GameKey.ofTrainingMode();
         placeFunctionFactory = mock(PlaceFunctionFactory.class);
-        controlsSection = mock(Section.class);
         throwFunctionFactory = mock(ThrowFunctionFactory.class);
 
         equipment = mock(Equipment.class);
         when(equipment.getName()).thenReturn("test equipment");
 
+        controlsSection = mock(Section.class);
         rootSection = mock(Section.class);
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
     }

@@ -34,7 +34,7 @@ public class ReloadSystemFactoryTest {
         when(section.getString("type")).thenReturn("MAGAZINE");
 
         ReloadSystemFactory factory = new ReloadSystemFactory(taskRunner);
-        ReloadSystem reloadSystem = factory.make(gun, section, audioEmitter);
+        ReloadSystem reloadSystem = factory.create(gun, section, audioEmitter);
 
         assertNotNull(reloadSystem);
     }
@@ -45,7 +45,7 @@ public class ReloadSystemFactoryTest {
         when(section.getString("type")).thenReturn("MANUAL_INSERTION");
 
         ReloadSystemFactory factory = new ReloadSystemFactory(taskRunner);
-        ReloadSystem reloadSystem = factory.make(gun, section, audioEmitter);
+        ReloadSystem reloadSystem = factory.create(gun, section, audioEmitter);
 
         assertNotNull(reloadSystem);
     }
@@ -56,6 +56,6 @@ public class ReloadSystemFactoryTest {
 
         ReloadSystemFactory factory = new ReloadSystemFactory(taskRunner);
 
-        assertThrows(WeaponFactoryCreationException.class, () -> factory.make(gun, section, audioEmitter));
+        assertThrows(WeaponFactoryCreationException.class, () -> factory.create(gun, section, audioEmitter));
     }
 }

@@ -31,7 +31,7 @@ public class ReloadSystemFactory {
      * @return a new {@link ReloadSystem} instance
      */
     @NotNull
-    public ReloadSystem make(@NotNull Gun gun, @NotNull Section section, @NotNull AudioEmitter audioEmitter) {
+    public ReloadSystem create(@NotNull Gun gun, @NotNull Section section, @NotNull AudioEmitter audioEmitter) {
         String type = section.getString("type");
         ReloadSystemType reloadSystemType;
 
