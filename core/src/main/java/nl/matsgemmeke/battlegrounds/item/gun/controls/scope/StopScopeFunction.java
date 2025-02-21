@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.gun.controls;
+package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import com.google.common.collect.Iterables;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
-public class ChangeScopeMagnificationFunction implements ItemFunction<GunHolder> {
+public class StopScopeFunction implements ItemFunction<GunHolder> {
 
     @NotNull
     private AudioEmitter audioEmitter;
@@ -19,7 +19,7 @@ public class ChangeScopeMagnificationFunction implements ItemFunction<GunHolder>
     @NotNull
     private ScopeAttachment scopeAttachment;
 
-    public ChangeScopeMagnificationFunction(@NotNull ScopeAttachment scopeAttachment, @NotNull AudioEmitter audioEmitter) {
+    public StopScopeFunction(@NotNull ScopeAttachment scopeAttachment, @NotNull AudioEmitter audioEmitter) {
         this.scopeAttachment = scopeAttachment;
         this.audioEmitter = audioEmitter;
         this.sounds = new HashSet<>();
@@ -52,6 +52,6 @@ public class ChangeScopeMagnificationFunction implements ItemFunction<GunHolder>
 
         audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
 
-        return scopeAttachment.nextMagnification();
+        return scopeAttachment.removeEffect();
     }
 }

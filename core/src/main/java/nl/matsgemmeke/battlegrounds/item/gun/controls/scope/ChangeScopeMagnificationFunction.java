@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.gun.controls;
+package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import com.google.common.collect.Iterables;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
-public class UseScopeFunction implements ItemFunction<GunHolder> {
+public class ChangeScopeMagnificationFunction implements ItemFunction<GunHolder> {
 
     @NotNull
     private AudioEmitter audioEmitter;
@@ -19,7 +19,7 @@ public class UseScopeFunction implements ItemFunction<GunHolder> {
     @NotNull
     private ScopeAttachment scopeAttachment;
 
-    public UseScopeFunction(@NotNull ScopeAttachment scopeAttachment, @NotNull AudioEmitter audioEmitter) {
+    public ChangeScopeMagnificationFunction(@NotNull ScopeAttachment scopeAttachment, @NotNull AudioEmitter audioEmitter) {
         this.scopeAttachment = scopeAttachment;
         this.audioEmitter = audioEmitter;
         this.sounds = new HashSet<>();
@@ -30,7 +30,7 @@ public class UseScopeFunction implements ItemFunction<GunHolder> {
     }
 
     public boolean isAvailable() {
-        return !scopeAttachment.isScoped();
+        return scopeAttachment.isScoped();
     }
 
     public boolean isBlocking() {
@@ -42,16 +42,16 @@ public class UseScopeFunction implements ItemFunction<GunHolder> {
     }
 
     public boolean cancel() {
-        return scopeAttachment.isScoped() && scopeAttachment.removeEffect();
+        return false;
     }
 
     public boolean perform(@NotNull GunHolder holder) {
-        if (scopeAttachment.isScoped()) {
+        if (!scopeAttachment.isScoped()) {
             return false;
         }
 
         audioEmitter.playSounds(sounds, holder.getEntity().getLocation());
 
-        return scopeAttachment.applyEffect(holder);
+        return scopeAttachment.nextMagnification();
     }
 }

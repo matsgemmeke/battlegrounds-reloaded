@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.gun.controls;
+package nl.matsgemmeke.battlegrounds.item.gun.controls.reload;
 
 import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;

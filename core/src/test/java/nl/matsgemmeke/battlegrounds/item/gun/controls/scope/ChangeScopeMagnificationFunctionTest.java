@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.gun.controls;
+package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;

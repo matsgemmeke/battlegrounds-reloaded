@@ -1,11 +1,10 @@
-package nl.matsgemmeke.battlegrounds.item.gun.controls;
+package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class UseScopeFunctionTest {
+public class StopScopeFunctionTest {
 
-    @NotNull
     private AudioEmitter audioEmitter;
-    @NotNull
     private ScopeAttachment scopeAttachment;
 
     @BeforeEach
@@ -30,33 +27,14 @@ public class UseScopeFunctionTest {
     public void shouldReturnAvailabilityBasedOnScopeState() {
         when(scopeAttachment.isScoped()).thenReturn(true);
 
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
+        StopScopeFunction function = new StopScopeFunction(scopeAttachment, audioEmitter);
         boolean available = function.isAvailable();
 
-        assertFalse(available);
+        assertTrue(available);
     }
 
     @Test
-    public void shouldNotCancelIfScopeIsNotBeingUsed() {
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
-        boolean cancelled = function.cancel();
-
-        assertFalse(cancelled);
-    }
-
-    @Test
-    public void shouldReturnWhetherAttachmentHasSuccessfullyCancelled() {
-        when(scopeAttachment.isScoped()).thenReturn(true);
-        when(scopeAttachment.removeEffect()).thenReturn(true);
-
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
-        boolean cancelled = function.cancel();
-
-        assertTrue(cancelled);
-    }
-
-    @Test
-    public void shouldInitiateScopeEffect() {
+    public void shouldRemoveScopeEffectAndPlaySoundsWhenPerformingAction() {
         Location location = new Location(null, 1.0, 1.0, 1.0);
 
         Player player = mock(Player.class);
@@ -65,23 +43,22 @@ public class UseScopeFunctionTest {
         GunHolder holder = mock(GunHolder.class);
         when(holder.getEntity()).thenReturn(player);
 
-        when(scopeAttachment.applyEffect(holder)).thenReturn(true);
+        when(scopeAttachment.isScoped()).thenReturn(true);
+        when(scopeAttachment.removeEffect()).thenReturn(true);
 
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
+        StopScopeFunction function = new StopScopeFunction(scopeAttachment, audioEmitter);
         boolean result = function.perform(holder);
 
         assertTrue(result);
 
-        verify(audioEmitter).playSounds(any(), eq(location));
+        verify(scopeAttachment).removeEffect();
     }
 
     @Test
-    public void shouldNotPerformIfScopeIsAlreadyBeingUsed() {
-        when(scopeAttachment.isScoped()).thenReturn(true);
-
+    public void shouldNotRemoveScopeEffectWhenPerformingActionIfScopeIsNotBeingUsed() {
         GunHolder holder = mock(GunHolder.class);
 
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
+        StopScopeFunction function = new StopScopeFunction(scopeAttachment, audioEmitter);
         boolean result = function.perform(holder);
 
         assertFalse(result);
