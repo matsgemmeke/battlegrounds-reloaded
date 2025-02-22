@@ -46,6 +46,9 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunctionFactory;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -128,6 +131,10 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
                 .build(DefaultPlayerRegistryFactory.class));
+
+        binder.install(new FactoryModuleBuilder()
+                .implement(ReloadSystem.class, MagazineReloadSystem.class)
+                .build(MagazineReloadSystemFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(Trigger.class, EnemyProximityTrigger.class)

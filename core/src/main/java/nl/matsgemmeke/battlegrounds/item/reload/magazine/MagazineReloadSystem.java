@@ -1,54 +1,48 @@
-package nl.matsgemmeke.battlegrounds.item.reload;
+package nl.matsgemmeke.battlegrounds.item.reload.magazine;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadProperties;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MagazineReloadSystem implements ReloadSystem {
 
     @NotNull
-    private AmmunitionHolder ammunitionHolder;
+    private final AmmunitionHolder ammunitionHolder;
     @NotNull
-    private AudioEmitter audioEmitter;
+    private final AudioEmitter audioEmitter;
     @NotNull
-    private Iterable<GameSound> reloadSounds;
-    @NotNull
-    private List<BukkitTask> currentTasks;
-    private long duration;
+    private final List<BukkitTask> currentTasks;
     @Nullable
     private ReloadPerformer currentPerformer;
     @NotNull
-    private TaskRunner taskRunner;
+    private final ReloadProperties properties;
+    @NotNull
+    private final TaskRunner taskRunner;
 
+    @Inject
     public MagazineReloadSystem(
-            @NotNull AmmunitionHolder ammunitionHolder,
-            @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
-            long duration
+            @Assisted @NotNull ReloadProperties properties,
+            @Assisted @NotNull AmmunitionHolder ammunitionHolder,
+            @Assisted @NotNull AudioEmitter audioEmitter
     ) {
         this.ammunitionHolder = ammunitionHolder;
+        this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
-        this.duration = duration;
         this.currentTasks = new ArrayList<>();
-        this.reloadSounds = Collections.emptySet();
-    }
-
-    @NotNull
-    public Iterable<GameSound> getReloadSounds() {
-        return reloadSounds;
-    }
-
-    public void setReloadSounds(@NotNull Iterable<GameSound> reloadSounds) {
-        this.reloadSounds = reloadSounds;
     }
 
     public boolean isPerforming() {
@@ -59,13 +53,11 @@ public class MagazineReloadSystem implements ReloadSystem {
         currentPerformer = performer;
         performer.applyReloadingState();
 
-        for (GameSound sound : reloadSounds) {
-            currentTasks.add(taskRunner.runTaskLater(() -> {
-                audioEmitter.playSound(sound, performer.getAudioPlayLocation());
-            }, sound.getDelay()));
+        for (GameSound sound : properties.reloadSounds()) {
+            currentTasks.add(taskRunner.runTaskLater(() -> audioEmitter.playSound(sound, performer.getAudioPlayLocation()), sound.getDelay()));
         }
 
-        currentTasks.add(taskRunner.runTaskLater(() -> this.finalizeReload(performer), duration));
+        currentTasks.add(taskRunner.runTaskLater(() -> this.finalizeReload(performer), properties.duration()));
         return true;
     }
 
@@ -84,7 +76,7 @@ public class MagazineReloadSystem implements ReloadSystem {
         return true;
     }
 
-    public void finalizeReload(@NotNull ReloadPerformer performer) {
+    private void finalizeReload(@NotNull ReloadPerformer performer) {
         int magazineAmmo = ammunitionHolder.getMagazineAmmo();
         int magazineSize = ammunitionHolder.getMagazineSize();
         int magazineSpace = magazineSize - magazineAmmo;
