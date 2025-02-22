@@ -27,7 +27,7 @@ public class RecoilProducerFactory {
      * @param section the configuration section
      * @return a new producer instance
      */
-    public RecoilProducer make(@NotNull Section section) {
+    public RecoilProducer create(@NotNull Section section) {
         String type = section.getString("type");
         RecoilProducerType recoilProducerType;
 

@@ -154,7 +154,7 @@ public class FirearmFactory implements WeaponFactory {
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("shooting.shot-sound"));
         firearm.setShotSounds(shotSounds);
 
-        FireMode fireMode = fireModeFactory.make(firearm, section.getSection("shooting.fire-mode"));
+        FireMode fireMode = fireModeFactory.create(firearm, section.getSection("shooting.fire-mode"));
         firearm.setFireMode(fireMode);
 
         // Read controls configuration
@@ -169,7 +169,7 @@ public class FirearmFactory implements WeaponFactory {
         Section patternSection = section.getSection("shooting.pattern");
 
         if (patternSection != null) {
-            SpreadPattern spreadPattern = spreadPatternFactory.make(patternSection);
+            SpreadPattern spreadPattern = spreadPatternFactory.create(patternSection);
             firearm.setSpreadPattern(spreadPattern);
         }
 
@@ -177,7 +177,7 @@ public class FirearmFactory implements WeaponFactory {
         Section recoilSection = section.getSection("shooting.recoil");
 
         if (recoilSection != null) {
-            RecoilProducer recoilProducer = recoilProducerFactory.make(recoilSection);
+            RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSection);
             firearm.setRecoilProducer(recoilProducer);
         }
 

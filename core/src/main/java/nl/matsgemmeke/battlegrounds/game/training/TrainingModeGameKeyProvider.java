@@ -69,7 +69,7 @@ public class TrainingModeGameKeyProvider implements Provider<GameKey> {
         // Registry components
         EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(trainingMode.getEquipmentStorage());
         GunRegistry gunRegistry = new DefaultGunRegistry(trainingMode.getGunStorage());
-        PlayerRegistry playerRegistry = playerRegistryFactory.make(trainingMode.getPlayerStorage());
+        PlayerRegistry playerRegistry = playerRegistryFactory.create(trainingMode.getPlayerStorage());
 
         // Info provider components
         DeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);

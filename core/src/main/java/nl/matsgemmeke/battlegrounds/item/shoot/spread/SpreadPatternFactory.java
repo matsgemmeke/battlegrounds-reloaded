@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public class SpreadPatternFactory {
 
     @NotNull
-    public SpreadPattern make(@NotNull Section section) {
+    public SpreadPattern create(@NotNull Section section) {
         String type = section.getString("type");
         SpreadPatternType spreadPatternType;
 

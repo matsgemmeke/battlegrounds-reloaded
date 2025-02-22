@@ -61,7 +61,7 @@ public class TrainingModeGameKeyProviderTest {
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
         when(collisionDetectorProvider.get()).thenReturn(collisionDetector);
 
-        when(playerRegistryFactory.make(any())).thenReturn(playerRegistry);
+        when(playerRegistryFactory.create(any())).thenReturn(playerRegistry);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
         TrainingModeGameKeyProvider provider = new TrainingModeGameKeyProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory, collisionDetectorProvider);

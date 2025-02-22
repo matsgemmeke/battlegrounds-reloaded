@@ -99,7 +99,7 @@ public class FirearmFactoryTest {
         when(rootSection.getSection("shooting.fire-mode")).thenReturn(fireModeSection);
 
         FireMode fireMode = mock(FireMode.class);
-        when(fireModeFactory.make(any(Shootable.class), eq(fireModeSection))).thenReturn(fireMode);
+        when(fireModeFactory.create(any(Shootable.class), eq(fireModeSection))).thenReturn(fireMode);
 
         bukkit = mockStatic(Bukkit.class);
         bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
@@ -172,7 +172,7 @@ public class FirearmFactoryTest {
         assertInstanceOf(DefaultFirearm.class, firearm);
 
         verify(gunRegistry).registerItem(firearm);
-        verify(spreadPatternFactory).make(patternSection);
+        verify(spreadPatternFactory).create(patternSection);
     }
 
     @Test
@@ -188,7 +188,7 @@ public class FirearmFactoryTest {
         assertInstanceOf(DefaultFirearm.class, firearm);
 
         verify(gunRegistry).registerItem(firearm);
-        verify(recoilProducerFactory).make(recoilSection);
+        verify(recoilProducerFactory).create(recoilSection);
     }
 
     @Test

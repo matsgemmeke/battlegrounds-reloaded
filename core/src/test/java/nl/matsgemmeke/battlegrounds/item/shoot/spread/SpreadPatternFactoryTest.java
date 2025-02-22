@@ -16,7 +16,7 @@ public class SpreadPatternFactoryTest {
         when(section.getString("type")).thenReturn("BUCKSHOT");
 
         SpreadPatternFactory factory = new SpreadPatternFactory();
-        SpreadPattern result = factory.make(section);
+        SpreadPattern result = factory.create(section);
 
         assertInstanceOf(BuckshotSpreadPattern.class, result);
     }
@@ -28,6 +28,6 @@ public class SpreadPatternFactoryTest {
 
         SpreadPatternFactory factory = new SpreadPatternFactory();
 
-        assertThrows(IllegalArgumentException.class, () -> factory.make(section));
+        assertThrows(IllegalArgumentException.class, () -> factory.create(section));
     }
 }

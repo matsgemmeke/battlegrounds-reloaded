@@ -29,7 +29,7 @@ public class FireModeFactoryTest {
         when(section.getString("type")).thenReturn("BURST_MODE");
 
         FireModeFactory factory = new FireModeFactory(taskRunner);
-        FireMode fireMode = factory.make(item, section);
+        FireMode fireMode = factory.create(item, section);
 
         assertInstanceOf(BurstMode.class, fireMode);
     }
@@ -39,7 +39,7 @@ public class FireModeFactoryTest {
         when(section.getString("type")).thenReturn("FULLY_AUTOMATIC");
 
         FireModeFactory factory = new FireModeFactory(taskRunner);
-        FireMode fireMode = factory.make(item, section);
+        FireMode fireMode = factory.create(item, section);
 
         assertInstanceOf(FullyAutomaticMode.class, fireMode);
     }
@@ -49,7 +49,7 @@ public class FireModeFactoryTest {
         when(section.getString("type")).thenReturn("SEMI_AUTOMATIC");
 
         FireModeFactory factory = new FireModeFactory(taskRunner);
-        FireMode fireMode = factory.make(item, section);
+        FireMode fireMode = factory.create(item, section);
 
         assertInstanceOf(SemiAutomaticMode.class, fireMode);
     }
@@ -60,6 +60,6 @@ public class FireModeFactoryTest {
 
         FireModeFactory factory = new FireModeFactory(taskRunner);
 
-        assertThrows(WeaponFactoryCreationException.class, () -> factory.make(item, section));
+        assertThrows(WeaponFactoryCreationException.class, () -> factory.create(item, section));
     }
 }

@@ -27,7 +27,7 @@ public class FireModeFactory {
      * @return a new {@link FireMode} instance
      */
     @NotNull
-    public FireMode make(@NotNull Shootable item, @NotNull Section section) {
+    public FireMode create(@NotNull Shootable item, @NotNull Section section) {
         String type = section.getString("type");
         FireModeType fireModeType;
 

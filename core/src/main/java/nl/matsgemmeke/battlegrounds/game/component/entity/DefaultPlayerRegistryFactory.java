@@ -7,5 +7,5 @@ import org.jetbrains.annotations.NotNull;
 public interface DefaultPlayerRegistryFactory {
 
     @NotNull
-    PlayerRegistry make(@NotNull EntityStorage<GamePlayer> playerStorage);
+    PlayerRegistry create(@NotNull EntityStorage<GamePlayer> playerStorage);
 }
