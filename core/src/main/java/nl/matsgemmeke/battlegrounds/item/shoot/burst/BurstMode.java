@@ -1,6 +1,11 @@
-package nl.matsgemmeke.battlegrounds.item.shoot;
+package nl.matsgemmeke.battlegrounds.item.shoot.burst;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.item.shoot.AutomaticFireCycleRunnable;
+import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,17 +14,18 @@ public class BurstMode implements FireMode {
 
     @Nullable
     private BukkitTask currentTask;
+    private int amountOfShots;
     private int rateOfFire;
-    private int shotAmount;
     @NotNull
     private Shootable item;
     @NotNull
     private TaskRunner taskRunner;
 
-    public BurstMode(@NotNull Shootable item, @NotNull TaskRunner taskRunner, int shotAmount, int rateOfFire) {
-        this.item = item;
+    @Inject
+    public BurstMode(@NotNull TaskRunner taskRunner, @Assisted @NotNull Shootable item, @Assisted int amountOfShots, @Assisted int rateOfFire) {
         this.taskRunner = taskRunner;
-        this.shotAmount = shotAmount;
+        this.item = item;
+        this.amountOfShots = amountOfShots;
         this.rateOfFire = rateOfFire;
     }
 
@@ -36,7 +42,7 @@ public class BurstMode implements FireMode {
         long delay = 0;
 
         currentTask = taskRunner.runTaskTimer(
-                new AutomaticFireCycleRunnable(item, shotAmount, this::cancelCycle),
+                new AutomaticFireCycleRunnable(item, amountOfShots, this::cancelCycle),
                 delay,
                 period
         );

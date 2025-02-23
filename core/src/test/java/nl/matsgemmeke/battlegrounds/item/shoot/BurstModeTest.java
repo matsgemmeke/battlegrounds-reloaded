@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstMode;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ public class BurstModeTest {
 
     @Test
     public void activatesWithCorrectDelayAndPeriod() {
-        BurstMode fireMode = new BurstMode(item, taskRunner, shotsAmount, rateOfFire);
+        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
         fireMode.activateCycle();
 
         verify(taskRunner).runTaskTimer(any(BukkitRunnable.class), eq(0L), eq(2L));
@@ -35,7 +36,7 @@ public class BurstModeTest {
 
     @Test
     public void shouldNotCancelIfNotActivated() {
-        BurstMode fireMode = new BurstMode(item, taskRunner, shotsAmount, rateOfFire);
+        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
         boolean cancelled = fireMode.cancelCycle();
 
         assertFalse(cancelled);
@@ -47,7 +48,7 @@ public class BurstModeTest {
 
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
 
-        BurstMode fireMode = new BurstMode(item, taskRunner, shotsAmount, rateOfFire);
+        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
         fireMode.activateCycle();
         boolean cancelled = fireMode.cancelCycle();
 
@@ -58,7 +59,7 @@ public class BurstModeTest {
 
     @Test
     public void shouldNotBeCyclingIfNotActivated() {
-        BurstMode fireMode = new BurstMode(item, taskRunner, shotsAmount, rateOfFire);
+        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
 
         assertFalse(fireMode.isCycling());
     }
@@ -69,7 +70,7 @@ public class BurstModeTest {
 
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
 
-        BurstMode fireMode = new BurstMode(item, taskRunner, shotsAmount, rateOfFire);
+        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
         fireMode.activateCycle();
 
         assertTrue(fireMode.isCycling());

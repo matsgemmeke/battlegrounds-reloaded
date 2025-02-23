@@ -51,6 +51,9 @@ import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstModeFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -102,6 +105,10 @@ public class BattlegroundsModule implements Module {
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class);
 
         // Factory bindings
+        binder.install(new FactoryModuleBuilder()
+                .implement(FireMode.class, BurstMode.class)
+                .build(BurstModeFactory.class));
+
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)
                 .build(DefaultGamePlayerFactory.class));
