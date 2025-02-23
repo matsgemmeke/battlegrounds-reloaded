@@ -2,13 +2,13 @@ package nl.matsgemmeke.battlegrounds.item.reload;
 
 import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -18,12 +18,12 @@ public class ReloadSystemFactory {
     @NotNull
     private final MagazineReloadSystemFactory magazineReloadSystemFactory;
     @NotNull
-    private TaskRunner taskRunner;
+    private final ManualInsertionReloadSystemFactory manualInsertionReloadSystemFactory;
 
     @Inject
-    public ReloadSystemFactory(@NotNull MagazineReloadSystemFactory magazineReloadSystemFactory, @NotNull TaskRunner taskRunner) {
+    public ReloadSystemFactory(@NotNull MagazineReloadSystemFactory magazineReloadSystemFactory, @NotNull ManualInsertionReloadSystemFactory manualInsertionReloadSystemFactory) {
         this.magazineReloadSystemFactory = magazineReloadSystemFactory;
-        this.taskRunner = taskRunner;
+        this.manualInsertionReloadSystemFactory = manualInsertionReloadSystemFactory;
     }
 
     /**
@@ -55,10 +55,7 @@ public class ReloadSystemFactory {
                 return magazineReloadSystemFactory.create(properties, gun, audioEmitter);
             }
             case MANUAL_INSERTION -> {
-                ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(gun, audioEmitter, taskRunner, duration);
-                reloadSystem.setReloadSounds(reloadSounds);
-
-                return reloadSystem;
+                return manualInsertionReloadSystemFactory.create(properties, gun, audioEmitter);
             }
         }
 

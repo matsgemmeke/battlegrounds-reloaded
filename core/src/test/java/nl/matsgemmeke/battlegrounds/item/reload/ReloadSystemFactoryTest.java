@@ -1,12 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -21,16 +22,16 @@ public class ReloadSystemFactoryTest {
     private AudioEmitter audioEmitter;
     private Gun gun;
     private MagazineReloadSystemFactory magazineReloadSystemFactory;
+    private ManualInsertionReloadSystemFactory manualInsertionReloadSystemFactory;
     private Section section;
-    private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         gun = mock(Gun.class);
         magazineReloadSystemFactory = mock(MagazineReloadSystemFactory.class);
+        manualInsertionReloadSystemFactory = mock(ManualInsertionReloadSystemFactory.class);
         section = mock(Section.class);
-        taskRunner = mock(TaskRunner.class);
     }
 
     @Test
@@ -44,7 +45,7 @@ public class ReloadSystemFactoryTest {
         MagazineReloadSystem reloadSystem = mock(MagazineReloadSystem.class);
         when(magazineReloadSystemFactory.create(any(ReloadProperties.class), eq(gun), eq(audioEmitter))).thenReturn(reloadSystem);
 
-        ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, taskRunner);
+        ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
         ReloadSystem result = factory.create(gun, section, audioEmitter);
 
         ArgumentCaptor<ReloadProperties> propertiesCaptor = ArgumentCaptor.forClass(ReloadProperties.class);
@@ -58,20 +59,32 @@ public class ReloadSystemFactoryTest {
 
     @Test
     public void createMakesReloadSystemInstanceForManualReload() {
+        int duration = 50;
+
+        when(section.getInt("duration")).thenReturn(duration);
         when(section.getString("sound")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(section.getString("type")).thenReturn("MANUAL_INSERTION");
 
-        ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, taskRunner);
-        ReloadSystem reloadSystem = factory.create(gun, section, audioEmitter);
+        ManualInsertionReloadSystem reloadSystem = mock(ManualInsertionReloadSystem.class);
+        when(manualInsertionReloadSystemFactory.create(any(ReloadProperties.class), eq(gun), eq(audioEmitter))).thenReturn(reloadSystem);
 
-        assertNotNull(reloadSystem);
+        ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
+        ReloadSystem result = factory.create(gun, section, audioEmitter);
+
+        ArgumentCaptor<ReloadProperties> propertiesCaptor = ArgumentCaptor.forClass(ReloadProperties.class);
+        verify(manualInsertionReloadSystemFactory).create(propertiesCaptor.capture(), eq(gun), eq(audioEmitter));
+
+        ReloadProperties properties = propertiesCaptor.getValue();
+        assertEquals(duration, properties.duration());
+
+        assertInstanceOf(ManualInsertionReloadSystem.class, result);
     }
 
     @Test
     public void throwErrorWhenUnknownFireModeType() {
         when(section.getString("type")).thenReturn("error");
 
-        ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, taskRunner);
+        ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
 
         assertThrows(WeaponFactoryCreationException.class, () -> factory.create(gun, section, audioEmitter));
     }

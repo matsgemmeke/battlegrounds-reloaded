@@ -1,53 +1,48 @@
-package nl.matsgemmeke.battlegrounds.item.reload;
+package nl.matsgemmeke.battlegrounds.item.reload.manual;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadProperties;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class ManualInsertionReloadSystem implements ReloadSystem {
 
     @NotNull
-    private AmmunitionHolder ammunitionHolder;
+    private final AmmunitionHolder ammunitionHolder;
     @NotNull
-    private AudioEmitter audioEmitter;
+    private final AudioEmitter audioEmitter;
     @NotNull
-    private Iterable<GameSound> reloadSounds;
-    @NotNull
-    private List<BukkitTask> soundPlayTasks;
-    private long duration;
+    private final List<BukkitTask> tasks;
     @Nullable
     private ReloadPerformer currentPerformer;
     @NotNull
-    private TaskRunner taskRunner;
+    private final ReloadProperties properties;
+    @NotNull
+    private final TaskRunner taskRunner;
 
+    @Inject
     public ManualInsertionReloadSystem(
-            @NotNull AmmunitionHolder ammunitionHolder,
-            @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
-            long duration) {
+            @Assisted @NotNull ReloadProperties properties,
+            @Assisted @NotNull AmmunitionHolder ammunitionHolder,
+            @Assisted @NotNull AudioEmitter audioEmitter
+    ) {
+        this.taskRunner = taskRunner;
+        this.properties = properties;
         this.ammunitionHolder = ammunitionHolder;
         this.audioEmitter = audioEmitter;
-        this.taskRunner = taskRunner;
-        this.duration = duration;
-        this.soundPlayTasks = new ArrayList<>();
-        this.reloadSounds = new HashSet<>();
-    }
-
-    @NotNull
-    public Iterable<GameSound> getReloadSounds() {
-        return reloadSounds;
-    }
-
-    public void setReloadSounds(@NotNull Iterable<GameSound> reloadSounds) {
-        this.reloadSounds = reloadSounds;
+        this.tasks = new ArrayList<>();
     }
 
     public boolean isPerforming() {
@@ -58,13 +53,11 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
         currentPerformer = performer;
         performer.applyReloadingState();
 
-        for (GameSound sound : reloadSounds) {
-            soundPlayTasks.add(taskRunner.runTaskTimer(() -> {
-                audioEmitter.playSound(sound, performer.getAudioPlayLocation());
-            }, sound.getDelay(), duration));
+        for (GameSound sound : properties.reloadSounds()) {
+            tasks.add(taskRunner.runTaskTimer(() -> audioEmitter.playSound(sound, performer.getAudioPlayLocation()), sound.getDelay(), properties.duration()));
         }
 
-        soundPlayTasks.add(taskRunner.runTaskTimer(this::addAmmunition, duration, duration));
+        tasks.add(taskRunner.runTaskTimer(this::addSingleAmmunition, properties.duration(), properties.duration()));
         return true;
     }
 
@@ -73,17 +66,17 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
             return false;
         }
 
-        for (BukkitTask task : soundPlayTasks) {
+        for (BukkitTask task : tasks) {
             task.cancel();
         }
 
         currentPerformer.resetReloadingState();
         currentPerformer = null;
-        soundPlayTasks.clear();
+        tasks.clear();
         return true;
     }
 
-    public void addAmmunition() {
+    public void addSingleAmmunition() {
         ammunitionHolder.setMagazineAmmo(ammunitionHolder.getMagazineAmmo() + 1);
         ammunitionHolder.setReserveAmmo(ammunitionHolder.getReserveAmmo() - 1);
         ammunitionHolder.updateAmmoDisplay();
