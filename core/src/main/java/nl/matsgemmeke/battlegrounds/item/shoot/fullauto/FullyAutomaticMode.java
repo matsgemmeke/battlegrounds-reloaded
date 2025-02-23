@@ -22,8 +22,8 @@ public class FullyAutomaticMode implements FireMode {
 
     @Inject
     public FullyAutomaticMode(@NotNull TaskRunner taskRunner, @Assisted @NotNull Shootable item, @Assisted int rateOfFire) {
-        this.item = item;
         this.taskRunner = taskRunner;
+        this.item = item;
         this.rateOfFire = rateOfFire;
     }
 

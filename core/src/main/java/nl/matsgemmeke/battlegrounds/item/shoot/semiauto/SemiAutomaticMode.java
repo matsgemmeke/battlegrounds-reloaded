@@ -1,6 +1,10 @@
-package nl.matsgemmeke.battlegrounds.item.shoot;
+package nl.matsgemmeke.battlegrounds.item.shoot.semiauto;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import org.jetbrains.annotations.NotNull;
 
 public class SemiAutomaticMode implements FireMode {
@@ -8,15 +12,16 @@ public class SemiAutomaticMode implements FireMode {
     private static final int TICKS_PER_MINUTE = 1200;
 
     private boolean delaying;
-    private long delayBetweenShots;
+    private final long delayBetweenShots;
     @NotNull
-    private Shootable item;
+    private final Shootable item;
     @NotNull
-    private TaskRunner taskRunner;
+    private final TaskRunner taskRunner;
 
-    public SemiAutomaticMode(@NotNull Shootable item, @NotNull TaskRunner taskRunner, long delayBetweenShots) {
-        this.item = item;
+    @Inject
+    public SemiAutomaticMode(@NotNull TaskRunner taskRunner, @Assisted @NotNull Shootable item, @Assisted long delayBetweenShots) {
         this.taskRunner = taskRunner;
+        this.item = item;
         this.delayBetweenShots = delayBetweenShots;
         this.delaying = false;
     }

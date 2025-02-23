@@ -1,6 +1,7 @@
-package nl.matsgemmeke.battlegrounds.item.shoot;
+package nl.matsgemmeke.battlegrounds.item.shoot.semiauto;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class SemiAutomaticModeTest {
 
     @Test
     public void shouldShootItemOnceWhenActivated() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(item, taskRunner, DELAY_BETWEEN_SHOTS);
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
         boolean activated = fireMode.activateCycle();
 
         verify(item).shoot();
@@ -40,7 +41,7 @@ public class SemiAutomaticModeTest {
 
     @Test
     public void doNothingIfItemIsCoolingDown() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(item, taskRunner, DELAY_BETWEEN_SHOTS);
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
         fireMode.activateCycle();
         boolean activated = fireMode.activateCycle();
 
@@ -52,7 +53,7 @@ public class SemiAutomaticModeTest {
 
     @Test
     public void shouldNotCancelIfNotActivated() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(item, taskRunner, DELAY_BETWEEN_SHOTS);
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
         boolean cancelled = fireMode.cancelCycle();
 
         assertFalse(cancelled);
@@ -60,7 +61,7 @@ public class SemiAutomaticModeTest {
 
     @Test
     public void shouldResetDelayWhenCancelling() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(item, taskRunner, DELAY_BETWEEN_SHOTS);
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
         fireMode.activateCycle();
         boolean cancelled = fireMode.cancelCycle();
         fireMode.activateCycle();
@@ -84,7 +85,7 @@ public class SemiAutomaticModeTest {
     @ParameterizedTest
     @MethodSource("rateOfFireExpectations")
     public void getRateOfFireShouldReturnPossibleAmountOfShotsWithDelay(long delay, int expectedRateOfFire) {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(item, taskRunner, delay);
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, delay);
         int rateOfFire = fireMode.getRateOfFire();
 
         assertEquals(expectedRateOfFire, rateOfFire);
@@ -92,14 +93,14 @@ public class SemiAutomaticModeTest {
 
     @Test
     public void shouldNeverBeCycling() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(item, taskRunner, DELAY_BETWEEN_SHOTS);
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
 
         assertFalse(fireMode.isCycling());
     }
 
     @Test
     public void shouldNotBeCyclingAfterActivation() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(item, taskRunner, DELAY_BETWEEN_SHOTS);
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
         fireMode.activateCycle();
 
         assertFalse(fireMode.isCycling());

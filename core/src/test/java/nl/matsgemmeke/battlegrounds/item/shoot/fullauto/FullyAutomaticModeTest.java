@@ -1,7 +1,8 @@
-package nl.matsgemmeke.battlegrounds.item.shoot;
+package nl.matsgemmeke.battlegrounds.item.shoot.fullauto;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.AutomaticFireCycleRunnable;
+import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;

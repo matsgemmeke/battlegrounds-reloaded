@@ -56,6 +56,8 @@ import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -113,6 +115,9 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(FireMode.class, FullyAutomaticMode.class)
                 .build(FullyAutomaticModeFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(FireMode.class, SemiAutomaticMode.class)
+                .build(SemiAutomaticModeFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)
