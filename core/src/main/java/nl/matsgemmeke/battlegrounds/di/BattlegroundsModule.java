@@ -1,9 +1,11 @@
-package nl.matsgemmeke.battlegrounds;
+package nl.matsgemmeke.battlegrounds.di;
 
 import com.google.inject.*;
 import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
+import nl.matsgemmeke.battlegrounds.InternalsProvider;
+import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
@@ -40,6 +42,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
@@ -142,13 +145,13 @@ public class BattlegroundsModule implements Module {
                 .build(DelayedActivationFactory.class));
 
         binder.install(new FactoryModuleBuilder()
-                .implement(ItemFunction.class, ActivateFunction.class)
+                .implement(TypeLiterals.EQUIPMENT_FUNCTION, ActivateFunction.class)
                 .build(ActivateFunctionFactory.class));
         binder.install(new FactoryModuleBuilder()
-                .implement(ItemFunction.class, PlaceFunction.class)
+                .implement(TypeLiterals.EQUIPMENT_FUNCTION, PlaceFunction.class)
                 .build(PlaceFunctionFactory.class));
         binder.install(new FactoryModuleBuilder()
-                .implement(ItemFunction.class, ThrowFunction.class)
+                .implement(TypeLiterals.EQUIPMENT_FUNCTION, ThrowFunction.class)
                 .build(ThrowFunctionFactory.class));
 
         binder.install(new FactoryModuleBuilder()

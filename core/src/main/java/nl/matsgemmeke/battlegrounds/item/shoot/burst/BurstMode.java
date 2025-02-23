@@ -22,7 +22,12 @@ public class BurstMode implements FireMode {
     private final TaskRunner taskRunner;
 
     @Inject
-    public BurstMode(@NotNull TaskRunner taskRunner, @Assisted @NotNull Shootable item, @Assisted int amountOfShots, @Assisted int rateOfFire) {
+    public BurstMode(
+            @NotNull TaskRunner taskRunner,
+            @Assisted @NotNull Shootable item,
+            @Assisted("AmountOfShots") int amountOfShots,
+            @Assisted("RateOfFire") int rateOfFire
+    ) {
         this.taskRunner = taskRunner;
         this.item = item;
         this.amountOfShots = amountOfShots;

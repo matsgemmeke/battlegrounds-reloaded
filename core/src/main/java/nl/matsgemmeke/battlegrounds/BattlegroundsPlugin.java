@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdCondition
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentWeaponIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.TrainingModePresenceCondition;
+import nl.matsgemmeke.battlegrounds.di.BattlegroundsModule;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
