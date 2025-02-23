@@ -59,6 +59,8 @@ import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactor
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
+import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -92,6 +94,8 @@ public class BattlegroundsModule implements Module {
         // Singleton bindings
         binder.bind(EventDispatcher.class).in(Singleton.class);
         binder.bind(GameContextProvider.class).in(Singleton.class);
+        binder.bind(MetadataValueEditor.class).in(Singleton.class);
+        binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
         binder.bind(TaskRunner.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
 
