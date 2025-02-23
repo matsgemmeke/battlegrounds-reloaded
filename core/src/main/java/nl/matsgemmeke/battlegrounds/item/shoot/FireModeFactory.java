@@ -5,6 +5,7 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
 import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,11 +16,14 @@ public class FireModeFactory {
     @NotNull
     private final BurstModeFactory burstModeFactory;
     @NotNull
+    private final FullyAutomaticModeFactory fullyAutomaticModeFactory;
+    @NotNull
     private TaskRunner taskRunner;
 
     @Inject
-    public FireModeFactory(@NotNull BurstModeFactory burstModeFactory, @NotNull TaskRunner taskRunner) {
+    public FireModeFactory(@NotNull BurstModeFactory burstModeFactory, @NotNull FullyAutomaticModeFactory fullyAutomaticModeFactory, @NotNull TaskRunner taskRunner) {
         this.burstModeFactory = burstModeFactory;
+        this.fullyAutomaticModeFactory = fullyAutomaticModeFactory;
         this.taskRunner = taskRunner;
     }
 
@@ -50,7 +54,7 @@ public class FireModeFactory {
                 return burstModeFactory.create(item, amountOfShots, rateOfFire);
             }
             case FULLY_AUTOMATIC -> {
-                return new FullyAutomaticMode(item, taskRunner, rateOfFire);
+                return fullyAutomaticModeFactory.create(item, rateOfFire);
             }
             case SEMI_AUTOMATIC -> {
                 long delayBetweenShots = section.getLong("delay-between-shots");

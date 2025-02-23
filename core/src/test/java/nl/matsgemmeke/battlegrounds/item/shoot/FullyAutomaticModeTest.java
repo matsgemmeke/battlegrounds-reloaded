@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticMode;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,7 @@ public class FullyAutomaticModeTest {
     public void activatesWithCorrectDelayAndPeriod() {
         int rateOfFire = 1200;
 
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(item, taskRunner, rateOfFire);
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
         fireMode.activateCycle();
 
         verify(taskRunner).runTaskTimer(any(AutomaticFireCycleRunnable.class), eq(0L), eq(1L));
@@ -35,7 +36,7 @@ public class FullyAutomaticModeTest {
     public void shouldNotCancelIfNotActivated() {
         int rateOfFire = 600;
 
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(item, taskRunner, rateOfFire);
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
         boolean cancelled = fireMode.cancelCycle();
 
         assertFalse(cancelled);
@@ -49,7 +50,7 @@ public class FullyAutomaticModeTest {
 
         int rateOfFire = 600;
 
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(item, taskRunner, rateOfFire);
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
         fireMode.activateCycle();
         boolean cancelled = fireMode.cancelCycle();
 
@@ -62,7 +63,7 @@ public class FullyAutomaticModeTest {
     public void shouldNotBeCyclingIfNotActivated() {
         int rateOfFire = 600;
 
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(item, taskRunner, rateOfFire);
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
 
         assertFalse(fireMode.isCycling());
     }
@@ -75,7 +76,7 @@ public class FullyAutomaticModeTest {
 
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
 
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(item, taskRunner, rateOfFire);
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
         fireMode.activateCycle();
 
         assertTrue(fireMode.isCycling());

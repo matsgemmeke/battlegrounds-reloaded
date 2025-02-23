@@ -14,12 +14,12 @@ public class BurstMode implements FireMode {
 
     @Nullable
     private BukkitTask currentTask;
-    private int amountOfShots;
-    private int rateOfFire;
+    private final int amountOfShots;
+    private final int rateOfFire;
     @NotNull
-    private Shootable item;
+    private final Shootable item;
     @NotNull
-    private TaskRunner taskRunner;
+    private final TaskRunner taskRunner;
 
     @Inject
     public BurstMode(@NotNull TaskRunner taskRunner, @Assisted @NotNull Shootable item, @Assisted int amountOfShots, @Assisted int rateOfFire) {

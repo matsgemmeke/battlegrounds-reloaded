@@ -1,6 +1,11 @@
-package nl.matsgemmeke.battlegrounds.item.shoot;
+package nl.matsgemmeke.battlegrounds.item.shoot.fullauto;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.item.shoot.AutomaticFireCycleRunnable;
+import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,13 +14,14 @@ public class FullyAutomaticMode implements FireMode {
 
     @Nullable
     private BukkitTask currentTask;
-    private int rateOfFire;
+    private final int rateOfFire;
     @NotNull
-    private Shootable item;
+    private final Shootable item;
     @NotNull
-    private TaskRunner taskRunner;
+    private final TaskRunner taskRunner;
 
-    public FullyAutomaticMode(@NotNull Shootable item, @NotNull TaskRunner taskRunner, int rateOfFire) {
+    @Inject
+    public FullyAutomaticMode(@NotNull TaskRunner taskRunner, @Assisted @NotNull Shootable item, @Assisted int rateOfFire) {
         this.item = item;
         this.taskRunner = taskRunner;
         this.rateOfFire = rateOfFire;

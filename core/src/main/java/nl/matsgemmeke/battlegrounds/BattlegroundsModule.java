@@ -54,6 +54,8 @@ import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSyst
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -62,10 +64,10 @@ import java.io.File;
 
 public class BattlegroundsModule implements Module {
 
-    private File dataFolder;
-    private InternalsProvider internals;
-    private Plugin plugin;
-    private PluginManager pluginManager;
+    private final File dataFolder;
+    private final InternalsProvider internals;
+    private final Plugin plugin;
+    private final PluginManager pluginManager;
 
     public BattlegroundsModule(
             File dataFolder,
@@ -108,6 +110,9 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(FireMode.class, BurstMode.class)
                 .build(BurstModeFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(FireMode.class, FullyAutomaticMode.class)
+                .build(FullyAutomaticModeFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)
