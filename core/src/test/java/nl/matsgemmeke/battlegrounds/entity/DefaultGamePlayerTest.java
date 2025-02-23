@@ -36,14 +36,14 @@ public class DefaultGamePlayerTest {
 
     @Test
     public void canGetPlayerEntity() {
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
 
         assertEquals(player, gamePlayer.getEntity());
     }
 
     @Test
     public void getLastDamageReturnsNullIfPlayerHasNotTakenDamageYet() {
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         Damage lastDamage = gamePlayer.getLastDamage();
 
         assertNull(lastDamage);
@@ -56,7 +56,7 @@ public class DefaultGamePlayerTest {
         when(player.getHealth()).thenReturn(20.0);
         when(player.isDead()).thenReturn(false);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         gamePlayer.damage(damage);
         Damage lastDamage = gamePlayer.getLastDamage();
 
@@ -67,7 +67,7 @@ public class DefaultGamePlayerTest {
     public void shouldNotReceiveRecoilWhenPlayerIsNotOnline() {
         when(player.isOnline()).thenReturn(false);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
 
         assertFalse(gamePlayer.canReceiveRecoil());
     }
@@ -77,7 +77,7 @@ public class DefaultGamePlayerTest {
         when(player.isOnline()).thenReturn(true);
         when(player.isDead()).thenReturn(true);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
 
         assertFalse(gamePlayer.canReceiveRecoil());
     }
@@ -87,7 +87,7 @@ public class DefaultGamePlayerTest {
         when(player.isOnline()).thenReturn(true);
         when(player.isDead()).thenReturn(false);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
 
         assertTrue(gamePlayer.canReceiveRecoil());
     }
@@ -99,7 +99,7 @@ public class DefaultGamePlayerTest {
 
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         double damageDealt = gamePlayer.damage(damage);
 
         assertEquals(0.0, damageDealt);
@@ -114,7 +114,7 @@ public class DefaultGamePlayerTest {
 
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         double damageDealt = gamePlayer.damage(damage);
 
         assertEquals(0.0, damageDealt);
@@ -143,7 +143,7 @@ public class DefaultGamePlayerTest {
 
         Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         double damageDealt = gamePlayer.damage(damage);
 
         assertEquals(expectedDamageDealt, damageDealt);
@@ -159,7 +159,7 @@ public class DefaultGamePlayerTest {
         when(inventory.getItemInMainHand()).thenReturn(itemStack);
         when(player.getInventory()).thenReturn(inventory);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         ItemStack heldItem = gamePlayer.getHeldItem();
 
         assertEquals(itemStack, heldItem);
@@ -172,7 +172,7 @@ public class DefaultGamePlayerTest {
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(inventory);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         gamePlayer.setHeldItem(itemStack);
 
         verify(inventory).setItemInMainHand(itemStack);
@@ -185,7 +185,7 @@ public class DefaultGamePlayerTest {
 
         when(player.getLastTwoTargetBlocks(null, maxDistance)).thenReturn(targetBlocks);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         List<Block> result = gamePlayer.getLastTwoTargetBlocks(maxDistance);
 
         assertEquals(targetBlocks, result);
@@ -193,7 +193,7 @@ public class DefaultGamePlayerTest {
 
     @Test
     public void shootsNormallyWhenStandingStill() {
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         double accuracy = gamePlayer.getRelativeAccuracy();
 
         assertEquals(1.0, accuracy, 0.0);
@@ -203,7 +203,7 @@ public class DefaultGamePlayerTest {
     public void shootsMoreAccuratelyWhenSneaking() {
         when(player.isSneaking()).thenReturn(true);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         double accuracy = gamePlayer.getRelativeAccuracy();
 
         assertTrue(accuracy > 1.0);
@@ -213,7 +213,7 @@ public class DefaultGamePlayerTest {
     public void shootsLessAccuratelyWhenSprinting() {
         when(player.isSprinting()).thenReturn(true);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         double accuracy = gamePlayer.getRelativeAccuracy();
 
         assertTrue(accuracy < 1.0);
@@ -221,7 +221,7 @@ public class DefaultGamePlayerTest {
 
     @Test
     public void applyingOperatingStateSetsFoodLevel() {
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         gamePlayer.applyReloadingState();
 
         verify(player).setFoodLevel(6);
@@ -231,7 +231,7 @@ public class DefaultGamePlayerTest {
     public void resettingOperatingStateSetsFoodLevel() {
         when(player.getFoodLevel()).thenReturn(10);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         gamePlayer.applyReloadingState();
         gamePlayer.resetReloadingState();
 
@@ -242,7 +242,7 @@ public class DefaultGamePlayerTest {
     public void shouldCallInternalFunctionWhenApplyingViewMagnification() {
         float magnification = -0.1f;
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         gamePlayer.applyViewMagnification(magnification);
 
         verify(internals).setWalkSpeed(player, magnification);
@@ -250,7 +250,7 @@ public class DefaultGamePlayerTest {
 
     @Test
     public void shouldCallInternalFunctionWhenModifyingCameraRotation() {
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         gamePlayer.modifyCameraRotation(1.0f, 1.0f);
 
         verify(internals).setPlayerRotation(player, 1.0f, 1.0f);
@@ -263,7 +263,7 @@ public class DefaultGamePlayerTest {
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(inventory);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         gamePlayer.removeItem(itemStack);
 
         verify(inventory).removeItem(itemStack);
@@ -275,7 +275,7 @@ public class DefaultGamePlayerTest {
 
         when(player.getLocation()).thenReturn(location);
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         Location result = gamePlayer.getAudioPlayLocation();
 
         assertEquals(location, result);
@@ -287,7 +287,7 @@ public class DefaultGamePlayerTest {
 
         when(player.getEyeLocation()).thenReturn(eyeLocation.clone());
 
-        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(player, internals);
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
         Location result = gamePlayer.getShootingDirection();
 
         assertNotEquals(eyeLocation, result);

@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 public abstract class CommandSource {
 
     @NotNull
-    private String description;
+    private final String description;
     @NotNull
-    private String name;
+    private final String name;
     @NotNull
-    private String usage;
+    private final String usage;
 
     public CommandSource(@NotNull String name, @NotNull String description, @NotNull String usage) {
         this.name = name;

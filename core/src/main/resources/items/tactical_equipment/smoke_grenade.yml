@@ -12,7 +12,7 @@ effect:
   activation:
     delay-until-activation: 60
     type: DELAYED
-  density: 5
+  density: 5.0
   duration: 400
   growth-increase: 0.025
   growth-period: 1

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.damage;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
@@ -18,14 +18,13 @@ public interface DamageProcessor {
     void addDamageCheck(@NotNull DamageCheck damageCheck);
 
     /**
-     * Determines whether damage is allowed between entities from different {@link GameContext} instances. This method
-     * checks if the current {@link GameContext} can inflict or receive damage from another specified
-     * {@link GameContext}.
+     * Determines whether damage is allowed between entities from different game instances. This method checks if the
+     * instance's corresponding game can inflict or receive damage from another specified game.
      *
-     * @param otherContext the context instance to check against the current context
-     * @return {@code true} if damage is allowed from or to the context given context, {@code false} otherwise
+     * @param gameKey the game key to check with the corresponding game
+     * @return {@code true} if damage is allowed from or to the given game, {@code false} otherwise
      */
-    boolean isDamageAllowed(@Nullable GameContext otherContext);
+    boolean isDamageAllowed(@Nullable GameKey gameKey);
 
     /**
      * Process the damage produced in an event where an entity directly damages another entity.

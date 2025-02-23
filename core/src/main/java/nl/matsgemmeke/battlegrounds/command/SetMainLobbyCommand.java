@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.configuration.GeneralDataConfiguration;
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.Location;
@@ -10,13 +11,14 @@ import org.jetbrains.annotations.NotNull;
 public class SetMainLobbyCommand extends CommandSource {
 
     @NotNull
-    private GeneralDataConfiguration generalData;
+    private final DataConfiguration dataConfiguration;
     @NotNull
-    private Translator translator;
+    private final Translator translator;
 
-    public SetMainLobbyCommand(@NotNull GeneralDataConfiguration generalData, @NotNull Translator translator) {
+    @Inject
+    public SetMainLobbyCommand(@NotNull DataConfiguration dataConfiguration, @NotNull Translator translator) {
         super("setmainlobby", translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()).getText(), "bg setmainlobby");
-        this.generalData = generalData;
+        this.dataConfiguration = dataConfiguration;
         this.translator = translator;
     }
 
@@ -24,8 +26,8 @@ public class SetMainLobbyCommand extends CommandSource {
         // Get the center location of the block the player is standing on
         Location location = player.getLocation().getBlock().getLocation().add(0.5, 0, 0.5);
 
-        generalData.setMainLobbyLocation(location);
-        generalData.save();
+        dataConfiguration.setMainLobbyLocation(location);
+        dataConfiguration.save();
 
         player.sendMessage(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath()).getText());
     }

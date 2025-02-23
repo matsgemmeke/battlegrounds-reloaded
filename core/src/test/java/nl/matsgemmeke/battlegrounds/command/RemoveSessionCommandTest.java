@@ -1,8 +1,7 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -15,7 +14,6 @@ import static org.mockito.Mockito.*;
 public class RemoveSessionCommandTest {
 
     private CommandSender sender;
-    private GameContext sessionContext;
     private GameContextProvider contextProvider;
     private TaskRunner taskRunner;
     private Translator translator;
@@ -23,7 +21,6 @@ public class RemoveSessionCommandTest {
     @BeforeEach
     public void setUp() {
         this.sender = mock(CommandSender.class);
-        this.sessionContext = mock(GameContext.class);
         this.contextProvider = mock(GameContextProvider.class);
         this.taskRunner = mock(TaskRunner.class);
         this.translator = mock(Translator.class);
@@ -32,7 +29,7 @@ public class RemoveSessionCommandTest {
     }
 
     @Test
-    public void shouldAddSenderToConfirmListUponFirstExecutingCommand() {
+    public void executeAddsSenderToConfirmListUponFirstExecutingCommand() {
         int gameId = 1;
         String confirmMessage = "confirm removal";
 
@@ -46,12 +43,11 @@ public class RemoveSessionCommandTest {
     }
 
     @Test
-    public void shouldBeAbleToRemoveSession() {
+    public void executeRemovesSession() {
         int sessionId = 1;
         String message = "hello";
 
-        when(contextProvider.getSessionContext(sessionId)).thenReturn(sessionContext);
-        when(contextProvider.removeSessionContext(sessionId)).thenReturn(true);
+        when(contextProvider.removeSession(sessionId)).thenReturn(true);
         when(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.SESSION_REMOVED.getPath())).thenReturn(new TextTemplate(message));
 
@@ -63,12 +59,11 @@ public class RemoveSessionCommandTest {
     }
 
     @Test
-    public void shouldNotifySenderWhenFailingToCreateSession() {
+    public void executeNotifiesSenderWhenFailingToCreateSession() {
         int sessionId = 1;
         String message = "hello";
 
-        when(contextProvider.getSessionContext(sessionId)).thenReturn(sessionContext);
-        when(contextProvider.removeSessionContext(sessionId)).thenReturn(false);
+        when(contextProvider.removeSession(sessionId)).thenReturn(false);
         when(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(message));
 

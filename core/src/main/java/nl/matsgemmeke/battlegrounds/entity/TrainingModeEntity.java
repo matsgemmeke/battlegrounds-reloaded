@@ -13,7 +13,7 @@ public class TrainingModeEntity implements GameEntity {
     @Nullable
     private Damage lastDamage;
     @NotNull
-    private LivingEntity entity;
+    private final LivingEntity entity;
 
     public TrainingModeEntity(@NotNull LivingEntity entity) {
         this.entity = entity;

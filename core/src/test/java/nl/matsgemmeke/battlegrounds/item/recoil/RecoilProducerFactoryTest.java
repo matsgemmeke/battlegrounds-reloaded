@@ -29,7 +29,7 @@ public class RecoilProducerFactoryTest {
         when(section.getString("type")).thenReturn("RANDOM_SPREAD");
 
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
-        RecoilProducer recoilProducer = factory.make(section);
+        RecoilProducer recoilProducer = factory.create(section);
 
         assertInstanceOf(RandomSpreadRecoil.class, recoilProducer);
     }
@@ -42,7 +42,7 @@ public class RecoilProducerFactoryTest {
         when(section.getString("type")).thenReturn("CAMERA_MOVEMENT");
 
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
-        RecoilProducer recoilProducer = factory.make(section);
+        RecoilProducer recoilProducer = factory.create(section);
 
         assertInstanceOf(CameraMovementRecoil.class, recoilProducer);
     }
@@ -54,6 +54,6 @@ public class RecoilProducerFactoryTest {
 
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
 
-        assertThrows(WeaponFactoryCreationException.class, () -> factory.make(section));
+        assertThrows(WeaponFactoryCreationException.class, () -> factory.create(section));
     }
 }

@@ -1,23 +1,22 @@
 package nl.matsgemmeke.battlegrounds.game.session;
 
-import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.BaseGame;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a session which groups multiple players to play various kinds of game modes.
  */
-public interface Session extends Game {
+public class Session extends BaseGame {
 
-    /**
-     * Gets the configuration for the session.
-     *
-     * @return the session configuration
-     */
-    SessionConfiguration getConfiguration();
+    @NotNull
+    private SessionConfiguration configuration;
 
-    /**
-     * Gets the identifier of the session.
-     *
-     * @return the session identifier
-     */
-    int getId();
+    public Session(@NotNull SessionConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    @NotNull
+    public SessionConfiguration getConfiguration() {
+        return configuration;
+    }
 }

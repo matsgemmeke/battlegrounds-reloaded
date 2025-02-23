@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.text;
 
-import nl.matsgemmeke.battlegrounds.configuration.LanguageConfiguration;
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,28 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class Translator {
 
     @NotNull
-    private LanguageConfiguration languageConfiguration;
+    private final LanguageConfiguration languageConfiguration;
 
+    @Inject
     public Translator(@NotNull LanguageConfiguration languageConfiguration) {
-        this.languageConfiguration = languageConfiguration;
-    }
-
-    /**
-     * Gets the current language configuration of the translator.
-     *
-     * @return the translator's language configuration
-     */
-    @NotNull
-    public LanguageConfiguration getLanguageConfiguration() {
-        return languageConfiguration;
-    }
-
-    /**
-     * Sets the current language configuration of the translator.
-     *
-     * @param languageConfiguration the translator's language configuration
-     */
-    public void setLanguageConfiguration(@NotNull LanguageConfiguration languageConfiguration) {
         this.languageConfiguration = languageConfiguration;
     }
 

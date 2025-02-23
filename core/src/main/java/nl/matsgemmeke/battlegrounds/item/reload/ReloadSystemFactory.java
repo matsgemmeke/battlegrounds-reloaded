@@ -1,12 +1,14 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
+import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -14,10 +16,14 @@ import java.util.List;
 public class ReloadSystemFactory {
 
     @NotNull
-    private TaskRunner taskRunner;
+    private final MagazineReloadSystemFactory magazineReloadSystemFactory;
+    @NotNull
+    private final ManualInsertionReloadSystemFactory manualInsertionReloadSystemFactory;
 
-    public ReloadSystemFactory(@NotNull TaskRunner taskRunner) {
-        this.taskRunner = taskRunner;
+    @Inject
+    public ReloadSystemFactory(@NotNull MagazineReloadSystemFactory magazineReloadSystemFactory, @NotNull ManualInsertionReloadSystemFactory manualInsertionReloadSystemFactory) {
+        this.magazineReloadSystemFactory = magazineReloadSystemFactory;
+        this.manualInsertionReloadSystemFactory = manualInsertionReloadSystemFactory;
     }
 
     /**
@@ -29,7 +35,7 @@ public class ReloadSystemFactory {
      * @return a new {@link ReloadSystem} instance
      */
     @NotNull
-    public ReloadSystem make(@NotNull Gun gun, @NotNull Section section, @NotNull AudioEmitter audioEmitter) {
+    public ReloadSystem create(@NotNull Gun gun, @NotNull Section section, @NotNull AudioEmitter audioEmitter) {
         String type = section.getString("type");
         ReloadSystemType reloadSystemType;
 
@@ -40,21 +46,16 @@ public class ReloadSystemFactory {
         }
 
         List<GameSound> reloadSounds = DefaultGameSound.parseSounds(section.getString("sound"));
-
         int duration = section.getInt("duration");
+
+        ReloadProperties properties = new ReloadProperties(reloadSounds, duration);
 
         switch (reloadSystemType) {
             case MAGAZINE -> {
-                MagazineReloadSystem reloadSystem = new MagazineReloadSystem(gun, audioEmitter, taskRunner, duration);
-                reloadSystem.setReloadSounds(reloadSounds);
-
-                return reloadSystem;
+                return magazineReloadSystemFactory.create(properties, gun, audioEmitter);
             }
             case MANUAL_INSERTION -> {
-                ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(gun, audioEmitter, taskRunner, duration);
-                reloadSystem.setReloadSounds(reloadSounds);
-
-                return reloadSystem;
+                return manualInsertionReloadSystemFactory.create(properties, gun, audioEmitter);
             }
         }
 

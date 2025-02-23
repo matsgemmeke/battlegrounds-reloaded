@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
@@ -20,26 +22,27 @@ public class SmokeScreenEffect extends BaseItemEffect {
     private static final long RUNNABLE_DELAY = 0L;
 
     @NotNull
-    private AudioEmitter audioEmitter;
+    private final AudioEmitter audioEmitter;
     private BukkitTask task;
     @NotNull
-    private CollisionDetector collisionDetector;
+    private final CollisionDetector collisionDetector;
     private double currentRadius;
     private int currentDuration;
     private Location currentLocation;
     @NotNull
-    private Random random;
+    private final Random random;
     @NotNull
-    private SmokeScreenProperties properties;
+    private final SmokeScreenProperties properties;
     @NotNull
-    private TaskRunner taskRunner;
+    private final TaskRunner taskRunner;
 
+    @Inject
     public SmokeScreenEffect(
-            @NotNull ItemEffectActivation effectActivation,
-            @NotNull SmokeScreenProperties properties,
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull CollisionDetector collisionDetector,
-            @NotNull TaskRunner taskRunner
+            @NotNull TaskRunner taskRunner,
+            @Assisted @NotNull ItemEffectActivation effectActivation,
+            @Assisted @NotNull SmokeScreenProperties properties,
+            @Assisted @NotNull AudioEmitter audioEmitter,
+            @Assisted @NotNull CollisionDetector collisionDetector
     ) {
         super(effectActivation);
         this.properties = properties;

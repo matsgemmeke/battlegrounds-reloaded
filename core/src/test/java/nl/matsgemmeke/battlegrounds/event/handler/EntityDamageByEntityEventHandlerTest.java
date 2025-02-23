@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,10 +41,10 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Test
     public void shouldNotProcessEventIfEntityAndDamagerAreNotInGames() {
-        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, EntityDamageEvent.DamageCause.CUSTOM, damage);
+        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, DamageCause.CUSTOM, damage);
 
-        when(contextProvider.getContext(entityUUID)).thenReturn(null);
-        when(contextProvider.getContext(damagerUUID)).thenReturn(null);
+        when(contextProvider.getGameKey(entityUUID)).thenReturn(null);
+        when(contextProvider.getGameKey(damagerUUID)).thenReturn(null);
 
         EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -55,17 +55,18 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Test
     public void shouldCancelEventIfDamagerContextDoesNotAllowDamageToEntityContext() {
-        GameContext damagerContext = mock(GameContext.class);
-        when(contextProvider.getContext(damagerUUID)).thenReturn(damagerContext);
+        GameKey damagerGameKey = GameKey.ofSession(1);
+        when(contextProvider.getGameKey(damagerUUID)).thenReturn(damagerGameKey);
 
-        GameContext entityContext = mock(GameContext.class);
-        when(contextProvider.getContext(entityUUID)).thenReturn(entityContext);
+        GameKey entityGameKey = GameKey.ofSession(2);
+        when(contextProvider.getGameKey(entityUUID)).thenReturn(entityGameKey);
 
         DamageProcessor damageProcessor = mock(DamageProcessor.class);
-        when(damageProcessor.isDamageAllowed(entityContext)).thenReturn(false);
-        when(damagerContext.getDamageProcessor()).thenReturn(damageProcessor);
+        when(damageProcessor.isDamageAllowed(entityGameKey)).thenReturn(false);
 
-        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
+        when(contextProvider.getComponent(damagerGameKey, DamageProcessor.class)).thenReturn(damageProcessor);
+
+        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, DamageCause.ENTITY_ATTACK, damage);
 
         EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -76,17 +77,16 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Test
     public void shouldCancelEventIfEntityContextDoesNotAllowDamageFromDamagerContext() {
-        GameContext entityContext = mock(GameContext.class);
-        when(contextProvider.getContext(entityUUID)).thenReturn(entityContext);
-
-        GameContext damagerContext = null;
-        when(contextProvider.getContext(damagerUUID)).thenReturn(damagerContext);
+        GameKey entityGameKey = GameKey.ofTrainingMode();
+        when(contextProvider.getGameKey(entityUUID)).thenReturn(entityGameKey);
+        when(contextProvider.getGameKey(damagerUUID)).thenReturn(null);
 
         DamageProcessor damageProcessor = mock(DamageProcessor.class);
-        when(damageProcessor.isDamageAllowed(damagerContext)).thenReturn(false);
-        when(entityContext.getDamageProcessor()).thenReturn(damageProcessor);
+        when(damageProcessor.isDamageAllowed(null)).thenReturn(false);
 
-        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
+        when(contextProvider.getComponent(entityGameKey, DamageProcessor.class)).thenReturn(damageProcessor);
+
+        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, DamageCause.ENTITY_ATTACK, damage);
 
         EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -97,15 +97,16 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Test
     public void shouldNotHandleEventIfDamageCauseDoesNotMap() {
-        GameContext context = mock(GameContext.class);
-        when(contextProvider.getContext(entityUUID)).thenReturn(context);
-        when(contextProvider.getContext(damagerUUID)).thenReturn(context);
+        GameKey gameKey = GameKey.ofTrainingMode();
+        when(contextProvider.getGameKey(entityUUID)).thenReturn(gameKey);
+        when(contextProvider.getGameKey(damagerUUID)).thenReturn(gameKey);
 
         DamageProcessor damageProcessor = mock(DamageProcessor.class);
-        when(damageProcessor.isDamageAllowed(context)).thenReturn(true);
-        when(context.getDamageProcessor()).thenReturn(damageProcessor);
+        when(damageProcessor.isDamageAllowed(gameKey)).thenReturn(true);
 
-        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, EntityDamageEvent.DamageCause.CUSTOM, damage);
+        when(contextProvider.getComponent(gameKey, DamageProcessor.class)).thenReturn(damageProcessor);
+
+        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, DamageCause.CUSTOM, damage);
 
         EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -116,20 +117,21 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Test
     public void handlingEventSetsEventDamageBasedOnResultOfDamageProcessor() {
-        GameContext context = mock(GameContext.class);
-        when(contextProvider.getContext(damagerUUID)).thenReturn(context);
-        when(contextProvider.getContext(entityUUID)).thenReturn(context);
+        GameKey gameKey =  GameKey.ofTrainingMode();
+        when(contextProvider.getGameKey(damagerUUID)).thenReturn(gameKey);
+        when(contextProvider.getGameKey(entityUUID)).thenReturn(gameKey);
 
         double modifiedDamage = 20.0;
 
-        DamageEvent damageEvent = new DamageEvent(damager, context, entity, context, DamageType.ATTACK_DAMAGE, modifiedDamage);
+        DamageEvent damageEvent = new DamageEvent(damager, gameKey, entity, gameKey, DamageType.ATTACK_DAMAGE, modifiedDamage);
 
         DamageProcessor damageProcessor = mock(DamageProcessor.class);
-        when(damageProcessor.isDamageAllowed(context)).thenReturn(true);
+        when(damageProcessor.isDamageAllowed(gameKey)).thenReturn(true);
         when(damageProcessor.processDamage(any(DamageEvent.class))).thenReturn(damageEvent);
-        when(context.getDamageProcessor()).thenReturn(damageProcessor);
 
-        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
+        when(contextProvider.getComponent(gameKey, DamageProcessor.class)).thenReturn(damageProcessor);
+
+        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, DamageCause.ENTITY_ATTACK, damage);
 
         EntityDamageByEntityEventHandler eventHandler = new EntityDamageByEntityEventHandler(contextProvider);
         eventHandler.handle(event);

@@ -51,15 +51,27 @@
                     <relocations>
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
-                            <shadedPattern>nl.matsgemmeke.acf</shadedPattern>
+                            <shadedPattern>nl.matsgemmeke.libs.acf</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.locales</pattern>
-                            <shadedPattern>nl.matsgemmeke.locales</shadedPattern>
+                            <shadedPattern>nl.matsgemmeke.libs.acf</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google</pattern>
+                            <shadedPattern>nl.matsgemmeke.libs.google</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>jakarta</pattern>
+                            <shadedPattern>nl.matsgemmeke.libs.jakarta</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>javax</pattern>
+                            <shadedPattern>nl.matsgemmeke.libs.javax</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>dev.dejvokep.boostedyaml</pattern>
-                            <shadedPattern>nl.matsgemmeke.boostedyaml</shadedPattern>
+                            <shadedPattern>nl.matsgemmeke.libs.boostedyaml</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

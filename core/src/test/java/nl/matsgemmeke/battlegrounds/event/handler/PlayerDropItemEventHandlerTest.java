@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.ActionHandler;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -31,8 +31,8 @@ public class PlayerDropItemEventHandlerTest {
     }
 
     @Test
-    public void shouldDoNothingIfPlayerIsNotInAnyGames() {
-        when(contextProvider.getContext(player)).thenReturn(null);
+    public void handleShouldDoNothingIfPlayerIsNotInAnyGames() {
+        when(contextProvider.getGameKey(player)).thenReturn(null);
 
         PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -42,15 +42,16 @@ public class PlayerDropItemEventHandlerTest {
 
     @Test
     public void shouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
+        GameKey gameKey = GameKey.ofTrainingMode();
+
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         when(item.getItemStack()).thenReturn(itemStack);
 
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemDrop(player, itemStack)).thenReturn(false);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getActionHandler()).thenReturn(actionHandler);
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
 
         PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(contextProvider);
         eventHandler.handle(event);
@@ -62,7 +63,7 @@ public class PlayerDropItemEventHandlerTest {
 
     @Test
     public void shouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
-        event.setCancelled(true);
+        GameKey gameKey = GameKey.ofTrainingMode();
 
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         when(item.getItemStack()).thenReturn(itemStack);
@@ -70,9 +71,10 @@ public class PlayerDropItemEventHandlerTest {
         ActionHandler actionHandler = mock(ActionHandler.class);
         when(actionHandler.handleItemDrop(player, itemStack)).thenReturn(true);
 
-        GameContext context = mock(GameContext.class);
-        when(context.getActionHandler()).thenReturn(actionHandler);
-        when(contextProvider.getContext(player)).thenReturn(context);
+        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
+        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
+
+        event.setCancelled(true);
 
         PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(contextProvider);
         eventHandler.handle(event);

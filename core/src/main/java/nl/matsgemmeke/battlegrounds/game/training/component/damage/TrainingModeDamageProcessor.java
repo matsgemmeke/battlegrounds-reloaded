@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.training.component.damage;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -19,12 +19,12 @@ public class TrainingModeDamageProcessor implements DamageProcessor {
     @NotNull
     private DeploymentInfoProvider deploymentInfoProvider;
     @NotNull
-    private List<DamageCheck> damageChecks;
+    private GameKey trainingModeKey;
     @NotNull
-    private GameContext trainingModeContext;
+    private List<DamageCheck> damageChecks;
 
-    public TrainingModeDamageProcessor(@NotNull GameContext trainingModeContext, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
-        this.trainingModeContext = trainingModeContext;
+    public TrainingModeDamageProcessor(@NotNull GameKey trainingModeKey, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
+        this.trainingModeKey = trainingModeKey;
         this.deploymentInfoProvider = deploymentInfoProvider;
         this.damageChecks = new ArrayList<>();
     }
@@ -33,10 +33,10 @@ public class TrainingModeDamageProcessor implements DamageProcessor {
         damageChecks.add(damageCheck);
     }
 
-    public boolean isDamageAllowed(@Nullable GameContext context) {
-        // Damage in training mode is allowed if both entities are in the same training mode context, or if one of the
-        // entities has no context, meaning it's a normal open world entity
-        return trainingModeContext == context || context == null;
+    public boolean isDamageAllowed(@Nullable GameKey gameKey) {
+        // Damage in training mode is allowed if both entities are in training mode, or if one of the entities has no
+        // game key, meaning it's a normal open world entity
+        return trainingModeKey == gameKey || gameKey == null;
     }
 
     @NotNull

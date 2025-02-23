@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.util;
 
+import com.google.inject.Inject;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.Metadatable;
 import org.bukkit.plugin.Plugin;
@@ -10,6 +11,7 @@ public class MetadataValueEditor {
     @NotNull
     private Plugin plugin;
 
+    @Inject
     public MetadataValueEditor(@NotNull Plugin plugin) {
         this.plugin = plugin;
     }

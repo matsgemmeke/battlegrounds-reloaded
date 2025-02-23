@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.configuration.GeneralDataConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -14,13 +14,13 @@ import static org.mockito.Mockito.*;
 
 public class SetMainLobbyCommandTest {
 
-    private GeneralDataConfiguration generalData;
+    private DataConfiguration dataConfiguration;
     private Player player;
     private Translator translator;
 
     @BeforeEach
     public void setUp() {
-        this.generalData = mock(GeneralDataConfiguration.class);
+        this.dataConfiguration = mock(DataConfiguration.class);
         this.player = mock(Player.class);
         this.translator = mock(Translator.class);
 
@@ -38,10 +38,10 @@ public class SetMainLobbyCommandTest {
         when(player.getLocation()).thenReturn(location);
         when(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath())).thenReturn(new TextTemplate(message));
 
-        SetMainLobbyCommand command = new SetMainLobbyCommand(generalData, translator);
+        SetMainLobbyCommand command = new SetMainLobbyCommand(dataConfiguration, translator);
         command.execute(player);
 
-        verify(generalData).setMainLobbyLocation(any(Location.class));
+        verify(dataConfiguration).setMainLobbyLocation(any(Location.class));
         verify(player).sendMessage(message);
     }
 }

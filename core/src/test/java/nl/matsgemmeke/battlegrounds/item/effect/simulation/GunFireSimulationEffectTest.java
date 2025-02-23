@@ -60,7 +60,7 @@ public class GunFireSimulationEffectTest {
 
         ItemEffectContext context = new ItemEffectContext(holder, source);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, effectActivation, audioEmitter, gunInfoProvider, properties);
         effect.prime(context);
 
         ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
@@ -89,7 +89,7 @@ public class GunFireSimulationEffectTest {
 
         when(gunInfoProvider.getGunFireSimulationInfo(holder)).thenReturn(null);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, effectActivation, audioEmitter, gunInfoProvider, properties);
         effect.prime(context);
 
         ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
@@ -125,7 +125,7 @@ public class GunFireSimulationEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, effectActivation, audioEmitter, gunInfoProvider, properties);
         effect.prime(context);
 
         ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
@@ -162,7 +162,7 @@ public class GunFireSimulationEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(effectActivation, audioEmitter, gunInfoProvider, taskRunner, properties);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, effectActivation, audioEmitter, gunInfoProvider, properties);
         effect.prime(context);
 
         ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);

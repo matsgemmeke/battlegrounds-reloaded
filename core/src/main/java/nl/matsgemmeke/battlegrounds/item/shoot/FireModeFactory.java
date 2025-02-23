@@ -1,8 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
+import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,10 +14,17 @@ import org.jetbrains.annotations.NotNull;
 public class FireModeFactory {
 
     @NotNull
-    private TaskRunner taskRunner;
+    private final BurstModeFactory burstModeFactory;
+    @NotNull
+    private final FullyAutomaticModeFactory fullyAutomaticModeFactory;
+    @NotNull
+    private final SemiAutomaticModeFactory semiAutomaticModeFactory;
 
-    public FireModeFactory(@NotNull TaskRunner taskRunner) {
-        this.taskRunner = taskRunner;
+    @Inject
+    public FireModeFactory(@NotNull BurstModeFactory burstModeFactory, @NotNull FullyAutomaticModeFactory fullyAutomaticModeFactory, @NotNull SemiAutomaticModeFactory semiAutomaticModeFactory) {
+        this.burstModeFactory = burstModeFactory;
+        this.fullyAutomaticModeFactory = fullyAutomaticModeFactory;
+        this.semiAutomaticModeFactory = semiAutomaticModeFactory;
     }
 
     /**
@@ -25,7 +35,7 @@ public class FireModeFactory {
      * @return a new {@link FireMode} instance
      */
     @NotNull
-    public FireMode make(@NotNull Shootable item, @NotNull Section section) {
+    public FireMode create(@NotNull Shootable item, @NotNull Section section) {
         String type = section.getString("type");
         FireModeType fireModeType;
 
@@ -38,14 +48,19 @@ public class FireModeFactory {
         int rateOfFire = section.getInt("rate-of-fire");
 
         switch (fireModeType) {
-            case BURST_MODE:
-                int shotAmount = section.getInt("shots");
-                return new BurstMode(item, taskRunner, shotAmount, rateOfFire);
-            case FULLY_AUTOMATIC:
-                return new FullyAutomaticMode(item, taskRunner, rateOfFire);
-            case SEMI_AUTOMATIC:
+            case BURST_MODE -> {
+                int amountOfShots = section.getInt("amount-of-shots");
+
+                return burstModeFactory.create(item, amountOfShots, rateOfFire);
+            }
+            case FULLY_AUTOMATIC -> {
+                return fullyAutomaticModeFactory.create(item, rateOfFire);
+            }
+            case SEMI_AUTOMATIC -> {
                 long delayBetweenShots = section.getLong("delay-between-shots");
-                return new SemiAutomaticMode(item, taskRunner, delayBetweenShots);
+
+                return semiAutomaticModeFactory.create(item, delayBetweenShots);
+            }
         }
 
         throw new WeaponFactoryCreationException("Invalid fire mode type \"" + type + "\"");

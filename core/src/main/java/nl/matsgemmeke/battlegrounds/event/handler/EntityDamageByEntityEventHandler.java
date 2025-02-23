@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -13,8 +14,9 @@ import org.jetbrains.annotations.NotNull;
 public class EntityDamageByEntityEventHandler implements EventHandler<EntityDamageByEntityEvent> {
 
     @NotNull
-    private GameContextProvider contextProvider;
+    private final GameContextProvider contextProvider;
 
+    @Inject
     public EntityDamageByEntityEventHandler(@NotNull GameContextProvider contextProvider) {
         this.contextProvider = contextProvider;
     }
@@ -22,25 +24,25 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
     public void handle(@NotNull EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         Entity damager = event.getDamager();
-        GameContext entityContext = contextProvider.getContext(entity.getUniqueId());
-        GameContext damagerContext = contextProvider.getContext(damager.getUniqueId());
+        GameKey entityGameKey = contextProvider.getGameKey(entity.getUniqueId());
+        GameKey damagerGameKey = contextProvider.getGameKey(damager.getUniqueId());
 
-        if (entityContext == null && damagerContext == null) {
+        if (entityGameKey == null && damagerGameKey == null) {
             // Do not handle events outside of game instances
             return;
         }
 
         DamageProcessor damageProcessor;
-        GameContext otherContext = null;
+        GameKey otherKey = null;
 
-        if (damagerContext != null) {
-            damageProcessor = damagerContext.getDamageProcessor();
-            otherContext = entityContext;
+        if (damagerGameKey != null) {
+            damageProcessor = contextProvider.getComponent(damagerGameKey, DamageProcessor.class);
+            otherKey = entityGameKey;
         } else {
-            damageProcessor = entityContext.getDamageProcessor();
+            damageProcessor = contextProvider.getComponent(entityGameKey, DamageProcessor.class);
         }
 
-        if (!damageProcessor.isDamageAllowed(otherContext)) {
+        if (!damageProcessor.isDamageAllowed(otherKey)) {
             event.setCancelled(true);
             return;
         }
@@ -52,7 +54,7 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
             return;
         }
 
-        DamageEvent damageEvent = new DamageEvent(damager, damagerContext, entity, entityContext, type, event.getDamage());
+        DamageEvent damageEvent = new DamageEvent(damager, damagerGameKey, entity, entityGameKey, type, event.getDamage());
         DamageEvent result = damageProcessor.processDamage(damageEvent);
 
         // Only set the event damage so the damage animation and physics are kept

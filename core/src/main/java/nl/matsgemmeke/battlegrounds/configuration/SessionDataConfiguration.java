@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import nl.matsgemmeke.battlegrounds.game.session.DefaultSessionConfiguration;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
 import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -22,13 +21,13 @@ public class SessionDataConfiguration extends BasePluginConfiguration {
         int maxPlayers = this.getInteger("config.max-players");
         int minPlayers = this.getInteger("config.min-players");
 
-        return new DefaultSessionConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
+        return new SessionConfiguration(lobbyCountdownDuration, minPlayers, maxPlayers);
     }
 
     public void saveConfiguration(@NotNull SessionConfiguration config) {
         this.setValue("config.lobby-countdown-duration", config.getLobbyCountdownDuration());
-        this.setValue("config.max-players", config.getMaxPlayers());
         this.setValue("config.min-players", config.getMinPlayers());
+        this.setValue("config.max-players", config.getMaxPlayers());
         this.save();
     }
 }

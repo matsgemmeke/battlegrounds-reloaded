@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.damage;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,23 +15,23 @@ public class DamageEvent {
     @NotNull
     private Entity entity;
     @Nullable
-    private GameContext damagerContext;
+    private GameKey damagerGameKey;
     @Nullable
-    private GameContext entityContext;
+    private GameKey entityGameKey;
 
     public DamageEvent(
             @NotNull Entity damager,
-            @Nullable GameContext damagerContext,
+            @Nullable GameKey damagerGameKey,
             @NotNull Entity entity,
-            @Nullable GameContext entityContext,
+            @Nullable GameKey entityGameKey,
             @NotNull DamageType type,
             double damage
     ) {
         this.damager = damager;
         this.entity = entity;
         this.type = type;
-        this.damagerContext = damagerContext;
-        this.entityContext = entityContext;
+        this.damagerGameKey = damagerGameKey;
+        this.entityGameKey = entityGameKey;
         this.damage = damage;
     }
 
@@ -54,8 +54,8 @@ public class DamageEvent {
     }
 
     @Nullable
-    public GameContext getDamagerContext() {
-        return damagerContext;
+    public GameKey getDamagerGameKey() {
+        return damagerGameKey;
     }
 
     @NotNull
@@ -64,7 +64,7 @@ public class DamageEvent {
     }
 
     @Nullable
-    public GameContext getEntityContext() {
-        return entityContext;
+    public GameKey getEntityGameKey() {
+        return entityGameKey;
     }
 }

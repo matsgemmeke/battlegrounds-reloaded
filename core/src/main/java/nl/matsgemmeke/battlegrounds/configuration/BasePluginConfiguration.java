@@ -11,11 +11,11 @@ import java.io.InputStream;
 
 public abstract class BasePluginConfiguration implements PluginConfiguration {
 
-    private boolean readOnly;
+    private final boolean readOnly;
     @NotNull
-    private File file;
+    private final File file;
     @Nullable
-    private InputStream resource;
+    private final InputStream resource;
     private YamlDocument document;
 
     public BasePluginConfiguration(@NotNull File file, @Nullable InputStream resource) {

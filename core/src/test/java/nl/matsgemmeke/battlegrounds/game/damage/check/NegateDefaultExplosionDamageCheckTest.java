@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.damage.check;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.Entity;
@@ -14,13 +14,12 @@ public class NegateDefaultExplosionDamageCheckTest {
     @Test
     public void shouldNotAlterDamageForEventsWithoutDefaultExplosionDamageCause() {
         Entity damager = mock(Entity.class);
-        GameContext damagerContext = mock(GameContext.class);
         Entity entity = mock(Entity.class);
-        GameContext entityContext = mock(GameContext.class);
+        GameKey gameKey = GameKey.ofTrainingMode();
 
         double damage = 10.0;
 
-        DamageEvent event = new DamageEvent(damager, damagerContext, entity, entityContext, DamageType.BULLET_DAMAGE, damage);
+        DamageEvent event = new DamageEvent(damager, gameKey, entity, gameKey, DamageType.BULLET_DAMAGE, damage);
 
         NegateDefaultExplosionDamageCheck check = new NegateDefaultExplosionDamageCheck();
         check.process(event);
@@ -31,11 +30,10 @@ public class NegateDefaultExplosionDamageCheckTest {
     @Test
     public void negateExplosionDamageForEventsWithDefaultExplosionDamageCause() {
         Entity damager = mock(Entity.class);
-        GameContext damagerContext = mock(GameContext.class);
         Entity entity = mock(Entity.class);
-        GameContext entityContext = mock(GameContext.class);
+        GameKey gameKey = GameKey.ofTrainingMode();
 
-        DamageEvent event = new DamageEvent(damager, damagerContext, entity, entityContext, DamageType.EXPLOSIVE_DAMAGE, 100.0);
+        DamageEvent event = new DamageEvent(damager, gameKey, entity, gameKey, DamageType.EXPLOSIVE_DAMAGE, 100.0);
 
         NegateDefaultExplosionDamageCheck check = new NegateDefaultExplosionDamageCheck();
         check.process(event);

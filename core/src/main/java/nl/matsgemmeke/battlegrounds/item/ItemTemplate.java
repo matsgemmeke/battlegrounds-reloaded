@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item;
 
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.UUIDDataType;
-import nl.matsgemmeke.battlegrounds.util.UUIDGenerator;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -31,10 +30,10 @@ public class ItemTemplate {
     @NotNull
     private UUID uuid;
 
-    public ItemTemplate(@NotNull NamespacedKey key, @NotNull Material material, @NotNull UUIDGenerator uuidGenerator) {
+    public ItemTemplate(@NotNull UUID uuid, @NotNull NamespacedKey key, @NotNull Material material) {
+        this.uuid = uuid;
         this.key = key;
         this.material = material;
-        this.uuid = uuidGenerator.generateRandom();
     }
 
     /**

@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.session.DefaultSessionConfiguration;
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
 import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
 import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
@@ -15,12 +16,13 @@ import java.util.Map;
 public class CreateSessionCommand extends CommandSource {
 
     @NotNull
-    private GameContextProvider contextProvider;
+    private final GameContextProvider contextProvider;
     @NotNull
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
     @NotNull
-    private Translator translator;
+    private final Translator translator;
 
+    @Inject
     public CreateSessionCommand(
             @NotNull GameContextProvider contextProvider,
             @NotNull SessionFactory sessionFactory,
@@ -33,13 +35,14 @@ public class CreateSessionCommand extends CommandSource {
     }
 
     public void execute(@NotNull CommandSender sender, int id) {
-        SessionConfiguration configuration = DefaultSessionConfiguration.getNewConfiguration();
-        Session session = sessionFactory.make(id, configuration);
+        SessionConfiguration configuration = SessionConfiguration.getNewConfiguration();
+        Session session = sessionFactory.create(id, configuration);
+        GameKey gameKey = GameKey.ofSession(id);
 
         Map<String, Object> values = Map.of("bg_session", id);
         String message;
 
-        if (!contextProvider.addSessionContext(id, session.getContext())) {
+        if (!contextProvider.addSession(gameKey, session)) {
             message = translator.translate(TranslationKey.SESSION_CREATION_FAILED.getPath()).replace(values);
         } else {
             message = translator.translate(TranslationKey.SESSION_CREATED.getPath()).replace(values);

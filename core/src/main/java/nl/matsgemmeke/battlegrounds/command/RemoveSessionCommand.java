@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
@@ -17,14 +17,15 @@ public class RemoveSessionCommand extends CommandSource {
     private static final long CONFIRM_LIST_COOLDOWN = 200;
 
     @NotNull
-    private GameContextProvider contextProvider;
+    private final GameContextProvider contextProvider;
     @NotNull
-    private List<CommandSender> confirmList;
+    private final List<CommandSender> confirmList;
     @NotNull
-    private TaskRunner taskRunner;
+    private final TaskRunner taskRunner;
     @NotNull
-    private Translator translator;
+    private final Translator translator;
 
+    @Inject
     public RemoveSessionCommand(
             @NotNull GameContextProvider contextProvider,
             @NotNull TaskRunner taskRunner,
@@ -38,21 +39,21 @@ public class RemoveSessionCommand extends CommandSource {
     }
 
     public void execute(@NotNull CommandSender sender, int id) {
+        Map<String, Object> values = Map.of("bg_session", id);
+
         if (!confirmList.contains(sender)) {
             confirmList.add(sender);
 
-            String confirmMessage = translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath()).getText();
+            String confirmMessage = translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath()).replace(values);
             sender.sendMessage(confirmMessage);
 
             taskRunner.runTaskLater(() -> confirmList.remove(sender), CONFIRM_LIST_COOLDOWN);
             return;
         }
 
-        GameContext sessionContext = contextProvider.getSessionContext(id);
-        Map<String, Object> values = Map.of("bg_session", id);
         String message;
 
-        if (sessionContext == null || !contextProvider.removeSessionContext(id)) {
+        if (!contextProvider.removeSession(id)) {
             message = translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath()).replace(values);
         } else {
             message = translator.translate(TranslationKey.SESSION_REMOVED.getPath()).replace(values);

@@ -1,10 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.session;
 
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
+import com.google.inject.Inject;
+import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.SessionDataConfiguration;
-import nl.matsgemmeke.battlegrounds.game.ItemStorage;
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -15,13 +13,11 @@ import java.io.File;
 public class SessionFactory {
 
     @NotNull
-    private File dataDirectory;
-    @NotNull
-    private InternalsProvider internals;
+    private final File setupFolder;
 
-    public SessionFactory(@NotNull File dataDirectory, @NotNull InternalsProvider internals) {
-        this.dataDirectory = dataDirectory;
-        this.internals = internals;
+    @Inject
+    public SessionFactory(@Named("SetupFolder") @NotNull File setupFolder) {
+        this.setupFolder = setupFolder;
     }
 
     /**
@@ -32,15 +28,13 @@ public class SessionFactory {
      * @return a new session instance
      */
     @NotNull
-    public Session make(int id, SessionConfiguration configuration) {
-        File dataConfigFile = new File(dataDirectory.getPath() + "/session_" + id + "/config.yml");
+    public Session create(int id, SessionConfiguration configuration) {
+        File sessionConfigFile = new File(setupFolder.getPath() + "/session-" + id + "/config.yml");
 
-        SessionDataConfiguration dataConfig = new SessionDataConfiguration(dataConfigFile);
+        SessionDataConfiguration dataConfig = new SessionDataConfiguration(sessionConfigFile);
         dataConfig.load();
         dataConfig.saveConfiguration(configuration);
 
-        ItemStorage<Gun, GunHolder> gunStorage = new ItemStorage<>();
-
-        return new DefaultSession(id, configuration, internals, gunStorage);
+        return new Session(configuration);
     }
 }

@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.combustion;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -51,15 +53,16 @@ public class CombustionEffect extends BaseItemEffect {
     @NotNull
     private TaskRunner taskRunner;
 
+    @Inject
     public CombustionEffect(
-            @NotNull ItemEffectActivation effectActivation,
-            @NotNull CombustionProperties properties,
-            @NotNull RangeProfile rangeProfile,
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull CollisionDetector collisionDetector,
             @NotNull MetadataValueEditor metadataValueEditor,
-            @NotNull TargetFinder targetFinder,
-            @NotNull TaskRunner taskRunner
+            @NotNull TaskRunner taskRunner,
+            @Assisted @NotNull ItemEffectActivation effectActivation,
+            @Assisted @NotNull CombustionProperties properties,
+            @Assisted @NotNull RangeProfile rangeProfile,
+            @Assisted @NotNull AudioEmitter audioEmitter,
+            @Assisted @NotNull CollisionDetector collisionDetector,
+            @Assisted @NotNull TargetFinder targetFinder
     ) {
         super(effectActivation);
         this.properties = properties;

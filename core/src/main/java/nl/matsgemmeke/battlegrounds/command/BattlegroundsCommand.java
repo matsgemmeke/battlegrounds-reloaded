@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import com.google.inject.Inject;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -21,29 +22,30 @@ public class BattlegroundsCommand extends BaseCommand {
     private static final String EMPTY_MESSAGE = " ";
 
     @NotNull
-    private List<CommandSource> subcommands;
+    private final List<CommandSource> subcommands;
     @NotNull
-    private Translator translator;
+    private final Translator translator;
 
+    @Inject
     public BattlegroundsCommand(@NotNull Translator translator) {
         this.translator = translator;
         this.subcommands = new ArrayList<>();
     }
 
-    public boolean addSubcommand(CommandSource subcommand) {
+    public boolean addSubcommand(@NotNull CommandSource subcommand) {
         return subcommands.add(subcommand);
     }
 
     @CommandCompletion("<id>")
     @CommandPermission("battlegrounds.createsession")
     @Subcommand("createsession|cs")
-    public void onCreateSession(CommandSender sender, @Conditions("nonexistent-session-id") Integer id) {
+    public void onCreateSession(@NotNull CommandSender sender, @Conditions("nonexistent-session-id") Integer id) {
         CreateSessionCommand command = this.getSubcommand("createsession");
         command.execute(sender, id);
     }
 
     @Default
-    public void onDefault(CommandSender sender) {
+    public void onDefault(@NotNull CommandSender sender) {
         sender.sendMessage(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText());
         sender.sendMessage(EMPTY_MESSAGE);
 
@@ -96,7 +98,7 @@ public class BattlegroundsCommand extends BaseCommand {
     }
 
     @NotNull
-    private <T extends CommandSource> T getSubcommand(String name) {
+    private <T extends CommandSource> T getSubcommand(@NotNull String name) {
         for (CommandSource subcommand : subcommands) {
             if (subcommand.getName().equalsIgnoreCase(name)) {
                 return (T) subcommand;

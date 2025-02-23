@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import net.md_5.bungee.api.chat.BaseComponent;
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -29,11 +27,11 @@ public class BattlegroundsCommandTest {
     public void shouldNotBeAbleToGetSubcommandWhenItDoesNotExist() {
         when(translator.translate(TranslationKey.DESCRIPTION_CREATESESSION.getPath())).thenReturn(new TextTemplate("text"));
 
-        GameContextProvider contextProvider = mock(GameContextProvider.class);
-        SessionFactory sessionFactory = mock(SessionFactory.class);
+        CommandSource subcommand = mock(CommandSource.class);
+        when(subcommand.getName()).thenReturn("not the reload command");
 
         BattlegroundsCommand bgCommand = new BattlegroundsCommand(translator);
-        bgCommand.addSubcommand(new CreateSessionCommand(contextProvider, sessionFactory, translator));
+        bgCommand.addSubcommand(subcommand);
 
         assertThrows(IllegalArgumentException.class, () -> bgCommand.onReload(player));
     }

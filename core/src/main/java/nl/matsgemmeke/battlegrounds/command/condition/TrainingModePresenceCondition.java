@@ -5,7 +5,11 @@ import co.aikar.commands.CommandConditions.Condition;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
@@ -14,19 +18,24 @@ import org.jetbrains.annotations.NotNull;
 public class TrainingModePresenceCondition implements Condition<BukkitCommandIssuer> {
 
     @NotNull
-    private GameContext gameContext;
+    private final GameContextProvider contextProvider;
     @NotNull
-    private Translator translator;
+    private final GameKey trainingModeGameKey;
+    @NotNull
+    private final Translator translator;
 
-    public TrainingModePresenceCondition(@NotNull GameContext gameContext, @NotNull Translator translator) {
-        this.gameContext = gameContext;
+    @Inject
+    public TrainingModePresenceCondition(@NotNull GameContextProvider contextProvider, @Named("TrainingMode") @NotNull GameKey trainingModeGameKey, @NotNull Translator translator) {
+        this.contextProvider = contextProvider;
+        this.trainingModeGameKey = trainingModeGameKey;
         this.translator = translator;
     }
 
     public void validateCondition(ConditionContext<BukkitCommandIssuer> conditionContext) throws InvalidCommandArgument {
         Player player = conditionContext.getIssuer().getPlayer();
+        PlayerRegistry playerRegistry = contextProvider.getComponent(trainingModeGameKey, PlayerRegistry.class);
 
-        if (gameContext.getPlayerRegistry().isRegistered(player)) {
+        if (playerRegistry.isRegistered(player)) {
             return;
         }
 

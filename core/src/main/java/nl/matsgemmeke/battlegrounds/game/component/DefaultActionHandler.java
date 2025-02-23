@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,11 +12,11 @@ import org.jetbrains.annotations.Nullable;
 public class DefaultActionHandler implements ActionHandler {
 
     @NotNull
-    private EntityRegistry<GamePlayer, Player> playerRegistry;
-    @NotNull
     private Game game;
+    @NotNull
+    private PlayerRegistry playerRegistry;
 
-    public DefaultActionHandler(@NotNull Game game, @NotNull EntityRegistry<GamePlayer, Player> playerRegistry) {
+    public DefaultActionHandler(@NotNull Game game, @NotNull PlayerRegistry playerRegistry) {
         this.game = game;
         this.playerRegistry = playerRegistry;
     }

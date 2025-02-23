@@ -1,11 +1,15 @@
 package nl.matsgemmeke.battlegrounds.command;
 
+import com.google.inject.Inject;
+import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
-import nl.matsgemmeke.battlegrounds.item.WeaponProvider;
+import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
@@ -16,25 +20,30 @@ import java.util.Map;
 public class GiveWeaponCommand extends CommandSource {
 
     @NotNull
-    private GameContext context;
+    private final GameContextProvider contextProvider;
     @NotNull
-    private Translator translator;
+    private final GameKey trainingModeKey;
     @NotNull
-    private WeaponProvider weaponProvider;
+    private final Translator translator;
+    @NotNull
+    private final WeaponCreator weaponCreator;
 
+    @Inject
     public GiveWeaponCommand(
-            @NotNull GameContext context,
+            @NotNull GameContextProvider contextProvider,
+            @Named("TrainingMode") @NotNull GameKey trainingModeKey,
             @NotNull Translator translator,
-            @NotNull WeaponProvider weaponProvider
+            @NotNull WeaponCreator weaponCreator
     ) {
         super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText(), "bg giveweapon <weapon>");
-        this.context = context;
+        this.contextProvider = contextProvider;
+        this.trainingModeKey = trainingModeKey;
         this.translator = translator;
-        this.weaponProvider = weaponProvider;
+        this.weaponCreator = weaponCreator;
     }
 
     public void execute(@NotNull Player player, @NotNull String weaponId) {
-        ItemConfiguration configuration = weaponProvider.getItemConfiguration(weaponId);
+        ItemConfiguration configuration = weaponCreator.getItemConfiguration(weaponId);
 
         // This shouldn't be null because of the condition on this command, but validate it again in case something
         // might change in the future
@@ -42,10 +51,11 @@ public class GiveWeaponCommand extends CommandSource {
             throw new IllegalArgumentException("Unable to find a factory instance for weapon with the id " + weaponId);
         }
 
-        GamePlayer gamePlayer = context.getPlayerRegistry().findByEntity(player);
+        PlayerRegistry playerRegistry = contextProvider.getComponent(trainingModeKey, PlayerRegistry.class);
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player);
 
-        WeaponFactory factory = weaponProvider.getFactory(configuration);
-        Weapon weapon = factory.make(configuration, context, gamePlayer);
+        WeaponFactory factory = weaponCreator.getFactory(configuration);
+        Weapon weapon = factory.create(configuration, trainingModeKey, gamePlayer);
 
         player.getInventory().addItem(weapon.getItemStack());
 

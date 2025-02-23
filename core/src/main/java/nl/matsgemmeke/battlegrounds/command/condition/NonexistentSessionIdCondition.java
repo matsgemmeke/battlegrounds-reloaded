@@ -2,7 +2,8 @@ package nl.matsgemmeke.battlegrounds.command.condition;
 
 import co.aikar.commands.*;
 import co.aikar.commands.CommandConditions.ParameterCondition;
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.jetbrains.annotations.NotNull;
@@ -12,17 +13,18 @@ import java.util.Map;
 public class NonexistentSessionIdCondition implements ParameterCondition<Integer, BukkitCommandExecutionContext, BukkitCommandIssuer> {
 
     @NotNull
-    private GameContextProvider contextProvider;
+    private final GameContextProvider contextProvider;
     @NotNull
-    private Translator translator;
+    private final Translator translator;
 
+    @Inject
     public NonexistentSessionIdCondition(@NotNull GameContextProvider contextProvider, @NotNull Translator translator) {
         this.contextProvider = contextProvider;
         this.translator = translator;
     }
 
     public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, Integer value) throws InvalidCommandArgument {
-        if (contextProvider.getSessionContext(value) == null) {
+        if (!contextProvider.sessionExists(value)) {
             return;
         }
 

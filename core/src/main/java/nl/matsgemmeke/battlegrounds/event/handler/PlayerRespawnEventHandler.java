@@ -1,9 +1,11 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -13,22 +15,24 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerRespawnEventHandler implements EventHandler<PlayerRespawnEvent> {
 
     @NotNull
-    private GameContextProvider contextProvider;
+    private final GameContextProvider contextProvider;
 
+    @Inject
     public PlayerRespawnEventHandler(@NotNull GameContextProvider contextProvider) {
         this.contextProvider = contextProvider;
     }
 
     public void handle(@NotNull PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        GameContext context = contextProvider.getContext(player);
+        GameKey gameKey = contextProvider.getGameKey(player);
 
-        if (context == null) {
+        if (gameKey == null) {
             return;
         }
 
-        GamePlayer gamePlayer = context.getPlayerRegistry().findByEntity(player);
-        SpawnPointProvider spawnPointProvider = context.getSpawnPointProvider();
+        PlayerRegistry playerRegistry = contextProvider.getComponent(gameKey, PlayerRegistry.class);
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player);
+        SpawnPointProvider spawnPointProvider = contextProvider.getComponent(gameKey, SpawnPointProvider.class);
 
         if (!spawnPointProvider.hasSpawnPoint(gamePlayer)) {
             return;

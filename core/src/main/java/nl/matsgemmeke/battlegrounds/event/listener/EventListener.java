@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.event.listener;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -15,6 +16,7 @@ public class EventListener implements Listener {
     @NotNull
     private EventDispatcher eventDispatcher;
 
+    @Inject
     public EventListener(@NotNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }

@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
+import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -16,10 +16,14 @@ import java.util.Map;
 public class ItemEffectActivationFactory {
 
     @NotNull
-    private TaskRunner taskRunner;
+    private final DelayedActivationFactory delayedActivationFactory;
+    @NotNull
+    private final TriggerFactory triggerFactory;
 
-    public ItemEffectActivationFactory(@NotNull TaskRunner taskRunner) {
-        this.taskRunner = taskRunner;
+    @Inject
+    public ItemEffectActivationFactory(@NotNull DelayedActivationFactory delayedActivationFactory, @NotNull TriggerFactory triggerFactory) {
+        this.delayedActivationFactory = delayedActivationFactory;
+        this.triggerFactory = triggerFactory;
     }
 
     /**
@@ -28,7 +32,8 @@ public class ItemEffectActivationFactory {
      * @param section the configuration section
      * @return a new activation instance
      */
-    public ItemEffectActivation make(@NotNull GameContext context, @NotNull Section section, @Nullable Activator activator) {
+    @NotNull
+    public ItemEffectActivation create(@NotNull GameKey gameKey, @NotNull Section section, @Nullable Activator activator) {
         String type = section.getString("type");
 
         if (type == null) {
@@ -46,7 +51,8 @@ public class ItemEffectActivationFactory {
         switch (effectActivationType) {
             case DELAYED -> {
                 long delayUntilActivation = section.getLong("delay-until-activation");
-                return new DelayedActivation(taskRunner, delayUntilActivation);
+
+                return delayedActivationFactory.create(delayUntilActivation);
             }
             case MANUAL -> {
                 if (activator == null) {
@@ -57,11 +63,10 @@ public class ItemEffectActivationFactory {
             }
             case TRIGGER -> {
                 TriggerActivation activation = new TriggerActivation();
-                TriggerFactory triggerFactory = new TriggerFactory(taskRunner);
                 Iterable<Map<String, Object>> triggers = (Iterable<Map<String, Object>>) section.get("triggers");
 
                 for (Map<String, Object> triggerConfig : triggers) {
-                    activation.addTrigger(triggerFactory.make(context, triggerConfig));
+                    activation.addTrigger(triggerFactory.create(gameKey, triggerConfig));
                 }
 
                 return activation;

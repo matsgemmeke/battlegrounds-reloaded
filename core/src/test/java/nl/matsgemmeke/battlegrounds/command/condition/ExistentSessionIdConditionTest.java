@@ -4,8 +4,7 @@ import co.aikar.commands.BukkitCommandExecutionContext;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
-import nl.matsgemmeke.battlegrounds.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -34,11 +33,9 @@ public class ExistentSessionIdConditionTest {
 
     @Test
     public void conditionShouldPassWhenSessionExists() {
-        GameContext sessionContext = mock(GameContext.class);
-
         int sessionId = 1;
 
-        when(contextProvider.getSessionContext(sessionId)).thenReturn(sessionContext);
+        when(contextProvider.sessionExists(sessionId)).thenReturn(true);
 
         ExistentSessionIdCondition condition = new ExistentSessionIdCondition(contextProvider, translator);
         condition.validateCondition(conditionContext, execContext, sessionId);
@@ -48,7 +45,7 @@ public class ExistentSessionIdConditionTest {
     public void conditionShouldNotPassWhenSessionDoesNotExist() {
         int sessionId = 1;
 
-        when(contextProvider.getSessionContext(sessionId)).thenReturn(null);
+        when(contextProvider.sessionExists(sessionId)).thenReturn(false);
         when(translator.translate(TranslationKey.SESSION_NOT_EXISTS.getPath())).thenReturn(new TextTemplate("message"));
 
         ExistentSessionIdCondition condition = new ExistentSessionIdCondition(contextProvider, translator);
