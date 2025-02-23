@@ -24,7 +24,6 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingModeGameKeyProvider;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -42,7 +41,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
