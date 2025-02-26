@@ -98,10 +98,8 @@ public class FirearmControlsFactory {
 
         if (reloadActionValue != null) {
             ReloadSystem reloadSystem = reloadSystemFactory.create(firearm, section.getSection("reloading"), audioEmitter);
-            List<GameSound> reloadSounds = DefaultGameSound.parseSounds(section.getString("reloading.sound"));
 
             ReloadFunction reloadFunction = new ReloadFunction(firearm, reloadSystem);
-            reloadFunction.addReloadSounds(reloadSounds);
 
             Action reloadAction = this.getActionFromConfiguration(firearm, "reload", reloadActionValue);
 

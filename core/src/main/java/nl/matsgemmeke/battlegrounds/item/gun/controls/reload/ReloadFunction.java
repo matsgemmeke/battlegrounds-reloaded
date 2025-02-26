@@ -1,36 +1,25 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.reload;
 
-import com.google.common.collect.Iterables;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-
 public class ReloadFunction implements ItemFunction<GunHolder> {
 
     @NotNull
-    private AmmunitionHolder ammunitionHolder;
+    private final Gun gun;
     @NotNull
-    private Iterable<GameSound> reloadSounds;
-    @NotNull
-    private ReloadSystem reloadSystem;
+    private final ReloadSystem reloadSystem;
 
-    public ReloadFunction(@NotNull AmmunitionHolder ammunitionHolder, @NotNull ReloadSystem reloadSystem) {
-        this.ammunitionHolder = ammunitionHolder;
+    public ReloadFunction(@NotNull Gun gun, @NotNull ReloadSystem reloadSystem) {
+        this.gun = gun;
         this.reloadSystem = reloadSystem;
-        this.reloadSounds = new HashSet<>();
-    }
-
-    public void addReloadSounds(@NotNull Iterable<GameSound> reloadSounds) {
-        this.reloadSounds = Iterables.concat(this.reloadSounds, reloadSounds);
     }
 
     public boolean isAvailable() {
-        return !reloadSystem.isPerforming();
+        return !reloadSystem.isPerforming() && gun.getMagazineAmmo() < gun.getMagazineSize() && gun.getReserveAmmo() > 0;
     }
 
     public boolean isBlocking() {
@@ -46,7 +35,7 @@ public class ReloadFunction implements ItemFunction<GunHolder> {
     }
 
     public boolean perform(@NotNull GunHolder holder) {
-        if (ammunitionHolder.getMagazineAmmo() >= ammunitionHolder.getMagazineSize() || ammunitionHolder.getReserveAmmo() <= 0) {
+        if (!this.isAvailable()) {
             return false;
         }
 
