@@ -8,21 +8,29 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -196,9 +204,39 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    public void shouldOnlyBeAbleToShootIfMagazineHasAmmo() {
+    public void reloadActivatesReloadSystemWithGivenPerformerAndUpdatesItem() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+        ReloadPerformer performer = mock(ReloadPerformer.class);
+
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
+
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setMagazineAmmo(1);
+        firearm.setAmmunitionStorage(ammunitionStorage);
+        firearm.setHolder(holder);
+        firearm.setItemTemplate(itemTemplate);
+        firearm.setName("test");
+        firearm.setReloadSystem(reloadSystem);
+        firearm.reload(performer);
+
+        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
+        verify(reloadSystem).performReload(eq(performer), procedureCaptor.capture());
+
+        Procedure onReload = procedureCaptor.getValue();
+        onReload.apply();
+
+        verify(holder).setHeldItem(itemStack);
+        verify(reloadSystem).performReload(performer, onReload);
+    }
+
+    @Test
+    public void canShootReturnsTrueIfMagazineHasAmmo() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
 
         boolean canShoot = firearm.canShoot();
 
@@ -206,10 +244,23 @@ public class DefaultFirearmTest {
     }
 
     @Test
+    public void canShootReturnsFalseIfMagazineHasNoAmmo() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(0, 30, 90, 300);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
+
+        boolean canShoot = firearm.canShoot();
+
+        assertFalse(canShoot);
+    }
+
+    @Test
     public void shouldProduceRecoilWhenShooting() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(0, 0, 0, 0, 0, 0);
         RecoilProducer recoilProducer = mock(RecoilProducer.class);
         World world = mock(World.class);
-
         Location startingLocation = new Location(world, 1.0, 1.0, 1.0);
 
         when(holder.getShootingDirection()).thenReturn(startingLocation);
@@ -217,9 +268,10 @@ public class DefaultFirearmTest {
         when(recoilProducer.produceRecoil(eq(holder), any(Location.class))).thenReturn(startingLocation);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setRecoilProducer(recoilProducer);
-
         firearm.shoot();
 
         verify(recoilProducer).produceRecoil(eq(holder), any(Location.class));
@@ -227,6 +279,8 @@ public class DefaultFirearmTest {
 
     @Test
     public void shouldNeverInflictDamageOnGunHolder() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(1, 1, 1, 1, 1, 1);
         World world = mock(World.class);
         Location startingLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
 
@@ -236,7 +290,9 @@ public class DefaultFirearmTest {
         when(targetFinder.findTargets(eq(holder), any(), eq(0.1))).thenReturn(List.of(holder));
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setShotSounds(Collections.emptyList());
         firearm.shoot();
 
@@ -245,6 +301,8 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtShortDistanceTarget() {
+        double shortRangeDamage = 100.0;
+        double shortRangeDistance = 10.0;
         List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
@@ -257,17 +315,17 @@ public class DefaultFirearmTest {
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        List<GameEntity> targets = Collections.singletonList(target);
-
-        when(targetFinder.findTargets(any(), any(), anyDouble())).thenReturn(targets);
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(0, 0, 0, 0, shortRangeDamage, shortRangeDistance);
 
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
+        when(targetFinder.findTargets(any(), any(), anyDouble())).thenReturn(List.of(target));
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
-        firearm.setShortDamage(100.0);
-        firearm.setShortRange(10.0);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
 
@@ -277,6 +335,8 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtMediumDistanceTarget() {
+        double mediumRangeDamage = 50.0;
+        double mediumRangeDistance = 50.0;
         List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
@@ -289,17 +349,17 @@ public class DefaultFirearmTest {
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        List<GameEntity> targets = Collections.singletonList(target);
-
-        when(targetFinder.findTargets(any(), any(), anyDouble())).thenReturn(targets);
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(0, 0, mediumRangeDamage, mediumRangeDistance, 0, 0);
 
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
+        when(targetFinder.findTargets(any(), any(), anyDouble())).thenReturn(List.of(target));
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
-        firearm.setMediumDamage(50.0);
-        firearm.setMediumRange(50.0);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
 
@@ -309,6 +369,8 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtLongDistanceTarget() {
+        double longRangeDamage = 10.0;
+        double longRangeDistance = 100.0;
         List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
@@ -321,17 +383,17 @@ public class DefaultFirearmTest {
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        List<GameEntity> targets = Collections.singletonList(target);
-
-        when(targetFinder.findTargets(any(), any(), anyDouble())).thenReturn(targets);
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, 0, 0, 0, 0);
 
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
+        when(targetFinder.findTargets(any(), any(), anyDouble())).thenReturn(List.of(target));
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
-        firearm.setLongDamage(10.0);
-        firearm.setLongRange(100.0);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
 
@@ -341,6 +403,8 @@ public class DefaultFirearmTest {
 
     @Test
     public void shootInflictsDamageOnDeploymentObject() {
+        double shortRangeDamage = 10.0;
+        double shortRangeDistance = 5.0;
         List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
@@ -350,26 +414,28 @@ public class DefaultFirearmTest {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         when(deploymentObject.getLocation()).thenReturn(deploymentObjectLocation);
 
-        List<DeploymentObject> deploymentObjects = Collections.singletonList(deploymentObject);
-
-        when(targetFinder.findDeploymentObjects(eq(holder), any(), eq(0.3))).thenReturn(deploymentObjects);
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(0, 0, 0, 0, shortRangeDamage, shortRangeDistance);
 
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
+        when(targetFinder.findDeploymentObjects(eq(holder), any(), eq(0.3))).thenReturn(List.of(deploymentObject));
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
-        firearm.setShortDamage(10.0);
-        firearm.setShortRange(5.0);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
 
         verify(audioEmitter).playSounds(shotSounds, startingLocation);
-        verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, new Damage(10.0, DamageType.BULLET_DAMAGE));
+        verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, new Damage(shortRangeDamage, DamageType.BULLET_DAMAGE));
     }
 
     @Test
     public void shootsMultipleProjectilesBasedOnSpreadPattern() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(1, 1, 1, 1, 1, 1);
         Location shootingDirection = new Location(null, 10.0, 10.0, 10.0);
 
         when(holder.getShootingDirection()).thenReturn(shootingDirection);
@@ -378,7 +444,9 @@ public class DefaultFirearmTest {
         when(pattern.getProjectileDirections(shootingDirection)).thenReturn(List.of(shootingDirection, shootingDirection));
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setSpreadPattern(pattern);
         firearm.shoot();
 
@@ -387,6 +455,8 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtTargetWithHeadshotDamageMultiplier() {
+        double shortRangeDamage = 100.0;
+        double shortRangeDistance = 10.0;
         List<GameSound> shotSounds = Collections.emptyList();
 
         World world = mock(World.class);
@@ -399,18 +469,18 @@ public class DefaultFirearmTest {
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(targetEntity);
 
-        List<GameEntity> targets = Collections.singletonList(target);
-
-        when(targetFinder.findTargets(any(), any(), anyDouble())).thenReturn(targets);
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(0, 0, 0, 0, shortRangeDamage, shortRangeDistance);
 
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
+        when(targetFinder.findTargets(any(), any(), anyDouble())).thenReturn(List.of(target));
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHeadshotDamageMultiplier(1.5);
         firearm.setHolder(holder);
-        firearm.setShortDamage(100.0);
-        firearm.setShortRange(10.0);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
 
@@ -420,24 +490,26 @@ public class DefaultFirearmTest {
 
     @Test
     public void canShootProjectilesAtSolidBlock() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(1, 1, 1, 1, 1, 1);
         List<GameSound> shotSounds = Collections.emptyList();
 
         Block block = mock(Block.class);
         World world = mock(World.class);
+        Location startingLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
 
         when(block.getWorld()).thenReturn(world);
         when(block.getType()).thenReturn(Material.STONE);
         when(world.getBlockAt(any())).thenReturn(block);
 
-        Location startingLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
-
         when(collisionDetector.producesBlockCollisionAt(any())).thenReturn(true);
-
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
 
@@ -447,10 +519,10 @@ public class DefaultFirearmTest {
 
     @Test
     public void displaysParticlesAtProjectileTrajectory() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        RangeProfile rangeProfile = new RangeProfile(1, 1, 1, 1, 1, 1);
         List<GameSound> shotSounds = Collections.emptyList();
-
         World world = mock(World.class);
-
         Location startingLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
 
         when(targetFinder.findTargets(any(), any(), anyDouble())).thenReturn(Collections.emptyList());
@@ -459,7 +531,9 @@ public class DefaultFirearmTest {
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
+        firearm.setRangeProfile(rangeProfile);
         firearm.setShotSounds(shotSounds);
         firearm.shoot();
 
@@ -514,12 +588,13 @@ public class DefaultFirearmTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
         firearm.setItemTemplate(itemTemplate);
-        firearm.setMagazineAmmo(10);
         firearm.setName("name");
-        firearm.setReserveAmmo(20);
 
         firearm.updateAmmoDisplay();
 

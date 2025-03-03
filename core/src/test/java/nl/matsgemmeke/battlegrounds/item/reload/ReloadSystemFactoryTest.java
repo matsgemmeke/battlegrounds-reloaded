@@ -19,6 +19,7 @@ import static org.mockito.Mockito.*;
 
 public class ReloadSystemFactoryTest {
 
+    private AmmunitionStorage ammunitionStorage;
     private AudioEmitter audioEmitter;
     private Gun gun;
     private MagazineReloadSystemFactory magazineReloadSystemFactory;
@@ -27,11 +28,14 @@ public class ReloadSystemFactoryTest {
 
     @BeforeEach
     public void setUp() {
+        ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
         audioEmitter = mock(AudioEmitter.class);
-        gun = mock(Gun.class);
         magazineReloadSystemFactory = mock(MagazineReloadSystemFactory.class);
         manualInsertionReloadSystemFactory = mock(ManualInsertionReloadSystemFactory.class);
         section = mock(Section.class);
+
+        gun = mock(Gun.class);
+        when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
     }
 
     @Test
@@ -43,13 +47,13 @@ public class ReloadSystemFactoryTest {
         when(section.getString("type")).thenReturn("MAGAZINE");
 
         MagazineReloadSystem reloadSystem = mock(MagazineReloadSystem.class);
-        when(magazineReloadSystemFactory.create(any(ReloadProperties.class), eq(gun), eq(audioEmitter))).thenReturn(reloadSystem);
+        when(magazineReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage), eq(audioEmitter))).thenReturn(reloadSystem);
 
         ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
         ReloadSystem result = factory.create(gun, section, audioEmitter);
 
         ArgumentCaptor<ReloadProperties> propertiesCaptor = ArgumentCaptor.forClass(ReloadProperties.class);
-        verify(magazineReloadSystemFactory).create(propertiesCaptor.capture(), eq(gun), eq(audioEmitter));
+        verify(magazineReloadSystemFactory).create(propertiesCaptor.capture(), eq(ammunitionStorage), eq(audioEmitter));
 
         ReloadProperties properties = propertiesCaptor.getValue();
         assertEquals(duration, properties.duration());
@@ -66,13 +70,13 @@ public class ReloadSystemFactoryTest {
         when(section.getString("type")).thenReturn("MANUAL_INSERTION");
 
         ManualInsertionReloadSystem reloadSystem = mock(ManualInsertionReloadSystem.class);
-        when(manualInsertionReloadSystemFactory.create(any(ReloadProperties.class), eq(gun), eq(audioEmitter))).thenReturn(reloadSystem);
+        when(manualInsertionReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage), eq(audioEmitter))).thenReturn(reloadSystem);
 
         ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
         ReloadSystem result = factory.create(gun, section, audioEmitter);
 
         ArgumentCaptor<ReloadProperties> propertiesCaptor = ArgumentCaptor.forClass(ReloadProperties.class);
-        verify(manualInsertionReloadSystemFactory).create(propertiesCaptor.capture(), eq(gun), eq(audioEmitter));
+        verify(manualInsertionReloadSystemFactory).create(propertiesCaptor.capture(), eq(ammunitionStorage), eq(audioEmitter));
 
         ReloadProperties properties = propertiesCaptor.getValue();
         assertEquals(duration, properties.duration());

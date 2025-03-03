@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls.shoot;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import org.bukkit.Location;
@@ -18,13 +18,13 @@ import static org.mockito.Mockito.*;
 
 public class ShootFunctionTest {
 
-    private AmmunitionHolder ammunitionHolder;
+    private AmmunitionStorage ammunitionStorage;
     private AudioEmitter audioEmitter;
     private FireMode fireMode;
 
     @BeforeEach
     public void setUp() {
-        this.ammunitionHolder = mock(AmmunitionHolder.class);
+        this.ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
         this.audioEmitter = mock(AudioEmitter.class);
         this.fireMode = mock(FireMode.class);
     }
@@ -33,7 +33,7 @@ public class ShootFunctionTest {
     public void shouldReturnAvailabilityBasedOnFireModeState() {
         when(fireMode.isCycling()).thenReturn(true);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
+        ShootFunction function = new ShootFunction(ammunitionStorage, audioEmitter, fireMode);
         boolean available = function.isAvailable();
 
         assertFalse(available);
@@ -43,7 +43,7 @@ public class ShootFunctionTest {
     public void shouldReturnPerformingStateBasedOnFireMode() {
         when(fireMode.isCycling()).thenReturn(true);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
+        ShootFunction function = new ShootFunction(ammunitionStorage, audioEmitter, fireMode);
         boolean performing = function.isPerforming();
 
         assertTrue(performing);
@@ -53,7 +53,7 @@ public class ShootFunctionTest {
     public void shouldCancelFireModeCycleWhenCancelling() {
         when(fireMode.cancelCycle()).thenReturn(true);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
+        ShootFunction function = new ShootFunction(ammunitionStorage, audioEmitter, fireMode);
         boolean cancelled = function.cancel();
 
         assertTrue(cancelled);
@@ -61,11 +61,9 @@ public class ShootFunctionTest {
 
     @Test
     public void shouldActivateFireModeCycleWhenPerformingAction() {
-        when(ammunitionHolder.getMagazineAmmo()).thenReturn(100);
-
         GunHolder holder = mock(GunHolder.class);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
+        ShootFunction function = new ShootFunction(ammunitionStorage, audioEmitter, fireMode);
         boolean result = function.perform(holder);
 
         assertTrue(result);
@@ -75,7 +73,7 @@ public class ShootFunctionTest {
 
     @Test
     public void shouldPlayTriggerSoundsWhenPerformingActionIfThereIsNotEnoughAmmo() {
-        when(ammunitionHolder.getMagazineAmmo()).thenReturn(-10);
+        ammunitionStorage.setMagazineAmmo(0);
 
         Iterable<GameSound> triggerSounds = Collections.emptySet();
         Location location = new Location(null, 1.0, 1.0, 1.0);
@@ -86,7 +84,7 @@ public class ShootFunctionTest {
         GunHolder holder = mock(GunHolder.class);
         when(holder.getEntity()).thenReturn(player);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
+        ShootFunction function = new ShootFunction(ammunitionStorage, audioEmitter, fireMode);
         function.setTriggerSounds(triggerSounds);
         boolean result = function.perform(holder);
 

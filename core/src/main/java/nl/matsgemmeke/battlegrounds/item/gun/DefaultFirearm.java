@@ -37,9 +37,6 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @NotNull
     private DamageProcessor damageProcessor;
     private double headshotDamageMultiplier;
-    private int magazineAmmo;
-    private int magazineSize;
-    private int reserveAmmo;
     private FireMode fireMode;
     private List<GameSound> shotSounds;
     private List<GameSound> triggerSounds;
@@ -70,30 +67,6 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
     public void setHeadshotDamageMultiplier(double headshotDamageMultiplier) {
         this.headshotDamageMultiplier = headshotDamageMultiplier;
-    }
-
-    public int getMagazineAmmo() {
-        return magazineAmmo;
-    }
-
-    public void setMagazineAmmo(int magazineAmmo) {
-        this.magazineAmmo = magazineAmmo;
-    }
-
-    public int getMagazineSize() {
-        return magazineSize;
-    }
-
-    public void setMagazineSize(int magazineSize) {
-        this.magazineSize = magazineSize;
-    }
-
-    public int getReserveAmmo() {
-        return reserveAmmo;
-    }
-
-    public void setReserveAmmo(int reserveAmmo) {
-        this.reserveAmmo = reserveAmmo;
     }
 
     @NotNull
@@ -133,17 +106,8 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     }
 
     private double getDamage(@NotNull Location startingLocation, @NotNull Location targetLocation, @NotNull Location projectileLocation) {
-        double damage = 0.0;
         double distance = startingLocation.distance(targetLocation);
-
-        if (distance <= shortRange) {
-            damage = shortDamage;
-        } else if (distance <= mediumRange) {
-            damage = mediumDamage;
-        } else if (distance <= longRange) {
-            damage = longDamage;
-        }
-
+        double damage = rangeProfile.getDamageByDistance(distance);
         Hitbox hitbox = Hitbox.getHitbox(targetLocation.getY(), projectileLocation.getY());
 
         if (hitbox == Hitbox.HEAD) {
@@ -220,7 +184,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     }
 
     public boolean canShoot() {
-        return magazineAmmo > 0;
+        return ammunitionStorage.getMagazineAmmo() > 0;
     }
 
     public boolean shoot() {
@@ -230,7 +194,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
         Location direction = holder.getShootingDirection();
 
-        magazineAmmo--;
+        ammunitionStorage.setMagazineAmmo(ammunitionStorage.getMagazineAmmo() - 1);
         audioEmitter.playSounds(shotSounds, direction);
 
         if (recoilProducer != null) {
@@ -247,6 +211,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
     private void shootProjectile(@NotNull Location direction) {
         double distance = PROJECTILE_DISTANCE_START;
+        double projectileRange = rangeProfile.getLongRangeDamage();
 
         // Keep reference to starting point
         Location startingPoint = direction.clone();
@@ -272,7 +237,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
             direction.subtract(vector);
 
             distance += PROJECTILE_DISTANCE_JUMP;
-        } while (distance < longRange);
+        } while (distance < projectileRange);
     }
 
     private Iterable<Location> getProjectileDirections(@NotNull Location aimDirection) {

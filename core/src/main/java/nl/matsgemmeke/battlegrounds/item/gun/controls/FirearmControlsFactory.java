@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.Firearm;
@@ -17,8 +18,6 @@ import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.ChangeScopeMagnifica
 import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.StopScopeFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.UseScopeFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.shoot.ShootFunction;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -33,18 +32,11 @@ public class FirearmControlsFactory {
     private final BattlegroundsConfiguration configuration;
     @NotNull
     private final GameContextProvider contextProvider;
-    @NotNull
-    private final ReloadSystemFactory reloadSystemFactory;
 
     @Inject
-    public FirearmControlsFactory(
-            @NotNull BattlegroundsConfiguration configuration,
-            @NotNull GameContextProvider contextProvider,
-            @NotNull ReloadSystemFactory reloadSystemFactory
-    ) {
+    public FirearmControlsFactory(@NotNull BattlegroundsConfiguration configuration, @NotNull GameContextProvider contextProvider) {
         this.configuration = configuration;
         this.contextProvider = contextProvider;
-        this.reloadSystemFactory = reloadSystemFactory;
     }
 
     @NotNull
@@ -97,9 +89,7 @@ public class FirearmControlsFactory {
         }
 
         if (reloadActionValue != null) {
-            ReloadSystem reloadSystem = reloadSystemFactory.create(firearm, section.getSection("reloading"), audioEmitter);
-
-            ReloadFunction reloadFunction = new ReloadFunction(firearm, reloadSystem);
+            ReloadFunction reloadFunction = new ReloadFunction(firearm);
 
             Action reloadAction = this.getActionFromConfiguration(firearm, "reload", reloadActionValue);
 
@@ -107,10 +97,11 @@ public class FirearmControlsFactory {
         }
 
         if (shootActionValue != null) {
+            AmmunitionStorage ammunitionStorage = firearm.getAmmunitionStorage();
             FireMode fireMode = firearm.getFireMode();
             List<GameSound> triggerSounds = DefaultGameSound.parseSounds(configuration.getGunTriggerSound());
 
-            ShootFunction shootFunction = new ShootFunction(firearm, audioEmitter, fireMode);
+            ShootFunction shootFunction = new ShootFunction(ammunitionStorage, audioEmitter, fireMode);
             shootFunction.setTriggerSounds(triggerSounds);
 
             Action shootAction = this.getActionFromConfiguration(firearm, "shoot", shootActionValue);

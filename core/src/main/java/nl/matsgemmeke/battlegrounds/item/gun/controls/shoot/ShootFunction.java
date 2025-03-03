@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls.shoot;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
@@ -13,7 +13,7 @@ import java.util.HashSet;
 public class ShootFunction implements ItemFunction<GunHolder> {
 
     @NotNull
-    private AmmunitionHolder ammunitionHolder;
+    private AmmunitionStorage ammunitionStorage;
     @NotNull
     private AudioEmitter audioEmitter;
     @NotNull
@@ -22,11 +22,11 @@ public class ShootFunction implements ItemFunction<GunHolder> {
     private Iterable<GameSound> triggerSounds;
 
     public ShootFunction(
-            @NotNull AmmunitionHolder ammunitionHolder,
+            @NotNull AmmunitionStorage ammunitionStorage,
             @NotNull AudioEmitter audioEmitter,
             @NotNull FireMode fireMode
     ) {
-        this.ammunitionHolder = ammunitionHolder;
+        this.ammunitionStorage = ammunitionStorage;
         this.audioEmitter = audioEmitter;
         this.fireMode = fireMode;
         this.triggerSounds = new HashSet<>();
@@ -58,7 +58,7 @@ public class ShootFunction implements ItemFunction<GunHolder> {
     }
 
     public boolean perform(@NotNull GunHolder holder) {
-        if (ammunitionHolder.getMagazineAmmo() <= 0) {
+        if (ammunitionStorage.getMagazineAmmo() <= 0) {
             audioEmitter.playSounds(triggerSounds, holder.getEntity().getLocation());
             return false;
         }

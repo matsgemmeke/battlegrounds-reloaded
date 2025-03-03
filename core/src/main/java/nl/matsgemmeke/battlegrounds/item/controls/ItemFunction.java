@@ -4,7 +4,12 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A feature of an item that performs a certain task.
+ * Represents a functional link between a performed action on an item and a specific feature of that item.
+ * <p>
+ * Implementations of this interface should be concise and designed to activate only the intended feature without
+ * triggering unrelated behaviors. This ensures a clear and modular interaction between item actions and their
+ * corresponding effects.
+ * </p>
  *
  * @param <T> the required item holder for executing the function
  */

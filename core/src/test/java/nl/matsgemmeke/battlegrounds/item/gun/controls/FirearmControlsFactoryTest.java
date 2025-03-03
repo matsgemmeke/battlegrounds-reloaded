@@ -5,10 +5,9 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.*;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,6 @@ public class FirearmControlsFactoryTest {
     private Firearm firearm;
     private GameContextProvider contextProvider;
     private GameKey gameKey;
-    private ReloadSystemFactory reloadSystemFactory;
     private Section controlsSection;
     private Section rootSection;
 
@@ -33,7 +31,6 @@ public class FirearmControlsFactoryTest {
         configuration = mock(BattlegroundsConfiguration.class);
         contextProvider = mock(GameContextProvider.class);
         gameKey = GameKey.ofTrainingMode();
-        reloadSystemFactory = mock(ReloadSystemFactory.class);
 
         firearm = mock(Firearm.class);
         when(firearm.getName()).thenReturn("test firearm");
@@ -53,20 +50,14 @@ public class FirearmControlsFactoryTest {
 
         Section reloadingSection = mock(Section.class);
 
-        ReloadSystem reloadSystem = mock(ReloadSystem.class);
-
-        when(reloadSystemFactory.create(firearm, reloadingSection, audioEmitter)).thenReturn(reloadSystem);
-
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
         when(rootSection.getSection("reloading")).thenReturn(reloadingSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider, reloadSystemFactory);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
         ItemControls<GunHolder> controls = controlsFactory.create(rootSection, firearm, gameKey);
 
         assertNotNull(controls);
-
-        verify(reloadSystemFactory).create(firearm, reloadingSection, audioEmitter);
     }
 
     @Test
@@ -77,15 +68,17 @@ public class FirearmControlsFactoryTest {
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("shoot")).thenReturn("RIGHT_CLICK");
 
+        when(configuration.getGunTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
 
-        when(configuration.getGunTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
 
         FireMode fireMode = mock(FireMode.class);
+        when(firearm.getAmmunitionStorage()).thenReturn(ammunitionStorage);
         when(firearm.getFireMode()).thenReturn(fireMode);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider, reloadSystemFactory);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
         ItemControls<GunHolder> controls = controlsFactory.create(rootSection, firearm, gameKey);
 
         assertNotNull(controls);
@@ -109,7 +102,7 @@ public class FirearmControlsFactoryTest {
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider, reloadSystemFactory);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
         ItemControls<GunHolder> controls = controlsFactory.create(rootSection, firearm, gameKey);
 
         assertNotNull(controls);
@@ -135,7 +128,7 @@ public class FirearmControlsFactoryTest {
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider, reloadSystemFactory);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
         ItemControls<GunHolder> controls = controlsFactory.create(rootSection, firearm, gameKey);
 
         assertNotNull(controls);
@@ -158,7 +151,7 @@ public class FirearmControlsFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider, reloadSystemFactory);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
 
         assertThrows(FirearmControlsCreationException.class, () -> controlsFactory.create(rootSection, firearm, gameKey));
     }
@@ -180,7 +173,7 @@ public class FirearmControlsFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider, reloadSystemFactory);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
 
         assertThrows(FirearmControlsCreationException.class, () -> controlsFactory.create(rootSection, firearm, gameKey));
     }

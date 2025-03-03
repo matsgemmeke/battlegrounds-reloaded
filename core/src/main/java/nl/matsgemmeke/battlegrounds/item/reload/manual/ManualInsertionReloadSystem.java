@@ -5,10 +5,11 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadProperties;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +20,7 @@ import java.util.List;
 public class ManualInsertionReloadSystem implements ReloadSystem {
 
     @NotNull
-    private final AmmunitionHolder ammunitionHolder;
+    private final AmmunitionStorage ammunitionStorage;
     @NotNull
     private final AudioEmitter audioEmitter;
     @NotNull
@@ -35,12 +36,12 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
     public ManualInsertionReloadSystem(
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull ReloadProperties properties,
-            @Assisted @NotNull AmmunitionHolder ammunitionHolder,
+            @Assisted @NotNull AmmunitionStorage ammunitionStorage,
             @Assisted @NotNull AudioEmitter audioEmitter
     ) {
         this.taskRunner = taskRunner;
         this.properties = properties;
-        this.ammunitionHolder = ammunitionHolder;
+        this.ammunitionStorage = ammunitionStorage;
         this.audioEmitter = audioEmitter;
         this.tasks = new ArrayList<>();
     }
@@ -49,7 +50,7 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
         return currentPerformer != null;
     }
 
-    public boolean performReload(@NotNull ReloadPerformer performer) {
+    public boolean performReload(@NotNull ReloadPerformer performer, @NotNull Procedure callback) {
         currentPerformer = performer;
         performer.applyReloadingState();
 
@@ -57,7 +58,11 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
             tasks.add(taskRunner.runTaskTimer(() -> audioEmitter.playSound(sound, performer.getAudioPlayLocation()), sound.getDelay(), properties.duration()));
         }
 
-        tasks.add(taskRunner.runTaskTimer(this::addSingleAmmunition, properties.duration(), properties.duration()));
+        tasks.add(taskRunner.runTaskTimer(() -> {
+            this.addSingleAmmunition();
+            callback.apply();
+        }, properties.duration(), properties.duration()));
+
         return true;
     }
 
@@ -77,11 +82,10 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
     }
 
     public void addSingleAmmunition() {
-        ammunitionHolder.setMagazineAmmo(ammunitionHolder.getMagazineAmmo() + 1);
-        ammunitionHolder.setReserveAmmo(ammunitionHolder.getReserveAmmo() - 1);
-        ammunitionHolder.updateAmmoDisplay();
+        ammunitionStorage.setMagazineAmmo(ammunitionStorage.getMagazineAmmo() + 1);
+        ammunitionStorage.setReserveAmmo(ammunitionStorage.getReserveAmmo() - 1);
 
-        if (ammunitionHolder.getMagazineAmmo() >= ammunitionHolder.getMagazineSize() || ammunitionHolder.getReserveAmmo() <= 0) {
+        if (ammunitionStorage.getMagazineAmmo() >= ammunitionStorage.getMagazineSize() || ammunitionStorage.getReserveAmmo() <= 0) {
             this.cancelReload();
         }
     }
