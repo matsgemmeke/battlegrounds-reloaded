@@ -5,15 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings("unchecked")
 public class ItemControlsTest {
 
     @Test
     public void shouldCancelPerformingFunctionsWhenCancelling() {
-        ItemFunction<GunHolder> function1 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function1 = mock();
         when(function1.isPerforming()).thenReturn(true);
 
-        ItemFunction<GunHolder> function2 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function2 = mock();
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function1);
@@ -28,7 +27,7 @@ public class ItemControlsTest {
     public void shouldTriggerCorrespondingFunctionWhenPerformingAction() {
         GunHolder holder = mock(GunHolder.class);
 
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
@@ -42,11 +41,11 @@ public class ItemControlsTest {
     public void shouldOnlyTriggerTheFirstFunctionWhenPerformingAction() {
         GunHolder holder = mock(GunHolder.class);
 
-        ItemFunction<GunHolder> function1 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function1 = mock();
         when(function1.isAvailable()).thenReturn(true);
         when(function1.perform(holder)).thenReturn(true);
 
-        ItemFunction<GunHolder> function2 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function2 = mock();
         when(function2.isAvailable()).thenReturn(true);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
@@ -61,7 +60,7 @@ public class ItemControlsTest {
     @Test
     public void shouldNotTriggerFunctionIfActionDoesNotCorrespond() {
         GunHolder holder = mock(GunHolder.class);
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function);
@@ -73,7 +72,7 @@ public class ItemControlsTest {
     @Test
     public void shouldNotTriggerFunctionIsIfNotAvailable() {
         GunHolder holder = mock(GunHolder.class);
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function);
@@ -86,13 +85,13 @@ public class ItemControlsTest {
     public void shouldNotTriggerFunctionIfAnotherBlockingFunctionIsPerforming() {
         GunHolder holder = mock(GunHolder.class);
 
-        ItemFunction<GunHolder> function1 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function1 = mock();
         when(function1.isAvailable()).thenReturn(true).thenReturn(false);
         when(function1.isBlocking()).thenReturn(true);
         when(function1.isPerforming()).thenReturn(false).thenReturn(true);
         when(function1.perform(holder)).thenReturn(true);
 
-        ItemFunction<GunHolder> function2 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function2 = mock();
         when(function2.isAvailable()).thenReturn(true);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
@@ -109,12 +108,12 @@ public class ItemControlsTest {
     public void shouldTriggerFunctionIfAnotherFunctionIsPerformingButNotBlocking() {
         GunHolder holder = mock(GunHolder.class);
 
-        ItemFunction<GunHolder> function1 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function1 = mock();
         when(function1.isAvailable()).thenReturn(true).thenReturn(false);
         when(function1.isPerforming()).thenReturn(false).thenReturn(true);
         when(function1.perform(holder)).thenReturn(true);
 
-        ItemFunction<GunHolder> function2 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function2 = mock();
         when(function2.isAvailable()).thenReturn(true);
 
         ItemControls<GunHolder> controls = new ItemControls<>();

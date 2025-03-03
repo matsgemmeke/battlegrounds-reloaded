@@ -103,7 +103,6 @@ public class GameContextProviderTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void getGameKeyReturnsNullIfGivenPlayerIsNotInAnyGame() {
         Game game = mock(Game.class);
         GameKey gameKey = GameKey.ofTrainingMode();

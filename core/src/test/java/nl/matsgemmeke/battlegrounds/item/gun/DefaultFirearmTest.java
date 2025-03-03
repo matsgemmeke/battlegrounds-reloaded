@@ -95,12 +95,11 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldCancelOngoingFunctionsWhenHolderIsChangingHeldItems() {
-        ItemFunction<GunHolder> function1 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function1 = mock();
         when(function1.isPerforming()).thenReturn(true);
 
-        ItemFunction<GunHolder> function2 = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function2 = mock();
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.LEFT_CLICK, function1);
@@ -112,9 +111,8 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void executesCorrespondingFunctionWhenChangingItem() {
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
@@ -126,9 +124,8 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldNotInteractWithControlsWhenLeftClickedIfHolderIsNull() {
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.LEFT_CLICK, function);
@@ -138,9 +135,8 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void executesCorrespondingFunctionWhenLeftClicked() {
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
@@ -152,9 +148,8 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldNotInteractWithControlsWhenRightClickedIfHolderIsNull() {
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.RIGHT_CLICK, function);
@@ -164,9 +159,8 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void executesCorrespondingFunctionWhenRightClicked() {
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
@@ -178,9 +172,8 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldNotInteractWithControlsWhenSwappedFromIfHolderIsNull() {
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.getControls().addControl(Action.SWAP_FROM, function);
@@ -190,9 +183,8 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void executesCorrespondingFunctionWhenSwappedFrom() {
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
@@ -550,9 +542,8 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldCancelFunctionsAndResetHolderWhenDropped() {
-        ItemFunction<GunHolder> function = (ItemFunction<GunHolder>) mock(ItemFunction.class);
+        ItemFunction<GunHolder> function = mock();
         when(function.isPerforming()).thenReturn(true);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);

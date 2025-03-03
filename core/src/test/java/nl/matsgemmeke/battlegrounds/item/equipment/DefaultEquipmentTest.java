@@ -256,11 +256,10 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldPerformFunctionWhenLeftClicked() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
-        ItemFunction<EquipmentHolder> function = (ItemFunction<EquipmentHolder>) mock(ItemFunction.class);
+        ItemFunction<EquipmentHolder> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
@@ -272,11 +271,10 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldPerformFunctionWhenRightClicked() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
-        ItemFunction<EquipmentHolder> function = (ItemFunction<EquipmentHolder>) mock(ItemFunction.class);
+        ItemFunction<EquipmentHolder> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();

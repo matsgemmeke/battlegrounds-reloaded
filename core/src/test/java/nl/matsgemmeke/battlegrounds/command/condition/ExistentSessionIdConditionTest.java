@@ -23,10 +23,9 @@ public class ExistentSessionIdConditionTest {
     private Translator translator;
 
     @BeforeEach
-    @SuppressWarnings("unchecked")
     public void setUp() {
         execContext = mock(BukkitCommandExecutionContext.class);
-        conditionContext = (ConditionContext<BukkitCommandIssuer>) mock(ConditionContext.class);
+        conditionContext = mock();
         contextProvider = mock(GameContextProvider.class);
         translator = mock(Translator.class);
     }
