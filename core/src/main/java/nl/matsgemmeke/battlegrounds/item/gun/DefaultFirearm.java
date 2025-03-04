@@ -37,7 +37,6 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @NotNull
     private DamageProcessor damageProcessor;
     private double headshotDamageMultiplier;
-    private FireMode fireMode;
     private List<GameSound> shotSounds;
     private List<GameSound> triggerSounds;
     @Nullable

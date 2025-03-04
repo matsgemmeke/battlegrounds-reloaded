@@ -53,11 +53,4 @@ public interface Gun extends Weapon, Interactable<GunHolder>, Reloadable, Shoota
     List<GameSound> getShotSounds();
 
     void setShotSounds(@NotNull List<GameSound> shotSounds);
-
-    /**
-     * Makes the gun shoot one of its projectiles.
-     *
-     * @return whether the gun has shot
-     */
-    boolean shoot();
 }

@@ -144,7 +144,14 @@ public class FirearmFactory implements WeaponFactory {
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("shooting.shot-sound"));
         firearm.setShotSounds(shotSounds);
 
-        FireMode fireMode = fireModeFactory.create(firearm, section.getSection("shooting.fire-mode"));
+        // Fire mode creation
+        Section fireModeSection = section.getSection("shooting.fire-mode");
+
+        if (fireModeSection == null) {
+            throw new FirearmCreationException("Unable to create firearm " + name + ": the fire mode configuration is missing");
+        }
+
+        FireMode fireMode = fireModeFactory.create(firearm, fireModeSection);
         firearm.setFireMode(fireMode);
 
         // Read controls configuration

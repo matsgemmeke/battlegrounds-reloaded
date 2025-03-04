@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.Firearm;
@@ -19,7 +18,6 @@ import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.StopScopeFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.UseScopeFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.shoot.ShootFunction;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,22 +87,15 @@ public class FirearmControlsFactory {
         }
 
         if (reloadActionValue != null) {
-            ReloadFunction reloadFunction = new ReloadFunction(firearm);
-
             Action reloadAction = this.getActionFromConfiguration(firearm, "reload", reloadActionValue);
+            ReloadFunction reloadFunction = new ReloadFunction(firearm);
 
             controls.addControl(reloadAction, reloadFunction);
         }
 
         if (shootActionValue != null) {
-            AmmunitionStorage ammunitionStorage = firearm.getAmmunitionStorage();
-            FireMode fireMode = firearm.getFireMode();
-            List<GameSound> triggerSounds = DefaultGameSound.parseSounds(configuration.getGunTriggerSound());
-
-            ShootFunction shootFunction = new ShootFunction(ammunitionStorage, audioEmitter, fireMode);
-            shootFunction.setTriggerSounds(triggerSounds);
-
             Action shootAction = this.getActionFromConfiguration(firearm, "shoot", shootActionValue);
+            ShootFunction shootFunction = new ShootFunction(firearm);
 
             controls.addControl(shootAction, shootFunction);
         }

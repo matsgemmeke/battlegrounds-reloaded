@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
+import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +21,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
 
     protected double damageAmplifier;
     protected AmmunitionStorage ammunitionStorage;
+    protected FireMode fireMode;
     @Nullable
     protected GunHolder holder;
     @NotNull
@@ -121,6 +123,10 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         return reloadSystem.cancelReload();
     }
 
+    public boolean cancelShootingCycle() {
+        return fireMode.cancelCycle();
+    }
+
     public boolean isMatching(@NotNull ItemStack itemStack) {
         return itemTemplate != null && itemTemplate.matchesTemplate(itemStack);
     }
@@ -133,6 +139,10 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
 
     public boolean isReloading() {
         return reloadSystem.isPerforming();
+    }
+
+    public boolean isShooting() {
+        return fireMode.isCycling();
     }
 
     public void onDrop() {

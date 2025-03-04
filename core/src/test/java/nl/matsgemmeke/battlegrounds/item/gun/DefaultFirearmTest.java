@@ -17,6 +17,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.*;
@@ -29,8 +30,6 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,6 +49,30 @@ public class DefaultFirearmTest {
         damageProcessor = mock(DamageProcessor.class);
         holder = mock(GunHolder.class);
         targetFinder = mock(TargetFinder.class);
+    }
+
+    @Test
+    public void cancelReloadCancelsReloadSystemPerformance() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+        when(reloadSystem.cancelReload()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setReloadSystem(reloadSystem);
+        boolean cancelled = firearm.cancelReload();
+
+        assertTrue(cancelled);
+    }
+
+    @Test
+    public void cancelShootingCycleCancelsFireModeCycle() {
+        FireMode fireMode = mock(FireMode.class);
+        when(fireMode.cancelCycle()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setFireMode(fireMode);
+        boolean cancelled = firearm.cancelShootingCycle();
+
+        assertTrue(cancelled);
     }
 
     @Test
@@ -92,6 +115,96 @@ public class DefaultFirearmTest {
         boolean matches = firearm.isMatching(other);
 
         assertFalse(matches);
+    }
+
+    @Test
+    public void isReloadAvailableReturnsFalseIfReloadSystemIsPerforming() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+        when(reloadSystem.isPerforming()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setReloadSystem(reloadSystem);
+        boolean reloadAvailable = firearm.isReloadAvailable();
+
+        assertFalse(reloadAvailable);
+    }
+
+    @Test
+    public void isReloadAvailableReturnsFalseIfMagazineAmmoEqualsMagazineSize() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+        when(reloadSystem.isPerforming()).thenReturn(false);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
+        firearm.setReloadSystem(reloadSystem);
+        boolean reloadAvailable = firearm.isReloadAvailable();
+
+        assertFalse(reloadAvailable);
+    }
+
+    @Test
+    public void isReloadAvailableReturnsFalseIfNoReserveAmmoIsAvailable() {
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(0, 30, 0, 300);
+
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+        when(reloadSystem.isPerforming()).thenReturn(false);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setAmmunitionStorage(ammunitionStorage);
+        firearm.setReloadSystem(reloadSystem);
+        boolean reloadAvailable = firearm.isReloadAvailable();
+
+        assertFalse(reloadAvailable);
+    }
+
+    @Test
+    public void isReloadingReturnsTrueIfReloadSystemIsPerforming() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+        when(reloadSystem.isPerforming()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setReloadSystem(reloadSystem);
+        boolean reloading = firearm.isReloading();
+
+        assertTrue(reloading);
+    }
+
+    @Test
+    public void isReloadingReturnsTrueIfReloadSystemIsNotPerforming() {
+        ReloadSystem reloadSystem = mock(ReloadSystem.class);
+        when(reloadSystem.isPerforming()).thenReturn(false);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setReloadSystem(reloadSystem);
+        boolean reloading = firearm.isReloading();
+
+        assertFalse(reloading);
+    }
+
+    @Test
+    public void isShootingReturnsTrueIfFireModeIsCycling() {
+        FireMode fireMode = mock(FireMode.class);
+        when(fireMode.isCycling()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setFireMode(fireMode);
+        boolean shooting = firearm.isShooting();
+
+        assertTrue(shooting);
+    }
+
+    @Test
+    public void isShootingReturnsFalseIfFireModeIsNotCycling() {
+        FireMode fireMode = mock(FireMode.class);
+        when(fireMode.isCycling()).thenReturn(false);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setFireMode(fireMode);
+        boolean shooting = firearm.isShooting();
+
+        assertFalse(shooting);
     }
 
     @Test

@@ -159,6 +159,16 @@ public class FirearmFactoryTest {
     }
 
     @Test
+    public void createThrowsFirearmCreationExceptionIfFireModeConfigurationIsMissing() {
+        when(rootSection.getSection("shooting.fire-mode")).thenReturn(null);
+
+        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
+
+        Exception exception = assertThrows(FirearmCreationException.class, () -> firearmFactory.create(itemConfiguration, gameKey));
+        assertEquals("Unable to create firearm test: the fire mode configuration is missing", exception.getMessage());
+    }
+
+    @Test
     public void createThrowsFirearmCreationExceptionIfReloadConfigurationIsMissing() {
         when(rootSection.getSection("reloading")).thenReturn(null);
 
