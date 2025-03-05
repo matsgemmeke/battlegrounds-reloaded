@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.reload.Reloadable;
+import nl.matsgemmeke.battlegrounds.item.scope.Scopable;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface Gun extends Weapon, Interactable<GunHolder>, Reloadable, Shootable {
+public interface Gun extends Weapon, Interactable<GunHolder>, Reloadable, Scopable, Shootable {
 
     @NotNull
     FireMode getFireMode();

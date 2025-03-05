@@ -24,6 +24,8 @@ import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
+import nl.matsgemmeke.battlegrounds.item.scope.ScopeProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
@@ -144,9 +146,14 @@ public class FirearmFactory implements WeaponFactory {
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("shooting.shot-sound"));
         firearm.setShotSounds(shotSounds);
 
-        // Fire mode creation
+        Section controlsSection = section.getSection("controls");
         Section fireModeSection = section.getSection("shooting.fire-mode");
+        Section patternSection = section.getSection("shooting.pattern");
+        Section recoilSection = section.getSection("shooting.recoil");
+        Section reloadingSection = section.getSection("reloading");
+        Section scopeSection = section.getSection("scope");
 
+        // Fire mode creation
         if (fireModeSection == null) {
             throw new FirearmCreationException("Unable to create firearm " + name + ": the fire mode configuration is missing");
         }
@@ -155,38 +162,42 @@ public class FirearmFactory implements WeaponFactory {
         firearm.setFireMode(fireMode);
 
         // Read controls configuration
-        Section controlsSection = section.getSection("controls");
-
         if (controlsSection != null) {
             ItemControls<GunHolder> controls = controlsFactory.create(section, firearm, gameKey);
             firearm.setControls(controls);
         }
 
         // Handle the pattern section if it's there
-        Section patternSection = section.getSection("shooting.pattern");
-
         if (patternSection != null) {
             SpreadPattern spreadPattern = spreadPatternFactory.create(patternSection);
             firearm.setSpreadPattern(spreadPattern);
         }
 
         // Handle the recoil section if it's there
-        Section recoilSection = section.getSection("shooting.recoil");
-
         if (recoilSection != null) {
             RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSection);
             firearm.setRecoilProducer(recoilProducer);
         }
 
         // Reload system creation
-        Section reloadingSection = section.getSection("reloading");
-
         if (reloadingSection == null) {
             throw new FirearmCreationException("Unable to create firearm " + name + ": the reloading configuration is missing");
         }
 
         ReloadSystem reloadSystem = reloadSystemFactory.create(firearm, reloadingSection, audioEmitter);
         firearm.setReloadSystem(reloadSystem);
+
+        // Scope attachment creation (optional)
+        if (scopeSection != null) {
+            List<GameSound> scopeUseSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sound"));
+            List<GameSound> scopeStopSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sound"));
+            List<Float> magnificationSettings = scopeSection.getFloatList("magnifications");
+
+            ScopeProperties properties = new ScopeProperties(scopeUseSounds, scopeStopSounds, magnificationSettings);
+            DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
+
+            firearm.setScopeAttachment(scopeAttachment);
+        }
 
         // Item template creation
         Material material;

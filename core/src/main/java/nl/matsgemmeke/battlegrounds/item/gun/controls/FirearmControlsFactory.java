@@ -54,14 +54,10 @@ public class FirearmControlsFactory {
             // Assume the gun also has a configuration for the scope
             Section scopeSection = section.getSection("scope");
 
-            List<Float> magnificationSettings = scopeSection.getFloatList("magnifications");
-
-            DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(magnificationSettings);
-
             if (changeScopeMagnificationActionValue != null) {
                 List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSection.getString("change-magnification-sound"));
 
-                ChangeScopeMagnificationFunction changeScopeMagnificationFunction = new ChangeScopeMagnificationFunction(scopeAttachment, audioEmitter);
+                ChangeScopeMagnificationFunction changeScopeMagnificationFunction = new ChangeScopeMagnificationFunction(null, audioEmitter);
                 changeScopeMagnificationFunction.addSounds(changeMagnificationSounds);
 
                 Action changeScopeMagnificationAction = this.getActionFromConfiguration(firearm, "scope-change-magnification", changeScopeMagnificationActionValue);
@@ -69,14 +65,11 @@ public class FirearmControlsFactory {
                 controls.addControl(changeScopeMagnificationAction, changeScopeMagnificationFunction);
             }
 
-            List<GameSound> useScopeSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sound"));
-
-            UseScopeFunction useScopeFunction = new UseScopeFunction(scopeAttachment, audioEmitter);
-            useScopeFunction.addSounds(useScopeSounds);
+            UseScopeFunction useScopeFunction = new UseScopeFunction(firearm);
 
             List<GameSound> stopScopeSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sound"));
 
-            StopScopeFunction stopScopeFunction = new StopScopeFunction(scopeAttachment, audioEmitter);
+            StopScopeFunction stopScopeFunction = new StopScopeFunction(null, audioEmitter);
             stopScopeFunction.addSounds(stopScopeSounds);
 
             Action useScopeAction = this.getActionFromConfiguration(firearm, "scope-use", useScopeActionValue);

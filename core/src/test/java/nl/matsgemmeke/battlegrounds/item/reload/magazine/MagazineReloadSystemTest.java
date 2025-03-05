@@ -66,7 +66,7 @@ public class MagazineReloadSystemTest {
         when(sound.getDelay()).thenReturn(soundDelay);
 
         ReloadPerformer performer = mock(ReloadPerformer.class);
-        when(performer.getAudioPlayLocation()).thenReturn(performerLocation);
+        when(performer.getLocation()).thenReturn(performerLocation);
 
         ReloadProperties properties = new ReloadProperties(List.of(sound), DURATION);
 

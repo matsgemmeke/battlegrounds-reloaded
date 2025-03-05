@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
+import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -119,8 +120,24 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         this.scopeAttachment = scopeAttachment;
     }
 
+    public boolean applyScope(@NotNull ScopeUser user) {
+        if (scopeAttachment == null) {
+            return false;
+        }
+
+        return scopeAttachment.applyEffect(user);
+    }
+
     public boolean cancelReload() {
         return reloadSystem.cancelReload();
+    }
+
+    public boolean cancelScope() {
+        if (scopeAttachment == null) {
+            return false;
+        }
+
+        return scopeAttachment.removeEffect();
     }
 
     public boolean cancelShootingCycle() {
@@ -145,6 +162,10 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         return fireMode.isCycling();
     }
 
+    public boolean isUsingScope() {
+        return scopeAttachment != null && scopeAttachment.isScoped();
+    }
+
     public void onDrop() {
         if (holder == null) {
             return;
@@ -167,6 +188,10 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
 
     public void reload(@NotNull ReloadPerformer performer) {
         reloadSystem.performReload(performer, this::update);
+    }
+
+    public boolean startShootCycle() {
+        return fireMode.activateCycle();
     }
 
     public boolean update() {

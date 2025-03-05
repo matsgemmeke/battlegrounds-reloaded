@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.scope;
 
 import com.google.common.collect.Iterables;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,34 +9,39 @@ import java.util.Iterator;
 
 public class DefaultScopeAttachment implements ScopeAttachment {
 
+    @NotNull
+    private final AudioEmitter audioEmitter;
     private float currentMagnification;
     @NotNull
-    private Iterable<Float> magnificationSettings;
-    @NotNull
     private Iterator<Float> settingsCycle;
+    @NotNull
+    private final ScopeProperties properties;
     @Nullable
     private ScopeUser currentUser;
     @Nullable
     private ScopeZoomEffect currentEffect;
 
-    public DefaultScopeAttachment(@NotNull Iterable<Float> magnificationSettings) {
-        this.magnificationSettings = magnificationSettings;
-        this.settingsCycle = magnificationSettings.iterator();
+    public DefaultScopeAttachment(@NotNull ScopeProperties properties, @NotNull AudioEmitter audioEmitter) {
+        this.properties = properties;
+        this.audioEmitter = audioEmitter;
+        this.settingsCycle = properties.magnificationSettings().iterator();
         this.currentMagnification = settingsCycle.next();
     }
 
-    public boolean applyEffect(@NotNull ScopeUser user) {
+    public boolean applyEffect(@NotNull ScopeUser scopeUser) {
         // Do not apply the effect if one is already being used
         if (currentEffect != null) {
             return false;
         }
 
-        currentEffect = new ScopeZoomEffect(user, currentMagnification);
+        audioEmitter.playSounds(properties.scopeUseSounds(), scopeUser.getLocation());
+
+        currentEffect = new ScopeZoomEffect(scopeUser, currentMagnification);
         currentEffect.apply();
 
-        currentUser = user;
+        currentUser = scopeUser;
 
-        return user.addEffect(currentEffect);
+        return scopeUser.addEffect(currentEffect);
     }
 
     public boolean isScoped() {
@@ -43,13 +49,13 @@ public class DefaultScopeAttachment implements ScopeAttachment {
     }
 
     public boolean nextMagnification() {
-        if (Iterables.size(magnificationSettings) <= 1) {
+        if (Iterables.size(properties.magnificationSettings()) <= 1) {
             return false;
         }
 
         // Obtain a new iterator if all values have been used
         if (!settingsCycle.hasNext()) {
-            settingsCycle = magnificationSettings.iterator();
+            settingsCycle = properties.magnificationSettings().iterator();
         }
 
         currentMagnification = settingsCycle.next();
@@ -66,6 +72,8 @@ public class DefaultScopeAttachment implements ScopeAttachment {
         if (currentEffect == null || currentUser == null) {
             return false;
         }
+
+        audioEmitter.playSounds(properties.scopeStopSounds(), currentUser.getLocation());
 
         currentEffect.remove();
         currentUser.removeEffect(currentEffect);

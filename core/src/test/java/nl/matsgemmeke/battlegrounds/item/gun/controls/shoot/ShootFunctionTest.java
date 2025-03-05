@@ -95,6 +95,6 @@ public class ShootFunctionTest {
 
         assertTrue(performed);
 
-        verify(gun).shoot();
+        verify(gun).startShootCycle();
     }
 }

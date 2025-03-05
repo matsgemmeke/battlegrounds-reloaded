@@ -35,7 +35,7 @@ public class ShootFunction implements ItemFunction<GunHolder> {
             return false;
         }
 
-        gun.shoot();
+        gun.startShootCycle();
         return true;
     }
 }

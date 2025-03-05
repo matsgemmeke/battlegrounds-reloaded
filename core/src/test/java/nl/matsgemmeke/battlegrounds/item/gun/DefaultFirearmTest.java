@@ -17,6 +17,8 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
+import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
@@ -52,6 +54,30 @@ public class DefaultFirearmTest {
     }
 
     @Test
+    public void applyScopeReturnsFalseIfGunHasNoScopeAttachment() {
+        ScopeUser scopeUser = mock(ScopeUser.class);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        boolean applied = firearm.applyScope(scopeUser);
+
+        assertFalse(applied);
+    }
+
+    @Test
+    public void applyScopeAppliesScopeAttachmentEffectToGivenScopeUser() {
+        ScopeUser scopeUser = mock(ScopeUser.class);
+
+        ScopeAttachment scopeAttachment = mock(ScopeAttachment.class);
+        when(scopeAttachment.applyEffect(scopeUser)).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setScopeAttachment(scopeAttachment);
+        boolean applied = firearm.applyScope(scopeUser);
+
+        assertTrue(applied);
+    }
+
+    @Test
     public void cancelReloadCancelsReloadSystemPerformance() {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystem.cancelReload()).thenReturn(true);
@@ -59,6 +85,26 @@ public class DefaultFirearmTest {
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setReloadSystem(reloadSystem);
         boolean cancelled = firearm.cancelReload();
+
+        assertTrue(cancelled);
+    }
+
+    @Test
+    public void cancelScopeReturnsFalseIfGunHasNoScopeAttachment() {
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        boolean cancelled = firearm.cancelScope();
+
+        assertFalse(cancelled);
+    }
+
+    @Test
+    public void cancelScopeRemovesScopeAttachmentEffect() {
+        ScopeAttachment scopeAttachment = mock(ScopeAttachment.class);
+        when(scopeAttachment.removeEffect()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setScopeAttachment(scopeAttachment);
+        boolean cancelled = firearm.cancelScope();
 
         assertTrue(cancelled);
     }
@@ -205,6 +251,38 @@ public class DefaultFirearmTest {
         boolean shooting = firearm.isShooting();
 
         assertFalse(shooting);
+    }
+
+    @Test
+    public void isUsingScopeReturnsFalseIfGunHasNoScopeAttachment() {
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        boolean usingScope = firearm.isUsingScope();
+
+        assertFalse(usingScope);
+    }
+
+    @Test
+    public void isUsingScopeReturnsFalseIfScopeAttachmentIsNotScoped() {
+        ScopeAttachment scopeAttachment = mock(ScopeAttachment.class);
+        when(scopeAttachment.isScoped()).thenReturn(false);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setScopeAttachment(scopeAttachment);
+        boolean usingScope = firearm.isUsingScope();
+
+        assertFalse(usingScope);
+    }
+
+    @Test
+    public void isUsingScopeReturnsTrueIfScopeAttachmentIsScoped() {
+        ScopeAttachment scopeAttachment = mock(ScopeAttachment.class);
+        when(scopeAttachment.isScoped()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setScopeAttachment(scopeAttachment);
+        boolean usingScope = firearm.isUsingScope();
+
+        assertTrue(usingScope);
     }
 
     @Test

@@ -33,4 +33,11 @@ public interface Shootable {
      * @return whether the item has shot
      */
     boolean shoot();
+
+    /**
+     * Makes the item shoot.
+     *
+     * @return whether the item has shot
+     */
+    boolean startShootCycle();
 }

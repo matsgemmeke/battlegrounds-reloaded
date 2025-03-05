@@ -55,7 +55,7 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
         performer.applyReloadingState();
 
         for (GameSound sound : properties.reloadSounds()) {
-            tasks.add(taskRunner.runTaskTimer(() -> audioEmitter.playSound(sound, performer.getAudioPlayLocation()), sound.getDelay(), properties.duration()));
+            tasks.add(taskRunner.runTaskTimer(() -> audioEmitter.playSound(sound, performer.getLocation()), sound.getDelay(), properties.duration()));
         }
 
         tasks.add(taskRunner.runTaskTimer(() -> {

@@ -55,7 +55,7 @@ public class MagazineReloadSystem implements ReloadSystem {
         performer.applyReloadingState();
 
         for (GameSound sound : properties.reloadSounds()) {
-            currentTasks.add(taskRunner.runTaskLater(() -> audioEmitter.playSound(sound, performer.getAudioPlayLocation()), sound.getDelay()));
+            currentTasks.add(taskRunner.runTaskLater(() -> audioEmitter.playSound(sound, performer.getLocation()), sound.getDelay()));
         }
 
         currentTasks.add(taskRunner.runTaskLater(() -> {
