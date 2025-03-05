@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import org.bukkit.Location;
@@ -14,53 +15,58 @@ import static org.mockito.Mockito.*;
 
 public class StopScopeFunctionTest {
 
-    private AudioEmitter audioEmitter;
-    private ScopeAttachment scopeAttachment;
+    private Gun gun;
 
     @BeforeEach
     public void setUp() {
-        audioEmitter = mock(AudioEmitter.class);
-        scopeAttachment = mock(ScopeAttachment.class);
+        gun = mock(Gun.class);
     }
 
     @Test
-    public void shouldReturnAvailabilityBasedOnScopeState() {
-        when(scopeAttachment.isScoped()).thenReturn(true);
+    public void isAvailableReturnsTrueIfGunIsUsingScope() {
+        when(gun.isUsingScope()).thenReturn(true);
 
-        StopScopeFunction function = new StopScopeFunction(scopeAttachment, audioEmitter);
+        StopScopeFunction function = new StopScopeFunction(gun);
         boolean available = function.isAvailable();
 
         assertTrue(available);
     }
 
     @Test
-    public void shouldRemoveScopeEffectAndPlaySoundsWhenPerformingAction() {
-        Location location = new Location(null, 1.0, 1.0, 1.0);
+    public void isAvailableReturnsFalseIfGunIsNotUsingScope() {
+        when(gun.isUsingScope()).thenReturn(false);
 
-        Player player = mock(Player.class);
-        when(player.getLocation()).thenReturn(location);
+        StopScopeFunction function = new StopScopeFunction(gun);
+        boolean available = function.isAvailable();
 
-        GunHolder holder = mock(GunHolder.class);
-        when(holder.getEntity()).thenReturn(player);
-
-        when(scopeAttachment.isScoped()).thenReturn(true);
-        when(scopeAttachment.removeEffect()).thenReturn(true);
-
-        StopScopeFunction function = new StopScopeFunction(scopeAttachment, audioEmitter);
-        boolean result = function.perform(holder);
-
-        assertTrue(result);
-
-        verify(scopeAttachment).removeEffect();
+        assertFalse(available);
     }
 
     @Test
-    public void shouldNotRemoveScopeEffectWhenPerformingActionIfScopeIsNotBeingUsed() {
+    public void performReturnsTrueAndCancelsScope() {
         GunHolder holder = mock(GunHolder.class);
 
-        StopScopeFunction function = new StopScopeFunction(scopeAttachment, audioEmitter);
-        boolean result = function.perform(holder);
+        when(gun.isUsingScope()).thenReturn(true);
 
-        assertFalse(result);
+        StopScopeFunction function = new StopScopeFunction(gun);
+        boolean performed = function.perform(holder);
+
+        assertTrue(performed);
+
+        verify(gun).cancelScope();
+    }
+
+    @Test
+    public void performReturnsFalseWhenGunIsNotUsingScope() {
+        GunHolder holder = mock(GunHolder.class);
+
+        when(gun.isUsingScope()).thenReturn(false);
+
+        StopScopeFunction function = new StopScopeFunction(gun);
+        boolean performed = function.perform(holder);
+
+        assertFalse(performed);
+
+        verify(gun, never()).cancelScope();
     }
 }

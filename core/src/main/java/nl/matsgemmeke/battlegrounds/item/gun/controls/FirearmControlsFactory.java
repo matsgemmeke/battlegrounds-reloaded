@@ -65,15 +65,11 @@ public class FirearmControlsFactory {
                 controls.addControl(changeScopeMagnificationAction, changeScopeMagnificationFunction);
             }
 
-            UseScopeFunction useScopeFunction = new UseScopeFunction(firearm);
-
-            List<GameSound> stopScopeSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sound"));
-
-            StopScopeFunction stopScopeFunction = new StopScopeFunction(null, audioEmitter);
-            stopScopeFunction.addSounds(stopScopeSounds);
-
             Action useScopeAction = this.getActionFromConfiguration(firearm, "scope-use", useScopeActionValue);
             Action stopScopeAction = this.getActionFromConfiguration(firearm, "scope-stop", stopScopeActionValue);
+
+            UseScopeFunction useScopeFunction = new UseScopeFunction(firearm);
+            StopScopeFunction stopScopeFunction = new StopScopeFunction(firearm);
 
             controls.addControl(useScopeAction, useScopeFunction);
             controls.addControl(stopScopeAction, stopScopeFunction);
