@@ -120,12 +120,8 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         this.scopeAttachment = scopeAttachment;
     }
 
-    public boolean applyScope(@NotNull ScopeUser user) {
-        if (scopeAttachment == null) {
-            return false;
-        }
-
-        return scopeAttachment.applyEffect(user);
+    public boolean applyScope(@NotNull ScopeUser scopeUser) {
+        return scopeAttachment != null && scopeAttachment.applyEffect(scopeUser);
     }
 
     public boolean cancelReload() {
@@ -133,15 +129,15 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     }
 
     public boolean cancelScope() {
-        if (scopeAttachment == null) {
-            return false;
-        }
-
-        return scopeAttachment.removeEffect();
+        return scopeAttachment != null && scopeAttachment.removeEffect();
     }
 
     public boolean cancelShootingCycle() {
         return fireMode.cancelCycle();
+    }
+
+    public boolean changeScopeMagnification() {
+        return scopeAttachment != null && scopeAttachment.nextMagnification();
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {

@@ -122,6 +122,38 @@ public class DefaultFirearmTest {
     }
 
     @Test
+    public void changeScopeMagnificationReturnsFalseIfGunHasNoScopeAttachment() {
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        boolean changed = firearm.changeScopeMagnification();
+
+        assertFalse(changed);
+    }
+
+    @Test
+    public void changeScopeMagnificationReturnsFalseIfScopeAttachmentCannotChangeMagnification() {
+        ScopeAttachment scopeAttachment = mock(ScopeAttachment.class);
+        when(scopeAttachment.nextMagnification()).thenReturn(false);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setScopeAttachment(scopeAttachment);
+        boolean changed = firearm.changeScopeMagnification();
+
+        assertFalse(changed);
+    }
+
+    @Test
+    public void changeScopeMagnificationReturnsTrueIfScopeAttachmentChangesMagnification() {
+        ScopeAttachment scopeAttachment = mock(ScopeAttachment.class);
+        when(scopeAttachment.nextMagnification()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setScopeAttachment(scopeAttachment);
+        boolean changed = firearm.changeScopeMagnification();
+
+        assertTrue(changed);
+    }
+
+    @Test
     public void matchesIfItemTemplateMatchesWithGivenItemStack() {
         ItemStack other = new ItemStack(Material.IRON_HOE);
 
@@ -730,6 +762,30 @@ public class DefaultFirearmTest {
         firearm.shoot();
 
         verify(audioEmitter, never()).playSounds(any(), any());
+    }
+
+    @Test
+    public void startShootCycleReturnsFalseIfFireModeCycleDoesNotStart() {
+        FireMode fireMode = mock(FireMode.class);
+        when(fireMode.activateCycle()).thenReturn(false);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setFireMode(fireMode);
+        boolean started = firearm.startShootCycle();
+
+        assertFalse(started);
+    }
+
+    @Test
+    public void startShootCycleReturnsTrueIfFireModeCycleStarts() {
+        FireMode fireMode = mock(FireMode.class);
+        when(fireMode.activateCycle()).thenReturn(true);
+
+        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setFireMode(fireMode);
+        boolean started = firearm.startShootCycle();
+
+        assertTrue(started);
     }
 
     @Test

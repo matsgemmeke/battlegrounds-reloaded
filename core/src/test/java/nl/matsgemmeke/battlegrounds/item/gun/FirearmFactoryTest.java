@@ -34,6 +34,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -218,6 +220,23 @@ public class FirearmFactoryTest {
 
         verify(gunRegistry).registerItem(firearm);
         verify(recoilProducerFactory).create(recoilSection);
+    }
+
+    @Test
+    public void createMakesFirearmInstanceWithScopeAttachmentIfConfigurationIsPresent() {
+        Section scopeSection = mock(Section.class);
+        when(scopeSection.getFloatList("magnifications")).thenReturn(List.of(-0.1f, -0.2f));
+
+        when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
+        when(rootSection.getSection("scope")).thenReturn(scopeSection);
+
+        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
+        Firearm firearm = firearmFactory.create(itemConfiguration, gameKey);
+
+        assertInstanceOf(DefaultFirearm.class, firearm);
+        assertNotNull(firearm.getScopeAttachment());
+
+        verify(gunRegistry).registerItem(firearm);
     }
 
     @Test

@@ -22,11 +22,12 @@ public class DefaultScopeAttachmentTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
 
-        List<GameSound> scopeUseSounds = List.of(mock(GameSound.class));
-        List<GameSound> scopeStopSounds = List.of(mock(GameSound.class));
+        List<GameSound> useSounds = List.of(mock(GameSound.class));
+        List<GameSound> stopSounds = List.of(mock(GameSound.class));
+        List<GameSound> changeMagnificationSounds = List.of(mock(GameSound.class));
         List<Float> magnificationSettings = List.of(-0.1f, -0.15f, -0.2f);
 
-        properties = new ScopeProperties(scopeUseSounds, scopeStopSounds, magnificationSettings);
+        properties = new ScopeProperties(useSounds, stopSounds, changeMagnificationSounds, magnificationSettings);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class DefaultScopeAttachmentTest {
         DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
         boolean applied = scopeAttachment.applyEffect(scopeUser);
 
-        verify(audioEmitter).playSounds(properties.scopeUseSounds(), userLocation);
+        verify(audioEmitter).playSounds(properties.useSounds(), userLocation);
         verify(scopeUser).addEffect(any());
 
         assertTrue(applied);
@@ -97,14 +98,14 @@ public class DefaultScopeAttachmentTest {
 
         assertTrue(removed);
 
-        verify(audioEmitter).playSounds(properties.scopeStopSounds(), userLocation);
+        verify(audioEmitter).playSounds(properties.stopSounds(), userLocation);
         verify(scopeUser).removeEffect(any(ItemEffect.class));
     }
 
     @Test
     public void shouldNotChangeMagnificationIfItHasNoMagnificationSettings() {
         List<Float> magnificationSettings = List.of(-0.1f);
-        ScopeProperties properties = new ScopeProperties(List.of(), List.of(), magnificationSettings);
+        ScopeProperties properties = new ScopeProperties(List.of(), List.of(), List.of(), magnificationSettings);
         ScopeUser scopeUser = mock(ScopeUser.class);
 
         DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
@@ -140,12 +141,16 @@ public class DefaultScopeAttachmentTest {
 
     @Test
     public void shouldUpdateEffectIfBeingUsedWhenChangingMagnification() {
+        Location userLocation = new Location(null, 1, 1, 1);
+
         ScopeUser scopeUser = mock(ScopeUser.class);
+        when(scopeUser.getLocation()).thenReturn(userLocation);
 
         DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
         scopeAttachment.applyEffect(scopeUser);
         scopeAttachment.nextMagnification();
 
+        verify(audioEmitter).playSounds(properties.changeMagnificationSounds(), userLocation);
         verify(scopeUser).applyViewMagnification(-0.15f);
     }
 }

@@ -189,11 +189,12 @@ public class FirearmFactory implements WeaponFactory {
 
         // Scope attachment creation (optional)
         if (scopeSection != null) {
-            List<GameSound> scopeUseSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sound"));
-            List<GameSound> scopeStopSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sound"));
+            List<GameSound> useSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sound"));
+            List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sound"));
+            List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSection.getString("change-magnification-sound"));
             List<Float> magnificationSettings = scopeSection.getFloatList("magnifications");
 
-            ScopeProperties properties = new ScopeProperties(scopeUseSounds, scopeStopSounds, magnificationSettings);
+            ScopeProperties properties = new ScopeProperties(useSounds, stopSounds, changeMagnificationSounds, magnificationSettings);
             DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
 
             firearm.setScopeAttachment(scopeAttachment);

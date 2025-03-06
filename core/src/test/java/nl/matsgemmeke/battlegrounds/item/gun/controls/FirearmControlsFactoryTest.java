@@ -1,10 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.*;
@@ -19,17 +16,13 @@ import static org.mockito.Mockito.*;
 
 public class FirearmControlsFactoryTest {
 
-    private BattlegroundsConfiguration configuration;
     private Firearm firearm;
-    private GameContextProvider contextProvider;
     private GameKey gameKey;
     private Section controlsSection;
     private Section rootSection;
 
     @BeforeEach
     public void setUp() {
-        configuration = mock(BattlegroundsConfiguration.class);
-        contextProvider = mock(GameContextProvider.class);
         gameKey = GameKey.ofTrainingMode();
 
         firearm = mock(Firearm.class);
@@ -42,9 +35,6 @@ public class FirearmControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithReloadFunction() {
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("reload")).thenReturn("LEFT_CLICK");
 
@@ -54,7 +44,7 @@ public class FirearmControlsFactoryTest {
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
         when(rootSection.getSection("reloading")).thenReturn(reloadingSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
         ItemControls<GunHolder> controls = controlsFactory.create(rootSection, firearm, gameKey);
 
         assertNotNull(controls);
@@ -62,13 +52,9 @@ public class FirearmControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithShootFunction() {
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("shoot")).thenReturn("RIGHT_CLICK");
 
-        when(configuration.getGunTriggerSound()).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
 
@@ -78,7 +64,7 @@ public class FirearmControlsFactoryTest {
         when(firearm.getAmmunitionStorage()).thenReturn(ammunitionStorage);
         when(firearm.getFireMode()).thenReturn(fireMode);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
         ItemControls<GunHolder> controls = controlsFactory.create(rootSection, firearm, gameKey);
 
         assertNotNull(controls);
@@ -86,9 +72,6 @@ public class FirearmControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithScopeUseAndScopeStopFunction() {
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("scope-use")).thenReturn("RIGHT_CLICK");
         when(controlsSection.getString("scope-stop")).thenReturn("LEFT_CLICK");
@@ -102,7 +85,7 @@ public class FirearmControlsFactoryTest {
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
         ItemControls<GunHolder> controls = controlsFactory.create(rootSection, firearm, gameKey);
 
         assertNotNull(controls);
@@ -110,9 +93,6 @@ public class FirearmControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithScopeChangeMagnificationFunction() {
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("scope-change-magnification")).thenReturn("SWAP_FROM");
         when(controlsSection.getString("scope-use")).thenReturn("RIGHT_CLICK");
@@ -128,7 +108,7 @@ public class FirearmControlsFactoryTest {
         when(rootSection.getString("item.material")).thenReturn("IRON_HOE");
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
         ItemControls<GunHolder> controls = controlsFactory.create(rootSection, firearm, gameKey);
 
         assertNotNull(controls);
@@ -136,9 +116,6 @@ public class FirearmControlsFactoryTest {
 
     @Test
     public void createThrowsFirearmControlsCreationExceptionWhenScopeUseActionConfigurationValueIsInvalid() {
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("scope-use")).thenReturn("fail");
         when(controlsSection.getString("scope-stop")).thenReturn("LEFT_CLICK");
@@ -151,16 +128,13 @@ public class FirearmControlsFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
 
         assertThrows(FirearmControlsCreationException.class, () -> controlsFactory.create(rootSection, firearm, gameKey));
     }
 
     @Test
     public void createThrowsFirearmControlsCreationExceptionWhenScopeStopActionConfigurationValueIsInvalid() {
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-
         Section controlsSection = mock(Section.class);
         when(controlsSection.getString("scope-use")).thenReturn("RIGHT_CLICK");
         when(controlsSection.getString("scope-stop")).thenReturn("fail");
@@ -173,7 +147,7 @@ public class FirearmControlsFactoryTest {
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
         when(rootSection.getSection("scope")).thenReturn(scopeSection);
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory(configuration, contextProvider);
+        FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
 
         assertThrows(FirearmControlsCreationException.class, () -> controlsFactory.create(rootSection, firearm, gameKey));
     }

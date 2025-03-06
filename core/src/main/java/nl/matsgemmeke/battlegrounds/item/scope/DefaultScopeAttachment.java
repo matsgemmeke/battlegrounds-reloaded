@@ -34,7 +34,7 @@ public class DefaultScopeAttachment implements ScopeAttachment {
             return false;
         }
 
-        audioEmitter.playSounds(properties.scopeUseSounds(), scopeUser.getLocation());
+        audioEmitter.playSounds(properties.useSounds(), scopeUser.getLocation());
 
         currentEffect = new ScopeZoomEffect(scopeUser, currentMagnification);
         currentEffect.apply();
@@ -49,7 +49,7 @@ public class DefaultScopeAttachment implements ScopeAttachment {
     }
 
     public boolean nextMagnification() {
-        if (Iterables.size(properties.magnificationSettings()) <= 1) {
+        if (properties.magnificationSettings().size() <= 1) {
             return false;
         }
 
@@ -60,7 +60,8 @@ public class DefaultScopeAttachment implements ScopeAttachment {
 
         currentMagnification = settingsCycle.next();
 
-        if (currentEffect != null) {
+        if (currentEffect != null && currentUser != null) {
+            audioEmitter.playSounds(properties.changeMagnificationSounds(), currentUser.getLocation());
             currentEffect.setMagnification(currentMagnification);
             currentEffect.update();
         }
@@ -73,7 +74,7 @@ public class DefaultScopeAttachment implements ScopeAttachment {
             return false;
         }
 
-        audioEmitter.playSounds(properties.scopeStopSounds(), currentUser.getLocation());
+        audioEmitter.playSounds(properties.stopSounds(), currentUser.getLocation());
 
         currentEffect.remove();
         currentUser.removeEffect(currentEffect);

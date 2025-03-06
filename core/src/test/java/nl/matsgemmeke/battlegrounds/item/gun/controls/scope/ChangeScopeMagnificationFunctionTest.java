@@ -1,10 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,54 +11,58 @@ import static org.mockito.Mockito.*;
 
 public class ChangeScopeMagnificationFunctionTest {
 
-    private AudioEmitter audioEmitter;
-    private ScopeAttachment scopeAttachment;
+    private Gun gun;
 
     @BeforeEach
     public void setUp() {
-        audioEmitter = mock(AudioEmitter.class);
-        scopeAttachment = mock(ScopeAttachment.class);
+        gun = mock(Gun.class);
     }
 
     @Test
-    public void shouldReturnAvailabilityWhetherScopeIsScoped() {
-        when(scopeAttachment.isScoped()).thenReturn(true);
+    public void isAvailableReturnsTrueWhenGunIsScoped() {
+        when(gun.isUsingScope()).thenReturn(true);
 
-        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(scopeAttachment, audioEmitter);
+        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(gun);
         boolean available = function.isAvailable();
 
         assertTrue(available);
     }
 
     @Test
-    public void shouldNotPerformIfScopeIsNotScoped() {
-        GunHolder holder = mock(GunHolder.class);
+    public void isAvailableReturnsFalseWhenGunIsNotScoped() {
+        when(gun.isUsingScope()).thenReturn(false);
 
-        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(scopeAttachment, audioEmitter);
-        boolean performed = function.perform(holder);
+        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(gun);
+        boolean available = function.isAvailable();
 
-        assertFalse(performed);
+        assertFalse(available);
     }
 
     @Test
-    public void shouldChangeScopeMagnificationWhenPerforming() {
-        when(scopeAttachment.isScoped()).thenReturn(true);
-        when(scopeAttachment.nextMagnification()).thenReturn(true);
-
-        Location location = new Location(null, 1.0, 1.0, 1.0);
-
-        Player player = mock(Player.class);
-        when(player.getLocation()).thenReturn(location);
-
+    public void performReturnsFalseWhenGunIsNotScoped() {
         GunHolder holder = mock(GunHolder.class);
-        when(holder.getEntity()).thenReturn(player);
 
-        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(scopeAttachment, audioEmitter);
+        when(gun.isUsingScope()).thenReturn(false);
+
+        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(gun);
+        boolean performed = function.perform(holder);
+
+        assertFalse(performed);
+
+        verify(gun, never()).changeScopeMagnification();
+    }
+
+    @Test
+    public void performReturnsTrueAndChangesMagnificationWhenGunIsScoped() {
+        GunHolder holder = mock(GunHolder.class);
+
+        when(gun.isUsingScope()).thenReturn(true);
+
+        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(gun);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
 
-        verify(audioEmitter).playSounds(any(), eq(location));
-        verify(scopeAttachment).nextMagnification();
+        verify(gun).changeScopeMagnification();
     }
 }

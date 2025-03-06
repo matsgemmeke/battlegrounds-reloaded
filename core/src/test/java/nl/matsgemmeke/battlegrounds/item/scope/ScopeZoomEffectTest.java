@@ -9,38 +9,38 @@ import static org.mockito.Mockito.*;
 
 public class ScopeZoomEffectTest {
 
-    private ScopeUser user;
+    private ScopeUser scopeUser;
 
     @BeforeEach
     public void setUp() {
-        this.user = mock(ScopeUser.class);
+        this.scopeUser = mock(ScopeUser.class);
     }
 
     @Test
     public void applyingEffectAltersUserViewMagnification() {
         float magnification = -0.1f;
 
-        ScopeZoomEffect effect = new ScopeZoomEffect(user, magnification);
+        ScopeZoomEffect effect = new ScopeZoomEffect(scopeUser, magnification);
         effect.apply();
 
-        verify(user).applyViewMagnification(magnification);
+        verify(scopeUser).applyViewMagnification(magnification);
     }
 
     @Test
     public void removingEffectResetsUserViewMagnification() {
         float magnification = -0.1f;
 
-        ScopeZoomEffect effect = new ScopeZoomEffect(user, magnification);
+        ScopeZoomEffect effect = new ScopeZoomEffect(scopeUser, magnification);
         effect.remove();
 
-        verify(user).applyViewMagnification(0.1f);
+        verify(scopeUser).applyViewMagnification(0.1f);
     }
 
     @Test
     public void doesNotUpdateIfMagnificationWasNotChanged() {
         float magnification = -0.1f;
 
-        ScopeZoomEffect effect = new ScopeZoomEffect(user, magnification);
+        ScopeZoomEffect effect = new ScopeZoomEffect(scopeUser, magnification);
         effect.apply();
         boolean updated = effect.update();
 
@@ -51,12 +51,12 @@ public class ScopeZoomEffectTest {
     public void changesMagnificationWhenUpdating() {
         float magnification = -0.1f;
 
-        ScopeZoomEffect effect = new ScopeZoomEffect(user, magnification);
+        ScopeZoomEffect effect = new ScopeZoomEffect(scopeUser, magnification);
         effect.apply();
         effect.setMagnification(-0.2f);
         boolean updated = effect.update();
 
-        verify(user).applyViewMagnification(-0.2f);
+        verify(scopeUser).applyViewMagnification(-0.2f);
 
         assertTrue(updated);
     }

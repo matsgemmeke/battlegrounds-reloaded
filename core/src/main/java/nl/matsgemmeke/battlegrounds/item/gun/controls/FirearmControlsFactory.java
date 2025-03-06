@@ -1,13 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
-import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.Firearm;
@@ -17,31 +11,16 @@ import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.ChangeScopeMagnifica
 import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.StopScopeFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.UseScopeFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.shoot.ShootFunction;
-import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 
 public class FirearmControlsFactory {
 
     @NotNull
-    private final BattlegroundsConfiguration configuration;
-    @NotNull
-    private final GameContextProvider contextProvider;
-
-    @Inject
-    public FirearmControlsFactory(@NotNull BattlegroundsConfiguration configuration, @NotNull GameContextProvider contextProvider) {
-        this.configuration = configuration;
-        this.contextProvider = contextProvider;
-    }
-
-    @NotNull
     public ItemControls<GunHolder> create(@NotNull Section section, @NotNull Firearm firearm, @NotNull GameKey gameKey) {
         ItemControls<GunHolder> controls = new ItemControls<>();
-
-        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
         Section controlsSection = section.getSection("controls");
         String reloadActionValue = controlsSection.getString("reload");
@@ -51,16 +30,9 @@ public class FirearmControlsFactory {
         String shootActionValue = controlsSection.getString("shoot");
 
         if (useScopeActionValue != null && stopScopeActionValue != null) {
-            // Assume the gun also has a configuration for the scope
-            Section scopeSection = section.getSection("scope");
-
             if (changeScopeMagnificationActionValue != null) {
-                List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSection.getString("change-magnification-sound"));
-
-                ChangeScopeMagnificationFunction changeScopeMagnificationFunction = new ChangeScopeMagnificationFunction(null, audioEmitter);
-                changeScopeMagnificationFunction.addSounds(changeMagnificationSounds);
-
                 Action changeScopeMagnificationAction = this.getActionFromConfiguration(firearm, "scope-change-magnification", changeScopeMagnificationActionValue);
+                ChangeScopeMagnificationFunction changeScopeMagnificationFunction = new ChangeScopeMagnificationFunction(firearm);
 
                 controls.addControl(changeScopeMagnificationAction, changeScopeMagnificationFunction);
             }
