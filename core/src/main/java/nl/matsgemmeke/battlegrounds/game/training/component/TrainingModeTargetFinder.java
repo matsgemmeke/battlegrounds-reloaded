@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class TrainingModeTargetFinder implements TargetFinder {
 
@@ -34,7 +35,7 @@ public class TrainingModeTargetFinder implements TargetFinder {
     }
 
     @NotNull
-    public List<DeploymentObject> findDeploymentObjects(@NotNull GameEntity gameEntity, @NotNull Location location, double range) {
+    public List<DeploymentObject> findDeploymentObjects(@NotNull UUID entityId, @NotNull Location location, double range) {
         List<DeploymentObject> deploymentObjects = new ArrayList<>();
 
         for (DeploymentObject deploymentObject : deploymentInfoProvider.getAllDeploymentObjects()) {
@@ -49,16 +50,21 @@ public class TrainingModeTargetFinder implements TargetFinder {
     }
 
     @NotNull
-    public List<GameEntity> findEnemyTargets(@NotNull GameEntity gameEntity, @NotNull Location location, double range) {
-        List<GameEntity> targets = this.findTargets(gameEntity, location, range);
+    public List<GameEntity> findEnemyTargets(@NotNull UUID entityId, @NotNull Location location, double range) {
+        List<GameEntity> targets = this.findTargets(entityId, location, range);
+
         // Remove the given entity, since it is not an enemy of itself
-        targets.remove(gameEntity);
+        for (GameEntity target : targets) {
+            if (target.getEntity().getUniqueId().equals(entityId)) {
+                targets.remove(target);
+            }
+        }
 
         return targets;
     }
 
     @NotNull
-    public List<GameEntity> findTargets(@NotNull GameEntity gameEntity, @NotNull Location location, double range) {
+    public List<GameEntity> findTargets(@NotNull UUID entityId, @NotNull Location location, double range) {
         World world = location.getWorld();
 
         if (world == null) {

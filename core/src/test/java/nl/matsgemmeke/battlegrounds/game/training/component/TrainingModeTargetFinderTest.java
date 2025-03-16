@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -34,7 +35,7 @@ public class TrainingModeTargetFinderTest {
 
     @Test
     public void findDeploymentObjectsReturnsDeploymentObjectsLocatedWithinGivenLocationAndRange() {
-        GameEntity gameEntity = mock(GameEntity.class);
+        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
         Location location = new Location(world, 1, 1, 1);
         double range = 0.5;
@@ -51,7 +52,7 @@ public class TrainingModeTargetFinderTest {
         when(deploymentInfoProvider.getAllDeploymentObjects()).thenReturn(List.of(objectInsideRange, objectOutsideRange));
 
         TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerStorage);
-        List<DeploymentObject> deploymentObjects = targetFinder.findDeploymentObjects(gameEntity, location, range);
+        List<DeploymentObject> deploymentObjects = targetFinder.findDeploymentObjects(entityId, location, range);
 
         assertEquals(1, deploymentObjects.size());
         assertTrue(deploymentObjects.contains(objectInsideRange));
@@ -59,28 +60,33 @@ public class TrainingModeTargetFinderTest {
     }
 
     @Test
-    public void returnNearbyTargetsButWithoutTheGivenGameEntityInstance() {
+    public void findEnemyTargetsReturnsNearbyTargetsButWithoutEntitiesContainingTheGivenEntityId() {
+        UUID entityId = UUID.randomUUID();
+        UUID targetId = UUID.randomUUID();
+        double range = 0.1;
+
         Player player = mock(Player.class);
-        Player targetEntity = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(entityId);
+
+        Player targetPlayer = mock(Player.class);
+        when(targetPlayer.getUniqueId()).thenReturn(targetId);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
         GamePlayer target = mock(GamePlayer.class);
-        when(target.getEntity()).thenReturn(targetEntity);
+        when(target.getEntity()).thenReturn(targetPlayer);
 
         World world = mock(World.class);
         Location location = new Location(world, 1.0, 1.0, 1.0);
 
-        double range = 0.1;
-
-        when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(player, targetEntity));
+        when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(player, targetPlayer));
 
         when(playerStorage.getEntity(player)).thenReturn(gamePlayer);
-        when(playerStorage.getEntity(targetEntity)).thenReturn(target);
+        when(playerStorage.getEntity(targetPlayer)).thenReturn(target);
 
         TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerStorage);
-        Collection<GameEntity> targets = targetFinder.findEnemyTargets(gamePlayer, location, range);
+        Collection<GameEntity> targets = targetFinder.findEnemyTargets(entityId, location, range);
 
         assertEquals(1, targets.size());
         assertTrue(targets.contains(target));
@@ -89,18 +95,18 @@ public class TrainingModeTargetFinderTest {
 
     @Test
     public void shouldReturnNoTargetsIfGivenLocationHasNoWorld() {
-        GameEntity entity = mock(GameEntity.class);
+        UUID entityId = UUID.randomUUID();
         Location location = new Location(null, 1.0, 1.0, 1.0);
 
         TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerStorage);
-        Collection<GameEntity> targets = targetFinder.findTargets(entity, location, 0.1);
+        Collection<GameEntity> targets = targetFinder.findTargets(entityId, location, 0.1);
 
         assertTrue(targets.isEmpty());
     }
 
     @Test
     public void findTargetsReturnsListOfNearbyPlayers() {
-        GameEntity gameEntity = mock(GameEntity.class);
+        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
 
         Location location = new Location(world, 1, 1, 1);
@@ -115,7 +121,7 @@ public class TrainingModeTargetFinderTest {
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(entity));
 
         TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerStorage);
-        List<GameEntity> targets = targetFinder.findTargets(gameEntity, location, range);
+        List<GameEntity> targets = targetFinder.findTargets(entityId, location, range);
 
         assertEquals(1, targets.size());
         assertEquals(gamePlayer, targets.get(0));
@@ -123,7 +129,7 @@ public class TrainingModeTargetFinderTest {
 
     @Test
     public void findTargetsReturnsEmptyListIfFoundPlayersArePassive() {
-        GameEntity gameEntity = mock(GameEntity.class);
+        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
 
         Location location = new Location(world, 1, 1, 1);
@@ -138,14 +144,14 @@ public class TrainingModeTargetFinderTest {
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(entity));
 
         TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerStorage);
-        List<GameEntity> targets = targetFinder.findTargets(gameEntity, location, range);
+        List<GameEntity> targets = targetFinder.findTargets(entityId, location, range);
 
         assertTrue(targets.isEmpty());
     }
 
     @Test
     public void findTargetsReturnsEntitiesThatAreNotPlayers() {
-        GameEntity gameEntity = mock(GameEntity.class);
+        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
 
         Location location = new Location(world, 1, 1, 1);
@@ -157,7 +163,7 @@ public class TrainingModeTargetFinderTest {
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(entity));
 
         TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerStorage);
-        List<GameEntity> targets = targetFinder.findTargets(gameEntity, location, range);
+        List<GameEntity> targets = targetFinder.findTargets(entityId, location, range);
 
         assertEquals(1, targets.size());
         assertEquals(entity, targets.get(0).getEntity());

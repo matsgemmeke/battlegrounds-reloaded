@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,24 +36,24 @@ public class MarkedSpawnPointTest {
 
     @Test
     public void onSpawnRemovesEffectSourceIfItExists() {
-        GameEntity gameEntity = mock(GameEntity.class);
+        Entity entity = mock(Entity.class);
 
         when(source.exists()).thenReturn(true);
 
         MarkedSpawnPoint spawnPoint = new MarkedSpawnPoint(source, YAW);
-        spawnPoint.onSpawn(gameEntity);
+        spawnPoint.onSpawn(entity);
 
         verify(source).remove();
     }
 
     @Test
     public void onSpawnDoesNotRemoveEffectSourceIfItDoesNotExist() {
-        GameEntity gameEntity = mock(GameEntity.class);
+        Entity entity = mock(Entity.class);
 
         when(source.exists()).thenReturn(false);
 
         MarkedSpawnPoint spawnPoint = new MarkedSpawnPoint(source, YAW);
-        spawnPoint.onSpawn(gameEntity);
+        spawnPoint.onSpawn(entity);
 
         verify(source, never()).remove();
     }

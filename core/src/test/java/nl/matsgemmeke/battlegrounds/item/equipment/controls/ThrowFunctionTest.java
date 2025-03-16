@@ -20,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,6 +62,7 @@ public class ThrowFunctionTest {
     @Test
     public void shouldBePerformingIfThrowsWereRecentlyExecuted() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
+        LivingEntity entity = mock(LivingEntity.class);
 
         ItemTemplate throwItemTemplate = mock(ItemTemplate.class);
         when(throwItemTemplate.createItemStack()).thenReturn(itemStack);
@@ -76,6 +78,7 @@ public class ThrowFunctionTest {
         Location throwingDirection = new Location(world, 1.0, 1.0, 1.0);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.getEntity()).thenReturn(entity);
         when(holder.getThrowingDirection()).thenReturn(throwingDirection);
         when(holder.getWorld()).thenReturn(world);
 
@@ -114,6 +117,7 @@ public class ThrowFunctionTest {
     @Test
     public void performReturnsTrueAndPrimesDroppedItem() {
         double droppedItemHealth = 10.0;
+        LivingEntity entity = mock(LivingEntity.class);
         Location location = new Location(null, 1.0, 1.0, 1.0, 0.0f, 0.0f);
 
         Item itemEntity = mock(Item.class);
@@ -147,6 +151,7 @@ public class ThrowFunctionTest {
         when(equipment.getProjectileProperties()).thenReturn(projectileProperties);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.getEntity()).thenReturn(entity);
         when(holder.getLocation()).thenReturn(location);
         when(holder.getThrowingDirection()).thenReturn(location);
         when(holder.getWorld()).thenReturn(world);

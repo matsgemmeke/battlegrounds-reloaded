@@ -111,7 +111,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
         holder.setHeldItem(null);
 
         if (!effect.isPrimed()) {
-            effect.prime(new ItemEffectContext(holder, droppedItem));
+            effect.prime(new ItemEffectContext(holder, holder.getEntity(), droppedItem));
         } else {
             effect.deploy(droppedItem);
         }

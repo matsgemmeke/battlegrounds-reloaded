@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class CookFunction implements ItemFunction<EquipmentHolder> {
@@ -52,8 +53,10 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
 
         audioEmitter.playSounds(properties.cookSounds(), holder.getEntity().getLocation());
 
+        LivingEntity entity = holder.getEntity();
         HeldItem heldItem = new HeldItem(holder, holder.getHeldItem());
-        ItemEffectContext context = new ItemEffectContext(holder, heldItem);
+
+        ItemEffectContext context = new ItemEffectContext(holder, entity, heldItem);
 
         effect.prime(context);
         return true;

@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
@@ -50,11 +50,11 @@ public class DelayedActivation implements ItemEffectActivation {
 
         primed = true;
 
-        ItemHolder holder = context.getHolder();
+        Deployer deployer = context.getDeployer();
         ItemEffectSource source = context.getSource();
 
         if (source.isDeployed()) {
-            holder.setHeldItem(null);
+            deployer.setHeldItem(null);
         }
 
         currentTask = taskRunner.runTaskLater(onActivate::apply, delayUntilActivation);

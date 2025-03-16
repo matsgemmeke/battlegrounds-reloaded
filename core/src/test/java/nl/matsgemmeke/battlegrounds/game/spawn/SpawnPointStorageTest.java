@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.spawn;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -9,24 +10,24 @@ import static org.mockito.Mockito.mock;
 public class SpawnPointStorageTest {
 
     @Test
-    public void getCustomSpawnPointReturnsNullIfThereIsNoCustomSpawnPointSetForGivenEntity() {
-        GameEntity gameEntity = mock(GameEntity.class);
+    public void getCustomSpawnPointReturnsNullIfThereIsNoCustomSpawnPointSetForGivenEntityId() {
+        UUID entityId = UUID.randomUUID();
 
         SpawnPointStorage storage = new SpawnPointStorage();
-        SpawnPoint spawnPoint = storage.getCustomSpawnPoint(gameEntity);
+        SpawnPoint spawnPoint = storage.getCustomSpawnPoint(entityId);
 
         assertNull(spawnPoint);
     }
 
     @Test
-    public void getCustomSpawnPointReturnsSpawnPointObjectAssignedToGivenEntity() {
-        GameEntity gameEntity = mock(GameEntity.class);
+    public void getCustomSpawnPointReturnsSpawnPointObjectAssignedToGivenEntityId() {
         SpawnPoint spawnPoint = mock(SpawnPoint.class);
+        UUID entityId = UUID.randomUUID();
 
         SpawnPointStorage storage = new SpawnPointStorage();
-        storage.setCustomSpawnPoint(gameEntity, spawnPoint);
+        storage.setCustomSpawnPoint(entityId, spawnPoint);
 
-        SpawnPoint result = storage.getCustomSpawnPoint(gameEntity);
+        SpawnPoint result = storage.getCustomSpawnPoint(entityId);
 
         assertNotNull(result);
         assertEquals(spawnPoint, result);

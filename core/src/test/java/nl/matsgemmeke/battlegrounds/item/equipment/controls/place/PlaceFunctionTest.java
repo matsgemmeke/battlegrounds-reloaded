@@ -19,6 +19,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.block.data.FaceAttachable.AttachedFace;
+import org.bukkit.entity.LivingEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -62,6 +63,7 @@ public class PlaceFunctionTest {
         BlockFace targetBlockFace = BlockFace.DOWN;
         BlockState adjacentBlockState = mock(BlockState.class);
         FaceAttachable faceAttachable = mock(FaceAttachable.class);
+        LivingEntity entity = mock(LivingEntity.class);
         Location location = new Location(null, 1, 1, 1);
 
         Block adjacentBlock = mock(Block.class);
@@ -77,6 +79,7 @@ public class PlaceFunctionTest {
         when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.getEntity()).thenReturn(entity);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
@@ -160,6 +163,7 @@ public class PlaceFunctionTest {
         BlockFace targetBlockFace = BlockFace.DOWN;
         BlockState adjacentBlockState = mock(BlockState.class);
         FaceAttachable faceAttachable = mock(FaceAttachable.class);
+        LivingEntity entity = mock(LivingEntity.class);
         Location location = new Location(null, 1, 1, 1);
 
         Block adjacentBlock = mock(Block.class);
@@ -177,6 +181,7 @@ public class PlaceFunctionTest {
         when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.getEntity()).thenReturn(entity);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);
@@ -254,6 +259,7 @@ public class PlaceFunctionTest {
         BlockState adjacentBlockState = mock(BlockState.class);
         Directional directional = mock(Directional.class);
         FaceAttachable faceAttachable = mock(FaceAttachable.class);
+        LivingEntity entity = mock(LivingEntity.class);
         Location location = new Location(null, 1, 1, 1);
 
         Block adjacentBlock = mock(Block.class);
@@ -276,6 +282,7 @@ public class PlaceFunctionTest {
         when(equipment.getEffect()).thenReturn(effect);
 
         EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.getEntity()).thenReturn(entity);
         when(holder.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         PlaceFunction function = new PlaceFunction(taskRunner, properties, equipment, audioEmitter);

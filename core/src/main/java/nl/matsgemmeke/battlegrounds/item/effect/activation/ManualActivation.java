@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Activation that initiates the effect by a manual operation by the item holder.
+ * Activation that initiates the effect by a manual operation by the deployer.
  */
 public class ManualActivation implements ItemEffectActivation {
 
@@ -36,7 +36,7 @@ public class ManualActivation implements ItemEffectActivation {
             return;
         }
 
-        activator.prepare(context.getHolder());
+        activator.prepare(context.getDeployer());
         primed = true;
     }
 }

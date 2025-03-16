@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
@@ -51,11 +51,11 @@ public class TriggerActivation implements ItemEffectActivation {
 
         primed = true;
 
-        ItemHolder holder = context.getHolder();
+        Deployer deployer = context.getDeployer();
         ItemEffectSource source = context.getSource();
 
         if (source.isDeployed()) {
-            holder.setHeldItem(null);
+            deployer.setHeldItem(null);
         }
 
         for (Trigger trigger : triggers) {

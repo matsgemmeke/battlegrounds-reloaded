@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.flash;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class FlashEffect extends BaseItemEffect {
 
@@ -35,29 +35,28 @@ public class FlashEffect extends BaseItemEffect {
     }
 
     public void perform(@NotNull ItemEffectContext context) {
-        ItemHolder holder = context.getHolder();
+        Entity entity = context.getEntity();
         ItemEffectSource source = context.getSource();
 
-        this.createExplosionEffect(holder, source);
-        this.applyPotionEffectToTargets(holder, source.getLocation());
+        this.createExplosionEffect(entity, source);
+        this.applyPotionEffectToTargets(entity.getUniqueId(), source.getLocation());
 
         source.remove();
     }
 
-    private void createExplosionEffect(@NotNull ItemHolder holder, @NotNull ItemEffectSource source) {
+    private void createExplosionEffect(@NotNull Entity damageSource, @NotNull ItemEffectSource source) {
         float power = properties.explosionPower();
         boolean setFire = properties.explosionSetFire();
         boolean breakBlocks = properties.explosionBreakBlocks();
 
         World world = source.getWorld();
         Location location = source.getLocation();
-        Entity damageSource = holder.getEntity();
 
         world.createExplosion(location, power, setFire, breakBlocks, damageSource);
     }
 
-    private void applyPotionEffectToTargets(@NotNull ItemHolder holder, @NotNull Location location) {
-        for (GameEntity target : targetFinder.findTargets(holder, location, properties.range())) {
+    private void applyPotionEffectToTargets(@NotNull UUID entityId, @NotNull Location location) {
+        for (GameEntity target : targetFinder.findTargets(entityId, location, properties.range())) {
             PotionEffectType potionEffectType = PotionEffectType.BLINDNESS;
             int duration = properties.potionEffect().duration();
             int amplifier = properties.potionEffect().amplifier();

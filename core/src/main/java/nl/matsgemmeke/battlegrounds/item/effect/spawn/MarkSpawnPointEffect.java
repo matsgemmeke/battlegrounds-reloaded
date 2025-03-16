@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkSpawnPointEffect extends BaseItemEffect {
@@ -19,10 +20,11 @@ public class MarkSpawnPointEffect extends BaseItemEffect {
     }
 
     public void perform(@NotNull ItemEffectContext context) {
-        Location eyeLocation = context.getHolder().getEntity().getEyeLocation();
+        LivingEntity entity = context.getEntity();
+        Location eyeLocation = entity.getEyeLocation();
         SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), eyeLocation.getYaw());
 
-        spawnPointProvider.setCustomSpawnPoint(context.getHolder(), spawnPoint);
+        spawnPointProvider.setCustomSpawnPoint(entity.getUniqueId(), spawnPoint);
     }
 
     public void reset() {
@@ -30,6 +32,6 @@ public class MarkSpawnPointEffect extends BaseItemEffect {
             return;
         }
 
-        spawnPointProvider.setCustomSpawnPoint(currentContext.getHolder(), null);
+        spawnPointProvider.setCustomSpawnPoint(currentContext.getEntity().getUniqueId(), null);
     }
 }

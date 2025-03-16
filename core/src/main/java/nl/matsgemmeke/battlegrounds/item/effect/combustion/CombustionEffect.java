@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CombustionEffect extends BaseItemEffect {
 
@@ -77,14 +77,13 @@ public class CombustionEffect extends BaseItemEffect {
     }
 
     public void perform(@NotNull ItemEffectContext context) {
-        ItemHolder holder = context.getHolder();
         ItemEffectSource source = context.getSource();
         Location location = source.getLocation();
         World world = source.getWorld();
 
         audioEmitter.playSounds(properties.combustionSounds(), location);
 
-        this.inflictDamage(holder, location);
+        this.inflictDamage(context.getEntity().getUniqueId(), location);
 
         task = taskRunner.runTaskTimer(() -> {
             if (++currentRadius > properties.maxRadius()) {
@@ -105,8 +104,8 @@ public class CombustionEffect extends BaseItemEffect {
         source.remove();
     }
 
-    private void inflictDamage(@NotNull ItemHolder holder, @NotNull Location location) {
-        for (GameEntity target : targetFinder.findTargets(holder, location, rangeProfile.getLongRangeDistance())) {
+    private void inflictDamage(@NotNull UUID entityId, @NotNull Location location) {
+        for (GameEntity target : targetFinder.findTargets(entityId, location, rangeProfile.getLongRangeDistance())) {
             Location targetLocation = target.getLocation();
 
             double distance = location.distance(targetLocation);

@@ -117,7 +117,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     }
 
     private boolean inflictDamage(@NotNull Location startingLocation, @NotNull Location projectileLocation) {
-        for (GameEntity target : targetFinder.findTargets(holder, projectileLocation, ENTITY_FINDING_RANGE)) {
+        for (GameEntity target : targetFinder.findTargets(holder.getEntity().getUniqueId(), projectileLocation, ENTITY_FINDING_RANGE)) {
             if (target.getEntity() == holder.getEntity()) {
                 continue;
             }
@@ -131,7 +131,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
             return true;
         }
 
-        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(holder, projectileLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {
+        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(holder.getEntity().getUniqueId(), projectileLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {
             Location objectLocation = deploymentObject.getLocation();
 
             double damageAmount = this.getDamage(startingLocation, objectLocation, projectileLocation);

@@ -32,6 +32,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -42,6 +43,7 @@ public class DefaultFirearmTest {
     private CollisionDetector collisionDetector;
     private DamageProcessor damageProcessor;
     private GunHolder holder;
+    private LivingEntity entity;
     private TargetFinder targetFinder;
 
     @BeforeEach
@@ -51,6 +53,9 @@ public class DefaultFirearmTest {
         damageProcessor = mock(DamageProcessor.class);
         holder = mock(GunHolder.class);
         targetFinder = mock(TargetFinder.class);
+
+        entity = mock(LivingEntity.class);
+        when(holder.getEntity()).thenReturn(entity);
     }
 
     @Test
@@ -497,12 +502,16 @@ public class DefaultFirearmTest {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
         RangeProfile rangeProfile = new RangeProfile(1, 1, 1, 1, 1, 1);
         World world = mock(World.class);
+        UUID entityId = UUID.randomUUID();
         Location startingLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
+
+        LivingEntity entity = mock(LivingEntity.class);
+        when(entity.getUniqueId()).thenReturn(entityId);
 
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        when(targetFinder.findTargets(eq(holder), any(), eq(0.1))).thenReturn(List.of(holder));
+        when(targetFinder.findTargets(eq(entityId), any(), eq(0.1))).thenReturn(List.of(holder));
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setAmmunitionStorage(ammunitionStorage);
@@ -622,6 +631,9 @@ public class DefaultFirearmTest {
         double shortRangeDistance = 5.0;
         List<GameSound> shotSounds = Collections.emptyList();
 
+        UUID entityId = UUID.randomUUID();
+        when(entity.getUniqueId()).thenReturn(entityId);
+
         World world = mock(World.class);
         Location startingLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
         Location deploymentObjectLocation = new Location(world, 1.0, 1.0, 2.0, 0.0F, 0.0F);
@@ -634,7 +646,7 @@ public class DefaultFirearmTest {
 
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);
         when(holder.getShootingDirection()).thenReturn(startingLocation);
-        when(targetFinder.findDeploymentObjects(eq(holder), any(), eq(0.3))).thenReturn(List.of(deploymentObject));
+        when(targetFinder.findDeploymentObjects(eq(entityId), any(), eq(0.3))).thenReturn(List.of(deploymentObject));
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setAmmunitionStorage(ammunitionStorage);

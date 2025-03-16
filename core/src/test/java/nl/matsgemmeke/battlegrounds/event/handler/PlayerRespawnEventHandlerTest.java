@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,9 +46,14 @@ public class PlayerRespawnEventHandlerTest {
     @Test
     public void handleDoesNotAlterEventIfThereIsNoSpawnPointForThePlayer() {
         GameKey gameKey = GameKey.ofTrainingMode();
-        Player player = mock(Player.class);
         Location respawnLocation = new Location(null, 1, 1, 1);
+        UUID entityId = UUID.randomUUID();
+
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(entityId);
+
         GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getEntity()).thenReturn(player);
 
         PlayerRespawnEvent event = new PlayerRespawnEvent(player, respawnLocation, false, false, RespawnReason.DEATH);
 
@@ -54,7 +61,7 @@ public class PlayerRespawnEventHandlerTest {
         when(playerRegistry.findByEntity(player)).thenReturn(gamePlayer);
 
         SpawnPointProvider spawnPointProvider = mock(SpawnPointProvider.class);
-        when(spawnPointProvider.hasSpawnPoint(gamePlayer)).thenReturn(false);
+        when(spawnPointProvider.hasSpawnPoint(entityId)).thenReturn(false);
 
         when(contextProvider.getGameKey(player)).thenReturn(gameKey);
         when(contextProvider.getComponent(gameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
@@ -69,10 +76,15 @@ public class PlayerRespawnEventHandlerTest {
     @Test
     public void handleSetsRespawnLocationIfPlayerHasSpawnPoint() {
         GameKey gameKey = GameKey.ofTrainingMode();
-        Player player = mock(Player.class);
         Location respawnLocation = new Location(null, 1, 1, 1);
         Location spawnPointLocation = new Location(mock(World.class), 2, 2, 2);
+        UUID entityId = UUID.randomUUID();
+
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(entityId);
+
         GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getEntity()).thenReturn(player);
 
         PlayerRespawnEvent event = new PlayerRespawnEvent(player, respawnLocation, false, false, RespawnReason.DEATH);
 
@@ -80,8 +92,8 @@ public class PlayerRespawnEventHandlerTest {
         when(playerRegistry.findByEntity(player)).thenReturn(gamePlayer);
 
         SpawnPointProvider spawnPointProvider = mock(SpawnPointProvider.class);
-        when(spawnPointProvider.hasSpawnPoint(gamePlayer)).thenReturn(true);
-        when(spawnPointProvider.respawnEntity(gamePlayer)).thenReturn(spawnPointLocation);
+        when(spawnPointProvider.hasSpawnPoint(entityId)).thenReturn(true);
+        when(spawnPointProvider.respawnEntity(player)).thenReturn(spawnPointLocation);
 
         when(contextProvider.getGameKey(player)).thenReturn(gameKey);
         when(contextProvider.getComponent(gameKey, PlayerRegistry.class)).thenReturn(playerRegistry);

@@ -106,7 +106,7 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
         holder.setHeldItem(null);
 
         if (!effect.isPrimed()) {
-            effect.prime(new ItemEffectContext(holder, placedBlock));
+            effect.prime(new ItemEffectContext(holder, holder.getEntity(), placedBlock));
         } else {
             effect.deploy(placedBlock);
         }

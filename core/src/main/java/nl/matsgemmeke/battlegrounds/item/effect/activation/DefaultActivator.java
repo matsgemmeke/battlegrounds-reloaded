@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,7 @@ public class DefaultActivator implements Activator {
 
     private boolean ready;
     @Nullable
-    private ItemHolder currentHolder;
+    private Deployer currentDeployer;
     @Nullable
     private ItemStack heldItemStack;
     @NotNull
@@ -29,27 +29,27 @@ public class DefaultActivator implements Activator {
         return itemTemplate.matchesTemplate(itemStack);
     }
 
-    public void prepare(@NotNull ItemHolder holder) {
-        // Do not prepare the activator again as it can only be held by one holder
-        if (currentHolder != null || heldItemStack != null) {
+    public void prepare(@NotNull Deployer deployer) {
+        // Do not prepare the activator again if already performed
+        if (currentDeployer != null || heldItemStack != null) {
             return;
         }
 
         ItemStack itemStack = itemTemplate.createItemStack();
-        holder.setHeldItem(itemStack);
+        deployer.setHeldItem(itemStack);
 
-        currentHolder = holder;
+        currentDeployer = deployer;
         heldItemStack = itemStack;
         ready = true;
     }
 
     public boolean remove() {
-        if (currentHolder == null || heldItemStack == null) {
+        if (currentDeployer == null || heldItemStack == null) {
             return false;
         }
 
-        currentHolder.removeItem(heldItemStack);
-        currentHolder = null;
+        currentDeployer.removeItem(heldItemStack);
+        currentDeployer = null;
         heldItemStack = null;
         return true;
     }
