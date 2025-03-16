@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemEffectContext {
@@ -9,11 +9,11 @@ public class ItemEffectContext {
     @NotNull
     private Deployer deployer;
     @NotNull
-    private ItemEffectSource source;
+    private Entity entity;
     @NotNull
-    private LivingEntity entity;
+    private ItemEffectSource source;
 
-    public ItemEffectContext(@NotNull Deployer deployer, @NotNull LivingEntity entity, @NotNull ItemEffectSource source) {
+    public ItemEffectContext(@NotNull Deployer deployer, @NotNull Entity entity, @NotNull ItemEffectSource source) {
         this.deployer = deployer;
         this.entity = entity;
         this.source = source;
@@ -29,11 +29,11 @@ public class ItemEffectContext {
     }
 
     @NotNull
-    public LivingEntity getEntity() {
+    public Entity getEntity() {
         return entity;
     }
 
-    public void setEntity(@NotNull LivingEntity entity) {
+    public void setEntity(@NotNull Entity entity) {
         this.entity = entity;
     }
 

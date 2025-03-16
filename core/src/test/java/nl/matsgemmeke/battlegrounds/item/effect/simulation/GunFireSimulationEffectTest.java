@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class GunFireSimulationEffectTest {
     @Test
     public void activateSimulatesGenericGunFireForEntityThatIsUnableToHoldGuns() {
         EquipmentHolder equipmentHolder = mock(EquipmentHolder.class);
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
@@ -81,7 +81,7 @@ public class GunFireSimulationEffectTest {
     @Test
     public void activateSimulatesGenericGunFireForEntityThatDoesNotCarryAnyGuns() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
@@ -111,7 +111,7 @@ public class GunFireSimulationEffectTest {
     @Test
     public void activateStopsSimulatesGunFireOnceEffectSourceNoLongerExists() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
@@ -149,7 +149,7 @@ public class GunFireSimulationEffectTest {
     @Test
     public void activateSimulatesGunFireOnceAndRemovesEffectSourceWhenFinished() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
         ItemEffectSource source = mock(ItemEffectSource.class);

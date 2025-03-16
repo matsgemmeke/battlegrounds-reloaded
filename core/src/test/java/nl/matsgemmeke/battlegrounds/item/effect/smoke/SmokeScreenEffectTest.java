@@ -13,7 +13,7 @@ import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,10 +38,10 @@ public class SmokeScreenEffectTest {
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
     private Deployer deployer;
+    private Entity entity;
     private ItemEffectActivation effectActivation;
     private ItemEffectContext context;
     private ItemEffectSource source;
-    private LivingEntity entity;
     private ParticleEffectProperties particleEffect;
     private TaskRunner taskRunner;
 
@@ -54,7 +54,7 @@ public class SmokeScreenEffectTest {
         taskRunner = mock(TaskRunner.class);
 
         deployer = mock(Deployer.class);
-        entity = mock(LivingEntity.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
         context = new ItemEffectContext(deployer, entity, source);
     }

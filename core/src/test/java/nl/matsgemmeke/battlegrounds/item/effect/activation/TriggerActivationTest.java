@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerObserver;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,15 +15,15 @@ import static org.mockito.Mockito.*;
 public class TriggerActivationTest {
 
     private Deployer deployer;
+    private Entity entity;
     private ItemEffectContext context;
     private ItemEffectSource source;
-    private LivingEntity entity;
 
     @BeforeEach
     public void setUp() {
         deployer = mock(Deployer.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
-        entity = mock(LivingEntity.class);
         context = new ItemEffectContext(deployer, entity, source);
     }
 

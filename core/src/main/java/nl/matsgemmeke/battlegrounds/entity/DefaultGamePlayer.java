@@ -144,6 +144,11 @@ public class DefaultGamePlayer implements GamePlayer {
     }
 
     @NotNull
+    public Location getDeployDirection() {
+        return player.getEyeLocation();
+    }
+
+    @NotNull
     public List<Block> getLastTwoTargetBlocks(int maxDistance) {
         return player.getLastTwoTargetBlocks(null, maxDistance);
     }

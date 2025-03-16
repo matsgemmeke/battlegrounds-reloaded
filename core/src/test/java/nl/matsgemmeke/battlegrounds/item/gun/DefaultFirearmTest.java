@@ -24,6 +24,7 @@ import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
@@ -505,7 +506,7 @@ public class DefaultFirearmTest {
         UUID entityId = UUID.randomUUID();
         Location startingLocation = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
 
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         when(holder.getRelativeAccuracy()).thenReturn(2.0f);

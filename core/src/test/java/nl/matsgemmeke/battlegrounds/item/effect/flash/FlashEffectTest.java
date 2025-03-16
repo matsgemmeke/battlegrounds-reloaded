@@ -10,7 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -43,11 +43,11 @@ public class FlashEffectTest {
     private static final int POTION_EFFECT_DURATION = 100;
 
     private Deployer deployer;
+    private Entity entity;
     private FlashProperties properties;
     private ItemEffectActivation effectActivation;
     private ItemEffectContext context;
     private ItemEffectSource source;
-    private LivingEntity entity;
     private TargetFinder targetFinder;
 
     @BeforeEach
@@ -60,7 +60,7 @@ public class FlashEffectTest {
         properties = new FlashProperties(potionEffect, RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
 
         deployer = mock(Deployer.class);
-        entity = mock(LivingEntity.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
         context = new ItemEffectContext(deployer, entity, source);
     }

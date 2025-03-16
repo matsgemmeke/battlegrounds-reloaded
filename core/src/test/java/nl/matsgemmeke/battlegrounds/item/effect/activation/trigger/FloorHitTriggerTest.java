@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor.FloorHi
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class FloorHitTriggerTest {
     @Test
     public void cancelCancelsTriggerCheck() {
         Deployer deployer = mock(Deployer.class);
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         ItemEffectSource source = mock(ItemEffectSource.class);
 
         ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
@@ -58,7 +58,7 @@ public class FloorHitTriggerTest {
     @Test
     public void stopsCheckingOnceSourceNoLongerExists() {
         Deployer deployer = mock(Deployer.class);
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
@@ -82,7 +82,7 @@ public class FloorHitTriggerTest {
     @Test
     public void notifyObserversOnceBlockBelowObjectIsNotPassable() {
         Deployer deployer = mock(Deployer.class);
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         TriggerObserver observer = mock(TriggerObserver.class);
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);

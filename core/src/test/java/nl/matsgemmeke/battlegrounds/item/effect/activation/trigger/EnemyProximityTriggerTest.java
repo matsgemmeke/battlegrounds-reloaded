@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.enemy.EnemyProximityTrigger;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ public class EnemyProximityTriggerTest {
         ItemEffectSource source = mock(ItemEffectSource.class);
         UUID entityId = UUID.randomUUID();
 
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
@@ -67,7 +67,7 @@ public class EnemyProximityTriggerTest {
     public void stopsCheckingOnceSourceNoLongerExists() {
         BukkitTask task = mock(BukkitTask.class);
         Deployer deployer = mock(Deployer.class);
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
@@ -93,7 +93,7 @@ public class EnemyProximityTriggerTest {
         Deployer deployer = mock(Deployer.class);
         UUID entityId = UUID.randomUUID();
 
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         Location sourceLocation = new Location(null, 1, 1, 1);
@@ -125,7 +125,7 @@ public class EnemyProximityTriggerTest {
         TriggerObserver observer = mock(TriggerObserver.class);
         UUID entityId = UUID.randomUUID();
 
-        LivingEntity entity = mock(LivingEntity.class);
+        Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         Location sourceLocation = new Location(null, 1, 1, 1);

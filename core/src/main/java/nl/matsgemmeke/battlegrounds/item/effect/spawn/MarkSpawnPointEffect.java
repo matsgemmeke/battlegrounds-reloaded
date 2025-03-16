@@ -2,11 +2,12 @@ package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkSpawnPointEffect extends BaseItemEffect {
@@ -20,9 +21,10 @@ public class MarkSpawnPointEffect extends BaseItemEffect {
     }
 
     public void perform(@NotNull ItemEffectContext context) {
-        LivingEntity entity = context.getEntity();
-        Location eyeLocation = entity.getEyeLocation();
-        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), eyeLocation.getYaw());
+        Deployer deployer = context.getDeployer();
+        Entity entity = context.getEntity();
+        Location deployDirection = deployer.getDeployDirection();
+        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), deployDirection.getYaw());
 
         spawnPointProvider.setCustomSpawnPoint(entity.getUniqueId(), spawnPoint);
     }

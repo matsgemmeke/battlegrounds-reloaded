@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,16 +20,16 @@ public class DelayedActivationTest {
     private static final long DELAY_UNTIL_ACTIVATION = 1L;
 
     private Deployer deployer;
+    private Entity entity;
     private ItemEffectContext context;
     private ItemEffectSource source;
-    private LivingEntity entity;
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
         deployer = mock(Deployer.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
-        entity = mock(LivingEntity.class);
         taskRunner = mock(TaskRunner.class);
         context = new ItemEffectContext(deployer, entity, source);
     }

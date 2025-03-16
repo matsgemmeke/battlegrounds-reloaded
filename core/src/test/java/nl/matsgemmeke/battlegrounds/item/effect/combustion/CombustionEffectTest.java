@@ -19,7 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,10 +54,10 @@ public class CombustionEffectTest {
     private CollisionDetector collisionDetector;
     private CombustionProperties properties;
     private Deployer deployer;
+    private Entity entity;
     private ItemEffectActivation effectActivation;
     private ItemEffectContext context;
     private ItemEffectSource source;
-    private LivingEntity entity;
     private MetadataValueEditor metadataValueEditor;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
@@ -75,7 +75,7 @@ public class CombustionEffectTest {
         taskRunner = mock(TaskRunner.class);
 
         deployer = mock(Deployer.class);
-        entity = mock(LivingEntity.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
         context = new ItemEffectContext(deployer, entity, source);
     }
@@ -325,7 +325,6 @@ public class CombustionEffectTest {
         when(target.getLocation()).thenReturn(targetLocation);
 
         GameEntity deployerEntity = mock(GameEntity.class);
-        when(deployerEntity.getEntity()).thenReturn(entity);
         when(deployerEntity.getLocation()).thenReturn(entityLocation);
 
         when(entity.getUniqueId()).thenReturn(entityId);

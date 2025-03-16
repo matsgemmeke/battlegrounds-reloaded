@@ -51,7 +51,7 @@ public class ExplosionEffect extends BaseItemEffect {
         World world = source.getWorld();
 
         for (GameEntity target : targetFinder.findTargets(entityId, sourceLocation, rangeProfile.getLongRangeDistance())) {
-            Location targetLocation = target.getEntity().getLocation();
+            Location targetLocation = target.getLocation();
             Damage damage = this.getDamageForTargetLocation(sourceLocation, targetLocation);
 
             target.damage(damage);

@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -20,10 +20,10 @@ import static org.mockito.Mockito.*;
 public class MarkSpawnPointEffectTest {
 
     private Deployer deployer;
+    private Entity entity;
     private ItemEffectActivation effectActivation;
     private ItemEffectContext context;
     private ItemEffectSource source;
-    private LivingEntity entity;
     private SpawnPointProvider spawnPointProvider;
 
     @BeforeEach
@@ -32,7 +32,7 @@ public class MarkSpawnPointEffectTest {
         spawnPointProvider = mock(SpawnPointProvider.class);
 
         deployer = mock(Deployer.class);
-        entity = mock(LivingEntity.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
         context = new ItemEffectContext(deployer, entity, source);
     }
@@ -40,9 +40,9 @@ public class MarkSpawnPointEffectTest {
     @Test
     public void primeCreatesNewCustomSpawnPointAndAssignsToDeployer() {
         UUID entityId = UUID.randomUUID();
-        Location eyeLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+        Location deployDirection = new Location(null, 1, 1, 1, 1.0f, 1.0f);
 
-        when(entity.getEyeLocation()).thenReturn(eyeLocation);
+        when(deployer.getDeployDirection()).thenReturn(deployDirection);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
@@ -68,9 +68,9 @@ public class MarkSpawnPointEffectTest {
     @Test
     public void resetResetsSpawnPointIfEffectIsPerformed() {
         UUID entityId = UUID.randomUUID();
-        Location eyeLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+        Location deployDirection = new Location(null, 1, 1, 1, 1.0f, 1.0f);
 
-        when(entity.getEyeLocation()).thenReturn(eyeLocation);
+        when(deployer.getDeployDirection()).thenReturn(deployDirection);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);

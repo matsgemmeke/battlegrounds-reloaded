@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,16 +13,16 @@ public class ManualActivationTest {
 
     private Activator activator;
     private Deployer deployer;
+    private Entity entity;
     private ItemEffectContext context;
     private ItemEffectSource source;
-    private LivingEntity entity;
 
     @BeforeEach
     public void setUp() {
         activator = mock(Activator.class);
         deployer = mock(Deployer.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
-        entity = mock(LivingEntity.class);
         context = new ItemEffectContext(deployer, entity, source);
     }
 

@@ -14,7 +14,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,11 +40,11 @@ public class ExplosionEffectTest {
 
     private DamageProcessor damageProcessor;
     private Deployer deployer;
+    private Entity entity;
     private ExplosionProperties properties;
     private ItemEffectActivation effectActivation;
     private ItemEffectContext context;
     private ItemEffectSource source;
-    private LivingEntity entity;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
 
@@ -57,7 +57,7 @@ public class ExplosionEffectTest {
         targetFinder = mock(TargetFinder.class);
 
         deployer = mock(Deployer.class);
-        entity = mock(LivingEntity.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
         context = new ItemEffectContext(deployer, entity, source);
     }
@@ -220,19 +220,14 @@ public class ExplosionEffectTest {
         Location sourceLocation = new Location(world, 1, 1, 1);
         Location targetLocation = new Location(world, 8, 1, 1);
 
-        when(entity.getLocation()).thenReturn(sourceLocation);
         when(entity.getUniqueId()).thenReturn(entityId);
         when(entity.getWorld()).thenReturn(world);
 
         GameEntity deployerEntity = mock(GameEntity.class);
-        when(deployerEntity.getEntity()).thenReturn(entity);
-
-        Player targetEntity = mock(Player.class);
-        when(targetEntity.getLocation()).thenReturn(targetLocation);
-        when(targetEntity.getWorld()).thenReturn(world);
+        when(deployerEntity.getLocation()).thenReturn(sourceLocation);
 
         GameEntity target = mock(GameEntity.class);
-        when(target.getEntity()).thenReturn(targetEntity);
+        when(target.getLocation()).thenReturn(targetLocation);
 
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
