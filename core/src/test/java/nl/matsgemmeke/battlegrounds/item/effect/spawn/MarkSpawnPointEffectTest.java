@@ -40,9 +40,9 @@ public class MarkSpawnPointEffectTest {
     @Test
     public void primeCreatesNewCustomSpawnPointAndAssignsToDeployer() {
         UUID entityId = UUID.randomUUID();
-        Location deployDirection = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+        Location deployLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
 
-        when(deployer.getDeployDirection()).thenReturn(deployDirection);
+        when(deployer.getDeployLocation()).thenReturn(deployLocation);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
@@ -68,9 +68,9 @@ public class MarkSpawnPointEffectTest {
     @Test
     public void resetResetsSpawnPointIfEffectIsPerformed() {
         UUID entityId = UUID.randomUUID();
-        Location deployDirection = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+        Location deployLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
 
-        when(deployer.getDeployDirection()).thenReturn(deployDirection);
+        when(deployer.getDeployLocation()).thenReturn(deployLocation);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);

@@ -23,8 +23,8 @@ public class MarkSpawnPointEffect extends BaseItemEffect {
     public void perform(@NotNull ItemEffectContext context) {
         Deployer deployer = context.getDeployer();
         Entity entity = context.getEntity();
-        Location deployDirection = deployer.getDeployDirection();
-        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), deployDirection.getYaw());
+        Location deployLocation = deployer.getDeployLocation();
+        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), deployLocation.getYaw());
 
         spawnPointProvider.setCustomSpawnPoint(entity.getUniqueId(), spawnPoint);
     }

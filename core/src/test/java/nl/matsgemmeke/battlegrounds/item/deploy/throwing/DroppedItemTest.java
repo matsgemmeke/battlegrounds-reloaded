@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.deploy;
+package nl.matsgemmeke.battlegrounds.item.deploy.throwing;
 
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;

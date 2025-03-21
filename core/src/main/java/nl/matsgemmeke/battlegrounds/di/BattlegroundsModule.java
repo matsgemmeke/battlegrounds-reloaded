@@ -26,6 +26,8 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.training.TrainingModeGameKeyProvider;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.DelayedActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.DelayedActivationFactory;
@@ -46,7 +48,6 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFun
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
@@ -74,12 +75,7 @@ public class BattlegroundsModule implements Module {
     private final Plugin plugin;
     private final PluginManager pluginManager;
 
-    public BattlegroundsModule(
-            File dataFolder,
-            InternalsProvider internals,
-            Plugin plugin,
-            PluginManager pluginManager
-    ) {
+    public BattlegroundsModule(File dataFolder, InternalsProvider internals, Plugin plugin, PluginManager pluginManager) {
         this.dataFolder = dataFolder;
         this.internals = internals;
         this.plugin = plugin;
@@ -115,6 +111,9 @@ public class BattlegroundsModule implements Module {
 
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
+                .build(DeploymentHandlerFactory.class));
+
+        binder.install(new FactoryModuleBuilder()
                 .implement(FireMode.class, BurstMode.class)
                 .build(BurstModeFactory.class));
         binder.install(new FactoryModuleBuilder()
@@ -148,9 +147,6 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(TypeLiterals.EQUIPMENT_FUNCTION, PlaceFunction.class)
                 .build(PlaceFunctionFactory.class));
-        binder.install(new FactoryModuleBuilder()
-                .implement(TypeLiterals.EQUIPMENT_FUNCTION, ThrowFunction.class)
-                .build(ThrowFunctionFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)

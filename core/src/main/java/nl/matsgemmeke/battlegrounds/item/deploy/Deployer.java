@@ -17,7 +17,7 @@ public interface Deployer {
      * @return the entity's deployment direction
      */
     @NotNull
-    Location getDeployDirection();
+    Location getDeployLocation();
 
     /**
      * Gets the {@link ItemStack} that the entity is holding.

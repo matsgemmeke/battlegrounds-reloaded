@@ -19,6 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
@@ -176,6 +177,17 @@ public class DefaultGamePlayerTest {
         gamePlayer.setHeldItem(itemStack);
 
         verify(inventory).setItemInMainHand(itemStack);
+    }
+
+    @Test
+    public void getDeployLocationReturnsPlayerEyeLocation() {
+        Location eyeLocation = new Location(null, 1, 1, 1);
+        when(player.getEyeLocation()).thenReturn(eyeLocation);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
+        Location deployLocation = gamePlayer.getDeployLocation();
+
+        assertThat(deployLocation).isEqualTo(eyeLocation);
     }
 
     @Test

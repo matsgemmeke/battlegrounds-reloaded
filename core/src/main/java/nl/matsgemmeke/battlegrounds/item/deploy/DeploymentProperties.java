@@ -2,10 +2,16 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+/**
+ * Represents the static configuration properties for a {@link DeployableItem}. This class holds predefined settings
+ * that determine how a specific deployment behaves. These values are typically loaded from the item configuration
+ * files.
+ */
 public class DeploymentProperties {
 
     private boolean activatedOnDestroy;
@@ -38,7 +44,7 @@ public class DeploymentProperties {
         return resistances;
     }
 
-    public void setResistances(@Nullable Map<DamageType, Double> resistances) {
+    public void setResistances(@NotNull Map<DamageType, Double> resistances) {
         this.resistances = resistances;
     }
 

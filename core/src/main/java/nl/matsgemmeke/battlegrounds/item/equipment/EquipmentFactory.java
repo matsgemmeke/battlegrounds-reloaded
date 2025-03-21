@@ -9,6 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.MappingException;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
@@ -50,6 +52,8 @@ public class EquipmentFactory implements WeaponFactory {
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
 
     @NotNull
+    private final DeploymentHandlerFactory deploymentHandlerFactory;
+    @NotNull
     private final EquipmentControlsFactory controlsFactory;
     @NotNull
     private final GameContextProvider contextProvider;
@@ -64,6 +68,7 @@ public class EquipmentFactory implements WeaponFactory {
 
     @Inject
     public EquipmentFactory(
+            @NotNull DeploymentHandlerFactory deploymentHandlerFactory,
             @NotNull GameContextProvider contextProvider,
             @NotNull EquipmentControlsFactory controlsFactory,
             @NotNull ItemEffectFactory effectFactory,
@@ -71,6 +76,7 @@ public class EquipmentFactory implements WeaponFactory {
             @NotNull NamespacedKeyCreator keyCreator,
             @NotNull TaskRunner taskRunner
     ) {
+        this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
         this.effectFactory = effectFactory;
@@ -174,7 +180,9 @@ public class EquipmentFactory implements WeaponFactory {
 
             ItemEffectActivation effectActivation = effectActivationFactory.create(gameKey, effectActivationSection, activator);
             ItemEffect effect = effectFactory.create(effectSection, gameKey, effectActivation);
+            DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(effect);
 
+            equipment.setDeploymentHandler(deploymentHandler);
             equipment.setEffect(effect);
         }
 

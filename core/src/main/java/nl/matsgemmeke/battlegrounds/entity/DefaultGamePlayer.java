@@ -144,7 +144,7 @@ public class DefaultGamePlayer implements GamePlayer {
     }
 
     @NotNull
-    public Location getDeployDirection() {
+    public Location getDeployLocation() {
         return player.getEyeLocation();
     }
 

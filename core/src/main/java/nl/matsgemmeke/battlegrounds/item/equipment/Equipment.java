@@ -4,10 +4,12 @@ import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Equipment extends Weapon, DeployableItem, Interactable<EquipmentHolder> {
@@ -29,11 +31,11 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
     void setActivator(@Nullable Activator activator);
 
     /**
-     * Gets the deployment properties associated with this equipment item. Returns null if no properties are set.
+     * Gets the deployment properties associated with this equipment item.
      *
-     * @return the deployment properties of the equipment item or null if not set
+     * @return the deployment properties of the equipment item
      */
-    @Nullable
+    @NotNull
     DeploymentProperties getDeploymentProperties();
 
     /**
@@ -41,7 +43,7 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
      *
      * @param deploymentProperties the deployment properties of the equipment item
      */
-    void setDeploymentProperties(@Nullable DeploymentProperties deploymentProperties);
+    void setDeploymentProperties(@NotNull DeploymentProperties deploymentProperties);
 
     /**
      * Gets the effect system associated with the equipment.
@@ -103,4 +105,8 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
      * @param itemTemplate the item template for throwing the equipment
      */
     void setThrowItemTemplate(@Nullable ItemTemplate itemTemplate);
+
+    boolean isPerformingDeployment();
+
+    void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder);
 }

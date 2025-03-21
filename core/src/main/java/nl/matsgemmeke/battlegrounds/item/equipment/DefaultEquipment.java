@@ -6,8 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
+import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
@@ -27,7 +26,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @Nullable
     private Activator activator;
-    @Nullable
+    @NotNull
+    private DeploymentHandler deploymentHandler;
     private DeploymentProperties deploymentProperties;
     @Nullable
     private EquipmentHolder holder;
@@ -65,6 +65,15 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void setControls(@NotNull ItemControls<EquipmentHolder> controls) {
         this.controls = controls;
+    }
+
+    @NotNull
+    public DeploymentHandler getDeploymentHandler() {
+        return deploymentHandler;
+    }
+
+    public void setDeploymentHandler(@NotNull DeploymentHandler deploymentHandler) {
+        this.deploymentHandler = deploymentHandler;
     }
 
     @NotNull
@@ -129,6 +138,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public boolean isMatching(@NotNull ItemStack itemStack) {
         return itemTemplate != null && itemTemplate.matchesTemplate(itemStack)
                 || activator != null && activator.isMatching(itemStack);
+    }
+
+    public boolean isPerformingDeployment() {
+        return deploymentHandler.isPerforming();
     }
 
     public void onChangeFrom() {
@@ -197,6 +210,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onSwapTo() {
+    }
+
+    public void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder) {
+        deploymentHandler.handleDeployment(deployment, holder, holder.getEntity());
     }
 
     public boolean update() {

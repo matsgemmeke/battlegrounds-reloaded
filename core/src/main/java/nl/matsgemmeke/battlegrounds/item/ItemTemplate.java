@@ -28,10 +28,10 @@ public class ItemTemplate {
     @Nullable
     private TextTemplate displayNameTemplate;
     @NotNull
-    private UUID uuid;
+    private UUID templateId;
 
-    public ItemTemplate(@NotNull UUID uuid, @NotNull NamespacedKey key, @NotNull Material material) {
-        this.uuid = uuid;
+    public ItemTemplate(@NotNull UUID templateId, @NotNull NamespacedKey key, @NotNull Material material) {
+        this.templateId = templateId;
         this.key = key;
         this.material = material;
     }
@@ -108,7 +108,7 @@ public class ItemTemplate {
             itemMeta.setDisplayName(displayName);
         }
 
-        itemMeta.getPersistentDataContainer().set(key, new UUIDDataType(), uuid);
+        itemMeta.getPersistentDataContainer().set(key, new UUIDDataType(), templateId);
         itemStack.setItemMeta(itemMeta);
 
         return itemStack;
@@ -129,6 +129,6 @@ public class ItemTemplate {
         }
 
         UUID uuid = itemMeta.getPersistentDataContainer().get(key, new UUIDDataType());
-        return uuid != null && uuid.equals(this.uuid);
+        return uuid != null && uuid.equals(templateId);
     }
 }

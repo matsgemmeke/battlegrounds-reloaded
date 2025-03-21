@@ -5,14 +5,19 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -65,6 +70,30 @@ public class DefaultEquipmentTest {
         boolean matches = equipment.isMatching(itemStack);
 
         assertFalse(matches);
+    }
+
+    @Test
+    public void isPerformingDeploymentReturnsTrueIfDeploymentHandlerIsPerforming() {
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandler.isPerforming()).thenReturn(true);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentHandler(deploymentHandler);
+        boolean performingDeployment = equipment.isPerformingDeployment();
+
+        assertThat(performingDeployment).isTrue();
+    }
+
+    @Test
+    public void isPerformingDeploymentReturnsFalseIfDeploymentHandlerIsNotPerforming() {
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandler.isPerforming()).thenReturn(false);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentHandler(deploymentHandler);
+        boolean performingDeployment = equipment.isPerformingDeployment();
+
+        assertThat(performingDeployment).isFalse();
     }
 
     @Test
@@ -283,6 +312,22 @@ public class DefaultEquipmentTest {
         equipment.onRightClick();
 
         verify(function).perform(holder);
+    }
+
+    @Test
+    public void performDeploymentCallsDeploymentHandler() {
+        Deployment deployment = mock(Deployment.class);
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        Player player = mock(Player.class);
+        when(holder.getEntity()).thenReturn(player);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentHandler(deploymentHandler);
+        equipment.performDeployment(deployment, holder);
+
+        verify(deploymentHandler).handleDeployment(deployment, holder, player);
     }
 
     @Test

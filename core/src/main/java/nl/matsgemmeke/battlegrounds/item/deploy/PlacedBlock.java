@@ -25,6 +25,7 @@ public class PlacedBlock implements DeploymentObject, ItemEffectSource {
     @Nullable
     private Damage lastDamage;
     private double health;
+    private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
     @NotNull
@@ -35,8 +36,12 @@ public class PlacedBlock implements DeploymentObject, ItemEffectSource {
         this.material = material;
     }
 
-    public boolean exists() {
-        return block.getType() == material;
+    public long getCooldown() {
+        return cooldown;
+    }
+
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
     }
 
     public double getHealth() {
@@ -91,6 +96,10 @@ public class PlacedBlock implements DeploymentObject, ItemEffectSource {
 
     public void destroy() {
         this.remove();
+    }
+
+    public boolean exists() {
+        return block.getType() == material;
     }
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {

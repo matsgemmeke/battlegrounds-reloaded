@@ -1,7 +1,8 @@
-package nl.matsgemmeke.battlegrounds.item.deploy;
+package nl.matsgemmeke.battlegrounds.item.deploy.throwing;
 
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.Location;
@@ -27,17 +28,22 @@ public class DroppedItem implements DeploymentObject, ItemEffectSource, Projecti
     private double entityHealth;
     private double health;
     @NotNull
-    private Item itemEntity;
+    private final Item item;
+    private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
 
-    public DroppedItem(@NotNull Item itemEntity) {
-        this.itemEntity = itemEntity;
+    public DroppedItem(@NotNull Item item) {
+        this.item = item;
         this.entityHealth = ENTITY_HEALTH;
     }
 
-    public boolean exists() {
-        return !itemEntity.isDead();
+    public long getCooldown() {
+        return cooldown;
+    }
+
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
     }
 
     public double getHealth() {
@@ -55,7 +61,7 @@ public class DroppedItem implements DeploymentObject, ItemEffectSource, Projecti
 
     @NotNull
     public Location getLocation() {
-        return itemEntity.getLocation();
+        return item.getLocation();
     }
 
     @Nullable
@@ -69,28 +75,28 @@ public class DroppedItem implements DeploymentObject, ItemEffectSource, Projecti
 
     @NotNull
     public Vector getVelocity() {
-        return itemEntity.getVelocity();
+        return item.getVelocity();
     }
 
     public void setVelocity(@NotNull Vector velocity) {
-        itemEntity.setVelocity(velocity);
+        item.setVelocity(velocity);
     }
 
     @NotNull
     public World getWorld() {
-        return itemEntity.getWorld();
+        return item.getWorld();
     }
 
     public boolean hasGravity() {
-        return itemEntity.hasGravity();
+        return item.hasGravity();
     }
 
     public void setGravity(boolean gravity) {
-        itemEntity.setGravity(gravity);
+        item.setGravity(gravity);
     }
 
     public double damage(@NotNull Damage damage) {
-        if (itemEntity.isDead() || !itemEntity.isValid()) {
+        if (item.isDead() || !item.isValid()) {
             return 0.0;
         }
 
@@ -122,6 +128,10 @@ public class DroppedItem implements DeploymentObject, ItemEffectSource, Projecti
         this.remove();
     }
 
+    public boolean exists() {
+        return !item.isDead();
+    }
+
     public boolean isDeployed() {
         return true;
     }
@@ -131,10 +141,10 @@ public class DroppedItem implements DeploymentObject, ItemEffectSource, Projecti
     }
 
     public boolean matchesEntity(@NotNull Entity entity) {
-        return itemEntity == entity;
+        return item == entity;
     }
 
     public void remove() {
-        itemEntity.remove();
+        item.remove();
     }
 }
