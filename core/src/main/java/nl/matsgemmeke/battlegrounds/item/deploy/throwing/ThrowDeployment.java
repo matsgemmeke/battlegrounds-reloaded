@@ -36,17 +36,17 @@ public class ThrowDeployment implements Deployment {
         item.setPickupDelay(DEFAULT_PICKUP_DELAY);
         item.setVelocity(velocity);
 
-        DroppedItem droppedItem = new DroppedItem(item);
-        droppedItem.setCooldown(deploymentProperties.cooldown());
-        droppedItem.setHealth(deploymentProperties.health());
-        droppedItem.setResistances(deploymentProperties.resistances());
+        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
+        object.setCooldown(deploymentProperties.cooldown());
+        object.setHealth(deploymentProperties.health());
+        object.setResistances(deploymentProperties.resistances());
 
-        deploymentProperties.projectileEffects().forEach(effect -> effect.onLaunch(droppedItem));
+        deploymentProperties.projectileEffects().forEach(effect -> effect.onLaunch(object));
 
         audioEmitter.playSounds(deploymentProperties.throwSounds(), deployLocation);
 
         deployer.setHeldItem(null);
 
-        return droppedItem;
+        return object;
     }
 }

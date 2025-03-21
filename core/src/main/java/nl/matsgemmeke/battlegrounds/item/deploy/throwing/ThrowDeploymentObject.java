@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * A deployed item in the form as a dropped {@link Item} entity.
  */
-public class DroppedItem implements DeploymentObject, ItemEffectSource, Projectile {
+public class ThrowDeploymentObject implements DeploymentObject, ItemEffectSource, Projectile {
 
     // An item entity is no living entity, but it has 4 health before getting destroyed
     private static final double ENTITY_HEALTH = 4.0;
@@ -33,7 +33,7 @@ public class DroppedItem implements DeploymentObject, ItemEffectSource, Projecti
     @Nullable
     private Map<DamageType, Double> resistances;
 
-    public DroppedItem(@NotNull Item item) {
+    public ThrowDeploymentObject(@NotNull Item item) {
         this.item = item;
         this.entityHealth = ENTITY_HEALTH;
     }

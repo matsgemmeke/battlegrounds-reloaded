@@ -59,10 +59,10 @@ public class ThrowDeploymentTest {
         ThrowDeployment deployment = new ThrowDeployment(deploymentProperties, audioEmitter);
         DeploymentObject object = deployment.perform(deployer, entity);
 
-        ArgumentCaptor<DroppedItem> droppedItemCaptor = ArgumentCaptor.forClass(DroppedItem.class);
-        verify(projectileEffect).onLaunch(droppedItemCaptor.capture());
+        ArgumentCaptor<ThrowDeploymentObject> objectCaptor = ArgumentCaptor.forClass(ThrowDeploymentObject.class);
+        verify(projectileEffect).onLaunch(objectCaptor.capture());
 
-        assertThat(object).isInstanceOf(DroppedItem.class);
+        assertThat(object).isInstanceOf(ThrowDeploymentObject.class);
         assertThat(object.getCooldown()).isEqualTo(COOLDOWN);
         assertThat(object.getHealth()).isEqualTo(HEALTH);
         assertThat(object.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
