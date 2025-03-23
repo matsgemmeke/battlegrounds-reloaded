@@ -44,4 +44,8 @@ public class DeploymentHandler {
 
         taskRunner.runTaskLater(() -> performing = false, object.getCooldown());
     }
+
+    public boolean isAwaitingDeployment() {
+        return object != null && !object.isDeployed();
+    }
 }

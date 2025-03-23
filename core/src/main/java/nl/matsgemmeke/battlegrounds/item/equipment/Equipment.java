@@ -106,6 +106,8 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
      */
     void setThrowItemTemplate(@Nullable ItemTemplate itemTemplate);
 
+    boolean isAwaitingDeployment();
+
     boolean isPerformingDeployment();
 
     void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder);

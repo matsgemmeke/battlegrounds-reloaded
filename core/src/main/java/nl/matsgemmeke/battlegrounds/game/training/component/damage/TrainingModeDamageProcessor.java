@@ -56,7 +56,7 @@ public class TrainingModeDamageProcessor implements DamageProcessor {
         deploymentObject.damage(damage);
 
         if (deploymentObject.getHealth() <= 0.0) {
-            deploymentObject.destroy();
+            deploymentObject.remove();
 
             DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(deploymentObject);
 

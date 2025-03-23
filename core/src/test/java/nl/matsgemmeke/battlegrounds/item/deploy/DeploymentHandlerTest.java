@@ -85,4 +85,48 @@ public class DeploymentHandlerTest {
         assertThat(effectContext.getEntity()).isEqualTo(entity);
         assertThat(effectContext.getSource()).isEqualTo(object);
     }
+
+    @Test
+    public void isAwaitingDeploymentReturnsFalseWhenNoDeploymentHasBeenPerformed() {
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
+
+        assertThat(awaitingDeployment).isFalse();
+    }
+
+    @Test
+    public void isAwaitingDeploymentReturnsFalseWhenDeploymentHasBeenPerformedWithObjectThatIsAlreadyDeployed() {
+        Deployer deployer = mock(Deployer.class);
+        Entity deployerEntity = mock(Entity.class);
+
+        DeploymentObject object = mock(DeploymentObject.class);
+        when(object.isDeployed()).thenReturn(true);
+
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.perform(deployer, deployerEntity)).thenReturn(object);
+
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
+
+        assertThat(awaitingDeployment).isFalse();
+    }
+
+    @Test
+    public void isAwaitingDeploymentReturnsTrueWhenDeploymentHasBeenPerformedWithObjectThatIsNotDeployed() {
+        Deployer deployer = mock(Deployer.class);
+        Entity deployerEntity = mock(Entity.class);
+
+        DeploymentObject object = mock(DeploymentObject.class);
+        when(object.isDeployed()).thenReturn(false);
+
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.perform(deployer, deployerEntity)).thenReturn(object);
+
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
+
+        assertThat(awaitingDeployment).isTrue();
+    }
 }

@@ -10,9 +10,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A deployment system that produces a {@link DeploymentObject} using an {@link Item}.
+ */
 public class ThrowDeployment implements Deployment {
 
-    // Take a high number to make sure the item cannot be picked up before its ignition
+    // Take a high number to make sure the item cannot be picked up before the deployment is complete
     private static final int DEFAULT_PICKUP_DELAY = 100000;
 
     @NotNull

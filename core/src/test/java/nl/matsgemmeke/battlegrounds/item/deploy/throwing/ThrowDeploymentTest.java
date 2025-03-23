@@ -31,7 +31,7 @@ public class ThrowDeploymentTest {
     private static final long COOLDOWN = 20L;
 
     @Test
-    public void performReturnsNewInstanceOfDroppedItem() {
+    public void performReturnsNewInstanceOfThrowDeploymentObject() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
         List<GameSound> throwSounds = Collections.emptyList();
         ProjectileEffect projectileEffect = mock(ProjectileEffect.class);

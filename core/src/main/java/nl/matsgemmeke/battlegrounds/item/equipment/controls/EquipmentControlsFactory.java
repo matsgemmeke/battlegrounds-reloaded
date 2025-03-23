@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -19,7 +20,6 @@ import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
@@ -79,9 +79,8 @@ public class EquipmentControlsFactory {
                 Action cookAction = this.getActionFromConfiguration(equipment, "cook", cookActionValue);
 
                 List<GameSound> cookSounds = DefaultGameSound.parseSounds(rootSection.getString("throwing.cook-sound"));
-
-                CookProperties cookProperties = new CookProperties(cookSounds);
-                CookFunction cookFunction = new CookFunction(cookProperties, equipment, audioEmitter);
+                PrimeDeployment deployment = new PrimeDeployment(audioEmitter, cookSounds);
+                CookFunction cookFunction = new CookFunction(equipment, deployment);
 
                 controls.addControl(cookAction, cookFunction);
             }

@@ -135,6 +135,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.throwItemTemplate = throwItemTemplate;
     }
 
+    public boolean isAwaitingDeployment() {
+        return deploymentHandler.isAwaitingDeployment();
+    }
+
     public boolean isMatching(@NotNull ItemStack itemStack) {
         return itemTemplate != null && itemTemplate.matchesTemplate(itemStack)
                 || activator != null && activator.isMatching(itemStack);

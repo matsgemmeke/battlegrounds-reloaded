@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
@@ -22,6 +21,30 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultEquipmentTest {
+
+    @Test
+    public void isAwaitingDeploymentReturnsTrueWhenDeploymentHandlerIsAwaitingDeployment() {
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandler.isAwaitingDeployment()).thenReturn(true);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentHandler(deploymentHandler);
+        boolean awaitingDeployment = equipment.isAwaitingDeployment();
+
+        assertThat(awaitingDeployment).isTrue();
+    }
+
+    @Test
+    public void isAwaitingDeploymentReturnsFalseWhenDeploymentHandlerIsNotAwaitingDeployment() {
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandler.isAwaitingDeployment()).thenReturn(false);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeploymentHandler(deploymentHandler);
+        boolean awaitingDeployment = equipment.isAwaitingDeployment();
+
+        assertThat(awaitingDeployment).isFalse();
+    }
 
     @Test
     public void matchesWithItemStackIfItemTemplateIsNotNullAndMatchesWithItsTemplate() {

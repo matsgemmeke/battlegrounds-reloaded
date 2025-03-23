@@ -9,7 +9,5 @@ public interface DeploymentObject extends ItemEffectSource, Damageable {
 
     long getCooldown();
 
-    void destroy();
-
     boolean matchesEntity(@NotNull Entity entity);
 }
