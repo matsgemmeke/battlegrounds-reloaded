@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFuncti
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class ThrowFunctionTest {
@@ -23,13 +23,33 @@ public class ThrowFunctionTest {
     }
 
     @Test
+    public void isAvailableReturnsTrueIfEquipmentIsNotDeployed() {
+        when(equipment.isDeployed()).thenReturn(false);
+
+        ThrowFunction function = new ThrowFunction(equipment, deployment);
+        boolean available = function.isAvailable();
+
+        assertThat(available).isTrue();
+    }
+
+    @Test
+    public void isAvailableReturnsTrueIfEquipmentIsAlreadyDeployed() {
+        when(equipment.isDeployed()).thenReturn(true);
+
+        ThrowFunction function = new ThrowFunction(equipment, deployment);
+        boolean available = function.isAvailable();
+
+        assertThat(available).isFalse();
+    }
+
+    @Test
     public void isPerformingReturnsFalseIfEquipmentIsNotPerformingDeployment() {
         when(equipment.isPerformingDeployment()).thenReturn(false);
 
         ThrowFunction function = new ThrowFunction(equipment, deployment);
         boolean performing = function.isPerforming();
 
-        assertFalse(performing);
+        assertThat(performing).isFalse();
     }
 
     @Test
@@ -39,7 +59,7 @@ public class ThrowFunctionTest {
         ThrowFunction function = new ThrowFunction(equipment, deployment);
         boolean performing = function.isPerforming();
 
-        assertTrue(performing);
+        assertThat(performing).isTrue();
     }
 
     @Test
@@ -52,7 +72,7 @@ public class ThrowFunctionTest {
         ThrowFunction function = new ThrowFunction(equipment, deployment);
         boolean performed = function.perform(holder);
 
-        assertTrue(performed);
+        assertThat(performed).isTrue();
 
         verify(equipment).performDeployment(deployment, holder);
     }

@@ -6,5 +6,5 @@ import org.jetbrains.annotations.NotNull;
 public interface Deployment {
 
     @NotNull
-    DeploymentObject perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity);
+    DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity);
 }

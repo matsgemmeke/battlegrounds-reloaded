@@ -1,7 +1,8 @@
-package nl.matsgemmeke.battlegrounds.item.deploy;
+package nl.matsgemmeke.battlegrounds.item.deploy.place;
 
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.Material;

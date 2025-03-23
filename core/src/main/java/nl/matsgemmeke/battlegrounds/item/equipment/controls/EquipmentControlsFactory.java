@@ -12,6 +12,8 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentProperties;
@@ -20,8 +22,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunctionFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunctionFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceProperties;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -44,20 +45,12 @@ public class EquipmentControlsFactory {
     private final GameContextProvider contextProvider;
     @NotNull
     private final NamespacedKeyCreator namespacedKeyCreator;
-    @NotNull
-    private final PlaceFunctionFactory placeFunctionFactory;
 
     @Inject
-    public EquipmentControlsFactory(
-            @NotNull GameContextProvider contextProvider,
-            @NotNull ActivateFunctionFactory activateFunctionFactory,
-            @NotNull NamespacedKeyCreator namespacedKeyCreator,
-            @NotNull PlaceFunctionFactory placeFunctionFactory
-    ) {
+    public EquipmentControlsFactory(@NotNull GameContextProvider contextProvider, @NotNull ActivateFunctionFactory activateFunctionFactory, @NotNull NamespacedKeyCreator namespacedKeyCreator) {
         this.activateFunctionFactory = activateFunctionFactory;
         this.contextProvider = contextProvider;
         this.namespacedKeyCreator = namespacedKeyCreator;
-        this.placeFunctionFactory = placeFunctionFactory;
     }
 
     @NotNull
@@ -118,12 +111,16 @@ public class EquipmentControlsFactory {
 
         if (placeActionValue != null) {
             Action placeAction = this.getActionFromConfiguration(equipment, "place", placeActionValue);
-            Material material = this.getMaterialFromConfiguration(equipment, "place material", rootSection.getString("placing.material"));
 
             List<GameSound> placeSounds = DefaultGameSound.parseSounds(rootSection.getString("placing.place-sound"));
-            long delayAfterPlacement = rootSection.getLong("placing.delay-after-placement");
-            PlaceProperties properties = new PlaceProperties(placeSounds, material, delayAfterPlacement);
-            ItemFunction<EquipmentHolder> placeFunction = placeFunctionFactory.create(properties, equipment, audioEmitter);
+            Map<DamageType, Double> resistances = Map.of();
+            Material material = this.getMaterialFromConfiguration(equipment, "place material", rootSection.getString("placing.material"));
+            double health = rootSection.getDouble("deploy.health");
+            long cooldown = rootSection.getLong("placing.delay-after-placement");
+
+            PlaceDeploymentProperties deploymentProperties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);
+            PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
+            PlaceFunction placeFunction = new PlaceFunction(equipment, deployment);
 
             controls.addControl(placeAction, placeFunction);
         }

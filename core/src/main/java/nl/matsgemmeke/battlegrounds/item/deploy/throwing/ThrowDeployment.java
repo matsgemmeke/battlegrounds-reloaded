@@ -29,7 +29,7 @@ public class ThrowDeployment implements Deployment {
     }
 
     @NotNull
-    public DeploymentObject perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+    public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
         Location deployLocation = deployer.getDeployLocation();
         Vector velocity = deployer.getDeployLocation().getDirection().multiply(deploymentProperties.velocity());
         ItemStack itemStack = deploymentProperties.itemTemplate().createItemStack();
@@ -50,6 +50,6 @@ public class ThrowDeployment implements Deployment {
 
         deployer.setHeldItem(null);
 
-        return object;
+        return DeploymentResult.success(object);
     }
 }

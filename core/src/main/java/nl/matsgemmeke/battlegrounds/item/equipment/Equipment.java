@@ -108,6 +108,8 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
 
     boolean isAwaitingDeployment();
 
+    boolean isDeployed();
+
     boolean isPerformingDeployment();
 
     void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder);

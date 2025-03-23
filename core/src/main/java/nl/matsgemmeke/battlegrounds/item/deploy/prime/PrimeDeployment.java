@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,9 +28,11 @@ public class PrimeDeployment implements Deployment {
     }
 
     @NotNull
-    public DeploymentObject perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+    public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
         audioEmitter.playSounds(primeSounds, deployerEntity.getLocation());
 
-        return new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
+        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
+
+        return DeploymentResult.success(object);
     }
 }

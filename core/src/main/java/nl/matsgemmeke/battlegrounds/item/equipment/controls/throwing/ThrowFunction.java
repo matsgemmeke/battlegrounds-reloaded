@@ -19,7 +19,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isAvailable() {
-        return true;
+        return !equipment.isDeployed();
     }
 
     public boolean isBlocking() {

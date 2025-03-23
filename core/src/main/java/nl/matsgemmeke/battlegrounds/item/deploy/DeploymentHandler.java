@@ -25,12 +25,25 @@ public class DeploymentHandler {
         this.effect = effect;
     }
 
+    public boolean isAwaitingDeployment() {
+        return object != null && !object.isDeployed();
+    }
+
+    public boolean isDeployed() {
+        return object != null;
+    }
+
     public boolean isPerforming() {
         return performing;
     }
 
     public void handleDeployment(@NotNull Deployment deployment, @NotNull Deployer deployer, @NotNull Entity deployerEntity) {
-        object = deployment.perform(deployer, deployerEntity);
+        DeploymentResult result = deployment.perform(deployer, deployerEntity);
+        object = result.object();
+
+        if (!result.success()) {
+            return;
+        }
 
         if (effect.isPrimed()) {
             effect.deploy(object);
@@ -43,9 +56,5 @@ public class DeploymentHandler {
         performing = true;
 
         taskRunner.runTaskLater(() -> performing = false, object.getCooldown());
-    }
-
-    public boolean isAwaitingDeployment() {
-        return object != null && !object.isDeployed();
     }
 }

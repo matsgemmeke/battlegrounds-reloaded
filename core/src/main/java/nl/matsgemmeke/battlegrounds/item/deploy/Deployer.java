@@ -1,9 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Represents an entity that is capable of deploying items.
@@ -26,6 +29,15 @@ public interface Deployer {
      */
     @NotNull
     ItemStack getHeldItem();
+
+    /**
+     * Gets the last two blocks in deployer's line of sight.
+     *
+     * @param maxDistance the distance to scan
+     * @return the last two target blocks of the deployer
+     */
+    @NotNull
+    List<Block> getLastTwoTargetBlocks(int maxDistance);
 
     /**
      * Removes an {@link ItemStack} from the entity.

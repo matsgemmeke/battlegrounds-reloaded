@@ -34,10 +34,11 @@ public class DeploymentHandlerTest {
     public void isPerformingReturnsFalseWhenHandlingDeployment() {
         Deployer deployer = mock(Deployer.class);
         DeploymentObject object = mock(DeploymentObject.class);
+        DeploymentResult result = DeploymentResult.success(object);
         Entity entity = mock(Entity.class);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(deployer, entity)).thenReturn(object);
+        when(deployment.perform(deployer, entity)).thenReturn(result);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
         deploymentHandler.handleDeployment(deployment, deployer, entity);
@@ -47,13 +48,29 @@ public class DeploymentHandlerTest {
     }
 
     @Test
-    public void handleDeploymentDeploysObjectIfEffectIsAlreadyPrimed() {
+    public void handleDeploymentDoesNotStartEffectWhenDeploymentResultIsNotSuccessful() {
         Deployer deployer = mock(Deployer.class);
-        DeploymentObject object = mock(DeploymentObject.class);
+        DeploymentResult result = DeploymentResult.failure();
         Entity entity = mock(Entity.class);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(deployer, entity)).thenReturn(object);
+        when(deployment.perform(deployer, entity)).thenReturn(result);
+
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        deploymentHandler.handleDeployment(deployment, deployer, entity);
+
+        verifyNoInteractions(effect, taskRunner);
+    }
+
+    @Test
+    public void handleDeploymentDeploysObjectIfEffectIsAlreadyPrimed() {
+        Deployer deployer = mock(Deployer.class);
+        DeploymentObject object = mock(DeploymentObject.class);
+        DeploymentResult result = DeploymentResult.success(object);
+        Entity entity = mock(Entity.class);
+
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.perform(deployer, entity)).thenReturn(result);
 
         when(effect.isPrimed()).thenReturn(true);
 
@@ -67,10 +84,11 @@ public class DeploymentHandlerTest {
     public void handleDeploymentPrimesEffectIfEffectIsNotPrimed() {
         Deployer deployer = mock(Deployer.class);
         DeploymentObject object = mock(DeploymentObject.class);
+        DeploymentResult result = DeploymentResult.success(object);
         Entity entity = mock(Entity.class);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(deployer, entity)).thenReturn(object);
+        when(deployment.perform(deployer, entity)).thenReturn(result);
 
         when(effect.isPrimed()).thenReturn(false);
 
@@ -102,8 +120,10 @@ public class DeploymentHandlerTest {
         DeploymentObject object = mock(DeploymentObject.class);
         when(object.isDeployed()).thenReturn(true);
 
+        DeploymentResult result = DeploymentResult.success(object);
+
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(object);
+        when(deployment.perform(deployer, deployerEntity)).thenReturn(result);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
@@ -120,8 +140,10 @@ public class DeploymentHandlerTest {
         DeploymentObject object = mock(DeploymentObject.class);
         when(object.isDeployed()).thenReturn(false);
 
+        DeploymentResult result = DeploymentResult.success(object);
+
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(object);
+        when(deployment.perform(deployer, deployerEntity)).thenReturn(result);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);

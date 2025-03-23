@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.deploy.prime;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -32,9 +32,10 @@ public class PrimeDeploymentTest {
         when(deployerEntity.getLocation()).thenReturn(deployerLocation);
 
         PrimeDeployment deployment = new PrimeDeployment(audioEmitter, primeSounds);
-        DeploymentObject object = deployment.perform(deployer, deployerEntity);
+        DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
-        assertThat(object).isInstanceOf(PrimeDeploymentObject.class);
+        assertThat(result.success()).isTrue();
+        assertThat(result.object()).isInstanceOf(PrimeDeploymentObject.class);
 
         verify(audioEmitter).playSounds(primeSounds, deployerLocation);
     }

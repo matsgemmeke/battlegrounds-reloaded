@@ -5,7 +5,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
+import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,19 +57,17 @@ public class ThrowDeploymentTest {
         when(world.dropItem(deployLocation, itemStack)).thenReturn(item);
 
         ThrowDeployment deployment = new ThrowDeployment(deploymentProperties, audioEmitter);
-        DeploymentObject object = deployment.perform(deployer, entity);
+        DeploymentResult result = deployment.perform(deployer, entity);
 
-        ArgumentCaptor<ThrowDeploymentObject> objectCaptor = ArgumentCaptor.forClass(ThrowDeploymentObject.class);
-        verify(projectileEffect).onLaunch(objectCaptor.capture());
-
-        assertThat(object).isInstanceOf(ThrowDeploymentObject.class);
-        assertThat(object.getCooldown()).isEqualTo(COOLDOWN);
-        assertThat(object.getHealth()).isEqualTo(HEALTH);
-        assertThat(object.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
+        assertThat(result.object()).isInstanceOf(ThrowDeploymentObject.class);
+        assertThat(result.object().getCooldown()).isEqualTo(COOLDOWN);
+        assertThat(result.object().getHealth()).isEqualTo(HEALTH);
+        assertThat(result.object().isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
 
         verify(audioEmitter).playSounds(throwSounds, deployLocation);
         verify(deployer).setHeldItem(null);
         verify(item).setPickupDelay(100000);
         verify(item).setVelocity(new Vector(-1.477211629518312,-0.0,-0.26047226650039546));
+        verify(projectileEffect).onLaunch(any(Projectile.class));
     }
 }
