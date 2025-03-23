@@ -4,7 +4,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -13,11 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An item that is still held by the holder. A held item is not a {@link DeploymentObject} as it has no physical object
- * to reference to. Instead, it is supposed to be a temporary source for an {@link ItemEffect} before an actual
- * {@link DeploymentObject} is deployed to replace the held item.
+ * Represents an item that is primed but held by the deployer and not yet deployed.
  */
-public class HeldItem implements DeploymentObject {
+public class PrimeDeploymentObject implements DeploymentObject {
 
     private static final double HAND_HEIGHT_OFFSET = 1.0;
     private static final long DEFAULT_COOLDOWN = 0L;
@@ -30,7 +27,7 @@ public class HeldItem implements DeploymentObject {
     @NotNull
     private final ItemStack itemStack;
 
-    public HeldItem(@NotNull Deployer deployer, @NotNull Entity deployerEntity, @NotNull ItemStack itemStack) {
+    public PrimeDeploymentObject(@NotNull Deployer deployer, @NotNull Entity deployerEntity, @NotNull ItemStack itemStack) {
         this.deployer = deployer;
         this.deployerEntity = deployerEntity;
         this.itemStack = itemStack;

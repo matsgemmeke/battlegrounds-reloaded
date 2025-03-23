@@ -30,6 +30,6 @@ public class PrimeDeployment implements Deployment {
     public DeploymentObject perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
         audioEmitter.playSounds(primeSounds, deployerEntity.getLocation());
 
-        return new HeldItem(deployer, deployerEntity, deployer.getHeldItem());
+        return new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
     }
 }

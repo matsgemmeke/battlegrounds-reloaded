@@ -34,7 +34,7 @@ public class PrimeDeploymentTest {
         PrimeDeployment deployment = new PrimeDeployment(audioEmitter, primeSounds);
         DeploymentObject object = deployment.perform(deployer, deployerEntity);
 
-        assertThat(object).isInstanceOf(HeldItem.class);
+        assertThat(object).isInstanceOf(PrimeDeploymentObject.class);
 
         verify(audioEmitter).playSounds(primeSounds, deployerLocation);
     }

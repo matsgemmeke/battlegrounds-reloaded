@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class HeldItemTest {
+public class PrimeDeploymentObjectTest {
 
     private Deployer deployer;
     private Entity deployerEntity;
@@ -29,8 +29,8 @@ public class HeldItemTest {
     public void existsReturnsTrueIfTheDeployerEntityIsNotDead() {
         when(deployerEntity.isDead()).thenReturn(false);
 
-        HeldItem heldItem = new HeldItem(deployer, deployerEntity, itemStack);
-        boolean exists = heldItem.exists();
+        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, itemStack);
+        boolean exists = object.exists();
 
         assertThat(exists).isTrue();
     }
@@ -39,8 +39,8 @@ public class HeldItemTest {
     public void existsReturnsFalseIfTheDeployerHolderEntityIsDead() {
         when(deployerEntity.isDead()).thenReturn(true);
 
-        HeldItem heldItem = new HeldItem(deployer, deployerEntity, itemStack);
-        boolean exists = heldItem.exists();
+        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, itemStack);
+        boolean exists = object.exists();
 
         assertThat(exists).isFalse();
     }
@@ -50,8 +50,8 @@ public class HeldItemTest {
         Location deployerLocation = new Location(null, 0, 0, 0);
         when(deployerEntity.getLocation()).thenReturn(deployerLocation);
 
-        HeldItem heldItem = new HeldItem(deployer, deployerEntity, itemStack);
-        Location objectLocation = heldItem.getLocation();
+        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, itemStack);
+        Location objectLocation = object.getLocation();
 
         assertThat(deployerLocation).isEqualTo(objectLocation);
     }
@@ -61,24 +61,24 @@ public class HeldItemTest {
         World deployerWorld = mock(World.class);
         when(deployerEntity.getWorld()).thenReturn(deployerWorld);
 
-        HeldItem heldItem = new HeldItem(deployer, deployerEntity, itemStack);
-        World objectWorld = heldItem.getWorld();
+        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, itemStack);
+        World objectWorld = object.getWorld();
 
         assertThat(deployerWorld).isEqualTo(objectWorld);
     }
 
     @Test
     public void isDeployedAlwaysReturnsFalse() {
-        HeldItem heldItem = new HeldItem(deployer, deployerEntity, itemStack);
-        boolean deployed = heldItem.isDeployed();
+        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, itemStack);
+        boolean deployed = object.isDeployed();
 
         assertThat(deployed).isFalse();
     }
 
     @Test
     public void removeRemovesTheItemStackFromTheHolder() {
-        HeldItem heldItem = new HeldItem(deployer, deployerEntity, itemStack);
-        heldItem.remove();
+        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, itemStack);
+        object.remove();
 
         verify(deployer).removeItem(itemStack);
     }

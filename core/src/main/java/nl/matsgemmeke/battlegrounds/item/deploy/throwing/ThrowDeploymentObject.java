@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 /**
- * A deployed item in the form as a dropped {@link Item} entity.
+ * Represents an item that is deployed in the form of an {@link Item} entity.
  */
 public class ThrowDeploymentObject implements DeploymentObject, ItemEffectSource, Projectile {
 
