@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.di;
+package nl.matsgemmeke.battlegrounds;
 
 import com.google.inject.*;
 import com.google.inject.Module;
