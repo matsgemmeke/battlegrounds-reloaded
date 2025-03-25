@@ -42,9 +42,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunctionFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
@@ -137,10 +134,6 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffectActivation.class, DelayedActivation.class)
                 .build(DelayedActivationFactory.class));
-
-        binder.install(new FactoryModuleBuilder()
-                .implement(TypeLiterals.EQUIPMENT_FUNCTION, ActivateFunction.class)
-                .build(ActivateFunctionFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)

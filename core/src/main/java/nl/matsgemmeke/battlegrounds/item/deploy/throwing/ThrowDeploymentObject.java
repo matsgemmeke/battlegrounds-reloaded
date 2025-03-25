@@ -29,21 +29,12 @@ public class ThrowDeploymentObject implements DeploymentObject, ItemEffectSource
     private double health;
     @NotNull
     private final Item item;
-    private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
 
     public ThrowDeploymentObject(@NotNull Item item) {
         this.item = item;
         this.entityHealth = ENTITY_HEALTH;
-    }
-
-    public long getCooldown() {
-        return cooldown;
-    }
-
-    public void setCooldown(long cooldown) {
-        this.cooldown = cooldown;
     }
 
     public double getHealth() {

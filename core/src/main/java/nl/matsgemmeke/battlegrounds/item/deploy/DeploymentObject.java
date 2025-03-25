@@ -7,7 +7,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface DeploymentObject extends ItemEffectSource, Damageable {
 
-    long getCooldown();
-
     boolean matchesEntity(@NotNull Entity entity);
 }

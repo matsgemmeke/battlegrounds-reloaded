@@ -29,7 +29,6 @@ public class PlaceDeploymentTest {
 
     private static final double HEALTH = 20.0;
     private static final List<GameSound> PLACE_SOUNDS = Collections.emptyList();
-    private static final long COOLDOWN = 10L;
     private static final Map<DamageType, Double> RESISTANCES = Collections.emptyMap();
     private static final Material MATERIAL = Material.WARPED_BUTTON;
 
@@ -43,7 +42,7 @@ public class PlaceDeploymentTest {
         audioEmitter = mock(AudioEmitter.class);
         deployer = mock(Deployer.class);
         deployerEntity = mock(Entity.class);
-        deploymentProperties = new PlaceDeploymentProperties(PLACE_SOUNDS, RESISTANCES, MATERIAL, HEALTH, COOLDOWN);
+        deploymentProperties = new PlaceDeploymentProperties(PLACE_SOUNDS, RESISTANCES, MATERIAL, HEALTH);
     }
 
     @Test
@@ -113,7 +112,6 @@ public class PlaceDeploymentTest {
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
         assertThat(result.success()).isTrue();
-        assertThat(result.object().getCooldown()).isEqualTo(COOLDOWN);
         assertThat(result.object().getHealth()).isEqualTo(HEALTH);
         assertThat(result.object().getLocation()).isEqualTo(adjacentBlockLocation);
 
@@ -145,7 +143,6 @@ public class PlaceDeploymentTest {
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
         assertThat(result.success()).isTrue();
-        assertThat(result.object().getCooldown()).isEqualTo(COOLDOWN);
         assertThat(result.object().getHealth()).isEqualTo(HEALTH);
         assertThat(result.object().getLocation()).isEqualTo(adjacentBlockLocation);
 
@@ -178,7 +175,6 @@ public class PlaceDeploymentTest {
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
         assertThat(result.success()).isTrue();
-        assertThat(result.object().getCooldown()).isEqualTo(COOLDOWN);
         assertThat(result.object().getHealth()).isEqualTo(HEALTH);
         assertThat(result.object().getLocation()).isEqualTo(adjacentBlockLocation);
 

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.entity.Entity;
@@ -11,7 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class DeploymentHandler {
 
-    private boolean performing;
+    @NotNull
+    private final ActivationProperties activationProperties;
+    @NotNull
+    private final AudioEmitter audioEmitter;
+    private boolean deployed;
     @Nullable
     private DeploymentObject object;
     @NotNull
@@ -20,21 +25,25 @@ public class DeploymentHandler {
     private final TaskRunner taskRunner;
 
     @Inject
-    public DeploymentHandler(@NotNull TaskRunner taskRunner, @Assisted @NotNull ItemEffect effect) {
+    public DeploymentHandler(
+            @NotNull TaskRunner taskRunner,
+            @Assisted @NotNull ActivationProperties activationProperties,
+            @Assisted @NotNull AudioEmitter audioEmitter,
+            @Assisted @NotNull ItemEffect effect
+    ) {
         this.taskRunner = taskRunner;
+        this.activationProperties = activationProperties;
+        this.audioEmitter = audioEmitter;
         this.effect = effect;
+        this.deployed = false;
     }
 
-    public boolean isAwaitingDeployment() {
-        return object != null && !object.isDeployed();
-    }
+    public void activateDeployment(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+        audioEmitter.playSounds(activationProperties.activationSounds(), deployerEntity.getLocation());
 
-    public boolean isDeployed() {
-        return object != null;
-    }
+        deployer.setHeldItem(null);
 
-    public boolean isPerforming() {
-        return performing;
+        taskRunner.runTaskLater(effect::activateInstantly, activationProperties.activationDelay());
     }
 
     public void handleDeployment(@NotNull Deployment deployment, @NotNull Deployer deployer, @NotNull Entity deployerEntity) {
@@ -53,8 +62,14 @@ public class DeploymentHandler {
             effect.prime(effectContext);
         }
 
-        performing = true;
+        deployed = true;
+    }
 
-        taskRunner.runTaskLater(() -> performing = false, object.getCooldown());
+    public boolean isAwaitingDeployment() {
+        return object != null && !object.isDeployed();
+    }
+
+    public boolean isDeployed() {
+        return deployed;
     }
 }

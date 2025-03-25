@@ -26,7 +26,6 @@ public class PlacedBlock implements DeploymentObject, ItemEffectSource {
     @Nullable
     private Damage lastDamage;
     private double health;
-    private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
     @NotNull
@@ -35,14 +34,6 @@ public class PlacedBlock implements DeploymentObject, ItemEffectSource {
     public PlacedBlock(@NotNull Block block, @NotNull Material material) {
         this.block = block;
         this.material = material;
-    }
-
-    public long getCooldown() {
-        return cooldown;
-    }
-
-    public void setCooldown(long cooldown) {
-        this.cooldown = cooldown;
     }
 
     public double getHealth() {

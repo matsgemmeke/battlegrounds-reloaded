@@ -27,7 +27,7 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean isPerforming() {
-        return equipment.isPerformingDeployment();
+        return false;
     }
 
     public boolean cancel() {

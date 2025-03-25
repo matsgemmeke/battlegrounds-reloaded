@@ -13,6 +13,7 @@ import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -135,6 +136,14 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.throwItemTemplate = throwItemTemplate;
     }
 
+    public void activateDeployment(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+        deploymentHandler.activateDeployment(deployer, deployerEntity);
+    }
+
+    public boolean isActivatorReady() {
+        return activator != null && activator.isReady();
+    }
+
     public boolean isAwaitingDeployment() {
         return deploymentHandler.isAwaitingDeployment();
     }
@@ -146,10 +155,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public boolean isMatching(@NotNull ItemStack itemStack) {
         return itemTemplate != null && itemTemplate.matchesTemplate(itemStack)
                 || activator != null && activator.isMatching(itemStack);
-    }
-
-    public boolean isPerformingDeployment() {
-        return deploymentHandler.isPerforming();
     }
 
     public void onChangeFrom() {

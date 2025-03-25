@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
@@ -19,8 +18,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunctionFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateProperties;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
@@ -40,15 +38,12 @@ public class EquipmentControlsFactory {
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
 
     @NotNull
-    private final ActivateFunctionFactory activateFunctionFactory;
-    @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
     private final NamespacedKeyCreator namespacedKeyCreator;
 
     @Inject
-    public EquipmentControlsFactory(@NotNull GameContextProvider contextProvider, @NotNull ActivateFunctionFactory activateFunctionFactory, @NotNull NamespacedKeyCreator namespacedKeyCreator) {
-        this.activateFunctionFactory = activateFunctionFactory;
+    public EquipmentControlsFactory(@NotNull GameContextProvider contextProvider, @NotNull NamespacedKeyCreator namespacedKeyCreator) {
         this.contextProvider = contextProvider;
         this.namespacedKeyCreator = namespacedKeyCreator;
     }
@@ -100,9 +95,8 @@ public class EquipmentControlsFactory {
             Map<DamageType, Double> resistances = Map.of();
             double health = rootSection.getDouble("deploy.health");
             double velocity = rootSection.getDouble("throwing.velocity");
-            long cooldown = rootSection.getLong("throwing.delay-after-throw");
 
-            ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
+            ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity);
             ThrowDeployment deployment = new ThrowDeployment(deploymentProperties, audioEmitter);
             ThrowFunction throwFunction = new ThrowFunction(equipment, deployment);
 
@@ -116,9 +110,8 @@ public class EquipmentControlsFactory {
             Map<DamageType, Double> resistances = Map.of();
             Material material = this.getMaterialFromConfiguration(equipment, "place material", rootSection.getString("placing.material"));
             double health = rootSection.getDouble("deploy.health");
-            long cooldown = rootSection.getLong("placing.delay-after-placement");
 
-            PlaceDeploymentProperties deploymentProperties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);
+            PlaceDeploymentProperties deploymentProperties = new PlaceDeploymentProperties(placeSounds, resistances, material, health);
             PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
             PlaceFunction placeFunction = new PlaceFunction(equipment, deployment);
 
@@ -127,12 +120,7 @@ public class EquipmentControlsFactory {
 
         if (activateActionValue != null) {
             Action activateAction = this.getActionFromConfiguration(equipment, "activate", activateActionValue);
-
-            List<GameSound> activationSounds = DefaultGameSound.parseSounds(rootSection.getString("effect.activation.activation-sound"));
-            long delayUntilActivation = rootSection.getLong("effect.activation.delay-until-activation");
-
-            ActivateProperties properties = new ActivateProperties(activationSounds, delayUntilActivation);
-            ItemFunction<EquipmentHolder> activateFunction = activateFunctionFactory.create(properties, equipment, audioEmitter);
+            ActivateFunction activateFunction = new ActivateFunction(equipment);
 
             controls.addControl(activateAction, activateFunction);
         }

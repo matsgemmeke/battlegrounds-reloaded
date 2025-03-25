@@ -21,23 +21,23 @@ public class PlaceFunctionTest {
     }
 
     @Test
-    public void isPerformingReturnsFalseWhenEquipmentIsNotPerformingDeployment() {
-        when(equipment.isPerformingDeployment()).thenReturn(false);
+    public void isAvailableReturnsFalseWhenEquipmentIsAlreadyDeployed() {
+        when(equipment.isDeployed()).thenReturn(true);
 
         PlaceFunction function = new PlaceFunction(equipment, deployment);
-        boolean performing = function.isPerforming();
+        boolean available = function.isAvailable();
 
-        assertThat(performing).isFalse();
+        assertThat(available).isFalse();
     }
 
     @Test
-    public void isPerformingReturnsTrueWhenEquipmentIsPerformingDeployment() {
-        when(equipment.isPerformingDeployment()).thenReturn(true);
+    public void isPerformingReturnsTrueWhenEquipmentIsNotDeployed() {
+        when(equipment.isDeployed()).thenReturn(false);
 
         PlaceFunction function = new PlaceFunction(equipment, deployment);
-        boolean performing = function.isPerforming();
+        boolean available = function.isAvailable();
 
-        assertThat(performing).isTrue();
+        assertThat(available).isTrue();
     }
 
     @Test

@@ -1,50 +1,59 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class DeploymentHandlerTest {
 
+    private static final List<GameSound> ACTIVATION_SOUNDS = Collections.emptyList();
+    private static final long ACTIVATION_DELAY = 10L;
+
+    private ActivationProperties activationProperties;
+    private AudioEmitter audioEmitter;
     private ItemEffect effect;
     private TaskRunner taskRunner;
 
     @BeforeEach
     public void setUp() {
+        activationProperties = new ActivationProperties(ACTIVATION_SOUNDS, ACTIVATION_DELAY);
+        audioEmitter = mock(AudioEmitter.class);
         effect = mock(ItemEffect.class);
         taskRunner = mock(TaskRunner.class);
     }
 
     @Test
-    public void isPerformingReturnsFalseWhenNotHandlingDeployment() {
-        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
-        boolean performing = deploymentHandler.isPerforming();
-
-        assertThat(performing).isFalse();
-    }
-
-    @Test
-    public void isPerformingReturnsFalseWhenHandlingDeployment() {
+    public void activateDeploymentActivatesEffectAfterActivationDelay() {
         Deployer deployer = mock(Deployer.class);
-        DeploymentObject object = mock(DeploymentObject.class);
-        DeploymentResult result = DeploymentResult.success(object);
-        Entity entity = mock(Entity.class);
+        Location deployerLocation = new Location(null, 1, 1, 1);
 
-        Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(deployer, entity)).thenReturn(result);
+        Entity deployerEntity = mock(Entity.class);
+        when(deployerEntity.getLocation()).thenReturn(deployerLocation);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
-        deploymentHandler.handleDeployment(deployment, deployer, entity);
-        boolean performing = deploymentHandler.isPerforming();
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
+        deploymentHandler.activateDeployment(deployer, deployerEntity);
 
-        assertThat(performing).isTrue();
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(ACTIVATION_DELAY));
+
+        runnableCaptor.getValue().run();
+
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, deployerLocation);
+        verify(deployer).setHeldItem(null);
+        verify(effect).activateInstantly();
     }
 
     @Test
@@ -56,7 +65,7 @@ public class DeploymentHandlerTest {
         Deployment deployment = mock(Deployment.class);
         when(deployment.perform(deployer, entity)).thenReturn(result);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
         deploymentHandler.handleDeployment(deployment, deployer, entity);
 
         verifyNoInteractions(effect, taskRunner);
@@ -74,7 +83,7 @@ public class DeploymentHandlerTest {
 
         when(effect.isPrimed()).thenReturn(true);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
         deploymentHandler.handleDeployment(deployment, deployer, entity);
 
         verify(effect).deploy(object);
@@ -92,7 +101,7 @@ public class DeploymentHandlerTest {
 
         when(effect.isPrimed()).thenReturn(false);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
         deploymentHandler.handleDeployment(deployment, deployer, entity);
 
         ArgumentCaptor<ItemEffectContext> effectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
@@ -106,7 +115,7 @@ public class DeploymentHandlerTest {
 
     @Test
     public void isAwaitingDeploymentReturnsFalseWhenNoDeploymentHasBeenPerformed() {
-        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
         boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
 
         assertThat(awaitingDeployment).isFalse();
@@ -125,7 +134,7 @@ public class DeploymentHandlerTest {
         Deployment deployment = mock(Deployment.class);
         when(deployment.perform(deployer, deployerEntity)).thenReturn(result);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
 
@@ -145,10 +154,35 @@ public class DeploymentHandlerTest {
         Deployment deployment = mock(Deployment.class);
         when(deployment.perform(deployer, deployerEntity)).thenReturn(result);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
 
         assertThat(awaitingDeployment).isTrue();
+    }
+
+    @Test
+    public void isDeployedReturnsFalseWhenNoDeploymentIsPerformed() {
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
+        boolean deployed = deploymentHandler.isDeployed();
+
+        assertThat(deployed).isFalse();
+    }
+
+    @Test
+    public void isDeployedReturnsTrueWhenAnyDeploymentIsPerformed() {
+        Deployer deployer = mock(Deployer.class);
+        DeploymentObject object = mock(DeploymentObject.class);
+        DeploymentResult result = DeploymentResult.success(object);
+        Entity entity = mock(Entity.class);
+
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.perform(deployer, entity)).thenReturn(result);
+
+        DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
+        deploymentHandler.handleDeployment(deployment, deployer, entity);
+        boolean deployed = deploymentHandler.isDeployed();
+
+        assertThat(deployed).isTrue();
     }
 }

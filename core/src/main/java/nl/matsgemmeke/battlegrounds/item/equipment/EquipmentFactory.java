@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.deploy.ActivationProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
@@ -110,6 +111,8 @@ public class EquipmentFactory implements WeaponFactory {
     private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
         Section section = configuration.getRoot();
 
+        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
+
         String name = section.getString("name");
         String description = section.getString("description");
 
@@ -176,11 +179,15 @@ public class EquipmentFactory implements WeaponFactory {
         Section effectActivationSection = section.getSection("effect.activation");
 
         if (effectSection != null && effectActivationSection != null) {
-            Activator activator = equipment.getActivator();
+            List<GameSound> activationSounds = DefaultGameSound.parseSounds(effectActivationSection.getString("activation-sound"));
+            long activationDelay = effectActivationSection.getLong("delay-until-activation");
+            ActivationProperties activationProperties = new ActivationProperties(activationSounds, activationDelay);
 
+            Activator activator = equipment.getActivator();
             ItemEffectActivation effectActivation = effectActivationFactory.create(gameKey, effectActivationSection, activator);
             ItemEffect effect = effectFactory.create(effectSection, gameKey, effectActivation);
-            DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(effect);
+
+            DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(activationProperties, audioEmitter, effect);
 
             equipment.setDeploymentHandler(deploymentHandler);
             equipment.setEffect(effect);
@@ -238,8 +245,6 @@ public class EquipmentFactory implements WeaponFactory {
             Section soundSection = projectileSection.getSection("effects.sound");
             Section stickSection = projectileSection.getSection("effects.stick");
             Section trailSection = projectileSection.getSection("effects.trail");
-
-            AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
             if (bounceSection != null) {
                 int amountOfBounces = bounceSection.getInt("amount-of-bounces");

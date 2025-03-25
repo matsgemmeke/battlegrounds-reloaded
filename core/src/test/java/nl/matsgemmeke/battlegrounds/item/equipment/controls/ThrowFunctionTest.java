@@ -43,26 +43,6 @@ public class ThrowFunctionTest {
     }
 
     @Test
-    public void isPerformingReturnsFalseIfEquipmentIsNotPerformingDeployment() {
-        when(equipment.isPerformingDeployment()).thenReturn(false);
-
-        ThrowFunction function = new ThrowFunction(equipment, deployment);
-        boolean performing = function.isPerforming();
-
-        assertThat(performing).isFalse();
-    }
-
-    @Test
-    public void isPerformingReturnsTrueIfEquipmentIsPerformingDeployment() {
-        when(equipment.isPerformingDeployment()).thenReturn(true);
-
-        ThrowFunction function = new ThrowFunction(equipment, deployment);
-        boolean performing = function.isPerforming();
-
-        assertThat(performing).isTrue();
-    }
-
-    @Test
     public void performCreatesThrowDeployment() {
         DeploymentProperties deploymentProperties = new DeploymentProperties();
         when(equipment.getDeploymentProperties()).thenReturn(deploymentProperties);

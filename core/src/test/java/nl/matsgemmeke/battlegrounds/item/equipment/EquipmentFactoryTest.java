@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.deploy.ActivationProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -37,6 +38,7 @@ import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -44,6 +46,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -174,10 +177,14 @@ public class EquipmentFactoryTest {
 
     @Test
     public void makeEquipmentItemWithEffectActivation() {
+        long activationDelay = 10L;
+
         Section effectSection = mock(Section.class);
         when(rootSection.getSection("effect")).thenReturn(effectSection);
 
         Section effectActivationSection = mock(Section.class);
+        when(effectActivationSection.getLong("delay-until-activation")).thenReturn(activationDelay);
+
         when(rootSection.getSection("effect.activation")).thenReturn(effectActivationSection);
 
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
@@ -187,13 +194,17 @@ public class EquipmentFactoryTest {
         when(effectFactory.create(effectSection, gameKey, effectActivation)).thenReturn(effect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandlerFactory.create(effect)).thenReturn(deploymentHandler);
+        when(deploymentHandlerFactory.create(any(ActivationProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, taskRunner);
         Equipment equipment = factory.create(configuration, gameKey);
 
-        assertInstanceOf(DefaultEquipment.class, equipment);
-        assertEquals(effect, equipment.getEffect());
+        ArgumentCaptor<ActivationProperties> activationPropertiesCaptor = ArgumentCaptor.forClass(ActivationProperties.class);
+        verify(deploymentHandlerFactory).create(activationPropertiesCaptor.capture(), eq(audioEmitter), eq(effect));
+
+        assertThat(activationPropertiesCaptor.getValue().activationDelay()).isEqualTo(activationDelay);
+        assertThat(equipment).isInstanceOf(DefaultEquipment.class);
+        assertThat(equipment.getEffect()).isEqualTo(effect);
     }
 
     @Test

@@ -15,6 +15,5 @@ public record ThrowDeploymentProperties(
         @NotNull List<ProjectileEffect> projectileEffects,
         @NotNull Map<DamageType, Double> resistances,
         double health,
-        double velocity,
-        long cooldown
+        double velocity
 ) { }
