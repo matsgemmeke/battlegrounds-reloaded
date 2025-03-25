@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,11 +42,27 @@ public class CookFunctionTest {
     }
 
     @Test
-    public void performStartDeploymentProcess() {
+    public void performReturnsFalseWhenHolderCannotDeploy() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.canDeploy()).thenReturn(false);
 
         CookFunction function = new CookFunction(equipment, deployment);
-        function.perform(holder);
+        boolean performed = function.perform(holder);
+
+        assertThat(performed).isFalse();
+
+        verifyNoInteractions(equipment);
+    }
+
+    @Test
+    public void performReturnsTrueAndStartsDeploymentProcess() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.canDeploy()).thenReturn(true);
+
+        CookFunction function = new CookFunction(equipment, deployment);
+        boolean performed = function.perform(holder);
+
+        assertThat(performed).isTrue();
 
         verify(equipment).performDeployment(deployment, holder);
     }

@@ -40,6 +40,7 @@ public class ThrowDeployment implements Deployment {
         item.setVelocity(velocity);
 
         ThrowDeploymentObject object = new ThrowDeploymentObject(item);
+        object.setCooldown(deploymentProperties.cooldown());
         object.setHealth(deploymentProperties.health());
         object.setResistances(deploymentProperties.resistances());
 

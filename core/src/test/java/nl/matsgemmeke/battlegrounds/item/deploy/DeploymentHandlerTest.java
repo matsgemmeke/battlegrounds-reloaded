@@ -74,30 +74,41 @@ public class DeploymentHandlerTest {
     @Test
     public void handleDeploymentDeploysObjectIfEffectIsAlreadyPrimed() {
         Deployer deployer = mock(Deployer.class);
-        DeploymentObject object = mock(DeploymentObject.class);
-        DeploymentResult result = DeploymentResult.success(object);
         Entity entity = mock(Entity.class);
+        long cooldown = 10L;
+
+        DeploymentObject object = mock(DeploymentObject.class);
+        when(object.getCooldown()).thenReturn(cooldown);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(deployer, entity)).thenReturn(result);
+        when(deployment.perform(deployer, entity)).thenReturn(DeploymentResult.success(object));
 
         when(effect.isPrimed()).thenReturn(true);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(taskRunner, activationProperties, audioEmitter, effect);
         deploymentHandler.handleDeployment(deployment, deployer, entity);
 
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(cooldown));
+
+        runnableCaptor.getValue().run();
+
+        verify(deployer).setCanDeploy(false);
+        verify(deployer).setCanDeploy(true);
         verify(effect).deploy(object);
     }
 
     @Test
     public void handleDeploymentPrimesEffectIfEffectIsNotPrimed() {
         Deployer deployer = mock(Deployer.class);
-        DeploymentObject object = mock(DeploymentObject.class);
-        DeploymentResult result = DeploymentResult.success(object);
         Entity entity = mock(Entity.class);
+        long cooldown = 10L;
+
+        DeploymentObject object = mock(DeploymentObject.class);
+        when(object.getCooldown()).thenReturn(cooldown);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(deployer, entity)).thenReturn(result);
+        when(deployment.perform(deployer, entity)).thenReturn(DeploymentResult.success(object));
 
         when(effect.isPrimed()).thenReturn(false);
 
@@ -105,12 +116,20 @@ public class DeploymentHandlerTest {
         deploymentHandler.handleDeployment(deployment, deployer, entity);
 
         ArgumentCaptor<ItemEffectContext> effectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+
         verify(effect).prime(effectContextCaptor.capture());
+        verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(cooldown));
 
         ItemEffectContext effectContext = effectContextCaptor.getValue();
         assertThat(effectContext.getDeployer()).isEqualTo(deployer);
         assertThat(effectContext.getEntity()).isEqualTo(entity);
         assertThat(effectContext.getSource()).isEqualTo(object);
+
+        runnableCaptor.getValue().run();
+
+        verify(deployer).setCanDeploy(false);
+        verify(deployer).setCanDeploy(true);
     }
 
     @Test

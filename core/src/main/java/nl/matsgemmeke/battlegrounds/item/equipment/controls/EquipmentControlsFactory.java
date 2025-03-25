@@ -95,8 +95,9 @@ public class EquipmentControlsFactory {
             Map<DamageType, Double> resistances = Map.of();
             double health = rootSection.getDouble("deploy.health");
             double velocity = rootSection.getDouble("throwing.velocity");
+            long cooldown = rootSection.getLong("throwing.delay-after-throw");
 
-            ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity);
+            ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
             ThrowDeployment deployment = new ThrowDeployment(deploymentProperties, audioEmitter);
             ThrowFunction throwFunction = new ThrowFunction(equipment, deployment);
 
@@ -110,8 +111,9 @@ public class EquipmentControlsFactory {
             Map<DamageType, Double> resistances = Map.of();
             Material material = this.getMaterialFromConfiguration(equipment, "place material", rootSection.getString("placing.material"));
             double health = rootSection.getDouble("deploy.health");
+            long cooldown = rootSection.getLong("placing.delay-after-placement");
 
-            PlaceDeploymentProperties deploymentProperties = new PlaceDeploymentProperties(placeSounds, resistances, material, health);
+            PlaceDeploymentProperties deploymentProperties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);
             PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
             PlaceFunction placeFunction = new PlaceFunction(equipment, deployment);
 

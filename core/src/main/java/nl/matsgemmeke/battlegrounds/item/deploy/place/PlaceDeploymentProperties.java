@@ -12,5 +12,6 @@ public record PlaceDeploymentProperties(
         @NotNull List<GameSound> placeSounds,
         @NotNull Map<DamageType, Double> resistances,
         @NotNull Material material,
-        double health
+        double health,
+        long cooldown
 ) { }

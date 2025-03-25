@@ -41,8 +41,22 @@ public class PlaceFunctionTest {
     }
 
     @Test
+    public void performReturnsFalseWhenHolderCannotDeploy() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.canDeploy()).thenReturn(false);
+
+        PlaceFunction function = new PlaceFunction(equipment, deployment);
+        boolean performed = function.perform(holder);
+
+        assertThat(performed).isFalse();
+
+        verifyNoInteractions(equipment);
+    }
+
+    @Test
     public void performReturnsTrueAndPerformsDeployment() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.canDeploy()).thenReturn(true);
 
         PlaceFunction function = new PlaceFunction(equipment, deployment);
         boolean performed = function.perform(holder);

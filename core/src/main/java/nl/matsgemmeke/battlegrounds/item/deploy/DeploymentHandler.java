@@ -63,6 +63,9 @@ public class DeploymentHandler {
         }
 
         deployed = true;
+        deployer.setCanDeploy(false);
+
+        taskRunner.runTaskLater(() -> deployer.setCanDeploy(true), object.getCooldown());
     }
 
     public boolean isAwaitingDeployment() {

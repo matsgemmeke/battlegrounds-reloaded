@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class PrimeDeploymentObject implements DeploymentObject {
 
     private static final double HAND_HEIGHT_OFFSET = 1.0;
+    private static final long DEFAULT_COOLDOWN = 0L;
 
     @NotNull
     private final Deployer deployer;
@@ -30,6 +31,10 @@ public class PrimeDeploymentObject implements DeploymentObject {
         this.deployer = deployer;
         this.deployerEntity = deployerEntity;
         this.itemStack = itemStack;
+    }
+
+    public long getCooldown() {
+        return DEFAULT_COOLDOWN;
     }
 
     public double getHealth() {

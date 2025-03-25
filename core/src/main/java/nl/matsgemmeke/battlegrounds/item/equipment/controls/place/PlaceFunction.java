@@ -35,6 +35,10 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
+        if (!holder.canDeploy()) {
+            return false;
+        }
+
         equipment.performDeployment(deployment, holder);
         return true;
     }

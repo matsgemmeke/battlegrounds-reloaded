@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -43,11 +42,22 @@ public class ThrowFunctionTest {
     }
 
     @Test
-    public void performCreatesThrowDeployment() {
-        DeploymentProperties deploymentProperties = new DeploymentProperties();
-        when(equipment.getDeploymentProperties()).thenReturn(deploymentProperties);
-
+    public void performReturnsFalseWhenHolderCannotDeploy() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.canDeploy()).thenReturn(false);
+
+        ThrowFunction function = new ThrowFunction(equipment, deployment);
+        boolean performed = function.perform(holder);
+
+        assertThat(performed).isFalse();
+
+        verifyNoInteractions(equipment);
+    }
+
+    @Test
+    public void performReturnsTrueAndCreatesThrowDeployment() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.canDeploy()).thenReturn(true);
 
         ThrowFunction function = new ThrowFunction(equipment, deployment);
         boolean performed = function.perform(holder);

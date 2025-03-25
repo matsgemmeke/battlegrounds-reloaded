@@ -26,8 +26,9 @@ import static org.mockito.Mockito.*;
 
 public class ThrowDeploymentTest {
 
-    private static final double HEALTH = 10.0;
+    private static final double HEALTH = 20.0;
     private static final double VELOCITY = 1.5;
+    private static final long COOLDOWN = 10L;
 
     @Test
     public void performReturnsNewInstanceOfThrowDeploymentObject() {
@@ -40,7 +41,7 @@ public class ThrowDeploymentTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack()).thenReturn(itemStack);
 
-        ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, HEALTH, VELOCITY);
+        ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, HEALTH, VELOCITY, COOLDOWN);
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
 
         World world = mock(World.class);
@@ -59,6 +60,7 @@ public class ThrowDeploymentTest {
         DeploymentResult result = deployment.perform(deployer, entity);
 
         assertThat(result.object()).isInstanceOf(ThrowDeploymentObject.class);
+        assertThat(result.object().getCooldown()).isEqualTo(COOLDOWN);
         assertThat(result.object().getHealth()).isEqualTo(HEALTH);
         assertThat(result.object().isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
 

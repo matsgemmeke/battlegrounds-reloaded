@@ -45,6 +45,7 @@ public class PlaceDeployment implements Deployment {
         this.placeBlock(adjacentBlock, targetBlockFace);
 
         PlacedBlock placedBlock = new PlacedBlock(adjacentBlock, deploymentProperties.material());
+        placedBlock.setCooldown(deploymentProperties.cooldown());
         placedBlock.setHealth(deploymentProperties.health());
         placedBlock.setResistances(deploymentProperties.resistances());
 

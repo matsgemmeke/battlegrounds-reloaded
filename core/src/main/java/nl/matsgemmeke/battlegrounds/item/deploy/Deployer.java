@@ -14,6 +14,20 @@ import java.util.List;
 public interface Deployer {
 
     /**
+     * Gets whether the entity is able to deploy deployable items.
+     *
+     * @return whether the entity can deploy items
+     */
+    boolean canDeploy();
+
+    /**
+     * Sets whether the entity is able to deploy deployable items.
+     *
+     * @param canDeploy whether the entity can deploy items
+     */
+    void setCanDeploy(boolean canDeploy);
+
+    /**
      * Gets the direction the entity would perform a deployment towards. Essentially, this is equal to wherever the
      * entity is looking.
      *
