@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * A deployed object in the form as a placed {@link Block}.
  */
-public class PlacedBlock implements DeploymentObject, ItemEffectSource {
+public class PlaceDeploymentObject implements DeploymentObject, ItemEffectSource {
 
     private static final double BLOCK_CENTER_OFFSET = 0.5;
 
@@ -32,7 +32,7 @@ public class PlacedBlock implements DeploymentObject, ItemEffectSource {
     @NotNull
     private Material material;
 
-    public PlacedBlock(@NotNull Block block, @NotNull Material material) {
+    public PlaceDeploymentObject(@NotNull Block block, @NotNull Material material) {
         this.block = block;
         this.material = material;
     }

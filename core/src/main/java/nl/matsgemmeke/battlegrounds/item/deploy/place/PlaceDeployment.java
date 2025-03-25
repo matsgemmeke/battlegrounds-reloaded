@@ -44,16 +44,16 @@ public class PlaceDeployment implements Deployment {
 
         this.placeBlock(adjacentBlock, targetBlockFace);
 
-        PlacedBlock placedBlock = new PlacedBlock(adjacentBlock, deploymentProperties.material());
-        placedBlock.setCooldown(deploymentProperties.cooldown());
-        placedBlock.setHealth(deploymentProperties.health());
-        placedBlock.setResistances(deploymentProperties.resistances());
+        PlaceDeploymentObject object = new PlaceDeploymentObject(adjacentBlock, deploymentProperties.material());
+        object.setCooldown(deploymentProperties.cooldown());
+        object.setHealth(deploymentProperties.health());
+        object.setResistances(deploymentProperties.resistances());
 
         audioEmitter.playSounds(deploymentProperties.placeSounds(), adjacentBlock.getLocation());
 
         deployer.setHeldItem(null);
 
-        return DeploymentResult.success(placedBlock);
+        return DeploymentResult.success(object);
     }
 
     private void placeBlock(@NotNull Block block, @NotNull BlockFace blockFace) {

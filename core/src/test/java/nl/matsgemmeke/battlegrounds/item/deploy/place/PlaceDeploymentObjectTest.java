@@ -17,11 +17,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
-public class PlacedBlockTest {
+public class PlaceDeploymentObjectTest {
 
     private Block block;
     private Material material;
@@ -36,8 +37,8 @@ public class PlacedBlockTest {
     public void shouldExistIfBlockTypeEqualsOriginalMaterial() {
         when(block.getType()).thenReturn(material);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        boolean exists = placedBlock.exists();
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        boolean exists = object.exists();
 
         assertTrue(exists);
     }
@@ -46,16 +47,16 @@ public class PlacedBlockTest {
     public void shouldNotExistIfBlockTypeDoesNotEqualOriginalMaterial() {
         when(block.getType()).thenReturn(Material.STONE);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        boolean exists = placedBlock.exists();
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        boolean exists = object.exists();
 
         assertFalse(exists);
     }
 
     @Test
     public void getLastDamageReturnsNullIfBlockHasNotTakenDamage() {
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        Damage lastDamage = placedBlock.getLastDamage();
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        Damage lastDamage = object.getLastDamage();
 
         assertNull(lastDamage);
     }
@@ -64,24 +65,24 @@ public class PlacedBlockTest {
     public void getLastDamageReturnsLastDamageDealtToBlock() {
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.damage(damage);
-        Damage lastDamage = placedBlock.getLastDamage();
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        object.damage(damage);
+        Damage lastDamage = object.getLastDamage();
 
         assertEquals(damage, lastDamage);
     }
 
     @Test
     public void getLocationReturnsCenterLocationOfBlock() {
-        Location location = new Location(null, 1, 1, 1);
+        Location location = new Location(null, 1, 2, 3);
         when(block.getLocation()).thenReturn(location);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        Location blockLocation = placedBlock.getLocation();
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        Location objectLocation = object.getLocation();
 
-        assertEquals(1.5, blockLocation.getX());
-        assertEquals(1.5, blockLocation.getY());
-        assertEquals(1.5, blockLocation.getZ());
+        assertThat(objectLocation.getX()).isEqualTo(1.5);
+        assertThat(objectLocation.getY()).isEqualTo(2.5);
+        assertThat(objectLocation.getZ()).isEqualTo(3.5);
     }
 
     @Test
@@ -89,16 +90,16 @@ public class PlacedBlockTest {
         World world = mock(World.class);
         when(block.getWorld()).thenReturn(world);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        World objectWorld = placedBlock.getWorld();
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        World objectWorld = object.getWorld();
 
         assertEquals(world, objectWorld);
     }
 
     @Test
     public void isDeployedAlwaysReturnsTrue() {
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        boolean deployed = placedBlock.isDeployed();
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        boolean deployed = object.isDeployed();
 
         assertTrue(deployed);
     }
@@ -125,28 +126,28 @@ public class PlacedBlockTest {
     ) {
         Damage damage = new Damage(damageAmount, damageType);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.setHealth(health);
-        placedBlock.setResistances(resistances);
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        object.setHealth(health);
+        object.setResistances(resistances);
 
-        double damageDealt = placedBlock.damage(damage);
+        double damageDealt = object.damage(damage);
 
-        assertEquals(expectedDamageDealt, damageDealt);
-        assertEquals(expectedHealth, placedBlock.getHealth());
+        assertThat(damageDealt).isEqualTo(expectedDamageDealt);
+        assertThat(object.getHealth()).isEqualTo(expectedHealth);
     }
 
     @Test
     public void destroyRemovesBlock() {
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.destroy();
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        object.destroy();
 
         verify(block).setType(Material.AIR);
     }
 
     @Test
     public void isImmuneReturnsFalseIfResistancesIsNull() {
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        boolean immune = placedBlock.isImmuneTo(DamageType.BULLET_DAMAGE);
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        boolean immune = object.isImmuneTo(DamageType.BULLET_DAMAGE);
 
         assertFalse(immune);
     }
@@ -155,9 +156,9 @@ public class PlacedBlockTest {
     public void isImmuneReturnsFalseIfResistancesDoesNotContainEntryForDamageType() {
         Map<DamageType, Double> resistances = Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.0);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.setResistances(resistances);
-        boolean immune = placedBlock.isImmuneTo(DamageType.BULLET_DAMAGE);
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        object.setResistances(resistances);
+        boolean immune = object.isImmuneTo(DamageType.BULLET_DAMAGE);
 
         assertFalse(immune);
     }
@@ -166,9 +167,9 @@ public class PlacedBlockTest {
     public void isImmuneReturnsFalseIfResistanceToDamageTypeIsLargerThanZero() {
         Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.setResistances(resistances);
-        boolean immune = placedBlock.isImmuneTo(DamageType.BULLET_DAMAGE);
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        object.setResistances(resistances);
+        boolean immune = object.isImmuneTo(DamageType.BULLET_DAMAGE);
 
         assertFalse(immune);
     }
@@ -177,9 +178,9 @@ public class PlacedBlockTest {
     public void isImmuneReturnsTrueIfResistanceToDamageTypeEqualsOrIsLowerThanZero() {
         Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.0);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.setResistances(resistances);
-        boolean immune = placedBlock.isImmuneTo(DamageType.BULLET_DAMAGE);
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        object.setResistances(resistances);
+        boolean immune = object.isImmuneTo(DamageType.BULLET_DAMAGE);
 
         assertTrue(immune);
     }
@@ -188,16 +189,16 @@ public class PlacedBlockTest {
     public void matchesEntityAlwaysReturnsFalse() {
         Entity entity = mock(Entity.class);
 
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        boolean matches = placedBlock.matchesEntity(entity);
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        boolean matches = object.matchesEntity(entity);
 
         assertFalse(matches);
     }
 
     @Test
     public void shouldRemoveBlockWhenRemovingObject() {
-        PlacedBlock placedBlock = new PlacedBlock(block, material);
-        placedBlock.remove();
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        object.remove();
 
         verify(block).setType(Material.AIR);
     }
