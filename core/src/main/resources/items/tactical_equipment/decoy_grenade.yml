@@ -4,9 +4,11 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: false
   health: 50.0
-  reset-on-destroy: false
+  on-destroy:
+    activate: false
+    remove: false
+    reset: false
 description: Distraction device that simulates enemy gunfire.
 effect:
   activation:

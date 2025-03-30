@@ -7,12 +7,14 @@ deploy:
   on-destroy:
     activate: true
     particle-effect:
-      count: 1
+      block-data: STONE
+      count: 10
       extra: 0
-      offset-x: 0.1
-      offset-y: 0.1
-      offset-z: 0.1
-      type: LAVA
+      offset-x: 0.25
+      offset-y: 0.25
+      offset-z: 0.25
+      particle: BLOCK_CRACK
+    remove: true
     reset: false
   resistances:
     fire-damage: 0

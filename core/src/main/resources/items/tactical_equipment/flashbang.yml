@@ -4,9 +4,15 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: false
   health: 50.0
-  reset-on-destroy: false
+  on-destroy:
+    activate: false
+    remove: true
+    reset: false
+  resistances:
+    bullet-damage: 0
+    explosive-damage: 0
+    fire-damage: 0
 description: Device that blinds the target when detonated.
 effect:
   activation:

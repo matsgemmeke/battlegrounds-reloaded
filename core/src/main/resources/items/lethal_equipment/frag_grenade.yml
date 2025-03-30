@@ -4,9 +4,11 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: false
   health: 50.0
-  reset-on-destroy: false
+  on-destroy:
+    activate: true
+    remove: true
+    reset: false
   resistances:
     bullet-damage: 0
     fire-damage: 0

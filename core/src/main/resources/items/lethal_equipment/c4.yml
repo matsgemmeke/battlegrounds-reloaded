@@ -5,9 +5,14 @@ controls:
   place: RIGHT_CLICK
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: false
   health: 50.0
-  reset-on-destroy: false
+  manual-activation:
+    activation-delay: 5
+    activation-sound: UI_BUTTON_CLICK-1-1.5-0
+  on-destroy:
+    activate: false
+    remove: true
+    reset: false
   resistances:
     bullet-damage: 0
     explosive-damage: 0
@@ -15,8 +20,6 @@ deploy:
 description: A plastic explosive device that is detonated remotely with the clacker.
 effect:
   activation:
-    activation-sound: UI_BUTTON_CLICK-1-1.5-0
-    delay-until-activation: 5
     type: MANUAL
   break-blocks: false
   power: 3.0
