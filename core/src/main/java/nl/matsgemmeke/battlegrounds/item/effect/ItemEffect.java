@@ -10,7 +10,7 @@ public interface ItemEffect {
     void activateInstantly();
 
     /**
-     * Cancels the current activation process of the effect. This method not do anything if the effect was already
+     * Cancels the current activation process of the effect. This method does not do anything if the effect was already
      * activated.
      */
     void cancelActivation();

@@ -17,11 +17,11 @@ import java.util.List;
 public class TrainingModeDamageProcessor implements DamageProcessor {
 
     @NotNull
-    private DeploymentInfoProvider deploymentInfoProvider;
+    private final DeploymentInfoProvider deploymentInfoProvider;
     @NotNull
-    private GameKey trainingModeKey;
+    private final GameKey trainingModeKey;
     @NotNull
-    private List<DamageCheck> damageChecks;
+    private final List<DamageCheck> damageChecks;
 
     public TrainingModeDamageProcessor(@NotNull GameKey trainingModeKey, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
         this.trainingModeKey = trainingModeKey;
@@ -56,12 +56,10 @@ public class TrainingModeDamageProcessor implements DamageProcessor {
         deploymentObject.damage(damage);
 
         if (deploymentObject.getHealth() <= 0.0) {
-            deploymentObject.destroy();
-
             DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(deploymentObject);
 
             if (deployableItem != null) {
-                deployableItem.onDestroyDeploymentObject(deploymentObject);
+                deployableItem.destroyDeployment();
             }
         }
     }

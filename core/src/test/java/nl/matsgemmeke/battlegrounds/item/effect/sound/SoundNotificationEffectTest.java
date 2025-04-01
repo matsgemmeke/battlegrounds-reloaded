@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
@@ -41,14 +41,11 @@ public class SoundNotificationEffectTest {
     }
 
     @Test
-    public void activatePlaysNoSoundsIfItemHolderEntityIsNoPlayer() {
-        ItemEffectSource effectSource = mock(ItemEffectSource.class);
+    public void activatePlaysNoSoundsIfEntityIsNoPlayer() {
+        Deployer deployer = mock(Deployer.class);
         Zombie zombie = mock(Zombie.class);
-
-        ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getEntity()).thenReturn(zombie);
-
-        ItemEffectContext context = new ItemEffectContext(holder, effectSource);
+        ItemEffectSource source = mock(ItemEffectSource.class);
+        ItemEffectContext context = new ItemEffectContext(deployer, zombie, source);
 
         SoundNotificationEffect effect = new SoundNotificationEffect(effectActivation, sounds);
         effect.prime(context);
@@ -62,17 +59,15 @@ public class SoundNotificationEffectTest {
     }
 
     @Test
-    public void activatePlaysSoundsOnlyForItemHolder() {
+    public void activatePlaysSoundsOnlyForPlayerEntity() {
+        Deployer deployer = mock(Deployer.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
         Location playerLocation = new Location(null, 0, 0, 0);
 
         Player player = mock(Player.class);
         when(player.getLocation()).thenReturn(playerLocation);
 
-        ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getEntity()).thenReturn(player);
-
-        ItemEffectSource effectSource = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(holder, effectSource);
+        ItemEffectContext context = new ItemEffectContext(deployer, player, source);
 
         SoundNotificationEffect effect = new SoundNotificationEffect(effectActivation, sounds);
         effect.prime(context);

@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
@@ -31,14 +32,16 @@ public class PlayerRespawnEventHandler implements EventHandler<PlayerRespawnEven
         }
 
         PlayerRegistry playerRegistry = contextProvider.getComponent(gameKey, PlayerRegistry.class);
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player);
         SpawnPointProvider spawnPointProvider = contextProvider.getComponent(gameKey, SpawnPointProvider.class);
 
-        if (!spawnPointProvider.hasSpawnPoint(gamePlayer)) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player);
+        Entity entity = gamePlayer.getEntity();
+
+        if (!spawnPointProvider.hasSpawnPoint(entity.getUniqueId())) {
             return;
         }
 
-        Location respawnLocation = spawnPointProvider.respawnEntity(gamePlayer);
+        Location respawnLocation = spawnPointProvider.respawnEntity(entity);
 
         event.setRespawnLocation(respawnLocation);
     }

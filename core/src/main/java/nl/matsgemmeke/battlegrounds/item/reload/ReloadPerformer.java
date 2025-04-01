@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
-import nl.matsgemmeke.battlegrounds.game.audio.AudioSource;
+import nl.matsgemmeke.battlegrounds.item.audio.SoundSource;
 
 /**
  * An entity that is capable of performing reloads.
  */
-public interface ReloadPerformer extends AudioSource {
+public interface ReloadPerformer extends SoundSource {
 
     /**
      * Applies effects to the entity for when they are performing a reload.

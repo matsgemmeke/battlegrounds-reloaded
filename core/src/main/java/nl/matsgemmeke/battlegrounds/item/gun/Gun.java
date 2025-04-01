@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.reload.Reloadable;
+import nl.matsgemmeke.battlegrounds.item.scope.Scopable;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface Gun extends Weapon, AmmunitionHolder, Interactable<GunHolder>, Shootable {
+public interface Gun extends Weapon, Interactable<GunHolder>, Reloadable, Scopable, Shootable {
 
     @NotNull
     FireMode getFireMode();
@@ -53,11 +54,4 @@ public interface Gun extends Weapon, AmmunitionHolder, Interactable<GunHolder>, 
     List<GameSound> getShotSounds();
 
     void setShotSounds(@NotNull List<GameSound> shotSounds);
-
-    /**
-     * Makes the gun shoot one of its projectiles.
-     *
-     * @return whether the gun has shot
-     */
-    boolean shoot();
 }

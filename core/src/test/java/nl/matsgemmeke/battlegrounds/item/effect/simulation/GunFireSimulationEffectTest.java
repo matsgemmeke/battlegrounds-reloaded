@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
@@ -9,9 +10,9 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,15 +51,16 @@ public class GunFireSimulationEffectTest {
     }
 
     @Test
-    public void activateSimulatesGenericGunFireForHolderWhichCannotHoldGuns() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+    public void activateSimulatesGenericGunFireForEntityThatIsUnableToHoldGuns() {
+        EquipmentHolder equipmentHolder = mock(EquipmentHolder.class);
+        Entity entity = mock(Entity.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+        ItemEffectContext context = new ItemEffectContext(equipmentHolder, entity, source);
 
         GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, effectActivation, audioEmitter, gunInfoProvider, properties);
         effect.prime(context);
@@ -77,17 +79,18 @@ public class GunFireSimulationEffectTest {
     }
 
     @Test
-    public void activateSimulatesGenericGunFireForHolderWhichDoesNotCarryAnyGuns() {
-        GunHolder holder = mock(GunHolder.class);
+    public void activateSimulatesGenericGunFireForEntityThatDoesNotCarryAnyGuns() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        Entity entity = mock(Entity.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+        ItemEffectContext context = new ItemEffectContext(gamePlayer, entity, source);
 
-        when(gunInfoProvider.getGunFireSimulationInfo(holder)).thenReturn(null);
+        when(gunInfoProvider.getGunFireSimulationInfo(gamePlayer)).thenReturn(null);
 
         GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, effectActivation, audioEmitter, gunInfoProvider, properties);
         effect.prime(context);
@@ -107,20 +110,21 @@ public class GunFireSimulationEffectTest {
 
     @Test
     public void activateStopsSimulatesGunFireOnceEffectSourceNoLongerExists() {
-        GunHolder holder = mock(GunHolder.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        Entity entity = mock(Entity.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
         when(source.getLocation()).thenReturn(sourceLocation);
 
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+        ItemEffectContext context = new ItemEffectContext(gamePlayer, entity, source);
 
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 120;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 
-        when(gunInfoProvider.getGunFireSimulationInfo(holder)).thenReturn(gunFireSimulationInfo);
+        when(gunInfoProvider.getGunFireSimulationInfo(gamePlayer)).thenReturn(gunFireSimulationInfo);
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
@@ -144,20 +148,21 @@ public class GunFireSimulationEffectTest {
 
     @Test
     public void activateSimulatesGunFireOnceAndRemovesEffectSourceWhenFinished() {
-        GunHolder holder = mock(GunHolder.class);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        Entity entity = mock(Entity.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+        ItemEffectContext context = new ItemEffectContext(gamePlayer, entity, source);
 
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 1200;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 
-        when(gunInfoProvider.getGunFireSimulationInfo(holder)).thenReturn(gunFireSimulationInfo);
+        when(gunInfoProvider.getGunFireSimulationInfo(gamePlayer)).thenReturn(gunFireSimulationInfo);
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);

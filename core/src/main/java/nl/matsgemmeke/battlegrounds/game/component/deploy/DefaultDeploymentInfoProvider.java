@@ -24,7 +24,11 @@ public class DefaultDeploymentInfoProvider implements DeploymentInfoProvider {
         List<DeploymentObject> deploymentObjects = new ArrayList<>();
 
         for (Equipment equipment : equipmentRegistry.findAll()) {
-            deploymentObjects.addAll(equipment.getDeploymentObjects());
+            DeploymentObject deploymentObject = equipment.getDeploymentObject();
+
+            if (deploymentObject != null) {
+                deploymentObjects.add(deploymentObject);
+            }
         }
 
         return deploymentObjects;
@@ -33,7 +37,7 @@ public class DefaultDeploymentInfoProvider implements DeploymentInfoProvider {
     @Nullable
     public DeployableItem getDeployableItem(@NotNull DeploymentObject deploymentObject) {
         for (Equipment equipment : equipmentRegistry.findAll()) {
-            if (equipment.getDeploymentObjects().contains(deploymentObject)) {
+            if (equipment.getDeploymentObject() == deploymentObject) {
                 return equipment;
             }
         }

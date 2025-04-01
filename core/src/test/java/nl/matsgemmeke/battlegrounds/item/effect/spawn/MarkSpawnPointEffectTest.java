@@ -1,44 +1,49 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
 public class MarkSpawnPointEffectTest {
 
+    private Deployer deployer;
+    private Entity entity;
     private ItemEffectActivation effectActivation;
+    private ItemEffectContext context;
+    private ItemEffectSource source;
     private SpawnPointProvider spawnPointProvider;
 
     @BeforeEach
     public void setUp() {
         effectActivation = mock(ItemEffectActivation.class);
         spawnPointProvider = mock(SpawnPointProvider.class);
+
+        deployer = mock(Deployer.class);
+        entity = mock(Entity.class);
+        source = mock(ItemEffectSource.class);
+        context = new ItemEffectContext(deployer, entity, source);
     }
 
     @Test
-    public void primeCreatesNewCustomSpawnPointAndAssignsToHolder() {
-        Location eyeLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+    public void primeCreatesNewCustomSpawnPointAndAssignsToDeployer() {
+        UUID entityId = UUID.randomUUID();
+        Location deployLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
 
-        Player player = mock(Player.class);
-        when(player.getEyeLocation()).thenReturn(eyeLocation);
-
-        ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getEntity()).thenReturn(player);
-
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+        when(deployer.getDeployLocation()).thenReturn(deployLocation);
+        when(entity.getUniqueId()).thenReturn(entityId);
 
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
         effect.prime(context);
@@ -49,7 +54,7 @@ public class MarkSpawnPointEffectTest {
         procedureCaptor.getValue().apply();
 
         ArgumentCaptor<MarkedSpawnPoint> spawnPointCaptor = ArgumentCaptor.forClass(MarkedSpawnPoint.class);
-        verify(spawnPointProvider).setCustomSpawnPoint(eq(holder), spawnPointCaptor.capture());
+        verify(spawnPointProvider).setCustomSpawnPoint(eq(entityId), spawnPointCaptor.capture());
     }
 
     @Test
@@ -57,26 +62,21 @@ public class MarkSpawnPointEffectTest {
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
         effect.reset();
 
-        verify(spawnPointProvider, never()).setCustomSpawnPoint(any(GameEntity.class), any(SpawnPoint.class));
+        verify(spawnPointProvider, never()).setCustomSpawnPoint(any(UUID.class), any(SpawnPoint.class));
     }
 
     @Test
     public void resetResetsSpawnPointIfEffectIsPerformed() {
-        Location eyeLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+        UUID entityId = UUID.randomUUID();
+        Location deployLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
 
-        Player player = mock(Player.class);
-        when(player.getEyeLocation()).thenReturn(eyeLocation);
-
-        ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getEntity()).thenReturn(player);
-
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+        when(deployer.getDeployLocation()).thenReturn(deployLocation);
+        when(entity.getUniqueId()).thenReturn(entityId);
 
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
         effect.prime(context);
         effect.reset();
 
-        verify(spawnPointProvider).setCustomSpawnPoint(holder, null);
+        verify(spawnPointProvider).setCustomSpawnPoint(entityId, null);
     }
 }

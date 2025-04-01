@@ -1,10 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerObserver;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -13,13 +14,17 @@ import static org.mockito.Mockito.*;
 
 public class TriggerActivationTest {
 
+    private Deployer deployer;
+    private Entity entity;
+    private ItemEffectContext context;
     private ItemEffectSource source;
-    private ItemHolder holder;
 
     @BeforeEach
     public void setUp() {
+        deployer = mock(Deployer.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
-        holder = mock(ItemHolder.class);
+        context = new ItemEffectContext(deployer, entity, source);
     }
 
     @Test
@@ -35,7 +40,6 @@ public class TriggerActivationTest {
 
     @Test
     public void cancelCancelsTriggersIfPrimed() {
-        ItemEffectContext context = new ItemEffectContext(holder, source);
         Trigger trigger = mock(Trigger.class);
 
         TriggerActivation activation = new TriggerActivation();
@@ -48,7 +52,6 @@ public class TriggerActivationTest {
 
     @Test
     public void primeDoesNotPerformTriggerChecksTwiceIfAlreadyPrimed() {
-        ItemEffectContext context = new ItemEffectContext(holder, source);
         Trigger trigger = mock(Trigger.class);
 
         TriggerActivation activation = new TriggerActivation();
@@ -60,11 +63,10 @@ public class TriggerActivationTest {
     }
 
     @Test
-    public void primeRemovesHolderItemIfSourceIsDeployedAndInitiatesTriggersOnlyOnce() {
-        when(source.isDeployed()).thenReturn(true);
-
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+    public void primeRemovesItemFromDeployerIfSourceIsDeployedAndInitiatesTriggersOnlyOnce() {
         Trigger trigger = mock(Trigger.class);
+
+        when(source.isDeployed()).thenReturn(true);
 
         TriggerActivation activation = new TriggerActivation();
         activation.addTrigger(trigger);
@@ -73,7 +75,7 @@ public class TriggerActivationTest {
         ArgumentCaptor<TriggerObserver> observerCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(trigger).addObserver(observerCaptor.capture());
 
-        verify(holder).setHeldItem(null);
+        verify(deployer).setHeldItem(null);
         verify(trigger).checkTriggerActivation(context);
     }
 }

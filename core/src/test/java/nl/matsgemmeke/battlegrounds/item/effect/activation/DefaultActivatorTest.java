@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,10 +30,10 @@ public class DefaultActivatorTest {
 
     @Test
     public void isReadyReturnsTrueWhenActivatorIsPrepared() {
-        ItemHolder holder = mock(ItemHolder.class);
+        Deployer deployer = mock(Deployer.class);
 
         DefaultActivator activator = new DefaultActivator(itemTemplate);
-        activator.prepare(holder);
+        activator.prepare(deployer);
         boolean ready = activator.isReady();
 
         assertTrue(ready);
@@ -64,19 +64,19 @@ public class DefaultActivatorTest {
     }
 
     @Test
-    public void prepareReadiesTheActivatorOnceAndSetHolderHeldItem() {
-        ItemHolder holder = mock(ItemHolder.class);
+    public void prepareReadiesTheActivatorOnceAndSetsDeployerHeldItem() {
+        Deployer deployer = mock(Deployer.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         when(itemTemplate.createItemStack()).thenReturn(itemStack);
 
         DefaultActivator activator = new DefaultActivator(itemTemplate);
-        activator.prepare(holder);
-        activator.prepare(holder);
+        activator.prepare(deployer);
+        activator.prepare(deployer);
 
         assertTrue(activator.isReady());
 
-        verify(holder).setHeldItem(itemStack);
+        verify(deployer).setHeldItem(itemStack);
     }
 
     @Test
@@ -88,18 +88,18 @@ public class DefaultActivatorTest {
     }
 
     @Test
-    public void removeReturnsTrueRemovesItemFromHolderIfActivatorIsPrepared() {
-        ItemHolder holder = mock(ItemHolder.class);
+    public void removeReturnsTrueRemovesItemFromDeployerIfActivatorIsPrepared() {
+        Deployer deployer = mock(Deployer.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         when(itemTemplate.createItemStack()).thenReturn(itemStack);
 
         DefaultActivator activator = new DefaultActivator(itemTemplate);
-        activator.prepare(holder);
+        activator.prepare(deployer);
         boolean removed = activator.remove();
 
         assertTrue(removed);
 
-        verify(holder).removeItem(itemStack);
+        verify(deployer).removeItem(itemStack);
     }
 }

@@ -28,7 +28,6 @@ public class TrainingModePresenceConditionTest {
     private Translator translator;
 
     @BeforeEach
-    @SuppressWarnings("unchecked")
     public void setUp() {
         playerRegistry = mock(PlayerRegistry.class);
         trainingModeGameKey = GameKey.ofTrainingMode();
@@ -38,7 +37,7 @@ public class TrainingModePresenceConditionTest {
         issuer = mock(BukkitCommandIssuer.class);
         when(issuer.getPlayer()).thenReturn(player);
 
-        conditionContext = (ConditionContext<BukkitCommandIssuer>) mock(ConditionContext.class);
+        conditionContext = mock();
         when(conditionContext.getIssuer()).thenReturn(issuer);
 
         contextProvider = mock(GameContextProvider.class);

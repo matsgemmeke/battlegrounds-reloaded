@@ -3,9 +3,19 @@ name: Motion Sensor
 controls:
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: false
   health: 50.0
-  reset-on-destroy: false
+  on-destroy:
+    activate: false
+    particle-effect:
+      block-data: REPEATER
+      count: 10
+      extra: 0
+      offset-x: 0.25
+      offset-y: 0.25
+      offset-z: 0.25
+      particle: BLOCK_CRACK
+    remove: true
+    reset: false
 description: Tactical ground-based sensor that detects enemy movement within its radius.
 effect:
   activation:

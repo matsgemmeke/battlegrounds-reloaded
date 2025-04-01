@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.reload;
 
-import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,86 +12,90 @@ import static org.mockito.Mockito.*;
 
 public class ReloadFunctionTest {
 
-    private AmmunitionHolder ammunitionHolder;
-    private ReloadSystem reloadSystem;
+    private Gun gun;
 
     @BeforeEach
     public void setUp() {
-        ammunitionHolder = mock(AmmunitionHolder.class);
-        reloadSystem = mock(ReloadSystem.class);
+        gun = mock(Gun.class);
     }
 
     @Test
-    public void shouldReturnAvailabilityBasedOnReloadSystemState() {
-        when(reloadSystem.isPerforming()).thenReturn(true);
+    public void isAvailableReturnsFalseIfGunCannotPerformReload() {
+        when(gun.isReloadAvailable()).thenReturn(false);
 
-        ReloadFunction function = new ReloadFunction(ammunitionHolder, reloadSystem);
+        ReloadFunction function = new ReloadFunction(gun);
         boolean available = function.isAvailable();
 
         assertFalse(available);
     }
 
     @Test
-    public void shouldReturnPerformingStateBasedOnReloadSystem() {
-        when(reloadSystem.isPerforming()).thenReturn(true);
+    public void isAvailableReturnsTrueIfGunCanReload() {
+        when(gun.isReloadAvailable()).thenReturn(true);
 
-        ReloadFunction function = new ReloadFunction(ammunitionHolder, reloadSystem);
+        ReloadFunction function = new ReloadFunction(gun);
+        boolean available = function.isAvailable();
+
+        assertTrue(available);
+    }
+
+    @Test
+    public void isPerformingReturnsTrueIfGunIsReloading() {
+        when(gun.isReloading()).thenReturn(true);
+
+        ReloadFunction function = new ReloadFunction(gun);
         boolean performing = function.isPerforming();
 
         assertTrue(performing);
     }
 
     @Test
-    public void shouldCancelReloadSystemWhenCancelling() {
-        when(reloadSystem.cancelReload()).thenReturn(true);
+    public void isPerformingReturnsFalseIfGunIsNotReloading() {
+        when(gun.isReloading()).thenReturn(false);
 
-        ReloadFunction function = new ReloadFunction(ammunitionHolder, reloadSystem);
+        ReloadFunction function = new ReloadFunction(gun);
+        boolean performing = function.isPerforming();
+
+        assertFalse(performing);
+    }
+
+    @Test
+    public void cancelCancelsGunReloadOperation() {
+        when(gun.cancelReload()).thenReturn(true);
+
+        ReloadFunction function = new ReloadFunction(gun);
         boolean cancelled = function.cancel();
 
         assertTrue(cancelled);
+
+        verify(gun).cancelReload();
     }
 
     @Test
-    public void shouldNotPerformIfAmmunitionHolderIsAlreadyFullyReloaded() {
-        when(ammunitionHolder.getMagazineAmmo()).thenReturn(10);
-        when(ammunitionHolder.getMagazineSize()).thenReturn(10);
+    public void performReturnsFalseIfGunIsNotAvailable() {
+        when(gun.isReloadAvailable()).thenReturn(false);
 
         GunHolder holder = mock(GunHolder.class);
 
-        ReloadFunction function = new ReloadFunction(ammunitionHolder, reloadSystem);
+        ReloadFunction function = new ReloadFunction(gun);
         boolean performed = function.perform(holder);
 
         assertFalse(performed);
+
+        verify(gun, never()).reload(any(GunHolder.class));
     }
 
     @Test
-    public void shouldNotPerformIfAmmunitionHolderHasNoReserveAmmoLeft() {
-        when(ammunitionHolder.getMagazineAmmo()).thenReturn(5);
-        when(ammunitionHolder.getMagazineSize()).thenReturn(10);
-        when(ammunitionHolder.getReserveAmmo()).thenReturn(0);
-
+    public void performReturnsTrueAndPerformsReload() {
         GunHolder holder = mock(GunHolder.class);
 
-        ReloadFunction function = new ReloadFunction(ammunitionHolder, reloadSystem);
-        boolean performed = function.perform(holder);
+        when(gun.isReloadAvailable()).thenReturn(true);
 
-        assertFalse(performed);
-    }
-
-    @Test
-    public void shouldPerformReloadWithReloadSystemWhenPerforming() {
-        GunHolder holder = mock(GunHolder.class);
-
-        when(ammunitionHolder.getMagazineAmmo()).thenReturn(5);
-        when(ammunitionHolder.getMagazineSize()).thenReturn(10);
-        when(ammunitionHolder.getReserveAmmo()).thenReturn(10);
-        when(reloadSystem.performReload(holder)).thenReturn(true);
-
-        ReloadFunction function = new ReloadFunction(ammunitionHolder, reloadSystem);
+        ReloadFunction function = new ReloadFunction(gun);
         boolean performed = function.perform(holder);
 
         assertTrue(performed);
 
-        verify(reloadSystem).performReload(holder);
+        verify(gun).reload(holder);
     }
 }

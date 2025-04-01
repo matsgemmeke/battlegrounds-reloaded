@@ -3,9 +3,18 @@ name: Molotov Cocktail
 controls:
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: true
   health: 10.0
-  reset-on-destroy: false
+  on-destroy:
+    activate: true
+    particle-effect:
+      count: 5
+      extra: 0
+      offset-x: 0.25
+      offset-y: 0.25
+      offset-z: 0.25
+      particle: FLAME
+    remove: true
+    reset: false
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
 effect:
   activation:

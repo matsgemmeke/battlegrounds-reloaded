@@ -10,10 +10,10 @@ public class ScopeZoomEffect implements ItemEffect {
     private float currentMagnification;
     private float magnification;
     @NotNull
-    private ScopeUser user;
+    private ScopeUser scopeUser;
 
-    public ScopeZoomEffect(@NotNull ScopeUser user, float magnification) {
-        this.user = user;
+    public ScopeZoomEffect(@NotNull ScopeUser scopeUser, float magnification) {
+        this.scopeUser = scopeUser;
         this.magnification = magnification;
     }
 
@@ -26,13 +26,13 @@ public class ScopeZoomEffect implements ItemEffect {
     }
 
     public void apply() {
-        user.applyViewMagnification(magnification);
+        scopeUser.applyViewMagnification(magnification);
 
         currentMagnification = magnification;
     }
 
     public void remove() {
-        user.applyViewMagnification(DEFAULT_MAGNIFICATION);
+        scopeUser.applyViewMagnification(DEFAULT_MAGNIFICATION);
     }
 
     public boolean update() {
@@ -42,7 +42,7 @@ public class ScopeZoomEffect implements ItemEffect {
         }
 
         currentMagnification = magnification;
-        user.applyViewMagnification(magnification);
+        scopeUser.applyViewMagnification(magnification);
         return true;
     }
 }

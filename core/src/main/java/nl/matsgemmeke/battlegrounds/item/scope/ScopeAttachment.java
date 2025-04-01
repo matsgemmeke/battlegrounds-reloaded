@@ -10,10 +10,10 @@ public interface ScopeAttachment {
     /**
      * Applies the scope effect to a {@link ScopeUser}.
      *
-     * @param user the entity
+     * @param scopeUser the entity
      * @return whether the effect was applied
      */
-    boolean applyEffect(@NotNull ScopeUser user);
+    boolean applyEffect(@NotNull ScopeUser scopeUser);
 
     /**
      * Gets whether the scope attachment is being used by a player.

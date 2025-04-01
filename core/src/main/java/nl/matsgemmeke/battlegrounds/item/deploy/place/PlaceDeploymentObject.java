@@ -1,7 +1,8 @@
-package nl.matsgemmeke.battlegrounds.item.deploy;
+package nl.matsgemmeke.battlegrounds.item.deploy.place;
 
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +17,7 @@ import java.util.Map;
 /**
  * A deployed object in the form as a placed {@link Block}.
  */
-public class PlacedBlock implements DeploymentObject, ItemEffectSource {
+public class PlaceDeploymentObject implements DeploymentObject, ItemEffectSource {
 
     private static final double BLOCK_CENTER_OFFSET = 0.5;
 
@@ -25,18 +26,23 @@ public class PlacedBlock implements DeploymentObject, ItemEffectSource {
     @Nullable
     private Damage lastDamage;
     private double health;
+    private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
     @NotNull
     private Material material;
 
-    public PlacedBlock(@NotNull Block block, @NotNull Material material) {
+    public PlaceDeploymentObject(@NotNull Block block, @NotNull Material material) {
         this.block = block;
         this.material = material;
     }
 
-    public boolean exists() {
-        return block.getType() == material;
+    public long getCooldown() {
+        return cooldown;
+    }
+
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
     }
 
     public double getHealth() {
@@ -89,8 +95,8 @@ public class PlacedBlock implements DeploymentObject, ItemEffectSource {
         return damageAmount;
     }
 
-    public void destroy() {
-        this.remove();
+    public boolean exists() {
+        return block.getType() == material;
     }
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {

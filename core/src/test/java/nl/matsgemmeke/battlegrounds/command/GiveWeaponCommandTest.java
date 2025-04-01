@@ -47,7 +47,6 @@ public class GiveWeaponCommandTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldGiveAssignedWeaponToPlayer() {
         String message = "weapon given";
         String weaponId = "TEST_WEAPON";

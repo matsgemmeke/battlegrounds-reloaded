@@ -1,16 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.shoot;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.AmmunitionHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,80 +11,90 @@ import static org.mockito.Mockito.*;
 
 public class ShootFunctionTest {
 
-    private AmmunitionHolder ammunitionHolder;
-    private AudioEmitter audioEmitter;
-    private FireMode fireMode;
+    private Gun gun;
 
     @BeforeEach
     public void setUp() {
-        this.ammunitionHolder = mock(AmmunitionHolder.class);
-        this.audioEmitter = mock(AudioEmitter.class);
-        this.fireMode = mock(FireMode.class);
+        gun = mock(Gun.class);
     }
 
     @Test
-    public void shouldReturnAvailabilityBasedOnFireModeState() {
-        when(fireMode.isCycling()).thenReturn(true);
+    public void isAvailableReturnsTrueIfGunCanShoot() {
+        when(gun.canShoot()).thenReturn(true);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
+        ShootFunction function = new ShootFunction(gun);
+        boolean available = function.isAvailable();
+
+        assertTrue(available);
+    }
+
+    @Test
+    public void isAvailableReturnsFalseIfGunCannotShoot() {
+        when(gun.canShoot()).thenReturn(false);
+
+        ShootFunction function = new ShootFunction(gun);
         boolean available = function.isAvailable();
 
         assertFalse(available);
     }
 
     @Test
-    public void shouldReturnPerformingStateBasedOnFireMode() {
-        when(fireMode.isCycling()).thenReturn(true);
+    public void isPerformingReturnsTrueIfGunIsShooting() {
+        when(gun.isShooting()).thenReturn(true);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
+        ShootFunction function = new ShootFunction(gun);
         boolean performing = function.isPerforming();
 
         assertTrue(performing);
     }
 
     @Test
-    public void shouldCancelFireModeCycleWhenCancelling() {
-        when(fireMode.cancelCycle()).thenReturn(true);
+    public void isPerformingReturnsFalseIfGunIsNotShooting() {
+        when(gun.isShooting()).thenReturn(false);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
+        ShootFunction function = new ShootFunction(gun);
+        boolean performing = function.isPerforming();
+
+        assertFalse(performing);
+    }
+
+    @Test
+    public void cancelCancelsGunShootingCycle() {
+        when(gun.cancelShootingCycle()).thenReturn(true);
+
+        ShootFunction function = new ShootFunction(gun);
         boolean cancelled = function.cancel();
 
         assertTrue(cancelled);
+
+        verify(gun).cancelShootingCycle();
     }
 
     @Test
-    public void shouldActivateFireModeCycleWhenPerformingAction() {
-        when(ammunitionHolder.getMagazineAmmo()).thenReturn(100);
-
+    public void performReturnsFalseIfGunCannotShoot() {
         GunHolder holder = mock(GunHolder.class);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
-        boolean result = function.perform(holder);
+        when(gun.canShoot()).thenReturn(false);
 
-        assertTrue(result);
+        ShootFunction function = new ShootFunction(gun);
+        boolean performed = function.perform(holder);
 
-        verify(fireMode).activateCycle();
+        assertFalse(performed);
+
+        verify(gun, never()).shoot();
     }
 
     @Test
-    public void shouldPlayTriggerSoundsWhenPerformingActionIfThereIsNotEnoughAmmo() {
-        when(ammunitionHolder.getMagazineAmmo()).thenReturn(-10);
-
-        Iterable<GameSound> triggerSounds = Collections.emptySet();
-        Location location = new Location(null, 1.0, 1.0, 1.0);
-
-        Player player = mock(Player.class);
-        when(player.getLocation()).thenReturn(location);
-
+    public void performReturnsTrueAndShootsIfGunCanShoot() {
         GunHolder holder = mock(GunHolder.class);
-        when(holder.getEntity()).thenReturn(player);
 
-        ShootFunction function = new ShootFunction(ammunitionHolder, audioEmitter, fireMode);
-        function.setTriggerSounds(triggerSounds);
-        boolean result = function.perform(holder);
+        when(gun.canShoot()).thenReturn(true);
 
-        assertFalse(result);
+        ShootFunction function = new ShootFunction(gun);
+        boolean performed = function.perform(holder);
 
-        verify(audioEmitter).playSounds(triggerSounds, location);
+        assertTrue(performed);
+
+        verify(gun).startShootCycle();
     }
 }

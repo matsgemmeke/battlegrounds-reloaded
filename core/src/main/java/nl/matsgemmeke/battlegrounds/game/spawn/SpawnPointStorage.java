@@ -1,27 +1,27 @@
 package nl.matsgemmeke.battlegrounds.game.spawn;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class SpawnPointStorage {
 
     @NotNull
-    private Map<GameEntity, SpawnPoint> customSpawnPointLocations;
+    private Map<UUID, SpawnPoint> customSpawnPointLocations;
 
     public SpawnPointStorage() {
         this.customSpawnPointLocations = new HashMap<>();
     }
 
     @Nullable
-    public SpawnPoint getCustomSpawnPoint(@NotNull GameEntity gameEntity) {
-        return customSpawnPointLocations.get(gameEntity);
+    public SpawnPoint getCustomSpawnPoint(@NotNull UUID entityId) {
+        return customSpawnPointLocations.get(entityId);
     }
 
-    public void setCustomSpawnPoint(@NotNull GameEntity gameEntity, @Nullable SpawnPoint spawnPoint) {
-        customSpawnPointLocations.put(gameEntity, spawnPoint);
+    public void setCustomSpawnPoint(@NotNull UUID entityId, @Nullable SpawnPoint spawnPoint) {
+        customSpawnPointLocations.put(entityId, spawnPoint);
     }
 }

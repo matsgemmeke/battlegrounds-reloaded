@@ -9,18 +9,18 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
-import nl.matsgemmeke.battlegrounds.item.mapper.MappingException;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.*;
@@ -40,7 +40,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -49,6 +48,8 @@ public class EquipmentFactory implements WeaponFactory {
 
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
 
+    @NotNull
+    private final DeploymentHandlerFactory deploymentHandlerFactory;
     @NotNull
     private final EquipmentControlsFactory controlsFactory;
     @NotNull
@@ -60,22 +61,28 @@ public class EquipmentFactory implements WeaponFactory {
     @NotNull
     private final NamespacedKeyCreator keyCreator;
     @NotNull
+    private final ParticleEffectMapper particleEffectMapper;
+    @NotNull
     private final TaskRunner taskRunner;
 
     @Inject
     public EquipmentFactory(
+            @NotNull DeploymentHandlerFactory deploymentHandlerFactory,
             @NotNull GameContextProvider contextProvider,
             @NotNull EquipmentControlsFactory controlsFactory,
             @NotNull ItemEffectFactory effectFactory,
             @NotNull ItemEffectActivationFactory effectActivationFactory,
             @NotNull NamespacedKeyCreator keyCreator,
+            @NotNull ParticleEffectMapper particleEffectMapper,
             @NotNull TaskRunner taskRunner
     ) {
+        this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
         this.effectFactory = effectFactory;
         this.effectActivationFactory = effectActivationFactory;
         this.keyCreator = keyCreator;
+        this.particleEffectMapper = particleEffectMapper;
         this.taskRunner = taskRunner;
     }
 
@@ -103,6 +110,8 @@ public class EquipmentFactory implements WeaponFactory {
     @NotNull
     private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
         Section section = configuration.getRoot();
+
+        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
         String name = section.getString("name");
         String description = section.getString("description");
@@ -165,60 +174,7 @@ public class EquipmentFactory implements WeaponFactory {
             equipment.setActivator(activator);
         }
 
-        // Setting the effect activation
-        Section effectSection = section.getSection("effect");
-        Section effectActivationSection = section.getSection("effect.activation");
-
-        if (effectSection != null && effectActivationSection != null) {
-            Activator activator = equipment.getActivator();
-
-            ItemEffectActivation effectActivation = effectActivationFactory.create(gameKey, effectActivationSection, activator);
-            ItemEffect effect = effectFactory.create(effectSection, gameKey, effectActivation);
-
-            equipment.setEffect(effect);
-        }
-
-        // Setting the deployment properties
-        Section deploySection = section.getSection("deploy");
-
-        if (deploySection != null) {
-            boolean activateOnDestroy = deploySection.getBoolean("on-destroy.activate");
-            boolean resetOnDestroy = deploySection.getBoolean("on-destroy.reset");
-            double health = deploySection.getDouble("health");
-            Map<DamageType, Double> resistances = new HashMap<>();
-
-            if (deploySection.contains("resistances.bullet-damage")) {
-                resistances.put(DamageType.BULLET_DAMAGE, deploySection.getDouble("resistances.bullet-damage"));
-            }
-            if (deploySection.contains("resistances.explosive-damage")) {
-                resistances.put(DamageType.EXPLOSIVE_DAMAGE, deploySection.getDouble("resistances.explosive-damage"));
-            }
-            if (deploySection.contains("resistances.fire-damage")) {
-                resistances.put(DamageType.FIRE_DAMAGE, deploySection.getDouble("resistances.fire-damage"));
-            }
-
-            DeploymentProperties deploymentProperties = new DeploymentProperties();
-            deploymentProperties.setActivatedOnDestroy(activateOnDestroy);
-            deploymentProperties.setHealth(health);
-            deploymentProperties.setResetOnDestroy(resetOnDestroy);
-            deploymentProperties.setResistances(resistances);
-
-            if (deploySection.contains("on-destroy.particle-effect")) {
-                Map<String, Object> particleEffectValues = deploySection.getSection("on-destroy.particle-effect").getStringRouteMappedValues(true);
-                ParticleEffectMapper mapper = new ParticleEffectMapper();
-                ParticleEffect particleEffect;
-
-                try {
-                    particleEffect = mapper.map(particleEffectValues);
-                } catch (MappingException e) {
-                    throw new EquipmentCreationException("Unable to create equipment item " + name + ": " + e.getMessage());
-                }
-
-                deploymentProperties.setDestroyParticleEffect(particleEffect);
-            }
-
-            equipment.setDeploymentProperties(deploymentProperties);
-        }
+        this.setUpDeploymentHandler(equipment, gameKey, section);
 
         // Setting the projectile properties
         Section projectileSection = section.getSection("projectile");
@@ -230,8 +186,6 @@ public class EquipmentFactory implements WeaponFactory {
             Section soundSection = projectileSection.getSection("effects.sound");
             Section stickSection = projectileSection.getSection("effects.stick");
             Section trailSection = projectileSection.getSection("effects.trail");
-
-            AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
             if (bounceSection != null) {
                 int amountOfBounces = bounceSection.getInt("amount-of-bounces");
@@ -328,5 +282,39 @@ public class EquipmentFactory implements WeaponFactory {
         }
 
         return equipment;
+    }
+
+    private void setUpDeploymentHandler(@NotNull DefaultEquipment equipment, @NotNull GameKey gameKey, @NotNull Section section) {
+        Section deploySection = section.getOptionalSection("deploy")
+                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", deployment configuration is missing"));
+        Section effectSection = section.getOptionalSection("effect")
+                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", effect configuration is missing"));
+        Section effectActivationSection = section.getOptionalSection("effect.activation")
+                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", effect activation configuration is missing"));
+
+        List<GameSound> activationSounds = DefaultGameSound.parseSounds(deploySection.getString("manual-activation.activation-sound"));
+        boolean activateEffectOnDestroy = deploySection.getBoolean("on-destroy.activate");
+        boolean removeOnDestroy = deploySection.getBoolean("on-destroy.remove");
+        boolean resetEffectOnDestroy = deploySection.getBoolean("on-destroy.reset");
+        long activationDelay = deploySection.getLong("manual-activation.activation-delay");
+
+        ParticleEffect destroyParticleEffect = null;
+
+        if (deploySection.contains("on-destroy.particle-effect")) {
+            Map<String, Object> particleEffectValues = deploySection.getSection("on-destroy.particle-effect").getStringRouteMappedValues(true);
+
+            destroyParticleEffect = particleEffectMapper.map(particleEffectValues);
+        }
+
+        DeploymentProperties deploymentProperties = new DeploymentProperties(activationSounds, destroyParticleEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, activationDelay);
+
+        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
+        Activator activator = equipment.getActivator();
+        ItemEffectActivation effectActivation = effectActivationFactory.create(gameKey, effectActivationSection, activator);
+        ItemEffect effect = effectFactory.create(effectSection, gameKey, effectActivation);
+
+        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
+
+        equipment.setDeploymentHandler(deploymentHandler);
     }
 }

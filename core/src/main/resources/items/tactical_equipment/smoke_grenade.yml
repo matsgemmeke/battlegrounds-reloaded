@@ -4,9 +4,11 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: true
   health: 50.0
-  reset-on-destroy: false
+  on-destroy:
+    activate: true
+    remove: false
+    reset: false
 description: Device that creates a smoke screen when detonated.
 effect:
   activation:

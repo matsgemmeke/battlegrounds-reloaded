@@ -1,27 +1,40 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemEffectContext {
 
     @NotNull
-    private ItemEffectSource source;
+    private Deployer deployer;
     @NotNull
-    private ItemHolder holder;
+    private Entity entity;
+    @NotNull
+    private ItemEffectSource source;
 
-    public ItemEffectContext(@NotNull ItemHolder holder, @NotNull ItemEffectSource source) {
-        this.holder = holder;
+    public ItemEffectContext(@NotNull Deployer deployer, @NotNull Entity entity, @NotNull ItemEffectSource source) {
+        this.deployer = deployer;
+        this.entity = entity;
         this.source = source;
     }
 
     @NotNull
-    public ItemHolder getHolder() {
-        return holder;
+    public Deployer getDeployer() {
+        return deployer;
     }
 
-    public void setHolder(@NotNull ItemHolder holder) {
-        this.holder = holder;
+    public void setDeployer(@NotNull Deployer deployer) {
+        this.deployer = deployer;
+    }
+
+    @NotNull
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(@NotNull Entity entity) {
+        this.entity = entity;
     }
 
     @NotNull

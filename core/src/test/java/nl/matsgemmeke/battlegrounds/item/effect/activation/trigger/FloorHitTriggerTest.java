@@ -1,13 +1,14 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation.trigger;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor.FloorHitTrigger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,9 +39,11 @@ public class FloorHitTriggerTest {
 
     @Test
     public void cancelCancelsTriggerCheck() {
-        ItemHolder holder = mock(ItemHolder.class);
+        Deployer deployer = mock(Deployer.class);
+        Entity entity = mock(Entity.class);
         ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+
+        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
@@ -54,7 +57,8 @@ public class FloorHitTriggerTest {
 
     @Test
     public void stopsCheckingOnceSourceNoLongerExists() {
-        ItemHolder holder = mock(ItemHolder.class);
+        Deployer deployer = mock(Deployer.class);
+        Entity entity = mock(Entity.class);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
@@ -62,7 +66,7 @@ public class FloorHitTriggerTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
 
         FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
         trigger.checkTriggerActivation(context);
@@ -77,6 +81,9 @@ public class FloorHitTriggerTest {
 
     @Test
     public void notifyObserversOnceBlockBelowObjectIsNotPassable() {
+        Deployer deployer = mock(Deployer.class);
+        Entity entity = mock(Entity.class);
+        TriggerObserver observer = mock(TriggerObserver.class);
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
@@ -88,9 +95,7 @@ public class FloorHitTriggerTest {
         when(blockBelowObject.isPassable()).thenReturn(true).thenReturn(false);
         when(world.getBlockAt(any(Location.class))).thenReturn(blockBelowObject);
 
-        ItemHolder holder = mock(ItemHolder.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-        TriggerObserver observer = mock(TriggerObserver.class);
+        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);

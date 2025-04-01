@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,11 +17,11 @@ public interface Activator extends Matchable {
     boolean isReady();
 
     /**
-     * Prepares the activator by a specific item holder.
+     * Prepares the activator for a specific deployer entity.
      *
-     * @param holder the item holder who prepares the activator
+     * @param deployer the deployer who prepares the activator
      */
-    void prepare(@NotNull ItemHolder holder);
+    void prepare(@NotNull Deployer deployer);
 
     /**
      * Removes the activator item from the current holder.

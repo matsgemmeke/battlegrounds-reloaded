@@ -1,10 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,74 +14,71 @@ import static org.mockito.Mockito.*;
 public class UseScopeFunctionTest {
 
     @NotNull
-    private AudioEmitter audioEmitter;
-    @NotNull
-    private ScopeAttachment scopeAttachment;
+    private Gun gun;
 
     @BeforeEach
     public void setUp() {
-        audioEmitter = mock(AudioEmitter.class);
-        scopeAttachment = mock(ScopeAttachment.class);
+        gun = mock(Gun.class);
     }
 
     @Test
-    public void shouldReturnAvailabilityBasedOnScopeState() {
-        when(scopeAttachment.isScoped()).thenReturn(true);
+    public void isAvailableReturnsTrueIfGunIsNotUsingScope() {
+        when(gun.isUsingScope()).thenReturn(false);
 
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
+        UseScopeFunction function = new UseScopeFunction(gun);
+        boolean available = function.isAvailable();
+
+        assertTrue(available);
+    }
+
+    @Test
+    public void isAvailableReturnsFalseIfGunIsUsingScope() {
+        when(gun.isUsingScope()).thenReturn(true);
+
+        UseScopeFunction function = new UseScopeFunction(gun);
         boolean available = function.isAvailable();
 
         assertFalse(available);
     }
 
     @Test
-    public void shouldNotCancelIfScopeIsNotBeingUsed() {
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
-        boolean cancelled = function.cancel();
+    public void cancelCancelsGunScope() {
+        when(gun.cancelScope()).thenReturn(true);
 
-        assertFalse(cancelled);
-    }
-
-    @Test
-    public void shouldReturnWhetherAttachmentHasSuccessfullyCancelled() {
-        when(scopeAttachment.isScoped()).thenReturn(true);
-        when(scopeAttachment.removeEffect()).thenReturn(true);
-
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
+        UseScopeFunction function = new UseScopeFunction(gun);
         boolean cancelled = function.cancel();
 
         assertTrue(cancelled);
+
+        verify(gun).cancelScope();
     }
 
     @Test
-    public void shouldInitiateScopeEffect() {
-        Location location = new Location(null, 1.0, 1.0, 1.0);
-
-        Player player = mock(Player.class);
-        when(player.getLocation()).thenReturn(location);
-
+    public void performReturnsFalseIfGunIsUsingScope() {
         GunHolder holder = mock(GunHolder.class);
-        when(holder.getEntity()).thenReturn(player);
 
-        when(scopeAttachment.applyEffect(holder)).thenReturn(true);
+        when(gun.isUsingScope()).thenReturn(true);
 
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
-        boolean result = function.perform(holder);
+        UseScopeFunction function = new UseScopeFunction(gun);
+        boolean performed = function.perform(holder);
 
-        assertTrue(result);
+        assertFalse(performed);
 
-        verify(audioEmitter).playSounds(any(), eq(location));
+        verify(gun, never()).applyScope(any(ScopeUser.class));
     }
 
     @Test
-    public void shouldNotPerformIfScopeIsAlreadyBeingUsed() {
-        when(scopeAttachment.isScoped()).thenReturn(true);
-
+    public void performReturnsTrueAndAppliesScope() {
         GunHolder holder = mock(GunHolder.class);
 
-        UseScopeFunction function = new UseScopeFunction(scopeAttachment, audioEmitter);
-        boolean result = function.perform(holder);
+        when(gun.applyScope(holder)).thenReturn(true);
+        when(gun.isUsingScope()).thenReturn(false);
 
-        assertFalse(result);
+        UseScopeFunction function = new UseScopeFunction(gun);
+        boolean performed = function.perform(holder);
+
+        assertTrue(performed);
+
+        verify(gun).applyScope(holder);
     }
 }

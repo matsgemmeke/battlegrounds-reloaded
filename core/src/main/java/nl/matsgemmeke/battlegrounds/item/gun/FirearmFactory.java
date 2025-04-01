@@ -14,13 +14,18 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
+import nl.matsgemmeke.battlegrounds.item.scope.ScopeProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
@@ -115,9 +120,6 @@ public class FirearmFactory implements WeaponFactory {
         firearm.setName(name);
 
         // Other variables
-        double accuracy = section.getDouble("shooting.accuracy");
-        firearm.setAccuracy(accuracy);
-
         double damageAmplifier = config.getGunDamageAmplifier();
         firearm.setDamageAmplifier(damageAmplifier);
 
@@ -126,59 +128,76 @@ public class FirearmFactory implements WeaponFactory {
 
         int magazineSize = section.getInt("ammo.magazine-size");
         int maxMagazineAmount = section.getInt("ammo.max-magazine-amount");
-        int reserveAmmo = section.getInt("ammo.default-supply") * magazineSize;
+        int defaultSupply = section.getInt("ammo.default-supply");
 
-        firearm.setMagazineAmmo(magazineSize);
-        firearm.setMagazineSize(magazineSize);
-        firearm.setMaxAmmo(maxMagazineAmount * magazineSize);
-        firearm.setReserveAmmo(reserveAmmo);
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, defaultSupply * magazineSize, maxMagazineAmount * magazineSize);
+        firearm.setAmmunitionStorage(ammunitionStorage);
 
-        double shortDamage = section.getDouble("shooting.range.short-range.damage");
-        firearm.setShortDamage(shortDamage);
+        double shortRangeDamage = section.getDouble("shooting.range.short-range.damage");
+        double shortRangeDistance = section.getDouble("shooting.range.short-range.distance");
+        double mediumRangeDamage = section.getDouble("shooting.range.medium-range.damage");
+        double mediumRangeDistance = section.getDouble("shooting.range.medium-range.distance");
+        double longRangeDamage = section.getDouble("shooting.range.long-range.damage");
+        double longRangeDistance = section.getDouble("shooting.range.long-range.distance");
 
-        double shortRange = section.getDouble("shooting.range.short-range.distance");
-        firearm.setShortRange(shortRange);
-
-        double mediumDamage = section.getDouble("shooting.range.medium-range.damage");
-        firearm.setMediumDamage(mediumDamage);
-
-        double mediumRange = section.getDouble("shooting.range.medium-range.distance");
-        firearm.setMediumRange(mediumRange);
-
-        double longDamage = section.getDouble("shooting.range.long-range.damage");
-        firearm.setLongDamage(longDamage);
-
-        double longRange = section.getDouble("shooting.range.long-range.distance");
-        firearm.setLongRange(longRange);
+        RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
+        firearm.setRangeProfile(rangeProfile);
 
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("shooting.shot-sound"));
         firearm.setShotSounds(shotSounds);
 
-        FireMode fireMode = fireModeFactory.create(firearm, section.getSection("shooting.fire-mode"));
+        Section controlsSection = section.getSection("controls");
+        Section fireModeSection = section.getSection("shooting.fire-mode");
+        Section patternSection = section.getSection("shooting.pattern");
+        Section recoilSection = section.getSection("shooting.recoil");
+        Section reloadingSection = section.getSection("reloading");
+        Section scopeSection = section.getSection("scope");
+
+        // Fire mode creation
+        if (fireModeSection == null) {
+            throw new FirearmCreationException("Unable to create firearm " + name + ": the fire mode configuration is missing");
+        }
+
+        FireMode fireMode = fireModeFactory.create(firearm, fireModeSection);
         firearm.setFireMode(fireMode);
 
         // Read controls configuration
-        Section controlsSection = section.getSection("controls");
-
         if (controlsSection != null) {
             ItemControls<GunHolder> controls = controlsFactory.create(section, firearm, gameKey);
             firearm.setControls(controls);
         }
 
         // Handle the pattern section if it's there
-        Section patternSection = section.getSection("shooting.pattern");
-
         if (patternSection != null) {
             SpreadPattern spreadPattern = spreadPatternFactory.create(patternSection);
             firearm.setSpreadPattern(spreadPattern);
         }
 
         // Handle the recoil section if it's there
-        Section recoilSection = section.getSection("shooting.recoil");
-
         if (recoilSection != null) {
             RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSection);
             firearm.setRecoilProducer(recoilProducer);
+        }
+
+        // Reload system creation
+        if (reloadingSection == null) {
+            throw new FirearmCreationException("Unable to create firearm " + name + ": the reloading configuration is missing");
+        }
+
+        ReloadSystem reloadSystem = reloadSystemFactory.create(firearm, reloadingSection, audioEmitter);
+        firearm.setReloadSystem(reloadSystem);
+
+        // Scope attachment creation (optional)
+        if (scopeSection != null) {
+            List<GameSound> useSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sound"));
+            List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sound"));
+            List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSection.getString("change-magnification-sound"));
+            List<Float> magnificationSettings = scopeSection.getFloatList("magnifications");
+
+            ScopeProperties properties = new ScopeProperties(useSounds, stopSounds, changeMagnificationSounds, magnificationSettings);
+            DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
+
+            firearm.setScopeAttachment(scopeAttachment);
         }
 
         // Item template creation
@@ -188,7 +207,7 @@ public class FirearmFactory implements WeaponFactory {
         try {
             material = Material.valueOf(materialValue);
         } catch (IllegalArgumentException e) {
-            throw new FirearmCreationException("Unable to create firearm " + name + "; item stack material " + materialValue + " is invalid");
+            throw new FirearmCreationException("Unable to create firearm " + name + ": item stack material \"" + materialValue + "\" is invalid");
         }
 
         UUID uuid = UUID.randomUUID();

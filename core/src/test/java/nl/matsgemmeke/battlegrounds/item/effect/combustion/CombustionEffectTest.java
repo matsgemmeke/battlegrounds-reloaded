@@ -8,8 +8,8 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
@@ -19,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +53,11 @@ public class CombustionEffectTest {
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
     private CombustionProperties properties;
+    private Deployer deployer;
+    private Entity entity;
     private ItemEffectActivation effectActivation;
+    private ItemEffectContext context;
+    private ItemEffectSource source;
     private MetadataValueEditor metadataValueEditor;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
@@ -67,18 +73,21 @@ public class CombustionEffectTest {
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);
         taskRunner = mock(TaskRunner.class);
+
+        deployer = mock(Deployer.class);
+        entity = mock(Entity.class);
+        source = mock(ItemEffectSource.class);
+        context = new ItemEffectContext(deployer, entity, source);
     }
 
     @Test
     public void activateInstantlyDoesNotPerformEffectIfItWasAlreadyActivated() {
-        ItemHolder holder = mock(ItemHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
+        UUID entityId = UUID.randomUUID();
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        when(entity.getUniqueId()).thenReturn(entityId);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
-
-        ItemEffectContext context = new ItemEffectContext(holder, source);
 
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
@@ -94,14 +103,12 @@ public class CombustionEffectTest {
 
     @Test
     public void activateInstantlyPerformsEffect() {
-        ItemHolder holder = mock(ItemHolder.class);
         Location sourceLocation = new Location(null, 1, 1, 1);
+        UUID entityId = UUID.randomUUID();
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        when(entity.getUniqueId()).thenReturn(entityId);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
-
-        ItemEffectContext context = new ItemEffectContext(holder, source);
 
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
@@ -122,12 +129,10 @@ public class CombustionEffectTest {
     @Test
     public void cancelActivationDoesNotCancelActivationIfAlreadyActivated() {
         Location sourceLocation = new Location(null, 1, 1, 1);
-
-        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
 
-        ItemHolder holder = mock(ItemHolder.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+        UUID entityId = UUID.randomUUID();
+        when(entity.getUniqueId()).thenReturn(entityId);
 
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
@@ -143,10 +148,6 @@ public class CombustionEffectTest {
 
     @Test
     public void cancelActivationCancelsActivationIfPrimed() {
-        ItemHolder holder = mock(ItemHolder.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
         effect.cancelActivation();
@@ -156,11 +157,7 @@ public class CombustionEffectTest {
 
     @Test
     public void deployChangesTheSourceOfTheContext() {
-        ItemHolder holder = mock(ItemHolder.class);
-        ItemEffectSource oldSource = mock(ItemEffectSource.class);
         ItemEffectSource newSource = mock(ItemEffectSource.class);
-
-        ItemEffectContext context = new ItemEffectContext(holder, oldSource);
 
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
@@ -189,11 +186,7 @@ public class CombustionEffectTest {
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfContextSourceIsDeployed() {
-        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.isDeployed()).thenReturn(true);
-
-        ItemHolder holder = mock(ItemHolder.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
 
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
@@ -204,11 +197,7 @@ public class CombustionEffectTest {
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfContextSourceIsNotDeployed() {
-        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.isDeployed()).thenReturn(false);
-
-        ItemHolder holder = mock(ItemHolder.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
 
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
@@ -227,10 +216,6 @@ public class CombustionEffectTest {
 
     @Test
     public void isPrimedReturnsTrueIfEffectWasPrimed() {
-        ItemHolder holder = mock(ItemHolder.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
         boolean primed = effect.isPrimed();
@@ -243,14 +228,12 @@ public class CombustionEffectTest {
         World world = mock(World.class);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(mock(Block.class));
 
-        ItemHolder holder = mock(ItemHolder.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
-
-        ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(holder, source);
+        UUID entityId = UUID.randomUUID();
+        when(entity.getUniqueId()).thenReturn(entityId);
 
         Block middleBlock = this.createBlock(world, 0, 0, 0, Material.AIR, true);
         Block leftBlock = this.createBlock(world, -1, 0, 0, Material.AIR, true);
@@ -332,24 +315,22 @@ public class CombustionEffectTest {
 
     @Test
     public void primeDamagesNearbyEntitiesInsideTheLongRangeDistance() {
+        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
-        Location holderLocation = new Location(world, 4, 0, 0);
+        Location entityLocation = new Location(world, 4, 0, 0);
         Location sourceLocation = new Location(world, 0, 0, 0);
         Location targetLocation = new Location(world, 2, 0, 0);
 
         GameEntity target = mock(GameEntity.class);
         when(target.getLocation()).thenReturn(targetLocation);
 
-        ItemHolder holder = mock(ItemHolder.class);
-        when(holder.getLocation()).thenReturn(holderLocation);
+        GameEntity deployerEntity = mock(GameEntity.class);
+        when(deployerEntity.getLocation()).thenReturn(entityLocation);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        when(entity.getUniqueId()).thenReturn(entityId);
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
-
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-
-        when(targetFinder.findTargets(holder, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(holder, target));
+        when(targetFinder.findTargets(entityId, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deployerEntity, target));
 
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
@@ -359,7 +340,7 @@ public class CombustionEffectTest {
 
         procedureCaptor.getValue().apply();
 
-        verify(holder).damage(new Damage(MEDIUM_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));
+        verify(deployerEntity).damage(new Damage(MEDIUM_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));
         verify(target).damage(new Damage(SHORT_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));
     }
 

@@ -3,9 +3,19 @@ name: Tactical Insertion
 controls:
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: false
   health: 50.0
-  reset-on-destroy: true
+  on-destroy:
+    activate: false
+    particle-effect:
+      block-data: REDSTONE_TORCH
+      count: 5
+      extra: 0
+      offset-x: 0.25
+      offset-y: 0.25
+      offset-z: 0.25
+      particle: BLOCK_CRACK
+    remove: true
+    reset: true
 description: Marks a location as your next spawn point.
 effect:
   activation:

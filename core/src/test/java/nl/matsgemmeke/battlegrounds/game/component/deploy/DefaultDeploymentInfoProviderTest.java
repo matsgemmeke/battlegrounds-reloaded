@@ -28,7 +28,7 @@ public class DefaultDeploymentInfoProviderTest {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getDeploymentObjects()).thenReturn(List.of(deploymentObject));
+        when(equipment.getDeploymentObject()).thenReturn(deploymentObject);
 
         when(equipmentRegistry.findAll()).thenReturn(List.of(equipment));
 
@@ -44,7 +44,7 @@ public class DefaultDeploymentInfoProviderTest {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getDeploymentObjects()).thenReturn(List.of(deploymentObject));
+        when(equipment.getDeploymentObject()).thenReturn(deploymentObject);
 
         when(equipmentRegistry.findAll()).thenReturn(List.of(equipment));
 
@@ -55,16 +55,17 @@ public class DefaultDeploymentInfoProviderTest {
     }
 
     @Test
-    public void getDeployableItemReturnsNullIfNoneOfTheDeployableItemContainsTheGivenDeploymentObject() {
+    public void getDeployableItemReturnsNullIfNoneOfTheDeployableItemsContainsGivenDeploymentObject() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        DeploymentObject otherDeploymentObject = mock(DeploymentObject.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getDeploymentObjects()).thenReturn(List.of());
+        when(equipment.getDeploymentObject()).thenReturn(deploymentObject);
 
         when(equipmentRegistry.findAll()).thenReturn(List.of(equipment));
 
         DefaultDeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
-        DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(deploymentObject);
+        DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(otherDeploymentObject);
 
         assertNull(deployableItem);
     }

@@ -1,16 +1,16 @@
 package nl.matsgemmeke.battlegrounds.game.training.component.spawn;
 
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
+import java.util.UUID;
 
 public class TrainingModeSpawnPointProvider implements SpawnPointProvider {
 
@@ -22,25 +22,26 @@ public class TrainingModeSpawnPointProvider implements SpawnPointProvider {
         this.spawnPointStorage = spawnPointStorage;
     }
 
-    public boolean hasSpawnPoint(@NotNull GameEntity gameEntity) {
-        return spawnPointStorage.getCustomSpawnPoint(gameEntity) != null;
+    public boolean hasSpawnPoint(@NotNull UUID entityId) {
+        return spawnPointStorage.getCustomSpawnPoint(entityId) != null;
     }
 
     @NotNull
-    public Location respawnEntity(@NotNull GameEntity gameEntity) {
-        SpawnPoint spawnPoint = spawnPointStorage.getCustomSpawnPoint(gameEntity);
+    public Location respawnEntity(@NotNull Entity entity) {
+        UUID entityId = entity.getUniqueId();
+        SpawnPoint spawnPoint = spawnPointStorage.getCustomSpawnPoint(entityId);
 
         if (spawnPoint == null) {
-            throw new IllegalStateException(MessageFormat.format("Cannot respawn entity {0} in training mode if it has no custom respawn location", gameEntity.getName()));
+            throw new IllegalStateException(MessageFormat.format("Cannot respawn entity {0} in training mode if it has no custom respawn location", entity.getName()));
         }
 
-        spawnPoint.onSpawn(gameEntity);
-        spawnPointStorage.setCustomSpawnPoint(gameEntity, null);
+        spawnPoint.onSpawn(entity);
+        spawnPointStorage.setCustomSpawnPoint(entityId, null);
 
         return spawnPoint.getLocation();
     }
 
-    public void setCustomSpawnPoint(@NotNull GameEntity gameEntity, @Nullable SpawnPoint spawnPoint) {
-        spawnPointStorage.setCustomSpawnPoint(gameEntity, spawnPoint);
+    public void setCustomSpawnPoint(@NotNull UUID entityId, @Nullable SpawnPoint spawnPoint) {
+        spawnPointStorage.setCustomSpawnPoint(entityId, spawnPoint);
     }
 }

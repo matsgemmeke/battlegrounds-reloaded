@@ -26,6 +26,7 @@ public class DefaultGamePlayer implements GamePlayer {
     private static final float SPRINTING_ACCURACY = 0.5f;
     private static final int OPERATING_FOOD_LEVEL = 6;
 
+    private boolean canDeploy;
     private boolean passive;
     @Nullable
     private Damage lastDamage;
@@ -42,7 +43,16 @@ public class DefaultGamePlayer implements GamePlayer {
         this.player = player;
         this.internals = internals;
         this.effects = new HashSet<>();
+        this.canDeploy = true;
         this.passive = false;
+    }
+
+    public boolean canDeploy() {
+        return canDeploy;
+    }
+
+    public void setCanDeploy(boolean canDeploy) {
+        this.canDeploy = canDeploy;
     }
 
     @NotNull
@@ -144,6 +154,11 @@ public class DefaultGamePlayer implements GamePlayer {
     }
 
     @NotNull
+    public Location getDeployLocation() {
+        return player.getEyeLocation();
+    }
+
+    @NotNull
     public List<Block> getLastTwoTargetBlocks(int maxDistance) {
         return player.getLastTwoTargetBlocks(null, maxDistance);
     }
@@ -151,11 +166,6 @@ public class DefaultGamePlayer implements GamePlayer {
     @NotNull
     public Location getShootingDirection() {
         return player.getEyeLocation().subtract(0, 0.25, 0);
-    }
-
-    @NotNull
-    public Location getThrowingDirection() {
-        return player.getEyeLocation();
     }
 
     public float getRelativeAccuracy() {

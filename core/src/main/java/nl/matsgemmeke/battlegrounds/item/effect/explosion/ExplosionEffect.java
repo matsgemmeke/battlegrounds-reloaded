@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -16,6 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class ExplosionEffect extends BaseItemEffect {
 
@@ -43,20 +44,20 @@ public class ExplosionEffect extends BaseItemEffect {
     }
 
     public void perform(@NotNull ItemEffectContext context) {
-        ItemHolder holder = context.getHolder();
+        Entity entity = context.getEntity();
+        UUID entityId = entity.getUniqueId();
         ItemEffectSource source = context.getSource();
         Location sourceLocation = source.getLocation();
         World world = source.getWorld();
-        Entity damageSource = holder.getEntity();
 
-        for (GameEntity target : targetFinder.findTargets(holder, sourceLocation, rangeProfile.getLongRangeDistance())) {
-            Location targetLocation = target.getEntity().getLocation();
+        for (GameEntity target : targetFinder.findTargets(entityId, sourceLocation, rangeProfile.getLongRangeDistance())) {
+            Location targetLocation = target.getLocation();
             Damage damage = this.getDamageForTargetLocation(sourceLocation, targetLocation);
 
             target.damage(damage);
         }
 
-        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(holder, sourceLocation, rangeProfile.getLongRangeDistance())) {
+        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(entityId, sourceLocation, rangeProfile.getLongRangeDistance())) {
             if (deploymentObject != source) {
                 Location objectLocation = deploymentObject.getLocation();
                 Damage damage = this.getDamageForTargetLocation(sourceLocation, objectLocation);
@@ -68,7 +69,7 @@ public class ExplosionEffect extends BaseItemEffect {
         // Remove the source before creating the explosion to prevent calling an extra EntityDamageByEntityEvent
         source.remove();
 
-        world.createExplosion(sourceLocation, properties.power(), properties.setFire(), properties.breakBlocks(), damageSource);
+        world.createExplosion(sourceLocation, properties.power(), properties.setFire(), properties.breakBlocks(), entity);
     }
 
     @NotNull

@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,14 +12,18 @@ import static org.mockito.Mockito.*;
 public class ManualActivationTest {
 
     private Activator activator;
+    private Deployer deployer;
+    private Entity entity;
+    private ItemEffectContext context;
     private ItemEffectSource source;
-    private ItemHolder holder;
 
     @BeforeEach
     public void setUp() {
         activator = mock(Activator.class);
+        deployer = mock(Deployer.class);
+        entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
-        holder = mock(ItemHolder.class);
+        context = new ItemEffectContext(deployer, entity, source);
     }
 
     @Test
@@ -31,8 +36,6 @@ public class ManualActivationTest {
 
     @Test
     public void cancelRemovesActivatorIfPrimed() {
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-
         ManualActivation activation = new ManualActivation(activator);
         activation.prime(context, () -> {});
         activation.cancel();
@@ -42,22 +45,18 @@ public class ManualActivationTest {
 
     @Test
     public void primeDoesNotPrepareActivatorAgainIfAlreadyPrimed() {
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-
         ManualActivation activation = new ManualActivation(activator);
         activation.prime(context, () -> {});
         activation.prime(context, () -> {});
 
-        verify(activator).prepare(holder);
+        verify(activator).prepare(deployer);
     }
 
     @Test
     public void primePreparesActivatorIfNotPrimed() {
-        ItemEffectContext context = new ItemEffectContext(holder, source);
-
         ManualActivation activation = new ManualActivation(activator);
         activation.prime(context, () -> {});
 
-        verify(activator).prepare(holder);
+        verify(activator).prepare(deployer);
     }
 }

@@ -4,9 +4,18 @@ controls:
   cook: RIGHT_CLICK
   throw: LEFT_CLICK
 deploy:
-  activate-on-destroy: false
   health: 50.0
-  reset-on-destroy: false
+  on-destroy:
+    activate: false
+    remove: false
+    reset: false
+<<<<<<< HEAD
+  resistances:
+    bullet-damage: 0
+    explosive-damage: 0
+    fire-damage: 0
+=======
+>>>>>>> origin/feature-function-refactor
 description: Distraction device that simulates enemy gunfire.
 effect:
   activation:
