@@ -5,8 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.NotNull;
@@ -29,37 +28,6 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
      * @param activator the equipment's activator item
      */
     void setActivator(@Nullable Activator activator);
-
-    /**
-     * Gets the deployment properties associated with this equipment item.
-     *
-     * @return the deployment properties of the equipment item
-     */
-    @NotNull
-    DeploymentProperties getDeploymentProperties();
-
-    /**
-     * Sets the deployment properties associated with this equipment item.
-     *
-     * @param deploymentProperties the deployment properties of the equipment item
-     */
-    void setDeploymentProperties(@NotNull DeploymentProperties deploymentProperties);
-
-    /**
-     * Gets the effect system associated with the equipment.
-     *
-     * @return the equipment effect
-     */
-    @Nullable
-    ItemEffect getEffect();
-
-    /**
-     * Sets the effect system associated with the equipment.
-     *
-     * @param effect the equipment effect
-     *
-     */
-    void setEffect(@Nullable ItemEffect effect);
 
     /**
      * Gets the holder of the equipmemt item. Returns null if the equipment does not have a holder.
@@ -106,9 +74,39 @@ public interface Equipment extends Weapon, DeployableItem, Interactable<Equipmen
      */
     void setThrowItemTemplate(@Nullable ItemTemplate itemTemplate);
 
+    /**
+     * Immediately activates the deployment object in the current deployment process. This method does not have any
+     * effects if no deployments have taken place before invoking.
+     *
+     * @param holder the holder that activates the deployment
+     */
+    void activateDeployment(@NotNull EquipmentHolder holder);
+
+    /**
+     * Retrieves the deployment object associated with the equipment item if it has been deployed.
+     *
+     * @return the deployment object if deployed, or {@code null} if not deployed
+     */
+    @Nullable
+    DeploymentObject getDeploymentObject();
+
+    /**
+     * Gets whether the equipment's activator is ready for use. Returns {@code true} if the equipment has an activator
+     * and is ready to be triggered, otherwise {code false}.
+     *
+     * @return whether the activator item is ready for use
+     */
+    boolean isActivatorReady();
+
     boolean isAwaitingDeployment();
 
     boolean isDeployed();
 
+    /**
+     * Performs a deployment on the equipment item.
+     *
+     * @param deployment the deployment instance
+     * @param holder the holder that performs the deployment
+     */
     void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder);
 }

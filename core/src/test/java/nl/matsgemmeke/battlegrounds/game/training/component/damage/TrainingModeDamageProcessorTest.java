@@ -112,7 +112,6 @@ public class TrainingModeDamageProcessorTest {
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject).damage(damage);
-        verify(deploymentObject).remove();
     }
 
     @Test
@@ -130,7 +129,6 @@ public class TrainingModeDamageProcessorTest {
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject).damage(damage);
-        verify(deploymentObject).remove();
-        verify(deployableItem).onDestroyDeploymentObject(deploymentObject);
+        verify(deployableItem).destroyDeployment();
     }
 }

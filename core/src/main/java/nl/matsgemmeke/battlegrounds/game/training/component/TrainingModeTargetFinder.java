@@ -3,9 +3,9 @@ package nl.matsgemmeke.battlegrounds.game.training.component;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.TrainingModeEntity;
-import nl.matsgemmeke.battlegrounds.game.EntityStorage;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -14,24 +14,21 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class TrainingModeTargetFinder implements TargetFinder {
 
     @NotNull
-    private DeploymentInfoProvider deploymentInfoProvider;
+    private final DeploymentInfoProvider deploymentInfoProvider;
     @NotNull
-    private EntityStorage<GamePlayer> playerStorage;
+    private final PlayerRegistry playerRegistry;
 
     public TrainingModeTargetFinder(
             @NotNull DeploymentInfoProvider deploymentInfoProvider,
-            @NotNull EntityStorage<GamePlayer> playerStorage
+            @NotNull PlayerRegistry playerRegistry
     ) {
         this.deploymentInfoProvider = deploymentInfoProvider;
-        this.playerStorage = playerStorage;
+        this.playerRegistry = playerRegistry;
     }
 
     @NotNull
@@ -51,12 +48,23 @@ public class TrainingModeTargetFinder implements TargetFinder {
 
     @NotNull
     public List<GameEntity> findEnemyTargets(@NotNull UUID entityId, @NotNull Location location, double range) {
-        List<GameEntity> targets = this.findTargets(entityId, location, range);
+        Collection<Entity> entities = this.findTargetEntities(location, range);
+        List<GameEntity> targets = new ArrayList<>();
 
-        // Remove the given entity, since it is not an enemy of itself
-        for (GameEntity target : targets) {
-            if (target.getEntity().getUniqueId().equals(entityId)) {
-                targets.remove(target);
+        for (Entity entity : entities) {
+            GamePlayer gamePlayer = playerRegistry.findByUUID(entity.getUniqueId());
+
+            if (gamePlayer != null && gamePlayer.getEntity().getUniqueId().equals(entityId)) {
+                continue;
+            }
+
+            if (gamePlayer != null && !gamePlayer.isPassive()) {
+                targets.add(gamePlayer);
+                continue;
+            }
+
+            if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity) {
+                targets.add(new TrainingModeEntity((LivingEntity) entity));
             }
         }
 
@@ -65,27 +73,33 @@ public class TrainingModeTargetFinder implements TargetFinder {
 
     @NotNull
     public List<GameEntity> findTargets(@NotNull UUID entityId, @NotNull Location location, double range) {
+        Collection<Entity> entities = this.findTargetEntities(location, range);
+        List<GameEntity> targets = new ArrayList<>();
+
+        for (Entity entity : entities) {
+            GamePlayer gamePlayer = playerRegistry.findByUUID(entity.getUniqueId());
+
+            if (gamePlayer != null && !gamePlayer.isPassive()) {
+                targets.add(gamePlayer);
+                continue;
+            }
+
+            if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity) {
+                targets.add(new TrainingModeEntity((LivingEntity) entity));
+            }
+        }
+
+        return targets;
+    }
+
+    @NotNull
+    private Collection<Entity> findTargetEntities(@NotNull Location location, double range) {
         World world = location.getWorld();
 
         if (world == null) {
             return Collections.emptyList();
         }
 
-        List<GameEntity> entities = new ArrayList<>();
-
-        for (Entity entity : location.getWorld().getNearbyEntities(location, range, range, range)) {
-            GamePlayer gamePlayer = playerStorage.getEntity(entity);
-
-            if (gamePlayer != null && !gamePlayer.isPassive()) {
-                entities.add(gamePlayer);
-                continue;
-            }
-
-            if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity) {
-                entities.add(new TrainingModeEntity((LivingEntity) entity));
-            }
-        }
-
-        return entities;
+        return world.getNearbyEntities(location, range, range, range);
     }
 }

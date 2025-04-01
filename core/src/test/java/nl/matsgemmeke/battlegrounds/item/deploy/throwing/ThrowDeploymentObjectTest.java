@@ -197,14 +197,6 @@ public class ThrowDeploymentObjectTest {
     }
 
     @Test
-    public void destroyRemovesItem() {
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.destroy();
-
-        verify(item).remove();
-    }
-
-    @Test
     public void isDeployedAlwaysReturnsTrue() {
         ThrowDeploymentObject object = new ThrowDeploymentObject(item);
         boolean deployed = object.isDeployed();

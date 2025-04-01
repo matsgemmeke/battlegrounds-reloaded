@@ -124,10 +124,6 @@ public class ThrowDeploymentObject implements DeploymentObject, ItemEffectSource
         return damageAmount;
     }
 
-    public void destroy() {
-        this.remove();
-    }
-
     public boolean exists() {
         return !item.isDead();
     }

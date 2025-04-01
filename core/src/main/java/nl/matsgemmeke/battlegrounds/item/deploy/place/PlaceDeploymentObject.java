@@ -95,10 +95,6 @@ public class PlaceDeploymentObject implements DeploymentObject, ItemEffectSource
         return damageAmount;
     }
 
-    public void destroy() {
-        this.remove();
-    }
-
     public boolean exists() {
         return block.getType() == material;
     }

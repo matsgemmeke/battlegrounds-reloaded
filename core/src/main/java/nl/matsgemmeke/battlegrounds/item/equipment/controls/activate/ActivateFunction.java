@@ -31,7 +31,11 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
     }
 
     public boolean perform(@NotNull EquipmentHolder holder) {
-        equipment.activateDeployment(holder, holder.getEntity());
+        if (!holder.canDeploy()) {
+            return false;
+        }
+
+        equipment.activateDeployment(holder);
         return true;
     }
 }

@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls.activate;
 
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,15 +38,28 @@ public class ActivateFunctionTest {
     }
 
     @Test
-    public void performReturnsTrueAndActivatesDeployment() {
-        Player player = mock(Player.class);
-
+    public void performReturnsFalseWhenHolderCannotDeploy() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.getEntity()).thenReturn(player);
+        when(holder.canDeploy()).thenReturn(false);
 
         ActivateFunction function = new ActivateFunction(equipment);
-        function.perform(holder);
+        boolean performed = function.perform(holder);
 
-        verify(equipment).activateDeployment(holder, player);
+        assertThat(performed).isFalse();
+
+        verifyNoInteractions(equipment);
+    }
+
+    @Test
+    public void performReturnsTrueAndActivatesDeployment() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        when(holder.canDeploy()).thenReturn(true);
+
+        ActivateFunction function = new ActivateFunction(equipment);
+        boolean performed = function.perform(holder);
+
+        assertThat(performed).isTrue();
+
+        verify(equipment).activateDeployment(holder);
     }
 }

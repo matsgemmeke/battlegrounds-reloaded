@@ -43,6 +43,7 @@ public class DefaultGamePlayer implements GamePlayer {
         this.player = player;
         this.internals = internals;
         this.effects = new HashSet<>();
+        this.canDeploy = true;
         this.passive = false;
     }
 

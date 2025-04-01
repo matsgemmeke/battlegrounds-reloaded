@@ -137,14 +137,6 @@ public class PlaceDeploymentObjectTest {
     }
 
     @Test
-    public void destroyRemovesBlock() {
-        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
-        object.destroy();
-
-        verify(block).setType(Material.AIR);
-    }
-
-    @Test
     public void isImmuneReturnsFalseIfResistancesIsNull() {
         PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
         boolean immune = object.isImmuneTo(DamageType.BULLET_DAMAGE);

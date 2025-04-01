@@ -210,7 +210,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
     private void shootProjectile(@NotNull Location direction) {
         double distance = PROJECTILE_DISTANCE_START;
-        double projectileRange = rangeProfile.getLongRangeDamage();
+        double projectileRange = rangeProfile.getLongRangeDistance();
 
         // Keep reference to starting point
         Location startingPoint = direction.clone();

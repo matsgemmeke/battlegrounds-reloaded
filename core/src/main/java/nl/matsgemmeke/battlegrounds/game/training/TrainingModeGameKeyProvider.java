@@ -82,7 +82,7 @@ public class TrainingModeGameKeyProvider implements Provider<GameKey> {
         SpawnPointProvider spawnPointProvider = new TrainingModeSpawnPointProvider(trainingMode.getSpawnPointStorage());
 
         DamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeKey, deploymentInfoProvider);
-        TargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, trainingMode.getPlayerStorage());
+        TargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerRegistry);
 
         contextProvider.assignTrainingMode(trainingMode);
 

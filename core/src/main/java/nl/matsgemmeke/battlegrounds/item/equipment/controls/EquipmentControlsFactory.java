@@ -29,9 +29,10 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class EquipmentControlsFactory {
 
@@ -73,12 +74,8 @@ public class EquipmentControlsFactory {
                 controls.addControl(cookAction, cookFunction);
             }
 
-            Section throwItemSection = rootSection.getSection("item.throw-item");
-
-            if (throwItemSection == null) {
-                throw new EquipmentControlsCreationException("Error while creating controls for equipment " + equipment.getName() + ": " +
-                        "cannot create throw function without a throw item template!");
-            }
+            Section throwItemSection = rootSection.getOptionalSection("item.throw-item")
+                    .orElseThrow(() -> new EquipmentControlsCreationException("Configuration for throw item template is missing"));
 
             String materialValue = throwItemSection.getString("material");
             Material material = this.getMaterialFromConfiguration(equipment, "throw item material", materialValue);
@@ -92,7 +89,7 @@ public class EquipmentControlsFactory {
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(rootSection.getString("throwing.throw-sound"));
             List<ProjectileEffect> projectileEffects = List.of();
-            Map<DamageType, Double> resistances = Map.of();
+            Map<DamageType, Double> resistances = this.getResistances(rootSection);
             double health = rootSection.getDouble("deploy.health");
             double velocity = rootSection.getDouble("throwing.velocity");
             long cooldown = rootSection.getLong("throwing.delay-after-throw");
@@ -108,7 +105,7 @@ public class EquipmentControlsFactory {
             Action placeAction = this.getActionFromConfiguration(equipment, "place", placeActionValue);
 
             List<GameSound> placeSounds = DefaultGameSound.parseSounds(rootSection.getString("placing.place-sound"));
-            Map<DamageType, Double> resistances = Map.of();
+            Map<DamageType, Double> resistances = this.getResistances(rootSection);
             Material material = this.getMaterialFromConfiguration(equipment, "place material", rootSection.getString("placing.material"));
             double health = rootSection.getDouble("deploy.health");
             long cooldown = rootSection.getLong("placing.delay-after-placement");
@@ -164,5 +161,42 @@ public class EquipmentControlsFactory {
 
             throw new EquipmentControlsCreationException(message);
         }
+    }
+
+    @NotNull
+    private Map<DamageType, Double> getResistances(@NotNull Section section) {
+        Section resistancesSection = section.getSection("deploy.resistances");
+
+        if (resistancesSection != null) {
+            return resistancesSection.getStringRouteMappedValues(false).entrySet().stream()
+                    .map(this::convertResistanceValueToEntry)
+                    .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (x, y) -> y, HashMap::new));
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    @NotNull
+    private Entry<DamageType, Double> convertResistanceValueToEntry(@NotNull Entry<String, Object> entry) {
+        String key = entry.getKey();
+        String value = entry.getValue().toString();
+        String resistanceEnumValue = key.replaceAll("-", "_").toUpperCase();
+
+        DamageType damageType;
+        double resistanceFactor;
+
+        try {
+            damageType = DamageType.valueOf(resistanceEnumValue);
+        } catch (IllegalArgumentException e) {
+            throw new EquipmentControlsCreationException("Invalid damage type value \"%s\"".formatted(key));
+        }
+
+        try {
+            resistanceFactor = Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            throw new EquipmentControlsCreationException("Invalid resistance factor value; \"%s\" is not a number".formatted(value));
+        }
+
+        return new SimpleEntry<>(damageType, resistanceFactor);
     }
 }
