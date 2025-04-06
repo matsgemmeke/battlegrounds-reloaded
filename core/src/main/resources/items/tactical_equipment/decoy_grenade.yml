@@ -9,13 +9,10 @@ deploy:
     activate: false
     remove: false
     reset: false
-<<<<<<< HEAD
   resistances:
     bullet-damage: 0
     explosive-damage: 0
     fire-damage: 0
-=======
->>>>>>> origin/feature-function-refactor
 description: Distraction device that simulates enemy gunfire.
 effect:
   activation:

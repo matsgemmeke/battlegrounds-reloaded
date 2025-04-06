@@ -1,12 +1,16 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.item.spec.GunSpecification;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Object that is able to create new weapon instances of various types.
@@ -15,9 +19,12 @@ public class WeaponCreator {
 
     @NotNull
     private Map<ItemConfiguration, WeaponFactory> configurations;
+    @NotNull
+    private Map<String, GunSpecification> gunSpecifications;
 
     public WeaponCreator() {
         this.configurations = new HashMap<>();
+        this.gunSpecifications = new HashMap<>();
     }
 
     /**
@@ -32,6 +39,10 @@ public class WeaponCreator {
         return configurations.get(configuration) != null;
     }
 
+    public void addGunSpecification(@NotNull String id, @NotNull GunSpecification specification) {
+        gunSpecifications.put(id, specification);
+    }
+
     /**
      * Gets whether a weapon id or name exists in the configuration.
      *
@@ -39,7 +50,7 @@ public class WeaponCreator {
      * @return whether the weapon exists
      */
     public boolean exists(@NotNull String weaponId) {
-        return this.getItemConfiguration(weaponId) != null;
+        return this.getIdList().contains(weaponId);
     }
 
     /**
@@ -51,6 +62,12 @@ public class WeaponCreator {
     @Nullable
     public WeaponFactory getFactory(@NotNull ItemConfiguration configuration) {
         return configurations.get(configuration);
+    }
+
+    private List<String> getIdList() {
+        return Stream.of(gunSpecifications.keySet())
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     /**

@@ -4,8 +4,6 @@ import com.google.inject.*;
 import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
@@ -61,17 +59,20 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 public class BattlegroundsModule implements Module {
 
     private final File dataFolder;
     private final InternalsProvider internals;
+    private final Logger logger;
     private final Plugin plugin;
     private final PluginManager pluginManager;
 
-    public BattlegroundsModule(File dataFolder, InternalsProvider internals, Plugin plugin, PluginManager pluginManager) {
+    public BattlegroundsModule(File dataFolder, InternalsProvider internals, Logger logger, Plugin plugin, PluginManager pluginManager) {
         this.dataFolder = dataFolder;
         this.internals = internals;
+        this.logger = logger;
         this.plugin = plugin;
         this.pluginManager = pluginManager;
     }
@@ -79,6 +80,7 @@ public class BattlegroundsModule implements Module {
     public void configure(Binder binder) {
         // Instance bindings
         binder.bind(InternalsProvider.class).toInstance(internals);
+        binder.bind(Logger.class).toInstance(logger);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
 
