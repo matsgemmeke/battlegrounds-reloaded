@@ -11,7 +11,7 @@ controls:
   scope-use: RIGHT_CLICK
   shoot: RIGHT_CLICK
 description: Bolt-action sniper rifle. Effective at long range.
-firearm-type: SNIPER_RIFLE
+gun-type: SNIPER_RIFLE
 item:
   damage: 32
   display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"

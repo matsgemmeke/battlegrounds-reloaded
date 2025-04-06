@@ -8,7 +8,7 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Double-barrel over/under shotgun. Effective at medium to close range.
-firearm-type: SHOTGUN
+gun-type: SHOTGUN
 item:
   damage: 23
   display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"

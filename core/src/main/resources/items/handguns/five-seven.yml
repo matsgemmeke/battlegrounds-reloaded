@@ -8,7 +8,7 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Semi-automatic pistol. Versatile and strong overall with a large magazine.
-firearm-type: HANDGUN
+gun-type: HANDGUN
 item:
   damage: 2
   display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"

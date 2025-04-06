@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class WeaponCreatorProviderTest {
@@ -126,9 +126,9 @@ public class WeaponCreatorProviderTest {
 
         File createdItemFile = new File(itemsFolder + "/submachine_guns/mp5.yml");
 
-        assertNotNull(weaponCreator);
-        assertTrue(itemsFolder.exists());
-        assertTrue(createdItemFile.exists());
+        assertThat(weaponCreator).isNotNull();
+        assertThat(itemsFolder.exists()).isTrue();
+        assertThat(createdItemFile.exists()).isTrue();
     }
 
     @Test
@@ -139,6 +139,16 @@ public class WeaponCreatorProviderTest {
         WeaponCreator weaponCreator = provider.get();
 
         assertThat(weaponCreator.exists("OLYMPIA")).isTrue();
+        assertThat(weaponCreator.exists("MP5")).isTrue();
+    }
+
+    @Test
+    public void getLoadsItemsFilesWithoutSubfoldersAndCreatesItemSpecifications() {
+        File itemsFolder = new File("src/main/resources/items/submachine_guns");
+
+        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactory, firearmFactory, itemsFolder, logger);
+        WeaponCreator weaponCreator = provider.get();
+
         assertThat(weaponCreator.exists("MP5")).isTrue();
     }
 }

@@ -8,7 +8,7 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Fully automatic with high rate of fire. Effective at medium range.
-firearm-type: ASSAULT_RIFLE
+gun-type: ASSAULT_RIFLE
 item:
   damage: 16
   display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"

@@ -121,7 +121,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
     }
 
     private void addItemSpecification(@NotNull WeaponCreator creator, @NotNull File file, @NotNull YamlDocument document) {
-        if (document.getString("firearm-type") != null) {
+        if (document.getString("gun-type") != null) {
             GunConfiguration configuration = new GunConfiguration(file, null);
             configuration.load();
 

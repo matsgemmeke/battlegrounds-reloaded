@@ -1,12 +1,16 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.item.spec.FireModeSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.item.spec.GunSpecification;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class WeaponCreatorTest {
 
@@ -22,35 +26,27 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void shouldReturnThatItemConfigurationHasWeaponId() {
-        String weaponId = "TEST_WEAPON";
+    public void existsReturnsTrueWhenSpecificationOfGivenWeaponIdExists() {
+        String gunId = "TEST_GUN";
 
-        ItemConfiguration configuration = mock(ItemConfiguration.class);
-        when(configuration.getItemId()).thenReturn(weaponId);
-
-        WeaponFactory factory = mock(WeaponFactory.class);
+        FireModeSpecification fireModeSpecification = new FireModeSpecification("test", Collections.emptyMap());
+        GunSpecification gunSpecification = new GunSpecification("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, fireModeSpecification);
 
         WeaponCreator weaponCreator = new WeaponCreator();
-        weaponCreator.addConfigurationFactory(configuration, factory);
+        weaponCreator.addGunSpecification(gunId, gunSpecification);
+        boolean exists = weaponCreator.exists(gunId);
 
-        boolean result = weaponCreator.exists(weaponId);
-
-        assertTrue(result);
+        assertThat(exists).isTrue();
     }
 
     @Test
-    public void shouldReturnThatItemConfigurationDoesNotHaveWeaponId() {
-        String weaponId = "TEST_WEAPON";
-
-        ItemConfiguration configuration = mock(ItemConfiguration.class);
-        WeaponFactory factory = mock(WeaponFactory.class);
+    public void existsReturnsFalseWhenSpecificationOfGivenWeaponIdDoesNotExist() {
+        String gunId = "TEST_GUN";
 
         WeaponCreator weaponCreator = new WeaponCreator();
-        weaponCreator.addConfigurationFactory(configuration, factory);
+        boolean exists = weaponCreator.exists(gunId);
 
-        boolean result = weaponCreator.exists(weaponId);
-
-        assertFalse(result);
+        assertThat(exists).isFalse();
     }
 
     @Test

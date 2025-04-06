@@ -8,7 +8,7 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Fully automatic with good accuracy. Effective at close to medium range.
-firearm-type: SUBMACHINE_GUN
+gun-type: SUBMACHINE_GUN
 item:
   damage: 8
   display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
