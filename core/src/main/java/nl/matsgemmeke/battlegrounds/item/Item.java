@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item;
 
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -43,7 +44,7 @@ public interface Item extends Matchable {
      *
      * @return the item name
      */
-    @Nullable
+    @NotNull
     String getName();
 
     /**
@@ -51,5 +52,5 @@ public interface Item extends Matchable {
      *
      * @param name the item name
      */
-    void setName(@Nullable String name);
+    void setName(@NotNull String name);
 }

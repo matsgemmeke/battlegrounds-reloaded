@@ -4,10 +4,12 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import jakarta.inject.Named;
+import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
+import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.GunConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.configuration.item.spec.GunSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +51,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.copyResourcesFiles(itemsFolder);
         }
 
-        WeaponCreator weaponCreator = new WeaponCreator();
+        WeaponCreator weaponCreator = new WeaponCreator(firearmFactory);
         File[] itemFolderFiles = itemsFolder.listFiles();
 
         if (itemFolderFiles == null || itemFolderFiles.length == 0) {
@@ -122,11 +124,16 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
     private void addItemSpecification(@NotNull WeaponCreator creator, @NotNull File file, @NotNull YamlDocument document) {
         if (document.getString("gun-type") != null) {
-            GunConfiguration configuration = new GunConfiguration(file, null);
-            configuration.load();
+            YamlReader yamlReader = new YamlReader(file, null);
+            yamlReader.load();
+
+            GunConfiguration configuration = new GunConfiguration(yamlReader);
+            ItemConfiguration itemConfiguration = new ItemConfiguration(file, null);
 
             String id = document.getString("id");
             GunSpecification specification = configuration.createSpec();
+
+            creator.addConfigurationFactory(id, itemConfiguration);
             creator.addGunSpecification(id, specification);
         }
     }

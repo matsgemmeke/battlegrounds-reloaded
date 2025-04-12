@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -17,7 +16,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class GiveWeaponCommandTest {
@@ -40,45 +38,30 @@ public class GiveWeaponCommandTest {
     }
 
     @Test
-    public void shouldThrowErrorWhenGivenIncompatibleWeaponId() {
-        GiveWeaponCommand command = new GiveWeaponCommand(contextProvider, gameKey, translator, weaponCreator);
-
-        assertThrows(IllegalArgumentException.class, () -> command.execute(player, "fail"));
-    }
-
-    @Test
     public void shouldGiveAssignedWeaponToPlayer() {
-        String message = "weapon given";
+        String message = "weapon given: %bg_weapon%";
         String weaponId = "TEST_WEAPON";
+        GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(inventory);
 
-        ItemConfiguration configuration = mock(ItemConfiguration.class);
-        when(weaponCreator.getItemConfiguration(weaponId)).thenReturn(configuration);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.findByEntity(player)).thenReturn(gamePlayer);
-
-        when(contextProvider.getComponent(gameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
 
         Weapon weapon = mock(Weapon.class);
         when(weapon.getItemStack()).thenReturn(itemStack);
         when(weapon.getName()).thenReturn("test");
 
-        WeaponFactory factory = mock(WeaponFactory.class);
-        when(factory.create(eq(configuration), eq(gameKey), any())).thenReturn(weapon);
-
+        when(contextProvider.getComponent(gameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
         when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
-        when(weaponCreator.getFactory(configuration)).thenReturn(factory);
+        when(weaponCreator.createWeapon(gamePlayer, gameKey, weaponId)).thenReturn(weapon);
 
         GiveWeaponCommand command = new GiveWeaponCommand(contextProvider, gameKey, translator, weaponCreator);
         command.execute(player, weaponId);
 
         verify(inventory).addItem(itemStack);
-        verify(player).sendMessage(message);
+        verify(player).sendMessage("weapon given: test");
     }
 }

@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import com.google.inject.Inject;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Timer;
@@ -24,27 +23,20 @@ public class RecoilProducerFactory {
     /**
      * Creates a new {@link RecoilProducer} instance based on configuration values.
      *
-     * @param section the configuration section
+     * @param specification the specification
      * @return a new producer instance
      */
-    public RecoilProducer create(@NotNull Section section) {
-        String type = section.getString("type");
-        RecoilProducerType recoilProducerType;
+    public RecoilProducer create(@NotNull RecoilSpecification specification) {
+        RecoilType recoilType = RecoilType.valueOf(specification.type());
 
-        try {
-            recoilProducerType = RecoilProducerType.valueOf(type);
-        } catch (IllegalArgumentException e) {
-            throw new WeaponFactoryCreationException("Error while getting recoil producer type \"" + type + "\"");
-        }
+        Float[] horizontalRecoilValues = specification.horizontalRecoilValues().toArray(Float[]::new);
+        Float[] verticalRecoilValues = specification.verticalRecoilValues().toArray(Float[]::new);
 
-        Float[] horizontalRecoilValues = section.getFloatList("horizontal").toArray(Float[]::new);
-        Float[] verticalRecoilValues = section.getFloatList("vertical").toArray(Float[]::new);
-
-        switch (recoilProducerType) {
+        switch (recoilType) {
             case CAMERA_MOVEMENT -> {
-                long kickbackDuration = section.getLong("kickback-duration");
-                float recoveryRate = section.getFloat("recovery-rate");
-                long recoveryDuration = section.getLong("recovery-duration");
+                long kickbackDuration = specification.kickbackDuration();
+                float recoveryRate = specification.recoveryRate();
+                long recoveryDuration = specification.recoveryDuration();
                 long rotationDuration = config.getCameraMovementRecoilDurationInMilliseconds();
 
                 Timer timer = new Timer();
@@ -68,6 +60,6 @@ public class RecoilProducerFactory {
             }
         }
 
-        throw new WeaponFactoryCreationException("Invalid recoil producer type \"" + type + "\"");
+        throw new RecoilProducerCreationException("Invalid recoil type '%s'".formatted(recoilType));
     }
 }

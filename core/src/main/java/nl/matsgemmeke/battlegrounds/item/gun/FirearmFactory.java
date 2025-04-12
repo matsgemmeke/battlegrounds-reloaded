@@ -4,6 +4,9 @@ import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpecification;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -17,7 +20,6 @@ import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
@@ -39,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class FirearmFactory implements WeaponFactory {
+public class FirearmFactory {
 
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-gun";
 
@@ -82,8 +84,8 @@ public class FirearmFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Firearm create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
-        Firearm firearm = this.createInstance(configuration, gameKey);
+    public Firearm create(@NotNull GunSpecification specification, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+        Firearm firearm = this.createInstance(specification, configuration, gameKey);
 
         GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
         gunRegistry.registerItem(firearm);
@@ -92,8 +94,8 @@ public class FirearmFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Firearm create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
-        Firearm firearm = this.createInstance(configuration, gameKey);
+    public Firearm create(@NotNull GunSpecification specification, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+        Firearm firearm = this.createInstance(specification, configuration, gameKey);
         firearm.setHolder(gamePlayer);
 
         GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
@@ -103,7 +105,7 @@ public class FirearmFactory implements WeaponFactory {
     }
 
     @NotNull
-    private Firearm createInstance(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+    private Firearm createInstance(@NotNull GunSpecification specification, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
         CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
         DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
@@ -111,77 +113,52 @@ public class FirearmFactory implements WeaponFactory {
 
         Section section = configuration.getRoot();
 
-        // Descriptive attributes
-        String name = section.getString("name");
-        String description = section.getString("description");
-
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setDescription(description);
-        firearm.setName(name);
+        firearm.setName(specification.name());
+        firearm.setDescription(specification.description());
+        firearm.setHeadshotDamageMultiplier(specification.headshotDamageMultiplier());
 
-        // Other variables
         double damageAmplifier = config.getGunDamageAmplifier();
         firearm.setDamageAmplifier(damageAmplifier);
 
-        double headshotDamageMultiplier = section.getDouble("shooting.headshot-damage-multiplier");
-        firearm.setHeadshotDamageMultiplier(headshotDamageMultiplier);
+        int magazineSize = specification.magazineSize();
+        int reserveAmmo = specification.defaultMagazineAmount() * magazineSize;
+        int maxAmmo = specification.maxMagazineAmount() * magazineSize;
 
-        int magazineSize = section.getInt("ammo.magazine-size");
-        int maxMagazineAmount = section.getInt("ammo.max-magazine-amount");
-        int defaultSupply = section.getInt("ammo.default-supply");
-
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, defaultSupply * magazineSize, maxMagazineAmount * magazineSize);
+        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
         firearm.setAmmunitionStorage(ammunitionStorage);
 
-        double shortRangeDamage = section.getDouble("shooting.range.short-range.damage");
-        double shortRangeDistance = section.getDouble("shooting.range.short-range.distance");
-        double mediumRangeDamage = section.getDouble("shooting.range.medium-range.damage");
-        double mediumRangeDistance = section.getDouble("shooting.range.medium-range.distance");
-        double longRangeDamage = section.getDouble("shooting.range.long-range.damage");
-        double longRangeDistance = section.getDouble("shooting.range.long-range.distance");
-
-        RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
+        RangeProfile rangeProfile = new RangeProfile(specification.longRangeDamage(), specification.longRangeDistance(), specification.mediumRangeDamage(), specification.mediumRangeDistance(), specification.shortRangeDamage(), specification.shortRangeDistance());
         firearm.setRangeProfile(rangeProfile);
 
-        List<GameSound> shotSounds = DefaultGameSound.parseSounds(section.getString("shooting.shot-sound"));
+        List<GameSound> shotSounds = DefaultGameSound.parseSounds(specification.shotSounds());
         firearm.setShotSounds(shotSounds);
 
-        Section controlsSection = section.getSection("controls");
-        Section fireModeSection = section.getSection("shooting.fire-mode");
-        Section patternSection = section.getSection("shooting.pattern");
-        Section recoilSection = section.getSection("shooting.recoil");
         Section reloadingSection = section.getSection("reloading");
         Section scopeSection = section.getSection("scope");
 
-        // Fire mode creation
-        if (fireModeSection == null) {
-            throw new FirearmCreationException("Unable to create firearm " + name + ": the fire mode configuration is missing");
-        }
+        ItemControls<GunHolder> controls = controlsFactory.create(specification.controls(), firearm);
+        firearm.setControls(controls);
 
-        FireMode fireMode = fireModeFactory.create(firearm, fireModeSection);
+        FireMode fireMode = fireModeFactory.create(specification.fireMode(), firearm);
         firearm.setFireMode(fireMode);
 
-        // Read controls configuration
-        if (controlsSection != null) {
-            ItemControls<GunHolder> controls = controlsFactory.create(section, firearm, gameKey);
-            firearm.setControls(controls);
-        }
+        RecoilSpecification recoilSpecification = specification.recoil();
+        SpreadPatternSpecification spreadPatternSpecification = specification.spreadPattern();
 
-        // Handle the pattern section if it's there
-        if (patternSection != null) {
-            SpreadPattern spreadPattern = spreadPatternFactory.create(patternSection);
-            firearm.setSpreadPattern(spreadPattern);
-        }
-
-        // Handle the recoil section if it's there
-        if (recoilSection != null) {
-            RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSection);
+        if (recoilSpecification != null) {
+            RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSpecification);
             firearm.setRecoilProducer(recoilProducer);
+        }
+
+        if (spreadPatternSpecification != null) {
+            SpreadPattern spreadPattern = spreadPatternFactory.create(spreadPatternSpecification);
+            firearm.setSpreadPattern(spreadPattern);
         }
 
         // Reload system creation
         if (reloadingSection == null) {
-            throw new FirearmCreationException("Unable to create firearm " + name + ": the reloading configuration is missing");
+            throw new FirearmCreationException("Unable to create firearm " + specification.name() + ": the reloading configuration is missing");
         }
 
         ReloadSystem reloadSystem = reloadSystemFactory.create(firearm, reloadingSection, audioEmitter);
@@ -200,27 +177,15 @@ public class FirearmFactory implements WeaponFactory {
             firearm.setScopeAttachment(scopeAttachment);
         }
 
-        // Item template creation
-        Material material;
-        String materialValue = section.getString("item.material");
-
-        try {
-            material = Material.valueOf(materialValue);
-        } catch (IllegalArgumentException e) {
-            throw new FirearmCreationException("Unable to create firearm " + name + ": item stack material \"" + materialValue + "\" is invalid");
-        }
-
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        int damage = section.getInt("item.damage");
-        String displayName = section.getString("item.display-name");
+        Material material = specification.item().material();
+        String displayName = specification.item().displayName();
+        int damage = specification.item().damage();
 
         ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDamage(damage);
-
-        if (displayName != null) {
-            itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
-        }
+        itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
 
         // Set and update the item stack
         firearm.setItemTemplate(itemTemplate);

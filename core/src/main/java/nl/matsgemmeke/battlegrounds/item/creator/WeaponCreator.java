@@ -1,10 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.item.spec.GunSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
+import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,11 +21,14 @@ import java.util.stream.Stream;
 public class WeaponCreator {
 
     @NotNull
-    private Map<ItemConfiguration, WeaponFactory> configurations;
+    private FirearmFactory firearmFactory;
+    @NotNull
+    private Map<String, ItemConfiguration> configurations;
     @NotNull
     private Map<String, GunSpecification> gunSpecifications;
 
-    public WeaponCreator() {
+    public WeaponCreator(@NotNull FirearmFactory firearmFactory) {
+        this.firearmFactory = firearmFactory;
         this.configurations = new HashMap<>();
         this.gunSpecifications = new HashMap<>();
     }
@@ -31,16 +37,36 @@ public class WeaponCreator {
      * Adds a {@link ItemConfiguration} to the provider along with its corresponding {@link WeaponFactory}.
      *
      * @param configuration the item configuration for the weapons
-     * @param factory the weapon factory
      * @return whether the weapon factory was added
      */
-    public boolean addConfigurationFactory(@NotNull ItemConfiguration configuration, @NotNull WeaponFactory factory) {
-        configurations.put(configuration, factory);
-        return configurations.get(configuration) != null;
+    public void addConfigurationFactory(@NotNull String weaponId, @NotNull ItemConfiguration configuration) {
+        configurations.put(weaponId, configuration);
     }
 
     public void addGunSpecification(@NotNull String id, @NotNull GunSpecification specification) {
         gunSpecifications.put(id, specification);
+    }
+
+    /**
+     * Attempts to create a {@link Weapon} for a given player. This newly created weapon will automatically be assigned
+     * to the player
+     *
+     * @param gamePlayer the player to create the weapon for
+     * @param gameKey the game key of the game where the player is in
+     * @param weaponId the weapon id
+     * @throws IllegalArgumentException when the instance does not contain a specification for the given weapon id
+     * @return a weapon instance that is created based of the specification of the given weapon id
+     */
+    @NotNull
+    public Weapon createWeapon(@NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey, @NotNull String weaponId) {
+        if (gunSpecifications.containsKey(weaponId)) {
+            GunSpecification specification = gunSpecifications.get(weaponId);
+            ItemConfiguration configuration = configurations.get(weaponId);
+
+            return firearmFactory.create(specification, configuration, gameKey, gamePlayer);
+        }
+
+        throw new IllegalArgumentException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponId));
     }
 
     /**
@@ -53,38 +79,9 @@ public class WeaponCreator {
         return this.getIdList().contains(weaponId);
     }
 
-    /**
-     * Returns the {@link WeaponFactory} which handles the creation of a specific weapon.
-     *
-     * @param configuration the item configuration
-     * @return the corresponding weapon factory
-     */
-    @Nullable
-    public WeaponFactory getFactory(@NotNull ItemConfiguration configuration) {
-        return configurations.get(configuration);
-    }
-
     private List<String> getIdList() {
         return Stream.of(gunSpecifications.keySet())
                 .flatMap(Collection::stream)
                 .toList();
-    }
-
-    /**
-     * Finds the {@link ItemConfiguration} that belongs to the given item id.
-     *
-     * @param id the item id
-     * @return the corresponding item configuration or null if it does not exist
-     */
-    @Nullable
-    public ItemConfiguration getItemConfiguration(@NotNull String id) {
-        for (ItemConfiguration configuration : configurations.keySet()) {
-            String itemId = configuration.getItemId();
-
-            if (itemId != null && itemId.equals(id)) {
-                return configuration;
-            }
-        }
-        return null;
     }
 }
