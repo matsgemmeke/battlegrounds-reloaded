@@ -131,7 +131,7 @@ public class FirearmFactoryTest {
         Damageable itemMeta = mock(Damageable.class);
         when(itemMeta.getPersistentDataContainer()).thenReturn(dataContainer);
 
-        ItemStackSpecification itemSpecification = new ItemStackSpecification(Material.IRON_HOE, "Test Gun", ITEM_DAMAGE);
+        ItemStackSpecification itemSpecification = new ItemStackSpecification("IRON_HOE", "Test Gun", ITEM_DAMAGE);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
         GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, itemSpecification, controlsSpecification, fireModeSpecification, null, null);
@@ -165,7 +165,7 @@ public class FirearmFactoryTest {
     public void createThrowsFirearmCreationExceptionIfReloadConfigurationIsMissing() {
         when(rootSection.getSection("reloading")).thenReturn(null);
 
-        ItemStackSpecification itemSpecification = new ItemStackSpecification(Material.IRON_HOE, "Test Gun", 1);
+        ItemStackSpecification itemSpecification = new ItemStackSpecification("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
         GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, itemSpecification, controlsSpecification, fireModeSpecification, null, null);
@@ -185,7 +185,7 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmWithSpreadPatternFromConfiguration() {
-        ItemStackSpecification itemSpecification = new ItemStackSpecification(Material.IRON_HOE, "Test Gun", 1);
+        ItemStackSpecification itemSpecification = new ItemStackSpecification("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
         SpreadPatternSpecification spreadPatternSpecification = new SpreadPatternSpecification("BUCKSHOT", 1, 0.5f, 0.5f);
@@ -207,7 +207,7 @@ public class FirearmFactoryTest {
 
     @Test
     public void createFirearmWithRecoilFromConfiguration() {
-        ItemStackSpecification itemSpecification = new ItemStackSpecification(Material.IRON_HOE, "Test Gun", 1);
+        ItemStackSpecification itemSpecification = new ItemStackSpecification("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
         RecoilSpecification recoilSpecification = new RecoilSpecification("RANDOM_SPREAD", List.of(), List.of(), null, null, null);
@@ -235,7 +235,7 @@ public class FirearmFactoryTest {
         Section scopeSection = mock(Section.class);
         when(scopeSection.getFloatList("magnifications")).thenReturn(List.of(-0.1f, -0.2f));
 
-        ItemStackSpecification itemSpecification = new ItemStackSpecification(Material.IRON_HOE, "Test Gun", 1);
+        ItemStackSpecification itemSpecification = new ItemStackSpecification("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
         GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, itemSpecification, controlsSpecification, fireModeSpecification, null, null);
@@ -261,7 +261,7 @@ public class FirearmFactoryTest {
     public void createMakesFirearmAndAssignsPlayer() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        ItemStackSpecification itemSpecification = new ItemStackSpecification(Material.IRON_HOE, "Test Gun", 1);
+        ItemStackSpecification itemSpecification = new ItemStackSpecification("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
         GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, itemSpecification, controlsSpecification, fireModeSpecification, null, null);

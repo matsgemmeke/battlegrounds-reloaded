@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpecificati
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpecification;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
-import org.bukkit.Material;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +47,7 @@ public class WeaponCreatorTest {
     }
 
     private GunSpecification createGunSpecification() {
-        ItemStackSpecification item = new ItemStackSpecification(Material.STICK, "name", 1);
+        ItemStackSpecification item = new ItemStackSpecification("STICK", "name", 1);
         ControlsSpecification controls = new ControlsSpecification("reload", "shoot", null, null, null);
         FireModeSpecification fireMode = new FireModeSpecification("test", null, null, null);
         RecoilSpecification recoil = new RecoilSpecification("recoil type", List.of(), List.of(), null, null, null);

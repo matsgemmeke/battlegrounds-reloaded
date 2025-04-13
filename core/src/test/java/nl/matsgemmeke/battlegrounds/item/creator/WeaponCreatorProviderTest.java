@@ -78,13 +78,13 @@ public class WeaponCreatorProviderTest {
         File itemsFolder = new File(tempDirectory.getPath() + "/items");
 
         MockedStatic<YamlDocument> yamlDocument = mockStatic(YamlDocument.class);
-        yamlDocument.when(() -> YamlDocument.create(any(File.class))).thenThrow(new IOException());
+        yamlDocument.when(() -> YamlDocument.create(any(File.class))).thenThrow(new IOException("An IO error occurred"));
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactory, firearmFactory, itemsFolder, logger);
         provider.get();
 
-        verify(logger).severe("Unable to load item configuration file olympia.yml");
-        verify(logger).severe("Unable to load item configuration file mp5.yml");
+        verify(logger).severe("Unable to load item configuration file 'olympia.yml': An IO error occurred");
+        verify(logger).severe("Unable to load item configuration file 'mp5.yml': An IO error occurred");
 
         yamlDocument.close();
     }
@@ -99,8 +99,8 @@ public class WeaponCreatorProviderTest {
         assertThat(weaponCreator.exists("OLYMPIA")).isFalse();
         assertThat(weaponCreator.exists("MP5")).isFalse();
 
-        verify(logger).severe("Cannot read item configuration file olympia.yml: Missing required 'id' value");
-        verify(logger).severe("Cannot read item configuration file mp5.yml: Missing required 'id' value");
+        verify(logger).severe("An error occurred while loading file 'olympia.yml': Identifier 'id' is missing");
+        verify(logger).severe("An error occurred while loading file 'mp5.yml': Identifier 'id' is missing");
     }
 
     @Test
@@ -113,8 +113,8 @@ public class WeaponCreatorProviderTest {
         assertThat(weaponCreator.exists("OLYMPIA")).isFalse();
         assertThat(weaponCreator.exists("MP5")).isFalse();
 
-        verify(logger).severe("Gun configuration error for OLYMPIA: Missing required 'name' value");
-        verify(logger).severe("Gun configuration error for MP5: Missing required 'name' value");
+        verify(logger).severe("An error occurred while loading item 'OLYMPIA': Missing required 'name' value");
+        verify(logger).severe("An error occurred while loading item 'MP5': Missing required 'name' value");
     }
 
     @Test

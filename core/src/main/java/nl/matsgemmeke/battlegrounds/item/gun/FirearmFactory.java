@@ -179,7 +179,7 @@ public class FirearmFactory {
 
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        Material material = specification.item().material();
+        Material material = Material.valueOf(specification.item().material());
         String displayName = specification.item().displayName();
         int damage = specification.item().damage();
 

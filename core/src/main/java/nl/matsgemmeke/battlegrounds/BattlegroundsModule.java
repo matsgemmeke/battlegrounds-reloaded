@@ -96,7 +96,7 @@ public class BattlegroundsModule implements Module {
                 .in(Singleton.class);
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
-        binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class);
+        binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(Singleton.class);
 
         // Component bindings
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class);

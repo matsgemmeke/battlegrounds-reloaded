@@ -107,18 +107,21 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
     }
 
     private void readItemFile(@NotNull File itemFile, @NotNull WeaponCreator creator) {
+        String id = null;
+
         try {
             YamlDocument document = YamlDocument.create(itemFile);
 
-            if (!document.contains("id")) {
-                throw new InvalidItemConfigurationException("Cannot read item configuration file %s: Missing required 'id' value".formatted(itemFile.getName()));
+            if ((id = document.getString("id")) == null) {
+                logger.severe("An error occurred while loading file '%s': Identifier 'id' is missing".formatted(itemFile.getName()));
+                return;
             }
 
             this.addItemSpecification(creator, itemFile, document);
         } catch (IOException e) {
-            logger.severe("Unable to load item configuration file %s".formatted(itemFile.getName()));
+            logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
         } catch (InvalidItemConfigurationException e) {
-            logger.severe(e.getMessage());
+            logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
         }
     }
 
@@ -128,7 +131,9 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             yamlReader.load();
 
             GunConfiguration configuration = new GunConfiguration(yamlReader);
+
             ItemConfiguration itemConfiguration = new ItemConfiguration(file, null);
+            itemConfiguration.load();
 
             String id = document.getString("id");
             GunSpecification specification = configuration.createSpec();

@@ -42,6 +42,16 @@ public class YamlReader {
     }
 
     @NotNull
+    public Optional<Integer> getOptionalInt(@NotNull String route) {
+        return document.getOptionalInt(route);
+    }
+
+    @NotNull
+    public Optional<String> getOptionalString(@NotNull String route) {
+        return document.getOptionalString(route);
+    }
+
+    @NotNull
     public String getString(@NotNull String route) {
         return document.getString(route);
     }

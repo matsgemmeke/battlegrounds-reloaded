@@ -1,18 +1,21 @@
 package nl.matsgemmeke.battlegrounds.configuration.item;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpecification;
-import org.bukkit.Material;
+import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
+import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationResult;
+import nl.matsgemmeke.battlegrounds.configuration.validation.Validator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class GunConfiguration {
 
@@ -25,60 +28,60 @@ public class GunConfiguration {
 
     @NotNull
     public GunSpecification createSpec() {
-        String name = this.getRequiredValue("name", String.class);
-        String description = this.getOptionalValue("description", String.class);
+        String name = this.resolve(String.class, "name", new RequiredValidator<>());
+        String description = this.resolve(String.class, "description");
 
-        int magazineSize = this.getRequiredValue("ammo.magazine-size", Integer.class);
-        int maxMagazineAmount = this.getRequiredValue("ammo.max-magazine-amount", Integer.class);
-        int defaultMagazineAmount = this.getRequiredValue("ammo.default-supply", Integer.class);
+        int magazineSize = this.resolve(Integer.class, "ammo.magazine-size", new RequiredValidator<>());
+        int maxMagazineAmount = this.resolve(Integer.class, "ammo.max-magazine-amount", new RequiredValidator<>());
+        int defaultMagazineAmount = this.resolve(Integer.class, "ammo.default-supply", new RequiredValidator<>());
 
-        double shortRangeDamage = this.getRequiredValue("shooting.range.short-range.damage", Double.class);
-        double shortRangeDistance = this.getRequiredValue("shooting.range.short-range.distance", Double.class);
-        double mediumRangeDamage = this.getRequiredValue("shooting.range.medium-range.damage", Double.class);
-        double mediumRangeDistance = this.getRequiredValue("shooting.range.medium-range.distance", Double.class);
-        double longRangeDamage = this.getRequiredValue("shooting.range.long-range.damage", Double.class);
-        double longRangeDistance = this.getRequiredValue("shooting.range.long-range.distance", Double.class);
-        double headshotDamageMultiplier = this.getRequiredValue("shooting.headshot-damage-multiplier", Double.class);
+        double shortRangeDamage = this.resolve(Double.class, "shooting.range.short-range.damage", new RequiredValidator<>());
+        double shortRangeDistance = this.resolve(Double.class, "shooting.range.short-range.distance", new RequiredValidator<>());
+        double mediumRangeDamage = this.resolve(Double.class, "shooting.range.medium-range.damage", new RequiredValidator<>());
+        double mediumRangeDistance = this.resolve(Double.class, "shooting.range.medium-range.distance", new RequiredValidator<>());
+        double longRangeDamage = this.resolve(Double.class, "shooting.range.long-range.damage", new RequiredValidator<>());
+        double longRangeDistance = this.resolve(Double.class, "shooting.range.long-range.distance", new RequiredValidator<>());
+        double headshotDamageMultiplier = this.resolve(Double.class, "shooting.headshot-damage-multiplier", new RequiredValidator<>());
 
-        String shotSounds = this.getOptionalValue("shooting.shot-sound", String.class);
+        String shotSounds = this.resolve(String.class, "shooting.shot-sound");
 
-        Material itemMaterial = this.getMaterial("item.material");
-        String itemDisplayName = this.getRequiredValue("item.display-name", String.class);
-        int itemDamage = this.getRequiredValue("item.damage", Integer.class);
+        String itemMaterial = this.resolve(String.class, "item.material", new RequiredValidator<>());
+        String itemDisplayName = this.resolve(String.class, "item.display-name", new RequiredValidator<>());
+        int itemDamage = this.resolve(Integer.class, "item.damage", new RequiredValidator<>());
         ItemStackSpecification item = new ItemStackSpecification(itemMaterial, itemDisplayName, itemDamage);
 
-        String reloadAction = this.getRequiredValue("controls.reload", String.class);
-        String shootAction = this.getRequiredValue("controls.shoot", String.class);
-        String useScopeAction = this.getOptionalValue("controls.use-scope", String.class);
-        String stopScopeAction = this.getOptionalValue("controls.stop-scope", String.class);
-        String changeScopeMagnificationAction = this.getOptionalValue("controls.change-scope-magnification", String.class);
+        String reloadAction = this.resolve(String.class, "controls.reload", new RequiredValidator<>());
+        String shootAction = this.resolve(String.class, "controls.shoot", new RequiredValidator<>());
+        String useScopeAction = this.resolve(String.class, "controls.use-scope");
+        String stopScopeAction = this.resolve(String.class, "controls.stop-scope");
+        String changeScopeMagnificationAction = this.resolve(String.class, "controls.change-scope-magnification");
         ControlsSpecification controls = new ControlsSpecification(reloadAction, shootAction, useScopeAction, stopScopeAction, changeScopeMagnificationAction);
 
-        String fireModeType = this.getRequiredValue("shooting.fire-mode.type", String.class);
-        Integer amountOfShots = this.getOptionalValue("shooting.fire-mode.amount-of-shots", Integer.class);
-        Integer rateOfFire = this.getOptionalValue("shooting.fire-mode.rate-of-fire", Integer.class);
-        Long delayBetweenShots = this.getOptionalValue("shooting.fire-mode.delay-between-shots", Long.class);
+        String fireModeType = this.resolve(String.class, "shooting.fire-mode.type", new RequiredValidator<>());
+        Integer amountOfShots = this.resolve(Integer.class, "shooting.fire-mode.amount-of-shots");
+        Integer rateOfFire = this.resolve(Integer.class, "shooting.fire-mode.rate-of-fire");
+        Long delayBetweenShots = this.resolve(Long.class, "shooting.fire-mode.delay-between-shots");
         FireModeSpecification fireMode = new FireModeSpecification(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
 
         RecoilSpecification recoil = null;
         SpreadPatternSpecification spreadPattern = null;
 
         if (yamlReader.contains("shooting.recoil")) {
-            String recoilType = this.getRequiredValue("shooting.recoil.type", String.class);
+            String recoilType = this.resolve(String.class, "shooting.recoil.type", new RequiredValidator<>());
             List<Float> horizontalRecoilValues = yamlReader.getOptionalFloatList("shooting.recoil.horizontal").orElse(Collections.emptyList());
             List<Float> verticalRecoilValues = yamlReader.getOptionalFloatList("shooting.recoil.vertical").orElse(Collections.emptyList());
-            Long kickbackDuration = this.getOptionalValue("shooting.recoil.kickback-duration", Long.class);
-            Float recoveryRate = this.getOptionalValue("shooting.recoil.recovery-rate", Float.class);
-            Long recoveryDuration = this.getOptionalValue("shooting.recoil.recovery-duration", Long.class);
+            Long kickbackDuration = this.resolve(Long.class, "shooting.recoil.kickback-duration");
+            Float recoveryRate = this.resolve(Float.class, "shooting.recoil.recovery-rate");
+            Long recoveryDuration = this.resolve(Long.class, "shooting.recoil.recovery-duration");
 
             recoil = new RecoilSpecification(recoilType, horizontalRecoilValues, verticalRecoilValues, kickbackDuration, recoveryRate, recoveryDuration);
         }
 
         if (yamlReader.contains("shooting.spread-pattern")) {
-            String spreadPatternType = this.getRequiredValue("shooting.spread-pattern.type", String.class);
-            Integer projectileAmount = this.getRequiredValue("shooting.spread-pattern.projectile-amount", Integer.class);
-            Float horizontalSpread = this.getRequiredValue("shooting.spread-pattern.horizontal-spread", Float.class);
-            Float verticalSpread = this.getRequiredValue("shooting.spread-pattern.vertical-spread", Float.class);
+            String spreadPatternType = this.resolve(String.class, "shooting.spread-pattern.type", new RequiredValidator<>());
+            Integer projectileAmount = this.resolve(Integer.class, "shooting.spread-pattern.projectile-amount", new RequiredValidator<>());
+            Float horizontalSpread = this.resolve(Float.class, "shooting.spread-pattern.horizontal-spread", new RequiredValidator<>());
+            Float verticalSpread = this.resolve(Float.class, "shooting.spread-pattern.vertical-spread", new RequiredValidator<>());
 
             spreadPattern = new SpreadPatternSpecification(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
@@ -86,29 +89,18 @@ public class GunConfiguration {
         return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, item, controls, fireMode, recoil, spreadPattern);
     }
 
-    @NotNull
-    private Material getMaterial(@NotNull String route) {
-        String materialValue = this.getRequiredValue(route, String.class);
+    @SafeVarargs
+    private <T> T resolve(@NotNull Class<T> type, @NotNull String route, @NotNull Validator<T>... validators) {
+        FieldSpec<T> spec = new FieldSpec<>(route);
+        Stream.of(validators).forEach(spec::withValidator);
 
-        try {
-            return Material.valueOf(materialValue);
-        } catch (IllegalArgumentException e) {
-            String id = yamlReader.getString("id");
-            throw new InvalidItemConfigurationException("Gun configuration error for %s: Material value '%s' in '%s' is invalid".formatted(id, materialValue, route));
+        T configValue = yamlReader.getAsOptional(route, type).orElse(null);
+        ValidationResult<T> result = spec.getValidatedValue(configValue);
+
+        if (!result.isValid()) {
+            throw new InvalidItemConfigurationException(result.getErrorMessage());
         }
-    }
 
-    @Nullable
-    private <T> T getOptionalValue(@NotNull String route, @NotNull Class<T> type) {
-        return yamlReader.getAsOptional(route, type).orElse(null);
-    }
-
-    @NotNull
-    private <T> T getRequiredValue(@NotNull String route, @NotNull Class<T> type) {
-        return yamlReader.getAsOptional(route, type)
-                .orElseThrow(() -> {
-                    String id = yamlReader.getString("id");
-                    return new InvalidItemConfigurationException("Gun configuration error for %s: Missing required '%s' value".formatted(id, route));
-                });
+        return result.getValue();
     }
 }
