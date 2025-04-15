@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -24,7 +23,7 @@ public class GunConfigurationTest {
 
     @Test
     public void createSpecThrowsInvalidItemConfigurationExceptionWhenValueFromYamlDoesNotPassValidator() {
-        when(yamlReader.getAsOptional("name", String.class)).thenReturn(Optional.empty());
+        when(yamlReader.getString("name")).thenReturn(null);
 
         GunConfiguration configuration = new GunConfiguration(yamlReader);
 
@@ -37,82 +36,82 @@ public class GunConfigurationTest {
     public void createSpecReturnsGunSpecContainingValuesFromYamlReader() {
         String name = "Test Gun";
 
-        int magazineSize = 10;
-        int maxMagazineAmount = 5;
-        int defaultMagazineAmount = 3;
+        Integer magazineSize = 10;
+        Integer maxMagazineAmount = 5;
+        Integer defaultMagazineAmount = 3;
 
-        double shortRangeDamage = 35.0;
-        double shortRangeDistance = 10.0;
-        double mediumRangeDamage = 25.0;
-        double mediumRangeDistance = 20.0;
-        double longRangeDamage = 15.0;
-        double longRangeDistance = 30.0;
-        double headshotDamageMultiplier = 2.0;
+        Double shortRangeDamage = 35.0;
+        Double shortRangeDistance = 10.0;
+        Double mediumRangeDamage = 25.0;
+        Double mediumRangeDistance = 20.0;
+        Double longRangeDamage = 15.0;
+        Double longRangeDistance = 30.0;
+        Double headshotDamageMultiplier = 2.0;
 
         String itemMaterial = "IRON_HOE";
         String itemDisplayName = "Test Gun %magazine_ammo%";
-        int itemDamage = 1;
+        Integer itemDamage = 1;
 
         String reloadAction = "LEFT_CLICK";
         String shootAction = "RIGHT_CLICK";
 
         String fireModeType = "FULLY_AUTOMATIC";
-        int rateOfFire = 600;
+        Integer rateOfFire = 600;
 
         String recoilType = "CAMERA_MOVEMENT";
         List<Float> horizontalRecoilValues = List.of(0.1f);
         List<Float> verticalRecoilValues = List.of(0.2f);
 
         String spreadPatternType = "BUCKSHOT";
-        int projectileAmount = 3;
-        float horizontalSpread = 0.4f;
-        float verticalSpread = 0.5f;
+        Integer projectileAmount = 3;
+        Float horizontalSpread = 0.4f;
+        Float verticalSpread = 0.5f;
 
-        when(yamlReader.getAsOptional("name", String.class)).thenReturn(Optional.of(name));
-        when(yamlReader.getAsOptional("description", String.class)).thenReturn(Optional.empty());
+        when(yamlReader.getString("name")).thenReturn(name);
+        when(yamlReader.getString("description")).thenReturn(null);
 
-        when(yamlReader.getAsOptional("ammo.magazine-size", Integer.class)).thenReturn(Optional.of(magazineSize));
-        when(yamlReader.getAsOptional("ammo.max-magazine-amount", Integer.class)).thenReturn(Optional.of(maxMagazineAmount));
-        when(yamlReader.getAsOptional("ammo.default-supply", Integer.class)).thenReturn(Optional.of(defaultMagazineAmount));
+        when(yamlReader.getInt("ammo.magazine-size")).thenReturn(magazineSize);
+        when(yamlReader.getInt("ammo.max-magazine-amount")).thenReturn(maxMagazineAmount);
+        when(yamlReader.getInt("ammo.default-supply")).thenReturn(defaultMagazineAmount);
 
-        when(yamlReader.getAsOptional("shooting.range.short-range.damage", Double.class)).thenReturn(Optional.of(shortRangeDamage));
-        when(yamlReader.getAsOptional("shooting.range.short-range.distance", Double.class)).thenReturn(Optional.of(shortRangeDistance));
-        when(yamlReader.getAsOptional("shooting.range.medium-range.damage", Double.class)).thenReturn(Optional.of(mediumRangeDamage));
-        when(yamlReader.getAsOptional("shooting.range.medium-range.distance", Double.class)).thenReturn(Optional.of(mediumRangeDistance));
-        when(yamlReader.getAsOptional("shooting.range.long-range.damage", Double.class)).thenReturn(Optional.of(longRangeDamage));
-        when(yamlReader.getAsOptional("shooting.range.long-range.distance", Double.class)).thenReturn(Optional.of(longRangeDistance));
-        when(yamlReader.getAsOptional("shooting.headshot-damage-multiplier", Double.class)).thenReturn(Optional.of(headshotDamageMultiplier));
+        when(yamlReader.getDouble("shooting.range.short-range.damage")).thenReturn(shortRangeDamage);
+        when(yamlReader.getDouble("shooting.range.short-range.distance")).thenReturn(shortRangeDistance);
+        when(yamlReader.getDouble("shooting.range.medium-range.damage")).thenReturn(mediumRangeDamage);
+        when(yamlReader.getDouble("shooting.range.medium-range.distance")).thenReturn(mediumRangeDistance);
+        when(yamlReader.getDouble("shooting.range.long-range.damage")).thenReturn(longRangeDamage);
+        when(yamlReader.getDouble("shooting.range.long-range.distance")).thenReturn(longRangeDistance);
+        when(yamlReader.getDouble("shooting.headshot-damage-multiplier")).thenReturn(headshotDamageMultiplier);
 
-        when(yamlReader.getAsOptional("shooting.shot-sound", String.class)).thenReturn(Optional.empty());
+        when(yamlReader.getString("shooting.shot-sound")).thenReturn(null);
 
-        when(yamlReader.getAsOptional("item.material", String.class)).thenReturn(Optional.of(itemMaterial));
-        when(yamlReader.getAsOptional("item.display-name", String.class)).thenReturn(Optional.of(itemDisplayName));
-        when(yamlReader.getAsOptional("item.damage", Integer.class)).thenReturn(Optional.of(itemDamage));
+        when(yamlReader.getString("item.material")).thenReturn(itemMaterial);
+        when(yamlReader.getString("item.display-name")).thenReturn(itemDisplayName);
+        when(yamlReader.getInt("item.damage")).thenReturn(itemDamage);
 
-        when(yamlReader.getAsOptional("controls.reload", String.class)).thenReturn(Optional.of(reloadAction));
-        when(yamlReader.getAsOptional("controls.shoot", String.class)).thenReturn(Optional.of(shootAction));
-        when(yamlReader.getAsOptional("controls.use-scope", String.class)).thenReturn(Optional.empty());
-        when(yamlReader.getAsOptional("controls.stop-scope", String.class)).thenReturn(Optional.empty());
-        when(yamlReader.getAsOptional("controls.change-scope-magnification", String.class)).thenReturn(Optional.empty());
+        when(yamlReader.getString("controls.reload")).thenReturn(reloadAction);
+        when(yamlReader.getString("controls.shoot")).thenReturn(shootAction);
+        when(yamlReader.getString("controls.use-scope")).thenReturn(null);
+        when(yamlReader.getString("controls.stop-scope")).thenReturn(null);
+        when(yamlReader.getString("controls.change-scope-magnification")).thenReturn(null);
 
-        when(yamlReader.getAsOptional("shooting.fire-mode.type", String.class)).thenReturn(Optional.of(fireModeType));
-        when(yamlReader.getAsOptional("shooting.fire-mode.amount-of-shots", Integer.class)).thenReturn(Optional.empty());
-        when(yamlReader.getAsOptional("shooting.fire-mode.rate-of-fire", Integer.class)).thenReturn(Optional.of(rateOfFire));
-        when(yamlReader.getAsOptional("shooting.fire-mode.delay-between-shots", Long.class)).thenReturn(Optional.empty());
+        when(yamlReader.getString("shooting.fire-mode.type")).thenReturn(fireModeType);
+        when(yamlReader.getInt("shooting.fire-mode.amount-of-shots")).thenReturn(null);
+        when(yamlReader.getInt("shooting.fire-mode.rate-of-fire")).thenReturn(rateOfFire);
+        when(yamlReader.getLong("shooting.fire-mode.delay-between-shots")).thenReturn(null);
 
         when(yamlReader.contains("shooting.recoil")).thenReturn(true);
-        when(yamlReader.getAsOptional("shooting.recoil.type", String.class)).thenReturn(Optional.of(recoilType));
-        when(yamlReader.getOptionalFloatList("shooting.recoil.horizontal")).thenReturn(Optional.of(horizontalRecoilValues));
-        when(yamlReader.getOptionalFloatList("shooting.recoil.vertical")).thenReturn(Optional.of(verticalRecoilValues));
-        when(yamlReader.getAsOptional("shooting.recoil.kickback-duration", Long.class)).thenReturn(Optional.empty());
-        when(yamlReader.getAsOptional("shooting.recoil.recovery-rate", Float.class)).thenReturn(Optional.empty());
-        when(yamlReader.getAsOptional("shooting.recoil.recovery-duration", Long.class)).thenReturn(Optional.empty());
+        when(yamlReader.getString("shooting.recoil.type")).thenReturn(recoilType);
+        when(yamlReader.getFloatList("shooting.recoil.horizontal")).thenReturn(horizontalRecoilValues);
+        when(yamlReader.getFloatList("shooting.recoil.vertical")).thenReturn(verticalRecoilValues);
+        when(yamlReader.getLong("shooting.recoil.kickback-duration")).thenReturn(null);
+        when(yamlReader.getFloat("shooting.recoil.recovery-rate")).thenReturn(null);
+        when(yamlReader.getLong("shooting.recoil.recovery-duration")).thenReturn(null);
 
         when(yamlReader.contains("shooting.spread-pattern")).thenReturn(true);
-        when(yamlReader.getAsOptional("shooting.spread-pattern.type", String.class)).thenReturn(Optional.of(spreadPatternType));
-        when(yamlReader.getAsOptional("shooting.spread-pattern.projectile-amount", Integer.class)).thenReturn(Optional.of(projectileAmount));
-        when(yamlReader.getAsOptional("shooting.spread-pattern.horizontal-spread", Float.class)).thenReturn(Optional.of(horizontalSpread));
-        when(yamlReader.getAsOptional("shooting.spread-pattern.vertical-spread", Float.class)).thenReturn(Optional.of(verticalSpread));
+        when(yamlReader.getString("shooting.spread-pattern.type")).thenReturn(spreadPatternType);
+        when(yamlReader.getInt("shooting.spread-pattern.projectile-amount")).thenReturn(projectileAmount);
+        when(yamlReader.getFloat("shooting.spread-pattern.horizontal-spread")).thenReturn(horizontalSpread);
+        when(yamlReader.getFloat("shooting.spread-pattern.vertical-spread")).thenReturn(verticalSpread);
 
         GunConfiguration configuration = new GunConfiguration(yamlReader);
         GunSpecification spec = configuration.createSpec();

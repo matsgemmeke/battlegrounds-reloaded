@@ -1,5 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Optional;
 
 /**
@@ -23,5 +26,6 @@ public interface Validator<T> {
      * @param value the value to validate (may be {@code null})
      * @return an {@link Optional} containing an error message if validation fails, or empty if valid
      */
-    Optional<String> validate(String route, T value);
+    @NotNull
+    Optional<String> validate(@NotNull String route, @Nullable T value);
 }

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationResult;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Validator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class FieldSpec<T> {
      * @return a {@link ValidationResult} containing either the valid value or an error message
      */
     @NotNull
-    public ValidationResult<T> getValidatedValue(T value) {
+    public ValidationResult<T> getValidatedValue(@Nullable T value) {
         for (Validator<T> validator : validators) {
             Optional<String> errorMessage = validator.validate(route, value);
 
