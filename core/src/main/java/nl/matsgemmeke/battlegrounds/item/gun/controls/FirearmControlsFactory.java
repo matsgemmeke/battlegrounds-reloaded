@@ -18,16 +18,6 @@ public class FirearmControlsFactory {
     public ItemControls<GunHolder> create(@NotNull ControlsSpecification specification, @NotNull Firearm firearm) {
         ItemControls<GunHolder> controls = new ItemControls<>();
 
-        // Should be safe to directly get an enum since the specification is already validated
-        Action reloadAction = Action.valueOf(specification.reloadAction());
-        Action shootAction = Action.valueOf(specification.shootAction());
-
-        ReloadFunction reloadFunction = new ReloadFunction(firearm);
-        ShootFunction shootFunction = new ShootFunction(firearm);
-
-        controls.addControl(reloadAction, reloadFunction);
-        controls.addControl(shootAction, shootFunction);
-
         String useScopeActionValue = specification.useScopeAction();
         String stopScopeActionValue = specification.stopScopeAction();
         String changeScopeMagnificationActionValue = specification.changeScopeMagnificationAction();
@@ -49,6 +39,16 @@ public class FirearmControlsFactory {
             controls.addControl(useScopeAction, useScopeFunction);
             controls.addControl(stopScopeAction, stopScopeFunction);
         }
+
+        // Should be safe to directly get an enum since the specification is already validated
+        Action reloadAction = Action.valueOf(specification.reloadAction());
+        Action shootAction = Action.valueOf(specification.shootAction());
+
+        ReloadFunction reloadFunction = new ReloadFunction(firearm);
+        ShootFunction shootFunction = new ShootFunction(firearm);
+
+        controls.addControl(reloadAction, reloadFunction);
+        controls.addControl(shootAction, shootFunction);
 
         return controls;
     }

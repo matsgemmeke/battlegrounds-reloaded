@@ -8,8 +8,10 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpecification
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.OneOfValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -44,9 +46,9 @@ public class GunConfiguration {
 
     private static final String RELOAD_ACTION_ROUTE = "controls.reload";
     private static final String SHOOT_ACTION_ROUTE = "controls.shoot";
-    private static final String USE_SCOPE_ACTION_ROUTE = "controls.use-scope";
-    private static final String STOP_SCOPE_ACTION_ROUTE = "controls.stop-scope";
-    private static final String CHANGE_SCOPE_MAGNIFICATION_ACTION_ROUTE = "controls.change-scope-magnification";
+    private static final String USE_SCOPE_ACTION_ROUTE = "controls.scope-use";
+    private static final String STOP_SCOPE_ACTION_ROUTE = "controls.scope-stop";
+    private static final String CHANGE_SCOPE_MAGNIFICATION_ACTION_ROUTE = "controls.scope-change-magnification";
 
     private static final String FIRE_MODE_TYPE_ROUTE = "shooting.fire-mode.type";
     private static final String FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE = "shooting.fire-mode.amount-of-shots";
@@ -145,6 +147,7 @@ public class GunConfiguration {
                 .route(ITEM_MATERIAL_ROUTE)
                 .value(yamlReader.getString(ITEM_MATERIAL_ROUTE))
                 .validate(new RequiredValidator<>())
+                .validate(new EnumValidator<>(Material.class))
                 .resolve();
         String itemDisplayName = new FieldSpecResolver<String>()
                 .route(ITEM_DISPLAY_NAME_ROUTE)

@@ -90,9 +90,9 @@ public class GunConfigurationTest {
 
         when(yamlReader.getString("controls.reload")).thenReturn(reloadAction);
         when(yamlReader.getString("controls.shoot")).thenReturn(shootAction);
-        when(yamlReader.getString("controls.use-scope")).thenReturn(null);
-        when(yamlReader.getString("controls.stop-scope")).thenReturn(null);
-        when(yamlReader.getString("controls.change-scope-magnification")).thenReturn(null);
+        when(yamlReader.getString("controls.scope-use")).thenReturn(null);
+        when(yamlReader.getString("controls.scope-stop")).thenReturn(null);
+        when(yamlReader.getString("controls.scope-change-magnification")).thenReturn(null);
 
         when(yamlReader.getString("shooting.fire-mode.type")).thenReturn(fireModeType);
         when(yamlReader.getInt("shooting.fire-mode.amount-of-shots")).thenReturn(null);
