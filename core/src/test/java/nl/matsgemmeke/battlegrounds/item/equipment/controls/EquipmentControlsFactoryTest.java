@@ -58,7 +58,7 @@ public class EquipmentControlsFactoryTest {
         when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
         when(rootSection.getOptionalSection("item.throw-item")).thenReturn(Optional.of(throwItemSection));
         when(rootSection.getSection("deploy.resistances")).thenReturn(resistancesSection);
-        when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
+        when(rootSection.getString("throwing.throw-sounds")).thenReturn("AMBIENT_CAVE-1-1-1");
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);

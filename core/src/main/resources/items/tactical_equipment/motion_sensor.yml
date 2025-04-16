@@ -24,7 +24,7 @@ effect:
         period-between-checks: 10
         type: ENEMY_PROXIMITY
     type: TRIGGER
-  sound: BLOCK_NOTE_BLOCK_BIT-1-2-0
+  sounds: BLOCK_NOTE_BLOCK_BIT-1-2-0
   type: SOUND_NOTIFICATION
 equipment-type: TACTICAL
 item:
@@ -36,5 +36,5 @@ item:
     material: SHEARS
 throwing:
   delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
+  throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
   velocity: 0.5

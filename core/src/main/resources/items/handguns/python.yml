@@ -17,7 +17,7 @@ level-unlocked: 18
 price: 600
 reloading:
   duration: 16
-  sound: BLOCK_STONE_BUTTON_CLICK_OFF-1-2-12
+  sounds: BLOCK_STONE_BUTTON_CLICK_OFF-1-2-12
   type: MANUAL_INSERTION
 shooting:
   fire-mode:
@@ -39,5 +39,5 @@ shooting:
     kickback-duration: 200
     type: CAMERA_MOVEMENT
     vertical: [-3.0, -3.5, -4.0]
-  shot-sound: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
-  suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
+  shot-sounds: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
+  suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0

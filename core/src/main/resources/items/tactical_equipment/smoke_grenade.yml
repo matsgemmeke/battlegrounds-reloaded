@@ -18,7 +18,7 @@ effect:
   duration: 400
   growth-increase: 0.025
   growth-period: 1
-  ignition-sound: BLOCK_FIRE_EXTINGUISH-1-0-0
+  ignition-sounds: BLOCK_FIRE_EXTINGUISH-1-0-0
   particle:
     count: 1
     extra: 0.01
@@ -47,7 +47,7 @@ projectile:
       horizontal-friction: 3.0
       vertical-friction: 2.0
 throwing:
-  cook-sound: ENTITY_TNT_PRIMED-1-2-0
+  cook-sounds: ENTITY_TNT_PRIMED-1-2-0
   delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
+  throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
   velocity: 1.2

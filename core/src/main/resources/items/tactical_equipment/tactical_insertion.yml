@@ -32,5 +32,5 @@ item:
     material: SHEARS
 throwing:
   delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
+  throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
   velocity: 0.0

@@ -8,7 +8,7 @@ deploy:
   health: 50.0
   manual-activation:
     activation-delay: 5
-    activation-sound: UI_BUTTON_CLICK-1-1.5-0
+    activation-sounds: UI_BUTTON_CLICK-1-1.5-0
   on-destroy:
     activate: false
     remove: true
@@ -50,8 +50,8 @@ item:
 placing:
   delay-after-placement: 10
   material: WARPED_BUTTON
-  place-sound: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
+  place-sounds: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
 throwing:
   delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
+  throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
   velocity: 1.0

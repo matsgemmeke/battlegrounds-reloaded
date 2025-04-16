@@ -201,7 +201,7 @@ public class EquipmentFactory implements WeaponFactory {
             }
 
             if (soundSection != null) {
-                List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sound"));
+                List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sounds"));
                 List<Integer> intervals = soundSection.getIntList("intervals");
 
                 SoundProperties properties = new SoundProperties(sounds, intervals);
@@ -211,7 +211,7 @@ public class EquipmentFactory implements WeaponFactory {
             }
 
             if (stickSection != null) {
-                List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickSection.getString("stick-sound"));
+                List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickSection.getString("stick-sounds"));
                 long checkDelay = stickSection.getLong("check-delay");
                 long checkPeriod = stickSection.getLong("check-period");
 
@@ -292,7 +292,7 @@ public class EquipmentFactory implements WeaponFactory {
         Section effectActivationSection = section.getOptionalSection("effect.activation")
                 .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", effect activation configuration is missing"));
 
-        List<GameSound> activationSounds = DefaultGameSound.parseSounds(deploySection.getString("manual-activation.activation-sound"));
+        List<GameSound> activationSounds = DefaultGameSound.parseSounds(deploySection.getString("manual-activation.activation-sounds"));
         boolean activateEffectOnDestroy = deploySection.getBoolean("on-destroy.activate");
         boolean removeOnDestroy = deploySection.getBoolean("on-destroy.remove");
         boolean resetEffectOnDestroy = deploySection.getBoolean("on-destroy.reset");

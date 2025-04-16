@@ -166,9 +166,9 @@ public class FirearmFactory {
 
         // Scope attachment creation (optional)
         if (scopeSection != null) {
-            List<GameSound> useSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sound"));
-            List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sound"));
-            List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSection.getString("change-magnification-sound"));
+            List<GameSound> useSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sounds"));
+            List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sounds"));
+            List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSection.getString("change-magnification-sounds"));
             List<Float> magnificationSettings = scopeSection.getFloatList("magnifications");
 
             ScopeProperties properties = new ScopeProperties(useSounds, stopSounds, changeMagnificationSounds, magnificationSettings);

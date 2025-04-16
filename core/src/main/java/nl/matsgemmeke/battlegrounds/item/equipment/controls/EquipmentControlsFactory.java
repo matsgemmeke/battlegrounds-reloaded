@@ -67,7 +67,7 @@ public class EquipmentControlsFactory {
             if (cookActionValue != null) {
                 Action cookAction = this.getActionFromConfiguration(equipment, "cook", cookActionValue);
 
-                List<GameSound> cookSounds = DefaultGameSound.parseSounds(rootSection.getString("throwing.cook-sound"));
+                List<GameSound> cookSounds = DefaultGameSound.parseSounds(rootSection.getString("throwing.cook-sounds"));
                 PrimeDeployment deployment = new PrimeDeployment(audioEmitter, cookSounds);
                 CookFunction cookFunction = new CookFunction(equipment, deployment);
 
@@ -87,7 +87,7 @@ public class EquipmentControlsFactory {
             ItemTemplate itemTemplate = new ItemTemplate(templateId, key, material);
             itemTemplate.setDamage(damage);
 
-            List<GameSound> throwSounds = DefaultGameSound.parseSounds(rootSection.getString("throwing.throw-sound"));
+            List<GameSound> throwSounds = DefaultGameSound.parseSounds(rootSection.getString("throwing.throw-sounds"));
             List<ProjectileEffect> projectileEffects = List.of();
             Map<DamageType, Double> resistances = this.getResistances(rootSection);
             double health = rootSection.getDouble("deploy.health");
@@ -104,7 +104,7 @@ public class EquipmentControlsFactory {
         if (placeActionValue != null) {
             Action placeAction = this.getActionFromConfiguration(equipment, "place", placeActionValue);
 
-            List<GameSound> placeSounds = DefaultGameSound.parseSounds(rootSection.getString("placing.place-sound"));
+            List<GameSound> placeSounds = DefaultGameSound.parseSounds(rootSection.getString("placing.place-sounds"));
             Map<DamageType, Double> resistances = this.getResistances(rootSection);
             Material material = this.getMaterialFromConfiguration(equipment, "place material", rootSection.getString("placing.material"));
             double health = rootSection.getDouble("deploy.health");

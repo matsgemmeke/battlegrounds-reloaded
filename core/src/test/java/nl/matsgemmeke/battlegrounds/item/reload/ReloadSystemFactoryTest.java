@@ -43,7 +43,7 @@ public class ReloadSystemFactoryTest {
         int duration = 50;
 
         when(section.getInt("duration")).thenReturn(duration);
-        when(section.getString("sound")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
+        when(section.getString("sounds")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(section.getString("type")).thenReturn("MAGAZINE");
 
         MagazineReloadSystem reloadSystem = mock(MagazineReloadSystem.class);
@@ -66,7 +66,7 @@ public class ReloadSystemFactoryTest {
         int duration = 50;
 
         when(section.getInt("duration")).thenReturn(duration);
-        when(section.getString("sound")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
+        when(section.getString("sounds")).thenReturn("ENTITY_BLAZE_HURT-3-2-0");
         when(section.getString("type")).thenReturn("MANUAL_INSERTION");
 
         ManualInsertionReloadSystem reloadSystem = mock(ManualInsertionReloadSystem.class);

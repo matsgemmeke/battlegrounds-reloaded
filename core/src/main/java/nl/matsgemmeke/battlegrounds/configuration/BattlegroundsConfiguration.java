@@ -24,7 +24,7 @@ public class BattlegroundsConfiguration extends BasePluginConfiguration {
 
     @NotNull
     public String getGunTriggerSound() {
-        return this.checkConfigurationValue("item-gun-trigger-sound", "UI_BUTTON_CLICK-0.5-2-0");
+        return this.checkConfigurationValue("item-gun-trigger-sounds", "UI_BUTTON_CLICK-0.5-2-0");
     }
 
     @NotNull

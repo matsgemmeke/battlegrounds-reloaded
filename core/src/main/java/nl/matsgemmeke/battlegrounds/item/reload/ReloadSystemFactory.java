@@ -44,7 +44,7 @@ public class ReloadSystemFactory {
             throw new WeaponFactoryCreationException("Error while getting reload system type \"" + type + "\"");
         }
 
-        List<GameSound> reloadSounds = DefaultGameSound.parseSounds(section.getString("sound"));
+        List<GameSound> reloadSounds = DefaultGameSound.parseSounds(section.getString("sounds"));
         int duration = section.getInt("duration");
 
         ReloadProperties properties = new ReloadProperties(reloadSounds, duration);

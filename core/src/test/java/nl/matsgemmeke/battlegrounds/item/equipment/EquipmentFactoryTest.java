@@ -258,7 +258,7 @@ public class EquipmentFactoryTest {
 
         Section soundSection = mock(Section.class);
         when(soundSection.getIntList("intervals")).thenReturn(intervals);
-        when(soundSection.getString("sound")).thenReturn("");
+        when(soundSection.getString("sounds")).thenReturn("");
 
         Section projectileSection = mock(Section.class);
         when(projectileSection.getSection("effects.sound")).thenReturn(soundSection);
