@@ -21,6 +21,6 @@ public class RequiredValidatorTest {
         RequiredValidator<String> validator = new RequiredValidator<>();
         Optional<String> error = validator.validate("test", null);
 
-        assertThat(error).hasValue("Missing required 'test' value");
+        assertThat(error).hasValue("Missing required value at 'test'");
     }
 }

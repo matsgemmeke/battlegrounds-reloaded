@@ -113,8 +113,8 @@ public class WeaponCreatorProviderTest {
         assertThat(weaponCreator.exists("OLYMPIA")).isFalse();
         assertThat(weaponCreator.exists("MP5")).isFalse();
 
-        verify(logger).severe("An error occurred while loading item 'OLYMPIA': Missing required 'name' value");
-        verify(logger).severe("An error occurred while loading item 'MP5': Missing required 'name' value");
+        verify(logger).severe("An error occurred while loading item 'OLYMPIA': Missing required value at 'name'");
+        verify(logger).severe("An error occurred while loading item 'MP5': Missing required value at 'name'");
     }
 
     @Test

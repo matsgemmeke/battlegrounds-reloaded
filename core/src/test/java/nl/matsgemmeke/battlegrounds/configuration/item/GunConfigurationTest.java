@@ -29,7 +29,7 @@ public class GunConfigurationTest {
 
         assertThatThrownBy(configuration::createSpec)
                 .isInstanceOf(InvalidItemConfigurationException.class)
-                .hasMessage("Missing required 'name' value");
+                .hasMessage("Missing required value at 'name'");
     }
 
     @Test

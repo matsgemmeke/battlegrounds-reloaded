@@ -10,7 +10,7 @@ public class RequiredValidator<T> implements Validator<T> {
     @NotNull
     public Optional<String> validate(@NotNull String route, @Nullable T value) {
         if (value == null) {
-            return Optional.of("Missing required '%s' value".formatted(route));
+            return Optional.of("Missing required value at '%s'".formatted(route));
         }
 
         return Optional.empty();
