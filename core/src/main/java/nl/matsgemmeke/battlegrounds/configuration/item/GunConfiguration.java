@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpecification
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.validation.ConditionalRequiredValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.OneOfValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
@@ -15,6 +16,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 public class GunConfiguration {
 
@@ -199,14 +201,17 @@ public class GunConfiguration {
         Integer amountOfShots = new FieldSpecResolver<Integer>()
                 .route(FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE)
                 .value(yamlReader.getInt(FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE))
+                .validate(new ConditionalRequiredValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, Set.of("BURST_MODE")))
                 .resolve();
         Integer rateOfFire = new FieldSpecResolver<Integer>()
                 .route(FIRE_MODE_RATE_OF_FIRE_ROUTE)
                 .value(yamlReader.getInt(FIRE_MODE_RATE_OF_FIRE_ROUTE))
+                .validate(new ConditionalRequiredValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, Set.of("BURST_MODE", "FULLY_AUTOMATIC")))
                 .resolve();
         Long delayBetweenShots = new FieldSpecResolver<Long>()
                 .route(FIRE_MODE_DELAY_BETWEEN_SHOTS_ROUTE)
                 .value(yamlReader.getLong(FIRE_MODE_DELAY_BETWEEN_SHOTS_ROUTE))
+                .validate(new ConditionalRequiredValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, Set.of("SEMI_AUTOMATIC")))
                 .resolve();
         FireModeSpecification fireMode = new FireModeSpecification(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
 
@@ -231,14 +236,17 @@ public class GunConfiguration {
             Long kickbackDuration = new FieldSpecResolver<Long>()
                     .route(RECOIL_KICKBACK_DURATION_ROUTE)
                     .value(yamlReader.getLong(RECOIL_KICKBACK_DURATION_ROUTE))
+                    .validate(new ConditionalRequiredValidator<>(RECOIL_TYPE_ROUTE, recoilType, Set.of("CAMERA_MOVEMENT")))
                     .resolve();
             Float recoveryRate = new FieldSpecResolver<Float>()
                     .route(RECOIL_RECOVERY_RATE_ROUTE)
                     .value(yamlReader.getFloat(RECOIL_RECOVERY_RATE_ROUTE))
+                    .validate(new ConditionalRequiredValidator<>(RECOIL_TYPE_ROUTE, recoilType, Set.of("CAMERA_MOVEMENT")))
                     .resolve();
             Long recoveryDuration = new FieldSpecResolver<Long>()
                     .route(RECOIL_RECOVERY_DURATION_ROUTE)
                     .value(yamlReader.getLong(RECOIL_RECOVERY_DURATION_ROUTE))
+                    .validate(new ConditionalRequiredValidator<>(RECOIL_TYPE_ROUTE, recoilType, Set.of("CAMERA_MOVEMENT")))
                     .resolve();
 
             recoil = new RecoilSpecification(recoilType, horizontalRecoilValues, verticalRecoilValues, kickbackDuration, recoveryRate, recoveryDuration);

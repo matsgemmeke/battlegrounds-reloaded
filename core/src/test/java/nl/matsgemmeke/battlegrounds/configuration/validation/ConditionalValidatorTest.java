@@ -30,6 +30,6 @@ public class ConditionalValidatorTest {
         ConditionalRequiredValidator<Integer, String> validator = new ConditionalRequiredValidator<>("fire-mode", "FULLY_AUTOMATIC", Set.of("FULLY_AUTOMATIC"));
         Optional<String> error = validator.validate("rate-of-fire", null);
 
-        assertThat(error).hasValue("Missing required value at 'rate-of-fire' when 'fire-mode' equals 'FULLY_AUTOMATIC'");
+        assertThat(error).hasValue("Value at 'rate-of-fire' is required when 'fire-mode' is set to 'FULLY_AUTOMATIC'");
     }
 }

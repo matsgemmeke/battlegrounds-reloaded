@@ -58,7 +58,7 @@ public class GunConfigurationTest {
         String fireModeType = "FULLY_AUTOMATIC";
         Integer rateOfFire = 600;
 
-        String recoilType = "CAMERA_MOVEMENT";
+        String recoilType = "RANDOM_SPREAD";
         List<Float> horizontalRecoilValues = List.of(0.1f);
         List<Float> verticalRecoilValues = List.of(0.2f);
 

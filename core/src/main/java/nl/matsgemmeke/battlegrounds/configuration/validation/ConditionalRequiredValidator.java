@@ -33,7 +33,7 @@ public class ConditionalRequiredValidator<T, S> implements Validator<T> {
     @NotNull
     public Optional<String> validate(@NotNull String route, @Nullable T value) {
         if (value == null && expectedValues.contains(conditionValue)) {
-            return Optional.of("Missing required value at '%s' when '%s' equals '%s'".formatted(route, conditionRoute, conditionValue));
+            return Optional.of("Value at '%s' is required when '%s' is set to '%s'".formatted(route, conditionRoute, conditionValue));
         }
 
         return Optional.empty();
