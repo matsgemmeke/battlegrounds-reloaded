@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import jakarta.inject.Named;
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.GunConfiguration;
@@ -132,13 +131,9 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
             GunConfiguration configuration = new GunConfiguration(yamlReader);
 
-            ItemConfiguration itemConfiguration = new ItemConfiguration(file, null);
-            itemConfiguration.load();
-
             String id = document.getString("id");
             GunSpec spec = configuration.createSpec();
 
-            creator.addConfigurationFactory(id, itemConfiguration);
             creator.addGunSpec(id, spec);
         }
     }

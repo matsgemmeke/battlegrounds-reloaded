@@ -22,12 +22,12 @@ public class DefaultScopeAttachmentTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
 
+        List<Float> magnifications = List.of(-0.1f, -0.15f, -0.2f);
         List<GameSound> useSounds = List.of(mock(GameSound.class));
         List<GameSound> stopSounds = List.of(mock(GameSound.class));
         List<GameSound> changeMagnificationSounds = List.of(mock(GameSound.class));
-        List<Float> magnificationSettings = List.of(-0.1f, -0.15f, -0.2f);
 
-        properties = new ScopeProperties(useSounds, stopSounds, changeMagnificationSounds, magnificationSettings);
+        properties = new ScopeProperties(magnifications, useSounds, stopSounds, changeMagnificationSounds);
     }
 
     @Test
@@ -103,9 +103,9 @@ public class DefaultScopeAttachmentTest {
     }
 
     @Test
-    public void shouldNotChangeMagnificationIfItHasNoMagnificationSettings() {
-        List<Float> magnificationSettings = List.of(-0.1f);
-        ScopeProperties properties = new ScopeProperties(List.of(), List.of(), List.of(), magnificationSettings);
+    public void shouldNotChangeMagnificationIfItHasNoMagnifications() {
+        List<Float> magnifications = List.of(-0.1f);
+        ScopeProperties properties = new ScopeProperties(magnifications, List.of(), List.of(), List.of());
         ScopeUser scopeUser = mock(ScopeUser.class);
 
         DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);

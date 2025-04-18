@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
@@ -60,13 +58,11 @@ public class FirearmFactoryTest {
     private GunRegistry gunRegistry;
     private FirearmControlsFactory controlsFactory;
     private FireModeFactory fireModeFactory;
-    private ItemConfiguration itemConfiguration;
     private ItemFactory itemFactory;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
     private RecoilProducerFactory recoilProducerFactory;
     private ReloadSystemFactory reloadSystemFactory;
-    private Section rootSection;
     private SpreadPatternFactory spreadPatternFactory;
 
     @BeforeEach
@@ -101,11 +97,6 @@ public class FirearmFactoryTest {
         keyCreator = mock(NamespacedKeyCreator.class);
         when(keyCreator.create("battlegrounds-gun")).thenReturn(key);
 
-        rootSection = mock(Section.class);
-
-        itemConfiguration = mock(ItemConfiguration.class);
-        when(itemConfiguration.getRoot()).thenReturn(rootSection);
-
         bukkit = mockStatic(Bukkit.class);
         bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
     }
@@ -126,7 +117,7 @@ public class FirearmFactoryTest {
         ItemStackSpec itemSpec = new ItemStackSpec("IRON_HOE", "Test Gun", ITEM_DAMAGE);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
-        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, null, null);
+        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, null, null, null);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpec), any(Firearm.class))).thenReturn(controls);
@@ -140,7 +131,7 @@ public class FirearmFactoryTest {
         when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.create(gunSpec, itemConfiguration, gameKey);
+        Firearm firearm = firearmFactory.create(gunSpec, gameKey);
 
         assertThat(firearm).isInstanceOf(DefaultFirearm.class);
         assertThat(firearm.getName()).isEqualTo("Test Gun");
@@ -163,7 +154,7 @@ public class FirearmFactoryTest {
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("BUCKSHOT", 1, 0.5f, 0.5f);
-        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, null, spreadPatternSpec);
+        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, null, null, spreadPatternSpec);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpec), any(Firearm.class))).thenReturn(controls);
@@ -175,7 +166,7 @@ public class FirearmFactoryTest {
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.create(gunSpec, itemConfiguration, gameKey);
+        Firearm firearm = firearmFactory.create(gunSpec, gameKey);
 
         assertThat(firearm).isInstanceOf(DefaultFirearm.class);
 
@@ -189,7 +180,7 @@ public class FirearmFactoryTest {
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
         RecoilSpec recoilSpec = new RecoilSpec("RANDOM_SPREAD", List.of(), List.of(), null, null, null);
-        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, null);
+        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, null, null);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpec), any(Firearm.class))).thenReturn(controls);
@@ -204,7 +195,7 @@ public class FirearmFactoryTest {
         when(recoilProducerFactory.create(recoilSpec)).thenReturn(recoilProducer);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.create(gunSpec, itemConfiguration, gameKey);
+        Firearm firearm = firearmFactory.create(gunSpec, gameKey);
 
         assertInstanceOf(DefaultFirearm.class, firearm);
 
@@ -213,14 +204,12 @@ public class FirearmFactoryTest {
 
     @Test
     public void createMakesFirearmInstanceWithScopeAttachmentIfConfigurationIsPresent() {
-        Section scopeSection = mock(Section.class);
-        when(scopeSection.getFloatList("magnifications")).thenReturn(List.of(-0.1f, -0.2f));
-
         ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpec itemSpec = new ItemStackSpec("IRON_HOE", "Test Gun", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
-        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, null, null);
+        ScopeSpec scopeSpec = new ScopeSpec(List.of(-0.1f, -0.2f), null, null, null);
+        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, null, scopeSpec, null);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpec), any(Firearm.class))).thenReturn(controls);
@@ -231,10 +220,8 @@ public class FirearmFactoryTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
 
-        when(rootSection.getSection("scope")).thenReturn(scopeSection);
-
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.create(gunSpec, itemConfiguration, gameKey);
+        Firearm firearm = firearmFactory.create(gunSpec, gameKey);
 
         assertInstanceOf(DefaultFirearm.class, firearm);
         assertNotNull(firearm.getScopeAttachment());
@@ -250,7 +237,7 @@ public class FirearmFactoryTest {
         ItemStackSpec itemSpec = new ItemStackSpec("IRON_HOE", "Test Gun", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
-        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, null, null);
+        GunSpec gunSpec = new GunSpec("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, null, null, null);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpec), any(Firearm.class))).thenReturn(controls);
@@ -262,7 +249,7 @@ public class FirearmFactoryTest {
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
-        Firearm firearm = firearmFactory.create(gunSpec, itemConfiguration, gameKey, gamePlayer);
+        Firearm firearm = firearmFactory.create(gunSpec, gameKey, gamePlayer);
 
         assertInstanceOf(DefaultFirearm.class, firearm);
         assertEquals(gamePlayer, firearm.getHolder());

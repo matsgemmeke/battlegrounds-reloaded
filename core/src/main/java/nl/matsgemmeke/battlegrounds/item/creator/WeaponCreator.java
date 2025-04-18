@@ -1,11 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,24 +21,11 @@ public class WeaponCreator {
     @NotNull
     private FirearmFactory firearmFactory;
     @NotNull
-    private Map<String, ItemConfiguration> configurations;
-    @NotNull
     private Map<String, GunSpec> gunSpecs;
 
     public WeaponCreator(@NotNull FirearmFactory firearmFactory) {
         this.firearmFactory = firearmFactory;
-        this.configurations = new HashMap<>();
         this.gunSpecs = new HashMap<>();
-    }
-
-    /**
-     * Adds a {@link ItemConfiguration} to the provider along with its corresponding {@link WeaponFactory}.
-     *
-     * @param configuration the item configuration for the weapons
-     * @return whether the weapon factory was added
-     */
-    public void addConfigurationFactory(@NotNull String weaponId, @NotNull ItemConfiguration configuration) {
-        configurations.put(weaponId, configuration);
     }
 
     public void addGunSpec(@NotNull String id, @NotNull GunSpec spec) {
@@ -61,9 +46,8 @@ public class WeaponCreator {
     public Weapon createWeapon(@NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey, @NotNull String weaponId) {
         if (gunSpecs.containsKey(weaponId)) {
             GunSpec spec = gunSpecs.get(weaponId);
-            ItemConfiguration configuration = configurations.get(weaponId);
 
-            return firearmFactory.create(spec, configuration, gameKey, gamePlayer);
+            return firearmFactory.create(spec, gameKey, gamePlayer);
         }
 
         throw new IllegalArgumentException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponId));

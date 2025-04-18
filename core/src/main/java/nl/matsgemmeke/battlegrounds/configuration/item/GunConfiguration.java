@@ -65,6 +65,11 @@ public class GunConfiguration {
     private static final String RECOIL_KICKBACK_DURATION_ROUTE = "shooting.recoil.kickback-duration";
     private static final String RECOIL_RECOVERY_RATE_ROUTE = "shooting.recoil.recovery-rate";
     private static final String RECOIL_RECOVERY_DURATION_ROUTE = "shooting.recoil.recovery-duration";
+    
+    private static final String SCOPE_MAGNIFICATIONS_ROUTE = "scope.magnifications";
+    private static final String SCOPE_USE_SOUNDS_ROUTE = "scope.use-sounds";
+    private static final String SCOPE_STOP_SOUNDS_ROUTE = "scope.stop-sounds";
+    private static final String SCOPE_CHANGE_MAGNIFICATION_SOUNDS_ROUTE = "scope.change-magnification-sounds";
 
     private static final String SPREAD_PATTERN_TYPE_ROUTE = "shooting.spread-pattern.type";
     private static final String SPREAD_PATTERN_PROJECTILE_AMOUNT_ROUTE = "shooting.spread-pattern.projectile-amount";
@@ -235,6 +240,7 @@ public class GunConfiguration {
         FireModeSpec fireModeSpec = new FireModeSpec(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
 
         RecoilSpec recoilSpec = null;
+        ScopeSpec scopeSpec = null;
         SpreadPatternSpec spreadPatternSpec = null;
 
         if (yamlReader.contains("shooting.recoil")) {
@@ -270,6 +276,28 @@ public class GunConfiguration {
 
             recoilSpec = new RecoilSpec(recoilType, horizontalRecoilValues, verticalRecoilValues, kickbackDuration, recoveryRate, recoveryDuration);
         }
+        
+        if (yamlReader.contains("scope")) {
+            List<Float> magnifications = new FieldSpecResolver<List<Float>>()
+                    .route(SCOPE_MAGNIFICATIONS_ROUTE)
+                    .value(yamlReader.getOptionalFloatList(SCOPE_MAGNIFICATIONS_ROUTE).orElse(null))
+                    .validate(new RequiredValidator<>())
+                    .resolve();
+            String useSounds = new FieldSpecResolver<String>()
+                    .route(SCOPE_USE_SOUNDS_ROUTE)
+                    .value(yamlReader.getString(SCOPE_USE_SOUNDS_ROUTE))
+                    .resolve();
+            String stopSounds = new FieldSpecResolver<String>()
+                    .route(SCOPE_STOP_SOUNDS_ROUTE)
+                    .value(yamlReader.getString(SCOPE_STOP_SOUNDS_ROUTE))
+                    .resolve();
+            String changeMagnficationSounds = new FieldSpecResolver<String>()
+                    .route(SCOPE_CHANGE_MAGNIFICATION_SOUNDS_ROUTE)
+                    .value(yamlReader.getString(SCOPE_CHANGE_MAGNIFICATION_SOUNDS_ROUTE))
+                    .resolve();
+
+            scopeSpec = new ScopeSpec(magnifications, useSounds, stopSounds, changeMagnficationSounds);
+        }
 
         if (yamlReader.contains("shooting.spread-pattern")) {
             String spreadPatternType = new FieldSpecResolver<String>()
@@ -297,6 +325,6 @@ public class GunConfiguration {
             spreadPatternSpec = new SpreadPatternSpec(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpec(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, spreadPatternSpec);
+        return new GunSpec(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
     }
 }

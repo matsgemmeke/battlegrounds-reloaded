@@ -1,11 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Inject;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
@@ -84,8 +83,8 @@ public class FirearmFactory {
     }
 
     @NotNull
-    public Firearm create(@NotNull GunSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
-        Firearm firearm = this.createInstance(spec, configuration, gameKey);
+    public Firearm create(@NotNull GunSpec spec, @NotNull GameKey gameKey) {
+        Firearm firearm = this.createInstance(spec, gameKey);
 
         GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
         gunRegistry.registerItem(firearm);
@@ -94,8 +93,8 @@ public class FirearmFactory {
     }
 
     @NotNull
-    public Firearm create(@NotNull GunSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
-        Firearm firearm = this.createInstance(spec, configuration, gameKey);
+    public Firearm create(@NotNull GunSpec spec, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+        Firearm firearm = this.createInstance(spec, gameKey);
         firearm.setHolder(gamePlayer);
 
         GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
@@ -105,13 +104,11 @@ public class FirearmFactory {
     }
 
     @NotNull
-    private Firearm createInstance(@NotNull GunSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+    private Firearm createInstance(@NotNull GunSpec spec, @NotNull GameKey gameKey) {
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
         CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
         DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
         TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
-
-        Section section = configuration.getRoot();
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setName(spec.name());
@@ -134,8 +131,6 @@ public class FirearmFactory {
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds());
         firearm.setShotSounds(shotSounds);
 
-        Section scopeSection = section.getSection("scope");
-
         ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloadSpec(), firearm, audioEmitter);
         firearm.setReloadSystem(reloadSystem);
 
@@ -146,6 +141,7 @@ public class FirearmFactory {
         firearm.setFireMode(fireMode);
 
         RecoilSpec recoilSpec = spec.recoilSpec();
+        ScopeSpec scopeSpec = spec.scopeSpec();
         SpreadPatternSpec spreadPatternSpec = spec.spreadPatternSpec();
 
         if (recoilSpec != null) {
@@ -153,22 +149,21 @@ public class FirearmFactory {
             firearm.setRecoilProducer(recoilProducer);
         }
 
-        if (spreadPatternSpec != null) {
-            SpreadPattern spreadPattern = spreadPatternFactory.create(spreadPatternSpec);
-            firearm.setSpreadPattern(spreadPattern);
-        }
+        if (scopeSpec != null) {
+            List<Float> magnifications = scopeSpec.magnifications();
+            List<GameSound> useSounds = DefaultGameSound.parseSounds(scopeSpec.useSounds());
+            List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSpec.stopSounds());
+            List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSpec.changeMagnificationSounds());
 
-        // Scope attachment creation (optional)
-        if (scopeSection != null) {
-            List<GameSound> useSounds = DefaultGameSound.parseSounds(scopeSection.getString("use-sounds"));
-            List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSection.getString("stop-sounds"));
-            List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSection.getString("change-magnification-sounds"));
-            List<Float> magnificationSettings = scopeSection.getFloatList("magnifications");
-
-            ScopeProperties properties = new ScopeProperties(useSounds, stopSounds, changeMagnificationSounds, magnificationSettings);
+            ScopeProperties properties = new ScopeProperties(magnifications, useSounds, stopSounds, changeMagnificationSounds);
             DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
 
             firearm.setScopeAttachment(scopeAttachment);
+        }
+
+        if (spreadPatternSpec != null) {
+            SpreadPattern spreadPattern = spreadPatternFactory.create(spreadPatternSpec);
+            firearm.setSpreadPattern(spreadPattern);
         }
 
         UUID uuid = UUID.randomUUID();

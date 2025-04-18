@@ -66,6 +66,8 @@ public class GunConfigurationTest {
         List<Float> horizontalRecoilValues = List.of(0.1f);
         List<Float> verticalRecoilValues = List.of(0.2f);
 
+        List<Float> magnifications = List.of(-0.1f, -0.2f);
+
         String spreadPatternType = "BUCKSHOT";
         Integer projectileAmount = 3;
         Float horizontalSpread = 0.4f;
@@ -114,6 +116,12 @@ public class GunConfigurationTest {
         when(yamlReader.getOptionalLong("shooting.recoil.kickback-duration")).thenReturn(Optional.empty());
         when(yamlReader.getOptionalFloat("shooting.recoil.recovery-rate")).thenReturn(Optional.empty());
         when(yamlReader.getOptionalLong("shooting.recoil.recovery-duration")).thenReturn(Optional.empty());
+
+        when(yamlReader.contains("scope")).thenReturn(true);
+        when(yamlReader.getOptionalFloatList("scope.magnifications")).thenReturn(Optional.of(magnifications));
+        when(yamlReader.getString("scope.use-sounds")).thenReturn(null);
+        when(yamlReader.getString("scope.stop-sounds")).thenReturn(null);
+        when(yamlReader.getString("scope.change-magnification-sounds")).thenReturn(null);
 
         when(yamlReader.contains("shooting.spread-pattern")).thenReturn(true);
         when(yamlReader.getString("shooting.spread-pattern.type")).thenReturn(spreadPatternType);
@@ -167,6 +175,12 @@ public class GunConfigurationTest {
         assertThat(spec.recoilSpec().kickbackDuration()).isNull();
         assertThat(spec.recoilSpec().recoveryRate()).isEqualTo(0.0f);
         assertThat(spec.recoilSpec().recoveryDuration()).isEqualTo(0L);
+
+        assertThat(spec.scopeSpec()).isNotNull();
+        assertThat(spec.scopeSpec().magnifications()).isEqualTo(magnifications);
+        assertThat(spec.scopeSpec().useSounds()).isNull();
+        assertThat(spec.scopeSpec().stopSounds()).isNull();
+        assertThat(spec.scopeSpec().changeMagnificationSounds()).isNull();
 
         assertThat(spec.spreadPatternSpec()).isNotNull();
         assertThat(spec.spreadPatternSpec().type()).isEqualTo(spreadPatternType);
