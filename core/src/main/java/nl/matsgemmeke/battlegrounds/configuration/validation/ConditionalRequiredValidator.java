@@ -17,12 +17,16 @@ import java.util.Set;
  */
 public class ConditionalRequiredValidator<T, S> implements Validator<T> {
 
-    @Nullable
+    @NotNull
     private final S conditionValue;
     @NotNull
     private final Set<S> expectedValues;
     @NotNull
     private final String conditionRoute;
+
+    public ConditionalRequiredValidator(@NotNull String conditionRoute, @NotNull S conditionValue, @NotNull S expectedValue) {
+        this(conditionRoute, conditionValue, Set.of(expectedValue));
+    }
 
     public ConditionalRequiredValidator(@NotNull String conditionRoute, @NotNull S conditionValue, @NotNull Set<S> expectedValues) {
         this.conditionRoute = conditionRoute;

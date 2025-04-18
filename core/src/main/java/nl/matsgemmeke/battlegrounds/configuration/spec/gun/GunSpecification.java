@@ -1,9 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.gun;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpecification;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpecification;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +18,7 @@ public record GunSpecification(
         @NotNull Double longRangeDistance,
         @NotNull Double headshotDamageMultiplier,
         @Nullable String shotSounds,
+        @NotNull ReloadSpecification reloadSpec,
         @NotNull ItemStackSpecification item,
         @NotNull ControlsSpecification controls,
         @NotNull FireModeSpecification fireMode,

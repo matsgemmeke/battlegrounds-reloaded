@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 public class YamlReader {
 
@@ -35,24 +36,24 @@ public class YamlReader {
         return document.getDouble(route);
     }
 
-    @Nullable
-    public Float getFloat(@NotNull String route) {
-        return document.getFloat(route);
+    @NotNull
+    public Optional<Float> getOptionalFloat(@NotNull String route) {
+        return document.getOptionalFloat(route);
     }
 
-    @Nullable
-    public List<Float> getFloatList(@NotNull String route) {
-        return document.getFloatList(route);
+    @NotNull
+    public Optional<List<Float>> getOptionalFloatList(@NotNull String route) {
+        return document.getOptionalFloatList(route);
     }
 
-    @Nullable
-    public Integer getInt(@NotNull String route) {
-        return document.getInt(route);
+    @NotNull
+    public Optional<Integer> getOptionalInt(@NotNull String route) {
+        return document.getOptionalInt(route);
     }
 
-    @Nullable
-    public Long getLong(@NotNull String route) {
-        return document.getLong(route);
+    @NotNull
+    public Optional<Long> getOptionalLong(@NotNull String route) {
+        return document.getOptionalLong(route);
     }
 
     @Nullable

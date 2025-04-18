@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,6 +49,9 @@ public class GunConfigurationTest {
         Double longRangeDistance = 30.0;
         Double headshotDamageMultiplier = 2.0;
 
+        String reloadType = "MAGAZINE";
+        Long reloadDuration = 50L;
+
         String itemMaterial = "IRON_HOE";
         String itemDisplayName = "Test Gun %magazine_ammo%";
         Integer itemDamage = 1;
@@ -70,9 +74,9 @@ public class GunConfigurationTest {
         when(yamlReader.getString("name")).thenReturn(name);
         when(yamlReader.getString("description")).thenReturn(null);
 
-        when(yamlReader.getInt("ammo.magazine-size")).thenReturn(magazineSize);
-        when(yamlReader.getInt("ammo.max-magazine-amount")).thenReturn(maxMagazineAmount);
-        when(yamlReader.getInt("ammo.default-supply")).thenReturn(defaultMagazineAmount);
+        when(yamlReader.getOptionalInt("ammo.magazine-size")).thenReturn(Optional.of(magazineSize));
+        when(yamlReader.getOptionalInt("ammo.max-magazine-amount")).thenReturn(Optional.of(maxMagazineAmount));
+        when(yamlReader.getOptionalInt("ammo.default-supply")).thenReturn(Optional.of(defaultMagazineAmount));
 
         when(yamlReader.getDouble("shooting.range.short-range.damage")).thenReturn(shortRangeDamage);
         when(yamlReader.getDouble("shooting.range.short-range.distance")).thenReturn(shortRangeDistance);
@@ -84,9 +88,13 @@ public class GunConfigurationTest {
 
         when(yamlReader.getString("shooting.shot-sounds")).thenReturn(null);
 
+        when(yamlReader.getString("reloading.type")).thenReturn(reloadType);
+        when(yamlReader.getString("reloading.reload-sounds")).thenReturn(null);
+        when(yamlReader.getOptionalLong("reloading.duration")).thenReturn(Optional.of(reloadDuration));
+
         when(yamlReader.getString("item.material")).thenReturn(itemMaterial);
         when(yamlReader.getString("item.display-name")).thenReturn(itemDisplayName);
-        when(yamlReader.getInt("item.damage")).thenReturn(itemDamage);
+        when(yamlReader.getOptionalInt("item.damage")).thenReturn(Optional.of(itemDamage));
 
         when(yamlReader.getString("controls.reload")).thenReturn(reloadAction);
         when(yamlReader.getString("controls.shoot")).thenReturn(shootAction);
@@ -95,23 +103,23 @@ public class GunConfigurationTest {
         when(yamlReader.getString("controls.scope-change-magnification")).thenReturn(null);
 
         when(yamlReader.getString("shooting.fire-mode.type")).thenReturn(fireModeType);
-        when(yamlReader.getInt("shooting.fire-mode.amount-of-shots")).thenReturn(null);
-        when(yamlReader.getInt("shooting.fire-mode.rate-of-fire")).thenReturn(rateOfFire);
-        when(yamlReader.getLong("shooting.fire-mode.delay-between-shots")).thenReturn(null);
+        when(yamlReader.getOptionalInt("shooting.fire-mode.amount-of-shots")).thenReturn(Optional.empty());
+        when(yamlReader.getOptionalInt("shooting.fire-mode.rate-of-fire")).thenReturn(Optional.of(rateOfFire));
+        when(yamlReader.getOptionalLong("shooting.fire-mode.delay-between-shots")).thenReturn(Optional.empty());
 
         when(yamlReader.contains("shooting.recoil")).thenReturn(true);
         when(yamlReader.getString("shooting.recoil.type")).thenReturn(recoilType);
-        when(yamlReader.getFloatList("shooting.recoil.horizontal")).thenReturn(horizontalRecoilValues);
-        when(yamlReader.getFloatList("shooting.recoil.vertical")).thenReturn(verticalRecoilValues);
-        when(yamlReader.getLong("shooting.recoil.kickback-duration")).thenReturn(null);
-        when(yamlReader.getFloat("shooting.recoil.recovery-rate")).thenReturn(null);
-        when(yamlReader.getLong("shooting.recoil.recovery-duration")).thenReturn(null);
+        when(yamlReader.getOptionalFloatList("shooting.recoil.horizontal")).thenReturn(Optional.of(horizontalRecoilValues));
+        when(yamlReader.getOptionalFloatList("shooting.recoil.vertical")).thenReturn(Optional.of(verticalRecoilValues));
+        when(yamlReader.getOptionalLong("shooting.recoil.kickback-duration")).thenReturn(Optional.empty());
+        when(yamlReader.getOptionalFloat("shooting.recoil.recovery-rate")).thenReturn(Optional.empty());
+        when(yamlReader.getOptionalLong("shooting.recoil.recovery-duration")).thenReturn(Optional.empty());
 
         when(yamlReader.contains("shooting.spread-pattern")).thenReturn(true);
         when(yamlReader.getString("shooting.spread-pattern.type")).thenReturn(spreadPatternType);
-        when(yamlReader.getInt("shooting.spread-pattern.projectile-amount")).thenReturn(projectileAmount);
-        when(yamlReader.getFloat("shooting.spread-pattern.horizontal-spread")).thenReturn(horizontalSpread);
-        when(yamlReader.getFloat("shooting.spread-pattern.vertical-spread")).thenReturn(verticalSpread);
+        when(yamlReader.getOptionalInt("shooting.spread-pattern.projectile-amount")).thenReturn(Optional.of(projectileAmount));
+        when(yamlReader.getOptionalFloat("shooting.spread-pattern.horizontal-spread")).thenReturn(Optional.of(horizontalSpread));
+        when(yamlReader.getOptionalFloat("shooting.spread-pattern.vertical-spread")).thenReturn(Optional.of(verticalSpread));
 
         GunConfiguration configuration = new GunConfiguration(yamlReader);
         GunSpecification spec = configuration.createSpec();
@@ -133,6 +141,10 @@ public class GunConfigurationTest {
 
         assertThat(spec.shotSounds()).isNull();
 
+        assertThat(spec.reloadSpec().type()).isEqualTo(reloadType);
+        assertThat(spec.reloadSpec().reloadSounds()).isNull();
+        assertThat(spec.reloadSpec().duration()).isEqualTo(reloadDuration);
+
         assertThat(spec.item().material()).isEqualTo(itemMaterial);
         assertThat(spec.item().displayName()).isEqualTo(itemDisplayName);
         assertThat(spec.item().damage()).isEqualTo(itemDamage);
@@ -153,8 +165,8 @@ public class GunConfigurationTest {
         assertThat(spec.recoil().horizontalRecoilValues()).isEqualTo(horizontalRecoilValues);
         assertThat(spec.recoil().verticalRecoilValues()).isEqualTo(verticalRecoilValues);
         assertThat(spec.recoil().kickbackDuration()).isNull();
-        assertThat(spec.recoil().recoveryRate()).isNull();
-        assertThat(spec.recoil().recoveryDuration()).isNull();
+        assertThat(spec.recoil().recoveryRate()).isEqualTo(0.0f);
+        assertThat(spec.recoil().recoveryDuration()).isEqualTo(0L);
 
         assertThat(spec.spreadPattern()).isNotNull();
         assertThat(spec.spreadPattern().type()).isEqualTo(spreadPatternType);

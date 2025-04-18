@@ -17,7 +17,7 @@ level-unlocked: 18
 price: 600
 reloading:
   duration: 16
-  sounds: BLOCK_STONE_BUTTON_CLICK_OFF-1-2-12
+  reload-sounds: BLOCK_STONE_BUTTON_CLICK_OFF-1-2-12
   type: MANUAL_INSERTION
 shooting:
   fire-mode:

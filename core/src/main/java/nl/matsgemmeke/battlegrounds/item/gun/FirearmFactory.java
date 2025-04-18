@@ -134,8 +134,10 @@ public class FirearmFactory {
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(specification.shotSounds());
         firearm.setShotSounds(shotSounds);
 
-        Section reloadingSection = section.getSection("reloading");
         Section scopeSection = section.getSection("scope");
+
+        ReloadSystem reloadSystem = reloadSystemFactory.create(specification.reloadSpec(), firearm, audioEmitter);
+        firearm.setReloadSystem(reloadSystem);
 
         ItemControls<GunHolder> controls = controlsFactory.create(specification.controls(), firearm);
         firearm.setControls(controls);
@@ -155,14 +157,6 @@ public class FirearmFactory {
             SpreadPattern spreadPattern = spreadPatternFactory.create(spreadPatternSpecification);
             firearm.setSpreadPattern(spreadPattern);
         }
-
-        // Reload system creation
-        if (reloadingSection == null) {
-            throw new FirearmCreationException("Unable to create firearm " + specification.name() + ": the reloading configuration is missing");
-        }
-
-        ReloadSystem reloadSystem = reloadSystemFactory.create(firearm, reloadingSection, audioEmitter);
-        firearm.setReloadSystem(reloadSystem);
 
         // Scope attachment creation (optional)
         if (scopeSection != null) {

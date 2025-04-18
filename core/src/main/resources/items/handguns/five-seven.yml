@@ -17,7 +17,7 @@ level-unlocked: 1
 price: 750
 reloading:
   duration: 36
-  sounds: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+  reload-sounds: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
   type: MAGAZINE
 shooting:
   fire-mode:

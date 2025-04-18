@@ -2,10 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.creator;
 
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpecification;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpecification;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,12 +44,13 @@ public class WeaponCreatorTest {
     }
 
     private GunSpecification createGunSpecification() {
+        ReloadSpecification reloadSpec = new ReloadSpecification("MAGAZINE", null, 20L);
         ItemStackSpecification item = new ItemStackSpecification("STICK", "name", 1);
         ControlsSpecification controls = new ControlsSpecification("reload", "shoot", null, null, null);
         FireModeSpecification fireMode = new FireModeSpecification("test", null, null, null);
         RecoilSpecification recoil = new RecoilSpecification("recoil type", List.of(), List.of(), null, null, null);
         SpreadPatternSpecification spreadPattern = new SpreadPatternSpecification("pattern type", 1, 0.5f, 0.5f);
 
-        return new GunSpecification("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, item, controls, fireMode, recoil, spreadPattern);
+        return new GunSpecification("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, reloadSpec, item, controls, fireMode, recoil, spreadPattern);
     }
 }
