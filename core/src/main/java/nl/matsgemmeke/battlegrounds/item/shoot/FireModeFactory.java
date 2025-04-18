@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
@@ -29,23 +29,23 @@ public class FireModeFactory {
     /**
      * Creates a new {@link FireMode} instance based on the given specification.
      *
-     * @param specification the fire mode specification from the configuration
+     * @param spec the fire mode specification
      * @param item the associated item
      * @return a new {@link FireMode} instance
      */
     @NotNull
-    public FireMode create(@NotNull FireModeSpecification specification, @NotNull Shootable item) {
-        FireModeType fireModeType = FireModeType.valueOf(specification.type());
+    public FireMode create(@NotNull FireModeSpec spec, @NotNull Shootable item) {
+        FireModeType fireModeType = FireModeType.valueOf(spec.type());
 
         switch (fireModeType) {
             case BURST_MODE -> {
-                return burstModeFactory.create(item, specification.amountOfShots(), specification.rateOfFire());
+                return burstModeFactory.create(item, spec.amountOfShots(), spec.rateOfFire());
             }
             case FULLY_AUTOMATIC -> {
-                return fullyAutomaticModeFactory.create(item, specification.rateOfFire());
+                return fullyAutomaticModeFactory.create(item, spec.rateOfFire());
             }
             case SEMI_AUTOMATIC -> {
-                return semiAutomaticModeFactory.create(item, specification.delayBetweenShots());
+                return semiAutomaticModeFactory.create(item, spec.delayBetweenShots());
             }
         }
 

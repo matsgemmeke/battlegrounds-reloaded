@@ -125,14 +125,14 @@ public class FirearmFactoryTest {
         ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpec itemSpec = new ItemStackSpec("IRON_HOE", "Test Gun", ITEM_DAMAGE);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
-        FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
-        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpecification, null, null);
+        FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
+        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpec, null, null);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpecification), any(Firearm.class))).thenReturn(controls);
 
         FireMode fireMode = mock(FireMode.class);
-        when(fireModeFactory.create(eq(fireModeSpecification), any(Firearm.class))).thenReturn(fireMode);
+        when(fireModeFactory.create(eq(fireModeSpec), any(Firearm.class))).thenReturn(fireMode);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
@@ -161,15 +161,15 @@ public class FirearmFactoryTest {
         ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpec itemSpec = new ItemStackSpec("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
-        FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
+        FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
         SpreadPatternSpecification spreadPatternSpecification = new SpreadPatternSpecification("BUCKSHOT", 1, 0.5f, 0.5f);
-        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpecification, null, spreadPatternSpecification);
+        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpec, null, spreadPatternSpecification);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpecification), any(Firearm.class))).thenReturn(controls);
 
         FireMode fireMode = mock(FireMode.class);
-        when(fireModeFactory.create(eq(fireModeSpecification), any(Shootable.class))).thenReturn(fireMode);
+        when(fireModeFactory.create(eq(fireModeSpec), any(Shootable.class))).thenReturn(fireMode);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
@@ -187,15 +187,15 @@ public class FirearmFactoryTest {
         ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpec itemSpec = new ItemStackSpec("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
-        FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
+        FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
         RecoilSpecification recoilSpecification = new RecoilSpecification("RANDOM_SPREAD", List.of(), List.of(), null, null, null);
-        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpecification, recoilSpecification, null);
+        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpec, recoilSpecification, null);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpecification), any(Firearm.class))).thenReturn(controls);
 
         FireMode fireMode = mock(FireMode.class);
-        when(fireModeFactory.create(eq(fireModeSpecification), any(Firearm.class))).thenReturn(fireMode);
+        when(fireModeFactory.create(eq(fireModeSpec), any(Firearm.class))).thenReturn(fireMode);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
@@ -219,14 +219,14 @@ public class FirearmFactoryTest {
         ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpec itemSpec = new ItemStackSpec("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
-        FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
-        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpecification, null, null);
+        FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
+        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpec, null, null);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpecification), any(Firearm.class))).thenReturn(controls);
 
         FireMode fireMode = mock(FireMode.class);
-        when(fireModeFactory.create(eq(fireModeSpecification), any(Firearm.class))).thenReturn(fireMode);
+        when(fireModeFactory.create(eq(fireModeSpec), any(Firearm.class))).thenReturn(fireMode);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
@@ -249,14 +249,14 @@ public class FirearmFactoryTest {
         ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpec itemSpec = new ItemStackSpec("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
-        FireModeSpecification fireModeSpecification = new FireModeSpecification("SEMI_AUTOMATIC", null, null, 5L);
-        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpecification, null, null);
+        FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
+        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpec, null, null);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpecification), any(Firearm.class))).thenReturn(controls);
 
         FireMode fireMode = mock(FireMode.class);
-        when(fireModeFactory.create(eq(fireModeSpecification), any(Shootable.class))).thenReturn(fireMode);
+        when(fireModeFactory.create(eq(fireModeSpec), any(Shootable.class))).thenReturn(fireMode);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);

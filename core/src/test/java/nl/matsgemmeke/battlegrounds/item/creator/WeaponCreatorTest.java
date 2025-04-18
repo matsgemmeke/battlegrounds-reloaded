@@ -47,10 +47,10 @@ public class WeaponCreatorTest {
         ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpecification controls = new ControlsSpecification("reload", "shoot", null, null, null);
-        FireModeSpecification fireMode = new FireModeSpecification("test", null, null, null);
+        FireModeSpec fireModeSpec = new FireModeSpec("test", null, null, null);
         RecoilSpecification recoil = new RecoilSpecification("recoil type", List.of(), List.of(), null, null, null);
         SpreadPatternSpecification spreadPattern = new SpreadPatternSpecification("pattern type", 1, 0.5f, 0.5f);
 
-        return new GunSpecification("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, reloadSpec, itemSpec, controls, fireMode, recoil, spreadPattern);
+        return new GunSpecification("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, reloadSpec, itemSpec, controls, fireModeSpec, recoil, spreadPattern);
     }
 }

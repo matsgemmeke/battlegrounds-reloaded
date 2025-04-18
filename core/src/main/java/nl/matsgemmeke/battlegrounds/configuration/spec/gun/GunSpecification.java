@@ -21,7 +21,7 @@ public record GunSpecification(
         @NotNull ReloadSpec reloadSpec,
         @NotNull ItemStackSpec itemSpec,
         @NotNull ControlsSpecification controls,
-        @NotNull FireModeSpecification fireMode,
+        @NotNull FireModeSpec fireModeSpec,
         @Nullable RecoilSpecification recoil,
         @Nullable SpreadPatternSpecification spreadPattern
 ) { }

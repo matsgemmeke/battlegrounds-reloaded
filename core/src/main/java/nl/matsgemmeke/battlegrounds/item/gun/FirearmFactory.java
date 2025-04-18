@@ -142,7 +142,7 @@ public class FirearmFactory {
         ItemControls<GunHolder> controls = controlsFactory.create(specification.controls(), firearm);
         firearm.setControls(controls);
 
-        FireMode fireMode = fireModeFactory.create(specification.fireMode(), firearm);
+        FireMode fireMode = fireModeFactory.create(specification.fireModeSpec(), firearm);
         firearm.setFireMode(fireMode);
 
         RecoilSpecification recoilSpecification = specification.recoil();

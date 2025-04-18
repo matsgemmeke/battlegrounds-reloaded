@@ -232,7 +232,7 @@ public class GunConfiguration {
                 .value(yamlReader.getOptionalLong(FIRE_MODE_DELAY_BETWEEN_SHOTS_ROUTE).orElse(null))
                 .validate(new ConditionalRequiredValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, "SEMI_AUTOMATIC"))
                 .resolve();
-        FireModeSpecification fireMode = new FireModeSpecification(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
+        FireModeSpec fireModeSpec = new FireModeSpec(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
 
         RecoilSpecification recoil = null;
         SpreadPatternSpecification spreadPattern = null;
@@ -297,6 +297,6 @@ public class GunConfiguration {
             spreadPattern = new SpreadPatternSpecification(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controls, fireMode, recoil, spreadPattern);
+        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controls, fireModeSpec, recoil, spreadPattern);
     }
 }

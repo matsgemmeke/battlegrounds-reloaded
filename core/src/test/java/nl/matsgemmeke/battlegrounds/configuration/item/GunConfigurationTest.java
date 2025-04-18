@@ -155,10 +155,10 @@ public class GunConfigurationTest {
         assertThat(spec.controls().stopScopeAction()).isNull();
         assertThat(spec.controls().changeScopeMagnificationAction()).isNull();
 
-        assertThat(spec.fireMode().type()).isEqualTo(fireModeType);
-        assertThat(spec.fireMode().amountOfShots()).isNull();
-        assertThat(spec.fireMode().rateOfFire()).isEqualTo(rateOfFire);
-        assertThat(spec.fireMode().delayBetweenShots()).isNull();
+        assertThat(spec.fireModeSpec().type()).isEqualTo(fireModeType);
+        assertThat(spec.fireModeSpec().amountOfShots()).isNull();
+        assertThat(spec.fireModeSpec().rateOfFire()).isEqualTo(rateOfFire);
+        assertThat(spec.fireModeSpec().delayBetweenShots()).isNull();
 
         assertThat(spec.recoil()).isNotNull();
         assertThat(spec.recoil().type()).isEqualTo(recoilType);
