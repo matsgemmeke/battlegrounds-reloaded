@@ -162,7 +162,7 @@ public class GunConfiguration {
                 .value(yamlReader.getOptionalLong(RELOAD_DURATION_ROUTE).orElse(null))
                 .validate(new RequiredValidator<>())
                 .resolve();
-        ReloadSpecification reloadSpec = new ReloadSpecification(reloadType, reloadSounds, reloadDuration);
+        ReloadSpec reloadSpec = new ReloadSpec(reloadType, reloadSounds, reloadDuration);
 
         String itemMaterial = new FieldSpecResolver<String>()
                 .route(ITEM_MATERIAL_ROUTE)

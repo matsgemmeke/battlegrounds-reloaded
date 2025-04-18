@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ReloadSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ReloadSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -33,7 +33,7 @@ public class ReloadSystemFactory {
      * @return a new {@link ReloadSystem} instance
      */
     @NotNull
-    public ReloadSystem create(@NotNull ReloadSpecification spec, @NotNull Reloadable item, @NotNull AudioEmitter audioEmitter) {
+    public ReloadSystem create(@NotNull ReloadSpec spec, @NotNull Reloadable item, @NotNull AudioEmitter audioEmitter) {
         ReloadSystemType reloadSystemType = ReloadSystemType.valueOf(spec.type());
         List<GameSound> reloadSounds = DefaultGameSound.parseSounds(spec.reloadSounds());
         long duration = spec.duration();

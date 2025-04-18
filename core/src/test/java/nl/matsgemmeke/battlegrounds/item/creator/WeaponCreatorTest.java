@@ -44,7 +44,7 @@ public class WeaponCreatorTest {
     }
 
     private GunSpecification createGunSpecification() {
-        ReloadSpecification reloadSpec = new ReloadSpecification("MAGAZINE", null, 20L);
+        ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpecification item = new ItemStackSpecification("STICK", "name", 1);
         ControlsSpecification controls = new ControlsSpecification("reload", "shoot", null, null, null);
         FireModeSpecification fireMode = new FireModeSpecification("test", null, null, null);

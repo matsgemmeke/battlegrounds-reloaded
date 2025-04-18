@@ -18,7 +18,7 @@ public record GunSpecification(
         @NotNull Double longRangeDistance,
         @NotNull Double headshotDamageMultiplier,
         @Nullable String shotSounds,
-        @NotNull ReloadSpecification reloadSpec,
+        @NotNull ReloadSpec reloadSpec,
         @NotNull ItemStackSpecification item,
         @NotNull ControlsSpecification controls,
         @NotNull FireModeSpecification fireMode,

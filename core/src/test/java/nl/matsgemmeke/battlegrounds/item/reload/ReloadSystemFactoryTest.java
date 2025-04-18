@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ReloadSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ReloadSpec;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
@@ -37,7 +37,7 @@ public class ReloadSystemFactoryTest {
 
     @Test
     public void createMakesReloadSystemInstanceForMagazineReload() {
-        ReloadSpecification reloadSpec = new ReloadSpecification("MAGAZINE", "ENTITY_BLAZE_HURT-3-2-0", 50L);
+        ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", "ENTITY_BLAZE_HURT-3-2-0", 50L);
 
         MagazineReloadSystem reloadSystem = mock(MagazineReloadSystem.class);
         when(magazineReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage), eq(audioEmitter))).thenReturn(reloadSystem);
@@ -56,7 +56,7 @@ public class ReloadSystemFactoryTest {
 
     @Test
     public void createMakesReloadSystemInstanceForManualReload() {
-        ReloadSpecification reloadSpec = new ReloadSpecification("MANUAL_INSERTION", "ENTITY_BLAZE_HURT-3-2-0", 50L);
+        ReloadSpec reloadSpec = new ReloadSpec("MANUAL_INSERTION", "ENTITY_BLAZE_HURT-3-2-0", 50L);
 
         ManualInsertionReloadSystem reloadSystem = mock(ManualInsertionReloadSystem.class);
         when(manualInsertionReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage), eq(audioEmitter))).thenReturn(reloadSystem);
