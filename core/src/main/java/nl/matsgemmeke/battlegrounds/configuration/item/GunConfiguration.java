@@ -180,7 +180,7 @@ public class GunConfiguration {
                 .value(yamlReader.getOptionalInt(ITEM_DAMAGE_ROUTE).orElse(null))
                 .validate(new RequiredValidator<>())
                 .resolve();
-        ItemStackSpecification item = new ItemStackSpecification(itemMaterial, itemDisplayName, itemDamage);
+        ItemStackSpec itemSpec = new ItemStackSpec(itemMaterial, itemDisplayName, itemDamage);
 
         String reloadAction = new FieldSpecResolver<String>()
                 .route(RELOAD_ACTION_ROUTE)
@@ -297,6 +297,6 @@ public class GunConfiguration {
             spreadPattern = new SpreadPatternSpecification(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, item, controls, fireMode, recoil, spreadPattern);
+        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controls, fireMode, recoil, spreadPattern);
     }
 }

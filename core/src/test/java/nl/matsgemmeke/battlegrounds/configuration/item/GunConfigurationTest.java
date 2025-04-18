@@ -145,9 +145,9 @@ public class GunConfigurationTest {
         assertThat(spec.reloadSpec().reloadSounds()).isNull();
         assertThat(spec.reloadSpec().duration()).isEqualTo(reloadDuration);
 
-        assertThat(spec.item().material()).isEqualTo(itemMaterial);
-        assertThat(spec.item().displayName()).isEqualTo(itemDisplayName);
-        assertThat(spec.item().damage()).isEqualTo(itemDamage);
+        assertThat(spec.itemSpec().material()).isEqualTo(itemMaterial);
+        assertThat(spec.itemSpec().displayName()).isEqualTo(itemDisplayName);
+        assertThat(spec.itemSpec().damage()).isEqualTo(itemDamage);
 
         assertThat(spec.controls().reloadAction()).isEqualTo(reloadAction);
         assertThat(spec.controls().shootAction()).isEqualTo(shootAction);
