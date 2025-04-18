@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.Firearm;
@@ -15,12 +15,12 @@ import org.jetbrains.annotations.NotNull;
 public class FirearmControlsFactory {
 
     @NotNull
-    public ItemControls<GunHolder> create(@NotNull ControlsSpecification specification, @NotNull Firearm firearm) {
+    public ItemControls<GunHolder> create(@NotNull ControlsSpec spec, @NotNull Firearm firearm) {
         ItemControls<GunHolder> controls = new ItemControls<>();
 
-        String useScopeActionValue = specification.useScopeAction();
-        String stopScopeActionValue = specification.stopScopeAction();
-        String changeScopeMagnificationActionValue = specification.changeScopeMagnificationAction();
+        String useScopeActionValue = spec.useScopeAction();
+        String stopScopeActionValue = spec.stopScopeAction();
+        String changeScopeMagnificationActionValue = spec.changeScopeMagnificationAction();
 
         if (useScopeActionValue != null && stopScopeActionValue != null) {
             if (changeScopeMagnificationActionValue != null) {
@@ -41,8 +41,8 @@ public class FirearmControlsFactory {
         }
 
         // Should be safe to directly get an enum since the specification is already validated
-        Action reloadAction = Action.valueOf(specification.reloadAction());
-        Action shootAction = Action.valueOf(specification.shootAction());
+        Action reloadAction = Action.valueOf(spec.reloadAction());
+        Action shootAction = Action.valueOf(spec.shootAction());
 
         ReloadFunction reloadFunction = new ReloadFunction(firearm);
         ShootFunction shootFunction = new ShootFunction(firearm);

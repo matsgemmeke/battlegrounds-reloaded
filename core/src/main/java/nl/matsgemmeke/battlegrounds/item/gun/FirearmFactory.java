@@ -139,7 +139,7 @@ public class FirearmFactory {
         ReloadSystem reloadSystem = reloadSystemFactory.create(specification.reloadSpec(), firearm, audioEmitter);
         firearm.setReloadSystem(reloadSystem);
 
-        ItemControls<GunHolder> controls = controlsFactory.create(specification.controls(), firearm);
+        ItemControls<GunHolder> controls = controlsFactory.create(specification.controlsSpec(), firearm);
         firearm.setControls(controls);
 
         FireMode fireMode = fireModeFactory.create(specification.fireModeSpec(), firearm);

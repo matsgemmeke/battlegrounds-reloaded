@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
@@ -24,7 +24,7 @@ public class WeaponCreatorTest {
     @Test
     public void existsReturnsTrueWhenSpecificationOfGivenWeaponIdExists() {
         String gunId = "TEST_GUN";
-        GunSpecification gunSpecification = this.createGunSpecification();
+        GunSpecification gunSpecification = this.createGunSpec();
 
         WeaponCreator weaponCreator = new WeaponCreator(firearmFactory);
         weaponCreator.addGunSpecification(gunId, gunSpecification);
@@ -43,14 +43,14 @@ public class WeaponCreatorTest {
         assertThat(exists).isFalse();
     }
 
-    private GunSpecification createGunSpecification() {
+    private GunSpecification createGunSpec() {
         ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
-        ControlsSpecification controls = new ControlsSpecification("reload", "shoot", null, null, null);
+        ControlsSpec controlsSpec = new ControlsSpec("reload", "shoot", null, null, null);
         FireModeSpec fireModeSpec = new FireModeSpec("test", null, null, null);
         RecoilSpec recoilSpec = new RecoilSpec("recoil type", List.of(), List.of(), null, null, null);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("pattern type", 1, 0.5f, 0.5f);
 
-        return new GunSpecification("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, reloadSpec, itemSpec, controls, fireModeSpec, recoilSpec, spreadPatternSpec);
+        return new GunSpecification("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, spreadPatternSpec);
     }
 }

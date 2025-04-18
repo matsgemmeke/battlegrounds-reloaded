@@ -149,11 +149,11 @@ public class GunConfigurationTest {
         assertThat(spec.itemSpec().displayName()).isEqualTo(itemDisplayName);
         assertThat(spec.itemSpec().damage()).isEqualTo(itemDamage);
 
-        assertThat(spec.controls().reloadAction()).isEqualTo(reloadAction);
-        assertThat(spec.controls().shootAction()).isEqualTo(shootAction);
-        assertThat(spec.controls().useScopeAction()).isNull();
-        assertThat(spec.controls().stopScopeAction()).isNull();
-        assertThat(spec.controls().changeScopeMagnificationAction()).isNull();
+        assertThat(spec.controlsSpec().reloadAction()).isEqualTo(reloadAction);
+        assertThat(spec.controlsSpec().shootAction()).isEqualTo(shootAction);
+        assertThat(spec.controlsSpec().useScopeAction()).isNull();
+        assertThat(spec.controlsSpec().stopScopeAction()).isNull();
+        assertThat(spec.controlsSpec().changeScopeMagnificationAction()).isNull();
 
         assertThat(spec.fireModeSpec().type()).isEqualTo(fireModeType);
         assertThat(spec.fireModeSpec().amountOfShots()).isNull();

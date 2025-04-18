@@ -20,7 +20,7 @@ public record GunSpecification(
         @Nullable String shotSounds,
         @NotNull ReloadSpec reloadSpec,
         @NotNull ItemStackSpec itemSpec,
-        @NotNull ControlsSpecification controls,
+        @NotNull ControlsSpec controlsSpec,
         @NotNull FireModeSpec fireModeSpec,
         @Nullable RecoilSpec recoilSpec,
         @Nullable SpreadPatternSpec spreadPatternSpec

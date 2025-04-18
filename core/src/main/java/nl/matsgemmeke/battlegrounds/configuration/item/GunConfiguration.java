@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.item;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ConditionalRequiredValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValidator;
@@ -209,7 +209,7 @@ public class GunConfiguration {
                 .value(yamlReader.getString(CHANGE_SCOPE_MAGNIFICATION_ACTION_ROUTE))
                 .validate(new OneOfValidator<>(ALLOWED_ACTION_VALUES))
                 .resolve();
-        ControlsSpecification controls = new ControlsSpecification(reloadAction, shootAction, useScopeAction, stopScopeAction, changeScopeMagnificationAction);
+        ControlsSpec controlsSpec = new ControlsSpec(reloadAction, shootAction, useScopeAction, stopScopeAction, changeScopeMagnificationAction);
 
         String fireModeType = new FieldSpecResolver<String>()
                 .route(FIRE_MODE_TYPE_ROUTE)
@@ -297,6 +297,6 @@ public class GunConfiguration {
             spreadPatternSpec = new SpreadPatternSpec(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controls, fireModeSpec, recoilSpec, spreadPatternSpec);
+        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, spreadPatternSpec);
     }
 }
