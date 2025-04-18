@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public record GunSpecification(
+public record GunSpec(
         @NotNull String name,
         @Nullable String description,
         @NotNull Integer magazineSize,

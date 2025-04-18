@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -84,8 +84,8 @@ public class FirearmFactory {
     }
 
     @NotNull
-    public Firearm create(@NotNull GunSpecification specification, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
-        Firearm firearm = this.createInstance(specification, configuration, gameKey);
+    public Firearm create(@NotNull GunSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+        Firearm firearm = this.createInstance(spec, configuration, gameKey);
 
         GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
         gunRegistry.registerItem(firearm);
@@ -94,8 +94,8 @@ public class FirearmFactory {
     }
 
     @NotNull
-    public Firearm create(@NotNull GunSpecification specification, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
-        Firearm firearm = this.createInstance(specification, configuration, gameKey);
+    public Firearm create(@NotNull GunSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+        Firearm firearm = this.createInstance(spec, configuration, gameKey);
         firearm.setHolder(gamePlayer);
 
         GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
@@ -105,7 +105,7 @@ public class FirearmFactory {
     }
 
     @NotNull
-    private Firearm createInstance(@NotNull GunSpecification specification, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+    private Firearm createInstance(@NotNull GunSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
         CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
         DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
@@ -114,39 +114,39 @@ public class FirearmFactory {
         Section section = configuration.getRoot();
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setName(specification.name());
-        firearm.setDescription(specification.description());
-        firearm.setHeadshotDamageMultiplier(specification.headshotDamageMultiplier());
+        firearm.setName(spec.name());
+        firearm.setDescription(spec.description());
+        firearm.setHeadshotDamageMultiplier(spec.headshotDamageMultiplier());
 
         double damageAmplifier = config.getGunDamageAmplifier();
         firearm.setDamageAmplifier(damageAmplifier);
 
-        int magazineSize = specification.magazineSize();
-        int reserveAmmo = specification.defaultMagazineAmount() * magazineSize;
-        int maxAmmo = specification.maxMagazineAmount() * magazineSize;
+        int magazineSize = spec.magazineSize();
+        int reserveAmmo = spec.defaultMagazineAmount() * magazineSize;
+        int maxAmmo = spec.maxMagazineAmount() * magazineSize;
 
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
         firearm.setAmmunitionStorage(ammunitionStorage);
 
-        RangeProfile rangeProfile = new RangeProfile(specification.longRangeDamage(), specification.longRangeDistance(), specification.mediumRangeDamage(), specification.mediumRangeDistance(), specification.shortRangeDamage(), specification.shortRangeDistance());
+        RangeProfile rangeProfile = new RangeProfile(spec.longRangeDamage(), spec.longRangeDistance(), spec.mediumRangeDamage(), spec.mediumRangeDistance(), spec.shortRangeDamage(), spec.shortRangeDistance());
         firearm.setRangeProfile(rangeProfile);
 
-        List<GameSound> shotSounds = DefaultGameSound.parseSounds(specification.shotSounds());
+        List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds());
         firearm.setShotSounds(shotSounds);
 
         Section scopeSection = section.getSection("scope");
 
-        ReloadSystem reloadSystem = reloadSystemFactory.create(specification.reloadSpec(), firearm, audioEmitter);
+        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloadSpec(), firearm, audioEmitter);
         firearm.setReloadSystem(reloadSystem);
 
-        ItemControls<GunHolder> controls = controlsFactory.create(specification.controlsSpec(), firearm);
+        ItemControls<GunHolder> controls = controlsFactory.create(spec.controlsSpec(), firearm);
         firearm.setControls(controls);
 
-        FireMode fireMode = fireModeFactory.create(specification.fireModeSpec(), firearm);
+        FireMode fireMode = fireModeFactory.create(spec.fireModeSpec(), firearm);
         firearm.setFireMode(fireMode);
 
-        RecoilSpec recoilSpec = specification.recoilSpec();
-        SpreadPatternSpec spreadPatternSpec = specification.spreadPatternSpec();
+        RecoilSpec recoilSpec = spec.recoilSpec();
+        SpreadPatternSpec spreadPatternSpec = spec.spreadPatternSpec();
 
         if (recoilSpec != null) {
             RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSpec);
@@ -173,9 +173,9 @@ public class FirearmFactory {
 
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        Material material = Material.valueOf(specification.itemSpec().material());
-        String displayName = specification.itemSpec().displayName();
-        int damage = specification.itemSpec().damage();
+        Material material = Material.valueOf(spec.itemSpec().material());
+        String displayName = spec.itemSpec().displayName();
+        int damage = spec.itemSpec().damage();
 
         ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDamage(damage);

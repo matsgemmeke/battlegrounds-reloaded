@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.GunConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
@@ -136,10 +136,10 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             itemConfiguration.load();
 
             String id = document.getString("id");
-            GunSpecification specification = configuration.createSpec();
+            GunSpec spec = configuration.createSpec();
 
             creator.addConfigurationFactory(id, itemConfiguration);
-            creator.addGunSpecification(id, specification);
+            creator.addGunSpec(id, spec);
         }
     }
 }

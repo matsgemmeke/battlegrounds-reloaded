@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ConditionalRequiredValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.OneOfValidator;
@@ -79,7 +79,7 @@ public class GunConfiguration {
     }
 
     @NotNull
-    public GunSpecification createSpec() {
+    public GunSpec createSpec() {
         String name = new FieldSpecResolver<String>()
                 .route(NAME_ROUTE)
                 .value(yamlReader.getString(NAME_ROUTE))
@@ -297,6 +297,6 @@ public class GunConfiguration {
             spreadPatternSpec = new SpreadPatternSpec(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, spreadPatternSpec);
+        return new GunSpec(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, spreadPatternSpec);
     }
 }

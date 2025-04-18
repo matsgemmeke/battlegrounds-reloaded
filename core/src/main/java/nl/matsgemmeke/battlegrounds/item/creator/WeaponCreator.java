@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
@@ -25,12 +25,12 @@ public class WeaponCreator {
     @NotNull
     private Map<String, ItemConfiguration> configurations;
     @NotNull
-    private Map<String, GunSpecification> gunSpecifications;
+    private Map<String, GunSpec> gunSpecs;
 
     public WeaponCreator(@NotNull FirearmFactory firearmFactory) {
         this.firearmFactory = firearmFactory;
         this.configurations = new HashMap<>();
-        this.gunSpecifications = new HashMap<>();
+        this.gunSpecs = new HashMap<>();
     }
 
     /**
@@ -43,8 +43,8 @@ public class WeaponCreator {
         configurations.put(weaponId, configuration);
     }
 
-    public void addGunSpecification(@NotNull String id, @NotNull GunSpecification specification) {
-        gunSpecifications.put(id, specification);
+    public void addGunSpec(@NotNull String id, @NotNull GunSpec spec) {
+        gunSpecs.put(id, spec);
     }
 
     /**
@@ -59,11 +59,11 @@ public class WeaponCreator {
      */
     @NotNull
     public Weapon createWeapon(@NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey, @NotNull String weaponId) {
-        if (gunSpecifications.containsKey(weaponId)) {
-            GunSpecification specification = gunSpecifications.get(weaponId);
+        if (gunSpecs.containsKey(weaponId)) {
+            GunSpec spec = gunSpecs.get(weaponId);
             ItemConfiguration configuration = configurations.get(weaponId);
 
-            return firearmFactory.create(specification, configuration, gameKey, gamePlayer);
+            return firearmFactory.create(spec, configuration, gameKey, gamePlayer);
         }
 
         throw new IllegalArgumentException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponId));
@@ -80,7 +80,7 @@ public class WeaponCreator {
     }
 
     private List<String> getIdList() {
-        return Stream.of(gunSpecifications.keySet())
+        return Stream.of(gunSpecs.keySet())
                 .flatMap(Collection::stream)
                 .toList();
     }

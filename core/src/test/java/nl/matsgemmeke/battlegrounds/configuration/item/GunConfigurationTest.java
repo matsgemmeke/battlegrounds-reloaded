@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.item;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -122,7 +122,7 @@ public class GunConfigurationTest {
         when(yamlReader.getOptionalFloat("shooting.spread-pattern.vertical-spread")).thenReturn(Optional.of(verticalSpread));
 
         GunConfiguration configuration = new GunConfiguration(yamlReader);
-        GunSpecification spec = configuration.createSpec();
+        GunSpec spec = configuration.createSpec();
 
         assertThat(spec.name()).isEqualTo(name);
         assertThat(spec.description()).isNull();
