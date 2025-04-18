@@ -49,8 +49,8 @@ public class WeaponCreatorTest {
         ControlsSpecification controls = new ControlsSpecification("reload", "shoot", null, null, null);
         FireModeSpec fireModeSpec = new FireModeSpec("test", null, null, null);
         RecoilSpec recoilSpec = new RecoilSpec("recoil type", List.of(), List.of(), null, null, null);
-        SpreadPatternSpecification spreadPattern = new SpreadPatternSpecification("pattern type", 1, 0.5f, 0.5f);
+        SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("pattern type", 1, 0.5f, 0.5f);
 
-        return new GunSpecification("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, reloadSpec, itemSpec, controls, fireModeSpec, recoilSpec, spreadPattern);
+        return new GunSpecification("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, reloadSpec, itemSpec, controls, fireModeSpec, recoilSpec, spreadPatternSpec);
     }
 }

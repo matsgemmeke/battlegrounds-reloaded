@@ -168,10 +168,10 @@ public class GunConfigurationTest {
         assertThat(spec.recoilSpec().recoveryRate()).isEqualTo(0.0f);
         assertThat(spec.recoilSpec().recoveryDuration()).isEqualTo(0L);
 
-        assertThat(spec.spreadPattern()).isNotNull();
-        assertThat(spec.spreadPattern().type()).isEqualTo(spreadPatternType);
-        assertThat(spec.spreadPattern().projectileAmount()).isEqualTo(projectileAmount);
-        assertThat(spec.spreadPattern().horizontalSpread()).isEqualTo(horizontalSpread);
-        assertThat(spec.spreadPattern().verticalSpread()).isEqualTo(verticalSpread);
+        assertThat(spec.spreadPatternSpec()).isNotNull();
+        assertThat(spec.spreadPatternSpec().type()).isEqualTo(spreadPatternType);
+        assertThat(spec.spreadPatternSpec().projectileAmount()).isEqualTo(projectileAmount);
+        assertThat(spec.spreadPatternSpec().horizontalSpread()).isEqualTo(horizontalSpread);
+        assertThat(spec.spreadPatternSpec().verticalSpread()).isEqualTo(verticalSpread);
     }
 }

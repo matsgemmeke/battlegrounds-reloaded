@@ -235,7 +235,7 @@ public class GunConfiguration {
         FireModeSpec fireModeSpec = new FireModeSpec(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
 
         RecoilSpec recoilSpec = null;
-        SpreadPatternSpecification spreadPattern = null;
+        SpreadPatternSpec spreadPatternSpec = null;
 
         if (yamlReader.contains("shooting.recoil")) {
             String recoilType = new FieldSpecResolver<String>()
@@ -294,9 +294,9 @@ public class GunConfiguration {
                     .validate(new RequiredValidator<>())
                     .resolve();
 
-            spreadPattern = new SpreadPatternSpecification(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
+            spreadPatternSpec = new SpreadPatternSpec(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controls, fireModeSpec, recoilSpec, spreadPattern);
+        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controls, fireModeSpec, recoilSpec, spreadPatternSpec);
     }
 }

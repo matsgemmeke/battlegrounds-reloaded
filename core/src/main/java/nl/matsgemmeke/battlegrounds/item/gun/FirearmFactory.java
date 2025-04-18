@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -146,15 +146,15 @@ public class FirearmFactory {
         firearm.setFireMode(fireMode);
 
         RecoilSpec recoilSpec = specification.recoilSpec();
-        SpreadPatternSpecification spreadPatternSpecification = specification.spreadPattern();
+        SpreadPatternSpec spreadPatternSpec = specification.spreadPatternSpec();
 
         if (recoilSpec != null) {
             RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSpec);
             firearm.setRecoilProducer(recoilProducer);
         }
 
-        if (spreadPatternSpecification != null) {
-            SpreadPattern spreadPattern = spreadPatternFactory.create(spreadPatternSpecification);
+        if (spreadPatternSpec != null) {
+            SpreadPattern spreadPattern = spreadPatternFactory.create(spreadPatternSpec);
             firearm.setSpreadPattern(spreadPattern);
         }
 

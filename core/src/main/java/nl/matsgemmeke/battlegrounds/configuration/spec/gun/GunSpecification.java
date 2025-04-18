@@ -23,5 +23,5 @@ public record GunSpecification(
         @NotNull ControlsSpecification controls,
         @NotNull FireModeSpec fireModeSpec,
         @Nullable RecoilSpec recoilSpec,
-        @Nullable SpreadPatternSpecification spreadPattern
+        @Nullable SpreadPatternSpec spreadPatternSpec
 ) { }
