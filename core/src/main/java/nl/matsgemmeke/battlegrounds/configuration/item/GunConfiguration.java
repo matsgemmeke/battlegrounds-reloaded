@@ -234,7 +234,7 @@ public class GunConfiguration {
                 .resolve();
         FireModeSpec fireModeSpec = new FireModeSpec(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
 
-        RecoilSpecification recoil = null;
+        RecoilSpec recoilSpec = null;
         SpreadPatternSpecification spreadPattern = null;
 
         if (yamlReader.contains("shooting.recoil")) {
@@ -268,7 +268,7 @@ public class GunConfiguration {
                     .value(yamlReader.getOptionalLong(RECOIL_RECOVERY_DURATION_ROUTE).orElse(0L))
                     .resolve();
 
-            recoil = new RecoilSpecification(recoilType, horizontalRecoilValues, verticalRecoilValues, kickbackDuration, recoveryRate, recoveryDuration);
+            recoilSpec = new RecoilSpec(recoilType, horizontalRecoilValues, verticalRecoilValues, kickbackDuration, recoveryRate, recoveryDuration);
         }
 
         if (yamlReader.contains("shooting.spread-pattern")) {
@@ -297,6 +297,6 @@ public class GunConfiguration {
             spreadPattern = new SpreadPatternSpecification(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controls, fireModeSpec, recoil, spreadPattern);
+        return new GunSpecification(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controls, fireModeSpec, recoilSpec, spreadPattern);
     }
 }

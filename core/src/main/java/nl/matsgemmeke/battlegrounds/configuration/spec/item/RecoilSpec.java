@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.item;
 
 import java.util.List;
 
-public record RecoilSpecification(
+public record RecoilSpec(
         String type,
         List<Float> horizontalRecoilValues,
         List<Float> verticalRecoilValues,

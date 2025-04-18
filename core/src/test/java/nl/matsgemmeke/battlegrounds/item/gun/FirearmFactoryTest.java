@@ -188,8 +188,8 @@ public class FirearmFactoryTest {
         ItemStackSpec itemSpec = new ItemStackSpec("IRON_HOE", "Test Gun", 1);
         ControlsSpecification controlsSpecification = new ControlsSpecification("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
         FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
-        RecoilSpecification recoilSpecification = new RecoilSpecification("RANDOM_SPREAD", List.of(), List.of(), null, null, null);
-        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpec, recoilSpecification, null);
+        RecoilSpec recoilSpec = new RecoilSpec("RANDOM_SPREAD", List.of(), List.of(), null, null, null);
+        GunSpecification gunSpecification = new GunSpecification("Test Gun", "Test description", MAGAZINE_SIZE, MAX_MAGAZINE_AMOUNT, DEFAULT_MAGAZINE_AMOUNT, 10.0, 35.0, 20.0, 25.0, 30.0, 15.0, 1.5, null, reloadSpec, itemSpec, controlsSpecification, fireModeSpec, recoilSpec, null);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(controlsSpecification), any(Firearm.class))).thenReturn(controls);
@@ -201,7 +201,7 @@ public class FirearmFactoryTest {
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
 
         RecoilProducer recoilProducer = mock(RecoilProducer.class);
-        when(recoilProducerFactory.create(recoilSpecification)).thenReturn(recoilProducer);
+        when(recoilProducerFactory.create(recoilSpec)).thenReturn(recoilProducer);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, fireModeFactory, keyCreator, recoilProducerFactory, reloadSystemFactory, spreadPatternFactory);
         Firearm firearm = firearmFactory.create(gunSpecification, itemConfiguration, gameKey);

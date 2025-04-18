@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Timer;
@@ -23,20 +23,20 @@ public class RecoilProducerFactory {
     /**
      * Creates a new {@link RecoilProducer} instance based on configuration values.
      *
-     * @param specification the specification
+     * @param spec the specification
      * @return a new producer instance
      */
-    public RecoilProducer create(@NotNull RecoilSpecification specification) {
-        RecoilType recoilType = RecoilType.valueOf(specification.type());
+    public RecoilProducer create(@NotNull RecoilSpec spec) {
+        RecoilType recoilType = RecoilType.valueOf(spec.type());
 
-        Float[] horizontalRecoilValues = specification.horizontalRecoilValues().toArray(Float[]::new);
-        Float[] verticalRecoilValues = specification.verticalRecoilValues().toArray(Float[]::new);
+        Float[] horizontalRecoilValues = spec.horizontalRecoilValues().toArray(Float[]::new);
+        Float[] verticalRecoilValues = spec.verticalRecoilValues().toArray(Float[]::new);
 
         switch (recoilType) {
             case CAMERA_MOVEMENT -> {
-                long kickbackDuration = specification.kickbackDuration();
-                float recoveryRate = specification.recoveryRate();
-                long recoveryDuration = specification.recoveryDuration();
+                long kickbackDuration = spec.kickbackDuration();
+                float recoveryRate = spec.recoveryRate();
+                long recoveryDuration = spec.recoveryDuration();
                 long rotationDuration = config.getCameraMovementRecoilDurationInMilliseconds();
 
                 Timer timer = new Timer();

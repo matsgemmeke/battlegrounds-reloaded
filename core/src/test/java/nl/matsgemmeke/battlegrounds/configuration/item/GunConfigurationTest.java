@@ -160,13 +160,13 @@ public class GunConfigurationTest {
         assertThat(spec.fireModeSpec().rateOfFire()).isEqualTo(rateOfFire);
         assertThat(spec.fireModeSpec().delayBetweenShots()).isNull();
 
-        assertThat(spec.recoil()).isNotNull();
-        assertThat(spec.recoil().type()).isEqualTo(recoilType);
-        assertThat(spec.recoil().horizontalRecoilValues()).isEqualTo(horizontalRecoilValues);
-        assertThat(spec.recoil().verticalRecoilValues()).isEqualTo(verticalRecoilValues);
-        assertThat(spec.recoil().kickbackDuration()).isNull();
-        assertThat(spec.recoil().recoveryRate()).isEqualTo(0.0f);
-        assertThat(spec.recoil().recoveryDuration()).isEqualTo(0L);
+        assertThat(spec.recoilSpec()).isNotNull();
+        assertThat(spec.recoilSpec().type()).isEqualTo(recoilType);
+        assertThat(spec.recoilSpec().horizontalRecoilValues()).isEqualTo(horizontalRecoilValues);
+        assertThat(spec.recoilSpec().verticalRecoilValues()).isEqualTo(verticalRecoilValues);
+        assertThat(spec.recoilSpec().kickbackDuration()).isNull();
+        assertThat(spec.recoilSpec().recoveryRate()).isEqualTo(0.0f);
+        assertThat(spec.recoilSpec().recoveryDuration()).isEqualTo(0L);
 
         assertThat(spec.spreadPattern()).isNotNull();
         assertThat(spec.spreadPattern().type()).isEqualTo(spreadPatternType);

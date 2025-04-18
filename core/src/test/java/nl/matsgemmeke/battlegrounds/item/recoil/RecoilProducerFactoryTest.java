@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,20 +21,20 @@ public class RecoilProducerFactoryTest {
 
     @Test
     public void createReturnsCameraMovementRecoilInstanceBasedOnSpecification() {
-        RecoilSpecification specification = new RecoilSpecification("CAMERA_MOVEMENT", List.of(), List.of(), 1L, 0.5f, 1L);
+        RecoilSpec spec = new RecoilSpec("CAMERA_MOVEMENT", List.of(), List.of(), 1L, 0.5f, 1L);
 
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
-        RecoilProducer recoilProducer = factory.create(specification);
+        RecoilProducer recoilProducer = factory.create(spec);
 
         assertThat(recoilProducer).isInstanceOf(CameraMovementRecoil.class);
     }
 
     @Test
     public void createReturnsRandomSpreadRecoilInstanceBasedOnSpecification() {
-        RecoilSpecification specification = new RecoilSpecification("RANDOM_SPREAD", List.of(), List.of(), null, null, null);
+        RecoilSpec spec = new RecoilSpec("RANDOM_SPREAD", List.of(), List.of(), null, null, null);
 
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
-        RecoilProducer recoilProducer = factory.create(specification);
+        RecoilProducer recoilProducer = factory.create(spec);
 
         assertThat(recoilProducer).isInstanceOf(RandomSpreadRecoil.class);
     }

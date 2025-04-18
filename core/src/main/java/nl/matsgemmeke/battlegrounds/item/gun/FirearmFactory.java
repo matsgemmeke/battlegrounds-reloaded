@@ -5,7 +5,7 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpecification;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpecification;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpecification;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
@@ -145,11 +145,11 @@ public class FirearmFactory {
         FireMode fireMode = fireModeFactory.create(specification.fireModeSpec(), firearm);
         firearm.setFireMode(fireMode);
 
-        RecoilSpecification recoilSpecification = specification.recoil();
+        RecoilSpec recoilSpec = specification.recoilSpec();
         SpreadPatternSpecification spreadPatternSpecification = specification.spreadPattern();
 
-        if (recoilSpecification != null) {
-            RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSpecification);
+        if (recoilSpec != null) {
+            RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSpec);
             firearm.setRecoilProducer(recoilProducer);
         }
 
