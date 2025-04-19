@@ -88,6 +88,7 @@ public class GunConfigurationTest {
         when(yamlReader.getDouble("shooting.range.long-range.distance")).thenReturn(longRangeDistance);
         when(yamlReader.getDouble("shooting.headshot-damage-multiplier")).thenReturn(headshotDamageMultiplier);
 
+
         when(yamlReader.getString("shooting.shot-sounds")).thenReturn(null);
 
         when(yamlReader.getString("reloading.type")).thenReturn(reloadType);

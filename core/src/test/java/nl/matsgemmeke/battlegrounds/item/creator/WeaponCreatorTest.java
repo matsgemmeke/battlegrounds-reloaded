@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.creator;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +15,12 @@ import static org.mockito.Mockito.mock;
 
 public class WeaponCreatorTest {
 
+    private EquipmentFactory equipmentFactory;
     private FirearmFactory firearmFactory;
 
     @BeforeEach
     public void setUp() {
+        equipmentFactory = mock(EquipmentFactory.class);
         firearmFactory = mock(FirearmFactory.class);
     }
 
@@ -26,7 +29,7 @@ public class WeaponCreatorTest {
         String gunId = "TEST_GUN";
         GunSpec gunSpec = this.createGunSpec();
 
-        WeaponCreator weaponCreator = new WeaponCreator(firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
         weaponCreator.addGunSpec(gunId, gunSpec);
         boolean exists = weaponCreator.exists(gunId);
 
@@ -37,7 +40,7 @@ public class WeaponCreatorTest {
     public void existsReturnsFalseWhenSpecificationOfGivenWeaponIdDoesNotExist() {
         String gunId = "TEST_GUN";
 
-        WeaponCreator weaponCreator = new WeaponCreator(firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
         boolean exists = weaponCreator.exists(gunId);
 
         assertThat(exists).isFalse();

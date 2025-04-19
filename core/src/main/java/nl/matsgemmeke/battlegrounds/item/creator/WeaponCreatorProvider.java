@@ -4,10 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import jakarta.inject.Named;
+import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.EquipmentConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.item.GunConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
@@ -50,7 +53,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.copyResourcesFiles(itemsFolder);
         }
 
-        WeaponCreator weaponCreator = new WeaponCreator(firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
         File[] itemFolderFiles = itemsFolder.listFiles();
 
         if (itemFolderFiles == null || itemFolderFiles.length == 0) {
@@ -116,7 +119,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
                 return;
             }
 
-            this.addItemSpecification(creator, itemFile, document);
+            this.addItemSpec(creator, itemFile, document);
         } catch (IOException e) {
             logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
         } catch (InvalidItemConfigurationException e) {
@@ -124,17 +127,34 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         }
     }
 
-    private void addItemSpecification(@NotNull WeaponCreator creator, @NotNull File file, @NotNull YamlDocument document) {
+    private void addItemSpec(@NotNull WeaponCreator creator, @NotNull File file, @NotNull YamlDocument document) {
+        String id = document.getString("id");
+
+        if (document.getString("equipment-type") != null) {
+            YamlReader yamlReader = new YamlReader(file, null);
+            yamlReader.load();
+
+            ItemConfiguration config = new ItemConfiguration(file, null);
+            config.load();
+
+            EquipmentConfiguration configuration = new EquipmentConfiguration(yamlReader);
+            EquipmentSpec spec = configuration.createSpec();
+
+            creator.addEquipmentSpec(id, spec, config);
+            return;
+        }
+
         if (document.getString("gun-type") != null) {
             YamlReader yamlReader = new YamlReader(file, null);
             yamlReader.load();
 
             GunConfiguration configuration = new GunConfiguration(yamlReader);
-
-            String id = document.getString("id");
             GunSpec spec = configuration.createSpec();
 
             creator.addGunSpec(id, spec);
+            return;
         }
+
+        throw new IllegalStateException("");
     }
 }

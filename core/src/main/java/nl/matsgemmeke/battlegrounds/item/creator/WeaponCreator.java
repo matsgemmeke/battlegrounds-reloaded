@@ -1,9 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
+import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,13 +22,26 @@ import java.util.stream.Stream;
 public class WeaponCreator {
 
     @NotNull
+    private EquipmentFactory equipmentFactory;
+    @NotNull
     private FirearmFactory firearmFactory;
+    @NotNull
+    private Map<String, EquipmentSpec> equipmentSpecs;
+    private Map<String, ItemConfiguration> equipmentConfigurations;
     @NotNull
     private Map<String, GunSpec> gunSpecs;
 
-    public WeaponCreator(@NotNull FirearmFactory firearmFactory) {
+    public WeaponCreator(@NotNull EquipmentFactory equipmentFactory, @NotNull FirearmFactory firearmFactory) {
+        this.equipmentFactory = equipmentFactory;
         this.firearmFactory = firearmFactory;
+        this.equipmentSpecs = new HashMap<>();
+        this.equipmentConfigurations = new HashMap<>();
         this.gunSpecs = new HashMap<>();
+    }
+
+    public void addEquipmentSpec(@NotNull String id, @NotNull EquipmentSpec equipmentSpec, @NotNull ItemConfiguration configuration) {
+        equipmentSpecs.put(id, equipmentSpec);
+        equipmentConfigurations.put(id, configuration);
     }
 
     public void addGunSpec(@NotNull String id, @NotNull GunSpec spec) {
@@ -44,6 +60,13 @@ public class WeaponCreator {
      */
     @NotNull
     public Weapon createWeapon(@NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey, @NotNull String weaponId) {
+        if (equipmentSpecs.containsKey(weaponId)) {
+            EquipmentSpec spec = equipmentSpecs.get(weaponId);
+            ItemConfiguration configuration = equipmentConfigurations.get(weaponId);
+
+            return equipmentFactory.create(spec, configuration, gameKey, gamePlayer);
+        }
+
         if (gunSpecs.containsKey(weaponId)) {
             GunSpec spec = gunSpecs.get(weaponId);
 
@@ -64,7 +87,7 @@ public class WeaponCreator {
     }
 
     private List<String> getIdList() {
-        return Stream.of(gunSpecs.keySet())
+        return Stream.of(equipmentSpecs.keySet(), gunSpecs.keySet())
                 .flatMap(Collection::stream)
                 .toList();
     }

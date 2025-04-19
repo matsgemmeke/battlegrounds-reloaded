@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
@@ -20,7 +21,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.*;
@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class EquipmentFactory implements WeaponFactory {
+public class EquipmentFactory {
 
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
 
@@ -87,8 +87,8 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
-        Equipment equipment = this.createInstance(configuration, gameKey);
+    public Equipment create(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+        Equipment equipment = this.createInstance(spec, configuration, gameKey);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
         equipmentRegistry.registerItem(equipment);
@@ -97,8 +97,8 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
-        Equipment equipment = this.createInstance(configuration, gameKey);
+    public Equipment create(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+        Equipment equipment = this.createInstance(spec, configuration, gameKey);
         equipment.setHolder(gamePlayer);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
@@ -108,39 +108,25 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+    private Equipment createInstance(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
         Section section = configuration.getRoot();
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
-        String name = section.getString("name");
-        String description = section.getString("description");
-
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setName(name);
-        equipment.setDescription(description);
+        equipment.setName(spec.name());
+        equipment.setDescription(spec.description());
 
         // ItemStack creation
-        Material material;
-        String materialValue = section.getString("item.material");
-
-        try {
-            material = Material.valueOf(materialValue);
-        } catch (IllegalArgumentException e) {
-            throw new EquipmentCreationException("Unable to create equipment item " + name + "; item stack material " + materialValue + " is invalid");
-        }
-
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        int damage = section.getInt("item.damage");
-        String displayName = section.getString("item.display-name");
+        Material material = Material.valueOf(spec.itemSpec().material());
+        int damage = spec.itemSpec().damage();
+        String displayName = spec.itemSpec().displayName();
 
         ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDamage(damage);
-
-        if (displayName != null) {
-            itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
-        }
+        itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
 
         equipment.setItemTemplate(itemTemplate);
         equipment.update();
@@ -155,7 +141,7 @@ public class EquipmentFactory implements WeaponFactory {
             try {
                 activatorMaterial = Material.valueOf(activatorMaterialValue);
             } catch (IllegalArgumentException e) {
-                throw new EquipmentCreationException("Unable to create equipment item " + name + "; activator item stack material " + activatorMaterialValue + " is invalid");
+                throw new EquipmentCreationException("Unable to create equipment item " + spec.name() + "; activator item stack material " + activatorMaterialValue + " is invalid");
             }
 
             UUID activatorUUID = UUID.randomUUID();
@@ -228,7 +214,7 @@ public class EquipmentFactory implements WeaponFactory {
                 try {
                     particle = Particle.valueOf(particleValue);
                 } catch (IllegalArgumentException e) {
-                    throw new EquipmentCreationException("Unable to create equipment item " + name + "; trail effect particle " + particleValue + " is invalid");
+                    throw new EquipmentCreationException("Unable to create equipment item " + spec.name() + "; trail effect particle " + particleValue + " is invalid");
                 }
 
                 int count = trailSection.getInt("particle.count");
@@ -260,7 +246,7 @@ public class EquipmentFactory implements WeaponFactory {
             try {
                 throwItemMaterial = Material.valueOf(throwItemMaterialValue);
             } catch (IllegalArgumentException e) {
-                throw new EquipmentCreationException("Unable to create equipment item " + name + ", throw item material " + throwItemMaterialValue + " is invalid");
+                throw new EquipmentCreationException("Unable to create equipment item " + spec.name() + ", throw item material " + throwItemMaterialValue + " is invalid");
             }
 
             UUID throwItemUUID = UUID.randomUUID();
