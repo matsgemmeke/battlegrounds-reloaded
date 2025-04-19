@@ -5,6 +5,7 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
@@ -131,30 +132,18 @@ public class EquipmentFactory {
         equipment.setItemTemplate(itemTemplate);
         equipment.update();
 
-        // Setting the optional activator item
-        Section activatorItemSection = section.getSection("item.activator");
+        ItemStackSpec activatorItemSpec = spec.activatorItemSpec();
 
-        if (activatorItemSection != null) {
-            Material activatorMaterial;
-            String activatorMaterialValue = activatorItemSection.getString("material");
-
-            try {
-                activatorMaterial = Material.valueOf(activatorMaterialValue);
-            } catch (IllegalArgumentException e) {
-                throw new EquipmentCreationException("Unable to create equipment item " + spec.name() + "; activator item stack material " + activatorMaterialValue + " is invalid");
-            }
-
+        if (activatorItemSpec != null) {
             UUID activatorUUID = UUID.randomUUID();
             NamespacedKey activatorKey = keyCreator.create(NAMESPACED_KEY_NAME);
-            int activatorDamage = activatorItemSection.getInt("damage");
-            String activatorDisplayName = activatorItemSection.getString("display-name");
+            Material activatorItemMaterial = Material.valueOf(activatorItemSpec.material());
+            int activatorItemDamage = activatorItemSpec.damage();
+            String activatorItemDisplayName = activatorItemSpec.displayName();
 
-            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorMaterial);
-            activatorItemTemplate.setDamage(activatorDamage);
-
-            if (activatorDisplayName != null) {
-                activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorDisplayName));
-            }
+            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorItemMaterial);
+            activatorItemTemplate.setDamage(activatorItemDamage);
+            activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorItemDisplayName));
 
             DefaultActivator activator = new DefaultActivator(activatorItemTemplate);
             equipment.setActivator(activator);

@@ -19,6 +19,10 @@ public class EquipmentConfiguration {
     private static final String ITEM_DISPLAY_NAME_ROUTE = "item.display-name";
     private static final String ITEM_DAMAGE_ROUTE = "item.damage";
 
+    private static final String ACTIVATOR_ITEM_MATERIAL_ROUTE = "item.activator.material";
+    private static final String ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE = "item.activator.display-name";
+    private static final String ACTIVATOR_ITEM_DAMAGE_ROUTE = "item.activator.damage";
+
     private static final String THROW_ACTION_ROUTE = "controls.throw";
     private static final String COOK_ACTION_ROUTE = "controls.cook";
     private static final String PLACE_ACTION_ROUTE = "controls.place";
@@ -79,6 +83,29 @@ public class EquipmentConfiguration {
                 .resolve();
         ControlsSpec controlsSpec = new ControlsSpec(throwAction, cookAction, placeAction, activateAction);
 
-        return new EquipmentSpec(name, description, itemSpec, controlsSpec);
+        ItemStackSpec activatorItemSpec = null;
+
+        if (yamlReader.contains("item.activator")) {
+            String activatorItemMaterial = new FieldSpecResolver<String>()
+                    .route(ACTIVATOR_ITEM_MATERIAL_ROUTE)
+                    .value(yamlReader.getString(ACTIVATOR_ITEM_MATERIAL_ROUTE))
+                    .validate(new RequiredValidator<>())
+                    .validate(new EnumValidator<>(Material.class))
+                    .resolve();
+            String activatorItemDisplayName = new FieldSpecResolver<String>()
+                    .route(ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE)
+                    .value(yamlReader.getString(ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE))
+                    .validate(new RequiredValidator<>())
+                    .resolve();
+            int activatorItemDamage = new FieldSpecResolver<Integer>()
+                    .route(ACTIVATOR_ITEM_DAMAGE_ROUTE)
+                    .value(yamlReader.getOptionalInt(ACTIVATOR_ITEM_DAMAGE_ROUTE).orElse(null))
+                    .validate(new RequiredValidator<>())
+                    .resolve();
+
+            activatorItemSpec = new ItemStackSpec(activatorItemMaterial, activatorItemDisplayName, activatorItemDamage);
+        }
+
+        return new EquipmentSpec(name, description, itemSpec, activatorItemSpec, controlsSpec);
     }
 }

@@ -18,6 +18,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
@@ -140,41 +141,20 @@ public class EquipmentFactoryTest {
     }
 
     @Test
-    public void shouldCreateEquipmentItemWithActivatorItem() {
-        EquipmentSpec spec = this.createEquipmentSpec();
-
-        int damage = 1;
-        String displayName = "&fActivator";
-
-        Damageable itemMeta = mock(Damageable.class);
-        when(itemFactory.getItemMeta(Material.FLINT)).thenReturn(itemMeta);
-
-        Section activatorItemSection = mock(Section.class);
-        when(activatorItemSection.getInt("damage")).thenReturn(damage);
-        when(activatorItemSection.getString("display-name")).thenReturn(displayName);
-        when(activatorItemSection.getString("material")).thenReturn("FLINT");
-
-        when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
+    public void createMakesEquipmentWithActivator() {
+        ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
+        ItemStackSpec activatorItemSpec = new ItemStackSpec("STONE", "&fActivator", 2);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
+        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, activatorItemSpec, controlsSpec);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
         Equipment equipment = factory.create(spec, configuration, gameKey);
 
-        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertThat(equipment).isInstanceOf(DefaultEquipment.class);
+        assertThat(equipment.getActivator()).isNotNull();
+        assertThat(equipment.getActivator()).isInstanceOf(DefaultActivator.class);
 
         verify(equipmentRegistry).registerItem(equipment);
-    }
-
-    @Test
-    public void throwExceptionWhenCreatingEquipmentItemWithInvalidActivatorMaterial() {
-        EquipmentSpec spec = this.createEquipmentSpec();
-
-        Section activatorItemSection = mock(Section.class);
-        when(activatorItemSection.getString("material")).thenReturn("fail");
-        when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
-
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-
-        assertThrows(EquipmentCreationException.class, () -> factory.create(spec, configuration, gameKey));
     }
 
     @Test
@@ -434,6 +414,6 @@ public class EquipmentFactoryTest {
     private EquipmentSpec createEquipmentSpec() {
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        return new EquipmentSpec("name", "description", itemSpec, controlsSpec);
+        return new EquipmentSpec("name", "description", itemSpec, null, controlsSpec);
     }
 }
