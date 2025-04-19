@@ -46,6 +46,7 @@ item:
   material: SHEARS
   throw-item:
     damage: 4
+    display-name: "&f%name%"
     material: SHEARS
 projectile:
   effects:

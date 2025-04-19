@@ -46,6 +46,7 @@ item:
   material: SHEARS
   throw-item:
     damage: 2
+    display-name: "&f%name%"
     material: SHEARS
 placing:
   delay-after-placement: 10

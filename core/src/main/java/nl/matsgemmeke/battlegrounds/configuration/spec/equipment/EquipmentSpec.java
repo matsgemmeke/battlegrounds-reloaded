@@ -7,5 +7,6 @@ public record EquipmentSpec(
         String description,
         ItemStackSpec itemSpec,
         ItemStackSpec activatorItemSpec,
+        ItemStackSpec throwItemSpec,
         ControlsSpec controlsSpec
 ) { }

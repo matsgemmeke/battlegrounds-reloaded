@@ -145,7 +145,7 @@ public class EquipmentFactoryTest {
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ItemStackSpec activatorItemSpec = new ItemStackSpec("STONE", "&fActivator", 2);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, activatorItemSpec, controlsSpec);
+        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, activatorItemSpec, null, controlsSpec);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
         Equipment equipment = factory.create(spec, configuration, gameKey);
@@ -153,6 +153,25 @@ public class EquipmentFactoryTest {
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getActivator()).isNotNull();
         assertThat(equipment.getActivator()).isInstanceOf(DefaultActivator.class);
+
+        verify(equipmentRegistry).registerItem(equipment);
+    }
+
+    @Test
+    public void createsMakesEquipmentWithThrowItem() {
+        ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
+        ItemStackSpec throwItemSpec = new ItemStackSpec("STONE", "&fThrow item", 2);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
+        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, null, throwItemSpec, controlsSpec);
+
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
+        Equipment equipment = factory.create(spec, configuration, gameKey);
+
+        assertThat(equipment).isInstanceOf(DefaultEquipment.class);
+        assertThat(equipment.getThrowItemTemplate()).isNotNull();
+        assertThat(equipment.getThrowItemTemplate().getDamage()).isEqualTo(2);
+        assertThat(equipment.getThrowItemTemplate().getDisplayNameTemplate()).isNotNull();
+        assertThat(equipment.getThrowItemTemplate().getDisplayNameTemplate().getText()).isEqualTo("&fThrow item");
 
         verify(equipmentRegistry).registerItem(equipment);
     }
@@ -354,42 +373,6 @@ public class EquipmentFactoryTest {
     }
 
     @Test
-    public void makeEquipmentItemWithThrowItemTemplate() {
-        EquipmentSpec spec = this.createEquipmentSpec();
-
-        int damage = 1;
-
-        Section throwItemSection = mock(Section.class);
-        when(throwItemSection.getInt("damage")).thenReturn(damage);
-        when(throwItemSection.getString("material")).thenReturn("SHEARS");
-
-        when(rootSection.getSection("item.throw-item")).thenReturn(throwItemSection);
-
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(spec, configuration, gameKey);
-
-        assertInstanceOf(DefaultEquipment.class, equipment);
-        assertNotNull(equipment.getThrowItemTemplate());
-        assertEquals(damage, equipment.getThrowItemTemplate().getDamage());
-
-        verify(equipmentRegistry).registerItem(equipment);
-    }
-
-    @Test
-    public void shouldThrowErrorWhenThrowItemMaterialConfigurationValueIsInvalid() {
-        EquipmentSpec spec = this.createEquipmentSpec();
-
-        Section throwItemSection = mock(Section.class);
-        when(throwItemSection.getString("material")).thenReturn("fail");
-
-        when(rootSection.getSection("item.throw-item")).thenReturn(throwItemSection);
-
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-
-        assertThrows(EquipmentCreationException.class, () -> factory.create(spec, configuration, gameKey));
-    }
-
-    @Test
     public void createMakesEquipmentItemWithControls() {
         EquipmentSpec spec = this.createEquipmentSpec();
 
@@ -414,6 +397,6 @@ public class EquipmentFactoryTest {
     private EquipmentSpec createEquipmentSpec() {
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        return new EquipmentSpec("name", "description", itemSpec, null, controlsSpec);
+        return new EquipmentSpec("name", "description", itemSpec, null, null, controlsSpec);
     }
 }

@@ -133,20 +133,31 @@ public class EquipmentFactory {
         equipment.update();
 
         ItemStackSpec activatorItemSpec = spec.activatorItemSpec();
+        ItemStackSpec throwItemSpec = spec.throwItemSpec();
 
         if (activatorItemSpec != null) {
             UUID activatorUUID = UUID.randomUUID();
             NamespacedKey activatorKey = keyCreator.create(NAMESPACED_KEY_NAME);
             Material activatorItemMaterial = Material.valueOf(activatorItemSpec.material());
-            int activatorItemDamage = activatorItemSpec.damage();
-            String activatorItemDisplayName = activatorItemSpec.displayName();
 
             ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorItemMaterial);
-            activatorItemTemplate.setDamage(activatorItemDamage);
-            activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorItemDisplayName));
+            activatorItemTemplate.setDamage(activatorItemSpec.damage());
+            activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorItemSpec.displayName()));
 
             DefaultActivator activator = new DefaultActivator(activatorItemTemplate);
             equipment.setActivator(activator);
+        }
+
+        if (throwItemSpec != null) {
+            UUID throwItemUUID = UUID.randomUUID();
+            NamespacedKey throwItemKey = keyCreator.create(NAMESPACED_KEY_NAME);
+            Material throwItemMaterial = Material.valueOf(throwItemSpec.material());
+
+            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemUUID, throwItemKey, throwItemMaterial);
+            throwItemTemplate.setDamage(throwItemSpec.damage());
+            throwItemTemplate.setDisplayNameTemplate(new TextTemplate(throwItemSpec.displayName()));
+
+            equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
         this.setUpDeploymentHandler(equipment, gameKey, section);
@@ -223,29 +234,6 @@ public class EquipmentFactory {
             }
 
             equipment.setProjectileProperties(projectileProperties);
-        }
-
-        // Setting the throw item template
-        Section throwItemSection = section.getSection("item.throw-item");
-
-        if (throwItemSection != null) {
-            Material throwItemMaterial;
-            String throwItemMaterialValue = throwItemSection.getString("material");
-
-            try {
-                throwItemMaterial = Material.valueOf(throwItemMaterialValue);
-            } catch (IllegalArgumentException e) {
-                throw new EquipmentCreationException("Unable to create equipment item " + spec.name() + ", throw item material " + throwItemMaterialValue + " is invalid");
-            }
-
-            UUID throwItemUUID = UUID.randomUUID();
-            NamespacedKey throwItemKey = keyCreator.create(NAMESPACED_KEY_NAME);
-            int throwItemDamage = throwItemSection.getInt("damage");
-
-            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemUUID, throwItemKey, throwItemMaterial);
-            throwItemTemplate.setDamage(throwItemDamage);
-
-            equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
         // Read controls configuration
