@@ -13,10 +13,18 @@ deploy:
     activate: false
     remove: true
     reset: false
+  placing:
+    cooldown: 10
+    material: WARPED_BUTTON
+    place-sounds: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
   resistances:
     bullet-damage: 0
     explosive-damage: 0
     fire-damage: 0
+  throwing:
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 1.0
 description: A plastic explosive device that is detonated remotely with the clacker.
 effect:
   activation:
@@ -49,11 +57,3 @@ item:
     damage: 2
     display-name: "&f%name%"
     material: SHEARS
-placing:
-  cooldown: 10
-  material: WARPED_BUTTON
-  place-sounds: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
-throwing:
-  cooldown: 30
-  throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 1.0

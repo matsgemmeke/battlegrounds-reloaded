@@ -16,6 +16,10 @@ deploy:
       particle: BLOCK_CRACK
     remove: true
     reset: true
+  throwing:
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 0.0
 description: Marks a location as your next spawn point.
 effect:
   activation:
@@ -32,7 +36,3 @@ item:
     damage: 11
     display-name: "&f%name%"
     material: SHEARS
-throwing:
-  cooldown: 30
-  throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 0.0

@@ -13,6 +13,11 @@ deploy:
     bullet-damage: 0
     explosive-damage: 0
     fire-damage: 0
+  throwing:
+    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 1.2
 description: Device that blinds the target when detonated.
 effect:
   activation:
@@ -48,8 +53,3 @@ projectile:
       check-period: 1
       horizontal-friction: 3.0
       vertical-friction: 2.0
-throwing:
-  cook-sounds: ENTITY_TNT_PRIMED-1-2-0
-  cooldown: 30
-  throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 1.2

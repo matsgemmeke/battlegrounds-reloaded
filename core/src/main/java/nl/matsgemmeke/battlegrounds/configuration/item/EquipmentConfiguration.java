@@ -32,15 +32,15 @@ public class EquipmentConfiguration {
     private static final String DISPLAY_ITEM_DISPLAY_NAME_ROUTE = "item.display.display-name";
     private static final String DISPLAY_ITEM_DAMAGE_ROUTE = "item.display.damage";
 
-    private static final String THROW_SOUNDS_ROUTE = "throwing.throw-sounds";
-    private static final String THROW_VELOCITY_ROUTE = "throwing.velocity";
-    private static final String THROW_COOLDOWN_ROUTE = "throwing.cooldown";
+    private static final String THROW_SOUNDS_ROUTE = "deploy.throwing.throw-sounds";
+    private static final String THROW_VELOCITY_ROUTE = "deploy.throwing.velocity";
+    private static final String THROW_COOLDOWN_ROUTE = "deploy.throwing.cooldown";
 
-    private static final String COOK_SOUNDS_ROUTE = "throwing.cook-sounds";
+    private static final String COOK_SOUNDS_ROUTE = "deploy.throwing.cook-sounds";
 
-    private static final String PLACE_MATERIAL_ROUTE = "placing.material";
-    private static final String PLACE_SOUNDS_ROUTE = "placing.cook-sounds";
-    private static final String PLACE_COOLDOWN_ROUTE = "placing.cooldown";
+    private static final String PLACE_MATERIAL_ROUTE = "deploy.placing.material";
+    private static final String PLACE_SOUNDS_ROUTE = "deploy.placing.cook-sounds";
+    private static final String PLACE_COOLDOWN_ROUTE = "deploy.placing.cooldown";
 
     private static final String ACTIVATOR_ITEM_MATERIAL_ROUTE = "item.activator.material";
     private static final String ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE = "item.activator.display-name";

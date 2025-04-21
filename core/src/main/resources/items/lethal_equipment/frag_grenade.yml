@@ -12,6 +12,11 @@ deploy:
   resistances:
     bullet-damage: 0
     fire-damage: 0
+  throwing:
+    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 1.2
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 effect:
   activation:
@@ -49,8 +54,3 @@ projectile:
       check-period: 1
       horizontal-friction: 3.0
       vertical-friction: 2.0
-throwing:
-  cook-sounds: ENTITY_TNT_PRIMED-1-2-0
-  cooldown: 30
-  throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 1.2
