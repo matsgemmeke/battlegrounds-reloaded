@@ -132,9 +132,6 @@ public class EquipmentFactory {
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controlsSpec(), spec.deploySpec(), equipment, gameKey);
-        equipment.setControls(controls);
-
         ItemStackSpec activatorItemSpec = spec.activatorItemSpec();
         ItemStackSpec throwItemSpec = spec.throwItemSpec();
 
@@ -162,6 +159,9 @@ public class EquipmentFactory {
 
             equipment.setThrowItemTemplate(throwItemTemplate);
         }
+
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controlsSpec(), spec.deploySpec(), equipment, gameKey);
+        equipment.setControls(controls);
 
         this.setUpDeploymentHandler(equipment, gameKey, section);
 

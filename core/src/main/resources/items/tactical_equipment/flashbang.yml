@@ -50,6 +50,6 @@ projectile:
       vertical-friction: 2.0
 throwing:
   cook-sounds: ENTITY_TNT_PRIMED-1-2-0
-  delay-after-throw: 30
+  cooldown: 30
   throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
   velocity: 1.2

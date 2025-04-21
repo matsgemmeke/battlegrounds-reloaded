@@ -67,10 +67,10 @@ public class EquipmentConfigurationTest {
         when(yamlReader.getString("item.activator.display-name")).thenReturn(activatorItemDisplayName);
         when(yamlReader.getOptionalInt("item.activator.damage")).thenReturn(Optional.of(activatorItemDamage));
 
-        when(yamlReader.contains("item.throw-item")).thenReturn(true);
-        when(yamlReader.getString("item.throw-item.material")).thenReturn(throwItemMaterial);
-        when(yamlReader.getString("item.throw-item.display-name")).thenReturn(throwItemDisplayName);
-        when(yamlReader.getOptionalInt("item.throw-item.damage")).thenReturn(Optional.of(throwItemDamage));
+        when(yamlReader.contains("item.throw")).thenReturn(true);
+        when(yamlReader.getString("item.throw.material")).thenReturn(throwItemMaterial);
+        when(yamlReader.getString("item.throw.display-name")).thenReturn(throwItemDisplayName);
+        when(yamlReader.getOptionalInt("item.throw.damage")).thenReturn(Optional.of(throwItemDamage));
 
         when(yamlReader.getOptionalDouble("deploy.health")).thenReturn(Optional.of(health));
 

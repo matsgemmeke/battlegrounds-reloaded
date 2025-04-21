@@ -46,9 +46,9 @@ public class EquipmentConfiguration {
     private static final String ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE = "item.activator.display-name";
     private static final String ACTIVATOR_ITEM_DAMAGE_ROUTE = "item.activator.damage";
 
-    private static final String THROW_ITEM_MATERIAL_ROUTE = "item.throw-item.material";
-    private static final String THROW_ITEM_DISPLAY_NAME_ROUTE = "item.throw-item.display-name";
-    private static final String THROW_ITEM_DAMAGE_ROUTE = "item.throw-item.damage";
+    private static final String THROW_ITEM_MATERIAL_ROUTE = "item.throw.material";
+    private static final String THROW_ITEM_DISPLAY_NAME_ROUTE = "item.throw.display-name";
+    private static final String THROW_ITEM_DAMAGE_ROUTE = "item.throw.damage";
 
     private static final String THROW_ACTION_ROUTE = "controls.throw";
     private static final String COOK_ACTION_ROUTE = "controls.cook";
@@ -202,7 +202,7 @@ public class EquipmentConfiguration {
             activatorItemSpec = new ItemStackSpec(activatorItemMaterial, activatorItemDisplayName, activatorItemDamage);
         }
 
-        if (yamlReader.contains("item.throw-item")) {
+        if (yamlReader.contains("item.throw")) {
             String throwItemMaterial = new FieldSpecResolver<String>()
                     .route(THROW_ITEM_MATERIAL_ROUTE)
                     .value(yamlReader.getString(THROW_ITEM_MATERIAL_ROUTE))

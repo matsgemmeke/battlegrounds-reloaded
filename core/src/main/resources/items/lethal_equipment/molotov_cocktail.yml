@@ -62,6 +62,6 @@ projectile:
         offset-z: 0.1
         type: FLAME
 throwing:
-  delay-after-throw: 30
+  cooldown: 30
   throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
   velocity: 1.2

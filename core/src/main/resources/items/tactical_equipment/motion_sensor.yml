@@ -37,6 +37,6 @@ item:
     display-name: "&f%name%"
     material: SHEARS
 throwing:
-  delay-after-throw: 30
+  cooldown: 30
   throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
   velocity: 0.5
