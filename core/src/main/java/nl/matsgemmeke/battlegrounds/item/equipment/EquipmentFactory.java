@@ -132,6 +132,9 @@ public class EquipmentFactory {
         equipment.setItemTemplate(itemTemplate);
         equipment.update();
 
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controlsSpec(), spec.deploySpec(), equipment, gameKey);
+        equipment.setControls(controls);
+
         ItemStackSpec activatorItemSpec = spec.activatorItemSpec();
         ItemStackSpec throwItemSpec = spec.throwItemSpec();
 
@@ -234,14 +237,6 @@ public class EquipmentFactory {
             }
 
             equipment.setProjectileProperties(projectileProperties);
-        }
-
-        // Read controls configuration
-        Section controlsSection = section.getSection("controls");
-
-        if (controlsSection != null) {
-            ItemControls<EquipmentHolder> controls = controlsFactory.create(section, equipment, gameKey);
-            equipment.setControls(controls);
         }
 
         return equipment;

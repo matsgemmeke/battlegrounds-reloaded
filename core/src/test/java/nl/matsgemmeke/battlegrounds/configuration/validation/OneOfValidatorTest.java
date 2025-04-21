@@ -12,6 +12,14 @@ public class OneOfValidatorTest {
     private static final List<String> ALLOWED_VALUES = List.of("TEST_ONE", "TEST_TWO");
 
     @Test
+    public void validateReturnsNoErrorMessageWhenGivenValueIsNull() {
+        OneOfValidator<String> validator = new OneOfValidator<>(ALLOWED_VALUES);
+        Optional<String> error = validator.validate("test", null);
+
+        assertThat(error).isEmpty();
+    }
+
+    @Test
     public void validateReturnsNoErrorWhenGivenValueIsPresentInAllowedValues() {
         OneOfValidator<String> validator = new OneOfValidator<>(ALLOWED_VALUES);
         Optional<String> error = validator.validate("test", "TEST_ONE");

@@ -7,7 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class YamlReader {
@@ -37,6 +39,16 @@ public class YamlReader {
     }
 
     @NotNull
+    public Optional<Boolean> getOptionalBoolean(@NotNull String route) {
+        return document.getOptionalBoolean(route);
+    }
+
+    @NotNull
+    public Optional<Double> getOptionalDouble(@NotNull String route) {
+        return document.getOptionalDouble(route);
+    }
+
+    @NotNull
     public Optional<Float> getOptionalFloat(@NotNull String route) {
         return document.getOptionalFloat(route);
     }
@@ -59,6 +71,11 @@ public class YamlReader {
     @Nullable
     public String getString(@NotNull String route) {
         return document.getString(route);
+    }
+
+    @NotNull
+    public Map<String, Object> getStringRouteMappedValues(@NotNull String route, boolean deep) {
+        return document.getOptionalSection(route).map(value -> value.getStringRouteMappedValues(deep)).orElse(Collections.emptyMap());
     }
 
     public void load() {

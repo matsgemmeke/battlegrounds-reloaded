@@ -48,6 +48,8 @@ public class EquipmentConfigurationTest {
         String throwItemDisplayName = "Test Throw Item";
         Integer throwItemDamage = 3;
 
+        Double health = 50.0;
+
         String throwAction = "LEFT_CLICK";
         String cookAction = "RIGHT_CLICK";
         String placeAction = "RIGHT_CLICK";
@@ -69,6 +71,8 @@ public class EquipmentConfigurationTest {
         when(yamlReader.getString("item.throw-item.material")).thenReturn(throwItemMaterial);
         when(yamlReader.getString("item.throw-item.display-name")).thenReturn(throwItemDisplayName);
         when(yamlReader.getOptionalInt("item.throw-item.damage")).thenReturn(Optional.of(throwItemDamage));
+
+        when(yamlReader.getOptionalDouble("deploy.health")).thenReturn(Optional.of(health));
 
         when(yamlReader.getString("controls.throw")).thenReturn(throwAction);
         when(yamlReader.getString("controls.cook")).thenReturn(cookAction);
@@ -92,6 +96,8 @@ public class EquipmentConfigurationTest {
         assertThat(spec.throwItemSpec().material()).isEqualTo(throwItemMaterial);
         assertThat(spec.throwItemSpec().displayName()).isEqualTo(throwItemDisplayName);
         assertThat(spec.throwItemSpec().damage()).isEqualTo(throwItemDamage);
+
+        assertThat(spec.deploySpec().health()).isEqualTo(health);
 
         assertThat(spec.controlsSpec().throwAction()).isEqualTo(throwAction);
         assertThat(spec.controlsSpec().cookAction()).isEqualTo(cookAction);

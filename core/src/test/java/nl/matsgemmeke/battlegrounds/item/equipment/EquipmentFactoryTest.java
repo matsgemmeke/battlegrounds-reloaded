@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploySpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -33,11 +34,9 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +48,7 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -145,7 +145,8 @@ public class EquipmentFactoryTest {
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ItemStackSpec activatorItemSpec = new ItemStackSpec("STONE", "&fActivator", 2);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, activatorItemSpec, null, controlsSpec);
+        DeploySpec deploySpec = new DeploySpec(50.0, true, false, false, Map.of(), null, null, null);
+        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, activatorItemSpec, null, controlsSpec, deploySpec);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
         Equipment equipment = factory.create(spec, configuration, gameKey);
@@ -162,7 +163,8 @@ public class EquipmentFactoryTest {
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ItemStackSpec throwItemSpec = new ItemStackSpec("STONE", "&fThrow item", 2);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, null, throwItemSpec, controlsSpec);
+        DeploySpec deploySpec = new DeploySpec(50.0, true, false, false, Map.of(), null, null, null);
+        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, null, throwItemSpec, controlsSpec, deploySpec);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
         Equipment equipment = factory.create(spec, configuration, gameKey);
@@ -377,7 +379,7 @@ public class EquipmentFactoryTest {
         EquipmentSpec spec = this.createEquipmentSpec();
 
         ItemControls<EquipmentHolder> controls = mock();
-        when(controlsFactory.create(eq(rootSection), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+        when(controlsFactory.create(eq(spec.controlsSpec()), eq(spec.deploySpec()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         Section controlsSection = mock(Section.class);
         when(rootSection.getSection("controls")).thenReturn(controlsSection);
@@ -397,6 +399,7 @@ public class EquipmentFactoryTest {
     private EquipmentSpec createEquipmentSpec() {
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        return new EquipmentSpec("name", "description", itemSpec, null, null, controlsSpec);
+        DeploySpec deploySpec = new DeploySpec(50.0, true, false, false, Map.of(), null, null, null);
+        return new EquipmentSpec("name", "description", itemSpec, null, null, controlsSpec, deploySpec);
     }
 }

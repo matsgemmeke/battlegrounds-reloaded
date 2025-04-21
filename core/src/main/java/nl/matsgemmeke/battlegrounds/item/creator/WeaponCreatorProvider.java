@@ -120,7 +120,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             }
 
             this.addItemSpec(creator, itemFile, document);
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
         } catch (InvalidItemConfigurationException e) {
             logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
@@ -155,6 +155,6 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             return;
         }
 
-        throw new IllegalStateException("");
+        throw new IllegalStateException("File has no specified item type");
     }
 }
