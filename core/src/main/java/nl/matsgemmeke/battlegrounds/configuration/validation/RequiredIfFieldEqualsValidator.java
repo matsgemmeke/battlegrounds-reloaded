@@ -7,7 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Validates that a value is present (non-null) only if another specific value is one of a given set of possibilities.
+ * Validator that enforces a conditional requirement rule: target field must be non-null or non-empty if another field
+ * has a specific value.
  * <p>
  * This validator is useful for enforcing conditional presence rules, such as requiring a field to be set only when
  * another field has a specific value.
@@ -15,7 +16,7 @@ import java.util.Set;
  * @param <T> the type of the value being validated
  * @param <S> the type of the condition value
  */
-public class ConditionalRequiredValidator<T, S> implements Validator<T> {
+public class RequiredIfFieldEqualsValidator<T, S> implements Validator<T> {
 
     @NotNull
     private final S conditionValue;
@@ -24,11 +25,11 @@ public class ConditionalRequiredValidator<T, S> implements Validator<T> {
     @NotNull
     private final String conditionRoute;
 
-    public ConditionalRequiredValidator(@NotNull String conditionRoute, @NotNull S conditionValue, @NotNull S expectedValue) {
+    public RequiredIfFieldEqualsValidator(@NotNull String conditionRoute, @NotNull S conditionValue, @NotNull S expectedValue) {
         this(conditionRoute, conditionValue, Set.of(expectedValue));
     }
 
-    public ConditionalRequiredValidator(@NotNull String conditionRoute, @NotNull S conditionValue, @NotNull Set<S> expectedValues) {
+    public RequiredIfFieldEqualsValidator(@NotNull String conditionRoute, @NotNull S conditionValue, @NotNull Set<S> expectedValues) {
         this.conditionRoute = conditionRoute;
         this.conditionValue = conditionValue;
         this.expectedValues = expectedValues;
