@@ -42,10 +42,11 @@ effect:
   type: EXPLOSION
 equipment-type: LETHAL
 item:
-  damage: 5
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
+    damage: 5
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
     damage: 5
     display-name: "&f%name%"
     material: SHEARS

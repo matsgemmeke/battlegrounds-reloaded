@@ -24,10 +24,11 @@ effect:
   type: MARK_SPAWN_POINT
 equipment-type: TACTICAL
 item:
-  damage: 11
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
+    damage: 11
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
     damage: 11
     display-name: "&f%name%"
     material: SHEARS

@@ -37,14 +37,15 @@ effect:
   type: EXPLOSION
 equipment-type: LETHAL
 item:
+  display:
+    damage: 2
+    display-name: "&f%name%"
+    material: SHEARS
   activator:
     damage: 3
     display-name: "&fDetonator"
     material: SHEARS
-  damage: 2
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  throw:
     damage: 2
     display-name: "&f%name%"
     material: SHEARS

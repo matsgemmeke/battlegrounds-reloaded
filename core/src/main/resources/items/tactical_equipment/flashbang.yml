@@ -32,10 +32,11 @@ effect:
   type: FLASH
 equipment-type: TACTICAL
 item:
-  damage: 6
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
+    damage: 6
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
     damage: 6
     display-name: "&f%name%"
     material: SHEARS

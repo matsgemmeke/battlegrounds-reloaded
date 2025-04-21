@@ -36,9 +36,9 @@ public class EquipmentConfigurationTest {
     public void createSpecReturnsGunSpecContainingValuesFromYamlReader() {
         String name = "Test Equipment";
 
-        String itemMaterial = "SHEARS";
-        String itemDisplayName = "Test Equipment";
-        Integer itemDamage = 1;
+        String displayItemMaterial = "SHEARS";
+        String displayItemDisplayName = "Test Equipment";
+        Integer displayItemDamage = 1;
 
         String activatorItemMaterial = "STICK";
         String activatorItemDisplayName = "Test Activator";
@@ -58,9 +58,9 @@ public class EquipmentConfigurationTest {
         when(yamlReader.getString("name")).thenReturn(name);
         when(yamlReader.getString("description")).thenReturn(null);
 
-        when(yamlReader.getString("item.material")).thenReturn(itemMaterial);
-        when(yamlReader.getString("item.display-name")).thenReturn(itemDisplayName);
-        when(yamlReader.getOptionalInt("item.damage")).thenReturn(Optional.of(itemDamage));
+        when(yamlReader.getString("item.display.material")).thenReturn(displayItemMaterial);
+        when(yamlReader.getString("item.display.display-name")).thenReturn(displayItemDisplayName);
+        when(yamlReader.getOptionalInt("item.display.damage")).thenReturn(Optional.of(displayItemDamage));
 
         when(yamlReader.contains("item.activator")).thenReturn(true);
         when(yamlReader.getString("item.activator.material")).thenReturn(activatorItemMaterial);
@@ -85,9 +85,9 @@ public class EquipmentConfigurationTest {
         assertThat(spec.name()).isEqualTo(name);
         assertThat(spec.description()).isNull();
 
-        assertThat(spec.itemSpec().material()).isEqualTo(itemMaterial);
-        assertThat(spec.itemSpec().displayName()).isEqualTo(itemDisplayName);
-        assertThat(spec.itemSpec().damage()).isEqualTo(itemDamage);
+        assertThat(spec.displayItemSpec().material()).isEqualTo(displayItemMaterial);
+        assertThat(spec.displayItemSpec().displayName()).isEqualTo(displayItemDisplayName);
+        assertThat(spec.displayItemSpec().damage()).isEqualTo(displayItemDamage);
 
         assertThat(spec.activatorItemSpec().material()).isEqualTo(activatorItemMaterial);
         assertThat(spec.activatorItemSpec().displayName()).isEqualTo(activatorItemDisplayName);

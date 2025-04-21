@@ -41,10 +41,11 @@ effect:
   type: COMBUSTION
 equipment-type: LETHAL
 item:
-  damage: 4
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
+    damage: 4
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
     damage: 4
     display-name: "&f%name%"
     material: SHEARS

@@ -29,10 +29,11 @@ effect:
   type: GUN_FIRE_SIMULATION
 equipment-type: TACTICAL
 item:
-  damage: 10
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
+    damage: 10
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
     damage: 10
     display-name: "&f%name%"
     material: SHEARS

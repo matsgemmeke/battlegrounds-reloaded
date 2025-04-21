@@ -32,10 +32,11 @@ effect:
   type: SMOKE_SCREEN
 equipment-type: TACTICAL
 item:
-  damage: 7
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
+    damage: 7
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
     damage: 7
     display-name: "&f%name%"
     material: SHEARS

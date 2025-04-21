@@ -130,6 +130,9 @@ public class EquipmentFactoryTest {
     public void shouldCreateSimpleEquipmentItem() {
         EquipmentSpec spec = this.createEquipmentSpec();
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controlsSpec()), eq(spec.deploySpec()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
         Equipment equipment = factory.create(spec, configuration, gameKey);
 
@@ -147,6 +150,9 @@ public class EquipmentFactoryTest {
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
         DeploySpec deploySpec = new DeploySpec(50.0, true, false, false, Map.of(), null, null, null);
         EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, activatorItemSpec, null, controlsSpec, deploySpec);
+
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(controlsSpec), eq(deploySpec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
         Equipment equipment = factory.create(spec, configuration, gameKey);
@@ -166,6 +172,9 @@ public class EquipmentFactoryTest {
         DeploySpec deploySpec = new DeploySpec(50.0, true, false, false, Map.of(), null, null, null);
         EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, null, throwItemSpec, controlsSpec, deploySpec);
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(controlsSpec), eq(deploySpec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
         Equipment equipment = factory.create(spec, configuration, gameKey);
 
@@ -181,6 +190,9 @@ public class EquipmentFactoryTest {
     @Test
     public void makeEquipmentItemWithEffectActivation() {
         EquipmentSpec spec = this.createEquipmentSpec();
+
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controlsSpec()), eq(spec.deploySpec()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         long activationDelay = 10L;
         when(deploySection.getLong("manual-activation.activation-delay")).thenReturn(activationDelay);
@@ -229,6 +241,9 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controlsSpec()), eq(spec.deploySpec()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
         MockedConstruction<BounceEffect> bounceEffectConstructor = mockConstruction(BounceEffect.class, (mock, context) -> {
             assertEquals(expectedProperties, context.arguments().get(1));
         });
@@ -260,6 +275,9 @@ public class EquipmentFactoryTest {
         when(projectileSection.getSection("effects.sound")).thenReturn(soundSection);
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
+
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controlsSpec()), eq(spec.deploySpec()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         MockedConstruction<SoundEffect> soundEffectConstructor = mockConstruction(SoundEffect.class, (mock, context) -> {
             assertEquals(expectedProperties, context.arguments().get(2));
@@ -294,6 +312,9 @@ public class EquipmentFactoryTest {
         when(projectileSection.getSection("effects.stick")).thenReturn(stickSection);
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
+
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controlsSpec()), eq(spec.deploySpec()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         MockedConstruction<StickEffect> stickEffectConstructor = mockConstruction(StickEffect.class, (mock, context) -> {
             assertEquals(expectedProperties, context.arguments().get(2));
@@ -341,6 +362,9 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controlsSpec()), eq(spec.deploySpec()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
         MockedConstruction<TrailEffect> trailEffectConstructor = mockConstruction(TrailEffect.class, (mock, context) -> {
             assertEquals(expectedProperties, context.arguments().get(1));
         });
@@ -369,6 +393,9 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controlsSpec()), eq(spec.deploySpec()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
 
         assertThrows(EquipmentCreationException.class, () -> factory.create(spec, configuration, gameKey));
@@ -380,9 +407,6 @@ public class EquipmentFactoryTest {
 
         ItemControls<EquipmentHolder> controls = mock();
         when(controlsFactory.create(eq(spec.controlsSpec()), eq(spec.deploySpec()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
-
-        Section controlsSection = mock(Section.class);
-        when(rootSection.getSection("controls")).thenReturn(controlsSection);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
 

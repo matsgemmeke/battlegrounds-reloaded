@@ -121,15 +121,15 @@ public class EquipmentFactory {
         // ItemStack creation
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        Material material = Material.valueOf(spec.itemSpec().material());
-        int damage = spec.itemSpec().damage();
-        String displayName = spec.itemSpec().displayName();
+        Material displayItemMaterial = Material.valueOf(spec.displayItemSpec().material());
+        int displayItemDamage = spec.displayItemSpec().damage();
+        String displayItemDisplayName = spec.displayItemSpec().displayName();
 
-        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
-        itemTemplate.setDamage(damage);
-        itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
+        ItemTemplate displayItemTemplate = new ItemTemplate(uuid, key, displayItemMaterial);
+        displayItemTemplate.setDamage(displayItemDamage);
+        displayItemTemplate.setDisplayNameTemplate(new TextTemplate(displayItemDisplayName));
 
-        equipment.setItemTemplate(itemTemplate);
+        equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
 
         ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controlsSpec(), spec.deploySpec(), equipment, gameKey);

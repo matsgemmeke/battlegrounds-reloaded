@@ -28,9 +28,9 @@ public class EquipmentConfiguration {
     private static final String NAME_ROUTE = "name";
     private static final String DESCRIPTION_ROUTE = "description";
 
-    private static final String ITEM_MATERIAL_ROUTE = "item.material";
-    private static final String ITEM_DISPLAY_NAME_ROUTE = "item.display-name";
-    private static final String ITEM_DAMAGE_ROUTE = "item.damage";
+    private static final String DISPLAY_ITEM_MATERIAL_ROUTE = "item.display.material";
+    private static final String DISPLAY_ITEM_DISPLAY_NAME_ROUTE = "item.display.display-name";
+    private static final String DISPLAY_ITEM_DAMAGE_ROUTE = "item.display.damage";
 
     private static final String THROW_SOUNDS_ROUTE = "throwing.throw-sounds";
     private static final String THROW_VELOCITY_ROUTE = "throwing.velocity";
@@ -80,23 +80,23 @@ public class EquipmentConfiguration {
                 .value(yamlReader.getString(DESCRIPTION_ROUTE))
                 .resolve();
 
-        String itemMaterial = new FieldSpecResolver<String>()
-                .route(ITEM_MATERIAL_ROUTE)
-                .value(yamlReader.getString(ITEM_MATERIAL_ROUTE))
+        String displayItemMaterial = new FieldSpecResolver<String>()
+                .route(DISPLAY_ITEM_MATERIAL_ROUTE)
+                .value(yamlReader.getString(DISPLAY_ITEM_MATERIAL_ROUTE))
                 .validate(new RequiredValidator<>())
                 .validate(new EnumValidator<>(Material.class))
                 .resolve();
-        String itemDisplayName = new FieldSpecResolver<String>()
-                .route(ITEM_DISPLAY_NAME_ROUTE)
-                .value(yamlReader.getString(ITEM_DISPLAY_NAME_ROUTE))
+        String displayItemDisplayName = new FieldSpecResolver<String>()
+                .route(DISPLAY_ITEM_DISPLAY_NAME_ROUTE)
+                .value(yamlReader.getString(DISPLAY_ITEM_DISPLAY_NAME_ROUTE))
                 .validate(new RequiredValidator<>())
                 .resolve();
-        int itemDamage = new FieldSpecResolver<Integer>()
-                .route(ITEM_DAMAGE_ROUTE)
-                .value(yamlReader.getOptionalInt(ITEM_DAMAGE_ROUTE).orElse(null))
+        int displayItemDamage = new FieldSpecResolver<Integer>()
+                .route(DISPLAY_ITEM_DAMAGE_ROUTE)
+                .value(yamlReader.getOptionalInt(DISPLAY_ITEM_DAMAGE_ROUTE).orElse(null))
                 .validate(new RequiredValidator<>())
                 .resolve();
-        ItemStackSpec itemSpec = new ItemStackSpec(itemMaterial, itemDisplayName, itemDamage);
+        ItemStackSpec displayItemSpec = new ItemStackSpec(displayItemMaterial, displayItemDisplayName, displayItemDamage);
 
         String throwAction = new FieldSpecResolver<String>()
                 .route(THROW_ACTION_ROUTE)
@@ -223,7 +223,7 @@ public class EquipmentConfiguration {
             throwItemSpec = new ItemStackSpec(throwItemMaterial, throwItemDisplayName, throwItemDamage);
         }
 
-        return new EquipmentSpec(name, description, itemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploySpec);
+        return new EquipmentSpec(name, description, displayItemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploySpec);
     }
 
     @NotNull

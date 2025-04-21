@@ -28,10 +28,11 @@ effect:
   type: SOUND_NOTIFICATION
 equipment-type: TACTICAL
 item:
-  damage: 8
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
+    damage: 8
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
     damage: 8
     display-name: "&f%name%"
     material: SHEARS
