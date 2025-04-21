@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.PlaceProperti
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ThrowPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.MapOneOfValidator;
+import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredIfFieldExistsValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -148,10 +149,12 @@ public class EquipmentConfiguration {
         Double throwVelocity = new FieldSpecResolver<Double>()
                 .route(THROW_VELOCITY_ROUTE)
                 .value(yamlReader.getOptionalDouble(THROW_VELOCITY_ROUTE).orElse(null))
+                .validate(new RequiredIfFieldExistsValidator<>(THROW_ACTION_ROUTE, throwAction))
                 .resolve();
         Long throwCooldown = new FieldSpecResolver<Long>()
                 .route(THROW_COOLDOWN_ROUTE)
                 .value(yamlReader.getOptionalLong(THROW_COOLDOWN_ROUTE).orElse(null))
+                .validate(new RequiredIfFieldExistsValidator<>(THROW_ACTION_ROUTE, throwAction))
                 .resolve();
         ThrowPropertiesSpec throwPropertiesSpec = new ThrowPropertiesSpec(throwSounds, throwVelocity, throwCooldown);
 
@@ -164,6 +167,7 @@ public class EquipmentConfiguration {
         String placeMaterial = new FieldSpecResolver<String>()
                 .route(PLACE_MATERIAL_ROUTE)
                 .value(yamlReader.getString(PLACE_MATERIAL_ROUTE))
+                .validate(new RequiredIfFieldExistsValidator<>(PLACE_ACTION_ROUTE, placeAction))
                 .validate(new EnumValidator<>(Material.class))
                 .resolve();
         String placeSounds = new FieldSpecResolver<String>()
@@ -173,6 +177,7 @@ public class EquipmentConfiguration {
         Long placeCooldown = new FieldSpecResolver<Long>()
                 .route(PLACE_COOLDOWN_ROUTE)
                 .value(yamlReader.getOptionalLong(PLACE_COOLDOWN_ROUTE).orElse(null))
+                .validate(new RequiredIfFieldExistsValidator<>(PLACE_ACTION_ROUTE, placeAction))
                 .resolve();
         PlacePropertiesSpec placePropertiesSpec = new PlacePropertiesSpec(placeMaterial, placeSounds, placeCooldown);
 
@@ -185,18 +190,18 @@ public class EquipmentConfiguration {
             String activatorItemMaterial = new FieldSpecResolver<String>()
                     .route(ACTIVATOR_ITEM_MATERIAL_ROUTE)
                     .value(yamlReader.getString(ACTIVATOR_ITEM_MATERIAL_ROUTE))
-                    .validate(new RequiredValidator<>())
+                    .validate(new RequiredIfFieldExistsValidator<>(ACTIVATE_ACTION_ROUTE, activateAction))
                     .validate(new EnumValidator<>(Material.class))
                     .resolve();
             String activatorItemDisplayName = new FieldSpecResolver<String>()
                     .route(ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE)
                     .value(yamlReader.getString(ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE))
-                    .validate(new RequiredValidator<>())
+                    .validate(new RequiredIfFieldExistsValidator<>(ACTIVATE_ACTION_ROUTE, activateAction))
                     .resolve();
             int activatorItemDamage = new FieldSpecResolver<Integer>()
                     .route(ACTIVATOR_ITEM_DAMAGE_ROUTE)
                     .value(yamlReader.getOptionalInt(ACTIVATOR_ITEM_DAMAGE_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
+                    .validate(new RequiredIfFieldExistsValidator<>(ACTIVATE_ACTION_ROUTE, activateAction))
                     .resolve();
 
             activatorItemSpec = new ItemStackSpec(activatorItemMaterial, activatorItemDisplayName, activatorItemDamage);
@@ -206,18 +211,18 @@ public class EquipmentConfiguration {
             String throwItemMaterial = new FieldSpecResolver<String>()
                     .route(THROW_ITEM_MATERIAL_ROUTE)
                     .value(yamlReader.getString(THROW_ITEM_MATERIAL_ROUTE))
-                    .validate(new RequiredValidator<>())
+                    .validate(new RequiredIfFieldExistsValidator<>(THROW_ACTION_ROUTE, throwAction))
                     .validate(new EnumValidator<>(Material.class))
                     .resolve();
             String throwItemDisplayName = new FieldSpecResolver<String>()
                     .route(THROW_ITEM_DISPLAY_NAME_ROUTE)
                     .value(yamlReader.getString(THROW_ITEM_DISPLAY_NAME_ROUTE))
-                    .validate(new RequiredValidator<>())
+                    .validate(new RequiredIfFieldExistsValidator<>(THROW_ACTION_ROUTE, throwAction))
                     .resolve();
             int throwItemDamage = new FieldSpecResolver<Integer>()
                     .route(THROW_ITEM_DAMAGE_ROUTE)
                     .value(yamlReader.getOptionalInt(THROW_ITEM_DAMAGE_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
+                    .validate(new RequiredIfFieldExistsValidator<>(THROW_ACTION_ROUTE, throwAction))
                     .resolve();
 
             throwItemSpec = new ItemStackSpec(throwItemMaterial, throwItemDisplayName, throwItemDamage);

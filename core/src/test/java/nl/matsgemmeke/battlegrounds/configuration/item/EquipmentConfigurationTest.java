@@ -49,6 +49,10 @@ public class EquipmentConfigurationTest {
         Integer throwItemDamage = 3;
 
         Double health = 50.0;
+        Double throwVelocity = 2.0;
+        Long throwCooldown = 20L;
+        String placeMaterial = "STICK";
+        Long placeCooldown = 40L;
 
         String throwAction = "LEFT_CLICK";
         String cookAction = "RIGHT_CLICK";
@@ -72,12 +76,19 @@ public class EquipmentConfigurationTest {
         when(yamlReader.getString("item.throw.display-name")).thenReturn(throwItemDisplayName);
         when(yamlReader.getOptionalInt("item.throw.damage")).thenReturn(Optional.of(throwItemDamage));
 
-        when(yamlReader.getOptionalDouble("deploy.health")).thenReturn(Optional.of(health));
-
         when(yamlReader.getString("controls.throw")).thenReturn(throwAction);
         when(yamlReader.getString("controls.cook")).thenReturn(cookAction);
         when(yamlReader.getString("controls.place")).thenReturn(placeAction);
         when(yamlReader.getString("controls.activate")).thenReturn(activateAction);
+
+        when(yamlReader.getOptionalDouble("deploy.health")).thenReturn(Optional.of(health));
+        when(yamlReader.getString("deploy.throwing.throw-sounds")).thenReturn(null);
+        when(yamlReader.getOptionalDouble("deploy.throwing.velocity")).thenReturn(Optional.of(throwVelocity));
+        when(yamlReader.getOptionalLong("deploy.throwing.cooldown")).thenReturn(Optional.of(throwCooldown));
+        when(yamlReader.getString("deploy.throwing.cook-sounds")).thenReturn(null);
+        when(yamlReader.getString("deploy.placing.material")).thenReturn(placeMaterial);
+        when(yamlReader.getString("deploy.placing.place-sounds")).thenReturn(null);
+        when(yamlReader.getOptionalLong("deploy.placing.cooldown")).thenReturn(Optional.of(placeCooldown));
 
         EquipmentConfiguration configuration = new EquipmentConfiguration(yamlReader);
         EquipmentSpec spec = configuration.createSpec();
@@ -97,11 +108,18 @@ public class EquipmentConfigurationTest {
         assertThat(spec.throwItemSpec().displayName()).isEqualTo(throwItemDisplayName);
         assertThat(spec.throwItemSpec().damage()).isEqualTo(throwItemDamage);
 
-        assertThat(spec.deploySpec().health()).isEqualTo(health);
-
         assertThat(spec.controlsSpec().throwAction()).isEqualTo(throwAction);
         assertThat(spec.controlsSpec().cookAction()).isEqualTo(cookAction);
         assertThat(spec.controlsSpec().placeAction()).isEqualTo(placeAction);
         assertThat(spec.controlsSpec().activateAction()).isEqualTo(activateAction);
+
+        assertThat(spec.deploySpec().health()).isEqualTo(health);
+        assertThat(spec.deploySpec().throwPropertiesSpec().throwSounds()).isNull();
+        assertThat(spec.deploySpec().throwPropertiesSpec().velocity()).isEqualTo(throwVelocity);
+        assertThat(spec.deploySpec().throwPropertiesSpec().cooldown()).isEqualTo(throwCooldown);
+        assertThat(spec.deploySpec().cookPropertiesSpec().cookSounds()).isNull();
+        assertThat(spec.deploySpec().placePropertiesSpec().material()).isEqualTo(placeMaterial);
+        assertThat(spec.deploySpec().placePropertiesSpec().placeSounds()).isNull();
+        assertThat(spec.deploySpec().placePropertiesSpec().cooldown()).isEqualTo(placeCooldown);
     }
 }
