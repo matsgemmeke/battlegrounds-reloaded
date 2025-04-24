@@ -1,3 +1,5 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy;
 
-public record CookPropertiesSpec(String cookSounds) { }
+import org.jetbrains.annotations.Nullable;
+
+public record CookPropertiesSpec(@Nullable String cookSounds) { }

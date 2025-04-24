@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
@@ -40,9 +41,10 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class EquipmentFactory {
@@ -121,9 +123,9 @@ public class EquipmentFactory {
         // ItemStack creation
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        Material displayItemMaterial = Material.valueOf(spec.displayItemSpec().material());
-        int displayItemDamage = spec.displayItemSpec().damage();
-        String displayItemDisplayName = spec.displayItemSpec().displayName();
+        Material displayItemMaterial = Material.valueOf(spec.displayItem().material());
+        int displayItemDamage = spec.displayItem().damage();
+        String displayItemDisplayName = spec.displayItem().displayName();
 
         ItemTemplate displayItemTemplate = new ItemTemplate(uuid, key, displayItemMaterial);
         displayItemTemplate.setDamage(displayItemDamage);
@@ -132,8 +134,8 @@ public class EquipmentFactory {
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
 
-        ItemStackSpec activatorItemSpec = spec.activatorItemSpec();
-        ItemStackSpec throwItemSpec = spec.throwItemSpec();
+        ItemStackSpec activatorItemSpec = spec.activatorItem();
+        ItemStackSpec throwItemSpec = spec.throwItem();
 
         if (activatorItemSpec != null) {
             UUID activatorUUID = UUID.randomUUID();
@@ -160,10 +162,11 @@ public class EquipmentFactory {
             equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controlsSpec(), spec.deploySpec(), equipment, gameKey);
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controls(), spec.deployment(), equipment, gameKey);
         equipment.setControls(controls);
 
-        this.setUpDeploymentHandler(equipment, gameKey, section);
+        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deployment(), gameKey, section, equipment.getActivator());
+        equipment.setDeploymentHandler(deploymentHandler);
 
         // Setting the projectile properties
         Section projectileSection = section.getSection("projectile");
@@ -242,37 +245,37 @@ public class EquipmentFactory {
         return equipment;
     }
 
-    private void setUpDeploymentHandler(@NotNull DefaultEquipment equipment, @NotNull GameKey gameKey, @NotNull Section section) {
-        Section deploySection = section.getOptionalSection("deploy")
-                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", deployment configuration is missing"));
+    @NotNull
+    private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull GameKey gameKey, @NotNull Section section, @Nullable Activator activator) {
         Section effectSection = section.getOptionalSection("effect")
-                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", effect configuration is missing"));
+                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item, effect configuration is missing"));
         Section effectActivationSection = section.getOptionalSection("effect.activation")
-                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", effect activation configuration is missing"));
+                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item, effect activation configuration is missing"));
 
-        List<GameSound> activationSounds = DefaultGameSound.parseSounds(deploySection.getString("manual-activation.activation-sounds"));
-        boolean activateEffectOnDestroy = deploySection.getBoolean("on-destroy.activate");
-        boolean removeOnDestroy = deploySection.getBoolean("on-destroy.remove");
-        boolean resetEffectOnDestroy = deploySection.getBoolean("on-destroy.reset");
-        long activationDelay = deploySection.getLong("manual-activation.activation-delay");
+        boolean activateEffectOnDestroy = deploymentSpec.activateEffectOnDestroy();
+        boolean removeOnDestroy = deploymentSpec.removeOnDestroy();
+        boolean resetEffectOnDestroy = deploymentSpec.resetEffectOnDestroy();
 
-        ParticleEffect destroyParticleEffect = null;
+        List<GameSound> activationSounds = Collections.emptyList();
+        long activationDelay = 0L;
 
-        if (deploySection.contains("on-destroy.particle-effect")) {
-            Map<String, Object> particleEffectValues = deploySection.getSection("on-destroy.particle-effect").getStringRouteMappedValues(true);
-
-            destroyParticleEffect = particleEffectMapper.map(particleEffectValues);
+        if (deploymentSpec.manualActivationSpec() != null) {
+            activationSounds = DefaultGameSound.parseSounds(deploymentSpec.manualActivationSpec().activationSounds());
+            activationDelay = deploymentSpec.manualActivationSpec().activationDelay();
         }
 
-        DeploymentProperties deploymentProperties = new DeploymentProperties(activationSounds, destroyParticleEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, activationDelay);
+        ParticleEffect destroyEffect = null;
+
+        if (deploymentSpec.destroyEffect() != null) {
+            destroyEffect = particleEffectMapper.map(deploymentSpec.destroyEffect());
+        }
+
+        DeploymentProperties deploymentProperties = new DeploymentProperties(activationSounds, destroyEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, activationDelay);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        Activator activator = equipment.getActivator();
         ItemEffectActivation effectActivation = effectActivationFactory.create(gameKey, effectActivationSection, activator);
         ItemEffect effect = effectFactory.create(effectSection, gameKey, effectActivation);
 
-        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
-
-        equipment.setDeploymentHandler(deploymentHandler);
+        return deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
     }
 }

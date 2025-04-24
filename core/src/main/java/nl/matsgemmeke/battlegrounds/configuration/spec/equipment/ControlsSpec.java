@@ -1,8 +1,10 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.equipment;
 
+import org.jetbrains.annotations.Nullable;
+
 public record ControlsSpec(
-        String throwAction,
-        String cookAction,
-        String placeAction,
-        String activateAction
+        @Nullable String throwAction,
+        @Nullable String cookAction,
+        @Nullable String placeAction,
+        @Nullable String activateAction
 ) { }

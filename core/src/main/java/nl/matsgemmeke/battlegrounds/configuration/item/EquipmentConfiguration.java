@@ -4,16 +4,15 @@ import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.CookPropertiesSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploySpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.PlacePropertiesSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ThrowPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.MapOneOfValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredIfFieldExistsValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -33,24 +32,6 @@ public class EquipmentConfiguration {
     private static final String DISPLAY_ITEM_DISPLAY_NAME_ROUTE = "item.display.display-name";
     private static final String DISPLAY_ITEM_DAMAGE_ROUTE = "item.display.damage";
 
-    private static final String THROW_SOUNDS_ROUTE = "deploy.throwing.throw-sounds";
-    private static final String THROW_VELOCITY_ROUTE = "deploy.throwing.velocity";
-    private static final String THROW_COOLDOWN_ROUTE = "deploy.throwing.cooldown";
-
-    private static final String COOK_SOUNDS_ROUTE = "deploy.throwing.cook-sounds";
-
-    private static final String PLACE_MATERIAL_ROUTE = "deploy.placing.material";
-    private static final String PLACE_SOUNDS_ROUTE = "deploy.placing.cook-sounds";
-    private static final String PLACE_COOLDOWN_ROUTE = "deploy.placing.cooldown";
-
-    private static final String ACTIVATOR_ITEM_MATERIAL_ROUTE = "item.activator.material";
-    private static final String ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE = "item.activator.display-name";
-    private static final String ACTIVATOR_ITEM_DAMAGE_ROUTE = "item.activator.damage";
-
-    private static final String THROW_ITEM_MATERIAL_ROUTE = "item.throw.material";
-    private static final String THROW_ITEM_DISPLAY_NAME_ROUTE = "item.throw.display-name";
-    private static final String THROW_ITEM_DAMAGE_ROUTE = "item.throw.damage";
-
     private static final String THROW_ACTION_ROUTE = "controls.throw";
     private static final String COOK_ACTION_ROUTE = "controls.cook";
     private static final String PLACE_ACTION_ROUTE = "controls.place";
@@ -61,6 +42,34 @@ public class EquipmentConfiguration {
     private static final String DESTROY_ON_REMOVE_ROUTE = "deploy.on-destroy.remove";
     private static final String DESTROY_ON_RESET_ROUTE = "deploy.on-destroy.reset";
     private static final String RESISTANCES_ROUTE = "deploy.resistances";
+    private static final String DESTROY_PARTICLE_EFFECT_PARTICLE_ROUTE = "deploy.on-destroy.particle-effect.particle";
+    private static final String DESTROY_PARTICLE_EFFECT_COUNT_ROUTE = "deploy.on-destroy.particle-effect.count";
+    private static final String DESTROY_PARTICLE_EFFECT_OFFSET_X_ROUTE = "deploy.on-destroy.particle-effect.offset-x";
+    private static final String DESTROY_PARTICLE_EFFECT_OFFSET_Y_ROUTE = "deploy.on-destroy.particle-effect.offset-y";
+    private static final String DESTROY_PARTICLE_EFFECT_OFFSET_Z_ROUTE = "deploy.on-destroy.particle-effect.offset-z";
+    private static final String DESTROY_PARTICLE_EFFECT_EXTRA_ROUTE = "deploy.on-destroy.particle-effect.extra";
+    private static final String DESTROY_PARTICLE_EFFECT_BLOCK_DATA_ROUTE = "deploy.on-destroy.particle-effect.block-data";
+
+    private static final String THROW_SOUNDS_ROUTE = "deploy.throwing.throw-sounds";
+    private static final String THROW_VELOCITY_ROUTE = "deploy.throwing.velocity";
+    private static final String THROW_COOLDOWN_ROUTE = "deploy.throwing.cooldown";
+
+    private static final String COOK_SOUNDS_ROUTE = "deploy.throwing.cook-sounds";
+
+    private static final String PLACE_MATERIAL_ROUTE = "deploy.placing.material";
+    private static final String PLACE_SOUNDS_ROUTE = "deploy.placing.place-sounds";
+    private static final String PLACE_COOLDOWN_ROUTE = "deploy.placing.cooldown";
+
+    private static final String ACTIVATION_DELAY_ROUTE = "deploy.manual-activation.activation-delay";
+    private static final String ACTIVATION_SOUNDS_ROUTE = "deploy.manual-activation.activation-sounds";
+
+    private static final String ACTIVATOR_ITEM_MATERIAL_ROUTE = "item.activator.material";
+    private static final String ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE = "item.activator.display-name";
+    private static final String ACTIVATOR_ITEM_DAMAGE_ROUTE = "item.activator.damage";
+
+    private static final String THROW_ITEM_MATERIAL_ROUTE = "item.throw.material";
+    private static final String THROW_ITEM_DISPLAY_NAME_ROUTE = "item.throw.display-name";
+    private static final String THROW_ITEM_DAMAGE_ROUTE = "item.throw.damage";
 
     @NotNull
     private final YamlReader yamlReader;
@@ -142,6 +151,48 @@ public class EquipmentConfiguration {
                 .validate(new MapOneOfValidator<>(ALLOWED_DAMAGE_TYPE_VALUES))
                 .resolve();
 
+        ParticleEffectSpec destroyEffect = null;
+
+        if (yamlReader.contains("deploy.on-destroy.particle-effect")) {
+            String destroyEffectParticle = new FieldSpecResolver<String>()
+                    .route(DESTROY_PARTICLE_EFFECT_PARTICLE_ROUTE)
+                    .value(yamlReader.getString(DESTROY_PARTICLE_EFFECT_PARTICLE_ROUTE))
+                    .validate(new RequiredValidator<>())
+                    .validate(new EnumValidator<>(Particle.class))
+                    .resolve();
+            Integer destroyEffectCount = new FieldSpecResolver<Integer>()
+                    .route(DESTROY_PARTICLE_EFFECT_COUNT_ROUTE)
+                    .value(yamlReader.getOptionalInt(DESTROY_PARTICLE_EFFECT_COUNT_ROUTE).orElse(null))
+                    .validate(new RequiredValidator<>())
+                    .resolve();
+            Double destroyEffectOffsetX = new FieldSpecResolver<Double>()
+                    .route(DESTROY_PARTICLE_EFFECT_OFFSET_X_ROUTE)
+                    .value(yamlReader.getOptionalDouble(DESTROY_PARTICLE_EFFECT_OFFSET_X_ROUTE).orElse(null))
+                    .validate(new RequiredValidator<>())
+                    .resolve();
+            Double destroyEffectOffsetY = new FieldSpecResolver<Double>()
+                    .route(DESTROY_PARTICLE_EFFECT_OFFSET_Y_ROUTE)
+                    .value(yamlReader.getOptionalDouble(DESTROY_PARTICLE_EFFECT_OFFSET_Y_ROUTE).orElse(null))
+                    .validate(new RequiredValidator<>())
+                    .resolve();
+            Double destroyEffectOffsetZ = new FieldSpecResolver<Double>()
+                    .route(DESTROY_PARTICLE_EFFECT_OFFSET_Z_ROUTE)
+                    .value(yamlReader.getOptionalDouble(DESTROY_PARTICLE_EFFECT_OFFSET_Z_ROUTE).orElse(null))
+                    .validate(new RequiredValidator<>())
+                    .resolve();
+            Double destroyEffectExtra = new FieldSpecResolver<Double>()
+                    .route(DESTROY_PARTICLE_EFFECT_EXTRA_ROUTE)
+                    .value(yamlReader.getOptionalDouble(DESTROY_PARTICLE_EFFECT_EXTRA_ROUTE).orElse(null))
+                    .resolve();
+            String destroyEffectBlockData = new FieldSpecResolver<String>()
+                    .route(DESTROY_PARTICLE_EFFECT_BLOCK_DATA_ROUTE)
+                    .value(yamlReader.getString(DESTROY_PARTICLE_EFFECT_BLOCK_DATA_ROUTE))
+                    .validate(new EnumValidator<>(Material.class))
+                    .resolve();
+
+            destroyEffect = new ParticleEffectSpec(destroyEffectParticle, destroyEffectCount, destroyEffectOffsetX, destroyEffectOffsetY, destroyEffectOffsetZ, destroyEffectExtra, destroyEffectBlockData);
+        }
+
         String throwSounds = new FieldSpecResolver<String>()
                 .route(THROW_SOUNDS_ROUTE)
                 .value(yamlReader.getString(THROW_SOUNDS_ROUTE))
@@ -181,7 +232,23 @@ public class EquipmentConfiguration {
                 .resolve();
         PlacePropertiesSpec placePropertiesSpec = new PlacePropertiesSpec(placeMaterial, placeSounds, placeCooldown);
 
-        DeploySpec deploySpec = new DeploySpec(health, destroyOnActivate, destroyOnRemove, destroyOnReset, resistances, throwPropertiesSpec, cookPropertiesSpec, placePropertiesSpec);
+        ManualActivationSpec manualActivationSpec = null;
+
+        if (yamlReader.contains("deploy.manual-activation")) {
+            Long activationDelay = new FieldSpecResolver<Long>()
+                    .route(ACTIVATION_DELAY_ROUTE)
+                    .value(yamlReader.getOptionalLong(ACTIVATION_DELAY_ROUTE).orElse(null))
+                    .validate(new RequiredValidator<>())
+                    .resolve();
+            String activationSounds = new FieldSpecResolver<String>()
+                    .route(ACTIVATION_SOUNDS_ROUTE)
+                    .value(yamlReader.getString(ACTIVATION_SOUNDS_ROUTE))
+                    .resolve();
+
+            manualActivationSpec = new ManualActivationSpec(activationDelay, activationSounds);
+        }
+
+        DeploymentSpec deploymentSpec = new DeploymentSpec(health, destroyOnActivate, destroyOnRemove, destroyOnReset, destroyEffect, resistances, throwPropertiesSpec, cookPropertiesSpec, placePropertiesSpec, manualActivationSpec);
 
         ItemStackSpec activatorItemSpec = null;
         ItemStackSpec throwItemSpec = null;
@@ -228,7 +295,7 @@ public class EquipmentConfiguration {
             throwItemSpec = new ItemStackSpec(throwItemMaterial, throwItemDisplayName, throwItemDamage);
         }
 
-        return new EquipmentSpec(name, description, displayItemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploySpec);
+        return new EquipmentSpec(name, description, displayItemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploymentSpec);
     }
 
     @NotNull

@@ -1,96 +1,54 @@
 package nl.matsgemmeke.battlegrounds.item.mapper;
 
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ParticleEffectMapperTest {
 
     @Test
-    public void mapThrowsExceptionIfGivenValuesHasNoParticleValue() {
-        Map<String, Object> values = Collections.emptyMap();
-
-        ParticleEffectMapper mapper = new ParticleEffectMapper();
-
-        assertThrows(MappingException.class, () -> mapper.map(values));
-    }
-
-    @Test
-    public void mapThrowsExceptionIfGivenValuesHasInvalidParticleValue() {
-        Map<String, Object> values = Map.of("particle", "fail");
-
-        ParticleEffectMapper mapper = new ParticleEffectMapper();
-
-        assertThrows(MappingException.class, () -> mapper.map(values));
-    }
-
-    @Test
     public void mapReturnsParticleEffectInstanceWithBlockData() {
-        Map<String, Object> values = Map.of(
-                "particle", "BLOCK_CRACK",
-                "count", 10,
-                "offset-x", 0.1,
-                "offset-y", 0.2,
-                "offset-z", 0.3,
-                "extra", 0.0,
-                "block-data", "STONE"
-        );
+        int count = 10;
+        double offsetX = 0.1;
+        double offsetY = 0.2;
+        double offsetZ = 0.3;
+        double extra = 0.0;
+        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", count, offsetX, offsetY, offsetZ, extra, "STONE");
 
         ParticleEffectMapper mapper = new ParticleEffectMapper();
-        ParticleEffect particleEffect = mapper.map(values);
+        ParticleEffect particleEffect = mapper.map(particleEffectSpec);
 
-        assertEquals(Particle.BLOCK_CRACK, particleEffect.particle());
-        assertEquals(10, particleEffect.count());
-        assertEquals(0.1, particleEffect.offsetX());
-        assertEquals(0.2, particleEffect.offsetY());
-        assertEquals(0.3, particleEffect.offsetZ());
-        assertEquals(0.0, particleEffect.extra());
-        assertEquals(Material.STONE, particleEffect.blockDataMaterial());
-    }
-
-    @Test
-    public void mapThrowsExceptionIfGivenValuesHasInvalidBlockDataMaterialValue() {
-        Map<String, Object> values = Map.of(
-                "particle", "BLOCK_CRACK",
-                "count", 10,
-                "offset-x", 0.1,
-                "offset-y", 0.2,
-                "offset-z", 0.3,
-                "extra", 0.0,
-                "block-data", "fail"
-        );
-
-        ParticleEffectMapper mapper = new ParticleEffectMapper();
-
-        assertThrows(MappingException.class, () -> mapper.map(values));
+        assertThat(particleEffect.particle()).isEqualTo(Particle.BLOCK_CRACK);
+        assertThat(particleEffect.count()).isEqualTo(count);
+        assertThat(particleEffect.offsetX()).isEqualTo(offsetX);
+        assertThat(particleEffect.offsetY()).isEqualTo(offsetY);
+        assertThat(particleEffect.offsetZ()).isEqualTo(offsetZ);
+        assertThat(particleEffect.extra()).isEqualTo(extra);
+        assertThat(particleEffect.blockDataMaterial()).isEqualTo(Material.STONE);
     }
 
     @Test
     public void mapReturnsParticleEffectInstanceWithoutBlockData() {
-        Map<String, Object> values = Map.of(
-                "particle", "FLAME",
-                "count", 10,
-                "offset-x", 0.1,
-                "offset-y", 0.2,
-                "offset-z", 0.3,
-                "extra", 0.0
-        );
+        int count = 10;
+        double offsetX = 0.1;
+        double offsetY = 0.2;
+        double offsetZ = 0.3;
+        double extra = 0.0;
+        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", count, offsetX, offsetY, offsetZ, extra, null);
 
         ParticleEffectMapper mapper = new ParticleEffectMapper();
-        ParticleEffect particleEffect = mapper.map(values);
+        ParticleEffect particleEffect = mapper.map(particleEffectSpec);
 
-        assertEquals(Particle.FLAME, particleEffect.particle());
-        assertEquals(10, particleEffect.count());
-        assertEquals(0.1, particleEffect.offsetX());
-        assertEquals(0.2, particleEffect.offsetY());
-        assertEquals(0.3, particleEffect.offsetZ());
-        assertEquals(0.0, particleEffect.extra());
-        assertNull(particleEffect.blockDataMaterial());
+        assertThat(particleEffect.particle()).isEqualTo(Particle.FLAME);
+        assertThat(particleEffect.count()).isEqualTo(count);
+        assertThat(particleEffect.offsetX()).isEqualTo(offsetX);
+        assertThat(particleEffect.offsetY()).isEqualTo(offsetY);
+        assertThat(particleEffect.offsetZ()).isEqualTo(offsetZ);
+        assertThat(particleEffect.extra()).isEqualTo(extra);
+        assertThat(particleEffect.blockDataMaterial()).isNull();
     }
 }
