@@ -26,7 +26,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     private ItemControls<EquipmentHolder> controls;
     @Nullable
-    private ItemTemplate itemTemplate;
+    private ItemTemplate displayItemTemplate;
     @Nullable
     private ItemTemplate throwItemTemplate;
     @NotNull
@@ -80,12 +80,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     @Nullable
-    public ItemTemplate getItemTemplate() {
-        return itemTemplate;
+    public ItemTemplate getDisplayItemTemplate() {
+        return displayItemTemplate;
     }
 
-    public void setItemTemplate(@Nullable ItemTemplate itemTemplate) {
-        this.itemTemplate = itemTemplate;
+    public void setDisplayItemTemplate(@Nullable ItemTemplate displayItemTemplate) {
+        this.displayItemTemplate = displayItemTemplate;
     }
 
     @Nullable
@@ -132,7 +132,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {
-        return itemTemplate != null && itemTemplate.matchesTemplate(itemStack)
+        return displayItemTemplate != null && displayItemTemplate.matchesTemplate(itemStack)
                 || activator != null && activator.isMatching(itemStack);
     }
 
@@ -176,12 +176,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public boolean update() {
-        if (itemTemplate == null) {
+        if (displayItemTemplate == null) {
             return false;
         }
 
         Map<String, Object> values = this.getTemplateValues();
-        itemStack = itemTemplate.createItemStack(values);
+        itemStack = displayItemTemplate.createItemStack(values);
 
         if (holder != null) {
             holder.setHeldItem(itemStack);

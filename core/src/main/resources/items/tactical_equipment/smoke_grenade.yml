@@ -9,6 +9,11 @@ deploy:
     activate: true
     remove: false
     reset: false
+  throwing:
+    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 1.2
 description: Device that creates a smoke screen when detonated.
 effect:
   activation:
@@ -18,7 +23,7 @@ effect:
   duration: 400
   growth-increase: 0.025
   growth-period: 1
-  ignition-sound: BLOCK_FIRE_EXTINGUISH-1-0-0
+  ignition-sounds: BLOCK_FIRE_EXTINGUISH-1-0-0
   particle:
     count: 1
     extra: 0.01
@@ -32,11 +37,13 @@ effect:
   type: SMOKE_SCREEN
 equipment-type: TACTICAL
 item:
-  damage: 7
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
     damage: 7
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
+    damage: 7
+    display-name: "&f%name%"
     material: SHEARS
 projectile:
   effects:
@@ -46,8 +53,3 @@ projectile:
       check-period: 1
       horizontal-friction: 3.0
       vertical-friction: 2.0
-throwing:
-  cook-sound: ENTITY_TNT_PRIMED-1-2-0
-  delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 1.2

@@ -1,33 +1,37 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.CookPropertiesSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.PlacePropertiesSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ThrowPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.equipment.*;
-import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import org.bukkit.NamespacedKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.text.html.Option;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 public class EquipmentControlsFactoryTest {
 
+    private static final boolean DESTROY_ON_ACTIVATE = true;
+    private static final boolean DESTROY_ON_REMOVE = false;
+    private static final boolean DESTROY_ON_RESET = false;
+    private static final double HEALTH = 50.0;
+    private static final Map<String, Double> RESISTANCES = Map.of("bullet-damage", 0.5);
+
     private Equipment equipment;
     private GameContextProvider contextProvider;
     private GameKey gameKey;
-    private NamespacedKeyCreator namespacedKeyCreator;
-    private Section controlsSection;
-    private Section rootSection;
 
     @BeforeEach
     public void setUp() {
@@ -36,198 +40,122 @@ public class EquipmentControlsFactoryTest {
 
         equipment = mock(Equipment.class);
         when(equipment.getName()).thenReturn("test equipment");
-
-        namespacedKeyCreator = mock(NamespacedKeyCreator.class);
-        when(namespacedKeyCreator.create("battlegrounds-equipment")).thenReturn(mock(NamespacedKey.class));
-
-        controlsSection = mock(Section.class);
-        rootSection = mock(Section.class);
-        when(rootSection.getSection("controls")).thenReturn(controlsSection);
     }
 
     @Test
     public void createMakesItemControlsWithThrowFunction() {
-        Map<String, Object> resistances = Map.of("bullet-damage", 0.5);
+        double velocity = 1.5;
+        long cooldown = 20L;
+        ThrowPropertiesSpec throwPropertiesSpec = new ThrowPropertiesSpec(null, velocity, cooldown);
 
-        Section resistancesSection = mock(Section.class);
-        when(resistancesSection.getStringRouteMappedValues(false)).thenReturn(resistances);
-
-        Section throwItemSection = mock(Section.class);
-        when(throwItemSection.getString("material")).thenReturn("SHEARS");
-
-        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
-        when(rootSection.getOptionalSection("item.throw-item")).thenReturn(Optional.of(throwItemSection));
-        when(rootSection.getSection("deploy.resistances")).thenReturn(resistancesSection);
-        when(rootSection.getString("throwing.throw-sound")).thenReturn("AMBIENT_CAVE-1-1-1");
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, throwPropertiesSpec, null, null, null);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-        ItemControls<EquipmentHolder> controls = factory.create(rootSection, equipment, gameKey);
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(equipment.getThrowItemTemplate()).thenReturn(itemTemplate);
 
-        assertNotNull(controls);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider);
+        ItemControls<EquipmentHolder> controls = factory.create(controlsSpec, deploymentSpec, equipment, gameKey);
+
+        assertThat(controls).isNotNull();
     }
 
     @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenThrowActionConfigurationValueIsInvalid() {
-        when(controlsSection.getString("throw")).thenReturn("fail");
+    public void createThrowsEquipmentControlsCreationExceptionWhenThrowActionHasValueButThrowItemTemplateIsNull() {
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, null, null);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
+        when(equipment.getThrowItemTemplate()).thenReturn(null);
 
-        Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
-        assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for function \"throw\" is not a valid action type!", exception.getMessage());
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider);
+
+        assertThatThrownBy(() -> factory.create(controlsSpec, deploymentSpec, equipment, gameKey))
+                .isInstanceOf(EquipmentControlsCreationException.class)
+                .hasMessage("Cannot create controls for 'throw', the equipment specification does not contain the required throw item template");
     }
 
     @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenThrowItemTemplateConfigurationDoesNotExist() {
-        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
-        when(rootSection.getOptionalSection("item.throw-item")).thenReturn(Optional.empty());
+    public void createThrowsEquipmentControlsCreationExceptionWhenThrowActionHasValueButThrowPropertiesIsNull() {
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, null, null);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
+        ItemTemplate throwItemTemplate = mock(ItemTemplate.class);
+        when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
 
-        Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
-        assertThat(exception.getMessage()).isEqualTo("Configuration for throw item template is missing");
-    }
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider);
 
-    @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenThrowItemMaterialIsInvalid() {
-        Section throwItemSection = mock(Section.class);
-        when(throwItemSection.getString("material")).thenReturn("fail");
-
-        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
-        when(rootSection.getOptionalSection("item.throw-item")).thenReturn(Optional.of(throwItemSection));
-
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-
-        Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
-        assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for the throw item material is not a valid material type!", exception.getMessage());
-    }
-
-    @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenResistanceKeyIsInvalid() {
-        Map<String, Object> resistances = Map.of("fail", 0.5);
-
-        Section resistancesSection = mock(Section.class);
-        when(resistancesSection.getStringRouteMappedValues(false)).thenReturn(resistances);
-
-        Section throwItemSection = mock(Section.class);
-        when(throwItemSection.getString("material")).thenReturn("SHEARS");
-
-        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
-        when(rootSection.getOptionalSection("item.throw-item")).thenReturn(Optional.of(throwItemSection));
-        when(rootSection.getSection("deploy.resistances")).thenReturn(resistancesSection);
-
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-
-        Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
-        assertThat(exception.getMessage()).isEqualTo("Invalid damage type value \"fail\"");
-    }
-
-    @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenResistanceValueIsNoNumber() {
-        Map<String, Object> resistances = Map.of("bullet-damage", "fail");
-
-        Section resistancesSection = mock(Section.class);
-        when(resistancesSection.getStringRouteMappedValues(false)).thenReturn(resistances);
-
-        Section throwItemSection = mock(Section.class);
-        when(throwItemSection.getString("material")).thenReturn("SHEARS");
-
-        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
-        when(rootSection.getOptionalSection("item.throw-item")).thenReturn(Optional.of(throwItemSection));
-        when(rootSection.getSection("deploy.resistances")).thenReturn(resistancesSection);
-
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-
-        Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
-        assertThat(exception.getMessage()).isEqualTo("Invalid resistance factor value; \"fail\" is not a number");
+        assertThatThrownBy(() -> factory.create(controlsSpec, deploymentSpec, equipment, gameKey))
+                .isInstanceOf(EquipmentControlsCreationException.class)
+                .hasMessage("Cannot create controls for 'throw', the equipment specification does not contain the required throw properties");
     }
 
     @Test
     public void createMakesItemControlsWithCookFunction() {
-        Section throwItemSection = mock(Section.class);
-        when(throwItemSection.getString("material")).thenReturn("SHEARS");
+        double velocity = 1.5;
+        long cooldown = 20L;
+        ThrowPropertiesSpec throwPropertiesSpec = new ThrowPropertiesSpec(null, velocity, cooldown);
 
-        when(controlsSection.getString("cook")).thenReturn("RIGHT_CLICK");
-        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
-        when(rootSection.getOptionalSection("item.throw-item")).thenReturn(Optional.of(throwItemSection));
+        CookPropertiesSpec cookPropertiesSpec = new CookPropertiesSpec(null);
+
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, throwPropertiesSpec, cookPropertiesSpec, null, null);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-        ItemControls<EquipmentHolder> controls = factory.create(rootSection, equipment, gameKey);
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(equipment.getThrowItemTemplate()).thenReturn(itemTemplate);
 
-        assertNotNull(controls);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider);
+        ItemControls<EquipmentHolder> controls = factory.create(controlsSpec, deploymentSpec, equipment, gameKey);
+
+        assertThat(controls).isNotNull();
     }
 
     @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenCookActionConfigurationValueIsInvalid() {
-        when(controlsSection.getString("cook")).thenReturn("fail");
-        when(controlsSection.getString("throw")).thenReturn("LEFT_CLICK");
+    public void createThrowsEquipmentControlsCreationExceptionWhenCookActionHasValueButCookPropertiesIsNull() {
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, null, null);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider);
 
-        Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
-        assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for function \"cook\" is not a valid action type!", exception.getMessage());
+        assertThatThrownBy(() -> factory.create(controlsSpec, deploymentSpec, equipment, gameKey))
+                .isInstanceOf(EquipmentControlsCreationException.class)
+                .hasMessage("Cannot create controls for 'cook', the equipment specification does not contain the required properties");
     }
 
     @Test
     public void createMakesItemControlsWithPlaceFunction() {
-        when(controlsSection.getString("place")).thenReturn("RIGHT_CLICK");
-        when(rootSection.getString("placing.material")).thenReturn("WARPED_BUTTON");
+        String material = "STICK";
+        long cooldown = 20L;
+        PlacePropertiesSpec placePropertiesSpec = new PlacePropertiesSpec(material, null, cooldown);
+
+        DeploymentSpec deploySpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, placePropertiesSpec, null);
+        ControlsSpec controlsSpec = new ControlsSpec(null, null, "RIGHT_CLICK", null);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-        ItemControls<EquipmentHolder> controls = factory.create(rootSection, equipment, gameKey);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider);
+        ItemControls<EquipmentHolder> controls = factory.create(controlsSpec, deploySpec, equipment, gameKey);
 
-        assertNotNull(controls);
-    }
-
-    @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenPlaceActionConfigurationValueIsInvalid() {
-        when(controlsSection.getString("place")).thenReturn("fail");
-
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-
-        Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
-        assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for function \"place\" is not a valid action type!", exception.getMessage());
-    }
-
-    @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenPlacingMaterialConfigurationValueIsInvalid() {
-        when(controlsSection.getString("place")).thenReturn("RIGHT_CLICK");
-        when(rootSection.getString("placing.material")).thenReturn("fail");
-
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-
-        Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
-        assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for the place material is not a valid material type!", exception.getMessage());
+        assertThat(controls).isNotNull();
     }
 
     @Test
     public void createMakesItemControlsWithActivateFunction() {
-        when(controlsSection.getString("activate")).thenReturn("RIGHT_CLICK");
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, null, null);
+        ControlsSpec controlsSpec = new ControlsSpec(null, null, null, "RIGHT_CLICK");
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-        ItemControls<EquipmentHolder> controls = factory.create(rootSection, equipment, gameKey);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider);
+        ItemControls<EquipmentHolder> controls = factory.create(controlsSpec, deploymentSpec, equipment, gameKey);
 
-        assertNotNull(controls);
-    }
-
-    @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenActivateActionConfigurationValueIsInvalid() {
-        when(controlsSection.getString("activate")).thenReturn("fail");
-
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, namespacedKeyCreator);
-
-        Exception exception = assertThrows(EquipmentControlsCreationException.class, () -> factory.create(rootSection, equipment, gameKey));
-        assertEquals("Error while creating controls for equipment test equipment: the value \"fail\" for function \"activate\" is not a valid action type!", exception.getMessage());
+        assertThat(controls).isNotNull();
     }
 }

@@ -88,7 +88,7 @@ public class ItemEffectFactory {
                 double shortRangeDamage = section.getDouble("range.short-range.damage");
                 double shortRangeDistance = section.getDouble("range.short-range.distance");
 
-                List<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("combustion-sound"));
+                List<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("combustion-sounds"));
 
                 CombustionProperties properties = new CombustionProperties(sounds, maxRadius, ticksBetweenSpread, maxDuration, burnBlocks, spreadFire);
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
@@ -137,7 +137,7 @@ public class ItemEffectFactory {
                 return new FlashEffect(effectActivation, properties, targetFinder);
             }
             case GUN_FIRE_SIMULATION -> {
-                List<GameSound> genericSounds = DefaultGameSound.parseSounds(section.getString("generic-sound"));
+                List<GameSound> genericSounds = DefaultGameSound.parseSounds(section.getString("generic-sounds"));
                 int genericRateOfFire = section.getInt("generic-rate-of-fire");
                 int maxBurstDuration = section.getInt("max-burst-duration");
                 int minBurstDuration = section.getInt("min-burst-duration");
@@ -178,7 +178,7 @@ public class ItemEffectFactory {
                 double extra = section.getDouble("particle.extra");
                 ParticleEffectProperties particleEffect = new ParticleEffectProperties(particle, count, offsetX, offsetY, offsetZ, extra);
 
-                List<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sound"));
+                List<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sounds"));
                 int duration = section.getInt("duration");
                 double density = section.getDouble("density");
                 double radiusMaxSize = section.getDouble("radius.max-size");
@@ -193,7 +193,7 @@ public class ItemEffectFactory {
                 return smokeScreenEffectFactory.create(effectActivation, properties, audioEmitter, collisionDetector);
             }
             case SOUND_NOTIFICATION -> {
-                Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sound"));
+                Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sounds"));
 
                 return new SoundNotificationEffect(effectActivation, sounds);
             }

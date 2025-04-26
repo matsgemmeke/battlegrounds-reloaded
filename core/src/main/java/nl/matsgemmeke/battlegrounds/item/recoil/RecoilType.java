@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
-public enum RecoilProducerType {
+public enum RecoilType {
 
     CAMERA_MOVEMENT,
     RANDOM_SPREAD

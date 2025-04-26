@@ -4,6 +4,9 @@ import com.google.inject.Inject;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
@@ -20,7 +23,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.*;
@@ -39,12 +41,13 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
-public class EquipmentFactory implements WeaponFactory {
+public class EquipmentFactory {
 
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
 
@@ -87,8 +90,8 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
-        Equipment equipment = this.createInstance(configuration, gameKey);
+    public Equipment create(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+        Equipment equipment = this.createInstance(spec, configuration, gameKey);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
         equipmentRegistry.registerItem(equipment);
@@ -97,8 +100,8 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    public Equipment create(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
-        Equipment equipment = this.createInstance(configuration, gameKey);
+    public Equipment create(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+        Equipment equipment = this.createInstance(spec, configuration, gameKey);
         equipment.setHolder(gamePlayer);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
@@ -108,73 +111,62 @@ public class EquipmentFactory implements WeaponFactory {
     }
 
     @NotNull
-    private Equipment createInstance(@NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+    private Equipment createInstance(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
         Section section = configuration.getRoot();
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
-        String name = section.getString("name");
-        String description = section.getString("description");
-
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setName(name);
-        equipment.setDescription(description);
+        equipment.setName(spec.name());
+        equipment.setDescription(spec.description());
 
         // ItemStack creation
-        Material material;
-        String materialValue = section.getString("item.material");
-
-        try {
-            material = Material.valueOf(materialValue);
-        } catch (IllegalArgumentException e) {
-            throw new EquipmentCreationException("Unable to create equipment item " + name + "; item stack material " + materialValue + " is invalid");
-        }
-
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        int damage = section.getInt("item.damage");
-        String displayName = section.getString("item.display-name");
+        Material displayItemMaterial = Material.valueOf(spec.displayItem().material());
+        int displayItemDamage = spec.displayItem().damage();
+        String displayItemDisplayName = spec.displayItem().displayName();
 
-        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
-        itemTemplate.setDamage(damage);
+        ItemTemplate displayItemTemplate = new ItemTemplate(uuid, key, displayItemMaterial);
+        displayItemTemplate.setDamage(displayItemDamage);
+        displayItemTemplate.setDisplayNameTemplate(new TextTemplate(displayItemDisplayName));
 
-        if (displayName != null) {
-            itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
-        }
-
-        equipment.setItemTemplate(itemTemplate);
+        equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
 
-        // Setting the optional activator item
-        Section activatorItemSection = section.getSection("item.activator");
+        ItemStackSpec activatorItemSpec = spec.activatorItem();
+        ItemStackSpec throwItemSpec = spec.throwItem();
 
-        if (activatorItemSection != null) {
-            Material activatorMaterial;
-            String activatorMaterialValue = activatorItemSection.getString("material");
-
-            try {
-                activatorMaterial = Material.valueOf(activatorMaterialValue);
-            } catch (IllegalArgumentException e) {
-                throw new EquipmentCreationException("Unable to create equipment item " + name + "; activator item stack material " + activatorMaterialValue + " is invalid");
-            }
-
+        if (activatorItemSpec != null) {
             UUID activatorUUID = UUID.randomUUID();
             NamespacedKey activatorKey = keyCreator.create(NAMESPACED_KEY_NAME);
-            int activatorDamage = activatorItemSection.getInt("damage");
-            String activatorDisplayName = activatorItemSection.getString("display-name");
+            Material activatorItemMaterial = Material.valueOf(activatorItemSpec.material());
 
-            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorMaterial);
-            activatorItemTemplate.setDamage(activatorDamage);
-
-            if (activatorDisplayName != null) {
-                activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorDisplayName));
-            }
+            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorItemMaterial);
+            activatorItemTemplate.setDamage(activatorItemSpec.damage());
+            activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorItemSpec.displayName()));
 
             DefaultActivator activator = new DefaultActivator(activatorItemTemplate);
             equipment.setActivator(activator);
         }
 
-        this.setUpDeploymentHandler(equipment, gameKey, section);
+        if (throwItemSpec != null) {
+            UUID throwItemUUID = UUID.randomUUID();
+            NamespacedKey throwItemKey = keyCreator.create(NAMESPACED_KEY_NAME);
+            Material throwItemMaterial = Material.valueOf(throwItemSpec.material());
+
+            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemUUID, throwItemKey, throwItemMaterial);
+            throwItemTemplate.setDamage(throwItemSpec.damage());
+            throwItemTemplate.setDisplayNameTemplate(new TextTemplate(throwItemSpec.displayName()));
+
+            equipment.setThrowItemTemplate(throwItemTemplate);
+        }
+
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controls(), spec.deployment(), equipment, gameKey);
+        equipment.setControls(controls);
+
+        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deployment(), gameKey, section, equipment.getActivator());
+        equipment.setDeploymentHandler(deploymentHandler);
 
         // Setting the projectile properties
         Section projectileSection = section.getSection("projectile");
@@ -201,7 +193,7 @@ public class EquipmentFactory implements WeaponFactory {
             }
 
             if (soundSection != null) {
-                List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sound"));
+                List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sounds"));
                 List<Integer> intervals = soundSection.getIntList("intervals");
 
                 SoundProperties properties = new SoundProperties(sounds, intervals);
@@ -211,7 +203,7 @@ public class EquipmentFactory implements WeaponFactory {
             }
 
             if (stickSection != null) {
-                List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickSection.getString("stick-sound"));
+                List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickSection.getString("stick-sounds"));
                 long checkDelay = stickSection.getLong("check-delay");
                 long checkPeriod = stickSection.getLong("check-period");
 
@@ -228,7 +220,7 @@ public class EquipmentFactory implements WeaponFactory {
                 try {
                     particle = Particle.valueOf(particleValue);
                 } catch (IllegalArgumentException e) {
-                    throw new EquipmentCreationException("Unable to create equipment item " + name + "; trail effect particle " + particleValue + " is invalid");
+                    throw new EquipmentCreationException("Unable to create equipment item " + spec.name() + "; trail effect particle " + particleValue + " is invalid");
                 }
 
                 int count = trailSection.getInt("particle.count");
@@ -250,71 +242,40 @@ public class EquipmentFactory implements WeaponFactory {
             equipment.setProjectileProperties(projectileProperties);
         }
 
-        // Setting the throw item template
-        Section throwItemSection = section.getSection("item.throw-item");
-
-        if (throwItemSection != null) {
-            Material throwItemMaterial;
-            String throwItemMaterialValue = throwItemSection.getString("material");
-
-            try {
-                throwItemMaterial = Material.valueOf(throwItemMaterialValue);
-            } catch (IllegalArgumentException e) {
-                throw new EquipmentCreationException("Unable to create equipment item " + name + ", throw item material " + throwItemMaterialValue + " is invalid");
-            }
-
-            UUID throwItemUUID = UUID.randomUUID();
-            NamespacedKey throwItemKey = keyCreator.create(NAMESPACED_KEY_NAME);
-            int throwItemDamage = throwItemSection.getInt("damage");
-
-            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemUUID, throwItemKey, throwItemMaterial);
-            throwItemTemplate.setDamage(throwItemDamage);
-
-            equipment.setThrowItemTemplate(throwItemTemplate);
-        }
-
-        // Read controls configuration
-        Section controlsSection = section.getSection("controls");
-
-        if (controlsSection != null) {
-            ItemControls<EquipmentHolder> controls = controlsFactory.create(section, equipment, gameKey);
-            equipment.setControls(controls);
-        }
-
         return equipment;
     }
 
-    private void setUpDeploymentHandler(@NotNull DefaultEquipment equipment, @NotNull GameKey gameKey, @NotNull Section section) {
-        Section deploySection = section.getOptionalSection("deploy")
-                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", deployment configuration is missing"));
+    @NotNull
+    private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull GameKey gameKey, @NotNull Section section, @Nullable Activator activator) {
         Section effectSection = section.getOptionalSection("effect")
-                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", effect configuration is missing"));
+                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item, effect configuration is missing"));
         Section effectActivationSection = section.getOptionalSection("effect.activation")
-                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item " + equipment.getName() + ", effect activation configuration is missing"));
+                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item, effect activation configuration is missing"));
 
-        List<GameSound> activationSounds = DefaultGameSound.parseSounds(deploySection.getString("manual-activation.activation-sound"));
-        boolean activateEffectOnDestroy = deploySection.getBoolean("on-destroy.activate");
-        boolean removeOnDestroy = deploySection.getBoolean("on-destroy.remove");
-        boolean resetEffectOnDestroy = deploySection.getBoolean("on-destroy.reset");
-        long activationDelay = deploySection.getLong("manual-activation.activation-delay");
+        boolean activateEffectOnDestroy = deploymentSpec.activateEffectOnDestroy();
+        boolean removeOnDestroy = deploymentSpec.removeOnDestroy();
+        boolean resetEffectOnDestroy = deploymentSpec.resetEffectOnDestroy();
 
-        ParticleEffect destroyParticleEffect = null;
+        List<GameSound> activationSounds = Collections.emptyList();
+        long activationDelay = 0L;
 
-        if (deploySection.contains("on-destroy.particle-effect")) {
-            Map<String, Object> particleEffectValues = deploySection.getSection("on-destroy.particle-effect").getStringRouteMappedValues(true);
-
-            destroyParticleEffect = particleEffectMapper.map(particleEffectValues);
+        if (deploymentSpec.manualActivation() != null) {
+            activationSounds = DefaultGameSound.parseSounds(deploymentSpec.manualActivation().activationSounds());
+            activationDelay = deploymentSpec.manualActivation().activationDelay();
         }
 
-        DeploymentProperties deploymentProperties = new DeploymentProperties(activationSounds, destroyParticleEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, activationDelay);
+        ParticleEffect destroyEffect = null;
+
+        if (deploymentSpec.destroyEffect() != null) {
+            destroyEffect = particleEffectMapper.map(deploymentSpec.destroyEffect());
+        }
+
+        DeploymentProperties deploymentProperties = new DeploymentProperties(activationSounds, destroyEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, activationDelay);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        Activator activator = equipment.getActivator();
         ItemEffectActivation effectActivation = effectActivationFactory.create(gameKey, effectActivationSection, activator);
         ItemEffect effect = effectFactory.create(effectSection, gameKey, effectActivation);
 
-        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
-
-        equipment.setDeploymentHandler(deploymentHandler);
+        return deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
     }
 }

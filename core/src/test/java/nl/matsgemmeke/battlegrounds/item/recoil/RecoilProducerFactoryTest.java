@@ -1,16 +1,14 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 public class RecoilProducerFactoryTest {
 
@@ -22,38 +20,22 @@ public class RecoilProducerFactoryTest {
     }
 
     @Test
-    public void isAbleToCreateRandomSpreadInstance() {
-        Section section = mock(Section.class);
-        when(section.getFloatList("horizontal")).thenReturn(Arrays.asList(10.0f, 20.0f));
-        when(section.getFloatList("vertical")).thenReturn(Arrays.asList(10.0f, 20.0f));
-        when(section.getString("type")).thenReturn("RANDOM_SPREAD");
+    public void createReturnsCameraMovementRecoilInstanceBasedOnSpecification() {
+        RecoilSpec spec = new RecoilSpec("CAMERA_MOVEMENT", List.of(), List.of(), 1L, 0.5f, 1L);
 
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
-        RecoilProducer recoilProducer = factory.create(section);
+        RecoilProducer recoilProducer = factory.create(spec);
 
-        assertInstanceOf(RandomSpreadRecoil.class, recoilProducer);
+        assertThat(recoilProducer).isInstanceOf(CameraMovementRecoil.class);
     }
 
     @Test
-    public void isAbleToCreateCameraMovementInstance() {
-        Section section = mock(Section.class);
-        when(section.getFloatList("horizontal")).thenReturn(Arrays.asList(10.0f, 20.0f));
-        when(section.getFloatList("vertical")).thenReturn(Arrays.asList(10.0f, 20.0f));
-        when(section.getString("type")).thenReturn("CAMERA_MOVEMENT");
+    public void createReturnsRandomSpreadRecoilInstanceBasedOnSpecification() {
+        RecoilSpec spec = new RecoilSpec("RANDOM_SPREAD", List.of(), List.of(), null, null, null);
 
         RecoilProducerFactory factory = new RecoilProducerFactory(config);
-        RecoilProducer recoilProducer = factory.create(section);
+        RecoilProducer recoilProducer = factory.create(spec);
 
-        assertInstanceOf(CameraMovementRecoil.class, recoilProducer);
-    }
-
-    @Test
-    public void throwsExceptionWhenCreatingUnknownRecoilProducerType() {
-        Section section = mock(Section.class);
-        when(section.getString("type")).thenReturn("error");
-
-        RecoilProducerFactory factory = new RecoilProducerFactory(config);
-
-        assertThrows(WeaponFactoryCreationException.class, () -> factory.create(section));
+        assertThat(recoilProducer).isInstanceOf(RandomSpreadRecoil.class);
     }
 }

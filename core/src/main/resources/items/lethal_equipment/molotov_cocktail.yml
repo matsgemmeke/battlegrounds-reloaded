@@ -15,6 +15,10 @@ deploy:
       particle: FLAME
     remove: true
     reset: false
+  throwing:
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 1.2
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
 effect:
   activation:
@@ -23,7 +27,7 @@ effect:
         type: FLOOR_HIT
     type: TRIGGER
   burn-blocks: false
-  combustion-sound: BLOCK_GLASS_BREAK-1-1-0
+  combustion-sounds: BLOCK_GLASS_BREAK-1-1-0
   max-duration: 600
   max-radius: 3
   range:
@@ -41,11 +45,13 @@ effect:
   type: COMBUSTION
 equipment-type: LETHAL
 item:
-  damage: 4
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
     damage: 4
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
+    damage: 4
+    display-name: "&f%name%"
     material: SHEARS
 projectile:
   effects:
@@ -59,7 +65,3 @@ projectile:
         offset-y: 0.1
         offset-z: 0.1
         type: FLAME
-throwing:
-  delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 1.2

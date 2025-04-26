@@ -2,37 +2,49 @@ package nl.matsgemmeke.battlegrounds.item.creator;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import dev.dejvokep.boostedyaml.YamlDocument;
 import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
+import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.EquipmentConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.item.GunConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
     @NotNull
-    private EquipmentFactory equipmentFactory;
+    private final EquipmentFactory equipmentFactory;
     @NotNull
-    private File itemsFolder;
+    private final File itemsFolder;
     @NotNull
-    private FirearmFactory firearmFactory;
+    private final FirearmFactory firearmFactory;
+    @NotNull
+    private final Logger logger;
 
     @Inject
     public WeaponCreatorProvider(
             @NotNull EquipmentFactory equipmentFactory,
             @NotNull FirearmFactory firearmFactory,
-            @Named("ItemsFolder") @NotNull File itemsFolder
+            @Named("ItemsFolder") @NotNull File itemsFolder,
+            @NotNull Logger logger
     ) {
         this.equipmentFactory = equipmentFactory;
         this.firearmFactory = firearmFactory;
         this.itemsFolder = itemsFolder;
+        this.logger = logger;
     }
 
     public WeaponCreator get() {
@@ -41,18 +53,34 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.copyResourcesFiles(itemsFolder);
         }
 
-        WeaponCreator creator = new WeaponCreator();
+        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        File[] itemFolderFiles = itemsFolder.listFiles();
 
-        for (File itemTypeDirectory : itemsFolder.listFiles()) {
-            for (File itemFile : itemTypeDirectory.listFiles()) {
-                ItemConfiguration itemConfig = new ItemConfiguration(itemFile, null);
-                itemConfig.load();
+        if (itemFolderFiles == null || itemFolderFiles.length == 0) {
+            String path = itemsFolder.getPath().replace('\\', '/');
+            logger.warning("Unable to load item configuration files: directory '%s' is empty. To generate the default item files, delete the directory and reload the plugin.".formatted(path));
+            return weaponCreator;
+        }
 
-                this.addItemConfiguration(creator, itemConfig);
+        for (File itemFolderFile : itemFolderFiles) {
+            if (itemFolderFile.isDirectory()) {
+                File[] itemSubfolderFiles = itemFolderFile.listFiles();
+
+                if (itemSubfolderFiles == null || itemSubfolderFiles.length == 0) {
+                    String path = itemFolderFile.getPath().replace('\\', '/');
+                    logger.warning("Unable to load item configuration files in items subfolder '%s'".formatted(path));
+                    continue;
+                }
+
+                for (File itemSubfolderFile : itemSubfolderFiles) {
+                    this.readItemFile(itemSubfolderFile, weaponCreator);
+                }
+            } else {
+                this.readItemFile(itemFolderFile, weaponCreator);
             }
         }
 
-        return creator;
+        return weaponCreator;
     }
 
     private void copyResourcesFiles(@NotNull File itemsDirectory) {
@@ -80,17 +108,53 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         return this.getClass().getResource("/items").toURI();
     }
 
-    private void addItemConfiguration(@NotNull WeaponCreator creator, @NotNull ItemConfiguration itemConfig) {
-        WeaponFactory factory;
+    private void readItemFile(@NotNull File itemFile, @NotNull WeaponCreator creator) {
+        String id = null;
 
-        if (itemConfig.getString("firearm-type") != null) {
-            factory = firearmFactory;
-        } else if (itemConfig.getString("equipment-type") != null) {
-            factory = equipmentFactory;
-        } else {
+        try {
+            YamlDocument document = YamlDocument.create(itemFile);
+
+            if ((id = document.getString("id")) == null) {
+                logger.severe("An error occurred while loading file '%s': Identifier 'id' is missing".formatted(itemFile.getName()));
+                return;
+            }
+
+            this.addItemSpec(creator, itemFile, document);
+        } catch (IOException | IllegalArgumentException e) {
+            logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
+        } catch (InvalidItemConfigurationException e) {
+            logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
+        }
+    }
+
+    private void addItemSpec(@NotNull WeaponCreator creator, @NotNull File file, @NotNull YamlDocument document) {
+        String id = document.getString("id");
+
+        if (document.getString("equipment-type") != null) {
+            YamlReader yamlReader = new YamlReader(file, null);
+            yamlReader.load();
+
+            ItemConfiguration config = new ItemConfiguration(file, null);
+            config.load();
+
+            EquipmentConfiguration configuration = new EquipmentConfiguration(yamlReader);
+            EquipmentSpec spec = configuration.createSpec();
+
+            creator.addEquipmentSpec(id, spec, config);
             return;
         }
 
-        creator.addConfigurationFactory(itemConfig, factory);
+        if (document.getString("gun-type") != null) {
+            YamlReader yamlReader = new YamlReader(file, null);
+            yamlReader.load();
+
+            GunConfiguration configuration = new GunConfiguration(yamlReader);
+            GunSpec spec = configuration.createSpec();
+
+            creator.addGunSpec(id, spec);
+            return;
+        }
+
+        throw new IllegalStateException("File has no specified item type");
     }
 }

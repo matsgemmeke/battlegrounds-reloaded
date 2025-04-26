@@ -3,6 +3,12 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ManualActivationSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -15,6 +21,8 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
+import nl.matsgemmeke.battlegrounds.item.effect.activation.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
@@ -33,7 +41,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +52,7 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -123,74 +131,104 @@ public class EquipmentFactoryTest {
     }
 
     @Test
-    public void shouldCreateSimpleEquipmentItem() {
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey);
+    public void createReturnsEquipmentWithPlayerHolder() {
+        EquipmentSpec spec = this.createEquipmentSpec();
+        GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        assertInstanceOf(DefaultEquipment.class, equipment);
-        assertEquals("name", equipment.getName());
-        assertEquals("description", equipment.getDescription());
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
+        ItemEffectActivation itemEffectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.create(gameKey, effectActivationSection, null)).thenReturn(itemEffectActivation);
+
+        ItemEffect itemEffect = mock(ItemEffect.class);
+        when(effectFactory.create(effectSection, gameKey, itemEffectActivation)).thenReturn(itemEffect);
+
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
+
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
+        Equipment equipment = factory.create(spec, configuration, gameKey, gamePlayer);
+
+        assertThat(equipment).isInstanceOf(DefaultEquipment.class);
+        assertThat(equipment.getName()).isEqualTo("name");
+        assertThat(equipment.getDescription()).isEqualTo("description");
+
+        verify(equipmentRegistry).registerItem(equipment, gamePlayer);
+    }
+
+    @Test
+    public void createMakesEquipmentWithActivator() {
+        ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
+        ItemStackSpec activatorItemSpec = new ItemStackSpec("STONE", "&fActivator", 2);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
+        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, activatorItemSpec, null, controlsSpec, deploymentSpec);
+
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(controlsSpec), eq(deploymentSpec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
+        ItemEffectActivation itemEffectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.create(eq(gameKey), eq(effectActivationSection), any(Activator.class))).thenReturn(itemEffectActivation);
+
+        ItemEffect itemEffect = mock(ItemEffect.class);
+        when(effectFactory.create(effectSection, gameKey, itemEffectActivation)).thenReturn(itemEffect);
+
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(itemEffect))).thenReturn(deploymentHandler);
+
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
+        Equipment equipment = factory.create(spec, configuration, gameKey);
+
+        assertThat(equipment).isInstanceOf(DefaultEquipment.class);
+        assertThat(equipment.getActivator()).isNotNull();
+        assertThat(equipment.getActivator()).isInstanceOf(DefaultActivator.class);
 
         verify(equipmentRegistry).registerItem(equipment);
     }
 
     @Test
-    public void createEquipmentItemWithDisplayName() {
-        when(rootSection.getString("item.display-name")).thenReturn("&f%name%");
+    public void createsMakesEquipmentWithThrowItem() {
+        ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
+        ItemStackSpec throwItemSpec = new ItemStackSpec("STONE", "&fThrow item", 2);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
+        EquipmentSpec spec = new EquipmentSpec("name", "description", itemSpec, null, throwItemSpec, controlsSpec, deploymentSpec);
+
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(controlsSpec), eq(deploymentSpec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
+        ItemEffectActivation itemEffectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.create(gameKey, effectActivationSection, null)).thenReturn(itemEffectActivation);
+
+        ItemEffect itemEffect = mock(ItemEffect.class);
+        when(effectFactory.create(effectSection, gameKey, itemEffectActivation)).thenReturn(itemEffect);
+
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey);
+        Equipment equipment = factory.create(spec, configuration, gameKey);
 
-        assertInstanceOf(DefaultEquipment.class, equipment);
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenCreatingEquipmentItemWithInvalidMaterial() {
-        when(rootSection.getString("item.material")).thenReturn("fail");
-
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-
-        assertThrows(EquipmentCreationException.class, () -> factory.create(configuration, gameKey));
-    }
-
-    @Test
-    public void shouldCreateEquipmentItemWithActivatorItem() {
-        int damage = 1;
-        String displayName = "&fActivator";
-
-        Damageable itemMeta = mock(Damageable.class);
-        when(itemFactory.getItemMeta(Material.FLINT)).thenReturn(itemMeta);
-
-        Section activatorItemSection = mock(Section.class);
-        when(activatorItemSection.getInt("damage")).thenReturn(damage);
-        when(activatorItemSection.getString("display-name")).thenReturn(displayName);
-        when(activatorItemSection.getString("material")).thenReturn("FLINT");
-
-        when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
-
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey);
-
-        assertInstanceOf(DefaultEquipment.class, equipment);
+        assertThat(equipment).isInstanceOf(DefaultEquipment.class);
+        assertThat(equipment.getThrowItemTemplate()).isNotNull();
+        assertThat(equipment.getThrowItemTemplate().getDamage()).isEqualTo(2);
+        assertThat(equipment.getThrowItemTemplate().getDisplayNameTemplate()).isNotNull();
+        assertThat(equipment.getThrowItemTemplate().getDisplayNameTemplate().getText()).isEqualTo("&fThrow item");
 
         verify(equipmentRegistry).registerItem(equipment);
     }
 
     @Test
-    public void throwExceptionWhenCreatingEquipmentItemWithInvalidActivatorMaterial() {
-        Section activatorItemSection = mock(Section.class);
-        when(activatorItemSection.getString("material")).thenReturn("fail");
-        when(rootSection.getSection("item.activator")).thenReturn(activatorItemSection);
+    public void makeEquipmentItemWithManualActivation() {
+        ItemStackSpec displayItemSpec = new ItemStackSpec("STICK", "name", 1);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
+        ManualActivationSpec manualActivationSpec = new ManualActivationSpec(10L, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, manualActivationSpec);
+        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec);
 
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-
-        assertThrows(EquipmentCreationException.class, () -> factory.create(configuration, gameKey));
-    }
-
-    @Test
-    public void makeEquipmentItemWithEffectActivation() {
-        long activationDelay = 10L;
-        when(deploySection.getLong("manual-activation.activation-delay")).thenReturn(activationDelay);
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
         when(effectActivationFactory.create(gameKey, effectActivationSection, null)).thenReturn(effectActivation);
@@ -202,18 +240,58 @@ public class EquipmentFactoryTest {
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey);
+        Equipment equipment = factory.create(spec, configuration, gameKey);
 
         ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
-
         verify(deploymentHandlerFactory).create(deploymentPropertiesCaptor.capture(), eq(audioEmitter), eq(effect));
 
-        assertThat(deploymentPropertiesCaptor.getValue().activationDelay()).isEqualTo(activationDelay);
+        assertThat(deploymentPropertiesCaptor.getValue().activationDelay()).isEqualTo(manualActivationSpec.activationDelay());
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
     }
 
     @Test
+    public void createReturnsEquipmentWithDestroyEffect() {
+        ItemStackSpec displayItemSpec = new ItemStackSpec("STICK", "name", 1);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
+        ParticleEffectSpec destroyEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, destroyEffectSpec, Map.of(), null, null, null, null);
+        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec);
+
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
+        ItemEffectActivation effectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.create(gameKey, effectActivationSection, null)).thenReturn(effectActivation);
+
+        ItemEffect effect = mock(ItemEffect.class);
+        when(effectFactory.create(effectSection, gameKey, effectActivation)).thenReturn(effect);
+
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
+
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
+        Equipment equipment = factory.create(spec, configuration, gameKey);
+
+        ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
+        verify(deploymentHandlerFactory).create(deploymentPropertiesCaptor.capture(), eq(audioEmitter), eq(effect));
+
+        DeploymentProperties deploymentProperties = deploymentPropertiesCaptor.getValue();
+
+        assertThat(equipment).isInstanceOf(DefaultEquipment.class);
+        assertThat(deploymentProperties.destroyParticleEffect()).isNotNull();
+        assertThat(deploymentProperties.destroyParticleEffect().particle()).isEqualTo(Particle.BLOCK_CRACK);
+        assertThat(deploymentProperties.destroyParticleEffect().count()).isEqualTo(destroyEffectSpec.count());
+        assertThat(deploymentProperties.destroyParticleEffect().offsetX()).isEqualTo(destroyEffectSpec.offsetX());
+        assertThat(deploymentProperties.destroyParticleEffect().offsetY()).isEqualTo(destroyEffectSpec.offsetY());
+        assertThat(deploymentProperties.destroyParticleEffect().offsetZ()).isEqualTo(destroyEffectSpec.offsetZ());
+        assertThat(deploymentProperties.destroyParticleEffect().extra()).isEqualTo(destroyEffectSpec.extra());
+        assertThat(deploymentProperties.destroyParticleEffect().blockDataMaterial()).isEqualTo(Material.STONE);
+    }
+
+    @Test
     public void makeEquipmentItemWithBounceEffect() {
+        EquipmentSpec spec = this.createEquipmentSpec();
+
         int amountOfBounces = 1;
         double horizontalFriction = 2.0;
         double verticalFriction = 2.0;
@@ -234,12 +312,24 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
+        ItemEffectActivation itemEffectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.create(gameKey, effectActivationSection, null)).thenReturn(itemEffectActivation);
+
+        ItemEffect itemEffect = mock(ItemEffect.class);
+        when(effectFactory.create(effectSection, gameKey, itemEffectActivation)).thenReturn(itemEffect);
+
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
+
         MockedConstruction<BounceEffect> bounceEffectConstructor = mockConstruction(BounceEffect.class, (mock, context) -> {
             assertEquals(expectedProperties, context.arguments().get(1));
         });
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey);
+        Equipment equipment = factory.create(spec, configuration, gameKey);
 
         assertEquals(1, bounceEffectConstructor.constructed().size());
         bounceEffectConstructor.close();
@@ -252,25 +342,38 @@ public class EquipmentFactoryTest {
 
     @Test
     public void makeEquipmentItemWithSoundEffect() {
-        List<Integer> intervals = List.of(10, 20, 30);
+        EquipmentSpec spec = this.createEquipmentSpec();
 
+        List<Integer> intervals = List.of(10, 20, 30);
         SoundProperties expectedProperties = new SoundProperties(Collections.emptyList(), intervals);
 
         Section soundSection = mock(Section.class);
         when(soundSection.getIntList("intervals")).thenReturn(intervals);
-        when(soundSection.getString("sound")).thenReturn("");
+        when(soundSection.getString("sounds")).thenReturn("");
 
         Section projectileSection = mock(Section.class);
         when(projectileSection.getSection("effects.sound")).thenReturn(soundSection);
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
+        ItemEffectActivation itemEffectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.create(gameKey, effectActivationSection, null)).thenReturn(itemEffectActivation);
+
+        ItemEffect itemEffect = mock(ItemEffect.class);
+        when(effectFactory.create(effectSection, gameKey, itemEffectActivation)).thenReturn(itemEffect);
+
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
+
         MockedConstruction<SoundEffect> soundEffectConstructor = mockConstruction(SoundEffect.class, (mock, context) -> {
             assertEquals(expectedProperties, context.arguments().get(2));
         });
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey);
+        Equipment equipment = factory.create(spec, configuration, gameKey);
 
         assertEquals(1, soundEffectConstructor.constructed().size());
         soundEffectConstructor.close();
@@ -283,9 +386,10 @@ public class EquipmentFactoryTest {
 
     @Test
     public void makeEquipmentItemWithStickEffect() {
+        EquipmentSpec spec = this.createEquipmentSpec();
+
         long checkDelay = 0;
         long checkPeriod = 1;
-
         StickProperties expectedProperties = new StickProperties(Collections.emptyList(), checkDelay, checkPeriod);
 
         Section stickSection = mock(Section.class);
@@ -298,12 +402,24 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
+        ItemEffectActivation itemEffectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.create(gameKey, effectActivationSection, null)).thenReturn(itemEffectActivation);
+
+        ItemEffect itemEffect = mock(ItemEffect.class);
+        when(effectFactory.create(effectSection, gameKey, itemEffectActivation)).thenReturn(itemEffect);
+
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
+
         MockedConstruction<StickEffect> stickEffectConstructor = mockConstruction(StickEffect.class, (mock, context) -> {
             assertEquals(expectedProperties, context.arguments().get(2));
         });
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey);
+        Equipment equipment = factory.create(spec, configuration, gameKey);
 
         assertEquals(1, stickEffectConstructor.constructed().size());
         stickEffectConstructor.close();
@@ -316,6 +432,8 @@ public class EquipmentFactoryTest {
 
     @Test
     public void makeEquipmentItemWithTrailEffect() {
+        EquipmentSpec spec = this.createEquipmentSpec();
+
         int particleCount = 1;
         double particleOffsetX = 0.1;
         double particleOffsetY = 0.2;
@@ -342,12 +460,24 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
+        ItemEffectActivation itemEffectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.create(gameKey, effectActivationSection, null)).thenReturn(itemEffectActivation);
+
+        ItemEffect itemEffect = mock(ItemEffect.class);
+        when(effectFactory.create(effectSection, gameKey, itemEffectActivation)).thenReturn(itemEffect);
+
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
+
         MockedConstruction<TrailEffect> trailEffectConstructor = mockConstruction(TrailEffect.class, (mock, context) -> {
             assertEquals(expectedProperties, context.arguments().get(1));
         });
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey);
+        Equipment equipment = factory.create(spec, configuration, gameKey);
 
         assertEquals(1, trailEffectConstructor.constructed().size());
         trailEffectConstructor.close();
@@ -360,6 +490,8 @@ public class EquipmentFactoryTest {
 
     @Test
     public void throwExceptionWhenCreatingEquipmentItemWithInvalidTrailEffectType() {
+        EquipmentSpec spec = this.createEquipmentSpec();
+
         Section trailSection = mock(Section.class);
         when(trailSection.getString("particle.type")).thenReturn("fail");
 
@@ -368,60 +500,27 @@ public class EquipmentFactoryTest {
 
         when(rootSection.getSection("projectile")).thenReturn(projectileSection);
 
+        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+
+        ItemEffectActivation itemEffectActivation = mock(ItemEffectActivation.class);
+        when(effectActivationFactory.create(gameKey, effectActivationSection, null)).thenReturn(itemEffectActivation);
+
+        ItemEffect itemEffect = mock(ItemEffect.class);
+        when(effectFactory.create(effectSection, gameKey, itemEffectActivation)).thenReturn(itemEffect);
+
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
+
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
 
-        assertThrows(EquipmentCreationException.class, () -> factory.create(configuration, gameKey));
+        assertThrows(EquipmentCreationException.class, () -> factory.create(spec, configuration, gameKey));
     }
 
-    @Test
-    public void makeEquipmentItemWithThrowItemTemplate() {
-        int damage = 1;
-
-        Section throwItemSection = mock(Section.class);
-        when(throwItemSection.getInt("damage")).thenReturn(damage);
-        when(throwItemSection.getString("material")).thenReturn("SHEARS");
-
-        when(rootSection.getSection("item.throw-item")).thenReturn(throwItemSection);
-
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey);
-
-        assertInstanceOf(DefaultEquipment.class, equipment);
-        assertNotNull(equipment.getThrowItemTemplate());
-        assertEquals(damage, equipment.getThrowItemTemplate().getDamage());
-
-        verify(equipmentRegistry).registerItem(equipment);
-    }
-
-    @Test
-    public void shouldThrowErrorWhenThrowItemMaterialConfigurationValueIsInvalid() {
-        Section throwItemSection = mock(Section.class);
-        when(throwItemSection.getString("material")).thenReturn("fail");
-
-        when(rootSection.getSection("item.throw-item")).thenReturn(throwItemSection);
-
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-
-        assertThrows(EquipmentCreationException.class, () -> factory.create(configuration, gameKey));
-    }
-
-    @Test
-    public void createMakesEquipmentItemWithControls() {
-        ItemControls<EquipmentHolder> controls = mock();
-        when(controlsFactory.create(eq(rootSection), any(Equipment.class), eq(gameKey))).thenReturn(controls);
-
-        Section controlsSection = mock(Section.class);
-        when(rootSection.getSection("controls")).thenReturn(controlsSection);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, effectActivationFactory, keyCreator, particleEffectMapper, taskRunner);
-        Equipment equipment = factory.create(configuration, gameKey, gamePlayer);
-        equipment.onChangeFrom();
-
-        assertInstanceOf(DefaultEquipment.class, equipment);
-
-        verify(controls).cancelAllFunctions();
-        verify(equipmentRegistry).registerItem(equipment, gamePlayer);
+    private EquipmentSpec createEquipmentSpec() {
+        ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
+        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
+        return new EquipmentSpec("name", "description", itemSpec, null, null, controlsSpec, deploymentSpec);
     }
 }

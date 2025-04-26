@@ -1,8 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import com.google.inject.Inject;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactoryCreationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
@@ -28,41 +27,28 @@ public class FireModeFactory {
     }
 
     /**
-     * Creates a new {@link FireMode} instance based on configuration values.
+     * Creates a new {@link FireMode} instance based on the given specification.
      *
+     * @param spec the fire mode specification
      * @param item the associated item
-     * @param section the configuration section
      * @return a new {@link FireMode} instance
      */
     @NotNull
-    public FireMode create(@NotNull Shootable item, @NotNull Section section) {
-        String type = section.getString("type");
-        FireModeType fireModeType;
-
-        try {
-            fireModeType = FireModeType.valueOf(type);
-        } catch (IllegalArgumentException e) {
-            throw new WeaponFactoryCreationException("Error while getting fire mode type \"" + type + "\"");
-        }
-
-        int rateOfFire = section.getInt("rate-of-fire");
+    public FireMode create(@NotNull FireModeSpec spec, @NotNull Shootable item) {
+        FireModeType fireModeType = FireModeType.valueOf(spec.type());
 
         switch (fireModeType) {
             case BURST_MODE -> {
-                int amountOfShots = section.getInt("amount-of-shots");
-
-                return burstModeFactory.create(item, amountOfShots, rateOfFire);
+                return burstModeFactory.create(item, spec.amountOfShots(), spec.rateOfFire());
             }
             case FULLY_AUTOMATIC -> {
-                return fullyAutomaticModeFactory.create(item, rateOfFire);
+                return fullyAutomaticModeFactory.create(item, spec.rateOfFire());
             }
             case SEMI_AUTOMATIC -> {
-                long delayBetweenShots = section.getLong("delay-between-shots");
-
-                return semiAutomaticModeFactory.create(item, delayBetweenShots);
+                return semiAutomaticModeFactory.create(item, spec.delayBetweenShots());
             }
         }
 
-        throw new WeaponFactoryCreationException("Invalid fire mode type \"" + type + "\"");
+        throw new FireModeCreationException("Invalid fire mode type \"" + fireModeType + "\"");
     }
 }

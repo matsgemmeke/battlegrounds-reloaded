@@ -16,6 +16,10 @@ deploy:
       particle: BLOCK_CRACK
     remove: true
     reset: true
+  throwing:
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 0.0
 description: Marks a location as your next spawn point.
 effect:
   activation:
@@ -24,13 +28,11 @@ effect:
   type: MARK_SPAWN_POINT
 equipment-type: TACTICAL
 item:
-  damage: 11
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
     damage: 11
+    display-name: "&f%name%"
     material: SHEARS
-throwing:
-  delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 0.0
+  throw:
+    damage: 11
+    display-name: "&f%name%"
+    material: SHEARS

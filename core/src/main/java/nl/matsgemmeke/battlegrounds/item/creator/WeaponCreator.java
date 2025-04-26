@@ -1,12 +1,20 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
+import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Object that is able to create new weapon instances of various types.
@@ -14,22 +22,58 @@ import java.util.Map;
 public class WeaponCreator {
 
     @NotNull
-    private Map<ItemConfiguration, WeaponFactory> configurations;
+    private EquipmentFactory equipmentFactory;
+    @NotNull
+    private FirearmFactory firearmFactory;
+    @NotNull
+    private Map<String, EquipmentSpec> equipmentSpecs;
+    private Map<String, ItemConfiguration> equipmentConfigurations;
+    @NotNull
+    private Map<String, GunSpec> gunSpecs;
 
-    public WeaponCreator() {
-        this.configurations = new HashMap<>();
+    public WeaponCreator(@NotNull EquipmentFactory equipmentFactory, @NotNull FirearmFactory firearmFactory) {
+        this.equipmentFactory = equipmentFactory;
+        this.firearmFactory = firearmFactory;
+        this.equipmentSpecs = new HashMap<>();
+        this.equipmentConfigurations = new HashMap<>();
+        this.gunSpecs = new HashMap<>();
+    }
+
+    public void addEquipmentSpec(@NotNull String id, @NotNull EquipmentSpec equipmentSpec, @NotNull ItemConfiguration configuration) {
+        equipmentSpecs.put(id, equipmentSpec);
+        equipmentConfigurations.put(id, configuration);
+    }
+
+    public void addGunSpec(@NotNull String id, @NotNull GunSpec spec) {
+        gunSpecs.put(id, spec);
     }
 
     /**
-     * Adds a {@link ItemConfiguration} to the provider along with its corresponding {@link WeaponFactory}.
+     * Attempts to create a {@link Weapon} for a given player. This newly created weapon will automatically be assigned
+     * to the player
      *
-     * @param configuration the item configuration for the weapons
-     * @param factory the weapon factory
-     * @return whether the weapon factory was added
+     * @param gamePlayer the player to create the weapon for
+     * @param gameKey the game key of the game where the player is in
+     * @param weaponId the weapon id
+     * @throws IllegalArgumentException when the instance does not contain a specification for the given weapon id
+     * @return a weapon instance that is created based of the specification of the given weapon id
      */
-    public boolean addConfigurationFactory(@NotNull ItemConfiguration configuration, @NotNull WeaponFactory factory) {
-        configurations.put(configuration, factory);
-        return configurations.get(configuration) != null;
+    @NotNull
+    public Weapon createWeapon(@NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey, @NotNull String weaponId) {
+        if (equipmentSpecs.containsKey(weaponId)) {
+            EquipmentSpec spec = equipmentSpecs.get(weaponId);
+            ItemConfiguration configuration = equipmentConfigurations.get(weaponId);
+
+            return equipmentFactory.create(spec, configuration, gameKey, gamePlayer);
+        }
+
+        if (gunSpecs.containsKey(weaponId)) {
+            GunSpec spec = gunSpecs.get(weaponId);
+
+            return firearmFactory.create(spec, gameKey, gamePlayer);
+        }
+
+        throw new IllegalArgumentException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponId));
     }
 
     /**
@@ -39,35 +83,12 @@ public class WeaponCreator {
      * @return whether the weapon exists
      */
     public boolean exists(@NotNull String weaponId) {
-        return this.getItemConfiguration(weaponId) != null;
+        return this.getIdList().contains(weaponId);
     }
 
-    /**
-     * Returns the {@link WeaponFactory} which handles the creation of a specific weapon.
-     *
-     * @param configuration the item configuration
-     * @return the corresponding weapon factory
-     */
-    @Nullable
-    public WeaponFactory getFactory(@NotNull ItemConfiguration configuration) {
-        return configurations.get(configuration);
-    }
-
-    /**
-     * Finds the {@link ItemConfiguration} that belongs to the given item id.
-     *
-     * @param id the item id
-     * @return the corresponding item configuration or null if it does not exist
-     */
-    @Nullable
-    public ItemConfiguration getItemConfiguration(@NotNull String id) {
-        for (ItemConfiguration configuration : configurations.keySet()) {
-            String itemId = configuration.getItemId();
-
-            if (itemId != null && itemId.equals(id)) {
-                return configuration;
-            }
-        }
-        return null;
+    private List<String> getIdList() {
+        return Stream.of(equipmentSpecs.keySet(), gunSpecs.keySet())
+                .flatMap(Collection::stream)
+                .toList();
     }
 }

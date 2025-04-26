@@ -8,7 +8,7 @@ controls:
   reload: LEFT_CLICK
   shoot: RIGHT_CLICK
 description: Semi-automatic pistol. Versatile and strong overall with a large magazine.
-firearm-type: HANDGUN
+gun-type: HANDGUN
 item:
   damage: 2
   display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
@@ -17,7 +17,7 @@ level-unlocked: 1
 price: 750
 reloading:
   duration: 36
-  sound: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
+  reload-sounds: BLOCK_WOODEN_DOOR_CLOSE-1-2-4, BLOCK_WOODEN_DOOR_OPEN-1-2-27, BLOCK_WOODEN_DOOR_CLOSE-1-2-30
   type: MAGAZINE
 shooting:
   fire-mode:
@@ -39,5 +39,5 @@ shooting:
     kickback-duration: 200
     type: CAMERA_MOVEMENT
     vertical: [-1.5, -2.0, -2.5]
-  shot-sound: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
-  suppressed-sound: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
+  shot-sounds: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
+  suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0

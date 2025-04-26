@@ -24,7 +24,7 @@ public class DefaultScopeAttachment implements ScopeAttachment {
     public DefaultScopeAttachment(@NotNull ScopeProperties properties, @NotNull AudioEmitter audioEmitter) {
         this.properties = properties;
         this.audioEmitter = audioEmitter;
-        this.settingsCycle = properties.magnificationSettings().iterator();
+        this.settingsCycle = properties.magnifications().iterator();
         this.currentMagnification = settingsCycle.next();
     }
 
@@ -49,13 +49,13 @@ public class DefaultScopeAttachment implements ScopeAttachment {
     }
 
     public boolean nextMagnification() {
-        if (properties.magnificationSettings().size() <= 1) {
+        if (properties.magnifications().size() <= 1) {
             return false;
         }
 
         // Obtain a new iterator if all values have been used
         if (!settingsCycle.hasNext()) {
-            settingsCycle = properties.magnificationSettings().iterator();
+            settingsCycle = properties.magnifications().iterator();
         }
 
         currentMagnification = settingsCycle.next();

@@ -9,20 +9,22 @@ deploy:
     activate: false
     remove: false
     reset: false
-<<<<<<< HEAD
   resistances:
     bullet-damage: 0
     explosive-damage: 0
     fire-damage: 0
-=======
->>>>>>> origin/feature-function-refactor
+  throwing:
+    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 1.2
 description: Distraction device that simulates enemy gunfire.
 effect:
   activation:
     delay-until-activation: 60
     type: DELAYED
   generic-rate-of-fire: 600
-  generic-sound: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+  generic-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
   max-burst-duration: 100
   min-burst-duration: 20
   max-delay-between-bursts: 60
@@ -32,11 +34,13 @@ effect:
   type: GUN_FIRE_SIMULATION
 equipment-type: TACTICAL
 item:
-  damage: 10
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
     damage: 10
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
+    damage: 10
+    display-name: "&f%name%"
     material: SHEARS
 projectile:
   effects:
@@ -46,8 +50,3 @@ projectile:
       check-period: 1
       horizontal-friction: 3.0
       vertical-friction: 2.0
-throwing:
-  cook-sound: ENTITY_TNT_PRIMED-1-2-0
-  delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 1.2

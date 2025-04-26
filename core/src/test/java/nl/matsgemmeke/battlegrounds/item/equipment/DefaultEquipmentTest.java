@@ -127,14 +127,14 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void matchesWithItemStackIfItemTemplateIsNotNullAndMatchesWithItsTemplate() {
+    public void matchesWithItemStackIfItemTemplateIsNotNullAndMatchesWithDisplayItemTemplate() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        ItemTemplate itemTemplate = mock(ItemTemplate.class);
-        when(itemTemplate.matchesTemplate(itemStack)).thenReturn(true);
+        ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
+        when(displayItemTemplate.matchesTemplate(itemStack)).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setItemTemplate(itemTemplate);
+        equipment.setDisplayItemTemplate(displayItemTemplate);
 
         boolean matches = equipment.isMatching(itemStack);
 
@@ -157,18 +157,18 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void doesNotMatchWithItemStackIfItDoesNotMatchWithEitherTheItemTemplateOrTheActivator() {
+    public void doesNotMatchWithItemStackIfItDoesNotMatchWithEitherDisplayItemOrActivator() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         Activator activator = mock(Activator.class);
         when(activator.isMatching(itemStack)).thenReturn(false);
 
-        ItemTemplate itemTemplate = mock(ItemTemplate.class);
-        when(itemTemplate.matchesTemplate(itemStack)).thenReturn(false);
+        ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
+        when(displayItemTemplate.matchesTemplate(itemStack)).thenReturn(false);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setActivator(activator);
-        equipment.setItemTemplate(itemTemplate);
+        equipment.setDisplayItemTemplate(displayItemTemplate);
 
         boolean matches = equipment.isMatching(itemStack);
 
@@ -233,9 +233,9 @@ public class DefaultEquipmentTest {
     }
 
     @Test
-    public void doesNotUpdateIfItemTemplateIsNull() {
+    public void doesNotUpdateIfDisplayItemTemplateIsNull() {
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setItemTemplate(null);
+        equipment.setDisplayItemTemplate(null);
         boolean updated = equipment.update();
 
         assertFalse(updated);
@@ -246,12 +246,12 @@ public class DefaultEquipmentTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
-        ItemTemplate itemTemplate = mock(ItemTemplate.class);
-        when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
+        ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
+        when(displayItemTemplate.createItemStack(any())).thenReturn(itemStack);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setHolder(holder);
-        equipment.setItemTemplate(itemTemplate);
+        equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.setName("test");
         equipment.setItemStack(itemStack);
         boolean updated = equipment.update();

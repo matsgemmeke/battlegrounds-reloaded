@@ -12,6 +12,11 @@ deploy:
     bullet-damage: 0
     explosive-damage: 0
     fire-damage: 0
+  throwing:
+    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 1.2
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 effect:
   activation:
@@ -33,23 +38,20 @@ effect:
   type: EXPLOSION
 equipment-type: LETHAL
 item:
-  damage: 9
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
     damage: 9
+    display-name: "&f%name%"
+    material: SHEARS
+  throw:
+    damage: 9
+    display-name: "&f%name%"
     material: SHEARS
 projectile:
   effects:
     sound:
       intervals: [10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58]
-      sound: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
+      sounds: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
     stick:
       check-delay: 0
       check-period: 1
-      stick-sound: ITEM_FLINTANDSTEEL_USE-0.5-2-0
-throwing:
-  cook-sound: ENTITY_TNT_PRIMED-1-2-0
-  delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 1.2
+      stick-sounds: ITEM_FLINTANDSTEEL_USE-0.5-2-0

@@ -18,6 +18,10 @@ deploy:
     reset: false
   resistances:
     fire-damage: 0
+  throwing:
+    cooldown: 30
+    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    velocity: 0.0
 description: Anti-personnel mine that triggers a proximity-based explosion.
 effect:
   activation:
@@ -42,13 +46,11 @@ effect:
   type: EXPLOSION
 equipment-type: LETHAL
 item:
-  damage: 5
-  display-name: "&f%name%"
-  material: SHEARS
-  throw-item:
+  display:
     damage: 5
+    display-name: "&f%name%"
     material: SHEARS
-throwing:
-  delay-after-throw: 30
-  throw-sound: ENTITY_ARROW_SHOOT-1-0.5-0
-  velocity: 0.0
+  throw:
+    damage: 5
+    display-name: "&f%name%"
+    material: SHEARS

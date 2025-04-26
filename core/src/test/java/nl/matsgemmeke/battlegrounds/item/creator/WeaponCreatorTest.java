@@ -1,81 +1,60 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
-import nl.matsgemmeke.battlegrounds.item.WeaponFactory;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
+import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class WeaponCreatorTest {
 
-    @Test
-    public void shouldBeAbleToAddConfigurationAndFactory() {
-        ItemConfiguration configuration = mock(ItemConfiguration.class);
-        WeaponFactory factory = mock(WeaponFactory.class);
+    private EquipmentFactory equipmentFactory;
+    private FirearmFactory firearmFactory;
 
-        WeaponCreator weaponCreator = new WeaponCreator();
-        boolean result = weaponCreator.addConfigurationFactory(configuration, factory);
-
-        assertTrue(result);
+    @BeforeEach
+    public void setUp() {
+        equipmentFactory = mock(EquipmentFactory.class);
+        firearmFactory = mock(FirearmFactory.class);
     }
 
     @Test
-    public void shouldReturnThatItemConfigurationHasWeaponId() {
-        String weaponId = "TEST_WEAPON";
+    public void existsReturnsTrueWhenSpecificationOfGivenWeaponIdExists() {
+        String gunId = "TEST_GUN";
+        GunSpec gunSpec = this.createGunSpec();
 
-        ItemConfiguration configuration = mock(ItemConfiguration.class);
-        when(configuration.getItemId()).thenReturn(weaponId);
+        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        weaponCreator.addGunSpec(gunId, gunSpec);
+        boolean exists = weaponCreator.exists(gunId);
 
-        WeaponFactory factory = mock(WeaponFactory.class);
-
-        WeaponCreator weaponCreator = new WeaponCreator();
-        weaponCreator.addConfigurationFactory(configuration, factory);
-
-        boolean result = weaponCreator.exists(weaponId);
-
-        assertTrue(result);
+        assertThat(exists).isTrue();
     }
 
     @Test
-    public void shouldReturnThatItemConfigurationDoesNotHaveWeaponId() {
-        String weaponId = "TEST_WEAPON";
+    public void existsReturnsFalseWhenSpecificationOfGivenWeaponIdDoesNotExist() {
+        String gunId = "TEST_GUN";
 
-        ItemConfiguration configuration = mock(ItemConfiguration.class);
-        WeaponFactory factory = mock(WeaponFactory.class);
+        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        boolean exists = weaponCreator.exists(gunId);
 
-        WeaponCreator weaponCreator = new WeaponCreator();
-        weaponCreator.addConfigurationFactory(configuration, factory);
-
-        boolean result = weaponCreator.exists(weaponId);
-
-        assertFalse(result);
+        assertThat(exists).isFalse();
     }
 
-    @Test
-    public void shouldReturnFactoryWhichCorrespondsToGivenItemConfiguration() {
-        ItemConfiguration configuration = mock(ItemConfiguration.class);
-        WeaponFactory factory = mock(WeaponFactory.class);
+    private GunSpec createGunSpec() {
+        ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
+        ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
+        ControlsSpec controlsSpec = new ControlsSpec("reload", "shoot", null, null, null);
+        FireModeSpec fireModeSpec = new FireModeSpec("test", null, null, null);
+        RecoilSpec recoilSpec = new RecoilSpec("recoil type", List.of(), List.of(), null, null, null);
+        ScopeSpec scopeSpec = new ScopeSpec(List.of(-0.1f, -0.2f), null, null, null);
+        SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("pattern type", 1, 0.5f, 0.5f);
 
-        WeaponCreator weaponCreator = new WeaponCreator();
-        weaponCreator.addConfigurationFactory(configuration, factory);
-
-        WeaponFactory result = weaponCreator.getFactory(configuration);
-
-        assertEquals(factory, result);
-    }
-
-    @Test
-    public void shouldReturnNullIfNoFactoryMatchesWithGivenWeaponId() {
-        ItemConfiguration configuration = mock(ItemConfiguration.class);
-        WeaponFactory factory = mock(WeaponFactory.class);
-
-        WeaponCreator weaponCreator = new WeaponCreator();
-        weaponCreator.addConfigurationFactory(mock(ItemConfiguration.class), factory);
-
-        WeaponFactory result = weaponCreator.getFactory(configuration);
-
-        assertNull(result);
+        return new GunSpec("test", null, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
     }
 }
