@@ -167,21 +167,21 @@ public class EquipmentConfigurationTest {
         assertThat(spec.deployment().destroyEffect().extra()).isEqualTo(destroyEffectExtra);
         assertThat(spec.deployment().destroyEffect().blockData()).isEqualTo(destroyEffectBlockData);
 
-        assertThat(spec.deployment().throwPropertiesSpec()).isNotNull();
-        assertThat(spec.deployment().throwPropertiesSpec().throwSounds()).isNull();
-        assertThat(spec.deployment().throwPropertiesSpec().velocity()).isEqualTo(throwVelocity);
-        assertThat(spec.deployment().throwPropertiesSpec().cooldown()).isEqualTo(throwCooldown);
+        assertThat(spec.deployment().throwProperties()).isNotNull();
+        assertThat(spec.deployment().throwProperties().throwSounds()).isNull();
+        assertThat(spec.deployment().throwProperties().velocity()).isEqualTo(throwVelocity);
+        assertThat(spec.deployment().throwProperties().cooldown()).isEqualTo(throwCooldown);
 
-        assertThat(spec.deployment().cookPropertiesSpec()).isNotNull();
-        assertThat(spec.deployment().cookPropertiesSpec().cookSounds()).isNull();
+        assertThat(spec.deployment().cookProperties()).isNotNull();
+        assertThat(spec.deployment().cookProperties().cookSounds()).isNull();
 
-        assertThat(spec.deployment().placePropertiesSpec()).isNotNull();
-        assertThat(spec.deployment().placePropertiesSpec().material()).isEqualTo(placeMaterial);
-        assertThat(spec.deployment().placePropertiesSpec().placeSounds()).isNull();
-        assertThat(spec.deployment().placePropertiesSpec().cooldown()).isEqualTo(placeCooldown);
+        assertThat(spec.deployment().placeProperties()).isNotNull();
+        assertThat(spec.deployment().placeProperties().material()).isEqualTo(placeMaterial);
+        assertThat(spec.deployment().placeProperties().placeSounds()).isNull();
+        assertThat(spec.deployment().placeProperties().cooldown()).isEqualTo(placeCooldown);
 
-        assertThat(spec.deployment().manualActivationSpec()).isNotNull();
-        assertThat(spec.deployment().manualActivationSpec().activationDelay()).isEqualTo(activationDelay);
-        assertThat(spec.deployment().manualActivationSpec().activationSounds()).isEqualTo(activationSounds);
+        assertThat(spec.deployment().manualActivation()).isNotNull();
+        assertThat(spec.deployment().manualActivation().activationDelay()).isEqualTo(activationDelay);
+        assertThat(spec.deployment().manualActivation().activationSounds()).isEqualTo(activationSounds);
     }
 }

@@ -11,9 +11,6 @@ import org.jetbrains.annotations.Nullable;
  * This record is constructed after the corresponding YAML file has been read and all values have been parsed and
  * validated. Instances of this record hold all the necessary configuration values which are guaranteed to be valid at
  * the time of instantiation.
- * <p>
- * This record is intended to be a simple data holder and should not contain any
- * game logic or mutable state.
  *
  * @param name the display name of the equipment item
  * @param description the description of the equipment item

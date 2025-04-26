@@ -150,43 +150,43 @@ public class GunConfigurationTest {
 
         assertThat(spec.shotSounds()).isNull();
 
-        assertThat(spec.reloadSpec().type()).isEqualTo(reloadType);
-        assertThat(spec.reloadSpec().reloadSounds()).isNull();
-        assertThat(spec.reloadSpec().duration()).isEqualTo(reloadDuration);
+        assertThat(spec.reload().type()).isEqualTo(reloadType);
+        assertThat(spec.reload().reloadSounds()).isNull();
+        assertThat(spec.reload().duration()).isEqualTo(reloadDuration);
 
-        assertThat(spec.itemSpec().material()).isEqualTo(itemMaterial);
-        assertThat(spec.itemSpec().displayName()).isEqualTo(itemDisplayName);
-        assertThat(spec.itemSpec().damage()).isEqualTo(itemDamage);
+        assertThat(spec.item().material()).isEqualTo(itemMaterial);
+        assertThat(spec.item().displayName()).isEqualTo(itemDisplayName);
+        assertThat(spec.item().damage()).isEqualTo(itemDamage);
 
-        assertThat(spec.controlsSpec().reloadAction()).isEqualTo(reloadAction);
-        assertThat(spec.controlsSpec().shootAction()).isEqualTo(shootAction);
-        assertThat(spec.controlsSpec().useScopeAction()).isNull();
-        assertThat(spec.controlsSpec().stopScopeAction()).isNull();
-        assertThat(spec.controlsSpec().changeScopeMagnificationAction()).isNull();
+        assertThat(spec.controls().reloadAction()).isEqualTo(reloadAction);
+        assertThat(spec.controls().shootAction()).isEqualTo(shootAction);
+        assertThat(spec.controls().useScopeAction()).isNull();
+        assertThat(spec.controls().stopScopeAction()).isNull();
+        assertThat(spec.controls().changeScopeMagnificationAction()).isNull();
 
-        assertThat(spec.fireModeSpec().type()).isEqualTo(fireModeType);
-        assertThat(spec.fireModeSpec().amountOfShots()).isNull();
-        assertThat(spec.fireModeSpec().rateOfFire()).isEqualTo(rateOfFire);
-        assertThat(spec.fireModeSpec().delayBetweenShots()).isNull();
+        assertThat(spec.fireMode().type()).isEqualTo(fireModeType);
+        assertThat(spec.fireMode().amountOfShots()).isNull();
+        assertThat(spec.fireMode().rateOfFire()).isEqualTo(rateOfFire);
+        assertThat(spec.fireMode().delayBetweenShots()).isNull();
 
-        assertThat(spec.recoilSpec()).isNotNull();
-        assertThat(spec.recoilSpec().type()).isEqualTo(recoilType);
-        assertThat(spec.recoilSpec().horizontalRecoilValues()).isEqualTo(horizontalRecoilValues);
-        assertThat(spec.recoilSpec().verticalRecoilValues()).isEqualTo(verticalRecoilValues);
-        assertThat(spec.recoilSpec().kickbackDuration()).isNull();
-        assertThat(spec.recoilSpec().recoveryRate()).isEqualTo(0.0f);
-        assertThat(spec.recoilSpec().recoveryDuration()).isEqualTo(0L);
+        assertThat(spec.recoil()).isNotNull();
+        assertThat(spec.recoil().type()).isEqualTo(recoilType);
+        assertThat(spec.recoil().horizontalRecoilValues()).isEqualTo(horizontalRecoilValues);
+        assertThat(spec.recoil().verticalRecoilValues()).isEqualTo(verticalRecoilValues);
+        assertThat(spec.recoil().kickbackDuration()).isNull();
+        assertThat(spec.recoil().recoveryRate()).isEqualTo(0.0f);
+        assertThat(spec.recoil().recoveryDuration()).isEqualTo(0L);
 
-        assertThat(spec.scopeSpec()).isNotNull();
-        assertThat(spec.scopeSpec().magnifications()).isEqualTo(magnifications);
-        assertThat(spec.scopeSpec().useSounds()).isNull();
-        assertThat(spec.scopeSpec().stopSounds()).isNull();
-        assertThat(spec.scopeSpec().changeMagnificationSounds()).isNull();
+        assertThat(spec.scope()).isNotNull();
+        assertThat(spec.scope().magnifications()).isEqualTo(magnifications);
+        assertThat(spec.scope().useSounds()).isNull();
+        assertThat(spec.scope().stopSounds()).isNull();
+        assertThat(spec.scope().changeMagnificationSounds()).isNull();
 
-        assertThat(spec.spreadPatternSpec()).isNotNull();
-        assertThat(spec.spreadPatternSpec().type()).isEqualTo(spreadPatternType);
-        assertThat(spec.spreadPatternSpec().projectileAmount()).isEqualTo(projectileAmount);
-        assertThat(spec.spreadPatternSpec().horizontalSpread()).isEqualTo(horizontalSpread);
-        assertThat(spec.spreadPatternSpec().verticalSpread()).isEqualTo(verticalSpread);
+        assertThat(spec.spreadPattern()).isNotNull();
+        assertThat(spec.spreadPattern().type()).isEqualTo(spreadPatternType);
+        assertThat(spec.spreadPattern().projectileAmount()).isEqualTo(projectileAmount);
+        assertThat(spec.spreadPattern().horizontalSpread()).isEqualTo(horizontalSpread);
+        assertThat(spec.spreadPattern().verticalSpread()).isEqualTo(verticalSpread);
     }
 }

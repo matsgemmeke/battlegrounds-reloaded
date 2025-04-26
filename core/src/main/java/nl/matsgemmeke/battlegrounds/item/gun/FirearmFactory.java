@@ -131,18 +131,18 @@ public class FirearmFactory {
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds());
         firearm.setShotSounds(shotSounds);
 
-        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloadSpec(), firearm, audioEmitter);
+        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reload(), firearm, audioEmitter);
         firearm.setReloadSystem(reloadSystem);
 
-        ItemControls<GunHolder> controls = controlsFactory.create(spec.controlsSpec(), firearm);
+        ItemControls<GunHolder> controls = controlsFactory.create(spec.controls(), firearm);
         firearm.setControls(controls);
 
-        FireMode fireMode = fireModeFactory.create(spec.fireModeSpec(), firearm);
+        FireMode fireMode = fireModeFactory.create(spec.fireMode(), firearm);
         firearm.setFireMode(fireMode);
 
-        RecoilSpec recoilSpec = spec.recoilSpec();
-        ScopeSpec scopeSpec = spec.scopeSpec();
-        SpreadPatternSpec spreadPatternSpec = spec.spreadPatternSpec();
+        RecoilSpec recoilSpec = spec.recoil();
+        ScopeSpec scopeSpec = spec.scope();
+        SpreadPatternSpec spreadPatternSpec = spec.spreadPattern();
 
         if (recoilSpec != null) {
             RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSpec);
@@ -168,9 +168,9 @@ public class FirearmFactory {
 
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        Material material = Material.valueOf(spec.itemSpec().material());
-        String displayName = spec.itemSpec().displayName();
-        int damage = spec.itemSpec().damage();
+        Material material = Material.valueOf(spec.item().material());
+        String displayName = spec.item().displayName();
+        int damage = spec.item().damage();
 
         ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDamage(damage);

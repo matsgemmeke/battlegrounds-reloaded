@@ -259,9 +259,9 @@ public class EquipmentFactory {
         List<GameSound> activationSounds = Collections.emptyList();
         long activationDelay = 0L;
 
-        if (deploymentSpec.manualActivationSpec() != null) {
-            activationSounds = DefaultGameSound.parseSounds(deploymentSpec.manualActivationSpec().activationSounds());
-            activationDelay = deploymentSpec.manualActivationSpec().activationDelay();
+        if (deploymentSpec.manualActivation() != null) {
+            activationSounds = DefaultGameSound.parseSounds(deploymentSpec.manualActivation().activationSounds());
+            activationDelay = deploymentSpec.manualActivation().activationDelay();
         }
 
         ParticleEffect destroyEffect = null;

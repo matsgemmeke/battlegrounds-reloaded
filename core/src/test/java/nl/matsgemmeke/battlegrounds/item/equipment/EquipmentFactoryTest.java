@@ -245,7 +245,7 @@ public class EquipmentFactoryTest {
         ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
         verify(deploymentHandlerFactory).create(deploymentPropertiesCaptor.capture(), eq(audioEmitter), eq(effect));
 
-        assertThat(deploymentPropertiesCaptor.getValue().activationDelay()).isEqualTo(spec.deployment().manualActivationSpec().activationDelay());
+        assertThat(deploymentPropertiesCaptor.getValue().activationDelay()).isEqualTo(manualActivationSpec.activationDelay());
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
     }
 
