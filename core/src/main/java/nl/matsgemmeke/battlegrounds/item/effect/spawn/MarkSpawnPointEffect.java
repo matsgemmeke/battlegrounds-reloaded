@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +14,7 @@ public class MarkSpawnPointEffect extends BaseItemEffect {
     @NotNull
     private SpawnPointProvider spawnPointProvider;
 
-    public MarkSpawnPointEffect(@NotNull ItemEffectActivation effectActivation, @NotNull SpawnPointProvider spawnPointProvider) {
-        super(effectActivation);
+    public MarkSpawnPointEffect(@NotNull SpawnPointProvider spawnPointProvider) {
         this.spawnPointProvider = spawnPointProvider;
     }
 

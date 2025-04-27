@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -30,13 +29,11 @@ public class ExplosionEffect extends BaseItemEffect {
     private TargetFinder targetFinder;
 
     public ExplosionEffect(
-            @NotNull ItemEffectActivation effectActivation,
             @NotNull ExplosionProperties properties,
             @NotNull DamageProcessor damageProcessor,
             @NotNull RangeProfile rangeProfile,
             @NotNull TargetFinder targetFinder
     ) {
-        super(effectActivation);
         this.properties = properties;
         this.damageProcessor = damageProcessor;
         this.targetFinder = targetFinder;

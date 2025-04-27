@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -39,12 +38,10 @@ public class SmokeScreenEffect extends BaseItemEffect {
     @Inject
     public SmokeScreenEffect(
             @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull ItemEffectActivation effectActivation,
             @Assisted @NotNull SmokeScreenProperties properties,
             @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull CollisionDetector collisionDetector
     ) {
-        super(effectActivation);
         this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
