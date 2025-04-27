@@ -29,8 +29,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.DelayedActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.DelayedActivationFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.enemy.EnemyProximityTrigger;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.enemy.EnemyProximityTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor.FloorHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.floor.FloorHitTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
@@ -40,6 +38,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy.EnemyProximityTrigger;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy.EnemyProximityTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.timed.TimedTrigger;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.timed.TimedTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -147,7 +147,7 @@ public class BattlegroundsModule implements Module {
                 .build(ManualInsertionReloadSystemFactory.class));
 
         binder.install(new FactoryModuleBuilder()
-                .implement(nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger.class, EnemyProximityTrigger.class)
+                .implement(Trigger.class, EnemyProximityTrigger.class)
                 .build(EnemyProximityTriggerFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger.class, FloorHitTrigger.class)
