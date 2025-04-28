@@ -10,12 +10,11 @@ import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.util.Procedure;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -23,7 +22,8 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.*;
 
 public class ExplosionEffectTest {
@@ -42,19 +42,19 @@ public class ExplosionEffectTest {
     private Deployer deployer;
     private Entity entity;
     private ExplosionProperties properties;
-    private ItemEffectActivation effectActivation;
     private ItemEffectContext context;
     private ItemEffectSource source;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
+    private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
         damageProcessor = mock(DamageProcessor.class);
         properties = new ExplosionProperties(POWER, SET_FIRE, BREAK_BLOCKS);
-        effectActivation = mock(ItemEffectActivation.class);
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);
+        trigger = mock(Trigger.class);
 
         deployer = mock(Deployer.class);
         entity = mock(Entity.class);
@@ -71,20 +71,21 @@ public class ExplosionEffectTest {
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
         effect.activateInstantly();
 
-        verify(effectActivation, never()).cancel();
+        verify(trigger, never()).cancel();
     }
 
     @Test
-    public void activateInstantlyPerformsEffectIfContextSourceExists() {
+    public void activateInstantlyPerformsEffectAndCancelsTriggersWhenContextSourceExists() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
@@ -92,124 +93,130 @@ public class ExplosionEffectTest {
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
         effect.activateInstantly();
 
         verify(source).remove();
+        verify(trigger).cancel();
         verify(world).createExplosion(sourceLocation, POWER, SET_FIRE, BREAK_BLOCKS, entity);
     }
 
     @Test
-    public void cancelActivationDoesNotCancelActivationIfNotPrimed() {
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+    public void cancelActivationDoesNotCancelTriggersIfNotPrimed() {
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        effect.addTrigger(trigger);
         effect.cancelActivation();
 
-        verify(effectActivation, never()).cancel();
+        verify(trigger, never()).cancel();
     }
 
     @Test
-    public void cancelActivationDoesNotCancelActivationIfAlreadyActivated() {
+    public void cancelActivationDoesNotCancelTriggersIfAlreadyActivated() {
         Location sourceLocation = new Location(null, 1, 1, 1);
         World world = mock(World.class);
 
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
         effect.cancelActivation();
 
-        verify(effectActivation, never()).cancel();
+        verify(trigger, never()).cancel();
     }
 
     @Test
-    public void cancelActivationCancelsActivationIfPrimed() {
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+    public void cancelActivationCancelsTriggersIfPrimed() {
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
         effect.cancelActivation();
 
-        verify(effectActivation).cancel();
+        verify(trigger).cancel();
     }
 
     @Test
-    public void deployChangesTheSourceOfTheContext() {
+    public void deployChangesSourceOfContext() {
         ItemEffectSource newSource = mock(ItemEffectSource.class);
 
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.prime(context);
         effect.deploy(newSource);
 
-        assertEquals(newSource, context.getSource());
+        assertThat(context.getSource()).isEqualTo(newSource);
     }
 
     @Test
     public void deployDoesNothingIfEffectIsNotPrimedYet() {
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
 
         // This method currently has no side effects to verify, refactor later?
-        assertDoesNotThrow(() -> effect.deploy(source));
+        assertThatCode(() -> effect.deploy(source)).doesNotThrowAnyException();
     }
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfEffectIsNotPrimed() {
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         boolean awaitingDeployment = effect.isAwaitingDeployment();
 
-        assertFalse(awaitingDeployment);
+        assertThat(awaitingDeployment).isFalse();
     }
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfContextSourceIsDeployed() {
         when(source.isDeployed()).thenReturn(true);
 
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.prime(context);
         boolean awaitingDeployment = effect.isAwaitingDeployment();
 
-        assertFalse(awaitingDeployment);
+        assertThat(awaitingDeployment).isFalse();
     }
 
     @Test
-    public void isAwaitingDeploymentReturnsFalseIfContextSourceIsNotDeployed() {
+    public void isAwaitingDeploymentReturnsTrueWhenContextSourceIsNotDeployed() {
         when(source.isDeployed()).thenReturn(false);
 
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.prime(context);
         boolean awaitingDeployment = effect.isAwaitingDeployment();
 
-        assertTrue(awaitingDeployment);
+        assertThat(awaitingDeployment).isTrue();
     }
 
     @Test
     public void isPrimedReturnsFalseIfEffectWasNotPrimed() {
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         boolean primed = effect.isPrimed();
 
-        assertFalse(primed);
+        assertThat(primed).isFalse();
     }
 
     @Test
     public void isPrimedReturnsTrueIfEffectWasPrimed() {
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.prime(context);
         boolean primed = effect.isPrimed();
 
-        assertTrue(primed);
+        assertThat(primed).isTrue();
     }
 
     @Test
     public void primePrimesEffectActivationOnce() {
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
         effect.prime(context);
 
-        verify(effectActivation).prime(eq(context), any(Procedure.class));
+        verify(trigger, times(1)).prime(context);
     }
 
     @Test
@@ -240,13 +247,14 @@ public class ExplosionEffectTest {
 
         ExplosionProperties properties = new ExplosionProperties(POWER, SET_FIRE, BREAK_BLOCKS);
 
-        ExplosionEffect effect = new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
 
         verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, new Damage(SHORT_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
         verify(source).remove();

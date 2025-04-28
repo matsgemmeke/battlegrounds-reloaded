@@ -16,7 +16,6 @@ import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
@@ -58,7 +57,7 @@ public class ItemEffectFactory {
         this.smokeScreenEffectFactory = smokeScreenEffectFactory;
     }
 
-    public ItemEffect create(@NotNull Section section, @NotNull GameKey gameKey, @NotNull ItemEffectActivation effectActivation) {
+    public ItemEffect create(@NotNull Section section, @NotNull GameKey gameKey) {
         String type = section.getString("type");
 
         if (type == null) {
@@ -97,7 +96,7 @@ public class ItemEffectFactory {
                 CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                return combustionEffectFactory.create(effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+                return combustionEffectFactory.create(properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
             }
             case EXPLOSION -> {
                 float power = section.getFloat("power");
@@ -116,7 +115,7 @@ public class ItemEffectFactory {
                 RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                return new ExplosionEffect(effectActivation, properties, damageProcessor, rangeProfile, targetFinder);
+                return new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
             }
             case FLASH -> {
                 double range = section.getDouble("range");
@@ -134,7 +133,7 @@ public class ItemEffectFactory {
                 FlashProperties properties = new FlashProperties(potionEffect, range, explosionPower, explosionBreakBlocks, explosionSetFire);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                return new FlashEffect(effectActivation, properties, targetFinder);
+                return new FlashEffect(properties, targetFinder);
             }
             case GUN_FIRE_SIMULATION -> {
                 List<GameSound> genericSounds = DefaultGameSound.parseSounds(section.getString("generic-sounds"));
@@ -150,12 +149,12 @@ public class ItemEffectFactory {
                 GunInfoProvider gunInfoProvider = contextProvider.getComponent(gameKey, GunInfoProvider.class);
                 GunFireSimulationProperties properties = new GunFireSimulationProperties(genericSounds, genericRateOfFire, maxBurstDuration, minBurstDuration, maxDelayBetweenBursts, minDelayBetweenBursts, maxTotalDuration, minTotalDuration);
 
-                return gunFireSimulationEffectFactory.create(effectActivation, audioEmitter, gunInfoProvider, properties);
+                return gunFireSimulationEffectFactory.create(audioEmitter, gunInfoProvider, properties);
             }
             case MARK_SPAWN_POINT -> {
                 SpawnPointProvider spawnPointProvider = contextProvider.getComponent(gameKey, SpawnPointProvider.class);
 
-                return new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
+                return new MarkSpawnPointEffect(spawnPointProvider);
             }
             case SMOKE_SCREEN -> {
                 Particle particle;
@@ -190,12 +189,12 @@ public class ItemEffectFactory {
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
                 CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
 
-                return smokeScreenEffectFactory.create(effectActivation, properties, audioEmitter, collisionDetector);
+                return smokeScreenEffectFactory.create(properties, audioEmitter, collisionDetector);
             }
             case SOUND_NOTIFICATION -> {
                 Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sounds"));
 
-                return new SoundNotificationEffect(effectActivation, sounds);
+                return new SoundNotificationEffect(sounds);
             }
         }
 

@@ -12,9 +12,9 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
-import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -30,7 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -55,24 +56,24 @@ public class CombustionEffectTest {
     private CombustionProperties properties;
     private Deployer deployer;
     private Entity entity;
-    private ItemEffectActivation effectActivation;
     private ItemEffectContext context;
     private ItemEffectSource source;
     private MetadataValueEditor metadataValueEditor;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
     private TaskRunner taskRunner;
+    private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
         properties = new CombustionProperties(COMBUSTION_SOUNDS, RADIUS, TICKS_BETWEEN_FIRE_SPREAD, MAX_DURATION, BURN_BLOCKS, SPREAD_FIRE);
-        effectActivation = mock(ItemEffectActivation.class);
         metadataValueEditor = mock(MetadataValueEditor.class);
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);
         taskRunner = mock(TaskRunner.class);
+        trigger = mock(Trigger.class);
 
         deployer = mock(Deployer.class);
         entity = mock(Entity.class);
@@ -89,16 +90,17 @@ public class CombustionEffectTest {
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
         effect.activateInstantly();
 
-        verify(effectActivation, never()).cancel();
+        verify(trigger, never()).cancel();
     }
 
     @Test
@@ -110,20 +112,22 @@ public class CombustionEffectTest {
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
 
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
         effect.activateInstantly();
 
-        verify(effectActivation).cancel();
+        verify(trigger).cancel();
         verify(source).remove();
     }
 
     @Test
-    public void cancelActivationDoesNotCancelActivationIfNotPrimed() {
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+    public void cancelActivationDoesNotCancelTriggersIfNotPrimed() {
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        effect.addTrigger(trigger);
         effect.cancelActivation();
 
-        verify(effectActivation, never()).cancel();
+        verify(trigger, never()).cancel();
     }
 
     @Test
@@ -134,93 +138,95 @@ public class CombustionEffectTest {
         UUID entityId = UUID.randomUUID();
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
         effect.cancelActivation();
 
-        verify(effectActivation, never()).cancel();
+        verify(trigger, never()).cancel();
     }
 
     @Test
     public void cancelActivationCancelsActivationIfPrimed() {
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
         effect.cancelActivation();
 
-        verify(effectActivation).cancel();
+        verify(trigger).cancel();
     }
 
     @Test
     public void deployChangesTheSourceOfTheContext() {
         ItemEffectSource newSource = mock(ItemEffectSource.class);
 
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
         effect.deploy(newSource);
 
-        assertEquals(newSource, context.getSource());
+        assertThat(context.getSource()).isEqualTo(newSource);
     }
 
     @Test
     public void deployDoesNothingIfEffectIsNotPrimedYet() {
         ItemEffectSource source = mock(ItemEffectSource.class);
 
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
 
         // This method currently has no side effects to verify, refactor later?
-        assertDoesNotThrow(() -> effect.deploy(source));
+        assertThatCode(() -> effect.deploy(source)).doesNotThrowAnyException();
     }
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfEffectIsNotPrimed() {
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         boolean awaitingDeployment = effect.isAwaitingDeployment();
 
-        assertFalse(awaitingDeployment);
+        assertThat(awaitingDeployment).isFalse();
     }
 
     @Test
     public void isAwaitingDeploymentReturnsFalseIfContextSourceIsDeployed() {
         when(source.isDeployed()).thenReturn(true);
 
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
         boolean awaitingDeployment = effect.isAwaitingDeployment();
 
-        assertFalse(awaitingDeployment);
+        assertThat(awaitingDeployment).isFalse();
     }
 
     @Test
-    public void isAwaitingDeploymentReturnsFalseIfContextSourceIsNotDeployed() {
+    public void isAwaitingDeploymentReturnsTrueIfContextSourceIsNotDeployed() {
         when(source.isDeployed()).thenReturn(false);
 
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
         boolean awaitingDeployment = effect.isAwaitingDeployment();
 
-        assertTrue(awaitingDeployment);
+        assertThat(awaitingDeployment).isTrue();
     }
 
     @Test
     public void isPrimedReturnsFalseIfEffectWasNotPrimed() {
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         boolean primed = effect.isPrimed();
 
-        assertFalse(primed);
+        assertThat(primed).isFalse();
     }
 
     @Test
     public void isPrimedReturnsTrueIfEffectWasPrimed() {
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.prime(context);
         boolean primed = effect.isPrimed();
 
-        assertTrue(primed);
+        assertThat(primed).isTrue();
     }
 
     @Test
@@ -248,13 +254,14 @@ public class CombustionEffectTest {
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
         when(collisionDetector.hasLineOfSight(blockOutsideLineOfSight.getLocation(), sourceLocation)).thenReturn(false);
 
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -332,13 +339,14 @@ public class CombustionEffectTest {
         when(source.getWorld()).thenReturn(world);
         when(targetFinder.findTargets(entityId, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deployerEntity, target));
 
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, effectActivation, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
 
         verify(deployerEntity).damage(new Damage(MEDIUM_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));
         verify(target).damage(new Damage(SHORT_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));

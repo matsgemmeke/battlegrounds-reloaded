@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.util.Procedure;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,15 +21,15 @@ public class MarkSpawnPointEffectTest {
 
     private Deployer deployer;
     private Entity entity;
-    private ItemEffectActivation effectActivation;
     private ItemEffectContext context;
     private ItemEffectSource source;
     private SpawnPointProvider spawnPointProvider;
+    private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
-        effectActivation = mock(ItemEffectActivation.class);
         spawnPointProvider = mock(SpawnPointProvider.class);
+        trigger = mock(Trigger.class);
 
         deployer = mock(Deployer.class);
         entity = mock(Entity.class);
@@ -45,13 +45,14 @@ public class MarkSpawnPointEffectTest {
         when(deployer.getDeployLocation()).thenReturn(deployLocation);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
+        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<MarkedSpawnPoint> spawnPointCaptor = ArgumentCaptor.forClass(MarkedSpawnPoint.class);
         verify(spawnPointProvider).setCustomSpawnPoint(eq(entityId), spawnPointCaptor.capture());
@@ -59,7 +60,7 @@ public class MarkSpawnPointEffectTest {
 
     @Test
     public void resetDoesNotResetSpawnPointIfEffectIsNotPerformed() {
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
+        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);
         effect.reset();
 
         verify(spawnPointProvider, never()).setCustomSpawnPoint(any(UUID.class), any(SpawnPoint.class));
@@ -73,7 +74,7 @@ public class MarkSpawnPointEffectTest {
         when(deployer.getDeployLocation()).thenReturn(deployLocation);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(effectActivation, spawnPointProvider);
+        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);
         effect.prime(context);
         effect.reset();
 
