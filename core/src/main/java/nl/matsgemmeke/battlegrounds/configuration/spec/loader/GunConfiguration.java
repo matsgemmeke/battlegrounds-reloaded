@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.item;
+package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
