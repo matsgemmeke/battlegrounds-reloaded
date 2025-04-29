@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Set;
 
-public class GunConfiguration {
+public class GunSpecLoader {
 
     private static final List<String> ALLOWED_ACTION_VALUES = List.of("CHANGE_FROM", "CHANGE_TO", "DROP_ITEM", "LEFT_CLICK", "PICKUP_ITEM", "RIGHT_CLICK", "SWAP_FROM", "SWAP_TO");
     private static final List<String> ALLOWED_RELOAD_TYPE_VALUES = List.of("MAGAZINE", "MANUAL_INSERTION");
@@ -79,12 +79,12 @@ public class GunConfiguration {
     @NotNull
     private final YamlReader yamlReader;
 
-    public GunConfiguration(@NotNull YamlReader yamlReader) {
+    public GunSpecLoader(@NotNull YamlReader yamlReader) {
         this.yamlReader = yamlReader;
     }
 
     @NotNull
-    public GunSpec createSpec() {
+    public GunSpec loadSpec() {
         String name = new FieldSpecResolver<String>()
                 .route(NAME_ROUTE)
                 .value(yamlReader.getString(NAME_ROUTE))

@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GunConfigurationTest {
+public class GunSpecLoaderTest {
 
     private YamlReader yamlReader;
 
@@ -27,9 +27,9 @@ public class GunConfigurationTest {
     public void createSpecThrowsInvalidItemConfigurationExceptionWhenValueFromYamlDoesNotPassValidator() {
         when(yamlReader.getString("name")).thenReturn(null);
 
-        GunConfiguration configuration = new GunConfiguration(yamlReader);
+        GunSpecLoader specLoader = new GunSpecLoader(yamlReader);
 
-        assertThatThrownBy(configuration::createSpec)
+        assertThatThrownBy(specLoader::loadSpec)
                 .isInstanceOf(InvalidItemConfigurationException.class)
                 .hasMessage("Missing required value at 'name'");
     }
@@ -131,8 +131,8 @@ public class GunConfigurationTest {
         when(yamlReader.getOptionalFloat("shooting.spread-pattern.horizontal-spread")).thenReturn(Optional.of(horizontalSpread));
         when(yamlReader.getOptionalFloat("shooting.spread-pattern.vertical-spread")).thenReturn(Optional.of(verticalSpread));
 
-        GunConfiguration configuration = new GunConfiguration(yamlReader);
-        GunSpec spec = configuration.createSpec();
+        GunSpecLoader specLoader = new GunSpecLoader(yamlReader);
+        GunSpec spec = specLoader.loadSpec();
 
         assertThat(spec.name()).isEqualTo(name);
         assertThat(spec.description()).isNull();
