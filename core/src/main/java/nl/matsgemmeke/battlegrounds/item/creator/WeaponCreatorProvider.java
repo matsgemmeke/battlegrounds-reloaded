@@ -7,7 +7,7 @@ import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.loader.EquipmentSpecLoader;
@@ -123,7 +123,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.addItemSpec(creator, itemFile, document);
         } catch (IOException | IllegalArgumentException e) {
             logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
-        } catch (InvalidItemConfigurationException e) {
+        } catch (InvalidFieldSpecException e) {
             logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
         }
     }

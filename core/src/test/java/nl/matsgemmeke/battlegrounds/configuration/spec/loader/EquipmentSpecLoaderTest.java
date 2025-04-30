@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,13 +24,13 @@ public class EquipmentSpecLoaderTest {
     }
 
     @Test
-    public void createSpecThrowsInvalidItemConfigurationExceptionWhenValueFromYamlDoesNotPassValidator() {
+    public void createSpecThrowsInvalidFieldSpecExceptionWhenValueFromYamlDoesNotPassValidator() {
         when(yamlReader.getString("name")).thenReturn(null);
 
         EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader);
 
         assertThatThrownBy(specLoader::loadSpec)
-                .isInstanceOf(InvalidItemConfigurationException.class)
+                .isInstanceOf(InvalidFieldSpecException.class)
                 .hasMessage("Missing required value at 'name'");
     }
 

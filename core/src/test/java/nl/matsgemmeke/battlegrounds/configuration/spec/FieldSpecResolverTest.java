@@ -13,16 +13,16 @@ import static org.mockito.Mockito.when;
 public class FieldSpecResolverTest {
 
     @Test
-    public void resolveThrowsInvalidItemConfigurationExceptionWhenRouteIsNull() {
+    public void resolveThrowsInvalidFieldSpecExceptionWhenRouteIsNull() {
         String value = "hello";
 
         assertThatThrownBy(() -> new FieldSpecResolver<String>().value(value).resolve())
-                .isInstanceOf(InvalidItemConfigurationException.class)
+                .isInstanceOf(InvalidFieldSpecException.class)
                 .hasMessage("Cannot resolve value 'hello' without assigned configuration route");
     }
 
     @Test
-    public void resolveThrowsInvalidItemConfigurationExceptionWhenValidationFails() {
+    public void resolveThrowsInvalidFieldSpecExceptionWhenValidationFails() {
         String error = "error";
         String route = "test";
         String value = "hello";
@@ -31,7 +31,7 @@ public class FieldSpecResolverTest {
         when(validator.validate(route, value)).thenReturn(Optional.of(error));
 
         assertThatThrownBy(() -> new FieldSpecResolver<String>().route(route).value(value).validate(validator).resolve())
-                .isInstanceOf(InvalidItemConfigurationException.class)
+                .isInstanceOf(InvalidFieldSpecException.class)
                 .hasMessage(error);
     }
 

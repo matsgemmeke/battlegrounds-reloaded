@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,13 +27,13 @@ public class GunSpecLoaderTest {
     }
 
     @Test
-    public void createSpecThrowsInvalidItemConfigurationExceptionWhenValueFromYamlDoesNotPassValidator() {
+    public void createSpecThrowsInvalidFieldSpecExceptionWhenValueFromYamlDoesNotPassValidator() {
         when(yamlReader.getString("name")).thenReturn(null);
 
         GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
 
         assertThatThrownBy(specLoader::loadSpec)
-                .isInstanceOf(InvalidItemConfigurationException.class)
+                .isInstanceOf(InvalidFieldSpecException.class)
                 .hasMessage("Missing required value at 'name'");
     }
 

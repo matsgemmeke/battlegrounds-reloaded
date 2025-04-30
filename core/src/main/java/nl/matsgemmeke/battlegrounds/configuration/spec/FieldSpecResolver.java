@@ -41,7 +41,7 @@ public class FieldSpecResolver<T> {
 
     public T resolve() {
         if (route == null) {
-            throw new InvalidItemConfigurationException("Cannot resolve value '%s' without assigned configuration route".formatted(value));
+            throw new InvalidFieldSpecException("Cannot resolve value '%s' without assigned configuration route".formatted(value));
         }
 
         FieldSpec<T> spec = new FieldSpec<>(route);
@@ -50,7 +50,7 @@ public class FieldSpecResolver<T> {
         ValidationResult<T> result = spec.getValidatedValue(value);
 
         if (!result.isValid()) {
-            throw new InvalidItemConfigurationException(result.getErrorMessage());
+            throw new InvalidFieldSpecException(result.getErrorMessage());
         }
 
         return result.getValue();
