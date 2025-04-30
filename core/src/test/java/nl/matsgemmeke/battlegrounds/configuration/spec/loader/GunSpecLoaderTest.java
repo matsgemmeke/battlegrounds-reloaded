@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import org.junit.jupiter.api.BeforeEach;

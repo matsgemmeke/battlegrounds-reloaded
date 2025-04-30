@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Validator;
 import org.junit.jupiter.api.Test;
 

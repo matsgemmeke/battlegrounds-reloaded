@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.item;
+package nl.matsgemmeke.battlegrounds.configuration.spec;
 
 public class InvalidItemConfigurationException extends RuntimeException {
 

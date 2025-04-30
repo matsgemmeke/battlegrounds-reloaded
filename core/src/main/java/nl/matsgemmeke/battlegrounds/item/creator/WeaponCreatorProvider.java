@@ -7,7 +7,7 @@ import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.loader.EquipmentSpecLoader;
