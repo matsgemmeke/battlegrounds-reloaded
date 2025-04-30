@@ -7,7 +7,7 @@ import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.item.EquipmentConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.item.EquipmentSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
@@ -138,8 +138,8 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             ItemConfiguration config = new ItemConfiguration(file, null);
             config.load();
 
-            EquipmentConfiguration configuration = new EquipmentConfiguration(yamlReader);
-            EquipmentSpec spec = configuration.createSpec();
+            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader);
+            EquipmentSpec spec = specLoader.loadSpec();
 
             creator.addEquipmentSpec(id, spec, config);
             return;

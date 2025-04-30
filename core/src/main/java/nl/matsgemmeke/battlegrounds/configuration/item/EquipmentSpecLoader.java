@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-public class EquipmentConfiguration {
+public class EquipmentSpecLoader {
 
     private static final List<String> ALLOWED_DAMAGE_TYPE_VALUES = List.of("bullet-damage", "explosive-damage", "fire-damage");
 
@@ -74,12 +74,12 @@ public class EquipmentConfiguration {
     @NotNull
     private final YamlReader yamlReader;
 
-    public EquipmentConfiguration(@NotNull YamlReader yamlReader) {
+    public EquipmentSpecLoader(@NotNull YamlReader yamlReader) {
         this.yamlReader = yamlReader;
     }
 
     @NotNull
-    public EquipmentSpec createSpec() {
+    public EquipmentSpec loadSpec() {
         String name = new FieldSpecResolver<String>()
                 .route(NAME_ROUTE)
                 .value(yamlReader.getString(NAME_ROUTE))

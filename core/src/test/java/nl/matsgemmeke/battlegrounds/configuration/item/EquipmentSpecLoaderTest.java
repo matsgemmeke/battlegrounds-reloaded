@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class EquipmentConfigurationTest {
+public class EquipmentSpecLoaderTest {
 
     private YamlReader yamlReader;
 
@@ -26,9 +26,9 @@ public class EquipmentConfigurationTest {
     public void createSpecThrowsInvalidItemConfigurationExceptionWhenValueFromYamlDoesNotPassValidator() {
         when(yamlReader.getString("name")).thenReturn(null);
 
-        EquipmentConfiguration configuration = new EquipmentConfiguration(yamlReader);
+        EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader);
 
-        assertThatThrownBy(configuration::createSpec)
+        assertThatThrownBy(specLoader::loadSpec)
                 .isInstanceOf(InvalidItemConfigurationException.class)
                 .hasMessage("Missing required value at 'name'");
     }
@@ -127,8 +127,8 @@ public class EquipmentConfigurationTest {
         when(yamlReader.getString("deploy.placing.place-sounds")).thenReturn(null);
         when(yamlReader.getOptionalLong("deploy.placing.cooldown")).thenReturn(Optional.of(placeCooldown));
 
-        EquipmentConfiguration configuration = new EquipmentConfiguration(yamlReader);
-        EquipmentSpec spec = configuration.createSpec();
+        EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader);
+        EquipmentSpec spec = specLoader.loadSpec();
 
         assertThat(spec.name()).isEqualTo(name);
         assertThat(spec.description()).isNull();
