@@ -16,23 +16,20 @@ public class RangeProfileSpecLoader {
     private static final String LONG_RANGE_DISTANCE_ROUTE = "long-range.distance";
 
     @NotNull
-    private final String baseRoute;
-    @NotNull
     private final YamlReader yamlReader;
 
-    public RangeProfileSpecLoader(@NotNull YamlReader yamlReader, @NotNull String baseRoute) {
+    public RangeProfileSpecLoader(@NotNull YamlReader yamlReader) {
         this.yamlReader = yamlReader;
-        this.baseRoute = baseRoute;
     }
 
     @NotNull
-    public RangeProfileSpec loadSpec() {
-        String shortRangeDamageRoute = this.createRoute(SHORT_RANGE_DAMAGE_ROUTE);
-        String shortRangeDistanceRoute = this.createRoute(SHORT_RANGE_DISTANCE_ROUTE);
-        String mediumRangeDamageRoute = this.createRoute(MEDIUM_RANGE_DAMAGE_ROUTE);
-        String mediumRangeDistanceRoute = this.createRoute(MEDIUM_RANGE_DISTANCE_ROUTE);
-        String longRangeDamageRoute = this.createRoute(LONG_RANGE_DAMAGE_ROUTE);
-        String longRangeDistanceRoute = this.createRoute(LONG_RANGE_DISTANCE_ROUTE);
+    public RangeProfileSpec loadSpec(@NotNull String baseRoute) {
+        String shortRangeDamageRoute = this.createRoute(baseRoute, SHORT_RANGE_DAMAGE_ROUTE);
+        String shortRangeDistanceRoute = this.createRoute(baseRoute, SHORT_RANGE_DISTANCE_ROUTE);
+        String mediumRangeDamageRoute = this.createRoute(baseRoute, MEDIUM_RANGE_DAMAGE_ROUTE);
+        String mediumRangeDistanceRoute = this.createRoute(baseRoute, MEDIUM_RANGE_DISTANCE_ROUTE);
+        String longRangeDamageRoute = this.createRoute(baseRoute, LONG_RANGE_DAMAGE_ROUTE);
+        String longRangeDistanceRoute = this.createRoute(baseRoute, LONG_RANGE_DISTANCE_ROUTE);
 
         Double shortRangeDamage = new FieldSpecResolver<Double>()
                 .route(shortRangeDamageRoute)
@@ -69,7 +66,7 @@ public class RangeProfileSpecLoader {
     }
 
     @NotNull
-    private String createRoute(@NotNull String route) {
+    private String createRoute(@NotNull String baseRoute, @NotNull String route) {
         return baseRoute + "." + route;
     }
 }

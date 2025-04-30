@@ -38,8 +38,8 @@ public class RangeProfileSpecLoaderTest {
         when(yamlReader.getOptionalDouble("base-route.long-range.damage")).thenReturn(Optional.of(longRangeDamage));
         when(yamlReader.getOptionalDouble("base-route.long-range.distance")).thenReturn(Optional.of(longRangeDistance));
 
-        RangeProfileSpecLoader specLoader = new RangeProfileSpecLoader(yamlReader, BASE_ROUTE);
-        RangeProfileSpec spec = specLoader.loadSpec();
+        RangeProfileSpecLoader specLoader = new RangeProfileSpecLoader(yamlReader);
+        RangeProfileSpec spec = specLoader.loadSpec(BASE_ROUTE);
 
         assertThat(spec.shortRangeDamage()).isEqualTo(shortRangeDamage);
         assertThat(spec.shortRangeDistance()).isEqualTo(shortRangeDistance);

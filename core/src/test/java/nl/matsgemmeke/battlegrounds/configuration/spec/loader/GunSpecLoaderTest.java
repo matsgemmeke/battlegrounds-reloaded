@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,10 +17,12 @@ import static org.mockito.Mockito.when;
 
 public class GunSpecLoaderTest {
 
+    private RangeProfileSpecLoader rangeProfileSpecLoader;
     private YamlReader yamlReader;
 
     @BeforeEach
     public void setUp() {
+        rangeProfileSpecLoader = mock(RangeProfileSpecLoader.class);
         yamlReader = mock(YamlReader.class);
     }
 
@@ -27,7 +30,7 @@ public class GunSpecLoaderTest {
     public void createSpecThrowsInvalidItemConfigurationExceptionWhenValueFromYamlDoesNotPassValidator() {
         when(yamlReader.getString("name")).thenReturn(null);
 
-        GunSpecLoader specLoader = new GunSpecLoader(yamlReader);
+        GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
 
         assertThatThrownBy(specLoader::loadSpec)
                 .isInstanceOf(InvalidItemConfigurationException.class)
@@ -42,12 +45,8 @@ public class GunSpecLoaderTest {
         Integer maxMagazineAmount = 5;
         Integer defaultMagazineAmount = 3;
 
-        Double shortRangeDamage = 35.0;
-        Double shortRangeDistance = 10.0;
-        Double mediumRangeDamage = 25.0;
-        Double mediumRangeDistance = 20.0;
-        Double longRangeDamage = 15.0;
-        Double longRangeDistance = 30.0;
+        RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+
         Double headshotDamageMultiplier = 2.0;
 
         String reloadType = "MAGAZINE";
@@ -81,14 +80,9 @@ public class GunSpecLoaderTest {
         when(yamlReader.getOptionalInt("ammo.max-magazine-amount")).thenReturn(Optional.of(maxMagazineAmount));
         when(yamlReader.getOptionalInt("ammo.default-supply")).thenReturn(Optional.of(defaultMagazineAmount));
 
-        when(yamlReader.getDouble("shooting.range.short-range.damage")).thenReturn(shortRangeDamage);
-        when(yamlReader.getDouble("shooting.range.short-range.distance")).thenReturn(shortRangeDistance);
-        when(yamlReader.getDouble("shooting.range.medium-range.damage")).thenReturn(mediumRangeDamage);
-        when(yamlReader.getDouble("shooting.range.medium-range.distance")).thenReturn(mediumRangeDistance);
-        when(yamlReader.getDouble("shooting.range.long-range.damage")).thenReturn(longRangeDamage);
-        when(yamlReader.getDouble("shooting.range.long-range.distance")).thenReturn(longRangeDistance);
-        when(yamlReader.getDouble("shooting.headshot-damage-multiplier")).thenReturn(headshotDamageMultiplier);
+        when(rangeProfileSpecLoader.loadSpec("shooting.range")).thenReturn(rangeProfileSpec);
 
+        when(yamlReader.getDouble("shooting.headshot-damage-multiplier")).thenReturn(headshotDamageMultiplier);
 
         when(yamlReader.getString("shooting.shot-sounds")).thenReturn(null);
 
@@ -131,7 +125,7 @@ public class GunSpecLoaderTest {
         when(yamlReader.getOptionalFloat("shooting.spread-pattern.horizontal-spread")).thenReturn(Optional.of(horizontalSpread));
         when(yamlReader.getOptionalFloat("shooting.spread-pattern.vertical-spread")).thenReturn(Optional.of(verticalSpread));
 
-        GunSpecLoader specLoader = new GunSpecLoader(yamlReader);
+        GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
         GunSpec spec = specLoader.loadSpec();
 
         assertThat(spec.name()).isEqualTo(name);
@@ -141,12 +135,8 @@ public class GunSpecLoaderTest {
         assertThat(spec.maxMagazineAmount()).isEqualTo(maxMagazineAmount);
         assertThat(spec.defaultMagazineAmount()).isEqualTo(defaultMagazineAmount);
 
-        assertThat(spec.shortRangeDamage()).isEqualTo(shortRangeDamage);
-        assertThat(spec.shortRangeDistance()).isEqualTo(shortRangeDistance);
-        assertThat(spec.mediumRangeDamage()).isEqualTo(mediumRangeDamage);
-        assertThat(spec.mediumRangeDistance()).isEqualTo(mediumRangeDistance);
-        assertThat(spec.longRangeDamage()).isEqualTo(longRangeDamage);
-        assertThat(spec.longRangeDistance()).isEqualTo(longRangeDistance);
+        assertThat(spec.rangeProfile()).isEqualTo(rangeProfileSpec);
+
         assertThat(spec.headshotDamageMultiplier()).isEqualTo(headshotDamageMultiplier);
 
         assertThat(spec.shotSounds()).isNull();

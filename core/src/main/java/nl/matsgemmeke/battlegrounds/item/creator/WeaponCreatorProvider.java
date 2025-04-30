@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationE
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.loader.GunSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.spec.loader.RangeProfileSpecLoader;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
@@ -148,7 +149,9 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             YamlReader yamlReader = new YamlReader(file, null);
             yamlReader.load();
 
-            GunSpecLoader specLoader = new GunSpecLoader(yamlReader);
+            RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
+
+            GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
             GunSpec spec = specLoader.loadSpec();
 
             creator.addGunSpec(id, spec);

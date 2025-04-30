@@ -30,12 +30,7 @@ public class GunSpecLoader {
     private static final String MAX_MAGAZINE_AMOUNT_ROUTE = "ammo.max-magazine-amount";
     private static final String DEFAULT_MAGAZINE_AMOUNT_ROUTE = "ammo.default-supply";
 
-    private static final String SHORT_RANGE_DAMAGE_ROUTE = "shooting.range.short-range.damage";
-    private static final String SHORT_RANGE_DISTANCE_ROUTE = "shooting.range.short-range.distance";
-    private static final String MEDIUM_RANGE_DAMAGE_ROUTE = "shooting.range.medium-range.damage";
-    private static final String MEDIUM_RANGE_DISTANCE_ROUTE = "shooting.range.medium-range.distance";
-    private static final String LONG_RANGE_DAMAGE_ROUTE = "shooting.range.long-range.damage";
-    private static final String LONG_RANGE_DISTANCE_ROUTE = "shooting.range.long-range.distance";
+    private static final String RANGE_PROFILE_ROUTE = "shooting.range";
     private static final String HEADSHOT_DAMAGE_MULTIPLIER_ROUTE = "shooting.headshot-damage-multiplier";
 
     private static final String SHOT_SOUNDS_ROUTE = "shooting.shot-sounds";
@@ -77,10 +72,13 @@ public class GunSpecLoader {
     private static final String SPREAD_PATTERN_VERTICAL_SPREAD_ROUTE = "shooting.spread-pattern.vertical-spread";
 
     @NotNull
+    private final RangeProfileSpecLoader rangeProfileSpecLoader;
+    @NotNull
     private final YamlReader yamlReader;
 
-    public GunSpecLoader(@NotNull YamlReader yamlReader) {
+    public GunSpecLoader(@NotNull YamlReader yamlReader, @NotNull RangeProfileSpecLoader rangeProfileSpecLoader) {
         this.yamlReader = yamlReader;
+        this.rangeProfileSpecLoader = rangeProfileSpecLoader;
     }
 
     @NotNull
@@ -111,36 +109,8 @@ public class GunSpecLoader {
                 .validate(new RequiredValidator<>())
                 .resolve();
 
-        double shortRangeDamage = new FieldSpecResolver<Double>()
-                .route(SHORT_RANGE_DAMAGE_ROUTE)
-                .value(yamlReader.getDouble(SHORT_RANGE_DAMAGE_ROUTE))
-                .validate(new RequiredValidator<>())
-                .resolve();
-        double shortRangeDistance = new FieldSpecResolver<Double>()
-                .route(SHORT_RANGE_DISTANCE_ROUTE)
-                .value(yamlReader.getDouble(SHORT_RANGE_DISTANCE_ROUTE))
-                .validate(new RequiredValidator<>())
-                .resolve();
-        double mediumRangeDamage = new FieldSpecResolver<Double>()
-                .route(MEDIUM_RANGE_DAMAGE_ROUTE)
-                .value(yamlReader.getDouble(MEDIUM_RANGE_DAMAGE_ROUTE))
-                .validate(new RequiredValidator<>())
-                .resolve();
-        double mediumRangeDistance = new FieldSpecResolver<Double>()
-                .route(MEDIUM_RANGE_DISTANCE_ROUTE)
-                .value(yamlReader.getDouble(MEDIUM_RANGE_DISTANCE_ROUTE))
-                .validate(new RequiredValidator<>())
-                .resolve();
-        double longRangeDamage = new FieldSpecResolver<Double>()
-                .route(LONG_RANGE_DAMAGE_ROUTE)
-                .value(yamlReader.getDouble(LONG_RANGE_DAMAGE_ROUTE))
-                .validate(new RequiredValidator<>())
-                .resolve();
-        double longRangeDistance = new FieldSpecResolver<Double>()
-                .route(LONG_RANGE_DISTANCE_ROUTE)
-                .value(yamlReader.getDouble(LONG_RANGE_DISTANCE_ROUTE))
-                .validate(new RequiredValidator<>())
-                .resolve();
+        RangeProfileSpec rangeProfileSpec = rangeProfileSpecLoader.loadSpec(RANGE_PROFILE_ROUTE);
+
         double headshotDamageMultiplier = new FieldSpecResolver<Double>()
                 .route(HEADSHOT_DAMAGE_MULTIPLIER_ROUTE)
                 .value(yamlReader.getDouble(HEADSHOT_DAMAGE_MULTIPLIER_ROUTE))
@@ -325,6 +295,6 @@ public class GunSpecLoader {
             spreadPatternSpec = new SpreadPatternSpec(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpec(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, shortRangeDamage, shortRangeDistance, mediumRangeDamage, mediumRangeDistance, longRangeDamage, longRangeDistance, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
+        return new GunSpec(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, rangeProfileSpec, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
     }
 }

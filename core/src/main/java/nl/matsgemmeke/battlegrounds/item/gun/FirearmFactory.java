@@ -125,7 +125,7 @@ public class FirearmFactory {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
         firearm.setAmmunitionStorage(ammunitionStorage);
 
-        RangeProfile rangeProfile = new RangeProfile(spec.longRangeDamage(), spec.longRangeDistance(), spec.mediumRangeDamage(), spec.mediumRangeDistance(), spec.shortRangeDamage(), spec.shortRangeDistance());
+        RangeProfile rangeProfile = new RangeProfile(spec.rangeProfile().longRangeDamage(), spec.rangeProfile().longRangeDistance(), spec.rangeProfile().mediumRangeDamage(), spec.rangeProfile().mediumRangeDistance(), spec.rangeProfile().shortRangeDamage(), spec.rangeProfile().shortRangeDistance());
         firearm.setRangeProfile(rangeProfile);
 
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds());
