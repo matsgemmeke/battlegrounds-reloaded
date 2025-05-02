@@ -3,7 +3,11 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -16,18 +20,32 @@ public class ItemEffectSpecLoaderTest {
     @Test
     public void loadSpecReturnsItemEffectSpecContainingValidatedValues() {
         String type = "COMBUSTION";
+        Set<String> triggerRoutes = Set.of("activator");
+        TriggerSpec triggerSpec = new TriggerSpec("ACTIVATOR", null, null, null);
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+
+        Double maxSize = 2.0;
+        Double minSize = 1.0;
 
         YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("base-route.type")).thenReturn(type);
+        when(yamlReader.getRoutes("base-route.triggers")).thenReturn(triggerRoutes);
+        when(yamlReader.getOptionalDouble("base-route.max-size")).thenReturn(Optional.of(maxSize));
+        when(yamlReader.getOptionalDouble("base-route.min-size")).thenReturn(Optional.of(minSize));
+
+        TriggerSpecLoader triggerSpecLoader = mock(TriggerSpecLoader.class);
+        when(triggerSpecLoader.loadSpec("base-route.triggers.activator")).thenReturn(triggerSpec);
 
         RangeProfileSpecLoader rangeProfileSpecLoader = mock(RangeProfileSpecLoader.class);
         when(rangeProfileSpecLoader.loadSpec("base-route.range")).thenReturn(rangeProfileSpec);
 
-        ItemEffectSpecLoader specLoader = new ItemEffectSpecLoader(yamlReader, rangeProfileSpecLoader);
+        ItemEffectSpecLoader specLoader = new ItemEffectSpecLoader(yamlReader, rangeProfileSpecLoader, triggerSpecLoader);
         ItemEffectSpec spec = specLoader.loadSpec(BASE_ROUTE);
 
         assertThat(spec.type()).isEqualTo(type);
+        assertThat(spec.triggers()).containsExactly(triggerSpec);
         assertThat(spec.rangeProfile()).isEqualTo(rangeProfileSpec);
+        assertThat(spec.maxSize()).isEqualTo(maxSize);
+        assertThat(spec.minSize()).isEqualTo(minSize);
     }
 }

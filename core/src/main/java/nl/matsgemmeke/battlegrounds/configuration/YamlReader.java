@@ -7,10 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class YamlReader {
 
@@ -66,6 +63,11 @@ public class YamlReader {
     @NotNull
     public Optional<Long> getOptionalLong(@NotNull String route) {
         return document.getOptionalLong(route);
+    }
+
+    @NotNull
+    public Set<String> getRoutes(@NotNull String route) {
+        return document.getSection(route).getRoutesAsStrings(false);
     }
 
     @Nullable

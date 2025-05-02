@@ -64,25 +64,25 @@ public class TriggerFactoryTest {
     }
 
     @Test
-    public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsEnemyProximityAndCheckingRangeIsNull() {
+    public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsEnemyProximityAndCheckRangeIsNull() {
         TriggerSpec spec = new TriggerSpec("ENEMY_PROXIMITY", null, PERIOD_BETWEEN_CHECKS, null);
 
         TriggerFactory factory = new TriggerFactory(contextProvider, enemyProximityTriggerFactory, floorHitTriggerFactory, timedTriggerFactory);
 
         assertThatThrownBy(() -> factory.create(spec, gameKey, null))
                 .isInstanceOf(TriggerCreationException.class)
-                .hasMessage("Cannot create EnemyProximityTrigger because of invalid spec: Required 'checkingRange' value is missing");
+                .hasMessage("Cannot create EnemyProximityTrigger because of invalid spec: Required 'checkRange' value is missing");
     }
 
     @Test
-    public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsEnemyProximityAndPeriodBetweenChecksIsNull() {
+    public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsEnemyProximityAndCheckIntervalIsNull() {
         TriggerSpec spec = new TriggerSpec("ENEMY_PROXIMITY", CHECKING_RANGE, null, null);
 
         TriggerFactory factory = new TriggerFactory(contextProvider, enemyProximityTriggerFactory, floorHitTriggerFactory, timedTriggerFactory);
 
         assertThatThrownBy(() -> factory.create(spec, gameKey, null))
                 .isInstanceOf(TriggerCreationException.class)
-                .hasMessage("Cannot create EnemyProximityTrigger because of invalid spec: Required 'periodBetweenChecks' value is missing");
+                .hasMessage("Cannot create EnemyProximityTrigger because of invalid spec: Required 'checkInterval' value is missing");
     }
 
     @Test
@@ -102,14 +102,14 @@ public class TriggerFactoryTest {
     }
 
     @Test
-    public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsFloorHitAndPeriodBetweenChecksIsNull() {
+    public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsFloorHitAndCheckIntervalIsNull() {
         TriggerSpec spec = new TriggerSpec("FLOOR_HIT", null, null, null);
 
         TriggerFactory factory = new TriggerFactory(contextProvider, enemyProximityTriggerFactory, floorHitTriggerFactory, timedTriggerFactory);
 
         assertThatThrownBy(() -> factory.create(spec, gameKey, null))
                 .isInstanceOf(TriggerCreationException.class)
-                .hasMessage("Cannot create FloorHitTrigger because of invalid spec: Required 'periodBetweenChecks' value is missing");
+                .hasMessage("Cannot create FloorHitTrigger because of invalid spec: Required 'checkInterval' value is missing");
     }
 
     @Test

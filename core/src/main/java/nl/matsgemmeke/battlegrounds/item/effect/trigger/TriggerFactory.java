@@ -51,18 +51,18 @@ public class TriggerFactory {
             }
             case ENEMY_PROXIMITY -> {
                 // The spec is supposed to be valid, but perform double checks
-                double checkingRange = this.validateNotNull(spec.checkingRange(), "checkingRange", "EnemyProximityTrigger");
-                long periodBetweenChecks = this.validateNotNull(spec.periodBetweenChecks(), "periodBetweenChecks", "EnemyProximityTrigger");
+                double checkRange = this.validateNotNull(spec.checkRange(), "checkRange", "EnemyProximityTrigger");
+                long checkInterval = this.validateNotNull(spec.checkInterval(), "checkInterval", "EnemyProximityTrigger");
 
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                return enemyProximityTriggerFactory.create(targetFinder, checkingRange, periodBetweenChecks);
+                return enemyProximityTriggerFactory.create(targetFinder, checkRange, checkInterval);
             }
             case FLOOR_HIT -> {
                 // The spec is supposed to be valid, but perform double checks
-                long periodBetweenChecks = this.validateNotNull(spec.periodBetweenChecks(), "periodBetweenChecks", "FloorHitTrigger");
+                long checkInterval = this.validateNotNull(spec.checkInterval(), "checkInterval", "FloorHitTrigger");
 
-                return floorHitTriggerFactory.create(periodBetweenChecks);
+                return floorHitTriggerFactory.create(checkInterval);
             }
             case TIMED -> {
                 // The spec is supposed to be valid, but perform double checks
