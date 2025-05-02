@@ -26,12 +26,18 @@ public class ItemEffectSpecLoaderTest {
 
         Double maxSize = 2.0;
         Double minSize = 1.0;
+        Double density = 5.0;
+        Double growth = 0.1;
+        Long growthInterval = 1L;
 
         YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("base-route.type")).thenReturn(type);
         when(yamlReader.getRoutes("base-route.triggers")).thenReturn(triggerRoutes);
         when(yamlReader.getOptionalDouble("base-route.max-size")).thenReturn(Optional.of(maxSize));
         when(yamlReader.getOptionalDouble("base-route.min-size")).thenReturn(Optional.of(minSize));
+        when(yamlReader.getOptionalDouble("base-route.density")).thenReturn(Optional.of(density));
+        when(yamlReader.getOptionalDouble("base-route.growth")).thenReturn(Optional.of(growth));
+        when(yamlReader.getOptionalLong("base-route.growth-interval")).thenReturn(Optional.of(growthInterval));
 
         TriggerSpecLoader triggerSpecLoader = mock(TriggerSpecLoader.class);
         when(triggerSpecLoader.loadSpec("base-route.triggers.activator")).thenReturn(triggerSpec);
@@ -47,5 +53,8 @@ public class ItemEffectSpecLoaderTest {
         assertThat(spec.rangeProfile()).isEqualTo(rangeProfileSpec);
         assertThat(spec.maxSize()).isEqualTo(maxSize);
         assertThat(spec.minSize()).isEqualTo(minSize);
+        assertThat(spec.density()).isEqualTo(density);
+        assertThat(spec.growth()).isEqualTo(growth);
+        assertThat(spec.growthInterval()).isEqualTo(growthInterval);
     }
 }

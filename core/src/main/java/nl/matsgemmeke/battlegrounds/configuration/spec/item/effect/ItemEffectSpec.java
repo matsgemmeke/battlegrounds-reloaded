@@ -9,18 +9,26 @@ import java.util.List;
 /**
  * Represents the immutable, validated configuration for an item effect.
  *
- * @param type         the item effect type
- * @param triggers     the trigger specifications
- * @param rangeProfile the range profile specification, will only be non-null when type equals to {@code COMBUSTION} or
- *                     {@code EXPLOSION}
- * @param maxSize      the maximum size of the effect, will only be non-null when type equals to {@code COMBUSTION} or
- *                     {@code SMOKE_SCREEN}
- * @param minSize      the minimum size of the effect,will only be non-null when type equals to {@code SMOKE_SCREEN}
+ * @param type           the item effect type
+ * @param triggers       the trigger specifications
+ * @param rangeProfile   the range profile specification, will only be non-null when type equals {@code COMBUSTION} or
+ *                       {@code EXPLOSION}
+ * @param maxSize        the maximum size of the effect, will only be non-null when type equals {@code COMBUSTION} or
+ *                       {@code SMOKE_SCREEN}
+ * @param minSize        the minimum size of the effect, will only be non-null when type equals {@code SMOKE_SCREEN}
+ * @param density        the density of the item, will only be non-null when type equals {@code SMOKE_SCREEN}
+ * @param growth         the amount of growth per growth cycle, will only be non-null when type equals
+ *                       {@code COMBUSTION} or {@code SMOKE_SCREEN}
+ * @param growthInterval the interval in ticks between growth cycles, will only be non-null when type equals
+ *                       {@code COMBUSTION} or {@code SMOKE_SCREEN}
  */
 public record ItemEffectSpec(
         @NotNull String type,
         @NotNull List<TriggerSpec> triggers,
         @Nullable RangeProfileSpec rangeProfile,
         @Nullable Double maxSize,
-        @Nullable Double minSize
+        @Nullable Double minSize,
+        @Nullable Double density,
+        @Nullable Double growth,
+        @Nullable Long growthInterval
 ) { }

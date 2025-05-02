@@ -23,6 +23,9 @@ public class ItemEffectSpecLoader {
     private static final String RANGE_PROFILE_ROUTE = "range";
     private static final String MAX_SIZE_ROUTE = "max-size";
     private static final String MIN_SIZE_ROUTE = "min-size";
+    private static final String DENSITY_ROUTE = "density";
+    private static final String GROWTH_ROUTE = "growth";
+    private static final String GROWTH_INTERVAL_ROUTE = "growth-interval";
 
     @NotNull
     private final RangeProfileSpecLoader rangeProfileSpecLoader;
@@ -44,6 +47,9 @@ public class ItemEffectSpecLoader {
         String rangeProfileRoute = this.createRoute(baseRoute, RANGE_PROFILE_ROUTE);
         String maxSizeRoute = this.createRoute(baseRoute, MAX_SIZE_ROUTE);
         String minSizeRoute = this.createRoute(baseRoute, MIN_SIZE_ROUTE);
+        String densityRoute = this.createRoute(baseRoute, DENSITY_ROUTE);
+        String growthRoute = this.createRoute(baseRoute, GROWTH_ROUTE);
+        String growthIntervalRoute = this.createRoute(baseRoute, GROWTH_INTERVAL_ROUTE);
 
         String type = new FieldSpecResolver<String>()
                 .route(typeRoute)
@@ -73,8 +79,23 @@ public class ItemEffectSpecLoader {
                 .value(yamlReader.getOptionalDouble(minSizeRoute).orElse(null))
                 .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, "SMOKE_SCREEN"))
                 .resolve();
+        Double density = new FieldSpecResolver<Double>()
+                .route(densityRoute)
+                .value(yamlReader.getOptionalDouble(densityRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, "SMOKE_SCREEN"))
+                .resolve();
+        Double growth = new FieldSpecResolver<Double>()
+                .route(growthRoute)
+                .value(yamlReader.getOptionalDouble(growthRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "SMOKE_SCREEN")))
+                .resolve();
+        Long growthInterval = new FieldSpecResolver<Long>()
+                .route(growthIntervalRoute)
+                .value(yamlReader.getOptionalLong(growthIntervalRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "SMOKE_SCREEN")))
+                .resolve();
 
-        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize);
+        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize, density, growth, growthInterval);
     }
 
     @NotNull
