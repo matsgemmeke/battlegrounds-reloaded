@@ -26,6 +26,12 @@ import java.util.List;
  * @param minDuration      the minimum duration of the effect in ticks, will only be non-null when type equals
  *                         {@code COMBUSTION}, {@code GUN_FIRE_SIMULATION} or {@code SMOKE_SCREEN}
  * @param activationSounds the sounds the effect produces when activated
+ * @param power            the power of the effect, will only be non-null when type equals {@code EXPLOSION} or
+ *                         {@code FLASH}
+ * @param damageBlocks     whether the effect will damage surrounding blocks, will only be non-null when type equals
+ *                         {@code COMBUSTION}, {@code EXPLOSION} or {@code FLASH}
+ * @param spreadFire       whether the effect will spread fire to surrounding blocks, will only be non-null when type
+ *                         equals {@code COMBUSTION}, {@code EXPLOSION} or {@code FLASH}
  */
 public record ItemEffectSpec(
         @NotNull String type,
@@ -38,5 +44,8 @@ public record ItemEffectSpec(
         @Nullable Long growthInterval,
         @Nullable Long maxDuration,
         @Nullable Long minDuration,
-        @Nullable String activationSounds
+        @Nullable String activationSounds,
+        @Nullable Float power,
+        @Nullable Boolean damageBlocks,
+        @Nullable Boolean spreadFire
 ) { }

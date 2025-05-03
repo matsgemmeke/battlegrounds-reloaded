@@ -32,9 +32,14 @@ public class ItemEffectSpecLoaderTest {
         Long maxDuration = 200L;
         Long minDuration = 100L;
 
+        Float power = 2.0f;
+        Boolean damageBlocks = true;
+        Boolean spreadFire = false;
+
         YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("base-route.type")).thenReturn(type);
         when(yamlReader.getRoutes("base-route.triggers")).thenReturn(triggerRoutes);
+
         when(yamlReader.getOptionalDouble("base-route.max-size")).thenReturn(Optional.of(maxSize));
         when(yamlReader.getOptionalDouble("base-route.min-size")).thenReturn(Optional.of(minSize));
         when(yamlReader.getOptionalDouble("base-route.density")).thenReturn(Optional.of(density));
@@ -43,6 +48,10 @@ public class ItemEffectSpecLoaderTest {
         when(yamlReader.getOptionalLong("base-route.max-duration")).thenReturn(Optional.of(maxDuration));
         when(yamlReader.getOptionalLong("base-route.min-duration")).thenReturn(Optional.of(minDuration));
         when(yamlReader.getString("base-route.activation-sounds")).thenReturn(null);
+
+        when(yamlReader.getOptionalFloat("base-route.power")).thenReturn(Optional.of(power));
+        when(yamlReader.getOptionalBoolean("base-route.damage-blocks")).thenReturn(Optional.of(damageBlocks));
+        when(yamlReader.getOptionalBoolean("base-route.spread-fire")).thenReturn(Optional.of(spreadFire));
 
         TriggerSpecLoader triggerSpecLoader = mock(TriggerSpecLoader.class);
         when(triggerSpecLoader.loadSpec("base-route.triggers.activator")).thenReturn(triggerSpec);
@@ -56,6 +65,7 @@ public class ItemEffectSpecLoaderTest {
         assertThat(spec.type()).isEqualTo(type);
         assertThat(spec.triggers()).containsExactly(triggerSpec);
         assertThat(spec.rangeProfile()).isEqualTo(rangeProfileSpec);
+
         assertThat(spec.maxSize()).isEqualTo(maxSize);
         assertThat(spec.minSize()).isEqualTo(minSize);
         assertThat(spec.density()).isEqualTo(density);
@@ -64,5 +74,9 @@ public class ItemEffectSpecLoaderTest {
         assertThat(spec.maxDuration()).isEqualTo(maxDuration);
         assertThat(spec.minDuration()).isEqualTo(minDuration);
         assertThat(spec.activationSounds()).isNull();
+
+        assertThat(spec.power()).isEqualTo(power);
+        assertThat(spec.damageBlocks()).isEqualTo(damageBlocks);
+        assertThat(spec.spreadFire()).isEqualTo(spreadFire);
     }
 }

@@ -21,6 +21,7 @@ public class ItemEffectSpecLoader {
     private static final String TYPE_ROUTE = "type";
     private static final String TRIGGERS_ROUTE = "triggers";
     private static final String RANGE_PROFILE_ROUTE = "range";
+
     private static final String MAX_SIZE_ROUTE = "max-size";
     private static final String MIN_SIZE_ROUTE = "min-size";
     private static final String DENSITY_ROUTE = "density";
@@ -29,6 +30,10 @@ public class ItemEffectSpecLoader {
     private static final String MAX_DURATION_ROUTE = "max-duration";
     private static final String MIN_DURATION_ROUTE = "min-duration";
     private static final String ACTIVATION_SOUNDS_ROUTE = "activation-sounds";
+
+    private static final String POWER_ROUTE = "power";
+    private static final String DAMAGE_BLOCKS_ROUTE = "damage-blocks";
+    private static final String SPREAD_FIRE_ROUTE = "spread-fire";
 
     @NotNull
     private final RangeProfileSpecLoader rangeProfileSpecLoader;
@@ -48,6 +53,7 @@ public class ItemEffectSpecLoader {
         String typeRoute = this.createRoute(baseRoute, TYPE_ROUTE);
         String triggersRoute = this.createRoute(baseRoute, TRIGGERS_ROUTE);
         String rangeProfileRoute = this.createRoute(baseRoute, RANGE_PROFILE_ROUTE);
+
         String maxSizeRoute = this.createRoute(baseRoute, MAX_SIZE_ROUTE);
         String minSizeRoute = this.createRoute(baseRoute, MIN_SIZE_ROUTE);
         String densityRoute = this.createRoute(baseRoute, DENSITY_ROUTE);
@@ -56,6 +62,10 @@ public class ItemEffectSpecLoader {
         String maxDurationRoute = this.createRoute(baseRoute, MAX_DURATION_ROUTE);
         String minDurationRoute = this.createRoute(baseRoute, MIN_DURATION_ROUTE);
         String activationSoundsRoute = this.createRoute(baseRoute, ACTIVATION_SOUNDS_ROUTE);
+
+        String powerRoute = this.createRoute(baseRoute, POWER_ROUTE);
+        String damageBlockRoute = this.createRoute(baseRoute, DAMAGE_BLOCKS_ROUTE);
+        String spreadFireRoute = this.createRoute(baseRoute, SPREAD_FIRE_ROUTE);
 
         String type = new FieldSpecResolver<String>()
                 .route(typeRoute)
@@ -115,7 +125,23 @@ public class ItemEffectSpecLoader {
                 .value(yamlReader.getString(activationSoundsRoute))
                 .resolve();
 
-        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize, density, growth, growthInterval, maxDuration, minDuration, activationSounds);
+        Float power = new FieldSpecResolver<Float>()
+                .route(powerRoute)
+                .value(yamlReader.getOptionalFloat(powerRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("EXPLOSION", "FLASH")))
+                .resolve();
+        Boolean damageBlocks = new FieldSpecResolver<Boolean>()
+                .route(damageBlockRoute)
+                .value(yamlReader.getOptionalBoolean(damageBlockRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "EXPLOSION", "FLASH")))
+                .resolve();
+        Boolean spreadFire = new FieldSpecResolver<Boolean>()
+                .route(spreadFireRoute)
+                .value(yamlReader.getOptionalBoolean(spreadFireRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "EXPLOSION", "FLASH")))
+                .resolve();
+
+        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize, density, growth, growthInterval, maxDuration, minDuration, activationSounds, power, damageBlocks, spreadFire);
     }
 
     @NotNull
