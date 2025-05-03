@@ -26,6 +26,9 @@ public class ItemEffectSpecLoader {
     private static final String DENSITY_ROUTE = "density";
     private static final String GROWTH_ROUTE = "growth";
     private static final String GROWTH_INTERVAL_ROUTE = "growth-interval";
+    private static final String MAX_DURATION_ROUTE = "max-duration";
+    private static final String MIN_DURATION_ROUTE = "min-duration";
+    private static final String ACTIVATION_SOUNDS_ROUTE = "activation-sounds";
 
     @NotNull
     private final RangeProfileSpecLoader rangeProfileSpecLoader;
@@ -50,6 +53,9 @@ public class ItemEffectSpecLoader {
         String densityRoute = this.createRoute(baseRoute, DENSITY_ROUTE);
         String growthRoute = this.createRoute(baseRoute, GROWTH_ROUTE);
         String growthIntervalRoute = this.createRoute(baseRoute, GROWTH_INTERVAL_ROUTE);
+        String maxDurationRoute = this.createRoute(baseRoute, MAX_DURATION_ROUTE);
+        String minDurationRoute = this.createRoute(baseRoute, MIN_DURATION_ROUTE);
+        String activationSoundsRoute = this.createRoute(baseRoute, ACTIVATION_SOUNDS_ROUTE);
 
         String type = new FieldSpecResolver<String>()
                 .route(typeRoute)
@@ -94,8 +100,22 @@ public class ItemEffectSpecLoader {
                 .value(yamlReader.getOptionalLong(growthIntervalRoute).orElse(null))
                 .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "SMOKE_SCREEN")))
                 .resolve();
+        Long maxDuration = new FieldSpecResolver<Long>()
+                .route(maxDurationRoute)
+                .value(yamlReader.getOptionalLong(maxDurationRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSITON", "GUN_FIRE_SIMULATION", "SMOKE_SCREEN")))
+                .resolve();
+        Long minDuration = new FieldSpecResolver<Long>()
+                .route(minDurationRoute)
+                .value(yamlReader.getOptionalLong(minDurationRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSITON", "GUN_FIRE_SIMULATION", "SMOKE_SCREEN")))
+                .resolve();
+        String activationSounds = new FieldSpecResolver<String>()
+                .route(activationSoundsRoute)
+                .value(yamlReader.getString(activationSoundsRoute))
+                .resolve();
 
-        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize, density, growth, growthInterval);
+        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize, density, growth, growthInterval, maxDuration, minDuration, activationSounds);
     }
 
     @NotNull
