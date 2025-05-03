@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.MapOneOfValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredIfFieldExistsValidator;
@@ -56,6 +57,8 @@ public class EquipmentSpecLoader {
     private static final String ACTIVATION_DELAY_ROUTE = "deploy.manual-activation.activation-delay";
     private static final String ACTIVATION_SOUNDS_ROUTE = "deploy.manual-activation.activation-sounds";
 
+    private static final String EFFECT_ROUTE = "effect";
+
     private static final String ACTIVATOR_ITEM_MATERIAL_ROUTE = "item.activator.material";
     private static final String ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE = "item.activator.display-name";
     private static final String ACTIVATOR_ITEM_DAMAGE_ROUTE = "item.activator.damage";
@@ -65,12 +68,19 @@ public class EquipmentSpecLoader {
     private static final String THROW_ITEM_DAMAGE_ROUTE = "item.throw.damage";
 
     @NotNull
+    private final ItemEffectSpecLoader itemEffectSpecLoader;
+    @NotNull
     private final ParticleEffectSpecLoader particleEffectSpecLoader;
     @NotNull
     private final YamlReader yamlReader;
 
-    public EquipmentSpecLoader(@NotNull YamlReader yamlReader, @NotNull ParticleEffectSpecLoader particleEffectSpecLoader) {
+    public EquipmentSpecLoader(
+            @NotNull YamlReader yamlReader,
+            @NotNull ItemEffectSpecLoader itemEffectSpecLoader,
+            @NotNull ParticleEffectSpecLoader particleEffectSpecLoader
+    ) {
         this.yamlReader = yamlReader;
+        this.itemEffectSpecLoader = itemEffectSpecLoader;
         this.particleEffectSpecLoader = particleEffectSpecLoader;
     }
 
@@ -209,6 +219,7 @@ public class EquipmentSpecLoader {
         }
 
         DeploymentSpec deploymentSpec = new DeploymentSpec(health, destroyOnActivate, destroyOnRemove, destroyOnReset, destroyEffect, resistances, throwPropertiesSpec, cookPropertiesSpec, placePropertiesSpec, manualActivationSpec);
+        ItemEffectSpec effectSpec = itemEffectSpecLoader.loadSpec(EFFECT_ROUTE);
 
         ItemStackSpec activatorItemSpec = null;
         ItemStackSpec throwItemSpec = null;
@@ -255,7 +266,7 @@ public class EquipmentSpecLoader {
             throwItemSpec = new ItemStackSpec(throwItemMaterial, throwItemDisplayName, throwItemDamage);
         }
 
-        return new EquipmentSpec(name, description, displayItemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploymentSpec);
+        return new EquipmentSpec(name, description, displayItemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploymentSpec, effectSpec);
     }
 
     @NotNull

@@ -10,10 +10,7 @@ import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.loader.EquipmentSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.loader.GunSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.loader.ParticleEffectSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.loader.RangeProfileSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.spec.loader.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
@@ -139,9 +136,14 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             ItemConfiguration config = new ItemConfiguration(file, null);
             config.load();
 
+            ActivationPatternSpecLoader activationPatternSpecLoader = new ActivationPatternSpecLoader(yamlReader);
             ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader);
+            RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
+            TriggerSpecLoader triggerSpecLoader = new TriggerSpecLoader(yamlReader);
 
-            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, particleEffectSpecLoader);
+            ItemEffectSpecLoader itemEffectSpecLoader = new ItemEffectSpecLoader(yamlReader, activationPatternSpecLoader, particleEffectSpecLoader, rangeProfileSpecLoader, triggerSpecLoader);
+
+            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader);
             EquipmentSpec spec = specLoader.loadSpec();
 
             creator.addEquipmentSpec(id, spec, config);

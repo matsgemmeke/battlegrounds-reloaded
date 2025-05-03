@@ -3,8 +3,13 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,6 +49,12 @@ public class EquipmentSpecLoaderTest {
 
         Long activationDelay = 5L;
         String activationSounds = "UI_BUTTON_CLICK-1-1-0";
+
+        TriggerSpec triggerSpec = new TriggerSpec("TIMED", 3.0, 5L, 20L);
+        RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(35.0, 10.0, 25.0, 20.0, 15.0, 30.0);
+        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 10, 0.1, 0.2, 0.3, 0.0, null);
+        ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 200L, 100L, 20L, 10L);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("EXPLOSION", List.of(triggerSpec), rangeProfileSpec, 5.0, 1.0, 3.0, 0.5, 2L, 200L, 100L, null, 2.0f, true, false, particleEffectSpec, activationPatternSpec);
 
         String throwAction = "LEFT_CLICK";
         String cookAction = "RIGHT_CLICK";
@@ -98,7 +109,10 @@ public class EquipmentSpecLoaderTest {
         ParticleEffectSpecLoader particleEffectSpecLoader = mock(ParticleEffectSpecLoader.class);
         when(particleEffectSpecLoader.loadSpec("deploy.on-destroy.particle-effect")).thenReturn(destroyEffect);
 
-        EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, particleEffectSpecLoader);
+        ItemEffectSpecLoader itemEffectSpecLoader = mock(ItemEffectSpecLoader.class);
+        when(itemEffectSpecLoader.loadSpec("effect")).thenReturn(effectSpec);
+
+        EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader);
         EquipmentSpec spec = specLoader.loadSpec();
 
         assertThat(spec.name()).isEqualTo(name);
@@ -146,5 +160,7 @@ public class EquipmentSpecLoaderTest {
         assertThat(spec.deployment().manualActivation()).isNotNull();
         assertThat(spec.deployment().manualActivation().activationDelay()).isEqualTo(activationDelay);
         assertThat(spec.deployment().manualActivation().activationSounds()).isEqualTo(activationSounds);
+
+        assertThat(spec.effect()).isEqualTo(effectSpec);
     }
 }
