@@ -1,7 +1,9 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,9 @@ public class ItemEffectSpecLoaderTest {
         Boolean damageBlocks = true;
         Boolean spreadFire = false;
 
+        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
+        ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 200L, 100L, 20L, 10L);
+
         YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("base-route.type")).thenReturn(type);
         when(yamlReader.getRoutes("base-route.triggers")).thenReturn(triggerRoutes);
@@ -59,7 +64,13 @@ public class ItemEffectSpecLoaderTest {
         RangeProfileSpecLoader rangeProfileSpecLoader = mock(RangeProfileSpecLoader.class);
         when(rangeProfileSpecLoader.loadSpec("base-route.range")).thenReturn(rangeProfileSpec);
 
-        ItemEffectSpecLoader specLoader = new ItemEffectSpecLoader(yamlReader, rangeProfileSpecLoader, triggerSpecLoader);
+        ParticleEffectSpecLoader particleEffectSpecLoader = mock(ParticleEffectSpecLoader.class);
+        when(particleEffectSpecLoader.loadSpec("base-route.particle-effect")).thenReturn(particleEffectSpec);
+
+        ActivationPatternSpecLoader activationPatternSpecLoader = mock(ActivationPatternSpecLoader.class);
+        when(activationPatternSpecLoader.loadSpec("base-route.activation-pattern")).thenReturn(activationPatternSpec);
+
+        ItemEffectSpecLoader specLoader = new ItemEffectSpecLoader(yamlReader, activationPatternSpecLoader, particleEffectSpecLoader, rangeProfileSpecLoader, triggerSpecLoader);
         ItemEffectSpec spec = specLoader.loadSpec(BASE_ROUTE);
 
         assertThat(spec.type()).isEqualTo(type);
