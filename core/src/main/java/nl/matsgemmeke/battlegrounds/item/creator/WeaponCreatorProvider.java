@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.loader.EquipmentSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.loader.GunSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.spec.loader.ParticleEffectSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.loader.RangeProfileSpecLoader;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
@@ -138,7 +139,9 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             ItemConfiguration config = new ItemConfiguration(file, null);
             config.load();
 
-            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader);
+            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader);
+
+            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, particleEffectSpecLoader);
             EquipmentSpec spec = specLoader.loadSpec();
 
             creator.addEquipmentSpec(id, spec, config);

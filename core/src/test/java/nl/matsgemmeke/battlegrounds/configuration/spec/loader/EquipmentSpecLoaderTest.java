@@ -1,38 +1,18 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EquipmentSpecLoaderTest {
-
-    private YamlReader yamlReader;
-
-    @BeforeEach
-    public void setUp() {
-        yamlReader = mock(YamlReader.class);
-    }
-
-    @Test
-    public void createSpecThrowsInvalidFieldSpecExceptionWhenValueFromYamlDoesNotPassValidator() {
-        when(yamlReader.getString("name")).thenReturn(null);
-
-        EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader);
-
-        assertThatThrownBy(specLoader::loadSpec)
-                .isInstanceOf(InvalidFieldSpecException.class)
-                .hasMessage("Missing required value at 'name'");
-    }
 
     @Test
     public void createSpecReturnsGunSpecContainingValuesFromYamlReader() {
@@ -55,14 +35,7 @@ public class EquipmentSpecLoaderTest {
         Boolean removeOnDestroy = false;
         Boolean resetEffectOnDestroy = false;
         Map<String, Object> resistances = Map.of("explosive-damage", 0.5);
-
-        String destroyEffectParticle = "BLOCK_CRACK";
-        Integer destroyEffectCount = 10;
-        Double destroyEffectOffsetX = 0.1;
-        Double destroyEffectOffsetY = 0.2;
-        Double destroyEffectOffsetZ = 0.3;
-        Double destroyEffectExtra = 0.0;
-        String destroyEffectBlockData = "STONE";
+        ParticleEffectSpec destroyEffect = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
 
         Double throwVelocity = 2.0;
         Long throwCooldown = 20L;
@@ -77,6 +50,7 @@ public class EquipmentSpecLoaderTest {
         String placeAction = "RIGHT_CLICK";
         String activateAction = "RIGHT_CLICK";
 
+        YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("name")).thenReturn(name);
         when(yamlReader.getString("description")).thenReturn(null);
 
@@ -106,13 +80,6 @@ public class EquipmentSpecLoaderTest {
         when(yamlReader.getStringRouteMappedValues("deploy.resistances", false)).thenReturn(resistances);
 
         when(yamlReader.contains("deploy.on-destroy.particle-effect")).thenReturn(true);
-        when(yamlReader.getString("deploy.on-destroy.particle-effect.particle")).thenReturn(destroyEffectParticle);
-        when(yamlReader.getOptionalInt("deploy.on-destroy.particle-effect.count")).thenReturn(Optional.of(destroyEffectCount));
-        when(yamlReader.getOptionalDouble("deploy.on-destroy.particle-effect.offset-x")).thenReturn(Optional.of(destroyEffectOffsetX));
-        when(yamlReader.getOptionalDouble("deploy.on-destroy.particle-effect.offset-y")).thenReturn(Optional.of(destroyEffectOffsetY));
-        when(yamlReader.getOptionalDouble("deploy.on-destroy.particle-effect.offset-z")).thenReturn(Optional.of(destroyEffectOffsetZ));
-        when(yamlReader.getOptionalDouble("deploy.on-destroy.particle-effect.extra")).thenReturn(Optional.of(destroyEffectExtra));
-        when(yamlReader.getString("deploy.on-destroy.particle-effect.block-data")).thenReturn(destroyEffectBlockData);
 
         when(yamlReader.contains("deploy.manual-activation")).thenReturn(true);
         when(yamlReader.getOptionalLong("deploy.manual-activation.activation-delay")).thenReturn(Optional.of(activationDelay));
@@ -128,7 +95,10 @@ public class EquipmentSpecLoaderTest {
         when(yamlReader.getString("deploy.placing.place-sounds")).thenReturn(null);
         when(yamlReader.getOptionalLong("deploy.placing.cooldown")).thenReturn(Optional.of(placeCooldown));
 
-        EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader);
+        ParticleEffectSpecLoader particleEffectSpecLoader = mock(ParticleEffectSpecLoader.class);
+        when(particleEffectSpecLoader.loadSpec("deploy.on-destroy.particle-effect")).thenReturn(destroyEffect);
+
+        EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, particleEffectSpecLoader);
         EquipmentSpec spec = specLoader.loadSpec();
 
         assertThat(spec.name()).isEqualTo(name);
@@ -158,15 +128,7 @@ public class EquipmentSpecLoaderTest {
         assertThat(spec.deployment().removeOnDestroy()).isEqualTo(removeOnDestroy);
         assertThat(spec.deployment().resetEffectOnDestroy()).isEqualTo(resetEffectOnDestroy);
         assertThat(spec.deployment().resistances()).hasSize(1).containsEntry("explosive-damage", 0.5);
-
-        assertThat(spec.deployment().destroyEffect()).isNotNull();
-        assertThat(spec.deployment().destroyEffect().particle()).isEqualTo(destroyEffectParticle);
-        assertThat(spec.deployment().destroyEffect().count()).isEqualTo(destroyEffectCount);
-        assertThat(spec.deployment().destroyEffect().offsetX()).isEqualTo(destroyEffectOffsetX);
-        assertThat(spec.deployment().destroyEffect().offsetY()).isEqualTo(destroyEffectOffsetY);
-        assertThat(spec.deployment().destroyEffect().offsetZ()).isEqualTo(destroyEffectOffsetZ);
-        assertThat(spec.deployment().destroyEffect().extra()).isEqualTo(destroyEffectExtra);
-        assertThat(spec.deployment().destroyEffect().blockData()).isEqualTo(destroyEffectBlockData);
+        assertThat(spec.deployment().destroyEffect()).isEqualTo(destroyEffect);
 
         assertThat(spec.deployment().throwProperties()).isNotNull();
         assertThat(spec.deployment().throwProperties().throwSounds()).isNull();

@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.MapOneOfValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredIfFieldExistsValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -42,13 +41,7 @@ public class EquipmentSpecLoader {
     private static final String DESTROY_ON_REMOVE_ROUTE = "deploy.on-destroy.remove";
     private static final String DESTROY_ON_RESET_ROUTE = "deploy.on-destroy.reset";
     private static final String RESISTANCES_ROUTE = "deploy.resistances";
-    private static final String DESTROY_PARTICLE_EFFECT_PARTICLE_ROUTE = "deploy.on-destroy.particle-effect.particle";
-    private static final String DESTROY_PARTICLE_EFFECT_COUNT_ROUTE = "deploy.on-destroy.particle-effect.count";
-    private static final String DESTROY_PARTICLE_EFFECT_OFFSET_X_ROUTE = "deploy.on-destroy.particle-effect.offset-x";
-    private static final String DESTROY_PARTICLE_EFFECT_OFFSET_Y_ROUTE = "deploy.on-destroy.particle-effect.offset-y";
-    private static final String DESTROY_PARTICLE_EFFECT_OFFSET_Z_ROUTE = "deploy.on-destroy.particle-effect.offset-z";
-    private static final String DESTROY_PARTICLE_EFFECT_EXTRA_ROUTE = "deploy.on-destroy.particle-effect.extra";
-    private static final String DESTROY_PARTICLE_EFFECT_BLOCK_DATA_ROUTE = "deploy.on-destroy.particle-effect.block-data";
+    private static final String DESTROY_PARTICLE_EFFECT_ROUTE = "deploy.on-destroy.particle-effect";
 
     private static final String THROW_SOUNDS_ROUTE = "deploy.throwing.throw-sounds";
     private static final String THROW_VELOCITY_ROUTE = "deploy.throwing.velocity";
@@ -72,10 +65,13 @@ public class EquipmentSpecLoader {
     private static final String THROW_ITEM_DAMAGE_ROUTE = "item.throw.damage";
 
     @NotNull
+    private final ParticleEffectSpecLoader particleEffectSpecLoader;
+    @NotNull
     private final YamlReader yamlReader;
 
-    public EquipmentSpecLoader(@NotNull YamlReader yamlReader) {
+    public EquipmentSpecLoader(@NotNull YamlReader yamlReader, @NotNull ParticleEffectSpecLoader particleEffectSpecLoader) {
         this.yamlReader = yamlReader;
+        this.particleEffectSpecLoader = particleEffectSpecLoader;
     }
 
     @NotNull
@@ -153,44 +149,8 @@ public class EquipmentSpecLoader {
 
         ParticleEffectSpec destroyEffect = null;
 
-        if (yamlReader.contains("deploy.on-destroy.particle-effect")) {
-            String destroyEffectParticle = new FieldSpecResolver<String>()
-                    .route(DESTROY_PARTICLE_EFFECT_PARTICLE_ROUTE)
-                    .value(yamlReader.getString(DESTROY_PARTICLE_EFFECT_PARTICLE_ROUTE))
-                    .validate(new RequiredValidator<>())
-                    .validate(new EnumValidator<>(Particle.class))
-                    .resolve();
-            Integer destroyEffectCount = new FieldSpecResolver<Integer>()
-                    .route(DESTROY_PARTICLE_EFFECT_COUNT_ROUTE)
-                    .value(yamlReader.getOptionalInt(DESTROY_PARTICLE_EFFECT_COUNT_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
-                    .resolve();
-            Double destroyEffectOffsetX = new FieldSpecResolver<Double>()
-                    .route(DESTROY_PARTICLE_EFFECT_OFFSET_X_ROUTE)
-                    .value(yamlReader.getOptionalDouble(DESTROY_PARTICLE_EFFECT_OFFSET_X_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
-                    .resolve();
-            Double destroyEffectOffsetY = new FieldSpecResolver<Double>()
-                    .route(DESTROY_PARTICLE_EFFECT_OFFSET_Y_ROUTE)
-                    .value(yamlReader.getOptionalDouble(DESTROY_PARTICLE_EFFECT_OFFSET_Y_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
-                    .resolve();
-            Double destroyEffectOffsetZ = new FieldSpecResolver<Double>()
-                    .route(DESTROY_PARTICLE_EFFECT_OFFSET_Z_ROUTE)
-                    .value(yamlReader.getOptionalDouble(DESTROY_PARTICLE_EFFECT_OFFSET_Z_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
-                    .resolve();
-            Double destroyEffectExtra = new FieldSpecResolver<Double>()
-                    .route(DESTROY_PARTICLE_EFFECT_EXTRA_ROUTE)
-                    .value(yamlReader.getOptionalDouble(DESTROY_PARTICLE_EFFECT_EXTRA_ROUTE).orElse(null))
-                    .resolve();
-            String destroyEffectBlockData = new FieldSpecResolver<String>()
-                    .route(DESTROY_PARTICLE_EFFECT_BLOCK_DATA_ROUTE)
-                    .value(yamlReader.getString(DESTROY_PARTICLE_EFFECT_BLOCK_DATA_ROUTE))
-                    .validate(new EnumValidator<>(Material.class))
-                    .resolve();
-
-            destroyEffect = new ParticleEffectSpec(destroyEffectParticle, destroyEffectCount, destroyEffectOffsetX, destroyEffectOffsetY, destroyEffectOffsetZ, destroyEffectExtra, destroyEffectBlockData);
+        if (yamlReader.contains(DESTROY_PARTICLE_EFFECT_ROUTE)) {
+            destroyEffect = particleEffectSpecLoader.loadSpec(DESTROY_PARTICLE_EFFECT_ROUTE);
         }
 
         String throwSounds = new FieldSpecResolver<String>()
