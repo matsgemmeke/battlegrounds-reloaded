@@ -96,12 +96,14 @@ public class EquipmentSpecLoaderTest {
         when(yamlReader.getOptionalLong("deploy.manual-activation.activation-delay")).thenReturn(Optional.of(activationDelay));
         when(yamlReader.getString("deploy.manual-activation.activation-sounds")).thenReturn(activationSounds);
 
+        when(yamlReader.contains("deploy.throwing")).thenReturn(true);
         when(yamlReader.getString("deploy.throwing.throw-sounds")).thenReturn(null);
         when(yamlReader.getOptionalDouble("deploy.throwing.velocity")).thenReturn(Optional.of(throwVelocity));
         when(yamlReader.getOptionalLong("deploy.throwing.cooldown")).thenReturn(Optional.of(throwCooldown));
 
         when(yamlReader.getString("deploy.throwing.cook-sounds")).thenReturn(null);
 
+        when(yamlReader.contains("deploy.placing")).thenReturn(true);
         when(yamlReader.getString("deploy.placing.material")).thenReturn(placeMaterial);
         when(yamlReader.getString("deploy.placing.place-sounds")).thenReturn(null);
         when(yamlReader.getOptionalLong("deploy.placing.cooldown")).thenReturn(Optional.of(placeCooldown));

@@ -24,13 +24,7 @@ deploy:
     velocity: 0.0
 description: Anti-personnel mine that triggers a proximity-based explosion.
 effect:
-  activation:
-    triggers:
-      - checking-range: 2.5
-        period-between-checks: 2
-        type: ENEMY_PROXIMITY
-    type: TRIGGER
-  break-blocks: false
+  damage-blocks: false
   power: 2.0
   range:
     long-range:
@@ -42,7 +36,12 @@ effect:
     short-range:
       damage: 150.0
       distance: 2.5
-  set-fire: false
+  spread-fire: false
+  triggers:
+    enemy-proximity:
+      check-interval: 2
+      check-range: 2.5
+      type: ENEMY_PROXIMITY
   type: EXPLOSION
 equipment-type: LETHAL
 item:

@@ -44,16 +44,19 @@ public class EquipmentSpecLoader {
     private static final String RESISTANCES_ROUTE = "deploy.resistances";
     private static final String DESTROY_PARTICLE_EFFECT_ROUTE = "deploy.on-destroy.particle-effect";
 
+    private static final String THROW_PROPERTIES_ROUTE = "deploy.throwing";
     private static final String THROW_SOUNDS_ROUTE = "deploy.throwing.throw-sounds";
     private static final String THROW_VELOCITY_ROUTE = "deploy.throwing.velocity";
     private static final String THROW_COOLDOWN_ROUTE = "deploy.throwing.cooldown";
 
     private static final String COOK_SOUNDS_ROUTE = "deploy.throwing.cook-sounds";
 
+    private static final String PLACE_PROPERTIES_ROUTE = "deploy.placing";
     private static final String PLACE_MATERIAL_ROUTE = "deploy.placing.material";
     private static final String PLACE_SOUNDS_ROUTE = "deploy.placing.place-sounds";
     private static final String PLACE_COOLDOWN_ROUTE = "deploy.placing.cooldown";
 
+    private static final String ACTIVATION_PROPERTIES_ROUTE = "deploy.manual-activation";
     private static final String ACTIVATION_DELAY_ROUTE = "deploy.manual-activation.activation-delay";
     private static final String ACTIVATION_SOUNDS_ROUTE = "deploy.manual-activation.activation-sounds";
 
@@ -163,21 +166,26 @@ public class EquipmentSpecLoader {
             destroyEffect = particleEffectSpecLoader.loadSpec(DESTROY_PARTICLE_EFFECT_ROUTE);
         }
 
-        String throwSounds = new FieldSpecResolver<String>()
-                .route(THROW_SOUNDS_ROUTE)
-                .value(yamlReader.getString(THROW_SOUNDS_ROUTE))
-                .resolve();
-        Double throwVelocity = new FieldSpecResolver<Double>()
-                .route(THROW_VELOCITY_ROUTE)
-                .value(yamlReader.getOptionalDouble(THROW_VELOCITY_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldExistsValidator<>(THROW_ACTION_ROUTE, throwAction))
-                .resolve();
-        Long throwCooldown = new FieldSpecResolver<Long>()
-                .route(THROW_COOLDOWN_ROUTE)
-                .value(yamlReader.getOptionalLong(THROW_COOLDOWN_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldExistsValidator<>(THROW_ACTION_ROUTE, throwAction))
-                .resolve();
-        ThrowPropertiesSpec throwPropertiesSpec = new ThrowPropertiesSpec(throwSounds, throwVelocity, throwCooldown);
+        ThrowPropertiesSpec throwPropertiesSpec = null;
+
+        if (yamlReader.contains(THROW_PROPERTIES_ROUTE)) {
+            String throwSounds = new FieldSpecResolver<String>()
+                    .route(THROW_SOUNDS_ROUTE)
+                    .value(yamlReader.getString(THROW_SOUNDS_ROUTE))
+                    .resolve();
+            Double throwVelocity = new FieldSpecResolver<Double>()
+                    .route(THROW_VELOCITY_ROUTE)
+                    .value(yamlReader.getOptionalDouble(THROW_VELOCITY_ROUTE).orElse(null))
+                    .validate(new RequiredIfFieldExistsValidator<>(THROW_ACTION_ROUTE, throwAction))
+                    .resolve();
+            Long throwCooldown = new FieldSpecResolver<Long>()
+                    .route(THROW_COOLDOWN_ROUTE)
+                    .value(yamlReader.getOptionalLong(THROW_COOLDOWN_ROUTE).orElse(null))
+                    .validate(new RequiredIfFieldExistsValidator<>(THROW_ACTION_ROUTE, throwAction))
+                    .resolve();
+
+            throwPropertiesSpec = new ThrowPropertiesSpec(throwSounds, throwVelocity, throwCooldown);
+        }
 
         String cookSounds = new FieldSpecResolver<String>()
                 .route(COOK_SOUNDS_ROUTE)
@@ -185,26 +193,31 @@ public class EquipmentSpecLoader {
                 .resolve();
         CookPropertiesSpec cookPropertiesSpec = new CookPropertiesSpec(cookSounds);
 
-        String placeMaterial = new FieldSpecResolver<String>()
-                .route(PLACE_MATERIAL_ROUTE)
-                .value(yamlReader.getString(PLACE_MATERIAL_ROUTE))
-                .validate(new RequiredIfFieldExistsValidator<>(PLACE_ACTION_ROUTE, placeAction))
-                .validate(new EnumValidator<>(Material.class))
-                .resolve();
-        String placeSounds = new FieldSpecResolver<String>()
-                .route(PLACE_SOUNDS_ROUTE)
-                .value(yamlReader.getString(PLACE_SOUNDS_ROUTE))
-                .resolve();
-        Long placeCooldown = new FieldSpecResolver<Long>()
-                .route(PLACE_COOLDOWN_ROUTE)
-                .value(yamlReader.getOptionalLong(PLACE_COOLDOWN_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldExistsValidator<>(PLACE_ACTION_ROUTE, placeAction))
-                .resolve();
-        PlacePropertiesSpec placePropertiesSpec = new PlacePropertiesSpec(placeMaterial, placeSounds, placeCooldown);
+        PlacePropertiesSpec placePropertiesSpec = null;
+
+        if (yamlReader.contains(PLACE_PROPERTIES_ROUTE)) {
+            String placeMaterial = new FieldSpecResolver<String>()
+                    .route(PLACE_MATERIAL_ROUTE)
+                    .value(yamlReader.getString(PLACE_MATERIAL_ROUTE))
+                    .validate(new RequiredIfFieldExistsValidator<>(PLACE_ACTION_ROUTE, placeAction))
+                    .validate(new EnumValidator<>(Material.class))
+                    .resolve();
+            String placeSounds = new FieldSpecResolver<String>()
+                    .route(PLACE_SOUNDS_ROUTE)
+                    .value(yamlReader.getString(PLACE_SOUNDS_ROUTE))
+                    .resolve();
+            Long placeCooldown = new FieldSpecResolver<Long>()
+                    .route(PLACE_COOLDOWN_ROUTE)
+                    .value(yamlReader.getOptionalLong(PLACE_COOLDOWN_ROUTE).orElse(null))
+                    .validate(new RequiredIfFieldExistsValidator<>(PLACE_ACTION_ROUTE, placeAction))
+                    .resolve();
+
+            placePropertiesSpec = new PlacePropertiesSpec(placeMaterial, placeSounds, placeCooldown);
+        }
 
         ManualActivationSpec manualActivationSpec = null;
 
-        if (yamlReader.contains("deploy.manual-activation")) {
+        if (yamlReader.contains(ACTIVATION_PROPERTIES_ROUTE)) {
             Long activationDelay = new FieldSpecResolver<Long>()
                     .route(ACTIVATION_DELAY_ROUTE)
                     .value(yamlReader.getOptionalLong(ACTIVATION_DELAY_ROUTE).orElse(null))

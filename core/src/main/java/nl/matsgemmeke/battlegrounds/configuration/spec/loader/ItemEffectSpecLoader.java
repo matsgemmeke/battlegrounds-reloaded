@@ -84,6 +84,9 @@ public class ItemEffectSpecLoader {
         String damageBlockRoute = this.createRoute(baseRoute, DAMAGE_BLOCKS_ROUTE);
         String spreadFireRoute = this.createRoute(baseRoute, SPREAD_FIRE_ROUTE);
 
+        String particleEffectRoute = this.createRoute(baseRoute, PARTICLE_EFFECT_ROUTE);
+        String activationPatternRoute = this.createRoute(baseRoute, ACTIVATION_PATTERN_ROUTE);
+
         String type = new FieldSpecResolver<String>()
                 .route(typeRoute)
                 .value(yamlReader.getString(typeRoute))
@@ -100,7 +103,11 @@ public class ItemEffectSpecLoader {
             triggerSpecs.add(triggerSpec);
         }
 
-        RangeProfileSpec rangeProfileSpec = rangeProfileSpecLoader.loadSpec(rangeProfileRoute);
+        RangeProfileSpec rangeProfileSpec = null;
+
+        if (yamlReader.contains(rangeProfileRoute)) {
+            rangeProfileSpec = rangeProfileSpecLoader.loadSpec(rangeProfileRoute);
+        }
 
         Double maxSize = new FieldSpecResolver<Double>()
                 .route(maxSizeRoute)
@@ -158,8 +165,16 @@ public class ItemEffectSpecLoader {
                 .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "EXPLOSION", "FLASH")))
                 .resolve();
 
-        ParticleEffectSpec particleEffectSpec = particleEffectSpecLoader.loadSpec(PARTICLE_EFFECT_ROUTE);
-        ActivationPatternSpec activationPatternSpec = activationPatternSpecLoader.loadSpec(ACTIVATION_PATTERN_ROUTE);
+        ParticleEffectSpec particleEffectSpec = null;
+        ActivationPatternSpec activationPatternSpec = null;
+
+        if (yamlReader.contains(particleEffectRoute)) {
+            particleEffectSpec = particleEffectSpecLoader.loadSpec(particleEffectRoute);
+        }
+
+        if (yamlReader.contains(activationPatternRoute)) {
+            activationPatternSpec = activationPatternSpecLoader.loadSpec(activationPatternRoute);
+        }
 
         return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize, density, growth, growthInterval, maxDuration, minDuration, activationSounds, power, damageBlocks, spreadFire, particleEffectSpec, activationPatternSpec);
     }

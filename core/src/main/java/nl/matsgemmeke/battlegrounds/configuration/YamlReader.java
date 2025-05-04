@@ -67,6 +67,10 @@ public class YamlReader {
 
     @NotNull
     public Set<String> getRoutes(@NotNull String route) {
+        if (!document.contains(route)) {
+            return Collections.emptySet();
+        }
+
         return document.getSection(route).getRoutesAsStrings(false);
     }
 

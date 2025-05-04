@@ -44,6 +44,7 @@ public class ItemEffectSpecLoaderTest {
         YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("base-route.type")).thenReturn(type);
         when(yamlReader.getRoutes("base-route.triggers")).thenReturn(triggerRoutes);
+        when(yamlReader.contains("base-route.range")).thenReturn(true);
 
         when(yamlReader.getOptionalDouble("base-route.max-size")).thenReturn(Optional.of(maxSize));
         when(yamlReader.getOptionalDouble("base-route.min-size")).thenReturn(Optional.of(minSize));
