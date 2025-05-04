@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
+import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

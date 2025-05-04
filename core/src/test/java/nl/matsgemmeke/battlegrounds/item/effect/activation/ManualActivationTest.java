@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.activation;
 
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
+import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.entity.Entity;

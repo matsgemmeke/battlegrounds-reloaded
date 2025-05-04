@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect.activation;
+package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;

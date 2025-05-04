@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.activation;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.activation.trigger.TriggerFactory;
 import org.junit.jupiter.api.BeforeEach;

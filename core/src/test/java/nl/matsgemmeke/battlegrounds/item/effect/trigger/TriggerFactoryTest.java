@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
+import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.activator.ActivatorTrigger;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy.EnemyProximityTriggerFactory;

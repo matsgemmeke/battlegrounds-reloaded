@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.trigger.activator;
 
+import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.BaseTrigger;
 
 import org.jetbrains.annotations.NotNull;
