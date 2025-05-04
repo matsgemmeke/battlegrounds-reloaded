@@ -1,7 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
 import com.google.inject.Inject;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.PotionEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
@@ -12,10 +16,9 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
-import nl.matsgemmeke.battlegrounds.item.InvalidItemConfigurationException;
-import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
@@ -28,8 +31,9 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
-import org.bukkit.Particle;
+import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -42,6 +46,8 @@ public class ItemEffectFactory {
     @NotNull
     private final GunFireSimulationEffectFactory gunFireSimulationEffectFactory;
     @NotNull
+    private final ParticleEffectMapper particleEffectMapper;
+    @NotNull
     private final SmokeScreenEffectFactory smokeScreenEffectFactory;
 
     @Inject
@@ -49,48 +55,31 @@ public class ItemEffectFactory {
             @NotNull GameContextProvider contextProvider,
             @NotNull CombustionEffectFactory combustionEffectFactory,
             @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory,
+            @NotNull ParticleEffectMapper particleEffectMapper,
             @NotNull SmokeScreenEffectFactory smokeScreenEffectFactory
     ) {
         this.contextProvider = contextProvider;
         this.combustionEffectFactory = combustionEffectFactory;
         this.gunFireSimulationEffectFactory = gunFireSimulationEffectFactory;
+        this.particleEffectMapper = particleEffectMapper;
         this.smokeScreenEffectFactory = smokeScreenEffectFactory;
     }
 
-    public ItemEffect create(@NotNull Section section, @NotNull GameKey gameKey) {
-        String type = section.getString("type");
-
-        if (type == null) {
-            throw new InvalidItemConfigurationException("Item effect type must be defined!");
-        }
-
-        ItemEffectType itemEffectType;
-
-        try {
-            itemEffectType = ItemEffectType.valueOf(type);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidItemConfigurationException("Item effect type \"" + type + "\" is invalid!");
-        }
+    public ItemEffect create(@NotNull ItemEffectSpec spec, @NotNull GameKey gameKey) {
+        ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.type());
 
         switch (itemEffectType) {
             case COMBUSTION -> {
-                int maxRadius = section.getInt("max-radius");
-                long ticksBetweenSpread = section.getLong("ticks-between-spread");
-                long maxDuration = section.getLong("max-duration");
-                boolean burnBlocks = section.getBoolean("burn-blocks");
-                boolean spreadFire = section.getBoolean("spread-fire");
+                double maxSize = this.validateSpecVar(spec.maxSize(), "maxSize", itemEffectType);
+                long growthInterval = this.validateSpecVar(spec.growthInterval(), "growthInterval", itemEffectType);
+                long maxDuration = this.validateSpecVar(spec.maxDuration(), "maxDuration", itemEffectType);
+                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks(), "damageBlocks", itemEffectType);
+                boolean spreadFire = this.validateSpecVar(spec.spreadFire(), "spreadFire", itemEffectType);
+                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds());
+                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.rangeProfile(), "rangeProfile", itemEffectType);
 
-                double longRangeDamage = section.getDouble("range.long-range.damage");
-                double longRangeDistance = section.getDouble("range.long-range.distance");
-                double mediumRangeDamage = section.getDouble("range.medium-range.damage");
-                double mediumRangeDistance = section.getDouble("range.medium-range.distance");
-                double shortRangeDamage = section.getDouble("range.short-range.damage");
-                double shortRangeDistance = section.getDouble("range.short-range.distance");
-
-                List<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("combustion-sounds"));
-
-                CombustionProperties properties = new CombustionProperties(sounds, maxRadius, ticksBetweenSpread, maxDuration, burnBlocks, spreadFire);
-                RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
+                CombustionProperties properties = new CombustionProperties(activationSounds, maxSize, growthInterval, maxDuration, damageBlocks, spreadFire);
+                RangeProfile rangeProfile = new RangeProfile(rangeProfileSpec.longRangeDamage(), rangeProfileSpec.longRangeDistance(), rangeProfileSpec.mediumRangeDamage(), rangeProfileSpec.mediumRangeDistance(), rangeProfileSpec.shortRangeDamage(), rangeProfileSpec.shortRangeDistance());
 
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
                 CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
@@ -99,55 +88,41 @@ public class ItemEffectFactory {
                 return combustionEffectFactory.create(properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
             }
             case EXPLOSION -> {
-                float power = section.getFloat("power");
-                boolean setFire = section.getBoolean("set-fire");
-                boolean breakBlocks = section.getBoolean("break-blocks");
+                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.rangeProfile(), "rangeProfile", itemEffectType);
+                float power = this.validateSpecVar(spec.power(), "power", itemEffectType);
+                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks(), "damageBlocks", itemEffectType);
+                boolean spreadFire = this.validateSpecVar(spec.spreadFire(), "spreadFire", itemEffectType);
 
-                double longRangeDamage = section.getDouble("range.long-range.damage");
-                double longRangeDistance = section.getDouble("range.long-range.distance");
-                double mediumRangeDamage = section.getDouble("range.medium-range.damage");
-                double mediumRangeDistance = section.getDouble("range.medium-range.distance");
-                double shortRangeDamage = section.getDouble("range.short-range.damage");
-                double shortRangeDistance = section.getDouble("range.short-range.distance");
-
-                ExplosionProperties properties = new ExplosionProperties(power, breakBlocks, setFire);
+                ExplosionProperties properties = new ExplosionProperties(power, damageBlocks, spreadFire);
                 DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
-                RangeProfile rangeProfile = new RangeProfile(longRangeDamage, longRangeDistance, mediumRangeDamage, mediumRangeDistance, shortRangeDamage, shortRangeDistance);
+                RangeProfile rangeProfile = new RangeProfile(rangeProfileSpec.longRangeDamage(), rangeProfileSpec.longRangeDistance(), rangeProfileSpec.mediumRangeDamage(), rangeProfileSpec.mediumRangeDistance(), rangeProfileSpec.shortRangeDamage(), rangeProfileSpec.shortRangeDistance());
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
                 return new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
             }
             case FLASH -> {
-                double range = section.getDouble("range");
-                float explosionPower = section.getFloat("explosion.power");
-                boolean explosionBreakBlocks = section.getBoolean("explosion.break-blocks");
-                boolean explosionSetFire = section.getBoolean("explosion.set-fire");
+                double maxSize = this.validateSpecVar(spec.maxSize(), "maxSize", itemEffectType);
+                float power = this.validateSpecVar(spec.power(), "power", itemEffectType);
+                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks(), "damageBlocks", itemEffectType);
+                boolean spreadFire = this.validateSpecVar(spec.spreadFire(), "spreadFire", itemEffectType);
+                PotionEffectSpec potionEffectSpec = this.validateSpecVar(spec.potionEffect(), "potionEffect", itemEffectType);
 
-                int duration = section.getInt("potion-effect.duration");
-                int amplifier = section.getInt("potion-effect.amplifier");
-                boolean ambient = section.getBoolean("potion-effect.ambient");
-                boolean particles = section.getBoolean("potion-effect.particles");
-                boolean icon = section.getBoolean("potion-effect.icon");
-                PotionEffectProperties potionEffect = new PotionEffectProperties(duration, amplifier, ambient, particles, icon);
+                PotionEffectProperties potionEffect = new PotionEffectProperties(potionEffectSpec.duration(), potionEffectSpec.amplifier(), potionEffectSpec.ambient(), potionEffectSpec.particles(), potionEffectSpec.icon());
 
-                FlashProperties properties = new FlashProperties(potionEffect, range, explosionPower, explosionBreakBlocks, explosionSetFire);
+                FlashProperties properties = new FlashProperties(potionEffect, maxSize, power, damageBlocks, spreadFire);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
                 return new FlashEffect(properties, targetFinder);
             }
             case GUN_FIRE_SIMULATION -> {
-                List<GameSound> genericSounds = DefaultGameSound.parseSounds(section.getString("generic-sounds"));
-                int genericRateOfFire = section.getInt("generic-rate-of-fire");
-                int maxBurstDuration = section.getInt("max-burst-duration");
-                int minBurstDuration = section.getInt("min-burst-duration");
-                int maxDelayBetweenBursts = section.getInt("max-delay-between-bursts");
-                int minDelayBetweenBursts = section.getInt("min-delay-between-bursts");
-                int maxTotalDuration = section.getInt("max-total-duration");
-                int minTotalDuration = section.getInt("min-total-duration");
+                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds());
+                long maxDuration = this.validateSpecVar(spec.maxDuration(), "maxDuration", itemEffectType);
+                long minDuration = this.validateSpecVar(spec.minDuration(), "minDuration", itemEffectType);
+                ActivationPatternSpec activationPatternSpec = this.validateSpecVar(spec.activationPattern(), "activationPattern", itemEffectType);
 
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
                 GunInfoProvider gunInfoProvider = contextProvider.getComponent(gameKey, GunInfoProvider.class);
-                GunFireSimulationProperties properties = new GunFireSimulationProperties(genericSounds, genericRateOfFire, maxBurstDuration, minBurstDuration, maxDelayBetweenBursts, minDelayBetweenBursts, maxTotalDuration, minTotalDuration);
+                GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, activationPatternSpec.burstInterval(), activationPatternSpec.maxBurstDuration(), activationPatternSpec.minBurstDuration(), activationPatternSpec.maxDelayDuration(), activationPatternSpec.minDelayDuration(), maxDuration, minDuration);
 
                 return gunFireSimulationEffectFactory.create(audioEmitter, gunInfoProvider, properties);
             }
@@ -157,47 +132,49 @@ public class ItemEffectFactory {
                 return new MarkSpawnPointEffect(spawnPointProvider);
             }
             case SMOKE_SCREEN -> {
-                Particle particle;
-                String particleValue = section.getString("particle.type");
+                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds());
+                long maxDuration = this.validateSpecVar(spec.maxDuration(), "maxDuration", itemEffectType);
+                long minDuration = this.validateSpecVar(spec.minDuration(), "minDuration", itemEffectType);
+                double density = this.validateSpecVar(spec.density(), "density", itemEffectType);
+                double maxSize = this.validateSpecVar(spec.maxSize(), "maxSize", itemEffectType);
+                double minSize = this.validateSpecVar(spec.minSize(), "minSize", itemEffectType);
+                double growth = this.validateSpecVar(spec.growth(), "growth", itemEffectType);
+                long growthInterval = this.validateSpecVar(spec.growthInterval(), "growthInterval", itemEffectType);
+                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect(), "particleEffect", itemEffectType);
 
-                if (particleValue == null) {
-                    throw new InvalidItemConfigurationException("Particle type must be defined!");
-                }
+                ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
 
-                try {
-                    particle = Particle.valueOf(particleValue);
-                } catch (IllegalArgumentException e) {
-                    throw new InvalidItemConfigurationException("Particle type \"" + particleValue + "\" is invalid!");
-                }
-
-                int count = section.getInt("particle.count");
-                double offsetX = section.getDouble("particle.offset-x");
-                double offsetY = section.getDouble("particle.offset-y");
-                double offsetZ = section.getDouble("particle.offset-z");
-                double extra = section.getDouble("particle.extra");
-                ParticleEffectProperties particleEffect = new ParticleEffectProperties(particle, count, offsetX, offsetY, offsetZ, extra);
-
-                List<GameSound> ignitionSounds = DefaultGameSound.parseSounds(section.getString("ignition-sounds"));
-                int duration = section.getInt("duration");
-                double density = section.getDouble("density");
-                double radiusMaxSize = section.getDouble("radius.max-size");
-                double radiusStartingSize = section.getDouble("radius.starting-size");
-                double growthIncrease = section.getDouble("growth-increase");
-                long growthPeriod = section.getLong("growth-period");
-
-                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ignitionSounds, duration, density, radiusMaxSize, radiusStartingSize, growthIncrease, growthPeriod);
+                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, maxDuration, minDuration, density, maxSize, minSize, growth, growthInterval);
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
                 CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
 
                 return smokeScreenEffectFactory.create(properties, audioEmitter, collisionDetector);
             }
             case SOUND_NOTIFICATION -> {
-                Iterable<GameSound> sounds = DefaultGameSound.parseSounds(section.getString("sounds"));
+                Iterable<GameSound> sounds = DefaultGameSound.parseSounds(spec.activationSounds());
 
                 return new SoundNotificationEffect(sounds);
             }
         }
 
-        throw new InvalidItemConfigurationException("Unknown item effect type \"" + type + "\"!");
+        throw new ItemEffectCreationException("Unknown item effect type \"" + itemEffectType + "\"!");
+    }
+
+    /**
+     * Acts as a double check to validate the presence of nullable specification variables.
+     *
+     * @param value the specification value
+     * @param valueName the name of the value, to create error messages
+     * @param effectType the name of the effect type, to create error messages
+     * @return the given value
+     * @throws ItemEffectCreationException if the value is null
+     * @param <T> the value type
+     */
+    private <T> T validateSpecVar(@Nullable T value, @NotNull String valueName, @NotNull Object effectType) {
+        if (value == null) {
+            throw new ItemEffectCreationException("Cannot create %s because of invalid spec: Required '%s' value is missing".formatted(effectType, valueName));
+        }
+
+        return value;
     }
 }

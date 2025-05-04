@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.PotionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
@@ -39,6 +40,7 @@ public class ItemEffectSpecLoaderTest {
         Boolean spreadFire = false;
 
         ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
+        PotionEffectSpec potionEffectSpec = new PotionEffectSpec("BLINDNESS", 100, 1, true, false, true);
         ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 200L, 100L, 20L, 10L);
 
         YamlReader yamlReader = mock(YamlReader.class);
@@ -68,10 +70,13 @@ public class ItemEffectSpecLoaderTest {
         ParticleEffectSpecLoader particleEffectSpecLoader = mock(ParticleEffectSpecLoader.class);
         when(particleEffectSpecLoader.loadSpec("base-route.particle-effect")).thenReturn(particleEffectSpec);
 
+        PotionEffectSpecLoader potionEffectSpecLoader = mock(PotionEffectSpecLoader.class);
+        when(potionEffectSpecLoader.loadSpec("base-route.potion-effect")).thenReturn(potionEffectSpec);
+
         ActivationPatternSpecLoader activationPatternSpecLoader = mock(ActivationPatternSpecLoader.class);
         when(activationPatternSpecLoader.loadSpec("base-route.activation-pattern")).thenReturn(activationPatternSpec);
 
-        ItemEffectSpecLoader specLoader = new ItemEffectSpecLoader(yamlReader, activationPatternSpecLoader, particleEffectSpecLoader, rangeProfileSpecLoader, triggerSpecLoader);
+        ItemEffectSpecLoader specLoader = new ItemEffectSpecLoader(yamlReader, activationPatternSpecLoader, particleEffectSpecLoader, potionEffectSpecLoader, rangeProfileSpecLoader, triggerSpecLoader);
         ItemEffectSpec spec = specLoader.loadSpec(BASE_ROUTE);
 
         assertThat(spec.type()).isEqualTo(type);

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.PotionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
@@ -53,8 +54,9 @@ public class EquipmentSpecLoaderTest {
         TriggerSpec triggerSpec = new TriggerSpec("TIMED", 3.0, 5L, 20L);
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(35.0, 10.0, 25.0, 20.0, 15.0, 30.0);
         ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 10, 0.1, 0.2, 0.3, 0.0, null);
+        PotionEffectSpec potionEffectSpec = new PotionEffectSpec("BLINDNESS", 100, 1, true, false, true);
         ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 200L, 100L, 20L, 10L);
-        ItemEffectSpec effectSpec = new ItemEffectSpec("EXPLOSION", List.of(triggerSpec), rangeProfileSpec, 5.0, 1.0, 3.0, 0.5, 2L, 200L, 100L, null, 2.0f, true, false, particleEffectSpec, activationPatternSpec);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("EXPLOSION", List.of(triggerSpec), rangeProfileSpec, 5.0, 1.0, 3.0, 0.5, 2L, 200L, 100L, null, 2.0f, true, false, particleEffectSpec, potionEffectSpec, activationPatternSpec);
 
         String throwAction = "LEFT_CLICK";
         String cookAction = "RIGHT_CLICK";

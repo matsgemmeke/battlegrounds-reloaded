@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
@@ -31,8 +31,8 @@ public class SmokeScreenEffectTest {
     private static final double PARTICLE_OFFSET_Y = 0.5;
     private static final double PARTICLE_OFFSET_Z = 0.5;
     private static final int PARTICLE_COUNT = 1;
-    private static final List<GameSound> IGNITION_SOUNDS = Collections.emptyList();
-    private static final long GROWTH_PERIOD = 1L;
+    private static final List<GameSound> ACTIVATION_SOUNDS = Collections.emptyList();
+    private static final long GROWTH_INTERVAL = 1L;
     private static final Particle PARTICLE_TYPE = Particle.CAMPFIRE_SIGNAL_SMOKE;
 
     private AudioEmitter audioEmitter;
@@ -41,7 +41,7 @@ public class SmokeScreenEffectTest {
     private Entity entity;
     private ItemEffectContext context;
     private ItemEffectSource source;
-    private ParticleEffectProperties particleEffect;
+    private ParticleEffect particleEffect;
     private TaskRunner taskRunner;
     private Trigger trigger;
 
@@ -49,7 +49,7 @@ public class SmokeScreenEffectTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
-        particleEffect = new ParticleEffectProperties(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
+        particleEffect = new ParticleEffect(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA, null);
         taskRunner = mock(TaskRunner.class);
         trigger = mock(Trigger.class);
 
@@ -61,13 +61,12 @@ public class SmokeScreenEffectTest {
 
     @Test
     public void activateCancelsTaskOnceSourceNoLongerExists() {
-        int duration = 1;
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, duration, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
 
         when(source.exists()).thenReturn(false);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_PERIOD))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_INTERVAL))).thenReturn(task);
 
         SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
         effect.addTrigger(trigger);
@@ -79,7 +78,7 @@ public class SmokeScreenEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
 
         runnableCaptor.getValue().run();
 
@@ -88,7 +87,6 @@ public class SmokeScreenEffectTest {
 
     @Test
     public void activateRemovesSourceAndCancelsTaskOnceEffectIsOver() {
-        int duration = 1;
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
 
@@ -97,9 +95,9 @@ public class SmokeScreenEffectTest {
         when(source.getWorld()).thenReturn(world);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_PERIOD))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_INTERVAL))).thenReturn(task);
 
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, duration, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 1L, 1L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
 
         SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
         effect.addTrigger(trigger);
@@ -111,11 +109,11 @@ public class SmokeScreenEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
 
         runnableCaptor.getValue().run();
 
-        verify(audioEmitter).playSounds(IGNITION_SOUNDS, sourceLocation);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceLocation);
         verify(source).remove();
         verify(task).cancel();
     }
@@ -130,7 +128,7 @@ public class SmokeScreenEffectTest {
         when(source.getLocation()).thenReturn(sourceOldLocation, sourceOldLocation, sourceNewLocation);
         when(source.getWorld()).thenReturn(world);
 
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, 100, 1.0, 0.0, 0.0, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
 
         SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
         effect.addTrigger(trigger);
@@ -142,11 +140,11 @@ public class SmokeScreenEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
 
         runnableCaptor.getValue().run();
 
-        verify(audioEmitter).playSounds(IGNITION_SOUNDS, sourceOldLocation);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceOldLocation);
         verify(world).spawnParticle(PARTICLE_TYPE, sourceNewLocation, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
     }
 
@@ -159,7 +157,7 @@ public class SmokeScreenEffectTest {
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5,0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 5.0, 5.0, 0.5,0.0, GROWTH_INTERVAL);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
@@ -174,11 +172,11 @@ public class SmokeScreenEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
 
         runnableCaptor.getValue().run();
 
-        verify(audioEmitter).playSounds(IGNITION_SOUNDS, sourceLocation);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceLocation);
         verify(world, times(2)).spawnParticle(eq(PARTICLE_TYPE), any(Location.class), eq(0), anyDouble(), anyDouble(), anyDouble(), eq(PARTICLE_EXTRA));
     }
 
@@ -186,7 +184,7 @@ public class SmokeScreenEffectTest {
     public void activateDoesNotDisplaySphereParticleIfTheParticleLocationCausesCollision() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
 
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
@@ -204,11 +202,11 @@ public class SmokeScreenEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
 
         runnableCaptor.getValue().run();
 
-        verify(audioEmitter).playSounds(IGNITION_SOUNDS, sourceLocation);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceLocation);
         verifyNoInteractions(world);
     }
 
@@ -216,7 +214,7 @@ public class SmokeScreenEffectTest {
     public void activateDoesNotDisplaySphereParticleIfTheParticleLocationHasNoLineOfSightToSource() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, IGNITION_SOUNDS, 100, 5.0, 5.0, 0.5, 0.0, GROWTH_PERIOD);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
 
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
@@ -235,11 +233,11 @@ public class SmokeScreenEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_PERIOD));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
 
         runnableCaptor.getValue().run();
 
-        verify(audioEmitter).playSounds(IGNITION_SOUNDS, sourceLocation);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceLocation);
         verifyNoInteractions(world);
     }
 }

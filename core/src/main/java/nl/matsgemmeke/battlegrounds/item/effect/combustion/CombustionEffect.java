@@ -83,7 +83,7 @@ public class CombustionEffect extends BaseItemEffect {
         this.inflictDamage(context.getEntity().getUniqueId(), location);
 
         task = taskRunner.runTaskTimer(() -> {
-            if (++currentRadius > properties.maxRadius()) {
+            if (++currentRadius > properties.maxSize()) {
                 currentRadius = 0;
                 task.cancel();
                 return;
@@ -94,7 +94,7 @@ public class CombustionEffect extends BaseItemEffect {
                     this.setOnFire(block);
                 }
             }
-        }, RUNNABLE_DELAY, properties.ticksBetweenFireSpread());
+        }, RUNNABLE_DELAY, properties.growthInterval());
 
         taskRunner.runTaskLater(this::reset, properties.maxDuration());
 

@@ -51,7 +51,6 @@ import org.mockito.Mockito;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -71,9 +70,6 @@ public class EquipmentFactoryTest {
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
     private ParticleEffectMapper particleEffectMapper;
-    private Section deploySection;
-    private Section effectSection;
-    private Section effectActivationSection;
     private Section rootSection;
     private TaskRunner taskRunner;
 
@@ -89,9 +85,6 @@ public class EquipmentFactoryTest {
         itemFactory = mock(ItemFactory.class);
         keyCreator = mock(NamespacedKeyCreator.class);
         particleEffectMapper = new ParticleEffectMapper();
-        deploySection = mock(Section.class);
-        effectSection = mock(Section.class);
-        effectActivationSection = mock(Section.class);
         taskRunner = mock(TaskRunner.class);
 
         contextProvider = mock(GameContextProvider.class);
@@ -107,9 +100,6 @@ public class EquipmentFactoryTest {
         when(keyCreator.create("battlegrounds-equipment")).thenReturn(key);
 
         rootSection = mock(Section.class);
-        when(rootSection.getOptionalSection("deploy")).thenReturn(Optional.of(deploySection));
-        when(rootSection.getOptionalSection("effect")).thenReturn(Optional.of(effectSection));
-        when(rootSection.getOptionalSection("effect.activation")).thenReturn(Optional.of(effectActivationSection));
         when(rootSection.getString("name")).thenReturn("name");
         when(rootSection.getString("description")).thenReturn("description");
         when(rootSection.getInt("item.damage")).thenReturn(1);
@@ -135,7 +125,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -156,7 +146,7 @@ public class EquipmentFactoryTest {
         ItemStackSpec activatorItemSpec = new ItemStackSpec("STONE", "&fActivator", 2);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
-        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, activatorItemSpec, null, controlsSpec, deploymentSpec, effectSpec);
 
@@ -164,7 +154,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(controlsSpec), eq(deploymentSpec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(itemEffect);
+        when(effectFactory.create(effectSpec, gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -185,7 +175,7 @@ public class EquipmentFactoryTest {
         ItemStackSpec throwItemSpec = new ItemStackSpec("STONE", "&fThrow item", 2);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
-        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, throwItemSpec, controlsSpec, deploymentSpec, effectSpec);
 
@@ -193,7 +183,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(controlsSpec), eq(deploymentSpec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(itemEffect);
+        when(effectFactory.create(effectSpec, gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -216,7 +206,7 @@ public class EquipmentFactoryTest {
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
         ManualActivationSpec manualActivationSpec = new ManualActivationSpec(10L, null);
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, manualActivationSpec);
-        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec);
 
@@ -224,7 +214,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect effect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(effect);
+        when(effectFactory.create(effectSpec, gameKey)).thenReturn(effect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
@@ -245,7 +235,7 @@ public class EquipmentFactoryTest {
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
         ParticleEffectSpec destroyEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, destroyEffectSpec, Map.of(), null, null, null, null);
-        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec);
 
@@ -253,7 +243,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect effect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(effect);
+        when(effectFactory.create(effectSpec, gameKey)).thenReturn(effect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
@@ -305,7 +295,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -346,7 +336,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -389,7 +379,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -444,7 +434,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -481,7 +471,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSection, gameKey)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -495,7 +485,7 @@ public class EquipmentFactoryTest {
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
-        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         return new EquipmentSpec("name", "description", itemSpec, null, null, controlsSpec, deploymentSpec, effectSpec);
     }
 }

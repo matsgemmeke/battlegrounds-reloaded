@@ -43,9 +43,9 @@ public class FlashEffect extends BaseItemEffect {
     }
 
     private void createExplosionEffect(@NotNull Entity damageSource, @NotNull ItemEffectSource source) {
-        float power = properties.explosionPower();
-        boolean setFire = properties.explosionSetFire();
-        boolean breakBlocks = properties.explosionBreakBlocks();
+        float power = properties.power();
+        boolean setFire = properties.setFire();
+        boolean breakBlocks = properties.breakBlocks();
 
         World world = source.getWorld();
         Location location = source.getLocation();

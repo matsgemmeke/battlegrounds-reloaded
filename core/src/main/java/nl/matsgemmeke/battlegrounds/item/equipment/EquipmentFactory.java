@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -161,7 +162,7 @@ public class EquipmentFactory {
         ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controls(), spec.deployment(), equipment, gameKey);
         equipment.setControls(controls);
 
-        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deployment(), gameKey, section, equipment.getActivator());
+        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deployment(), spec.effect(), gameKey, equipment.getActivator());
         equipment.setDeploymentHandler(deploymentHandler);
 
         // Setting the projectile properties
@@ -242,12 +243,7 @@ public class EquipmentFactory {
     }
 
     @NotNull
-    private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull GameKey gameKey, @NotNull Section section, @Nullable Activator activator) {
-        Section effectSection = section.getOptionalSection("effect")
-                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item, effect configuration is missing"));
-        Section effectActivationSection = section.getOptionalSection("effect.activation")
-                .orElseThrow(() -> new EquipmentCreationException("Unable to create equipment item, effect activation configuration is missing"));
-
+    private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull ItemEffectSpec effectSpec, @NotNull GameKey gameKey, @Nullable Activator activator) {
         boolean activateEffectOnDestroy = deploymentSpec.activateEffectOnDestroy();
         boolean removeOnDestroy = deploymentSpec.removeOnDestroy();
         boolean resetEffectOnDestroy = deploymentSpec.resetEffectOnDestroy();
@@ -269,7 +265,7 @@ public class EquipmentFactory {
         DeploymentProperties deploymentProperties = new DeploymentProperties(activationSounds, destroyEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, activationDelay);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        ItemEffect effect = effectFactory.create(effectSection, gameKey);
+        ItemEffect effect = effectFactory.create(effectSpec, gameKey);
 
         return deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
     }

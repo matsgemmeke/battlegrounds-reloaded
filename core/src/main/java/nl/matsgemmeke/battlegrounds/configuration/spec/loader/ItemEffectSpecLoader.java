@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.PotionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
@@ -38,12 +39,15 @@ public class ItemEffectSpecLoader {
     private static final String SPREAD_FIRE_ROUTE = "spread-fire";
 
     private static final String PARTICLE_EFFECT_ROUTE = "particle-effect";
+    private static final String POTION_EFFECT_ROUTE = "potion-effect";
     private static final String ACTIVATION_PATTERN_ROUTE = "activation-pattern";
 
     @NotNull
     private final ActivationPatternSpecLoader activationPatternSpecLoader;
     @NotNull
     private final ParticleEffectSpecLoader particleEffectSpecLoader;
+    @NotNull
+    private final PotionEffectSpecLoader potionEffectSpecLoader;
     @NotNull
     private final RangeProfileSpecLoader rangeProfileSpecLoader;
     @NotNull
@@ -55,12 +59,14 @@ public class ItemEffectSpecLoader {
             @NotNull YamlReader yamlReader,
             @NotNull ActivationPatternSpecLoader activationPatternSpecLoader,
             @NotNull ParticleEffectSpecLoader particleEffectSpecLoader,
+            @NotNull PotionEffectSpecLoader potionEffectSpecLoader,
             @NotNull RangeProfileSpecLoader rangeProfileSpecLoader,
             @NotNull TriggerSpecLoader triggerSpecLoader
     ) {
         this.yamlReader = yamlReader;
         this.activationPatternSpecLoader = activationPatternSpecLoader;
         this.particleEffectSpecLoader = particleEffectSpecLoader;
+        this.potionEffectSpecLoader = potionEffectSpecLoader;
         this.rangeProfileSpecLoader = rangeProfileSpecLoader;
         this.triggerSpecLoader = triggerSpecLoader;
     }
@@ -85,6 +91,7 @@ public class ItemEffectSpecLoader {
         String spreadFireRoute = this.createRoute(baseRoute, SPREAD_FIRE_ROUTE);
 
         String particleEffectRoute = this.createRoute(baseRoute, PARTICLE_EFFECT_ROUTE);
+        String potionEffectRoute = this.createRoute(baseRoute, POTION_EFFECT_ROUTE);
         String activationPatternRoute = this.createRoute(baseRoute, ACTIVATION_PATTERN_ROUTE);
 
         String type = new FieldSpecResolver<String>()
@@ -166,17 +173,22 @@ public class ItemEffectSpecLoader {
                 .resolve();
 
         ParticleEffectSpec particleEffectSpec = null;
+        PotionEffectSpec potionEffectSpec = null;
         ActivationPatternSpec activationPatternSpec = null;
 
         if (yamlReader.contains(particleEffectRoute)) {
             particleEffectSpec = particleEffectSpecLoader.loadSpec(particleEffectRoute);
         }
 
+        if (yamlReader.contains(potionEffectRoute)) {
+            potionEffectSpec = potionEffectSpecLoader.loadSpec(potionEffectRoute);
+        }
+
         if (yamlReader.contains(activationPatternRoute)) {
             activationPatternSpec = activationPatternSpecLoader.loadSpec(activationPatternRoute);
         }
 
-        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize, density, growth, growthInterval, maxDuration, minDuration, activationSounds, power, damageBlocks, spreadFire, particleEffectSpec, activationPatternSpec);
+        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize, density, growth, growthInterval, maxDuration, minDuration, activationSounds, power, damageBlocks, spreadFire, particleEffectSpec, potionEffectSpec, activationPatternSpec);
     }
 
     @NotNull
