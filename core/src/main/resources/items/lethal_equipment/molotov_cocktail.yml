@@ -21,15 +21,12 @@ deploy:
     velocity: 1.2
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
 effect:
-  activation:
-    triggers:
-      - period-between-checks: 2
-        type: FLOOR_HIT
-    type: TRIGGER
-  burn-blocks: false
-  combustion-sounds: BLOCK_GLASS_BREAK-1-1-0
+  activation-sounds: BLOCK_GLASS_BREAK-1-1-0
+  damage-blocks: false
+  growth: 0.5
+  growth-interval: 5
   max-duration: 600
-  max-radius: 3
+  max-size: 3.0
   range:
     long-range:
       damage: 10.0
@@ -41,7 +38,10 @@ effect:
       damage: 30.0
       distance: 0.5
   spread-fire: false
-  ticks-between-spread: 5
+  triggers:
+    floor-hit:
+      check-interval: 2
+      type: FLOOR_HIT
   type: COMBUSTION
 equipment-type: LETHAL
 item:

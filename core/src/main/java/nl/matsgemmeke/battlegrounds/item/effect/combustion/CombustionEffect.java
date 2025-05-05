@@ -13,7 +13,6 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,14 +56,12 @@ public class CombustionEffect extends BaseItemEffect {
     public CombustionEffect(
             @NotNull MetadataValueEditor metadataValueEditor,
             @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull ItemEffectActivation effectActivation,
             @Assisted @NotNull CombustionProperties properties,
             @Assisted @NotNull RangeProfile rangeProfile,
             @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull CollisionDetector collisionDetector,
             @Assisted @NotNull TargetFinder targetFinder
     ) {
-        super(effectActivation);
         this.properties = properties;
         this.rangeProfile = rangeProfile;
         this.audioEmitter = audioEmitter;
@@ -86,7 +83,7 @@ public class CombustionEffect extends BaseItemEffect {
         this.inflictDamage(context.getEntity().getUniqueId(), location);
 
         task = taskRunner.runTaskTimer(() -> {
-            if (++currentRadius > properties.maxRadius()) {
+            if (++currentRadius > properties.maxSize()) {
                 currentRadius = 0;
                 task.cancel();
                 return;
@@ -97,7 +94,7 @@ public class CombustionEffect extends BaseItemEffect {
                     this.setOnFire(block);
                 }
             }
-        }, RUNNABLE_DELAY, properties.ticksBetweenFireSpread());
+        }, RUNNABLE_DELAY, properties.growthInterval());
 
         taskRunner.runTaskLater(this::reset, properties.maxDuration());
 

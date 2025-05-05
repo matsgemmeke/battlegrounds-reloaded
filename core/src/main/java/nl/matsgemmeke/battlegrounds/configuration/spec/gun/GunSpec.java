@@ -16,12 +16,7 @@ import org.jetbrains.annotations.Nullable;
  * @param magazineSize the size of the gun's magazine
  * @param maxMagazineAmount the maximum number of magazines the holder can carry for the gun
  * @param defaultMagazineAmount the default number of magazines the holder will carry when receiving the gun
- * @param shortRangeDamage the amount of damage applied inside the short range
- * @param shortRangeDistance the maximum distance for the short range
- * @param mediumRangeDamage the amount of damage applied inside the medium range
- * @param mediumRangeDistance the maximum distance for the medium range
- * @param longRangeDamage the amount of damage applied inside the long range
- * @param longRangeDistance the maximum distance for the long range
+ * @param rangeProfile the range profile specification
  * @param headshotDamageMultiplier the damage multiplier when hitting headshots
  * @param shotSounds the raw value that defines the sounds the gun makes when shooting
  * @param reload the specification for the reload system
@@ -38,12 +33,7 @@ public record GunSpec(
         @NotNull Integer magazineSize,
         @NotNull Integer maxMagazineAmount,
         @NotNull Integer defaultMagazineAmount,
-        @NotNull Double shortRangeDamage,
-        @NotNull Double shortRangeDistance,
-        @NotNull Double mediumRangeDamage,
-        @NotNull Double mediumRangeDistance,
-        @NotNull Double longRangeDamage,
-        @NotNull Double longRangeDistance,
+        @NotNull RangeProfileSpec rangeProfile,
         @NotNull Double headshotDamageMultiplier,
         @Nullable String shotSounds,
         @NotNull ReloadSpec reload,

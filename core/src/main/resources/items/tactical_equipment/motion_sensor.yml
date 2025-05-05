@@ -22,13 +22,12 @@ deploy:
     velocity: 0.5
 description: Tactical ground-based sensor that detects enemy movement within its radius.
 effect:
-  activation:
-    triggers:
-      - checking-range: 2.5
-        period-between-checks: 10
-        type: ENEMY_PROXIMITY
-    type: TRIGGER
-  sounds: BLOCK_NOTE_BLOCK_BIT-1-2-0
+  activation-sounds: BLOCK_NOTE_BLOCK_BIT-1-2-0
+  triggers:
+    enemy-proximity:
+      check-interval: 10
+      check-range: 2.5
+      type: ENEMY_PROXIMITY
   type: SOUND_NOTIFICATION
 equipment-type: TACTICAL
 item:

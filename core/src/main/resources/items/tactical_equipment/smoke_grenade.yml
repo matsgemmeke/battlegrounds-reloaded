@@ -16,24 +16,25 @@ deploy:
     velocity: 1.2
 description: Device that creates a smoke screen when detonated.
 effect:
-  activation:
-    delay-until-activation: 60
-    type: DELAYED
+  activation-sounds: BLOCK_FIRE_EXTINGUISH-1-0-0
   density: 5.0
-  duration: 400
-  growth-increase: 0.025
-  growth-period: 1
-  ignition-sounds: BLOCK_FIRE_EXTINGUISH-1-0-0
-  particle:
+  growth: 0.025
+  growth-interval: 1
+  max-duration: 450
+  min-duration: 350
+  max-size: 3.0
+  min-size: 0.2
+  particle-effect:
+    particle: CAMPFIRE_SIGNAL_SMOKE
     count: 1
-    extra: 0.01
     offset-x: 0.1
     offset-y: 0.1
     offset-z: 0.1
-    type: CAMPFIRE_SIGNAL_SMOKE
-  radius:
-    max-size: 3.0
-    starting-size: 0.2
+    extra: 0.01
+  triggers:
+    timed:
+      delay-until-activation: 60
+      type: TIMED
   type: SMOKE_SCREEN
 equipment-type: TACTICAL
 item:

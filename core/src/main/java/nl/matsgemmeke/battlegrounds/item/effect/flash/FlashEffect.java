@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -27,8 +26,7 @@ public class FlashEffect extends BaseItemEffect {
     @NotNull
     private TargetFinder targetFinder;
 
-    public FlashEffect(@NotNull ItemEffectActivation effectActivation, @NotNull FlashProperties properties, @NotNull TargetFinder targetFinder) {
-        super(effectActivation);
+    public FlashEffect(@NotNull FlashProperties properties, @NotNull TargetFinder targetFinder) {
         this.properties = properties;
         this.targetFinder = targetFinder;
         this.appliedPotionEffects = new HashMap<>();
@@ -45,9 +43,9 @@ public class FlashEffect extends BaseItemEffect {
     }
 
     private void createExplosionEffect(@NotNull Entity damageSource, @NotNull ItemEffectSource source) {
-        float power = properties.explosionPower();
-        boolean setFire = properties.explosionSetFire();
-        boolean breakBlocks = properties.explosionBreakBlocks();
+        float power = properties.power();
+        boolean setFire = properties.setFire();
+        boolean breakBlocks = properties.breakBlocks();
 
         World world = source.getWorld();
         Location location = source.getLocation();

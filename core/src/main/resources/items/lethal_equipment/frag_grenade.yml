@@ -19,10 +19,7 @@ deploy:
     velocity: 1.2
 description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 effect:
-  activation:
-    delay-until-activation: 80
-    type: DELAYED
-  break-blocks: false
+  damage-blocks: false
   power: 2.0
   range:
     long-range:
@@ -34,7 +31,11 @@ effect:
     short-range:
       damage: 150.0
       distance: 2.5
-  set-fire: false
+  spread-fire: false
+  triggers:
+    timed:
+      delay-until-activation: 80
+      type: TIMED
   type: EXPLOSION
 equipment-type: LETHAL
 item:

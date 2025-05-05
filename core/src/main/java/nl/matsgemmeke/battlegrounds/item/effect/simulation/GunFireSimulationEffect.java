@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +32,8 @@ public class GunFireSimulationEffect extends BaseItemEffect {
     private final GunFireSimulationProperties properties;
     @NotNull
     private final GunInfoProvider gunInfoProvider;
-    private int elapsedTicks;
-    private int remainingTicks;
+    private long elapsedTicks;
+    private long remainingTicks;
     @NotNull
     private final Random random;
     @NotNull
@@ -43,12 +42,10 @@ public class GunFireSimulationEffect extends BaseItemEffect {
     @Inject
     public GunFireSimulationEffect(
             @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull ItemEffectActivation effectActivation,
             @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull GunInfoProvider gunInfoProvider,
             @Assisted @NotNull GunFireSimulationProperties properties
     ) {
-        super(effectActivation);
         this.taskRunner = taskRunner;
         this.audioEmitter = audioEmitter;
         this.gunInfoProvider = gunInfoProvider;
@@ -71,22 +68,22 @@ public class GunFireSimulationEffect extends BaseItemEffect {
             return;
         }
 
-        this.simulateGunFire(context, gunFireSimulationInfo.shotSounds(), gunFireSimulationInfo.rateOfFire());
+        double roundsPerSecond = (double) gunFireSimulationInfo.rateOfFire() / 60;
+        int interval = (int) (TICKS_PER_SECOND / roundsPerSecond);
+
+        this.simulateGunFire(context, gunFireSimulationInfo.shotSounds(), interval);
     }
 
     private void simulateGenericGunFire(@NotNull ItemEffectContext context) {
-        this.simulateGunFire(context, properties.genericSounds(), properties.genericRateOfFire());
+        this.simulateGunFire(context, properties.genericSounds(), properties.burstInterval());
     }
 
-    private void simulateGunFire(@NotNull ItemEffectContext context, @NotNull List<GameSound> sounds, int rateOfFire) {
-        int totalDuration = random.nextInt(properties.minTotalDuration(), properties.maxTotalDuration());
+    private void simulateGunFire(@NotNull ItemEffectContext context, @NotNull List<GameSound> sounds, long interval) {
+        long totalDuration = random.nextLong(properties.minTotalDuration(), properties.maxTotalDuration());
 
         elapsedTicks = 0;
         remainingTicks = this.getRandomBurstDurationInTicks();
         playingSounds = true;
-
-        double roundsPerSecond = (double) rateOfFire / 60;
-        int interval = (int) (TICKS_PER_SECOND / roundsPerSecond);
 
         task = taskRunner.runTaskTimer(() -> {
             ItemEffectSource source = context.getSource();
@@ -122,11 +119,11 @@ public class GunFireSimulationEffect extends BaseItemEffect {
         }, TIMER_DELAY, TIMER_PERIOD);
     }
 
-    private int getRandomBurstDurationInTicks() {
-        return random.nextInt(properties.minBurstDuration(), properties.maxBurstDuration());
+    private long getRandomBurstDurationInTicks() {
+        return random.nextLong(properties.minBurstDuration(), properties.maxBurstDuration());
     }
 
-    private int getRandomDelayDurationInTicks() {
-        return random.nextInt(properties.minDelayBetweenBursts(), properties.maxDelayBetweenBursts());
+    private long getRandomDelayDurationInTicks() {
+        return random.nextLong(properties.minDelayDuration(), properties.maxDelayDuration());
     }
 }

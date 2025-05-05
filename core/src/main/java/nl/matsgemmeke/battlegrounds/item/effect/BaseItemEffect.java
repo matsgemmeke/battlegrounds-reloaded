@@ -1,22 +1,25 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class BaseItemEffect implements ItemEffect {
 
     private boolean activated;
     private boolean primed;
-    @NotNull
-    protected ItemEffectActivation effectActivation;
     @Nullable
     protected ItemEffectContext currentContext;
+    @NotNull
+    protected final List<Trigger> triggers;
 
-    public BaseItemEffect(@NotNull ItemEffectActivation effectActivation) {
-        this.effectActivation = effectActivation;
+    public BaseItemEffect() {
         this.activated = false;
         this.primed = false;
+        this.triggers = new ArrayList<>();
     }
 
     public void activateInstantly() {
@@ -25,8 +28,12 @@ public abstract class BaseItemEffect implements ItemEffect {
         }
 
         activated = true;
-        effectActivation.cancel();
+        triggers.forEach(Trigger::cancel);
         this.perform(currentContext);
+    }
+
+    public void addTrigger(@NotNull Trigger trigger) {
+        triggers.add(trigger);
     }
 
     public void cancelActivation() {
@@ -34,7 +41,7 @@ public abstract class BaseItemEffect implements ItemEffect {
             return;
         }
 
-        effectActivation.cancel();
+        triggers.forEach(Trigger::cancel);
     }
 
     public void deploy(@NotNull ItemEffectSource source) {
@@ -61,9 +68,12 @@ public abstract class BaseItemEffect implements ItemEffect {
         currentContext = context;
         primed = true;
 
-        effectActivation.prime(context, () -> {
-            activated = true;
-            this.perform(currentContext);
+        triggers.forEach(trigger -> {
+            trigger.addObserver(() -> {
+                activated = true;
+                this.perform(currentContext);
+            });
+            trigger.prime(context);
         });
     }
 

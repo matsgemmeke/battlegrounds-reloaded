@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.util.Procedure;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -45,15 +45,15 @@ public class FlashEffectTest {
     private Deployer deployer;
     private Entity entity;
     private FlashProperties properties;
-    private ItemEffectActivation effectActivation;
     private ItemEffectContext context;
     private ItemEffectSource source;
     private TargetFinder targetFinder;
+    private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
-        effectActivation = mock(ItemEffectActivation.class);
         targetFinder = mock(TargetFinder.class);
+        trigger = mock(Trigger.class);
 
         PotionEffectProperties potionEffect = new PotionEffectProperties(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
 
@@ -80,13 +80,14 @@ public class FlashEffectTest {
         when(source.getWorld()).thenReturn(world);
         when(targetFinder.findTargets(entityId, sourceLocation, RANGE)).thenReturn(List.of(target));
 
-        FlashEffect effect = new FlashEffect(effectActivation, properties, targetFinder);
+        FlashEffect effect = new FlashEffect(properties, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureArgumentCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureArgumentCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureArgumentCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
         verify(player).addPotionEffect(potionEffectCaptor.capture());
@@ -130,13 +131,14 @@ public class FlashEffectTest {
         when(source.getWorld()).thenReturn(world);
         when(targetFinder.findTargets(entityId, sourceLocation, RANGE)).thenReturn(List.of(target));
 
-        FlashEffect effect = new FlashEffect(effectActivation, properties, targetFinder);
+        FlashEffect effect = new FlashEffect(properties, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureArgumentCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureArgumentCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverArgumentCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverArgumentCaptor.capture());
 
-        procedureArgumentCaptor.getValue().apply();
+        triggerObserverArgumentCaptor.getValue().onActivate();
         effect.reset();
 
         verify(player, never()).removePotionEffect(any(PotionEffectType.class));
@@ -158,13 +160,14 @@ public class FlashEffectTest {
 
         when(targetFinder.findTargets(entityId, sourceLocation, RANGE)).thenReturn(List.of(target));
 
-        FlashEffect effect = new FlashEffect(effectActivation, properties, targetFinder);
+        FlashEffect effect = new FlashEffect(properties, targetFinder);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureArgumentCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureArgumentCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverArgumentCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverArgumentCaptor.capture());
 
-        procedureArgumentCaptor.getValue().apply();
+        triggerObserverArgumentCaptor.getValue().onActivate();
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
         verify(player).addPotionEffect(potionEffectCaptor.capture());

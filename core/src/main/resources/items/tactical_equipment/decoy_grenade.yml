@@ -20,17 +20,19 @@ deploy:
     velocity: 1.2
 description: Distraction device that simulates enemy gunfire.
 effect:
-  activation:
-    delay-until-activation: 60
-    type: DELAYED
-  generic-rate-of-fire: 600
-  generic-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
-  max-burst-duration: 100
-  min-burst-duration: 20
-  max-delay-between-bursts: 60
-  min-delay-between-bursts: 20
-  max-total-duration: 300
-  min-total-duration: 200
+  activation-pattern:
+    burst-interval: 2
+    max-burst-duration: 100
+    min-burst-duration: 20
+    max-delay-duration: 60
+    min-delay-duration: 20
+  activation-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+  max-duration: 300
+  min-duration: 200
+  triggers:
+    timed:
+      delay-until-activation: 60
+      type: TIMED
   type: GUN_FIRE_SIMULATION
 equipment-type: TACTICAL
 item:

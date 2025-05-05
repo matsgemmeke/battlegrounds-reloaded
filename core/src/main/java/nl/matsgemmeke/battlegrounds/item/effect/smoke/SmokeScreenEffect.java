@@ -8,8 +8,8 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
@@ -39,12 +39,10 @@ public class SmokeScreenEffect extends BaseItemEffect {
     @Inject
     public SmokeScreenEffect(
             @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull ItemEffectActivation effectActivation,
             @Assisted @NotNull SmokeScreenProperties properties,
             @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull CollisionDetector collisionDetector
     ) {
-        super(effectActivation);
         this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
@@ -54,11 +52,13 @@ public class SmokeScreenEffect extends BaseItemEffect {
     }
 
     public void perform(@NotNull ItemEffectContext context) {
-        audioEmitter.playSounds(properties.ignitionSounds(), context.getSource().getLocation());
+        audioEmitter.playSounds(properties.activationSounds(), context.getSource().getLocation());
 
         currentDuration = 0;
         currentLocation = context.getSource().getLocation();
-        currentRadius = properties.radiusStartingSize();
+        currentRadius = properties.minSize();
+
+        long totalDuration = this.getTotalDuration(properties.minDuration(), properties.maxDuration());
 
         task = taskRunner.runTaskTimer(() -> {
             ItemEffectSource source = context.getSource();
@@ -68,14 +68,22 @@ public class SmokeScreenEffect extends BaseItemEffect {
                 return;
             }
 
-            if (++currentDuration >= properties.duration()) {
+            if (++currentDuration >= totalDuration) {
                 source.remove();
                 task.cancel();
                 return;
             }
 
             this.createSmokeEffect(source.getLocation(), source.getWorld());
-        }, RUNNABLE_DELAY, properties.growthPeriod());
+        }, RUNNABLE_DELAY, properties.growthInterval());
+    }
+
+    private long getTotalDuration(long minDuration, long maxDuration) {
+        if (minDuration == maxDuration) {
+            return minDuration;
+        } else {
+            return random.nextLong(properties.minDuration(), properties.maxDuration());
+        }
     }
 
     private void createSmokeEffect(@NotNull Location location, @NotNull World world) {
@@ -84,11 +92,11 @@ public class SmokeScreenEffect extends BaseItemEffect {
         if (moving) {
             this.spawnParticle(location, world);
             // If the source moved location the smoke will no longer expand into a sphere, so it resets the size
-            currentRadius = properties.radiusStartingSize();
+            currentRadius = properties.minSize();
             currentLocation = location;
         } else {
-            currentRadius += properties.growthIncrease();
-            double radius = Math.min(currentRadius, properties.radiusMaxSize());
+            currentRadius += properties.growth();
+            double radius = Math.min(currentRadius, properties.maxSize());
 
             this.createSphere(location, world, radius);
         }
@@ -101,7 +109,7 @@ public class SmokeScreenEffect extends BaseItemEffect {
     }
 
     private void spawnParticle(@NotNull Location location, @NotNull World world) {
-        Particle particle = properties.particleEffect().type();
+        Particle particle = properties.particleEffect().particle();
         int count = properties.particleEffect().count();
         double offsetX = properties.particleEffect().offsetX();
         double offsetY = properties.particleEffect().offsetY();
@@ -136,10 +144,11 @@ public class SmokeScreenEffect extends BaseItemEffect {
             // Spawn particle at calculated location
             if (!collisionDetector.producesBlockCollisionAt(particleLocation)
                     && collisionDetector.hasLineOfSight(particleLocation, location)) {
-                Particle particle = properties.particleEffect().type();
+                Particle particle = properties.particleEffect().particle();
                 double extra = properties.particleEffect().extra();
+                Material data = properties.particleEffect().blockDataMaterial();
 
-                world.spawnParticle(particle, particleLocation, 0, offsetX, offsetY, offsetZ, extra);
+                world.spawnParticle(particle, particleLocation, 0, offsetX, offsetY, offsetZ, extra, data, true);
             }
         }
     }

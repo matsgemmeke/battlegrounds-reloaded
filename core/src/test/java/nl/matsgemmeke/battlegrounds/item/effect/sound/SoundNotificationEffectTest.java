@@ -4,8 +4,8 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
-import nl.matsgemmeke.battlegrounds.util.Procedure;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -25,12 +25,12 @@ public class SoundNotificationEffectTest {
     private static final float PITCH = 2.0f;
 
     private GameSound sound;
-    private ItemEffectActivation effectActivation;
     private List<GameSound> sounds;
+    private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
-        effectActivation = mock(ItemEffectActivation.class);
+        trigger = mock(Trigger.class);
 
         sound = mock(GameSound.class);
         when(sound.getSound()).thenReturn(SOUND);
@@ -47,13 +47,14 @@ public class SoundNotificationEffectTest {
         ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(deployer, zombie, source);
 
-        SoundNotificationEffect effect = new SoundNotificationEffect(effectActivation, sounds);
+        SoundNotificationEffect effect = new SoundNotificationEffect(sounds);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
 
         verifyNoInteractions(sound);
     }
@@ -69,13 +70,14 @@ public class SoundNotificationEffectTest {
 
         ItemEffectContext context = new ItemEffectContext(deployer, player, source);
 
-        SoundNotificationEffect effect = new SoundNotificationEffect(effectActivation, sounds);
+        SoundNotificationEffect effect = new SoundNotificationEffect(sounds);
+        effect.addTrigger(trigger);
         effect.prime(context);
 
-        ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
-        verify(effectActivation).prime(eq(context), procedureCaptor.capture());
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        procedureCaptor.getValue().apply();
+        triggerObserverCaptor.getValue().onActivate();
 
         verify(player).playSound(playerLocation, SOUND, VOLUME, PITCH);
     }

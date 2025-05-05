@@ -22,9 +22,10 @@ deploy:
     velocity: 0.0
 description: Marks a location as your next spawn point.
 effect:
-  activation:
-    delay-until-activation: 1
-    type: DELAYED
+  triggers:
+    timed:
+      delay-until-activation: 1
+      type: TIMED
   type: MARK_SPAWN_POINT
 equipment-type: TACTICAL
 item:

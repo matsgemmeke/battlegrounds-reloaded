@@ -5,14 +5,12 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.activation.ItemEffectActivation;
 import org.jetbrains.annotations.NotNull;
 
 public interface CombustionEffectFactory {
 
     @NotNull
-    ItemEffect create(@NotNull ItemEffectActivation effectActivation,
-                      @NotNull CombustionProperties properties,
+    ItemEffect create(@NotNull CombustionProperties properties,
                       @NotNull RangeProfile rangeProfile,
                       @NotNull AudioEmitter audioEmitter,
                       @NotNull CollisionDetector collisionDetector,

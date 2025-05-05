@@ -7,11 +7,10 @@ import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.item.EquipmentConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.item.GunConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.item.InvalidItemConfigurationException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.loader.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +121,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.addItemSpec(creator, itemFile, document);
         } catch (IOException | IllegalArgumentException e) {
             logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
-        } catch (InvalidItemConfigurationException e) {
+        } catch (InvalidFieldSpecException e) {
             logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
         }
     }
@@ -137,8 +136,16 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             ItemConfiguration config = new ItemConfiguration(file, null);
             config.load();
 
-            EquipmentConfiguration configuration = new EquipmentConfiguration(yamlReader);
-            EquipmentSpec spec = configuration.createSpec();
+            ActivationPatternSpecLoader activationPatternSpecLoader = new ActivationPatternSpecLoader(yamlReader);
+            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader);
+            PotionEffectSpecLoader potionEffectSpecLoader = new PotionEffectSpecLoader(yamlReader);
+            RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
+            TriggerSpecLoader triggerSpecLoader = new TriggerSpecLoader(yamlReader);
+
+            ItemEffectSpecLoader itemEffectSpecLoader = new ItemEffectSpecLoader(yamlReader, activationPatternSpecLoader, particleEffectSpecLoader, potionEffectSpecLoader, rangeProfileSpecLoader, triggerSpecLoader);
+
+            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader);
+            EquipmentSpec spec = specLoader.loadSpec();
 
             creator.addEquipmentSpec(id, spec, config);
             return;
@@ -148,8 +155,10 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             YamlReader yamlReader = new YamlReader(file, null);
             yamlReader.load();
 
-            GunConfiguration configuration = new GunConfiguration(yamlReader);
-            GunSpec spec = configuration.createSpec();
+            RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
+
+            GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
+            GunSpec spec = specLoader.loadSpec();
 
             creator.addGunSpec(id, spec);
             return;

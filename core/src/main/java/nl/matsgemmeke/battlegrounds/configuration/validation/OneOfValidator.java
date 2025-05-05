@@ -3,14 +3,14 @@ package nl.matsgemmeke.battlegrounds.configuration.validation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 public class OneOfValidator<T> implements Validator<T> {
 
-    private final List<T> allowedValues;
+    private final Collection<T> allowedValues;
 
-    public OneOfValidator(List<T> allowedValues) {
+    public OneOfValidator(Collection<T> allowedValues) {
         this.allowedValues = allowedValues;
     }
 
