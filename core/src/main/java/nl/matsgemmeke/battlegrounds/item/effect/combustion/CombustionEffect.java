@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class CombustionEffect extends BaseItemEffect {
@@ -40,11 +41,14 @@ public class CombustionEffect extends BaseItemEffect {
     private CollisionDetector collisionDetector;
     @NotNull
     private CombustionProperties properties;
-    private int currentRadius;
+    private double currentRadius;
     @NotNull
     private List<Block> changedBlocks;
+    private long duration;
     @NotNull
     private MetadataValueEditor metadataValueEditor;
+    @NotNull
+    private Random random;
     @NotNull
     private RangeProfile rangeProfile;
     @NotNull
@@ -71,6 +75,7 @@ public class CombustionEffect extends BaseItemEffect {
         this.taskRunner = taskRunner;
         this.changedBlocks = new ArrayList<>();
         this.currentRadius = 0;
+        this.random = new Random();
     }
 
     public void perform(@NotNull ItemEffectContext context) {
@@ -80,25 +85,38 @@ public class CombustionEffect extends BaseItemEffect {
 
         audioEmitter.playSounds(properties.combustionSounds(), location);
 
+        currentRadius = properties.minSize();
+        duration = this.getRandomDuration(properties.minDuration(), properties.maxDuration());
+
         this.inflictDamage(context.getEntity().getUniqueId(), location);
 
         task = taskRunner.runTaskTimer(() -> {
-            if (++currentRadius > properties.maxSize()) {
+            currentRadius += properties.growth();
+
+            if (currentRadius > properties.maxSize()) {
                 currentRadius = 0;
                 task.cancel();
                 return;
             }
 
-            for (Block block : this.getBlocksInRadius(location, world, currentRadius)) {
+            for (Block block : this.getBlocksInRadius(location, world, (int) currentRadius)) {
                 if (block.getType() == Material.AIR && collisionDetector.hasLineOfSight(block.getLocation(), location)) {
                     this.setOnFire(block);
                 }
             }
         }, RUNNABLE_DELAY, properties.growthInterval());
 
-        taskRunner.runTaskLater(this::reset, properties.maxDuration());
+        taskRunner.runTaskLater(this::reset, duration);
 
         source.remove();
+    }
+
+    private long getRandomDuration(long minDuration, long maxDuration) {
+        if (minDuration >= maxDuration) {
+            return minDuration;
+        } else {
+            return random.nextLong(minDuration, maxDuration);
+        }
     }
 
     private void inflictDamage(@NotNull UUID entityId, @NotNull Location location) {

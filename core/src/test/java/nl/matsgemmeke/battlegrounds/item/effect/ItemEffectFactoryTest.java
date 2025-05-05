@@ -70,7 +70,7 @@ public class ItemEffectFactoryTest {
     @Test
     public void createInstanceForCombustionEffectType() {
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(30.0, 0.5, 20.0, 1.0, 10.0, 1.5);
-        ItemEffectSpec effectSpec = new ItemEffectSpec("COMBUSTION", List.of(triggerSpec), rangeProfileSpec, 5.0, 2.5, null, 0.5, 5L, 450L, 350L, null, null, true, false, null, null, null);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("COMBUSTION", List.of(triggerSpec), rangeProfileSpec, 2.5, 5.0, null, 0.5, 5L, 350L, 450L, null, null, true, false, null, null, null);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
@@ -92,8 +92,11 @@ public class ItemEffectFactoryTest {
         verify(combustionEffectFactory).create(propertiesCaptor.capture(), rangeProfileCaptor.capture(), eq(audioEmitter), eq(collisionDetector), eq(targetFinder));
 
         CombustionProperties properties = propertiesCaptor.getValue();
+        assertThat(properties.minSize()).isEqualTo(effectSpec.minSize());
         assertThat(properties.maxSize()).isEqualTo(effectSpec.maxSize());
+        assertThat(properties.growth()).isEqualTo(effectSpec.growth());
         assertThat(properties.growthInterval()).isEqualTo(effectSpec.growthInterval());
+        assertThat(properties.minDuration()).isEqualTo(effectSpec.minDuration());
         assertThat(properties.maxDuration()).isEqualTo(effectSpec.maxDuration());
         assertThat(properties.burnBlocks()).isEqualTo(effectSpec.damageBlocks());
         assertThat(properties.spreadFire()).isEqualTo(effectSpec.spreadFire());

@@ -25,7 +25,9 @@ effect:
   damage-blocks: false
   growth: 0.5
   growth-interval: 5
+  min-duration: 500
   max-duration: 600
+  min-size: 0.5
   max-size: 3.0
   range:
     long-range:

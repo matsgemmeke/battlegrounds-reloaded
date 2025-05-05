@@ -40,16 +40,19 @@ public class CombustionEffectTest {
 
     private static final boolean BURN_BLOCKS = false;
     private static final boolean SPREAD_FIRE = true;
+    private static final double GROWTH = 0.5;
+    private static final double MIN_SIZE = 0.5;
+    private static final double MAX_SIZE = 1.5;
     private static final double LONG_RANGE_DAMAGE = 25.0;
     private static final double LONG_RANGE_DISTANCE = 10.0;
     private static final double MEDIUM_RANGE_DAMAGE = 75.0;
     private static final double MEDIUM_RANGE_DISTANCE = 5.0;
     private static final double SHORT_RANGE_DAMAGE = 150.0;
     private static final double SHORT_RANGE_DISTANCE = 2.5;
-    private static final int RADIUS = 2;
     private static final List<GameSound> COMBUSTION_SOUNDS = Collections.emptyList();
+    private static final long GROWTH_INTERVAL = 5L;
+    private static final long MIN_DURATION = 500L;
     private static final long MAX_DURATION = 600L;
-    private static final long TICKS_BETWEEN_FIRE_SPREAD = 5L;
 
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
@@ -68,7 +71,7 @@ public class CombustionEffectTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
-        properties = new CombustionProperties(COMBUSTION_SOUNDS, RADIUS, TICKS_BETWEEN_FIRE_SPREAD, MAX_DURATION, BURN_BLOCKS, SPREAD_FIRE);
+        properties = new CombustionProperties(COMBUSTION_SOUNDS, MIN_SIZE, MAX_SIZE, GROWTH, GROWTH_INTERVAL, MIN_DURATION, MAX_DURATION, BURN_BLOCKS, SPREAD_FIRE);
         metadataValueEditor = mock(MetadataValueEditor.class);
         rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);
@@ -249,7 +252,7 @@ public class CombustionEffectTest {
         Block blockOutsideLineOfSight = this.createBlock(world, 0, 0, 2, Material.AIR, true);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(TICKS_BETWEEN_FIRE_SPREAD))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_INTERVAL))).thenReturn(task);
 
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
         when(collisionDetector.hasLineOfSight(blockOutsideLineOfSight.getLocation(), sourceLocation)).thenReturn(false);
@@ -266,14 +269,17 @@ public class CombustionEffectTest {
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
 
-        // Simulate the task running three times to exceed the radius
+        // Simulate the task running three times to exceed the max size
         Runnable runnable = runnableCaptor.getValue();
         runnable.run();
         runnable.run();
         runnable.run();
 
         ArgumentCaptor<Runnable> resetRunnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskLater(resetRunnableCaptor.capture(), eq(MAX_DURATION));
+        verify(taskRunner).runTaskLater(
+                resetRunnableCaptor.capture(),
+                longThat(duration -> duration >= MIN_DURATION && duration <= MAX_DURATION)
+        );
 
         resetRunnableCaptor.getValue().run();
 
