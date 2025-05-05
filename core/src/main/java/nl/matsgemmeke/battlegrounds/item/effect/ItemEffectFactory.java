@@ -79,15 +79,18 @@ public class ItemEffectFactory {
 
         switch (itemEffectType) {
             case COMBUSTION -> {
+                double minSize = this.validateSpecVar(spec.minSize(), "minSize", itemEffectType);
                 double maxSize = this.validateSpecVar(spec.maxSize(), "maxSize", itemEffectType);
+                double growth = this.validateSpecVar(spec.growth(), "growth", itemEffectType);
                 long growthInterval = this.validateSpecVar(spec.growthInterval(), "growthInterval", itemEffectType);
                 long maxDuration = this.validateSpecVar(spec.maxDuration(), "maxDuration", itemEffectType);
+                long minDuration = this.validateSpecVar(spec.minDuration(), "minDuration", itemEffectType);
                 boolean damageBlocks = this.validateSpecVar(spec.damageBlocks(), "damageBlocks", itemEffectType);
                 boolean spreadFire = this.validateSpecVar(spec.spreadFire(), "spreadFire", itemEffectType);
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds());
                 RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.rangeProfile(), "rangeProfile", itemEffectType);
 
-                CombustionProperties properties = new CombustionProperties(activationSounds, maxSize, growthInterval, maxDuration, damageBlocks, spreadFire);
+                CombustionProperties properties = new CombustionProperties(activationSounds, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
                 RangeProfile rangeProfile = new RangeProfile(rangeProfileSpec.longRangeDamage(), rangeProfileSpec.longRangeDistance(), rangeProfileSpec.mediumRangeDamage(), rangeProfileSpec.mediumRangeDistance(), rangeProfileSpec.shortRangeDamage(), rangeProfileSpec.shortRangeDistance());
 
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
@@ -142,18 +145,18 @@ public class ItemEffectFactory {
             }
             case SMOKE_SCREEN -> {
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds());
-                long maxDuration = this.validateSpecVar(spec.maxDuration(), "maxDuration", itemEffectType);
                 long minDuration = this.validateSpecVar(spec.minDuration(), "minDuration", itemEffectType);
+                long maxDuration = this.validateSpecVar(spec.maxDuration(), "maxDuration", itemEffectType);
                 double density = this.validateSpecVar(spec.density(), "density", itemEffectType);
-                double maxSize = this.validateSpecVar(spec.maxSize(), "maxSize", itemEffectType);
                 double minSize = this.validateSpecVar(spec.minSize(), "minSize", itemEffectType);
+                double maxSize = this.validateSpecVar(spec.maxSize(), "maxSize", itemEffectType);
                 double growth = this.validateSpecVar(spec.growth(), "growth", itemEffectType);
                 long growthInterval = this.validateSpecVar(spec.growthInterval(), "growthInterval", itemEffectType);
                 ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect(), "particleEffect", itemEffectType);
 
                 ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
 
-                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, maxDuration, minDuration, density, maxSize, minSize, growth, growthInterval);
+                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
                 CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
 

@@ -79,7 +79,7 @@ public class SmokeScreenEffect extends BaseItemEffect {
     }
 
     private long getTotalDuration(long minDuration, long maxDuration) {
-        if (minDuration == maxDuration) {
+        if (minDuration >= maxDuration) {
             return minDuration;
         } else {
             return random.nextLong(properties.minDuration(), properties.maxDuration());

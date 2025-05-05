@@ -9,11 +9,11 @@ import java.util.List;
 public record SmokeScreenProperties(
         @NotNull ParticleEffect particleEffect,
         @NotNull List<GameSound> activationSounds,
-        long maxDuration,
         long minDuration,
+        long maxDuration,
         double density,
-        double maxSize,
         double minSize,
+        double maxSize,
         double growth,
         long growthInterval
 ) { }

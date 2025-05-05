@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.validation.GreaterThanOrEqualToFieldValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.OneOfValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredIfFieldEqualsValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
@@ -25,13 +26,13 @@ public class ItemEffectSpecLoader {
     private static final String TRIGGERS_ROUTE = "triggers";
     private static final String RANGE_PROFILE_ROUTE = "range";
 
-    private static final String MAX_SIZE_ROUTE = "max-size";
     private static final String MIN_SIZE_ROUTE = "min-size";
+    private static final String MAX_SIZE_ROUTE = "max-size";
     private static final String DENSITY_ROUTE = "density";
     private static final String GROWTH_ROUTE = "growth";
     private static final String GROWTH_INTERVAL_ROUTE = "growth-interval";
-    private static final String MAX_DURATION_ROUTE = "max-duration";
     private static final String MIN_DURATION_ROUTE = "min-duration";
+    private static final String MAX_DURATION_ROUTE = "max-duration";
     private static final String ACTIVATION_SOUNDS_ROUTE = "activation-sounds";
 
     private static final String POWER_ROUTE = "power";
@@ -77,13 +78,13 @@ public class ItemEffectSpecLoader {
         String triggersRoute = this.createRoute(baseRoute, TRIGGERS_ROUTE);
         String rangeProfileRoute = this.createRoute(baseRoute, RANGE_PROFILE_ROUTE);
 
-        String maxSizeRoute = this.createRoute(baseRoute, MAX_SIZE_ROUTE);
         String minSizeRoute = this.createRoute(baseRoute, MIN_SIZE_ROUTE);
+        String maxSizeRoute = this.createRoute(baseRoute, MAX_SIZE_ROUTE);
         String densityRoute = this.createRoute(baseRoute, DENSITY_ROUTE);
         String growthRoute = this.createRoute(baseRoute, GROWTH_ROUTE);
         String growthIntervalRoute = this.createRoute(baseRoute, GROWTH_INTERVAL_ROUTE);
-        String maxDurationRoute = this.createRoute(baseRoute, MAX_DURATION_ROUTE);
         String minDurationRoute = this.createRoute(baseRoute, MIN_DURATION_ROUTE);
+        String maxDurationRoute = this.createRoute(baseRoute, MAX_DURATION_ROUTE);
         String activationSoundsRoute = this.createRoute(baseRoute, ACTIVATION_SOUNDS_ROUTE);
 
         String powerRoute = this.createRoute(baseRoute, POWER_ROUTE);
@@ -116,15 +117,16 @@ public class ItemEffectSpecLoader {
             rangeProfileSpec = rangeProfileSpecLoader.loadSpec(rangeProfileRoute);
         }
 
+        Double minSize = new FieldSpecResolver<Double>()
+                .route(minSizeRoute)
+                .value(yamlReader.getOptionalDouble(minSizeRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "SMOKE_SCREEN")))
+                .resolve();
         Double maxSize = new FieldSpecResolver<Double>()
                 .route(maxSizeRoute)
                 .value(yamlReader.getOptionalDouble(maxSizeRoute).orElse(null))
                 .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "SMOKE_SCREEN")))
-                .resolve();
-        Double minSize = new FieldSpecResolver<Double>()
-                .route(minSizeRoute)
-                .value(yamlReader.getOptionalDouble(minSizeRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, "SMOKE_SCREEN"))
+                .validate(new GreaterThanOrEqualToFieldValidator<>(minSizeRoute, minSize))
                 .resolve();
         Double density = new FieldSpecResolver<Double>()
                 .route(densityRoute)
@@ -141,15 +143,16 @@ public class ItemEffectSpecLoader {
                 .value(yamlReader.getOptionalLong(growthIntervalRoute).orElse(null))
                 .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "SMOKE_SCREEN")))
                 .resolve();
-        Long maxDuration = new FieldSpecResolver<Long>()
-                .route(maxDurationRoute)
-                .value(yamlReader.getOptionalLong(maxDurationRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSITON", "GUN_FIRE_SIMULATION", "SMOKE_SCREEN")))
-                .resolve();
         Long minDuration = new FieldSpecResolver<Long>()
                 .route(minDurationRoute)
                 .value(yamlReader.getOptionalLong(minDurationRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSITON", "GUN_FIRE_SIMULATION", "SMOKE_SCREEN")))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "GUN_FIRE_SIMULATION", "SMOKE_SCREEN")))
+                .resolve();
+        Long maxDuration = new FieldSpecResolver<Long>()
+                .route(maxDurationRoute)
+                .value(yamlReader.getOptionalLong(maxDurationRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COMBUSTION", "GUN_FIRE_SIMULATION", "SMOKE_SCREEN")))
+                .validate(new GreaterThanOrEqualToFieldValidator<>(minDurationRoute, minDuration))
                 .resolve();
         String activationSounds = new FieldSpecResolver<String>()
                 .route(activationSoundsRoute)
@@ -188,7 +191,7 @@ public class ItemEffectSpecLoader {
             activationPatternSpec = activationPatternSpecLoader.loadSpec(activationPatternRoute);
         }
 
-        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, maxSize, minSize, density, growth, growthInterval, maxDuration, minDuration, activationSounds, power, damageBlocks, spreadFire, particleEffectSpec, potionEffectSpec, activationPatternSpec);
+        return new ItemEffectSpec(type, triggerSpecs, rangeProfileSpec, minSize, maxSize, density, growth, growthInterval, minDuration, maxDuration, activationSounds, power, damageBlocks, spreadFire, particleEffectSpec, potionEffectSpec, activationPatternSpec);
     }
 
     @NotNull

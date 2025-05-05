@@ -27,13 +27,13 @@ public class ItemEffectSpecLoaderTest {
         TriggerSpec triggerSpec = new TriggerSpec("ACTIVATOR", null, null, null);
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 
-        Double maxSize = 2.0;
         Double minSize = 1.0;
+        Double maxSize = 2.0;
         Double density = 5.0;
         Double growth = 0.1;
         Long growthInterval = 1L;
-        Long maxDuration = 200L;
         Long minDuration = 100L;
+        Long maxDuration = 200L;
 
         Float power = 2.0f;
         Boolean damageBlocks = true;
@@ -41,20 +41,20 @@ public class ItemEffectSpecLoaderTest {
 
         ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
         PotionEffectSpec potionEffectSpec = new PotionEffectSpec("BLINDNESS", 100, 1, true, false, true);
-        ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 200L, 100L, 20L, 10L);
+        ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 100L, 200L, 10L, 20L);
 
         YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("base-route.type")).thenReturn(type);
         when(yamlReader.getRoutes("base-route.triggers")).thenReturn(triggerRoutes);
         when(yamlReader.contains("base-route.range")).thenReturn(true);
 
-        when(yamlReader.getOptionalDouble("base-route.max-size")).thenReturn(Optional.of(maxSize));
         when(yamlReader.getOptionalDouble("base-route.min-size")).thenReturn(Optional.of(minSize));
+        when(yamlReader.getOptionalDouble("base-route.max-size")).thenReturn(Optional.of(maxSize));
         when(yamlReader.getOptionalDouble("base-route.density")).thenReturn(Optional.of(density));
         when(yamlReader.getOptionalDouble("base-route.growth")).thenReturn(Optional.of(growth));
         when(yamlReader.getOptionalLong("base-route.growth-interval")).thenReturn(Optional.of(growthInterval));
-        when(yamlReader.getOptionalLong("base-route.max-duration")).thenReturn(Optional.of(maxDuration));
         when(yamlReader.getOptionalLong("base-route.min-duration")).thenReturn(Optional.of(minDuration));
+        when(yamlReader.getOptionalLong("base-route.max-duration")).thenReturn(Optional.of(maxDuration));
         when(yamlReader.getString("base-route.activation-sounds")).thenReturn(null);
 
         when(yamlReader.getOptionalFloat("base-route.power")).thenReturn(Optional.of(power));
@@ -83,13 +83,13 @@ public class ItemEffectSpecLoaderTest {
         assertThat(spec.triggers()).containsExactly(triggerSpec);
         assertThat(spec.rangeProfile()).isEqualTo(rangeProfileSpec);
 
-        assertThat(spec.maxSize()).isEqualTo(maxSize);
         assertThat(spec.minSize()).isEqualTo(minSize);
+        assertThat(spec.maxSize()).isEqualTo(maxSize);
         assertThat(spec.density()).isEqualTo(density);
         assertThat(spec.growth()).isEqualTo(growth);
         assertThat(spec.growthInterval()).isEqualTo(growthInterval);
-        assertThat(spec.maxDuration()).isEqualTo(maxDuration);
         assertThat(spec.minDuration()).isEqualTo(minDuration);
+        assertThat(spec.maxDuration()).isEqualTo(maxDuration);
         assertThat(spec.activationSounds()).isNull();
 
         assertThat(spec.power()).isEqualTo(power);
