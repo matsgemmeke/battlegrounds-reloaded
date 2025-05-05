@@ -64,7 +64,7 @@ public class SmokeScreenEffectTest {
 
     @Test
     public void activateCancelsTaskOnceSourceNoLongerExists() {
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
 
         when(source.exists()).thenReturn(false);
 
@@ -131,7 +131,7 @@ public class SmokeScreenEffectTest {
         when(source.getLocation()).thenReturn(sourceOldLocation, sourceOldLocation, sourceNewLocation);
         when(source.getWorld()).thenReturn(world);
 
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
 
         SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
         effect.addTrigger(trigger);
@@ -160,7 +160,7 @@ public class SmokeScreenEffectTest {
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 5.0, 5.0, 0.5,0.0, GROWTH_INTERVAL);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 5.0, 5.0, 0.5,0.0, GROWTH_INTERVAL);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
@@ -187,7 +187,7 @@ public class SmokeScreenEffectTest {
     public void activateDoesNotDisplaySphereParticleIfTheParticleLocationCausesCollision() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
 
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
@@ -217,7 +217,7 @@ public class SmokeScreenEffectTest {
     public void activateDoesNotDisplaySphereParticleIfTheParticleLocationHasNoLineOfSightToSource() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 200L, 100L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
+        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
 
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);

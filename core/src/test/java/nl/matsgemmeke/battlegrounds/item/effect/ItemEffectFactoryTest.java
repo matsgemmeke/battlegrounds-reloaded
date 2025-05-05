@@ -129,7 +129,7 @@ public class ItemEffectFactoryTest {
     @Test
     public void createInstanceForFlashEffectType() {
         PotionEffectSpec potionEffectSpec = new PotionEffectSpec("BLINDNESS", 100, 1, true, false, true);
-        ItemEffectSpec effectSpec = new ItemEffectSpec("FLASH", List.of(triggerSpec), null, 5.0, null, null, null, null, null, null, null, 2.0f, true, false, null, potionEffectSpec, null);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("FLASH", List.of(triggerSpec), null, null, 5.0, null, null, null, null, null, null, 2.0f, true, false, null, potionEffectSpec, null);
 
         TargetFinder targetFinder = mock(TargetFinder.class);
         when(contextProvider.getComponent(gameKey, TargetFinder.class)).thenReturn(targetFinder);
@@ -138,6 +138,7 @@ public class ItemEffectFactoryTest {
         ItemEffect itemEffect = factory.create(effectSpec, gameKey, null);
 
         assertThat(itemEffect).isInstanceOf(FlashEffect.class);
+
     }
 
     @Test
@@ -188,7 +189,7 @@ public class ItemEffectFactoryTest {
     @Test
     public void createInstanceForSmokeScreenEffectType() {
         ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("CAMPFIRE_COSY_SMOKE", 1, 0.1, 0.1, 0.1, 0.0, null);
-        ItemEffectSpec effectSpec = new ItemEffectSpec("SMOKE_SCREEN", List.of(triggerSpec), null, 5.0, 2.5, 5.0, 0.5, 5L, 200L, 100L, null, null, null, null, particleEffectSpec, null, null);
+        ItemEffectSpec effectSpec = new ItemEffectSpec("SMOKE_SCREEN", List.of(triggerSpec), null, 2.5, 5.0, 5.0, 0.5, 5L, 100L, 200L, null, null, null, null, particleEffectSpec, null, null);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
@@ -206,11 +207,11 @@ public class ItemEffectFactoryTest {
         verify(smokeScreenEffectFactory).create(propertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector));
 
         SmokeScreenProperties properties = propertiesCaptor.getValue();
-        assertThat(properties.maxDuration()).isEqualTo(effectSpec.maxDuration());
         assertThat(properties.minDuration()).isEqualTo(effectSpec.minDuration());
+        assertThat(properties.maxDuration()).isEqualTo(effectSpec.maxDuration());
         assertThat(properties.density()).isEqualTo(effectSpec.density());
-        assertThat(properties.maxSize()).isEqualTo(effectSpec.maxSize());
         assertThat(properties.minSize()).isEqualTo(effectSpec.minSize());
+        assertThat(properties.maxSize()).isEqualTo(effectSpec.maxSize());
         assertThat(properties.growth()).isEqualTo(effectSpec.growth());
         assertThat(properties.growthInterval()).isEqualTo(effectSpec.growthInterval());
         assertThat(properties.particleEffect().particle()).isEqualTo(Particle.CAMPFIRE_COSY_SMOKE);

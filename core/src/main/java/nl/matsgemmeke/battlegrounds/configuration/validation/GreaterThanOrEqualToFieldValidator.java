@@ -9,17 +9,22 @@ public class GreaterThanOrEqualToFieldValidator<T extends Comparable<T>> impleme
 
     @NotNull
     private final String fieldRoute;
-    @NotNull
+    @Nullable
     private final T fieldValue;
 
-    public GreaterThanOrEqualToFieldValidator(@NotNull String fieldRoute, @NotNull T fieldValue) {
+    public GreaterThanOrEqualToFieldValidator(@NotNull String fieldRoute, @Nullable T fieldValue) {
         this.fieldRoute = fieldRoute;
         this.fieldValue = fieldValue;
     }
 
     @NotNull
     public Optional<String> validate(@NotNull String route, @Nullable T value) {
-        if (value == null || value.compareTo(fieldValue) < 0) {
+        // Skip validation if either is missing
+        if (value == null || fieldValue == null) {
+            return Optional.empty();
+        }
+
+        if (value.compareTo(fieldValue) < 0) {
             return Optional.of("The value '%s' at route '%s' must be greater than or equal to the value '%s' at route '%s'".formatted(value, route, fieldValue, fieldRoute));
         }
 

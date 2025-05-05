@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.validation.GreaterThanOrEqualToFieldValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,19 +25,14 @@ public class ActivationPatternSpecLoader {
     @NotNull
     public ActivationPatternSpec loadSpec(@NotNull String baseRoute) {
         String burstIntervalRoute = this.createRoute(baseRoute, BURST_INTERVAL_ROUTE);
-        String maxBurstDurationRoute = this.createRoute(baseRoute, MAX_BURST_DURATION_ROUTE);
         String minBurstDurationRoute = this.createRoute(baseRoute, MIN_BURST_DURATION_ROUTE);
-        String maxDelayDurationRoute = this.createRoute(baseRoute, MAX_DELAY_DURATION_ROUTE);
+        String maxBurstDurationRoute = this.createRoute(baseRoute, MAX_BURST_DURATION_ROUTE);
         String minDelayDurationRoute = this.createRoute(baseRoute, MIN_DELAY_DURATION_ROUTE);
+        String maxDelayDurationRoute = this.createRoute(baseRoute, MAX_DELAY_DURATION_ROUTE);
 
         Long burstInterval = new FieldSpecResolver<Long>()
                 .route(burstIntervalRoute)
                 .value(yamlReader.getOptionalLong(burstIntervalRoute).orElse(null))
-                .validate(new RequiredValidator<>())
-                .resolve();
-        Long maxBurstDuration = new FieldSpecResolver<Long>()
-                .route(maxBurstDurationRoute)
-                .value(yamlReader.getOptionalLong(maxBurstDurationRoute).orElse(null))
                 .validate(new RequiredValidator<>())
                 .resolve();
         Long minBurstDuration = new FieldSpecResolver<Long>()
@@ -44,18 +40,25 @@ public class ActivationPatternSpecLoader {
                 .value(yamlReader.getOptionalLong(minBurstDurationRoute).orElse(null))
                 .validate(new RequiredValidator<>())
                 .resolve();
-        Long maxDelayDuration = new FieldSpecResolver<Long>()
-                .route(maxDelayDurationRoute)
-                .value(yamlReader.getOptionalLong(maxDelayDurationRoute).orElse(null))
+        Long maxBurstDuration = new FieldSpecResolver<Long>()
+                .route(maxBurstDurationRoute)
+                .value(yamlReader.getOptionalLong(maxBurstDurationRoute).orElse(null))
                 .validate(new RequiredValidator<>())
+                .validate(new GreaterThanOrEqualToFieldValidator<>(minBurstDurationRoute, minBurstDuration))
                 .resolve();
         Long minDelayDuration = new FieldSpecResolver<Long>()
                 .route(minDelayDurationRoute)
                 .value(yamlReader.getOptionalLong(minDelayDurationRoute).orElse(null))
                 .validate(new RequiredValidator<>())
                 .resolve();
+        Long maxDelayDuration = new FieldSpecResolver<Long>()
+                .route(maxDelayDurationRoute)
+                .value(yamlReader.getOptionalLong(maxDelayDurationRoute).orElse(null))
+                .validate(new RequiredValidator<>())
+                .validate(new GreaterThanOrEqualToFieldValidator<>(minDelayDurationRoute, minDelayDuration))
+                .resolve();
 
-        return new ActivationPatternSpec(burstInterval, maxBurstDuration, minBurstDuration, maxDelayDuration, minDelayDuration);
+        return new ActivationPatternSpec(burstInterval, minBurstDuration, maxBurstDuration, minDelayDuration, maxDelayDuration);
     }
 
     @NotNull
