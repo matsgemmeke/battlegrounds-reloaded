@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -31,9 +32,11 @@ public class SmokeScreenEffectTest {
     private static final double PARTICLE_OFFSET_Y = 0.5;
     private static final double PARTICLE_OFFSET_Z = 0.5;
     private static final int PARTICLE_COUNT = 1;
+    private static final Material PARTICLE_BLOCK_DATA = null;
+    private static final Particle PARTICLE_TYPE = Particle.CAMPFIRE_SIGNAL_SMOKE;
+
     private static final List<GameSound> ACTIVATION_SOUNDS = Collections.emptyList();
     private static final long GROWTH_INTERVAL = 1L;
-    private static final Particle PARTICLE_TYPE = Particle.CAMPFIRE_SIGNAL_SMOKE;
 
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
@@ -49,7 +52,7 @@ public class SmokeScreenEffectTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
-        particleEffect = new ParticleEffect(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA, null);
+        particleEffect = new ParticleEffect(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA, PARTICLE_BLOCK_DATA);
         taskRunner = mock(TaskRunner.class);
         trigger = mock(Trigger.class);
 
@@ -177,7 +180,7 @@ public class SmokeScreenEffectTest {
         runnableCaptor.getValue().run();
 
         verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceLocation);
-        verify(world, times(2)).spawnParticle(eq(PARTICLE_TYPE), any(Location.class), eq(0), anyDouble(), anyDouble(), anyDouble(), eq(PARTICLE_EXTRA));
+        verify(world, times(2)).spawnParticle(eq(PARTICLE_TYPE), any(Location.class), eq(0), anyDouble(), anyDouble(), anyDouble(), eq(PARTICLE_EXTRA), eq(PARTICLE_BLOCK_DATA), eq(true));
     }
 
     @Test

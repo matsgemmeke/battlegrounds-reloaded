@@ -28,6 +28,7 @@ effect:
     duration: 100
     icon: false
     particles: true
+    type: BLINDNESS
   power: 1.0
   spread-fire: false
   trigger:

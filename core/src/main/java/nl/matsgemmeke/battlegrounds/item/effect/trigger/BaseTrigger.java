@@ -19,6 +19,6 @@ public abstract class BaseTrigger implements Trigger {
     }
 
     protected void notifyObservers() {
-        observers.forEach(observer -> observer.onActivate());
+        observers.forEach(TriggerObserver::onActivate);
     }
 }

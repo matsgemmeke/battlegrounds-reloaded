@@ -266,7 +266,7 @@ public class EquipmentFactory {
         DeploymentProperties deploymentProperties = new DeploymentProperties(activationSounds, destroyEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, activationDelay);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        ItemEffect effect = effectFactory.create(effectSpec, gameKey);
+        ItemEffect effect = effectFactory.create(effectSpec, gameKey, activator);
 
         return deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
     }

@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
@@ -78,8 +79,8 @@ public class SmokeScreenEffect extends BaseItemEffect {
     }
 
     private long getTotalDuration(long minDuration, long maxDuration) {
-        if (minDuration <= maxDuration) {
-            return maxDuration - minDuration;
+        if (minDuration == maxDuration) {
+            return minDuration;
         } else {
             return random.nextLong(properties.minDuration(), properties.maxDuration());
         }
@@ -145,8 +146,9 @@ public class SmokeScreenEffect extends BaseItemEffect {
                     && collisionDetector.hasLineOfSight(particleLocation, location)) {
                 Particle particle = properties.particleEffect().particle();
                 double extra = properties.particleEffect().extra();
+                Material data = properties.particleEffect().blockDataMaterial();
 
-                world.spawnParticle(particle, particleLocation, 0, offsetX, offsetY, offsetZ, extra);
+                world.spawnParticle(particle, particleLocation, 0, offsetX, offsetY, offsetZ, extra, data, true);
             }
         }
     }
