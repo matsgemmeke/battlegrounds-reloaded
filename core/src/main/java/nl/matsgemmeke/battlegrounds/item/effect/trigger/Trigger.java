@@ -1,29 +1,32 @@
 package nl.matsgemmeke.battlegrounds.item.effect.trigger;
 
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.jetbrains.annotations.NotNull;
 
 public interface Trigger {
 
+    /**
+     * Activates the trigger, so it start monitoring the given {@link TriggerContext}.
+     *
+     * @param context the trigger context
+     */
+    void activate(@NotNull TriggerContext context);
+
+    /**
+     * Adds an observer to the trigger that gets notified when the trigger executes.
+     *
+     * @param observer the observer function
+     */
     void addObserver(@NotNull TriggerObserver observer);
 
     /**
-     * Cancels the trigger.
+     * Deactivates the trigger and cancels the monitoring.
      */
-    void cancel();
+    void deactivate();
 
     /**
-     * Gets whether the trigger system is primed.
+     * Gets whether the trigger system is currently activated and monitoring.
      *
-     * @return whether the trigger is primed
+     * @return whether the trigger is activated
      */
-    boolean isPrimed();
-
-    /**
-     * Activates the trigger process for the provided {@link ItemEffectContext}.
-     *
-     * @param context the item effect context
-     */
-    void prime(@NotNull ItemEffectContext context);
+    boolean isActivated();
 }

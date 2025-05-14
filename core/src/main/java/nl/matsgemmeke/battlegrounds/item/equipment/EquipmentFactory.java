@@ -132,6 +132,7 @@ public class EquipmentFactory {
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
 
+        Activator activator = null;
         ItemStackSpec activatorItemSpec = spec.activatorItem();
         ItemStackSpec throwItemSpec = spec.throwItem();
 
@@ -144,7 +145,7 @@ public class EquipmentFactory {
             activatorItemTemplate.setDamage(activatorItemSpec.damage());
             activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorItemSpec.displayName()));
 
-            DefaultActivator activator = new DefaultActivator(activatorItemTemplate);
+            activator = new DefaultActivator(activatorItemTemplate);
             equipment.setActivator(activator);
         }
 
@@ -163,7 +164,7 @@ public class EquipmentFactory {
         ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controls(), spec.deployment(), equipment, gameKey);
         equipment.setControls(controls);
 
-        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deployment(), spec.effect(), gameKey, equipment.getActivator());
+        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deployment(), spec.effect(), gameKey, activator);
         equipment.setDeploymentHandler(deploymentHandler);
 
         // Setting the projectile properties
@@ -249,12 +250,12 @@ public class EquipmentFactory {
         boolean removeOnDestroy = deploymentSpec.removeOnDestroy();
         boolean resetEffectOnDestroy = deploymentSpec.resetEffectOnDestroy();
 
-        List<GameSound> activationSounds = Collections.emptyList();
-        long activationDelay = 0L;
+        List<GameSound> manualActivationSounds = Collections.emptyList();
+        long manualActivationDelay = 0L;
 
         if (deploymentSpec.manualActivation() != null) {
-            activationSounds = DefaultGameSound.parseSounds(deploymentSpec.manualActivation().activationSounds());
-            activationDelay = deploymentSpec.manualActivation().activationDelay();
+            manualActivationSounds = DefaultGameSound.parseSounds(deploymentSpec.manualActivation().sounds());
+            manualActivationDelay = deploymentSpec.manualActivation().delay();
         }
 
         ParticleEffect destroyEffect = null;
@@ -263,11 +264,14 @@ public class EquipmentFactory {
             destroyEffect = particleEffectMapper.map(deploymentSpec.destroyEffect());
         }
 
-        DeploymentProperties deploymentProperties = new DeploymentProperties(activationSounds, destroyEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, activationDelay);
+        DeploymentProperties deploymentProperties = new DeploymentProperties(manualActivationSounds, destroyEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, manualActivationDelay);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        ItemEffect effect = effectFactory.create(effectSpec, gameKey, activator);
+        ItemEffect effect = effectFactory.create(effectSpec, gameKey);
 
-        return deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
+        deploymentHandler.setActivator(activator);
+
+        return deploymentHandler;
     }
 }

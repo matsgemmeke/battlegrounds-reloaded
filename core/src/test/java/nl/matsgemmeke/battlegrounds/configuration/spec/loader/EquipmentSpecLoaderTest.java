@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class EquipmentSpecLoaderTest {
 
     @Test
-    public void createSpecReturnsGunSpecContainingValuesFromYamlReader() {
+    public void createSpecReturnsEquipmentSpecContainingValuesFromYamlReader() {
         String name = "Test Equipment";
 
         String displayItemMaterial = "SHEARS";
@@ -48,8 +48,8 @@ public class EquipmentSpecLoaderTest {
         String placeMaterial = "STICK";
         Long placeCooldown = 40L;
 
-        Long activationDelay = 5L;
-        String activationSounds = "UI_BUTTON_CLICK-1-1-0";
+        Long manualActivationDelay = 5L;
+        String manualActivationSounds = "UI_BUTTON_CLICK-1-1-0";
 
         TriggerSpec triggerSpec = new TriggerSpec("TIMED", 3.0, 5L, 20L);
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(35.0, 10.0, 25.0, 20.0, 15.0, 30.0);
@@ -95,8 +95,8 @@ public class EquipmentSpecLoaderTest {
         when(yamlReader.contains("deploy.on-destroy.particle-effect")).thenReturn(true);
 
         when(yamlReader.contains("deploy.manual-activation")).thenReturn(true);
-        when(yamlReader.getOptionalLong("deploy.manual-activation.activation-delay")).thenReturn(Optional.of(activationDelay));
-        when(yamlReader.getString("deploy.manual-activation.activation-sounds")).thenReturn(activationSounds);
+        when(yamlReader.getOptionalLong("deploy.manual-activation.delay")).thenReturn(Optional.of(manualActivationDelay));
+        when(yamlReader.getString("deploy.manual-activation.sounds")).thenReturn(manualActivationSounds);
 
         when(yamlReader.contains("deploy.throwing")).thenReturn(true);
         when(yamlReader.getString("deploy.throwing.throw-sounds")).thenReturn(null);
@@ -162,8 +162,8 @@ public class EquipmentSpecLoaderTest {
         assertThat(spec.deployment().placeProperties().cooldown()).isEqualTo(placeCooldown);
 
         assertThat(spec.deployment().manualActivation()).isNotNull();
-        assertThat(spec.deployment().manualActivation().activationDelay()).isEqualTo(activationDelay);
-        assertThat(spec.deployment().manualActivation().activationSounds()).isEqualTo(activationSounds);
+        assertThat(spec.deployment().manualActivation().delay()).isEqualTo(manualActivationDelay);
+        assertThat(spec.deployment().manualActivation().sounds()).isEqualTo(manualActivationSounds);
 
         assertThat(spec.effect()).isEqualTo(effectSpec);
     }

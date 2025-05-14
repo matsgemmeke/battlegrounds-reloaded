@@ -7,8 +7,8 @@ controls:
 deploy:
   health: 50.0
   manual-activation:
-    activation-delay: 5
-    activation-sounds: UI_BUTTON_CLICK-1-1.5-0
+    delay: 5
+    sounds: UI_BUTTON_CLICK-1-1.5-0
   on-destroy:
     activate: false
     remove: true

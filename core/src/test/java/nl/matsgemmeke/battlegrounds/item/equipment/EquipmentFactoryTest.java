@@ -20,7 +20,6 @@ import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
@@ -126,7 +125,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect(), gameKey, null)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -155,7 +154,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(controlsSpec), eq(deploymentSpec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(eq(effectSpec), eq(gameKey), any(Activator.class))).thenReturn(itemEffect);
+        when(effectFactory.create(effectSpec, gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -184,7 +183,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(controlsSpec), eq(deploymentSpec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSpec, gameKey, null)).thenReturn(itemEffect);
+        when(effectFactory.create(effectSpec, gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -215,7 +214,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect effect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSpec, gameKey, null)).thenReturn(effect);
+        when(effectFactory.create(effectSpec, gameKey)).thenReturn(effect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
@@ -226,7 +225,7 @@ public class EquipmentFactoryTest {
         ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
         verify(deploymentHandlerFactory).create(deploymentPropertiesCaptor.capture(), eq(audioEmitter), eq(effect));
 
-        assertThat(deploymentPropertiesCaptor.getValue().activationDelay()).isEqualTo(manualActivationSpec.activationDelay());
+        assertThat(deploymentPropertiesCaptor.getValue().manualActivationDelay()).isEqualTo(manualActivationSpec.delay());
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
     }
 
@@ -244,7 +243,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect effect = mock(ItemEffect.class);
-        when(effectFactory.create(effectSpec, gameKey, null)).thenReturn(effect);
+        when(effectFactory.create(effectSpec, gameKey)).thenReturn(effect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
@@ -296,7 +295,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect(), gameKey, null)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -337,7 +336,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect(), gameKey, null)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -380,7 +379,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect(), gameKey, null)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -435,7 +434,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect(), gameKey, null)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -472,7 +471,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec.controls()), eq(spec.deployment()), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect(), gameKey, null)).thenReturn(itemEffect);
+        when(effectFactory.create(spec.effect(), gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);

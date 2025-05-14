@@ -3,10 +3,9 @@ package nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
@@ -37,70 +36,67 @@ public class EnemyProximityTriggerTest {
     }
 
     @Test
-    public void isPrimedReturnsFalseWhenTriggerIsNotPrimed() {
+    public void isActivatedReturnsFalseWhenNotActivated() {
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(taskRunner, targetFinder, CHECKING_RANGE, PERIOD_BETWEEN_CHECKS);
-        boolean primed = trigger.isPrimed();
+        boolean activated = trigger.isActivated();
 
-        assertThat(primed).isFalse();
+        assertThat(activated).isFalse();
     }
 
     @Test
-    public void isPrimedReturnsTrueWhenTriggerIsPrimed() {
-        Deployer deployer = mock(Deployer.class);
+    public void isActivatedReturnsTrueWhenActivated() {
         Entity entity = mock(Entity.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
+        TriggerTarget target = mock(TriggerTarget.class);
+        TriggerContext context = new TriggerContext(entity, target);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(taskRunner, targetFinder, CHECKING_RANGE, PERIOD_BETWEEN_CHECKS);
-        trigger.prime(context);
-        boolean primed = trigger.isPrimed();
+        trigger.activate(context);
+        boolean activated = trigger.isActivated();
 
-        assertThat(primed).isTrue();
+        assertThat(activated).isTrue();
     }
 
     @Test
-    public void cancelDoesNotCancelTriggerCheckIfNotActivated() {
+    public void deactivateDoesNotCancelTriggerCheckWhenNotActivated() {
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(taskRunner, targetFinder, CHECKING_RANGE, PERIOD_BETWEEN_CHECKS);
 
-        assertThatCode(trigger::cancel).doesNotThrowAnyException();
+        assertThatCode(trigger::deactivate).doesNotThrowAnyException();
     }
 
     @Test
-    public void cancelCancelsTriggerCheck() {
-        Deployer deployer = mock(Deployer.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
+    public void deactivateCancelsTriggerCheckWhenActivated() {
+        TriggerTarget target = mock(TriggerTarget.class);
         UUID entityId = UUID.randomUUID();
 
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
+        TriggerContext context = new TriggerContext(entity, target);
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(taskRunner, targetFinder, CHECKING_RANGE, PERIOD_BETWEEN_CHECKS);
-        trigger.prime(context);
-        trigger.cancel();
+        trigger.activate(context);
+        trigger.deactivate();
 
         verify(task).cancel();
     }
 
     @Test
-    public void primeStartRunnableThatStopsCheckingOnceSourceNoLongerExists() {
+    public void activateStartsRunnableThatStopsCheckingOnceSourceNoLongerExists() {
         BukkitTask task = mock(BukkitTask.class);
-        Deployer deployer = mock(Deployer.class);
         Entity entity = mock(Entity.class);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.exists()).thenReturn(false);
+        TriggerTarget target = mock(TriggerTarget.class);
+        when(target.exists()).thenReturn(false);
 
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
+        TriggerContext context = new TriggerContext(entity, target);
 
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(taskRunner, targetFinder, CHECKING_RANGE, PERIOD_BETWEEN_CHECKS);
-        trigger.prime(context);
+        trigger.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -111,27 +107,25 @@ public class EnemyProximityTriggerTest {
     }
 
     @Test
-    public void primeStartsRunnableThatDoesNothingInCurrentCheckWhenNoEnemyTargetsAreInsideCheckingRange() {
+    public void activateStartsRunnableThatDoesNothingInCurrentCheckWhenNoEnemyTargetsAreInsideCheckingRange() {
         BukkitTask task = mock(BukkitTask.class);
-        Deployer deployer = mock(Deployer.class);
+        Location targetLocation = new Location(null, 1, 1, 1);
         UUID entityId = UUID.randomUUID();
 
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        Location sourceLocation = new Location(null, 1, 1, 1);
+        TriggerTarget target = mock(TriggerTarget.class);
+        when(target.exists()).thenReturn(true);
+        when(target.getLocation()).thenReturn(targetLocation);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
+        TriggerContext context = new TriggerContext(entity, target);
 
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
-
-        when(targetFinder.findEnemyTargets(entityId, sourceLocation, CHECKING_RANGE)).thenReturn(Collections.emptyList());
+        when(targetFinder.findEnemyTargets(entityId, targetLocation, CHECKING_RANGE)).thenReturn(Collections.emptyList());
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(taskRunner, targetFinder, CHECKING_RANGE, PERIOD_BETWEEN_CHECKS);
-        trigger.prime(context);
+        trigger.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -142,29 +136,27 @@ public class EnemyProximityTriggerTest {
     }
 
     @Test
-    public void primeStartsRunnableThatNotifiesObserversWhenEnemyTargetsAreInsideCheckingRange() {
+    public void activateStartsRunnableThatNotifiesObserversWhenEnemyTargetsAreInsideCheckingRange() {
         BukkitTask task = mock(BukkitTask.class);
-        Deployer deployer = mock(Deployer.class);
+        Location targetLocation = new Location(null, 1, 1, 1);
         TriggerObserver observer = mock(TriggerObserver.class);
         UUID entityId = UUID.randomUUID();
 
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        Location sourceLocation = new Location(null, 1, 1, 1);
+        TriggerTarget target = mock(TriggerTarget.class);
+        when(target.exists()).thenReturn(true);
+        when(target.getLocation()).thenReturn(targetLocation);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
+        TriggerContext context = new TriggerContext(entity, target);
 
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
-
-        when(targetFinder.findEnemyTargets(entityId, sourceLocation, CHECKING_RANGE)).thenReturn(List.of(mock(GameEntity.class)));
+        when(targetFinder.findEnemyTargets(entityId, targetLocation, CHECKING_RANGE)).thenReturn(List.of(mock(GameEntity.class)));
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(taskRunner, targetFinder, CHECKING_RANGE, PERIOD_BETWEEN_CHECKS);
         trigger.addObserver(observer);
-        trigger.prime(context);
+        trigger.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());

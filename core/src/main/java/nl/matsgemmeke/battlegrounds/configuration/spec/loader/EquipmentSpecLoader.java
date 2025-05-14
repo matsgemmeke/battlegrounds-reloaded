@@ -56,9 +56,9 @@ public class EquipmentSpecLoader {
     private static final String PLACE_SOUNDS_ROUTE = "deploy.placing.place-sounds";
     private static final String PLACE_COOLDOWN_ROUTE = "deploy.placing.cooldown";
 
-    private static final String ACTIVATION_PROPERTIES_ROUTE = "deploy.manual-activation";
-    private static final String ACTIVATION_DELAY_ROUTE = "deploy.manual-activation.activation-delay";
-    private static final String ACTIVATION_SOUNDS_ROUTE = "deploy.manual-activation.activation-sounds";
+    private static final String MANUAL_ACTIVATION_PROPERTIES_ROUTE = "deploy.manual-activation";
+    private static final String MANUAL_ACTIVATION_DELAY_ROUTE = "deploy.manual-activation.delay";
+    private static final String MANUAL_ACTIVATION_SOUNDS_ROUTE = "deploy.manual-activation.sounds";
 
     private static final String EFFECT_ROUTE = "effect";
 
@@ -217,15 +217,15 @@ public class EquipmentSpecLoader {
 
         ManualActivationSpec manualActivationSpec = null;
 
-        if (yamlReader.contains(ACTIVATION_PROPERTIES_ROUTE)) {
+        if (yamlReader.contains(MANUAL_ACTIVATION_PROPERTIES_ROUTE)) {
             Long activationDelay = new FieldSpecResolver<Long>()
-                    .route(ACTIVATION_DELAY_ROUTE)
-                    .value(yamlReader.getOptionalLong(ACTIVATION_DELAY_ROUTE).orElse(null))
+                    .route(MANUAL_ACTIVATION_DELAY_ROUTE)
+                    .value(yamlReader.getOptionalLong(MANUAL_ACTIVATION_DELAY_ROUTE).orElse(null))
                     .validate(new RequiredValidator<>())
                     .resolve();
             String activationSounds = new FieldSpecResolver<String>()
-                    .route(ACTIVATION_SOUNDS_ROUTE)
-                    .value(yamlReader.getString(ACTIVATION_SOUNDS_ROUTE))
+                    .route(MANUAL_ACTIVATION_SOUNDS_ROUTE)
+                    .value(yamlReader.getString(MANUAL_ACTIVATION_SOUNDS_ROUTE))
                     .resolve();
 
             manualActivationSpec = new ManualActivationSpec(activationDelay, activationSounds);

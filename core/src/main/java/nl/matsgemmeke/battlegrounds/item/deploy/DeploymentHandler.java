@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class DeploymentHandler {
 
+    @Nullable
+    private Activator activator;
     @NotNull
     private final AudioEmitter audioEmitter;
     private boolean deployed;
@@ -46,16 +49,25 @@ public class DeploymentHandler {
     }
 
     @Nullable
+    public Activator getActivator() {
+        return activator;
+    }
+
+    public void setActivator(@Nullable Activator activator) {
+        this.activator = activator;
+    }
+
+    @Nullable
     public DeploymentObject getDeploymentObject() {
         return deploymentObject;
     }
 
     public void activateDeployment(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
-        audioEmitter.playSounds(deploymentProperties.activationSounds(), deployerEntity.getLocation());
+        audioEmitter.playSounds(deploymentProperties.manualActivationSounds(), deployerEntity.getLocation());
 
         deployer.setHeldItem(null);
 
-        taskRunner.runTaskLater(effect::activateInstantly, deploymentProperties.activationDelay());
+        taskRunner.runTaskLater(effect::activateInstantly, deploymentProperties.manualActivationDelay());
     }
 
     public void destroyDeployment() {
@@ -97,6 +109,10 @@ public class DeploymentHandler {
             effect.prime(new ItemEffectContext(deployer, deployerEntity, deploymentObject));
         } else {
             effect.deploy(deploymentObject);
+        }
+
+        if (activator != null) {
+            activator.prepare(deployer);
         }
 
         if (deploymentObject.isDeployed()) {

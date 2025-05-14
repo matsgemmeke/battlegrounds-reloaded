@@ -38,7 +38,6 @@ import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemEffectFactory {
@@ -73,7 +72,7 @@ public class ItemEffectFactory {
         this.triggerFactory = triggerFactory;
     }
 
-    public ItemEffect create(@NotNull ItemEffectSpec spec, @NotNull GameKey gameKey, @Nullable Activator activator) {
+    public ItemEffect create(@NotNull ItemEffectSpec spec, @NotNull GameKey gameKey) {
         ItemEffect itemEffect;
         ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.type());
 
@@ -171,7 +170,7 @@ public class ItemEffectFactory {
         }
 
         for (TriggerSpec triggerSpec : spec.triggers()) {
-            Trigger trigger = triggerFactory.create(triggerSpec, gameKey, activator);
+            Trigger trigger = triggerFactory.create(triggerSpec, gameKey);
 
             itemEffect.addTrigger(trigger);
         }

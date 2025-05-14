@@ -66,6 +66,11 @@ public class YamlReader {
     }
 
     @NotNull
+    public Optional<List<Long>> getOptionalLongList(@NotNull String route) {
+        return document.getOptionalLongList(route);
+    }
+
+    @NotNull
     public Set<String> getRoutes(@NotNull String route) {
         if (!document.contains(route)) {
             return Collections.emptySet();
