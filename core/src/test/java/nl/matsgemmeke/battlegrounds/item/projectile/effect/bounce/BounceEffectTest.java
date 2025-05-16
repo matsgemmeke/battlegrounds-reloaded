@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;

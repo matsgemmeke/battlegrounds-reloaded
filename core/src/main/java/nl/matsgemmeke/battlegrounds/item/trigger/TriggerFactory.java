@@ -1,13 +1,13 @@
-package nl.matsgemmeke.battlegrounds.item.effect.trigger;
+package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy.EnemyProximityTriggerFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.floor.FloorHitTriggerFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.timed.TimedTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.effect.trigger.timed;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTrigger;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;

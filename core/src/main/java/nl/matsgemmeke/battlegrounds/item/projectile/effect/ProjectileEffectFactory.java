@@ -10,8 +10,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
@@ -21,6 +19,8 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFact
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

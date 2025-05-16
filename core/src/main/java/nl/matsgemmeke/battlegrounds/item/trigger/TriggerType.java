@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect.trigger;
+package nl.matsgemmeke.battlegrounds.item.trigger;
 
 public enum TriggerType {
 

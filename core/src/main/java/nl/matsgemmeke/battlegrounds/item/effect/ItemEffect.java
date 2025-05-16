@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import org.jetbrains.annotations.NotNull;
 
 public interface ItemEffect {

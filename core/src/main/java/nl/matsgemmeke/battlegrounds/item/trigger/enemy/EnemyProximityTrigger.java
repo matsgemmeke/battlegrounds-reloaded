@@ -1,13 +1,13 @@
-package nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy;
+package nl.matsgemmeke.battlegrounds.item.trigger.enemy;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.BaseTrigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.BaseTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 

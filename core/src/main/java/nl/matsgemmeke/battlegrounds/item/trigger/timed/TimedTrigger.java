@@ -1,10 +1,10 @@
-package nl.matsgemmeke.battlegrounds.item.effect.trigger.timed;
+package nl.matsgemmeke.battlegrounds.item.trigger.timed;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.BaseTrigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.BaseTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

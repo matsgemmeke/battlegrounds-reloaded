@@ -1,11 +1,11 @@
-package nl.matsgemmeke.battlegrounds.item.effect.trigger.floor;
+package nl.matsgemmeke.battlegrounds.item.trigger.floor;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.BaseTrigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.BaseTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;

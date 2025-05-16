@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect.trigger;
+package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
