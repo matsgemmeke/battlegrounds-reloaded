@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
@@ -56,8 +55,6 @@ public class EquipmentFactory {
     private final ParticleEffectMapper particleEffectMapper;
     @NotNull
     private final ProjectileEffectFactory projectileEffectFactory;
-    @NotNull
-    private final TaskRunner taskRunner;
 
     @Inject
     public EquipmentFactory(
@@ -67,8 +64,7 @@ public class EquipmentFactory {
             @NotNull ItemEffectFactory effectFactory,
             @NotNull NamespacedKeyCreator keyCreator,
             @NotNull ParticleEffectMapper particleEffectMapper,
-            @NotNull ProjectileEffectFactory projectileEffectFactory,
-            @NotNull TaskRunner taskRunner
+            @NotNull ProjectileEffectFactory projectileEffectFactory
     ) {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.contextProvider = contextProvider;
@@ -77,7 +73,6 @@ public class EquipmentFactory {
         this.keyCreator = keyCreator;
         this.particleEffectMapper = particleEffectMapper;
         this.projectileEffectFactory = projectileEffectFactory;
-        this.taskRunner = taskRunner;
     }
 
     @NotNull
