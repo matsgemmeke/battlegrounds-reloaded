@@ -1,6 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
@@ -11,20 +14,26 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 public class BounceEffect implements ProjectileEffect {
 
     private static final double RAY_TRACE_MAX_DISTANCE = 1.0;
 
     @NotNull
-    private BounceProperties properties;
+    private final BounceProperties properties;
+    @NotNull
+    private final Set<Trigger> triggers;
+    @NotNull
+    private final TaskRunner taskRunner;
     private BukkitTask task;
     private int bounces;
-    @NotNull
-    private TaskRunner taskRunner;
 
-    public BounceEffect(@NotNull TaskRunner taskRunner, @NotNull BounceProperties properties) {
+    @Inject
+    public BounceEffect(@NotNull TaskRunner taskRunner, @Assisted @NotNull BounceProperties properties, @Assisted @NotNull Set<Trigger> triggers) {
         this.taskRunner = taskRunner;
         this.properties = properties;
+        this.triggers = triggers;
     }
 
     public void onLaunch(@NotNull Projectile projectile) {

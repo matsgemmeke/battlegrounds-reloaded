@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class StickEffectTest {
 
     private static final List<GameSound> STICK_SOUNDS = Collections.emptyList();
-    private static final long CHECK_DELAY = 0L;
+    private static final long CHECK_DELAY = 1L;
     private static final long CHECK_PERIOD = 1L;
 
     private AudioEmitter audioEmitter;
@@ -32,7 +32,7 @@ public class StickEffectTest {
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        properties = new StickProperties(STICK_SOUNDS, CHECK_DELAY, CHECK_PERIOD);
+        properties = new StickProperties(STICK_SOUNDS);
         taskRunner = mock(TaskRunner.class);
     }
 
@@ -44,7 +44,7 @@ public class StickEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        StickEffect effect = new StickEffect(audioEmitter, taskRunner, properties);
+        StickEffect effect = new StickEffect(taskRunner, properties, audioEmitter);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -75,7 +75,7 @@ public class StickEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        StickEffect effect = new StickEffect(audioEmitter, taskRunner, properties);
+        StickEffect effect = new StickEffect(taskRunner, properties, audioEmitter);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -108,7 +108,7 @@ public class StickEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        StickEffect effect = new StickEffect(audioEmitter, taskRunner, properties);
+        StickEffect effect = new StickEffect(taskRunner, properties, audioEmitter);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);

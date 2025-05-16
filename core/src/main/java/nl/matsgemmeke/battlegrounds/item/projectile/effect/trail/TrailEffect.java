@@ -1,30 +1,38 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.trail;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
+import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 public class TrailEffect implements ProjectileEffect {
 
-    private BukkitTask task;
-    @NotNull
-    private TaskRunner taskRunner;
-    @NotNull
-    private TrailProperties properties;
+    private static final long RUNNABLE_PERIOD = 1L;
 
-    public TrailEffect(@NotNull TaskRunner taskRunner, @NotNull TrailProperties properties) {
+    @NotNull
+    private final ParticleEffectSpawner particleEffectSpawner;
+    @NotNull
+    private final TaskRunner taskRunner;
+    @NotNull
+    private final TrailProperties properties;
+    private BukkitTask task;
+
+    @Inject
+    public TrailEffect(@NotNull ParticleEffectSpawner particleEffectSpawner, @NotNull TaskRunner taskRunner, @Assisted @NotNull TrailProperties properties) {
+        this.particleEffectSpawner = particleEffectSpawner;
         this.taskRunner = taskRunner;
         this.properties = properties;
     }
 
     @Override
     public void onLaunch(@NotNull Projectile projectile) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.checkDelay(), properties.checkPeriod());
+        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.delay(), RUNNABLE_PERIOD);
     }
 
     private void runCheck(@NotNull Projectile projectile) {
@@ -33,15 +41,9 @@ public class TrailEffect implements ProjectileEffect {
             return;
         }
 
-        Particle particle = properties.particleEffect().type();
         Location location = projectile.getLocation();
-        int count = properties.particleEffect().count();
-        double offsetX = properties.particleEffect().offsetX();
-        double offsetY = properties.particleEffect().offsetY();
-        double offsetZ = properties.particleEffect().offsetZ();
-        double extra = properties.particleEffect().extra();
-
         World world = projectile.getWorld();
-        world.spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra);
+
+        particleEffectSpawner.spawnParticleEffect(properties.particleEffect(), world, location);
     }
 }

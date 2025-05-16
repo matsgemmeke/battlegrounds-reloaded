@@ -1,10 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.trail;
 
-import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+
+import java.util.List;
 
 public record TrailProperties(
-        @NotNull ParticleEffectProperties particleEffect,
-        long checkDelay,
-        long checkPeriod
-) {}
+        ParticleEffect particleEffect,
+        Long delay,
+        List<Long> intervals,
+        Integer maxActivations
+) { }

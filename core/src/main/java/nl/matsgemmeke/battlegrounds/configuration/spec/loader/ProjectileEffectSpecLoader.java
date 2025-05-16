@@ -24,6 +24,7 @@ public class ProjectileEffectSpecLoader {
     private static final String SOUNDS_ROUTE = "sounds";
     private static final String HORIZONTAL_FRICTION_ROUTE = "horizontal-friction";
     private static final String VERTICAL_FRICTION_ROUTE = "vertical-friction";
+    private static final String MAX_ACTIVATIONS_ROUTE = "max-activations";
     private static final String PARTICLE_EFFECT_ROUTE = "particle-effect";
     private static final String TRIGGERS_ROUTE = "triggers";
 
@@ -48,6 +49,7 @@ public class ProjectileEffectSpecLoader {
         String soundsRoute = this.createRoute(baseRoute, SOUNDS_ROUTE);
         String horizontalFrictionRoute = this.createRoute(baseRoute, HORIZONTAL_FRICTION_ROUTE);
         String verticalFrictionRoute = this.createRoute(baseRoute, VERTICAL_FRICTION_ROUTE);
+        String maxActivationsRoute = this.createRoute(baseRoute, MAX_ACTIVATIONS_ROUTE);
         String particleEffectRoute = this.createRoute(baseRoute, PARTICLE_EFFECT_ROUTE);
         String triggersRoute = this.createRoute(baseRoute, TRIGGERS_ROUTE);
 
@@ -81,6 +83,11 @@ public class ProjectileEffectSpecLoader {
                 .value(yamlReader.getOptionalDouble(verticalFrictionRoute).orElse(null))
                 .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, "BOUNCE"))
                 .resolve();
+        Integer maxActivations = new FieldSpecResolver<Integer>()
+                .route(maxActivationsRoute)
+                .value(yamlReader.getOptionalInt(maxActivationsRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("BOUNCE", "TRAIL")))
+                .resolve();
 
         ParticleEffectSpec particleEffectSpec = particleEffectSpecLoader.loadSpec(particleEffectRoute);
         List<TriggerSpec> triggerSpecs = new ArrayList<>();
@@ -92,7 +99,7 @@ public class ProjectileEffectSpecLoader {
             triggerSpecs.add(triggerSpec);
         }
 
-        return new ProjectileEffectSpec(type, delay, intervals, sounds, horizontalFriction, verticalFriction, particleEffectSpec, triggerSpecs);
+        return new ProjectileEffectSpec(type, delay, intervals, sounds, horizontalFriction, verticalFriction, maxActivations, particleEffectSpec, triggerSpecs);
     }
 
     @NotNull

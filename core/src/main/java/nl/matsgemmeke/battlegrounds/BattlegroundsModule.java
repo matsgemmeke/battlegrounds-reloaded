@@ -39,6 +39,15 @@ import nl.matsgemmeke.battlegrounds.item.effect.trigger.floor.FloorHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.floor.FloorHitTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.timed.TimedTrigger;
 import nl.matsgemmeke.battlegrounds.item.effect.trigger.timed.TimedTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
@@ -131,6 +140,19 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
                 .build(DefaultPlayerRegistryFactory.class));
+
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileEffect.class, BounceEffect.class)
+                .build(BounceEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileEffect.class, SoundEffect.class)
+                .build(SoundEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileEffect.class, StickEffect.class)
+                .build(StickEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileEffect.class, TrailEffect.class)
+                .build(TrailEffectFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(ReloadSystem.class, MagazineReloadSystem.class)

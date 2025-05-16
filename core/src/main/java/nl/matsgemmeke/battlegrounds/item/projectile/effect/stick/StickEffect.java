@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.stick;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
@@ -20,14 +22,15 @@ public class StickEffect implements ProjectileEffect {
     @NotNull
     private TaskRunner taskRunner;
 
-    public StickEffect(@NotNull AudioEmitter audioEmitter, @NotNull TaskRunner taskRunner, @NotNull StickProperties properties) {
-        this.audioEmitter = audioEmitter;
+    @Inject
+    public StickEffect(@NotNull TaskRunner taskRunner, @Assisted @NotNull StickProperties properties, @Assisted @NotNull AudioEmitter audioEmitter) {
         this.taskRunner = taskRunner;
         this.properties = properties;
+        this.audioEmitter = audioEmitter;
     }
 
     public void onLaunch(@NotNull Projectile projectile) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.checkDelay(), properties.checkPeriod());
+        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), 1L, 1L);
     }
 
     private void runCheck(@NotNull Projectile projectile) {

@@ -25,6 +25,7 @@ public class ProjectileEffectSpecLoaderTest {
         List<Long> intervals = List.of(2L, 4L, 6L);
         Double horizontalFriction = 3.0;
         Double verticalFriction = 2.0;
+        Integer maxActivations = 3;
         ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null);
         Set<String> triggerRoutes = Set.of("floor-hit");
         TriggerSpec triggerSpec = new TriggerSpec("FLOOR_HIT", null, 1L, null);
@@ -36,6 +37,7 @@ public class ProjectileEffectSpecLoaderTest {
         when(yamlReader.getString("base-route.sounds")).thenReturn(null);
         when(yamlReader.getOptionalDouble("base-route.horizontal-friction")).thenReturn(Optional.of(horizontalFriction));
         when(yamlReader.getOptionalDouble("base-route.vertical-friction")).thenReturn(Optional.of(verticalFriction));
+        when(yamlReader.getOptionalInt("base-route.max-activations")).thenReturn(Optional.of(maxActivations));
         when(yamlReader.getRoutes("base-route.triggers")).thenReturn(triggerRoutes);
 
         ParticleEffectSpecLoader particleEffectSpecLoader = mock(ParticleEffectSpecLoader.class);
@@ -53,6 +55,7 @@ public class ProjectileEffectSpecLoaderTest {
         assertThat(spec.sounds()).isNull();
         assertThat(spec.horizontalFriction()).isEqualTo(horizontalFriction);
         assertThat(spec.verticalFriction()).isEqualTo(verticalFriction);
+        assertThat(spec.maxActivations()).isEqualTo(maxActivations);
         assertThat(spec.particleEffect()).isEqualTo(particleEffectSpec);
         assertThat(spec.triggers()).containsExactly(triggerSpec);
     }

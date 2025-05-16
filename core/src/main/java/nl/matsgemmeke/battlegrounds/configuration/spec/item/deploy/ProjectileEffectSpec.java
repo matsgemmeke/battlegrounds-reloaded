@@ -19,6 +19,8 @@ import java.util.List;
  * @param horizontalFriction the amount of horizontal friction, will only be non-null when type equals to
  *                           {@code BOUNCE}
  * @param verticalFriction   the amount of vertical friction, will only be non-null when type equals to {@code BOUNCE}
+ * @param maxActivations     the maximum amount of times the projectile effect will activate, will only be non-null
+ *                           when type equals to {@code BOUNCE} or {@code TRAIL}
  * @param particleEffect     the particle effect used during the effect, will only be non-null when type equals to
  *                           {@code TRAIL}
  * @param triggers           the list of triggers used to activate the effect, will only be non-null when type equals
@@ -31,6 +33,7 @@ public record ProjectileEffectSpec(
         @Nullable String sounds,
         @Nullable Double horizontalFriction,
         @Nullable Double verticalFriction,
+        @Nullable Integer maxActivations,
         @Nullable ParticleEffectSpec particleEffect,
         @Nullable List<TriggerSpec> triggers
 ) { }
