@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
@@ -71,8 +70,8 @@ public class EquipmentFactory {
     }
 
     @NotNull
-    public Equipment create(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
-        Equipment equipment = this.createInstance(spec, configuration, gameKey);
+    public Equipment create(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey) {
+        Equipment equipment = this.createInstance(spec, gameKey);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
         equipmentRegistry.registerItem(equipment);
@@ -81,8 +80,8 @@ public class EquipmentFactory {
     }
 
     @NotNull
-    public Equipment create(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
-        Equipment equipment = this.createInstance(spec, configuration, gameKey);
+    public Equipment create(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+        Equipment equipment = this.createInstance(spec, gameKey);
         equipment.setHolder(gamePlayer);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
@@ -92,7 +91,7 @@ public class EquipmentFactory {
     }
 
     @NotNull
-    private Equipment createInstance(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
+    private Equipment createInstance(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey) {
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setName(spec.name());
         equipment.setDescription(spec.description());

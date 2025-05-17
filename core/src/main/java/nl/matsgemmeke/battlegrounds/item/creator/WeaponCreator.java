@@ -22,26 +22,23 @@ import java.util.stream.Stream;
 public class WeaponCreator {
 
     @NotNull
-    private EquipmentFactory equipmentFactory;
+    private final EquipmentFactory equipmentFactory;
     @NotNull
-    private FirearmFactory firearmFactory;
+    private final FirearmFactory firearmFactory;
     @NotNull
-    private Map<String, EquipmentSpec> equipmentSpecs;
-    private Map<String, ItemConfiguration> equipmentConfigurations;
+    private final Map<String, EquipmentSpec> equipmentSpecs;
     @NotNull
-    private Map<String, GunSpec> gunSpecs;
+    private final Map<String, GunSpec> gunSpecs;
 
     public WeaponCreator(@NotNull EquipmentFactory equipmentFactory, @NotNull FirearmFactory firearmFactory) {
         this.equipmentFactory = equipmentFactory;
         this.firearmFactory = firearmFactory;
         this.equipmentSpecs = new HashMap<>();
-        this.equipmentConfigurations = new HashMap<>();
         this.gunSpecs = new HashMap<>();
     }
 
-    public void addEquipmentSpec(@NotNull String id, @NotNull EquipmentSpec equipmentSpec, @NotNull ItemConfiguration configuration) {
+    public void addEquipmentSpec(@NotNull String id, @NotNull EquipmentSpec equipmentSpec) {
         equipmentSpecs.put(id, equipmentSpec);
-        equipmentConfigurations.put(id, configuration);
     }
 
     public void addGunSpec(@NotNull String id, @NotNull GunSpec spec) {
@@ -62,9 +59,8 @@ public class WeaponCreator {
     public Weapon createWeapon(@NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey, @NotNull String weaponId) {
         if (equipmentSpecs.containsKey(weaponId)) {
             EquipmentSpec spec = equipmentSpecs.get(weaponId);
-            ItemConfiguration configuration = equipmentConfigurations.get(weaponId);
 
-            return equipmentFactory.create(spec, configuration, gameKey, gamePlayer);
+            return equipmentFactory.create(spec, gameKey, gamePlayer);
         }
 
         if (gunSpecs.containsKey(weaponId)) {

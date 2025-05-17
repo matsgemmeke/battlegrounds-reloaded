@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
@@ -51,13 +49,11 @@ public class EquipmentFactoryTest {
     private EquipmentRegistry equipmentRegistry;
     private GameContextProvider contextProvider;
     private GameKey gameKey;
-    private ItemConfiguration configuration;
     private ItemEffectFactory effectFactory;
     private ItemFactory itemFactory;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
     private ParticleEffectMapper particleEffectMapper;
-    private Section rootSection;
 
     @BeforeEach
     public void setUp() {
@@ -66,7 +62,6 @@ public class EquipmentFactoryTest {
         controlsFactory = mock(EquipmentControlsFactory.class);
         equipmentRegistry = mock(EquipmentRegistry.class);
         gameKey = GameKey.ofTrainingMode();
-        configuration = mock(ItemConfiguration.class);
         effectFactory = mock(ItemEffectFactory.class);
         itemFactory = mock(ItemFactory.class);
         keyCreator = mock(NamespacedKeyCreator.class);
@@ -83,14 +78,6 @@ public class EquipmentFactoryTest {
 
         keyCreator = mock(NamespacedKeyCreator.class);
         when(keyCreator.create("battlegrounds-equipment")).thenReturn(key);
-
-        rootSection = mock(Section.class);
-        when(rootSection.getString("name")).thenReturn("name");
-        when(rootSection.getString("description")).thenReturn("description");
-        when(rootSection.getInt("item.damage")).thenReturn(1);
-        when(rootSection.getString("item.material")).thenReturn("SHEARS");
-
-        when(configuration.getRoot()).thenReturn(rootSection);
 
         bukkit = mockStatic(Bukkit.class);
         bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
@@ -116,7 +103,7 @@ public class EquipmentFactoryTest {
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, keyCreator, particleEffectMapper);
-        Equipment equipment = factory.create(spec, configuration, gameKey, gamePlayer);
+        Equipment equipment = factory.create(spec, gameKey, gamePlayer);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getName()).isEqualTo("name");
@@ -145,7 +132,7 @@ public class EquipmentFactoryTest {
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(itemEffect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, keyCreator, particleEffectMapper);
-        Equipment equipment = factory.create(spec, configuration, gameKey);
+        Equipment equipment = factory.create(spec, gameKey);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getActivator()).isNotNull();
@@ -174,7 +161,7 @@ public class EquipmentFactoryTest {
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, keyCreator, particleEffectMapper);
-        Equipment equipment = factory.create(spec, configuration, gameKey);
+        Equipment equipment = factory.create(spec, gameKey);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getThrowItemTemplate()).isNotNull();
@@ -205,7 +192,7 @@ public class EquipmentFactoryTest {
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, keyCreator, particleEffectMapper);
-        Equipment equipment = factory.create(spec, configuration, gameKey);
+        Equipment equipment = factory.create(spec, gameKey);
 
         ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
         verify(deploymentHandlerFactory).create(deploymentPropertiesCaptor.capture(), eq(audioEmitter), eq(effect));
@@ -234,7 +221,7 @@ public class EquipmentFactoryTest {
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, keyCreator, particleEffectMapper);
-        Equipment equipment = factory.create(spec, configuration, gameKey);
+        Equipment equipment = factory.create(spec, gameKey);
 
         ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
         verify(deploymentHandlerFactory).create(deploymentPropertiesCaptor.capture(), eq(audioEmitter), eq(effect));

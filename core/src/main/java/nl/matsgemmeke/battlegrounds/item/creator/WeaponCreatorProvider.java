@@ -133,9 +133,6 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             YamlReader yamlReader = new YamlReader(file, null);
             yamlReader.load();
 
-            ItemConfiguration config = new ItemConfiguration(file, null);
-            config.load();
-
             ActivationPatternSpecLoader activationPatternSpecLoader = new ActivationPatternSpecLoader(yamlReader);
             ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader);
             PotionEffectSpecLoader potionEffectSpecLoader = new PotionEffectSpecLoader(yamlReader);
@@ -148,7 +145,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader, projectileEffectSpecLoader);
             EquipmentSpec spec = specLoader.loadSpec();
 
-            creator.addEquipmentSpec(id, spec, config);
+            creator.addEquipmentSpec(id, spec);
             return;
         }
 
