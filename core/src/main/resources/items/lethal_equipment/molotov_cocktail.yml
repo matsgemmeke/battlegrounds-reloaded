@@ -58,12 +58,14 @@ item:
 projectile:
   effects:
     trail:
-      check-delay: 5
-      check-period: 2
-      particle:
+      type: TRAIL
+      delay: 5
+      intervals: [1]
+      max-activations: 100
+      particle-effect:
+        particle: FLAME
         count: 1
         extra: 0
         offset-x: 0.1
         offset-y: 0.1
         offset-z: 0.1
-        type: FLAME

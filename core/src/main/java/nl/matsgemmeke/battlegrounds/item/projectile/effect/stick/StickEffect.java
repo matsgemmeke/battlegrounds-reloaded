@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class StickEffect implements ProjectileEffect {
 
+    private static final long RUNNABLE_PERIOD = 1L;
+
     @NotNull
     private AudioEmitter audioEmitter;
     private BukkitTask task;
@@ -30,7 +32,7 @@ public class StickEffect implements ProjectileEffect {
     }
 
     public void onLaunch(@NotNull Projectile projectile) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), 1L, 1L);
+        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.delay(), RUNNABLE_PERIOD);
     }
 
     private void runCheck(@NotNull Projectile projectile) {

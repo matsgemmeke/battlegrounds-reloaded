@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.CookPropertiesSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.PlacePropertiesSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ThrowPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -27,6 +27,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,27 +40,30 @@ public class EquipmentControlsFactory {
 
     @NotNull
     private final GameContextProvider contextProvider;
+    @NotNull
+    private final ProjectileEffectFactory projectileEffectFactory;
 
     @Inject
-    public EquipmentControlsFactory(@NotNull GameContextProvider contextProvider) {
+    public EquipmentControlsFactory(@NotNull GameContextProvider contextProvider, @NotNull ProjectileEffectFactory projectileEffectFactory) {
         this.contextProvider = contextProvider;
+        this.projectileEffectFactory = projectileEffectFactory;
     }
 
     @NotNull
-    public ItemControls<EquipmentHolder> create(@NotNull ControlsSpec controlsSpec, @NotNull DeploymentSpec deploymentSpec, @NotNull Equipment equipment, @NotNull GameKey gameKey) {
+    public ItemControls<EquipmentHolder> create(@NotNull EquipmentSpec spec, @NotNull Equipment equipment, @NotNull GameKey gameKey) {
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
-        String throwActionValue = controlsSpec.throwAction();
-        String cookActionValue = controlsSpec.cookAction();
-        String placeActionValue = controlsSpec.placeAction();
-        String activateActionValue = controlsSpec.activateAction();
+        String throwActionValue = spec.controls().throwAction();
+        String cookActionValue = spec.controls().cookAction();
+        String placeActionValue = spec.controls().placeAction();
+        String activateActionValue = spec.controls().activateAction();
 
         if (throwActionValue != null) {
             if (cookActionValue != null) {
                 Action cookAction = Action.valueOf(cookActionValue);
-                CookPropertiesSpec cookProperties = deploymentSpec.cookProperties();
+                CookPropertiesSpec cookProperties = spec.deployment().cookProperties();
 
                 // The specification files should already be validated, so this acts as a double check
                 if (cookProperties == null) {
@@ -75,7 +79,7 @@ public class EquipmentControlsFactory {
 
             Action throwAction = Action.valueOf(throwActionValue);
             ItemTemplate itemTemplate = equipment.getThrowItemTemplate();
-            ThrowPropertiesSpec throwProperties = deploymentSpec.throwProperties();
+            ThrowPropertiesSpec throwProperties = spec.deployment().throwProperties();
 
             // The specification files should already be validated, so this acts as a double check
             if (itemTemplate == null) {
@@ -87,11 +91,16 @@ public class EquipmentControlsFactory {
             }
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(throwProperties.throwSounds());
-            List<ProjectileEffect> projectileEffects = List.of();
-            Map<DamageType, Double> resistances = this.getResistances(deploymentSpec.resistances());
-            double health = deploymentSpec.health();
+            Map<DamageType, Double> resistances = this.getResistances(spec.deployment().resistances());
+            double health = spec.deployment().health();
             double velocity = throwProperties.velocity();
             long cooldown = throwProperties.cooldown();
+
+            List<ProjectileEffect> projectileEffects = new ArrayList<>();
+
+            for (ProjectileEffectSpec projectileEffectSpec : spec.projectileEffects()) {
+                projectileEffects.add(projectileEffectFactory.create(projectileEffectSpec, gameKey));
+            }
 
             ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
             ThrowDeployment deployment = new ThrowDeployment(deploymentProperties, audioEmitter);
@@ -102,16 +111,16 @@ public class EquipmentControlsFactory {
 
         if (placeActionValue != null) {
             Action placeAction = Action.valueOf(placeActionValue);
-            PlacePropertiesSpec placeProperties = deploymentSpec.placeProperties();
+            PlacePropertiesSpec placeProperties = spec.deployment().placeProperties();
 
             if (placeProperties == null) {
                 throw new EquipmentControlsCreationException("Cannot create controls for 'place', the equipment specification does not contain the required place properties");
             }
 
             List<GameSound> placeSounds = DefaultGameSound.parseSounds(placeProperties.placeSounds());
-            Map<DamageType, Double> resistances = this.getResistances(deploymentSpec.resistances());
+            Map<DamageType, Double> resistances = this.getResistances(spec.deployment().resistances());
             Material material = Material.valueOf(placeProperties.material());
-            double health = deploymentSpec.health();
+            double health = spec.deployment().health();
             long cooldown = placeProperties.cooldown();
 
             PlaceDeploymentProperties deploymentProperties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);

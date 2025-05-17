@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,6 +62,7 @@ public class EquipmentSpecLoader {
     private static final String MANUAL_ACTIVATION_SOUNDS_ROUTE = "deploy.manual-activation.sounds";
 
     private static final String EFFECT_ROUTE = "effect";
+    private static final String PROJECTILE_EFFECTS_ROUTE = "projectile.effects";
 
     private static final String ACTIVATOR_ITEM_MATERIAL_ROUTE = "item.activator.material";
     private static final String ACTIVATOR_ITEM_DISPLAY_NAME_ROUTE = "item.activator.display-name";
@@ -75,16 +77,20 @@ public class EquipmentSpecLoader {
     @NotNull
     private final ParticleEffectSpecLoader particleEffectSpecLoader;
     @NotNull
+    private final ProjectileEffectSpecLoader projectileEffectSpecLoader;
+    @NotNull
     private final YamlReader yamlReader;
 
     public EquipmentSpecLoader(
             @NotNull YamlReader yamlReader,
             @NotNull ItemEffectSpecLoader itemEffectSpecLoader,
-            @NotNull ParticleEffectSpecLoader particleEffectSpecLoader
+            @NotNull ParticleEffectSpecLoader particleEffectSpecLoader,
+            @NotNull ProjectileEffectSpecLoader projectileEffectSpecLoader
     ) {
         this.yamlReader = yamlReader;
         this.itemEffectSpecLoader = itemEffectSpecLoader;
         this.particleEffectSpecLoader = particleEffectSpecLoader;
+        this.projectileEffectSpecLoader = projectileEffectSpecLoader;
     }
 
     @NotNull
@@ -233,6 +239,13 @@ public class EquipmentSpecLoader {
 
         DeploymentSpec deploymentSpec = new DeploymentSpec(health, destroyOnActivate, destroyOnRemove, destroyOnReset, destroyEffect, resistances, throwPropertiesSpec, cookPropertiesSpec, placePropertiesSpec, manualActivationSpec);
         ItemEffectSpec effectSpec = itemEffectSpecLoader.loadSpec(EFFECT_ROUTE);
+        List<ProjectileEffectSpec> projectileEffectSpecs = new ArrayList<>();
+
+        for (String key : yamlReader.getRoutes(PROJECTILE_EFFECTS_ROUTE)) {
+            String projectileEffectRoute = PROJECTILE_EFFECTS_ROUTE + "." + key;
+
+            projectileEffectSpecs.add(projectileEffectSpecLoader.loadSpec(projectileEffectRoute));
+        }
 
         ItemStackSpec activatorItemSpec = null;
         ItemStackSpec throwItemSpec = null;
@@ -279,7 +292,7 @@ public class EquipmentSpecLoader {
             throwItemSpec = new ItemStackSpec(throwItemMaterial, throwItemDisplayName, throwItemDamage);
         }
 
-        return new EquipmentSpec(name, description, displayItemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploymentSpec, effectSpec);
+        return new EquipmentSpec(name, description, displayItemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploymentSpec, effectSpec, projectileEffectSpecs);
     }
 
     @NotNull

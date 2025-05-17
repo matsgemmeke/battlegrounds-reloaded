@@ -4,4 +4,4 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 
 import java.util.List;
 
-public record StickProperties(List<GameSound> stickSounds) { }
+public record StickProperties(List<GameSound> stickSounds, Long delay) { }

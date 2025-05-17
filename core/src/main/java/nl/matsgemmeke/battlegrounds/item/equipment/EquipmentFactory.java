@@ -25,7 +25,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
@@ -53,8 +52,6 @@ public class EquipmentFactory {
     private final NamespacedKeyCreator keyCreator;
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
-    @NotNull
-    private final ProjectileEffectFactory projectileEffectFactory;
 
     @Inject
     public EquipmentFactory(
@@ -63,8 +60,7 @@ public class EquipmentFactory {
             @NotNull EquipmentControlsFactory controlsFactory,
             @NotNull ItemEffectFactory effectFactory,
             @NotNull NamespacedKeyCreator keyCreator,
-            @NotNull ParticleEffectMapper particleEffectMapper,
-            @NotNull ProjectileEffectFactory projectileEffectFactory
+            @NotNull ParticleEffectMapper particleEffectMapper
     ) {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.contextProvider = contextProvider;
@@ -72,7 +68,6 @@ public class EquipmentFactory {
         this.effectFactory = effectFactory;
         this.keyCreator = keyCreator;
         this.particleEffectMapper = particleEffectMapper;
-        this.projectileEffectFactory = projectileEffectFactory;
     }
 
     @NotNull
@@ -145,7 +140,7 @@ public class EquipmentFactory {
             equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controls(), spec.deployment(), equipment, gameKey);
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec, equipment, gameKey);
         equipment.setControls(controls);
 
         DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deployment(), spec.effect(), gameKey, activator);

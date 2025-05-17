@@ -89,12 +89,16 @@ public class ProjectileEffectFactory {
                 List<Long> intervals = this.validateSpecVar(spec.intervals(), "intervals", type);
 
                 SoundProperties properties = new SoundProperties(sounds, delay, intervals);
-                return soundEffectFactory.create(properties);
+                AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
+
+                return soundEffectFactory.create(properties, audioEmitter);
+
             }
             case STICK -> {
                 List<GameSound> stickSounds = DefaultGameSound.parseSounds(spec.sounds());
+                Long delay = this.validateSpecVar(spec.delay(), "delay", type);
 
-                StickProperties properties = new StickProperties(stickSounds);
+                StickProperties properties = new StickProperties(stickSounds, delay);
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
                 return stickEffectFactory.create(properties, audioEmitter);

@@ -39,6 +39,7 @@ public class ProjectileEffectSpecLoaderTest {
         when(yamlReader.getOptionalDouble("base-route.vertical-friction")).thenReturn(Optional.of(verticalFriction));
         when(yamlReader.getOptionalInt("base-route.max-activations")).thenReturn(Optional.of(maxActivations));
         when(yamlReader.getRoutes("base-route.triggers")).thenReturn(triggerRoutes);
+        when(yamlReader.contains("base-route.particle-effect")).thenReturn(true);
 
         ParticleEffectSpecLoader particleEffectSpecLoader = mock(ParticleEffectSpecLoader.class);
         when(particleEffectSpecLoader.loadSpec("base-route.particle-effect")).thenReturn(particleEffectSpec);

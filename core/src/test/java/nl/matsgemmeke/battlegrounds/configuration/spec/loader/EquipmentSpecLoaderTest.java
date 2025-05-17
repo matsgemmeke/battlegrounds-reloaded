@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.PotionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -57,6 +59,8 @@ public class EquipmentSpecLoaderTest {
         PotionEffectSpec potionEffectSpec = new PotionEffectSpec("BLINDNESS", 100, 1, true, false, true);
         ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 200L, 100L, 20L, 10L);
         ItemEffectSpec effectSpec = new ItemEffectSpec("EXPLOSION", List.of(triggerSpec), rangeProfileSpec, 5.0, 1.0, 3.0, 0.5, 2L, 200L, 100L, null, 2.0f, true, false, particleEffectSpec, potionEffectSpec, activationPatternSpec);
+
+        ProjectileEffectSpec projectileEffectSpec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null, null, null);
 
         String throwAction = "LEFT_CLICK";
         String cookAction = "RIGHT_CLICK";
@@ -116,7 +120,12 @@ public class EquipmentSpecLoaderTest {
         ItemEffectSpecLoader itemEffectSpecLoader = mock(ItemEffectSpecLoader.class);
         when(itemEffectSpecLoader.loadSpec("effect")).thenReturn(effectSpec);
 
-        EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader);
+        when(yamlReader.getRoutes("projectile.effects")).thenReturn(Set.of("bounce"));
+
+        ProjectileEffectSpecLoader projectileEffectSpecLoader = mock(ProjectileEffectSpecLoader.class);
+        when(projectileEffectSpecLoader.loadSpec("projectile.effects.bounce")).thenReturn(projectileEffectSpec);
+
+        EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader, projectileEffectSpecLoader);
         EquipmentSpec spec = specLoader.loadSpec();
 
         assertThat(spec.name()).isEqualTo(name);
@@ -166,5 +175,6 @@ public class EquipmentSpecLoaderTest {
         assertThat(spec.deployment().manualActivation().sounds()).isEqualTo(manualActivationSounds);
 
         assertThat(spec.effect()).isEqualTo(effectSpec);
+        assertThat(spec.projectileEffects()).containsExactly(projectileEffectSpec);
     }
 }

@@ -143,8 +143,9 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             TriggerSpecLoader triggerSpecLoader = new TriggerSpecLoader(yamlReader);
 
             ItemEffectSpecLoader itemEffectSpecLoader = new ItemEffectSpecLoader(yamlReader, activationPatternSpecLoader, particleEffectSpecLoader, potionEffectSpecLoader, rangeProfileSpecLoader, triggerSpecLoader);
+            ProjectileEffectSpecLoader projectileEffectSpecLoader = new ProjectileEffectSpecLoader(yamlReader, particleEffectSpecLoader, triggerSpecLoader);
 
-            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader);
+            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader, projectileEffectSpecLoader);
             EquipmentSpec spec = specLoader.loadSpec();
 
             creator.addEquipmentSpec(id, spec, config);

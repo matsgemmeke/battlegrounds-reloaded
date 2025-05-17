@@ -62,12 +62,12 @@ public class ProjectileEffectSpecLoader {
         Long delay = new FieldSpecResolver<Long>()
                 .route(delayRoute)
                 .value(yamlReader.getOptionalLong(delayRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COUNTDOWN", "TRAIL")))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("SOUND", "TRAIL")))
                 .resolve();
         List<Long> intervals = new FieldSpecResolver<List<Long>>()
                 .route(intervalsRoute)
                 .value(yamlReader.getOptionalLongList(intervalsRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("COUNTDOWN", "TRAIL")))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("SOUND", "TRAIL")))
                 .resolve();
         String sounds = new FieldSpecResolver<String>()
                 .route(soundsRoute)
@@ -89,8 +89,12 @@ public class ProjectileEffectSpecLoader {
                 .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("BOUNCE", "TRAIL")))
                 .resolve();
 
-        ParticleEffectSpec particleEffectSpec = particleEffectSpecLoader.loadSpec(particleEffectRoute);
+        ParticleEffectSpec particleEffectSpec = null;
         List<TriggerSpec> triggerSpecs = new ArrayList<>();
+
+        if (yamlReader.contains(particleEffectRoute)) {
+            particleEffectSpec = particleEffectSpecLoader.loadSpec(particleEffectRoute);
+        }
 
         for (String key : yamlReader.getRoutes(triggersRoute)) {
             String triggerRoute = this.createRoute(baseRoute, TRIGGERS_ROUTE + "." + key);

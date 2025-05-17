@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class StickEffectTest {
 
     private static final List<GameSound> STICK_SOUNDS = Collections.emptyList();
-    private static final long CHECK_DELAY = 1L;
+    private static final Long DELAY = 1L;
     private static final long CHECK_PERIOD = 1L;
 
     private AudioEmitter audioEmitter;
@@ -32,7 +32,7 @@ public class StickEffectTest {
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        properties = new StickProperties(STICK_SOUNDS);
+        properties = new StickProperties(STICK_SOUNDS, DELAY);
         taskRunner = mock(TaskRunner.class);
     }
 
@@ -42,13 +42,13 @@ public class StickEffectTest {
         when(projectile.exists()).thenReturn(false);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
         StickEffect effect = new StickEffect(taskRunner, properties, audioEmitter);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(CHECK_DELAY), eq(CHECK_PERIOD));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(DELAY), eq(CHECK_PERIOD));
 
         runnableCaptor.getValue().run();
 
@@ -73,13 +73,13 @@ public class StickEffectTest {
         when(projectile.getWorld()).thenReturn(world);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
         StickEffect effect = new StickEffect(taskRunner, properties, audioEmitter);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(CHECK_DELAY), eq(CHECK_PERIOD));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(DELAY), eq(CHECK_PERIOD));
 
         runnableCaptor.getValue().run();
 
@@ -106,13 +106,13 @@ public class StickEffectTest {
         when(projectile.getWorld()).thenReturn(world);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
         StickEffect effect = new StickEffect(taskRunner, properties, audioEmitter);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(CHECK_DELAY), eq(CHECK_PERIOD));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(DELAY), eq(CHECK_PERIOD));
 
         runnableCaptor.getValue().run();
 
