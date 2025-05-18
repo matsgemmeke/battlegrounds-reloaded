@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,7 @@ public abstract class BaseItemEffect implements ItemEffect {
         }
 
         activated = true;
-        triggers.forEach(Trigger::cancel);
+        triggers.forEach(Trigger::deactivate);
         this.perform(currentContext);
     }
 
@@ -41,7 +42,7 @@ public abstract class BaseItemEffect implements ItemEffect {
             return;
         }
 
-        triggers.forEach(Trigger::cancel);
+        triggers.forEach(Trigger::deactivate);
     }
 
     public void deploy(@NotNull ItemEffectSource source) {
@@ -68,13 +69,15 @@ public abstract class BaseItemEffect implements ItemEffect {
         currentContext = context;
         primed = true;
 
-        triggers.forEach(trigger -> {
+        for (Trigger trigger : triggers) {
+            TriggerContext triggerContext = new TriggerContext(currentContext.getEntity(), currentContext.getSource());
+
             trigger.addObserver(() -> {
                 activated = true;
                 this.perform(currentContext);
             });
-            trigger.prime(context);
-        });
+            trigger.activate(triggerContext);
+        }
     }
 
     public abstract void perform(@NotNull ItemEffectContext context);

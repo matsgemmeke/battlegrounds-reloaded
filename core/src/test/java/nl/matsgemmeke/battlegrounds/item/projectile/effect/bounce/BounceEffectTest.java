@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,6 +20,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -35,12 +37,16 @@ public class BounceEffectTest {
     private static final long CHECK_PERIOD = 1L;
 
     private BounceProperties properties;
+    private Set<Trigger> triggers;
     private TaskRunner taskRunner;
+    private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
         properties = new BounceProperties(AMOUNT_OF_BOUNCES, HORIZONTAL_FRICTION, VERTICAL_FRICTION, CHECK_DELAY, CHECK_PERIOD);
         taskRunner = mock(TaskRunner.class);
+        trigger = mock(Trigger.class);
+        triggers = Set.of(trigger);
     }
 
     @Test
@@ -51,7 +57,7 @@ public class BounceEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        BounceEffect effect = new BounceEffect(taskRunner, properties);
+        BounceEffect effect = new BounceEffect(taskRunner, properties, triggers);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -79,7 +85,7 @@ public class BounceEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        BounceEffect effect = new BounceEffect(taskRunner, properties);
+        BounceEffect effect = new BounceEffect(taskRunner, properties, triggers);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -110,7 +116,7 @@ public class BounceEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        BounceEffect effect = new BounceEffect(taskRunner, properties);
+        BounceEffect effect = new BounceEffect(taskRunner, properties, triggers);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -142,7 +148,7 @@ public class BounceEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        BounceEffect effect = new BounceEffect(taskRunner, properties);
+        BounceEffect effect = new BounceEffect(taskRunner, properties, triggers);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -176,7 +182,7 @@ public class BounceEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        BounceEffect effect = new BounceEffect(taskRunner, properties);
+        BounceEffect effect = new BounceEffect(taskRunner, properties, triggers);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -227,7 +233,7 @@ public class BounceEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(CHECK_DELAY), eq(CHECK_PERIOD))).thenReturn(task);
 
-        BounceEffect effect = new BounceEffect(taskRunner, properties);
+        BounceEffect effect = new BounceEffect(taskRunner, properties, triggers);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);

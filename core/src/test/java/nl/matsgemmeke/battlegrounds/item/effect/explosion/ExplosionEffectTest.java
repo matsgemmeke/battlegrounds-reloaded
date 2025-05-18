@@ -10,8 +10,9 @@ import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -81,11 +82,11 @@ public class ExplosionEffectTest {
         triggerObserverCaptor.getValue().onActivate();
         effect.activateInstantly();
 
-        verify(trigger, never()).cancel();
+        verify(trigger, never()).deactivate();
     }
 
     @Test
-    public void activateInstantlyPerformsEffectAndCancelsTriggersWhenContextSourceExists() {
+    public void activateInstantlyPerformsEffectAndDeactivatesTriggersWhenContextSourceExists() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
 
@@ -99,21 +100,21 @@ public class ExplosionEffectTest {
         effect.activateInstantly();
 
         verify(source).remove();
-        verify(trigger).cancel();
+        verify(trigger).deactivate();
         verify(world).createExplosion(sourceLocation, POWER, SET_FIRE, BREAK_BLOCKS, entity);
     }
 
     @Test
-    public void cancelActivationDoesNotCancelTriggersIfNotPrimed() {
+    public void cancelActivationDoesNotDeactivateTriggersWhenNotPrimed() {
         ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.addTrigger(trigger);
         effect.cancelActivation();
 
-        verify(trigger, never()).cancel();
+        verify(trigger, never()).deactivate();
     }
 
     @Test
-    public void cancelActivationDoesNotCancelTriggersIfAlreadyActivated() {
+    public void cancelActivationDoesNotDeactivateTriggersWhenAlreadyActivated() {
         Location sourceLocation = new Location(null, 1, 1, 1);
         World world = mock(World.class);
 
@@ -130,17 +131,17 @@ public class ExplosionEffectTest {
         triggerObserverCaptor.getValue().onActivate();
         effect.cancelActivation();
 
-        verify(trigger, never()).cancel();
+        verify(trigger, never()).deactivate();
     }
 
     @Test
-    public void cancelActivationCancelsTriggersIfPrimed() {
+    public void cancelActivationDeactivatesTriggersWhenPrimed() {
         ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.addTrigger(trigger);
         effect.prime(context);
         effect.cancelActivation();
 
-        verify(trigger).cancel();
+        verify(trigger).deactivate();
     }
 
     @Test
@@ -216,7 +217,12 @@ public class ExplosionEffectTest {
         effect.prime(context);
         effect.prime(context);
 
-        verify(trigger, times(1)).prime(context);
+        ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
+        verify(trigger, times(1)).activate(triggerContextCaptor.capture());
+
+        TriggerContext triggerContext = triggerContextCaptor.getValue();
+        assertThat(triggerContext.deployerEntity()).isEqualTo(entity);
+        assertThat(triggerContext.target()).isEqualTo(source);
     }
 
     @Test

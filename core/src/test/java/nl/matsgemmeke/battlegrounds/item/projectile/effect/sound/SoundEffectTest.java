@@ -20,7 +20,8 @@ import static org.mockito.Mockito.*;
 public class SoundEffectTest {
 
     private static final List<GameSound> SOUNDS = Collections.emptyList();
-    private static final List<Integer> INTERVALS = List.of(10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58);
+    private static final List<Long> INTERVALS = List.of(10L, 19L, 27L, 34L, 40L, 45L, 49L, 52L, 54L, 56L, 58L);
+    private static final Long DELAY = 1L;
 
     private AudioEmitter audioEmitter;
     private SoundProperties properties;
@@ -29,7 +30,7 @@ public class SoundEffectTest {
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        properties = new SoundProperties(SOUNDS, INTERVALS);
+        properties = new SoundProperties(SOUNDS, DELAY, INTERVALS);
         taskRunner = mock(TaskRunner.class);
     }
 
@@ -39,13 +40,13 @@ public class SoundEffectTest {
         when(projectile.exists()).thenReturn(false);
 
         BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
+        when(taskRunner.runTaskTimer(any(Runnable.class), eq(DELAY), eq(1L))).thenReturn(task);
 
-        SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, properties);
+        SoundEffect effect = new SoundEffect(taskRunner, properties, audioEmitter);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(DELAY), eq(1L));
 
         runnableCaptor.getValue().run();
 
@@ -64,16 +65,16 @@ public class SoundEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
-        SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, properties);
+        SoundEffect effect = new SoundEffect(taskRunner, properties, audioEmitter);
         effect.onLaunch(projectile);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
+        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(DELAY), eq(1L));
 
         for (int i = 0; i < 60; i++) {
             runnableCaptor.getValue().run();
         }
 
-        verify(audioEmitter, times(11)).playSounds(SOUNDS, projectileLocation);
+        verify(audioEmitter, times(INTERVALS.size())).playSounds(SOUNDS, projectileLocation);
     }
 }

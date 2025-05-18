@@ -8,10 +8,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public record DeploymentProperties(
-        @NotNull List<GameSound> activationSounds,
+        @NotNull List<GameSound> manualActivationSounds,
         @Nullable ParticleEffect destroyParticleEffect,
         boolean activateEffectOnDestroy,
         boolean removeOnDestroy,
         boolean resetEffectOnDestroy,
-        long activationDelay
+        long manualActivationDelay
 ) { }

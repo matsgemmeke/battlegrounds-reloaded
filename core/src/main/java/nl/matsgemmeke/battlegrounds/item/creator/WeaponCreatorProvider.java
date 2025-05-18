@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import jakarta.inject.Named;
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
@@ -133,9 +132,6 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             YamlReader yamlReader = new YamlReader(file, null);
             yamlReader.load();
 
-            ItemConfiguration config = new ItemConfiguration(file, null);
-            config.load();
-
             ActivationPatternSpecLoader activationPatternSpecLoader = new ActivationPatternSpecLoader(yamlReader);
             ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader);
             PotionEffectSpecLoader potionEffectSpecLoader = new PotionEffectSpecLoader(yamlReader);
@@ -143,11 +139,12 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             TriggerSpecLoader triggerSpecLoader = new TriggerSpecLoader(yamlReader);
 
             ItemEffectSpecLoader itemEffectSpecLoader = new ItemEffectSpecLoader(yamlReader, activationPatternSpecLoader, particleEffectSpecLoader, potionEffectSpecLoader, rangeProfileSpecLoader, triggerSpecLoader);
+            ProjectileEffectSpecLoader projectileEffectSpecLoader = new ProjectileEffectSpecLoader(yamlReader, particleEffectSpecLoader, triggerSpecLoader);
 
-            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader);
+            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader, projectileEffectSpecLoader);
             EquipmentSpec spec = specLoader.loadSpec();
 
-            creator.addEquipmentSpec(id, spec, config);
+            creator.addEquipmentSpec(id, spec);
             return;
         }
 

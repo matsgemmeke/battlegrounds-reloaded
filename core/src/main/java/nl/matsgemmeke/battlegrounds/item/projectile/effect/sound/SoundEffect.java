@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
@@ -9,27 +11,27 @@ import org.jetbrains.annotations.NotNull;
 
 public class SoundEffect implements ProjectileEffect {
 
-    private static final long CHECK_DELAY = 0L;
-    private static final long CHECK_PERIOD = 1L;
+    private static final long RUNNABLE_PERIOD = 1L;
 
     @NotNull
-    private AudioEmitter audioEmitter;
+    private final AudioEmitter audioEmitter;
+    @NotNull
+    private final SoundProperties properties;
+    @NotNull
+    private final TaskRunner taskRunner;
     private BukkitTask task;
-    private int ticks;
-    @NotNull
-    private SoundProperties properties;
-    @NotNull
-    private TaskRunner taskRunner;
+    private long elapsedTicks;
 
-    public SoundEffect(@NotNull AudioEmitter audioEmitter, @NotNull TaskRunner taskRunner, @NotNull SoundProperties properties) {
+    @Inject
+    public SoundEffect(@NotNull TaskRunner taskRunner, @Assisted @NotNull SoundProperties properties, @Assisted @NotNull AudioEmitter audioEmitter) {
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
         this.properties = properties;
-        this.ticks = 0;
+        this.elapsedTicks = 0;
     }
 
     public void onLaunch(@NotNull Projectile projectile) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), CHECK_DELAY, CHECK_PERIOD);
+        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.delay(), RUNNABLE_PERIOD);
     }
 
     private void runCheck(@NotNull Projectile projectile) {
@@ -38,9 +40,9 @@ public class SoundEffect implements ProjectileEffect {
             return;
         }
 
-        ticks++;
+        elapsedTicks++;
 
-        if (!properties.intervals().contains(ticks)) {
+        if (!properties.intervals().contains(elapsedTicks)) {
             return;
         }
 

@@ -12,8 +12,8 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -103,7 +103,7 @@ public class CombustionEffectTest {
         triggerObserverCaptor.getValue().onActivate();
         effect.activateInstantly();
 
-        verify(trigger, never()).cancel();
+        verify(trigger, never()).deactivate();
     }
 
     @Test
@@ -120,21 +120,21 @@ public class CombustionEffectTest {
         effect.prime(context);
         effect.activateInstantly();
 
-        verify(trigger).cancel();
+        verify(trigger).deactivate();
         verify(source).remove();
     }
 
     @Test
-    public void cancelActivationDoesNotCancelTriggersIfNotPrimed() {
+    public void cancelActivationDoesNotDeactivateTriggersIfNotPrimed() {
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.addTrigger(trigger);
         effect.cancelActivation();
 
-        verify(trigger, never()).cancel();
+        verify(trigger, never()).deactivate();
     }
 
     @Test
-    public void cancelActivationDoesNotCancelActivationIfAlreadyActivated() {
+    public void cancelActivationDoesNotDeactivateTriggersIfAlreadyActivated() {
         Location sourceLocation = new Location(null, 1, 1, 1);
         when(source.getLocation()).thenReturn(sourceLocation);
 
@@ -151,17 +151,17 @@ public class CombustionEffectTest {
         triggerObserverCaptor.getValue().onActivate();
         effect.cancelActivation();
 
-        verify(trigger, never()).cancel();
+        verify(trigger, never()).deactivate();
     }
 
     @Test
-    public void cancelActivationCancelsActivationIfPrimed() {
+    public void cancelActivationDeactivatesTriggersIfPrimed() {
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.addTrigger(trigger);
         effect.prime(context);
         effect.cancelActivation();
 
-        verify(trigger).cancel();
+        verify(trigger).deactivate();
     }
 
     @Test

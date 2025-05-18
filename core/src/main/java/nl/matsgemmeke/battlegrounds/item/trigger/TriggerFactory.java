@@ -1,15 +1,13 @@
-package nl.matsgemmeke.battlegrounds.item.effect.trigger;
+package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.effect.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.activator.ActivatorTrigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy.EnemyProximityTriggerFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.floor.FloorHitTriggerFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.timed.TimedTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,17 +36,10 @@ public class TriggerFactory {
     }
 
     @NotNull
-    public Trigger create(@NotNull TriggerSpec spec, @NotNull GameKey gameKey, @Nullable Activator activator) {
+    public Trigger create(@NotNull TriggerSpec spec, @NotNull GameKey gameKey) {
         TriggerType triggerType = TriggerType.valueOf(spec.type());
 
         switch (triggerType) {
-            case ACTIVATOR -> {
-                if (activator == null) {
-                    throw new TriggerCreationException("Cannot create ActivatorTrigger: given activator object is null");
-                }
-
-                return new ActivatorTrigger(activator);
-            }
             case ENEMY_PROXIMITY -> {
                 // The spec is supposed to be valid, but perform double checks
                 double checkRange = this.validateNotNull(spec.checkRange(), "checkRange", "EnemyProximityTrigger");

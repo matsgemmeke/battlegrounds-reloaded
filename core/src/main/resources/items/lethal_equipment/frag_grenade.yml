@@ -50,7 +50,8 @@ item:
 projectile:
   effects:
     bounce:
-      amount-of-bounces: 1
+      type: BOUNCE
+      max-activations: 1
       check-delay: 0
       check-period: 1
       horizontal-friction: 3.0

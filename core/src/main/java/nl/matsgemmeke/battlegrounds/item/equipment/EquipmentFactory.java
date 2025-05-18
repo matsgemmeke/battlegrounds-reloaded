@@ -1,9 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import com.google.inject.Inject;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.configuration.ItemConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
@@ -16,7 +13,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.ParticleEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
@@ -28,20 +24,10 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
-import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,8 +51,6 @@ public class EquipmentFactory {
     private final NamespacedKeyCreator keyCreator;
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
-    @NotNull
-    private final TaskRunner taskRunner;
 
     @Inject
     public EquipmentFactory(
@@ -75,8 +59,7 @@ public class EquipmentFactory {
             @NotNull EquipmentControlsFactory controlsFactory,
             @NotNull ItemEffectFactory effectFactory,
             @NotNull NamespacedKeyCreator keyCreator,
-            @NotNull ParticleEffectMapper particleEffectMapper,
-            @NotNull TaskRunner taskRunner
+            @NotNull ParticleEffectMapper particleEffectMapper
     ) {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.contextProvider = contextProvider;
@@ -84,12 +67,11 @@ public class EquipmentFactory {
         this.effectFactory = effectFactory;
         this.keyCreator = keyCreator;
         this.particleEffectMapper = particleEffectMapper;
-        this.taskRunner = taskRunner;
     }
 
     @NotNull
-    public Equipment create(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
-        Equipment equipment = this.createInstance(spec, configuration, gameKey);
+    public Equipment create(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey) {
+        Equipment equipment = this.createInstance(spec, gameKey);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
         equipmentRegistry.registerItem(equipment);
@@ -98,8 +80,8 @@ public class EquipmentFactory {
     }
 
     @NotNull
-    public Equipment create(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
-        Equipment equipment = this.createInstance(spec, configuration, gameKey);
+    public Equipment create(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
+        Equipment equipment = this.createInstance(spec, gameKey);
         equipment.setHolder(gamePlayer);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
@@ -109,11 +91,7 @@ public class EquipmentFactory {
     }
 
     @NotNull
-    private Equipment createInstance(@NotNull EquipmentSpec spec, @NotNull ItemConfiguration configuration, @NotNull GameKey gameKey) {
-        Section section = configuration.getRoot();
-
-        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-
+    private Equipment createInstance(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey) {
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setName(spec.name());
         equipment.setDescription(spec.description());
@@ -132,6 +110,7 @@ public class EquipmentFactory {
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
 
+        Activator activator = null;
         ItemStackSpec activatorItemSpec = spec.activatorItem();
         ItemStackSpec throwItemSpec = spec.throwItem();
 
@@ -144,7 +123,7 @@ public class EquipmentFactory {
             activatorItemTemplate.setDamage(activatorItemSpec.damage());
             activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorItemSpec.displayName()));
 
-            DefaultActivator activator = new DefaultActivator(activatorItemTemplate);
+            activator = new DefaultActivator(activatorItemTemplate);
             equipment.setActivator(activator);
         }
 
@@ -160,85 +139,11 @@ public class EquipmentFactory {
             equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec.controls(), spec.deployment(), equipment, gameKey);
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec, equipment, gameKey);
         equipment.setControls(controls);
 
-        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deployment(), spec.effect(), gameKey, equipment.getActivator());
+        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deployment(), spec.effect(), gameKey, activator);
         equipment.setDeploymentHandler(deploymentHandler);
-
-        // Setting the projectile properties
-        Section projectileSection = section.getSection("projectile");
-
-        if (projectileSection != null) {
-            ProjectileProperties projectileProperties = new ProjectileProperties();
-
-            Section bounceSection = projectileSection.getSection("effects.bounce");
-            Section soundSection = projectileSection.getSection("effects.sound");
-            Section stickSection = projectileSection.getSection("effects.stick");
-            Section trailSection = projectileSection.getSection("effects.trail");
-
-            if (bounceSection != null) {
-                int amountOfBounces = bounceSection.getInt("amount-of-bounces");
-                double horizontalFriction = bounceSection.getDouble("horizontal-friction");
-                double verticalFriction = bounceSection.getDouble("vertical-friction");
-                long checkDelay = bounceSection.getLong("check-delay");
-                long checkPeriod = bounceSection.getLong("check-period");
-
-                BounceProperties properties = new BounceProperties(amountOfBounces, horizontalFriction, verticalFriction, checkDelay, checkPeriod);
-                BounceEffect effect = new BounceEffect(taskRunner, properties);
-
-                projectileProperties.getEffects().add(effect);
-            }
-
-            if (soundSection != null) {
-                List<GameSound> sounds = DefaultGameSound.parseSounds(soundSection.getString("sounds"));
-                List<Integer> intervals = soundSection.getIntList("intervals");
-
-                SoundProperties properties = new SoundProperties(sounds, intervals);
-                SoundEffect effect = new SoundEffect(audioEmitter, taskRunner, properties);
-
-                projectileProperties.getEffects().add(effect);
-            }
-
-            if (stickSection != null) {
-                List<GameSound> stickSounds = DefaultGameSound.parseSounds(stickSection.getString("stick-sounds"));
-                long checkDelay = stickSection.getLong("check-delay");
-                long checkPeriod = stickSection.getLong("check-period");
-
-                StickProperties properties = new StickProperties(stickSounds, checkDelay, checkPeriod);
-                StickEffect effect = new StickEffect(audioEmitter, taskRunner, properties);
-
-                projectileProperties.getEffects().add(effect);
-            }
-
-            if (trailSection != null) {
-                String particleValue = trailSection.getString("particle.type");
-                Particle particle;
-
-                try {
-                    particle = Particle.valueOf(particleValue);
-                } catch (IllegalArgumentException e) {
-                    throw new EquipmentCreationException("Unable to create equipment item " + spec.name() + "; trail effect particle " + particleValue + " is invalid");
-                }
-
-                int count = trailSection.getInt("particle.count");
-                double offsetX = trailSection.getDouble("particle.offset-x");
-                double offsetY = trailSection.getDouble("particle.offset-y");
-                double offsetZ = trailSection.getDouble("particle.offset-z");
-                double extra = trailSection.getDouble("particle.extra");
-                ParticleEffectProperties particleEffect = new ParticleEffectProperties(particle, count, offsetX, offsetY, offsetZ, extra);
-
-                long checkDelay = trailSection.getLong("check-delay");
-                long checkPeriod = trailSection.getLong("check-period");
-
-                TrailProperties properties = new TrailProperties(particleEffect, checkDelay, checkPeriod);
-                TrailEffect effect = new TrailEffect(taskRunner, properties);
-
-                projectileProperties.getEffects().add(effect);
-            }
-
-            equipment.setProjectileProperties(projectileProperties);
-        }
 
         return equipment;
     }
@@ -249,12 +154,12 @@ public class EquipmentFactory {
         boolean removeOnDestroy = deploymentSpec.removeOnDestroy();
         boolean resetEffectOnDestroy = deploymentSpec.resetEffectOnDestroy();
 
-        List<GameSound> activationSounds = Collections.emptyList();
-        long activationDelay = 0L;
+        List<GameSound> manualActivationSounds = Collections.emptyList();
+        long manualActivationDelay = 0L;
 
         if (deploymentSpec.manualActivation() != null) {
-            activationSounds = DefaultGameSound.parseSounds(deploymentSpec.manualActivation().activationSounds());
-            activationDelay = deploymentSpec.manualActivation().activationDelay();
+            manualActivationSounds = DefaultGameSound.parseSounds(deploymentSpec.manualActivation().sounds());
+            manualActivationDelay = deploymentSpec.manualActivation().delay();
         }
 
         ParticleEffect destroyEffect = null;
@@ -263,11 +168,14 @@ public class EquipmentFactory {
             destroyEffect = particleEffectMapper.map(deploymentSpec.destroyEffect());
         }
 
-        DeploymentProperties deploymentProperties = new DeploymentProperties(activationSounds, destroyEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, activationDelay);
+        DeploymentProperties deploymentProperties = new DeploymentProperties(manualActivationSounds, destroyEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, manualActivationDelay);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        ItemEffect effect = effectFactory.create(effectSpec, gameKey, activator);
+        ItemEffect effect = effectFactory.create(effectSpec, gameKey);
 
-        return deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
+        deploymentHandler.setActivator(activator);
+
+        return deploymentHandler;
     }
 }

@@ -32,13 +32,15 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy.EnemyProximityTrigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.enemy.EnemyProximityTriggerFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.floor.FloorHitTrigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.floor.FloorHitTriggerFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.timed.TimedTrigger;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.timed.TimedTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
@@ -51,6 +53,13 @@ import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -131,6 +140,19 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
                 .build(DefaultPlayerRegistryFactory.class));
+
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileEffect.class, BounceEffect.class)
+                .build(BounceEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileEffect.class, SoundEffect.class)
+                .build(SoundEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileEffect.class, StickEffect.class)
+                .build(StickEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileEffect.class, TrailEffect.class)
+                .build(TrailEffectFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(ReloadSystem.class, MagazineReloadSystem.class)

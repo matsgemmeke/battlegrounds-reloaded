@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.effect.trigger.floor;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -24,74 +24,61 @@ public class FloorHitTriggerTest {
     private static final long PERIOD_BETWEEN_CHECKS = 5L;
 
     private TaskRunner taskRunner;
+    private TriggerContext context;
+    private TriggerTarget target;
 
     @BeforeEach
     public void setUp() {
         taskRunner = mock(TaskRunner.class);
+        target = mock(TriggerTarget.class);
+        context = new TriggerContext(mock(Entity.class), target);
     }
 
     @Test
-    public void isPrimedReturnsFalseWhenTriggerIsNotPrimed() {
+    public void isActivatedReturnsFalseWhenTriggerIsNotActivated() {
         FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
-        boolean primed = trigger.isPrimed();
+        boolean activated = trigger.isActivated();
 
-        assertThat(primed).isFalse();
+        assertThat(activated).isFalse();
     }
 
     @Test
-    public void isPrimedReturnsTrueWhenTriggerIsPrimed() {
-        Deployer deployer = mock(Deployer.class);
-        Entity entity = mock(Entity.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
-
+    public void isActivatedReturnsTrueWhenTriggerIsActivated() {
         FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
-        trigger.prime(context);
-        boolean primed = trigger.isPrimed();
+        trigger.activate(context);
+        boolean activated = trigger.isActivated();
 
-        assertThat(primed).isTrue();
+        assertThat(activated).isTrue();
     }
 
     @Test
-    public void cancelDoesNotCancelTriggerCheckIfNotActivated() {
+    public void deactivateDoesNotCancelTriggerCheckWhenNotActivated() {
         FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
 
-        assertThatCode(trigger::cancel).doesNotThrowAnyException();
+        assertThatCode(trigger::deactivate).doesNotThrowAnyException();
     }
 
     @Test
-    public void cancelCancelsTriggerCheck() {
-        Deployer deployer = mock(Deployer.class);
-        Entity entity = mock(Entity.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
-
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
-
+    public void deactivateCancelsTriggerCheck() {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
         FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
-        trigger.prime(context);
-        trigger.cancel();
+        trigger.activate(context);
+        trigger.deactivate();
 
         verify(task).cancel();
     }
 
     @Test
-    public void primeStartsRunnableThatStopsCheckingOnceSourceNoLongerExists() {
-        Deployer deployer = mock(Deployer.class);
-        Entity entity = mock(Entity.class);
-
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.exists()).thenReturn(false);
+    public void activateStartsRunnableThatStopsCheckingOnceSourceNoLongerExists() {
+        when(target.exists()).thenReturn(false);
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
-
         FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
-        trigger.prime(context);
+        trigger.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
@@ -102,29 +89,24 @@ public class FloorHitTriggerTest {
     }
 
     @Test
-    public void primeStartsRunnableThatNotifiesObserversOnceBlockBelowObjectIsNotPassable() {
-        Deployer deployer = mock(Deployer.class);
-        Entity entity = mock(Entity.class);
+    public void activateStartsRunnableThatNotifiesObserversOnceBlockBelowObjectIsNotPassable() {
         TriggerObserver observer = mock(TriggerObserver.class);
         World world = mock(World.class);
-        Location sourceLocation = new Location(world, 1, 1, 1);
-
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
+        Location targetLocation = new Location(world, 1, 1, 1);
 
         Block blockBelowObject = mock(Block.class);
         when(blockBelowObject.isPassable()).thenReturn(true).thenReturn(false);
         when(world.getBlockAt(any(Location.class))).thenReturn(blockBelowObject);
 
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, source);
+        when(target.exists()).thenReturn(true);
+        when(target.getLocation()).thenReturn(targetLocation);
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
 
         FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
         trigger.addObserver(observer);
-        trigger.prime(context);
+        trigger.activate(context);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
