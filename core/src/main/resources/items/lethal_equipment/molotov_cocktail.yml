@@ -59,8 +59,13 @@ projectile:
   effects:
     trail:
       type: TRAIL
-      delay: 5
-      intervals: [1]
+      triggers:
+        scheduled:
+          type: SCHEDULED
+          schedule:
+            type: REPEATING
+            delay: 5
+            intervals: 2
       max-activations: 100
       particle-effect:
         particle: FLAME

@@ -50,8 +50,9 @@ projectile:
   effects:
     bounce:
       type: BOUNCE
+      triggers:
+        impact:
+          type: IMPACT
       max-activations: 1
-      check-delay: 0
-      check-period: 1
       horizontal-friction: 3.0
       vertical-friction: 2.0

@@ -51,11 +51,16 @@ projectile:
   effects:
     sound:
       type: SOUND
-      delay: 0
-      intervals: [10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58]
+      triggers:
+        scheduled:
+          type: SCHEDULED
+          schedule:
+            type: MULTI_DELAY
+            delays: [10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58]
       sounds: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
     stick:
       type: STICK
-      delay: 0
-      check-period: 1
+      triggers:
+        impact:
+          type: IMPACT
       stick-sounds: ITEM_FLINTANDSTEEL_USE-0.5-2-0
