@@ -28,7 +28,7 @@ public class ProjectileEffectSpecLoaderTest {
         Integer maxActivations = 3;
         ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null);
         Set<String> triggerRoutes = Set.of("floor-hit");
-        TriggerSpec triggerSpec = new TriggerSpec("FLOOR_HIT", null, 1L, null);
+        TriggerSpec triggerSpec = new TriggerSpec("FLOOR_HIT", 5L, 1L, null, null);
 
         YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("base-route.type")).thenReturn(type);

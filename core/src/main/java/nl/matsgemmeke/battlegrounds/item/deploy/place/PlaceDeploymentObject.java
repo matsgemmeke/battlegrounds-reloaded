@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,6 +71,11 @@ public class PlaceDeploymentObject implements DeploymentObject, ItemEffectSource
 
     public void setResistances(@Nullable Map<DamageType, Double> resistances) {
         this.resistances = resistances;
+    }
+
+    public Vector getVelocity() {
+        // Block do not move, so it always has a vector of zero
+        return new Vector().zero();
     }
 
     @NotNull

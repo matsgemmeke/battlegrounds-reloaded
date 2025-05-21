@@ -19,7 +19,7 @@ public class SequenceSchedule implements Schedule {
     @NotNull
     private final Plugin plugin;
     @NotNull
-    private final Set<ScheduleTask> tasks;
+    private final Set<ScheduleTask> scheduleTasks;
     @Nullable
     private BukkitTask bukkitTask;
     @NotNull
@@ -29,7 +29,7 @@ public class SequenceSchedule implements Schedule {
     @Inject
     public SequenceSchedule(@NotNull Plugin plugin) {
         this.plugin = plugin;
-        this.tasks = new HashSet<>();
+        this.scheduleTasks = new HashSet<>();
         this.offsetTicks = new ArrayList<>();
         this.elapsedTicks = 0;
     }
@@ -44,7 +44,7 @@ public class SequenceSchedule implements Schedule {
     }
 
     public void addTask(@NotNull ScheduleTask task) {
-        tasks.add(task);
+        scheduleTasks.add(task);
     }
 
     public boolean isRunning() {
@@ -63,7 +63,7 @@ public class SequenceSchedule implements Schedule {
         elapsedTicks++;
 
         if (offsetTicks.contains(elapsedTicks)) {
-            tasks.forEach(ScheduleTask::run);
+            scheduleTasks.forEach(ScheduleTask::run);
         }
     }
 

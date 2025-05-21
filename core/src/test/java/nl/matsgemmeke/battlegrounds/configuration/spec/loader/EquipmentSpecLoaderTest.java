@@ -53,7 +53,7 @@ public class EquipmentSpecLoaderTest {
         Long manualActivationDelay = 5L;
         String manualActivationSounds = "UI_BUTTON_CLICK-1-1-0";
 
-        TriggerSpec triggerSpec = new TriggerSpec("TIMED", 3.0, 5L, 20L);
+        TriggerSpec triggerSpec = new TriggerSpec("TIMED", 1L, null, null, null);
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(35.0, 10.0, 25.0, 20.0, 15.0, 30.0);
         ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 10, 0.1, 0.2, 0.3, 0.0, null);
         PotionEffectSpec potionEffectSpec = new PotionEffectSpec("BLINDNESS", 100, 1, true, false, true);

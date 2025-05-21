@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -55,6 +56,18 @@ public class PrimeDeploymentObjectTest {
 
         assertThat(deployerLocation).isEqualTo(objectLocation);
     }
+
+    @Test
+    public void getVelocityReturnsDeployerEntityVelocity() {
+        Vector deployerVelocity = new Vector(1.0, 2.0, 3.0);
+        when(deployerEntity.getVelocity()).thenReturn(deployerVelocity);
+
+        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, itemStack);
+        Vector objectVelocity = object.getVelocity();
+
+        assertThat(objectVelocity).isEqualTo(deployerVelocity);
+    }
+
 
     @Test
     public void getWorldReturnsTheDeployerEntityWorld() {

@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,4 +27,8 @@ public interface TriggerTarget {
      */
     @NotNull
     Location getLocation();
+
+    Vector getVelocity();
+
+    World getWorld();
 }

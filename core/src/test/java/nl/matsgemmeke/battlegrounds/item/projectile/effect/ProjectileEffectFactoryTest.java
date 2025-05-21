@@ -61,7 +61,7 @@ public class ProjectileEffectFactoryTest {
         Double horizontalFriction = 2.0;
         Double verticalFriction = 3.0;
         Integer maxActivations = 3;
-        TriggerSpec triggerSpec = new TriggerSpec("TIMED", null, null, null);
+        TriggerSpec triggerSpec = new TriggerSpec("TIMED", 10L, null, null, null);
 
         Trigger trigger = mock(Trigger.class);
         when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(trigger);
@@ -115,7 +115,7 @@ public class ProjectileEffectFactoryTest {
         StickEffect stickEffect = mock(StickEffect.class);
         String stickSounds = "AMBIENT_CAVE-1-1-0";
         Long delay = 1L;
-        TriggerSpec triggerSpec = new TriggerSpec("FLOOR_HIT", null, 1L, null);
+        TriggerSpec triggerSpec = new TriggerSpec("FLOOR_HIT", 10L, 1L, null, null);
 
         Trigger trigger = mock(Trigger.class);
         when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(trigger);
