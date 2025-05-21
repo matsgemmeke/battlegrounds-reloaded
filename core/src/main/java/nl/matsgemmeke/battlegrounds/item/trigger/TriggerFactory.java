@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
@@ -16,8 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class TriggerFactory {
 
-    @NotNull
-    private final EnemyProximityTriggerFactory enemyProximityTriggerFactory;
     @NotNull
     private final FloorHitTriggerFactory floorHitTriggerFactory;
     @NotNull
@@ -30,13 +28,11 @@ public class TriggerFactory {
     @Inject
     public TriggerFactory(
             @NotNull GameContextProvider contextProvider,
-            @NotNull EnemyProximityTriggerFactory enemyProximityTriggerFactory,
             @NotNull FloorHitTriggerFactory floorHitTriggerFactory,
             @NotNull Scheduler scheduler,
             @NotNull TimedTriggerFactory timedTriggerFactory
     ) {
         this.contextProvider = contextProvider;
-        this.enemyProximityTriggerFactory = enemyProximityTriggerFactory;
         this.floorHitTriggerFactory = floorHitTriggerFactory;
         this.scheduler = scheduler;
         this.timedTriggerFactory = timedTriggerFactory;
@@ -52,9 +48,10 @@ public class TriggerFactory {
                 long interval = this.validateNotNull(spec.interval(), "interval", triggerType);
                 double range = this.validateNotNull(spec.range(), "range", triggerType);
 
+                Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                return enemyProximityTriggerFactory.create(targetFinder, range, interval);
+                return new EnemyProximityTrigger(schedule, targetFinder, range);
             }
             case FLOOR_HIT -> {
                 long interval = this.validateNotNull(spec.interval(), "interval", triggerType);

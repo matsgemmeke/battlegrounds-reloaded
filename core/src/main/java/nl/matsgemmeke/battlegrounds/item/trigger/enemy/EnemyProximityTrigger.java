@@ -1,42 +1,28 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.enemy;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.BaseTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
-import org.bukkit.scheduler.BukkitTask;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class EnemyProximityTrigger extends BaseTrigger {
 
-    private static final long RUNNABLE_DELAY = 0L;
-
-    private boolean activated;
-    private BukkitTask task;
     private final double checkingRange;
-    private final long periodBetweenChecks;
+    @NotNull
+    private final Schedule schedule;
     @NotNull
     private final TargetFinder targetFinder;
-    @NotNull
-    private final TaskRunner taskRunner;
+    private boolean activated;
 
-    @Inject
-    public EnemyProximityTrigger(
-            @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull TargetFinder targetFinder,
-            @Assisted double checkingRange,
-            @Assisted long periodBetweenChecks
-    ) {
+    public EnemyProximityTrigger(@NotNull Schedule schedule, @NotNull TargetFinder targetFinder, double checkingRange) {
+        this.schedule = schedule;
         this.targetFinder = targetFinder;
-        this.taskRunner = taskRunner;
         this.checkingRange = checkingRange;
-        this.periodBetweenChecks = periodBetweenChecks;
         this.activated = false;
     }
 
@@ -45,15 +31,16 @@ public class EnemyProximityTrigger extends BaseTrigger {
     }
 
     public void activate(@NotNull TriggerContext context) {
+        schedule.addTask(() -> this.runCheck(context));
+        schedule.start();
         activated = true;
-        task = taskRunner.runTaskTimer(() -> this.runCheck(context), RUNNABLE_DELAY, periodBetweenChecks);
     }
 
     private void runCheck(@NotNull TriggerContext context) {
         TriggerTarget target = context.target();
 
         if (!target.exists()) {
-            task.cancel();
+            this.deactivate();
             return;
         }
 
@@ -67,11 +54,7 @@ public class EnemyProximityTrigger extends BaseTrigger {
     }
 
     public void deactivate() {
-        if (task == null) {
-            return;
-        }
-
+        schedule.stop();
         activated = false;
-        task.cancel();
     }
 }

@@ -24,12 +24,14 @@ public class ImpactTriggerTest {
 
     private Entity entity;
     private Schedule schedule;
+    private TriggerObserver observer;
     private TriggerTarget target;
 
     @BeforeEach
     public void setUp() {
         entity = mock(Entity.class);
         schedule = mock(Schedule.class);
+        observer = mock(TriggerObserver.class);
         target = mock(TriggerTarget.class);
     }
 
@@ -73,7 +75,6 @@ public class ImpactTriggerTest {
     @Test
     public void activateStartsScheduleWithTaskThatDoesNotNotifyObserversWhenCastRayTraceResultIsNull() {
         TriggerContext context = new TriggerContext(entity, target);
-        TriggerObserver observer = mock(TriggerObserver.class);
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
 
@@ -101,7 +102,6 @@ public class ImpactTriggerTest {
     @Test
     public void activateStartsScheduleWithTaskThatDoesNotNotifyObserversWhenCastRayTraceResultHasNoHitBlock() {
         TriggerContext context = new TriggerContext(entity, target);
-        TriggerObserver observer = mock(TriggerObserver.class);
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), (Block) null, null);
@@ -130,7 +130,6 @@ public class ImpactTriggerTest {
     @Test
     public void activateStartsScheduleWithTaskThatDoesNotNotifyObserversWhenCastRayTraceResultHasNoHitBlockFace() {
         TriggerContext context = new TriggerContext(entity, target);
-        TriggerObserver observer = mock(TriggerObserver.class);
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
         Block hitBlock = mock(Block.class);
@@ -160,7 +159,6 @@ public class ImpactTriggerTest {
     @Test
     public void activateStartsScheduleWithTaskThatDoesNotNotifyObserversWhenCastRayTraceResultHitsBlockThatIsNotSolid() {
         TriggerContext context = new TriggerContext(entity, target);
-        TriggerObserver observer = mock(TriggerObserver.class);
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
 
@@ -193,7 +191,6 @@ public class ImpactTriggerTest {
     @Test
     public void activateStartsScheduleWithTaskThatNotifiesObserversWhenCastRayTraceResultHitsSolidBlock() {
         TriggerContext context = new TriggerContext(entity, target);
-        TriggerObserver observer = mock(TriggerObserver.class);
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
 

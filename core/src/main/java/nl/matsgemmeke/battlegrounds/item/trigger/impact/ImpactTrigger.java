@@ -30,7 +30,6 @@ public class ImpactTrigger extends BaseTrigger {
     public void activate(@NotNull TriggerContext context) {
         schedule.addTask(() -> this.runCheck(context));
         schedule.start();
-
         activated = true;
     }
 
