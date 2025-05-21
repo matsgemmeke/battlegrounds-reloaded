@@ -1,10 +1,9 @@
-package nl.matsgemmeke.battlegrounds.item.effect.trigger.floor;
+package nl.matsgemmeke.battlegrounds.item.trigger.floor;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
-import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;

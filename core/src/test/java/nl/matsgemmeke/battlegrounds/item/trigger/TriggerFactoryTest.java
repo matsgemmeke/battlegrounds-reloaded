@@ -1,12 +1,9 @@
-package nl.matsgemmeke.battlegrounds.item.effect.trigger;
+package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerCreationException;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
