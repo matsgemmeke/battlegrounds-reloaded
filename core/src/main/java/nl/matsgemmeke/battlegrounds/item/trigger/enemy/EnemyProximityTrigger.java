@@ -57,7 +57,7 @@ public class EnemyProximityTrigger extends BaseTrigger {
             return;
         }
 
-        List<GameEntity> targets = targetFinder.findEnemyTargets(context.deployerEntity().getUniqueId(), target.getLocation(), checkingRange);
+        List<GameEntity> targets = targetFinder.findEnemyTargets(context.entity().getUniqueId(), target.getLocation(), checkingRange);
 
         if (targets.isEmpty()) {
             return;

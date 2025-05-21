@@ -56,7 +56,6 @@ public class ImpactTrigger extends BaseTrigger {
         }
 
         this.notifyObservers();
-        this.deactivate();
     }
 
     public void deactivate() {

@@ -221,7 +221,7 @@ public class ExplosionEffectTest {
         verify(trigger, times(1)).activate(triggerContextCaptor.capture());
 
         TriggerContext triggerContext = triggerContextCaptor.getValue();
-        assertThat(triggerContext.deployerEntity()).isEqualTo(entity);
+        assertThat(triggerContext.entity()).isEqualTo(entity);
         assertThat(triggerContext.target()).isEqualTo(source);
     }
 
