@@ -54,8 +54,6 @@ import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactor
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -159,9 +157,6 @@ public class BattlegroundsModule implements Module {
                 .implement(ReloadSystem.class, ManualInsertionReloadSystem.class)
                 .build(ManualInsertionReloadSystemFactory.class));
 
-        binder.install(new FactoryModuleBuilder()
-                .implement(Trigger.class, FloorHitTrigger.class)
-                .build(FloorHitTriggerFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(Trigger.class, TimedTrigger.class)
                 .build(TimedTriggerFactory.class));

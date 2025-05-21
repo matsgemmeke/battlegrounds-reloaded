@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -17,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 public class TriggerFactory {
 
     @NotNull
-    private final FloorHitTriggerFactory floorHitTriggerFactory;
-    @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
     private final Scheduler scheduler;
@@ -28,12 +26,10 @@ public class TriggerFactory {
     @Inject
     public TriggerFactory(
             @NotNull GameContextProvider contextProvider,
-            @NotNull FloorHitTriggerFactory floorHitTriggerFactory,
             @NotNull Scheduler scheduler,
             @NotNull TimedTriggerFactory timedTriggerFactory
     ) {
         this.contextProvider = contextProvider;
-        this.floorHitTriggerFactory = floorHitTriggerFactory;
         this.scheduler = scheduler;
         this.timedTriggerFactory = timedTriggerFactory;
     }
@@ -54,9 +50,11 @@ public class TriggerFactory {
                 return new EnemyProximityTrigger(schedule, targetFinder, range);
             }
             case FLOOR_HIT -> {
+                long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
                 long interval = this.validateNotNull(spec.interval(), "interval", triggerType);
+                Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
 
-                return floorHitTriggerFactory.create(interval);
+                return new FloorHitTrigger(schedule);
             }
             case IMPACT -> {
                 Long delay = this.validateNotNull(spec.delay(), "delay", triggerType);

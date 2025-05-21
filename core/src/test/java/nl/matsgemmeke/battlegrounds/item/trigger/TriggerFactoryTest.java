@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTriggerFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -28,7 +27,6 @@ public class TriggerFactoryTest {
     private static final long INTERVAL = 2L;
     private static final List<Long> OFFSET_DELAYS = List.of(10L, 20L);
 
-    private FloorHitTriggerFactory floorHitTriggerFactory;
     private GameContextProvider contextProvider;
     private GameKey gameKey;
     private Scheduler scheduler;
@@ -36,7 +34,6 @@ public class TriggerFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        floorHitTriggerFactory = mock(FloorHitTriggerFactory.class);
         contextProvider = mock(GameContextProvider.class);
         gameKey = GameKey.ofTrainingMode();
         scheduler = mock(Scheduler.class);
@@ -47,7 +44,7 @@ public class TriggerFactoryTest {
     public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsEnemyProximityAndRangeIsNull() {
         TriggerSpec spec = new TriggerSpec("ENEMY_PROXIMITY", DELAY, INTERVAL, null, null);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, floorHitTriggerFactory, scheduler, timedTriggerFactory);
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler, timedTriggerFactory);
 
         assertThatThrownBy(() -> factory.create(spec, gameKey))
                 .isInstanceOf(TriggerCreationException.class)
@@ -55,10 +52,21 @@ public class TriggerFactoryTest {
     }
 
     @Test
+    public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsEnemyProximityAndDelayIsNull() {
+        TriggerSpec spec = new TriggerSpec("ENEMY_PROXIMITY", null, INTERVAL, null, RANGE);
+
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler, timedTriggerFactory);
+
+        assertThatThrownBy(() -> factory.create(spec, gameKey))
+                .isInstanceOf(TriggerCreationException.class)
+                .hasMessage("Cannot create trigger ENEMY_PROXIMITY because of invalid spec: Required 'delay' value is missing");
+    }
+
+    @Test
     public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsEnemyProximityAndIntervalIsNull() {
         TriggerSpec spec = new TriggerSpec("ENEMY_PROXIMITY", DELAY, null, null, RANGE);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, floorHitTriggerFactory, scheduler, timedTriggerFactory);
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler, timedTriggerFactory);
 
         assertThatThrownBy(() -> factory.create(spec, gameKey))
                 .isInstanceOf(TriggerCreationException.class)
@@ -75,17 +83,28 @@ public class TriggerFactoryTest {
         TargetFinder targetFinder = mock(TargetFinder.class);
         when(contextProvider.getComponent(gameKey, TargetFinder.class)).thenReturn(targetFinder);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, floorHitTriggerFactory, scheduler, timedTriggerFactory);
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler, timedTriggerFactory);
         Trigger trigger = factory.create(spec, gameKey);
 
         assertThat(trigger).isInstanceOf(EnemyProximityTrigger.class);
     }
 
     @Test
+    public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsFloorHitAndDelayIsNull() {
+        TriggerSpec spec = new TriggerSpec("FLOOR_HIT", null, INTERVAL, null, RANGE);
+
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler, timedTriggerFactory);
+
+        assertThatThrownBy(() -> factory.create(spec, gameKey))
+                .isInstanceOf(TriggerCreationException.class)
+                .hasMessage("Cannot create trigger FLOOR_HIT because of invalid spec: Required 'delay' value is missing");
+    }
+
+    @Test
     public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsFloorHitAndIntervalIsNull() {
         TriggerSpec spec = new TriggerSpec("FLOOR_HIT", DELAY, null, null, RANGE);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, floorHitTriggerFactory, scheduler, timedTriggerFactory);
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler, timedTriggerFactory);
 
         assertThatThrownBy(() -> factory.create(spec, gameKey))
                 .isInstanceOf(TriggerCreationException.class)
@@ -96,20 +115,20 @@ public class TriggerFactoryTest {
     public void createReturnsFloorHitTriggerInstanceWhenTriggerTypeEqualsFloorHit() {
         TriggerSpec spec = new TriggerSpec("FLOOR_HIT", DELAY, INTERVAL, null, RANGE);
 
-        FloorHitTrigger floorHitTrigger = mock(FloorHitTrigger.class);
-        when(floorHitTriggerFactory.create(INTERVAL)).thenReturn(floorHitTrigger);
+        Schedule schedule = mock(Schedule.class);
+        when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, floorHitTriggerFactory, scheduler, timedTriggerFactory);
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler, timedTriggerFactory);
         Trigger trigger = factory.create(spec, gameKey);
 
-        assertThat(trigger).isEqualTo(floorHitTrigger);
+        assertThat(trigger).isInstanceOf(FloorHitTrigger.class);
     }
 
     @Test
     public void createThrowsTriggerCreationExceptionWhenTriggerTypeEqualsTimedAndDelayIsNull() {
         TriggerSpec spec = new TriggerSpec("TIMED", null, null, null, null);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, floorHitTriggerFactory, scheduler, timedTriggerFactory);
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler, timedTriggerFactory);
 
         assertThatThrownBy(() -> factory.create(spec, gameKey))
                 .isInstanceOf(TriggerCreationException.class)
@@ -123,7 +142,7 @@ public class TriggerFactoryTest {
         TimedTrigger timedTrigger = mock(TimedTrigger.class);
         when(timedTriggerFactory.create(DELAY)).thenReturn(timedTrigger);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, floorHitTriggerFactory, scheduler, timedTriggerFactory);
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler, timedTriggerFactory);
         Trigger trigger = factory.create(spec, gameKey);
 
         assertThat(trigger).isEqualTo(timedTrigger);

@@ -1,41 +1,40 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.floor;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class FloorHitTriggerTest {
 
-    private static final long PERIOD_BETWEEN_CHECKS = 5L;
-
-    private TaskRunner taskRunner;
+    private Schedule schedule;
     private TriggerContext context;
+    private TriggerObserver observer;
     private TriggerTarget target;
 
     @BeforeEach
     public void setUp() {
-        taskRunner = mock(TaskRunner.class);
+        schedule = mock(Schedule.class);
+        observer = mock(TriggerObserver.class);
         target = mock(TriggerTarget.class);
         context = new TriggerContext(mock(Entity.class), target);
     }
 
     @Test
     public void isActivatedReturnsFalseWhenTriggerIsNotActivated() {
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
+        FloorHitTrigger trigger = new FloorHitTrigger(schedule);
         boolean activated = trigger.isActivated();
 
         assertThat(activated).isFalse();
@@ -43,7 +42,7 @@ public class FloorHitTriggerTest {
 
     @Test
     public void isActivatedReturnsTrueWhenTriggerIsActivated() {
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
+        FloorHitTrigger trigger = new FloorHitTrigger(schedule);
         trigger.activate(context);
         boolean activated = trigger.isActivated();
 
@@ -51,45 +50,25 @@ public class FloorHitTriggerTest {
     }
 
     @Test
-    public void deactivateDoesNotCancelTriggerCheckWhenNotActivated() {
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
-
-        assertThatCode(trigger::deactivate).doesNotThrowAnyException();
-    }
-
-    @Test
-    public void deactivateCancelsTriggerCheck() {
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
-
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
-        trigger.activate(context);
-        trigger.deactivate();
-
-        verify(task).cancel();
-    }
-
-    @Test
-    public void activateStartsRunnableThatStopsCheckingOnceSourceNoLongerExists() {
+    public void activateStartsScheduleWithTaskThatStopsCheckingOnceTargetNoLongerExists() {
         when(target.exists()).thenReturn(false);
 
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
-
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
+        FloorHitTrigger trigger = new FloorHitTrigger(schedule);
+        trigger.addObserver(observer);
         trigger.activate(context);
 
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
+        ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
+        verify(schedule).addTask(scheduleTaskCaptor.capture());
 
-        runnableCaptor.getValue().run();
+        scheduleTaskCaptor.getValue().run();
 
-        verify(task).cancel();
+        verifyNoInteractions(observer);
+        verify(schedule).start();
+        verify(schedule).stop();
     }
 
     @Test
-    public void activateStartsRunnableThatNotifiesObserversOnceBlockBelowObjectIsNotPassable() {
-        TriggerObserver observer = mock(TriggerObserver.class);
+    public void activateStartsScheduleWithTaskThatNotifiesObserversOnceBlockBelowObjectIsNotPassable() {
         World world = mock(World.class);
         Location targetLocation = new Location(world, 1, 1, 1);
 
@@ -100,21 +79,26 @@ public class FloorHitTriggerTest {
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
 
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(PERIOD_BETWEEN_CHECKS))).thenReturn(task);
-
-        FloorHitTrigger trigger = new FloorHitTrigger(taskRunner, PERIOD_BETWEEN_CHECKS);
+        FloorHitTrigger trigger = new FloorHitTrigger(schedule);
         trigger.addObserver(observer);
         trigger.activate(context);
 
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), anyLong(), anyLong());
+        ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
+        verify(schedule).addTask(scheduleTaskCaptor.capture());
 
-        Runnable runnable = runnableCaptor.getValue();
-        runnable.run();
-        runnable.run();
+        ScheduleTask task = scheduleTaskCaptor.getValue();
+        task.run();
+        task.run();
 
         verify(observer).onActivate();
-        verify(task).cancel();
+        verify(schedule).start();
+    }
+
+    @Test
+    public void deactivateStopsSchedule() {
+        FloorHitTrigger trigger = new FloorHitTrigger(schedule);
+        trigger.deactivate();
+
+        verify(schedule).stop();
     }
 }
