@@ -53,9 +53,6 @@ import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -156,10 +153,6 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ReloadSystem.class, ManualInsertionReloadSystem.class)
                 .build(ManualInsertionReloadSystemFactory.class));
-
-        binder.install(new FactoryModuleBuilder()
-                .implement(Trigger.class, TimedTrigger.class)
-                .build(TimedTriggerFactory.class));
 
         // File bindings
         binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);

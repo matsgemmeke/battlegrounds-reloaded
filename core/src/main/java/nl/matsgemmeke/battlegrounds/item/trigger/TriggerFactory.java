@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.jetbrains.annotations.NotNull;
@@ -20,18 +20,11 @@ public class TriggerFactory {
     private final GameContextProvider contextProvider;
     @NotNull
     private final Scheduler scheduler;
-    @NotNull
-    private final TimedTriggerFactory timedTriggerFactory;
 
     @Inject
-    public TriggerFactory(
-            @NotNull GameContextProvider contextProvider,
-            @NotNull Scheduler scheduler,
-            @NotNull TimedTriggerFactory timedTriggerFactory
-    ) {
+    public TriggerFactory(@NotNull GameContextProvider contextProvider, @NotNull Scheduler scheduler) {
         this.contextProvider = contextProvider;
         this.scheduler = scheduler;
-        this.timedTriggerFactory = timedTriggerFactory;
     }
 
     @NotNull
@@ -64,9 +57,10 @@ public class TriggerFactory {
                 return new ImpactTrigger(schedule);
             }
             case TIMED -> {
-                long delayUntilActivation = this.validateNotNull(spec.delay(), "delay", triggerType);
+                long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
+                Schedule schedule = scheduler.createSingleRunSchedule(delay);
 
-                return timedTriggerFactory.create(delayUntilActivation);
+                return new TimedTrigger(schedule);
             }
         }
 

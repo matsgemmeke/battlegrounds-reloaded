@@ -1,76 +1,61 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.timed;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import org.bukkit.entity.Entity;
-import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class TimedTriggerTest {
 
     private static final long DELAY_UNTIL_ACTIVATION = 1L;
 
-    private TaskRunner taskRunner;
+    private Schedule schedule;
     private TriggerContext context;
+    private TriggerObserver observer;
 
     @BeforeEach
     public void setUp() {
-        taskRunner = mock(TaskRunner.class);
+        schedule = mock(Schedule.class);
         context = new TriggerContext(mock(Entity.class), mock(TriggerTarget.class));
+        observer = mock(TriggerObserver.class);
     }
 
     @Test
-    public void deactivateDoesNotCancelTaskWhenNotActivated() {
-        TimedTrigger trigger = new TimedTrigger(taskRunner, DELAY_UNTIL_ACTIVATION);
-        trigger.deactivate();
-
-        assertThat(trigger.isActivated()).isFalse();
-    }
-
-    @Test
-    public void deactivateCancelsTaskWhenActivated() {
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskLater(any(Runnable.class), eq(DELAY_UNTIL_ACTIVATION))).thenReturn(task);
-
-        TimedTrigger trigger = new TimedTrigger(taskRunner, DELAY_UNTIL_ACTIVATION);
-        trigger.activate(context);
-        trigger.deactivate();
-
-        assertThat(trigger.isActivated()).isFalse();
-
-        verify(task).cancel();
-    }
-
-    @Test
-    public void activateDoesNotScheduleDelayedActivationTwiceWhenAlreadyActivated() {
-        TimedTrigger trigger = new TimedTrigger(taskRunner, DELAY_UNTIL_ACTIVATION);
+    public void activateDoesNotStartScheduleTwiceWhenAlreadyActivated() {
+        TimedTrigger trigger = new TimedTrigger(schedule);
         trigger.activate(context);
         trigger.activate(context);
 
-        verify(taskRunner, times(1)).runTaskLater(any(Runnable.class), eq(DELAY_UNTIL_ACTIVATION));
+        verify(schedule, times(1)).start();
     }
 
     @Test
-    public void activateStartsRunnableThatNotifiesObservablesAfterDelay() {
-        TriggerObserver observer = mock(TriggerObserver.class);
-
-        TimedTrigger trigger = new TimedTrigger(taskRunner, DELAY_UNTIL_ACTIVATION);
+    public void activateStartsScheduleWithTaskThatNotifiesObservablesAndStopsSchedule() {
+        TimedTrigger trigger = new TimedTrigger(schedule);
         trigger.addObserver(observer);
         trigger.activate(context);
 
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(DELAY_UNTIL_ACTIVATION));
+        ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
+        verify(schedule).addTask(scheduleTaskCaptor.capture());
 
-        runnableCaptor.getValue().run();
+        scheduleTaskCaptor.getValue().run();
 
         verify(observer).onActivate();
+        verify(schedule).stop();
+    }
+
+    @Test
+    public void deactivateStopsSchedule() {
+        TimedTrigger trigger = new TimedTrigger(schedule);
+        trigger.deactivate();
+
+        verify(schedule).stop();
     }
 }
