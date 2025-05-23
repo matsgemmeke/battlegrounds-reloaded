@@ -7,12 +7,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class DelayedTrigger extends BaseTrigger {
 
+    private final boolean continuous;
     @NotNull
     private final Schedule schedule;
     private boolean activated;
 
-    public DelayedTrigger(@NotNull Schedule schedule) {
+    public DelayedTrigger(@NotNull Schedule schedule, boolean continuous) {
         this.schedule = schedule;
+        this.continuous = continuous;
         this.activated = false;
     }
 
@@ -25,12 +27,17 @@ public class DelayedTrigger extends BaseTrigger {
             return;
         }
 
-        schedule.addTask(() -> {
-            this.notifyObservers();
-            this.deactivate();
-        });
+        schedule.addTask(this::execute);
         schedule.start();
         activated = true;
+    }
+
+    private void execute() {
+        this.notifyObservers();
+
+        if (!continuous) {
+            this.deactivate();
+        }
     }
 
     public void deactivate() {

@@ -14,6 +14,8 @@ import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class TriggerFactory {
 
     @NotNull
@@ -33,10 +35,18 @@ public class TriggerFactory {
 
         switch (triggerType) {
             case DELAYED -> {
-                long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
-                Schedule schedule = scheduler.createSingleRunSchedule(delay);
+                List<Long> offsetDelays = this.validateNotNull(spec.offsetDelays(), "offsetDelays", triggerType);
+                Schedule schedule;
 
-                return new DelayedTrigger(schedule);
+                boolean continuous = offsetDelays.size() > 1;
+
+                if (continuous) {
+                    schedule = scheduler.createSequenceSchedule(offsetDelays);
+                } else {
+                    schedule = scheduler.createSingleRunSchedule(offsetDelays.get(0));
+                }
+
+                return new DelayedTrigger(schedule, continuous);
             }
             case ENEMY_PROXIMITY -> {
                 long delay = this.validateNotNull(spec.delay(), "delay", triggerType);

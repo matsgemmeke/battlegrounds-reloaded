@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class DelayedTriggerTest {
@@ -26,8 +27,25 @@ public class DelayedTriggerTest {
     }
 
     @Test
+    public void isActivatedReturnsFalseWhenNotActivated() {
+        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
+        boolean activated = trigger.isActivated();
+
+        assertThat(activated).isFalse();
+    }
+
+    @Test
+    public void isActivatedReturnsTrueWhenActivated() {
+        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
+        trigger.activate(context);
+        boolean activated = trigger.isActivated();
+
+        assertThat(activated).isTrue();
+    }
+
+    @Test
     public void activateDoesNotStartScheduleTwiceWhenAlreadyActivated() {
-        DelayedTrigger trigger = new DelayedTrigger(schedule);
+        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
         trigger.activate(context);
         trigger.activate(context);
 
@@ -35,8 +53,8 @@ public class DelayedTriggerTest {
     }
 
     @Test
-    public void activateStartsScheduleWithTaskThatNotifiesObservablesAndStopsSchedule() {
-        DelayedTrigger trigger = new DelayedTrigger(schedule);
+    public void activateStartsScheduleWithTaskThatNotifiesObservablesAndStopsScheduleWhenNotContinuous() {
+        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
         trigger.addObserver(observer);
         trigger.activate(context);
 
@@ -46,12 +64,29 @@ public class DelayedTriggerTest {
         scheduleTaskCaptor.getValue().run();
 
         verify(observer).onActivate();
+        verify(schedule).start();
         verify(schedule).stop();
     }
 
     @Test
+    public void activateStartsScheduleWithTaskThatNotifiesObservablesAndDoesNotStopScheduleWhenContinuous() {
+        DelayedTrigger trigger = new DelayedTrigger(schedule, true);
+        trigger.addObserver(observer);
+        trigger.activate(context);
+
+        ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
+        verify(schedule).addTask(scheduleTaskCaptor.capture());
+
+        scheduleTaskCaptor.getValue().run();
+
+        verify(observer).onActivate();
+        verify(schedule).start();
+        verify(schedule, never()).stop();
+    }
+
+    @Test
     public void deactivateStopsSchedule() {
-        DelayedTrigger trigger = new DelayedTrigger(schedule);
+        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
         trigger.deactivate();
 
         verify(schedule).stop();

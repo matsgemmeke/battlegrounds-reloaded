@@ -30,7 +30,6 @@ public class TriggerFactoryTest {
     private static final double RANGE = 2.5;
     private static final long DELAY = 10L;
     private static final long INTERVAL = 2L;
-    private static final List<Long> OFFSET_DELAYS = List.of(10L, 20L);
 
     private GameContextProvider contextProvider;
     private GameKey gameKey;
@@ -45,7 +44,7 @@ public class TriggerFactoryTest {
 
     private static Stream<Arguments> invalidTriggerSpecCases() {
         return Stream.of(
-                arguments(new TriggerSpec("DELAYED", null, null, null, null), "delay"),
+                arguments(new TriggerSpec("DELAYED", null, null, null, null), "offsetDelays"),
                 arguments(new TriggerSpec("ENEMY_PROXIMITY", null, INTERVAL, null, RANGE), "delay"),
                 arguments(new TriggerSpec("ENEMY_PROXIMITY", DELAY, null, null, RANGE), "interval"),
                 arguments(new TriggerSpec("ENEMY_PROXIMITY", DELAY, INTERVAL, null, null), "range"),
@@ -69,11 +68,26 @@ public class TriggerFactoryTest {
     }
 
     @Test
-    public void createReturnsDelayedTriggerInstanceWhenTriggerTypeEqualsDelayed() {
-        TriggerSpec spec = new TriggerSpec("DELAYED", DELAY, null, null, null);
+    public void createReturnsDelayedTriggerInstanceWithSingleRunScheduleWhenTriggerTypeEqualsDelayed() {
+        List<Long> offsetDelays = List.of(DELAY);
+        TriggerSpec spec = new TriggerSpec("DELAYED", null, null, offsetDelays, null);
 
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
+
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
+        Trigger trigger = factory.create(spec, gameKey);
+
+        assertThat(trigger).isInstanceOf(DelayedTrigger.class);
+    }
+
+    @Test
+    public void createReturnsDelayedTriggerInstanceWithSequenceScheduleWhenTriggerTypeEqualsDelayed() {
+        List<Long> offsetDelays = List.of(10L, 20L);
+        TriggerSpec spec = new TriggerSpec("DELAYED", null, null, offsetDelays, null);
+
+        Schedule schedule = mock(Schedule.class);
+        when(scheduler.createSequenceSchedule(offsetDelays)).thenReturn(schedule);
 
         TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
         Trigger trigger = factory.create(spec, gameKey);
