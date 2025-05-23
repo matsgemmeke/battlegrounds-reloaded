@@ -4,10 +4,10 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.trigger.delayed.DelayedTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,14 +45,14 @@ public class TriggerFactoryTest {
 
     private static Stream<Arguments> invalidTriggerSpecCases() {
         return Stream.of(
+                arguments(new TriggerSpec("DELAYED", null, null, null, null), "delay"),
                 arguments(new TriggerSpec("ENEMY_PROXIMITY", null, INTERVAL, null, RANGE), "delay"),
                 arguments(new TriggerSpec("ENEMY_PROXIMITY", DELAY, null, null, RANGE), "interval"),
                 arguments(new TriggerSpec("ENEMY_PROXIMITY", DELAY, INTERVAL, null, null), "range"),
                 arguments(new TriggerSpec("FLOOR_HIT", null, INTERVAL, null, null), "delay"),
                 arguments(new TriggerSpec("FLOOR_HIT", DELAY, null, null, null), "interval"),
                 arguments(new TriggerSpec("IMPACT", null, INTERVAL, null, null), "delay"),
-                arguments(new TriggerSpec("IMPACT", DELAY, null, null, null), "interval"),
-                arguments(new TriggerSpec("TIMED", null, null, null, null), "delay")
+                arguments(new TriggerSpec("IMPACT", DELAY, null, null, null), "interval")
         );
     }
 
@@ -66,6 +66,19 @@ public class TriggerFactoryTest {
         assertThatThrownBy(() -> factory.create(spec, gameKey))
                 .isInstanceOf(TriggerCreationException.class)
                 .hasMessage(expectedErrorMessage);
+    }
+
+    @Test
+    public void createReturnsDelayedTriggerInstanceWhenTriggerTypeEqualsDelayed() {
+        TriggerSpec spec = new TriggerSpec("DELAYED", DELAY, null, null, null);
+
+        Schedule schedule = mock(Schedule.class);
+        when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
+
+        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
+        Trigger trigger = factory.create(spec, gameKey);
+
+        assertThat(trigger).isInstanceOf(DelayedTrigger.class);
     }
 
     @Test
@@ -108,18 +121,5 @@ public class TriggerFactoryTest {
         Trigger trigger = factory.create(spec, gameKey);
 
         assertThat(trigger).isInstanceOf(ImpactTrigger.class);
-    }
-
-    @Test
-    public void createReturnsTimedTriggerInstanceWhenTriggerTypeEqualsTimed() {
-        TriggerSpec spec = new TriggerSpec("TIMED", DELAY, null, null, null);
-
-        Schedule schedule = mock(Schedule.class);
-        when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
-
-        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
-        Trigger trigger = factory.create(spec, gameKey);
-
-        assertThat(trigger).isInstanceOf(TimedTrigger.class);
     }
 }

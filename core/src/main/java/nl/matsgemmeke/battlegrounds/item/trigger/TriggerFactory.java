@@ -5,10 +5,10 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.trigger.delayed.DelayedTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +32,12 @@ public class TriggerFactory {
         TriggerType triggerType = TriggerType.valueOf(spec.type());
 
         switch (triggerType) {
+            case DELAYED -> {
+                long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
+                Schedule schedule = scheduler.createSingleRunSchedule(delay);
+
+                return new DelayedTrigger(schedule);
+            }
             case ENEMY_PROXIMITY -> {
                 long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
                 long interval = this.validateNotNull(spec.interval(), "interval", triggerType);
@@ -55,12 +61,6 @@ public class TriggerFactory {
                 Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
 
                 return new ImpactTrigger(schedule);
-            }
-            case TIMED -> {
-                long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
-                Schedule schedule = scheduler.createSingleRunSchedule(delay);
-
-                return new TimedTrigger(schedule);
             }
         }
 

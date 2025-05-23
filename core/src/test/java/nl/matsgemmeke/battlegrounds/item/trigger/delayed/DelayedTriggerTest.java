@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.trigger.timed;
+package nl.matsgemmeke.battlegrounds.item.trigger.delayed;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
@@ -12,9 +12,7 @@ import org.mockito.ArgumentCaptor;
 
 import static org.mockito.Mockito.*;
 
-public class TimedTriggerTest {
-
-    private static final long DELAY_UNTIL_ACTIVATION = 1L;
+public class DelayedTriggerTest {
 
     private Schedule schedule;
     private TriggerContext context;
@@ -29,7 +27,7 @@ public class TimedTriggerTest {
 
     @Test
     public void activateDoesNotStartScheduleTwiceWhenAlreadyActivated() {
-        TimedTrigger trigger = new TimedTrigger(schedule);
+        DelayedTrigger trigger = new DelayedTrigger(schedule);
         trigger.activate(context);
         trigger.activate(context);
 
@@ -38,7 +36,7 @@ public class TimedTriggerTest {
 
     @Test
     public void activateStartsScheduleWithTaskThatNotifiesObservablesAndStopsSchedule() {
-        TimedTrigger trigger = new TimedTrigger(schedule);
+        DelayedTrigger trigger = new DelayedTrigger(schedule);
         trigger.addObserver(observer);
         trigger.activate(context);
 
@@ -53,7 +51,7 @@ public class TimedTriggerTest {
 
     @Test
     public void deactivateStopsSchedule() {
-        TimedTrigger trigger = new TimedTrigger(schedule);
+        DelayedTrigger trigger = new DelayedTrigger(schedule);
         trigger.deactivate();
 
         verify(schedule).stop();
