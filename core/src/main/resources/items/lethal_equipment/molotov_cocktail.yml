@@ -42,8 +42,9 @@ effect:
   spread-fire: false
   triggers:
     floor-hit:
-      check-interval: 2
       type: FLOOR_HIT
+      delay: 0
+      interval: 2
   type: COMBUSTION
 equipment-type: LETHAL
 item:
@@ -59,13 +60,12 @@ projectile:
   effects:
     trail:
       type: TRAIL
+      delay: 5
+      intervals: [2]
       triggers:
         scheduled:
           type: SCHEDULED
-          schedule:
-            type: REPEATING
-            delay: 5
-            intervals: 2
+          offset-delays: [5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39]
       max-activations: 100
       particle-effect:
         particle: FLAME

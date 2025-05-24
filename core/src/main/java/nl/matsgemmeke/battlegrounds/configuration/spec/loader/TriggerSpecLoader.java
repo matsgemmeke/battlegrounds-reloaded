@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class TriggerSpecLoader {
 
-    private static final List<String> ALLOWED_TYPE_VALUES = List.of("ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT", "SEQUENCE", "TIMED");
+    private static final List<String> ALLOWED_TYPE_VALUES = List.of("ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT", "SCHEDULED");
     private static final String TYPE_ROUTE = "type";
     private static final String DELAY_ROUTE = "delay";
     private static final String INTERVAL_ROUTE = "interval";
@@ -44,7 +44,7 @@ public class TriggerSpecLoader {
         Long delay = new FieldSpecResolver<Long>()
                 .route(delayRoute)
                 .value(yamlReader.getOptionalLong(delayRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT", "TIMED")))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT")))
                 .resolve();
         Long interval = new FieldSpecResolver<Long>()
                 .route(intervalRoute)
@@ -54,7 +54,7 @@ public class TriggerSpecLoader {
         List<Long> offsetDelays = new FieldSpecResolver<List<Long>>()
                 .route(offsetDelaysRoute)
                 .value(yamlReader.getOptionalLongList(offsetDelaysRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, "SEQUENCE"))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, "SCHEDULED"))
                 .resolve();
         Double range = new FieldSpecResolver<Double>()
                 .route(rangeRoute)

@@ -33,9 +33,9 @@ effect:
       distance: 2.5
   spread-fire: false
   triggers:
-    timed:
-      delay-until-activation: 80
-      type: TIMED
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [80]
   type: EXPLOSION
 equipment-type: LETHAL
 item:
@@ -54,6 +54,8 @@ projectile:
       triggers:
         impact:
           type: IMPACT
+          delay: 0
+          interval: 1
       max-activations: 1
       horizontal-friction: 3.0
       vertical-friction: 2.0

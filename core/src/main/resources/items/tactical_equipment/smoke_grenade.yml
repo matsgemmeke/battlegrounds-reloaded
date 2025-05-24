@@ -32,9 +32,9 @@ effect:
     offset-z: 0.1
     extra: 0.01
   triggers:
-    timed:
-      delay-until-activation: 60
-      type: TIMED
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [60]
   type: SMOKE_SCREEN
 equipment-type: TACTICAL
 item:
@@ -53,6 +53,8 @@ projectile:
       triggers:
         impact:
           type: IMPACT
+          delay: 0
+          interval: 1
       max-activations: 1
       horizontal-friction: 3.0
       vertical-friction: 2.0

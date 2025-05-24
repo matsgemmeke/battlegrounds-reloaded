@@ -34,8 +34,8 @@ effect:
   spread-fire: false
   triggers:
     timed:
-      delay-until-activation: 60
-      type: TIMED
+      type: SCHEDULED
+      offset-delays: [60]
   type: EXPLOSION
 equipment-type: LETHAL
 item:
@@ -54,13 +54,13 @@ projectile:
       triggers:
         scheduled:
           type: SCHEDULED
-          schedule:
-            type: MULTI_DELAY
-            delays: [10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58]
+          offset-delays: [10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58]
       sounds: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
     stick:
       type: STICK
       triggers:
         impact:
           type: IMPACT
+          delay: 0
+          interval: 1
       stick-sounds: ITEM_FLINTANDSTEEL_USE-0.5-2-0

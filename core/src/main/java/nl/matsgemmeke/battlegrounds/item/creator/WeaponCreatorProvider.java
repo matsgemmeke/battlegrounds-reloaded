@@ -119,8 +119,10 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
             this.addItemSpec(creator, itemFile, document);
         } catch (IOException | IllegalArgumentException e) {
+            System.out.println(e.getMessage());
             logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
         } catch (InvalidFieldSpecException e) {
+            System.out.println("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
             logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
         }
     }

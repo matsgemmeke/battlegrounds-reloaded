@@ -23,9 +23,9 @@ deploy:
 description: Marks a location as your next spawn point.
 effect:
   triggers:
-    timed:
-      delay-until-activation: 1
-      type: TIMED
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [1]
   type: MARK_SPAWN_POINT
 equipment-type: TACTICAL
 item:
