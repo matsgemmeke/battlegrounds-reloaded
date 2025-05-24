@@ -5,10 +5,10 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.trigger.delayed.DelayedTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.scheduled.ScheduledTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.jetbrains.annotations.NotNull;
@@ -34,20 +34,6 @@ public class TriggerFactory {
         TriggerType triggerType = TriggerType.valueOf(spec.type());
 
         switch (triggerType) {
-            case DELAYED -> {
-                List<Long> offsetDelays = this.validateNotNull(spec.offsetDelays(), "offsetDelays", triggerType);
-                Schedule schedule;
-
-                boolean continuous = offsetDelays.size() > 1;
-
-                if (continuous) {
-                    schedule = scheduler.createSequenceSchedule(offsetDelays);
-                } else {
-                    schedule = scheduler.createSingleRunSchedule(offsetDelays.get(0));
-                }
-
-                return new DelayedTrigger(schedule, continuous);
-            }
             case ENEMY_PROXIMITY -> {
                 long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
                 long interval = this.validateNotNull(spec.interval(), "interval", triggerType);
@@ -71,6 +57,20 @@ public class TriggerFactory {
                 Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
 
                 return new ImpactTrigger(schedule);
+            }
+            case SCHEDULED -> {
+                List<Long> offsetDelays = this.validateNotNull(spec.offsetDelays(), "offsetDelays", triggerType);
+                Schedule schedule;
+
+                boolean continuous = offsetDelays.size() > 1;
+
+                if (continuous) {
+                    schedule = scheduler.createSequenceSchedule(offsetDelays);
+                } else {
+                    schedule = scheduler.createSingleRunSchedule(offsetDelays.get(0));
+                }
+
+                return new ScheduledTrigger(schedule, continuous);
             }
         }
 

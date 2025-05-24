@@ -1,18 +1,18 @@
-package nl.matsgemmeke.battlegrounds.item.trigger.delayed;
+package nl.matsgemmeke.battlegrounds.item.trigger.scheduled;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.BaseTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import org.jetbrains.annotations.NotNull;
 
-public class DelayedTrigger extends BaseTrigger {
+public class ScheduledTrigger extends BaseTrigger {
 
     private final boolean continuous;
     @NotNull
     private final Schedule schedule;
     private boolean activated;
 
-    public DelayedTrigger(@NotNull Schedule schedule, boolean continuous) {
+    public ScheduledTrigger(@NotNull Schedule schedule, boolean continuous) {
         this.schedule = schedule;
         this.continuous = continuous;
         this.activated = false;

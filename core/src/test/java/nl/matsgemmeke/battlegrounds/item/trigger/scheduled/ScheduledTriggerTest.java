@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.trigger.delayed;
+package nl.matsgemmeke.battlegrounds.item.trigger.scheduled;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
@@ -13,7 +13,7 @@ import org.mockito.ArgumentCaptor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DelayedTriggerTest {
+public class ScheduledTriggerTest {
 
     private Schedule schedule;
     private TriggerContext context;
@@ -28,7 +28,7 @@ public class DelayedTriggerTest {
 
     @Test
     public void isActivatedReturnsFalseWhenNotActivated() {
-        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
+        ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
         boolean activated = trigger.isActivated();
 
         assertThat(activated).isFalse();
@@ -36,7 +36,7 @@ public class DelayedTriggerTest {
 
     @Test
     public void isActivatedReturnsTrueWhenActivated() {
-        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
+        ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
         trigger.activate(context);
         boolean activated = trigger.isActivated();
 
@@ -45,7 +45,7 @@ public class DelayedTriggerTest {
 
     @Test
     public void activateDoesNotStartScheduleTwiceWhenAlreadyActivated() {
-        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
+        ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
         trigger.activate(context);
         trigger.activate(context);
 
@@ -54,7 +54,7 @@ public class DelayedTriggerTest {
 
     @Test
     public void activateStartsScheduleWithTaskThatNotifiesObservablesAndStopsScheduleWhenNotContinuous() {
-        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
+        ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
         trigger.addObserver(observer);
         trigger.activate(context);
 
@@ -70,7 +70,7 @@ public class DelayedTriggerTest {
 
     @Test
     public void activateStartsScheduleWithTaskThatNotifiesObservablesAndDoesNotStopScheduleWhenContinuous() {
-        DelayedTrigger trigger = new DelayedTrigger(schedule, true);
+        ScheduledTrigger trigger = new ScheduledTrigger(schedule, true);
         trigger.addObserver(observer);
         trigger.activate(context);
 
@@ -86,7 +86,7 @@ public class DelayedTriggerTest {
 
     @Test
     public void deactivateStopsSchedule() {
-        DelayedTrigger trigger = new DelayedTrigger(schedule, false);
+        ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
         trigger.deactivate();
 
         verify(schedule).stop();
