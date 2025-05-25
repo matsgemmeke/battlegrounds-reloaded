@@ -11,7 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundProperties;
@@ -31,8 +31,6 @@ import java.util.stream.Collectors;
 public class ProjectileEffectFactory {
 
     @NotNull
-    private final BounceEffectFactory bounceEffectFactory;
-    @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
@@ -47,7 +45,6 @@ public class ProjectileEffectFactory {
 
     @Inject
     public ProjectileEffectFactory(
-            @NotNull BounceEffectFactory bounceEffectFactory,
             @NotNull GameContextProvider contextProvider,
             @NotNull ParticleEffectMapper particleEffectMapper,
             @NotNull SoundEffectFactory soundEffectFactory,
@@ -55,7 +52,6 @@ public class ProjectileEffectFactory {
             @NotNull TrailEffectFactory trailEffectFactory,
             @NotNull TriggerFactory triggerFactory
     ) {
-        this.bounceEffectFactory = bounceEffectFactory;
         this.contextProvider = contextProvider;
         this.particleEffectMapper = particleEffectMapper;
         this.soundEffectFactory = soundEffectFactory;
@@ -81,7 +77,7 @@ public class ProjectileEffectFactory {
 
                 BounceProperties properties = new BounceProperties(amountOfBounces, horizontalFriction, verticalFriction, 1L, 1L);
 
-                return bounceEffectFactory.create(properties, triggers);
+                return new BounceEffect(properties, triggers);
             }
             case SOUND -> {
                 List<GameSound> sounds = DefaultGameSound.parseSounds(spec.sounds());

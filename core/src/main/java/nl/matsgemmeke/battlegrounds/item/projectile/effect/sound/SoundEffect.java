@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +33,10 @@ public class SoundEffect implements ProjectileEffect {
 
     public void onLaunch(@NotNull Projectile projectile) {
         task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.delay(), RUNNABLE_PERIOD);
+    }
+
+    public void onLaunch(@NotNull Entity deployerEntity, @NotNull Projectile projectile) {
+        throw new UnsupportedOperationException();
     }
 
     private void runCheck(@NotNull Projectile projectile) {

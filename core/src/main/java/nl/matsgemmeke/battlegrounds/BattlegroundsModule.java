@@ -33,8 +33,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
@@ -134,9 +132,6 @@ public class BattlegroundsModule implements Module {
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
                 .build(DefaultPlayerRegistryFactory.class));
 
-        binder.install(new FactoryModuleBuilder()
-                .implement(ProjectileEffect.class, BounceEffect.class)
-                .build(BounceEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileEffect.class, SoundEffect.class)
                 .build(SoundEffectFactory.class));

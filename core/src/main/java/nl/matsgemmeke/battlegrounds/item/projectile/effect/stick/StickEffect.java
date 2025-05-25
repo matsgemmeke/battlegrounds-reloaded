@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,10 @@ public class StickEffect implements ProjectileEffect {
 
     public void onLaunch(@NotNull Projectile projectile) {
         task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.delay(), RUNNABLE_PERIOD);
+    }
+
+    public void onLaunch(@NotNull Entity deployerEntity, @NotNull Projectile projectile) {
+        throw new UnsupportedOperationException();
     }
 
     private void runCheck(@NotNull Projectile projectile) {

@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +34,10 @@ public class TrailEffect implements ProjectileEffect {
     @Override
     public void onLaunch(@NotNull Projectile projectile) {
         task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.delay(), RUNNABLE_PERIOD);
+    }
+
+    public void onLaunch(@NotNull Entity deployerEntity, @NotNull Projectile projectile) {
+        throw new UnsupportedOperationException();
     }
 
     private void runCheck(@NotNull Projectile projectile) {

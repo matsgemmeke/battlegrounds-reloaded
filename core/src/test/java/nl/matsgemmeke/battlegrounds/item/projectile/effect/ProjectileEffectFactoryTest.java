@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
@@ -25,8 +24,10 @@ import org.bukkit.Particle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedConstruction;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,7 +35,6 @@ import static org.mockito.Mockito.*;
 
 public class ProjectileEffectFactoryTest {
 
-    private BounceEffectFactory bounceEffectFactory;
     private GameContextProvider contextProvider;
     private GameKey gameKey;
     private ParticleEffectMapper particleEffectMapper;
@@ -45,7 +45,6 @@ public class ProjectileEffectFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        bounceEffectFactory = mock(BounceEffectFactory.class);
         contextProvider = mock(GameContextProvider.class);
         gameKey = GameKey.ofTrainingMode();
         particleEffectMapper = new ParticleEffectMapper();
@@ -57,30 +56,32 @@ public class ProjectileEffectFactoryTest {
 
     @Test
     public void createReturnsInstanceOfBounceEffect() {
-        BounceEffect bounceEffect = mock(BounceEffect.class);
         Double horizontalFriction = 2.0;
         Double verticalFriction = 3.0;
         Integer maxActivations = 3;
         TriggerSpec triggerSpec = new TriggerSpec("TIMED", 10L, null, null, null);
+        ProjectileEffectSpec spec = new ProjectileEffectSpec("BOUNCE", null, null, null, horizontalFriction, verticalFriction, maxActivations, null, List.of(triggerSpec));
 
         Trigger trigger = mock(Trigger.class);
         when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(trigger);
 
-        ProjectileEffectSpec spec = new ProjectileEffectSpec("BOUNCE", null, null, null, horizontalFriction, verticalFriction, maxActivations, null, List.of(triggerSpec));
-        when(bounceEffectFactory.create(any(BounceProperties.class), argThat(triggers -> triggers.contains(trigger)))).thenReturn(bounceEffect);
+        MockedConstruction<BounceEffect> bounceEffectConstructor = mockConstruction(BounceEffect.class, (mock, context) -> {
+            BounceProperties properties = (BounceProperties) context.arguments().get(0);
+            Set<Trigger> triggers = (Set<Trigger>) context.arguments().get(1);
 
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(bounceEffectFactory, contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
+            assertThat(properties.amountOfBounces()).isEqualTo(maxActivations);
+            assertThat(properties.horizontalFriction()).isEqualTo(horizontalFriction);
+            assertThat(properties.verticalFriction()).isEqualTo(verticalFriction);
+            assertThat(triggers).containsExactly(trigger);
+        });
+
+        ProjectileEffectFactory factory = new ProjectileEffectFactory(contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
         ProjectileEffect projectileEffect = factory.create(spec, gameKey);
 
-        ArgumentCaptor<BounceProperties> bouncePropertiesCaptor = ArgumentCaptor.forClass(BounceProperties.class);
-        verify(bounceEffectFactory).create(bouncePropertiesCaptor.capture(), argThat(triggers -> triggers.contains(trigger)));
+        assertThat(bounceEffectConstructor.constructed()).hasSize(1);
+        assertThat(projectileEffect).isInstanceOf(BounceEffect.class);
 
-        BounceProperties properties = bouncePropertiesCaptor.getValue();
-        assertThat(properties.amountOfBounces()).isEqualTo(maxActivations);
-        assertThat(properties.horizontalFriction()).isEqualTo(horizontalFriction);
-        assertThat(properties.verticalFriction()).isEqualTo(verticalFriction);
-
-        assertThat(projectileEffect).isEqualTo(bounceEffect);
+        bounceEffectConstructor.close();
     }
 
     @Test
@@ -96,7 +97,7 @@ public class ProjectileEffectFactoryTest {
         ProjectileEffectSpec spec = new ProjectileEffectSpec("SOUND", delay, intervals, sounds, null, null, null, null, null);
         when(soundEffectFactory.create(any(SoundProperties.class), eq(audioEmitter))).thenReturn(soundEffect);
 
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(bounceEffectFactory, contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
+        ProjectileEffectFactory factory = new ProjectileEffectFactory(contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
         ProjectileEffect projectileEffect = factory.create(spec, gameKey);
 
         ArgumentCaptor<SoundProperties> soundPropertiesCaptor = ArgumentCaptor.forClass(SoundProperties.class);
@@ -126,7 +127,7 @@ public class ProjectileEffectFactoryTest {
         ProjectileEffectSpec spec = new ProjectileEffectSpec("STICK", delay, null, stickSounds, null, null, null, null, List.of(triggerSpec));
         when(stickEffectFactory.create(any(StickProperties.class), eq(audioEmitter))).thenReturn(stickEffect);
 
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(bounceEffectFactory, contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
+        ProjectileEffectFactory factory = new ProjectileEffectFactory(contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
         ProjectileEffect projectileEffect = factory.create(spec, gameKey);
 
         ArgumentCaptor<StickProperties> stickPropertiesCaptor = ArgumentCaptor.forClass(StickProperties.class);
@@ -150,7 +151,7 @@ public class ProjectileEffectFactoryTest {
         ProjectileEffectSpec spec = new ProjectileEffectSpec("TRAIL", delay, intervals, null, null, null, maxActivations, particleEffectSpec, null);
         when(trailEffectFactory.create(any(TrailProperties.class))).thenReturn(trailEffect);
 
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(bounceEffectFactory, contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
+        ProjectileEffectFactory factory = new ProjectileEffectFactory(contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
         ProjectileEffect projectileEffect = factory.create(spec, gameKey);
 
         ArgumentCaptor<TrailProperties> trailPropertiesCaptor = ArgumentCaptor.forClass(TrailProperties.class);
@@ -169,7 +170,7 @@ public class ProjectileEffectFactoryTest {
     public void createThrowsProjectileEffectCreationExceptionWhenRequiredSpecValueIsNull() {
         ProjectileEffectSpec spec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null, null, null);
 
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(bounceEffectFactory, contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
+        ProjectileEffectFactory factory = new ProjectileEffectFactory(contextProvider, particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
 
         assertThatThrownBy(() -> factory.create(spec, gameKey))
                 .isInstanceOf(ProjectileEffectCreationException.class)
