@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
-import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -68,6 +67,6 @@ public class ThrowDeploymentTest {
         verify(deployer).setHeldItem(null);
         verify(item).setPickupDelay(100000);
         verify(item).setVelocity(new Vector(-1.477211629518312,-0.0,-0.26047226650039546));
-        verify(projectileEffect).onLaunch(any(Projectile.class));
+        verify(projectileEffect).onLaunch(eq(entity), argThat(projectile -> projectile == result.object()));
     }
 }

@@ -22,9 +22,6 @@ public class TrailEffect extends BaseProjectileEffect {
         this.properties = properties;
     }
 
-    public void onLaunch(@NotNull Projectile projectile) {
-    }
-
     public void performEffect(@NotNull Projectile projectile) {
         Location location = projectile.getLocation();
         World world = projectile.getWorld();

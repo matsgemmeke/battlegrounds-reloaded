@@ -6,7 +6,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ProjectileEffect {
 
-    void onLaunch(@NotNull Projectile projectile);
-
     void onLaunch(@NotNull Entity deployerEntity, @NotNull Projectile projectile);
 }

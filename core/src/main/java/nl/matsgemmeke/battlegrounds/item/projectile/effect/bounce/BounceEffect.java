@@ -23,8 +23,6 @@ public class BounceEffect extends BaseProjectileEffect {
         this.bounces = 0;
     }
 
-    public void onLaunch(@NotNull Projectile projectile) { }
-
     public void performEffect(@NotNull Projectile projectile) {
         Vector velocity = projectile.getVelocity();
         Location projectileLocation = projectile.getLocation();

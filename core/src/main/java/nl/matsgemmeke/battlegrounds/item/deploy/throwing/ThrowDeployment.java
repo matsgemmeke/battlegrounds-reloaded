@@ -44,7 +44,7 @@ public class ThrowDeployment implements Deployment {
         object.setHealth(deploymentProperties.health());
         object.setResistances(deploymentProperties.resistances());
 
-        deploymentProperties.projectileEffects().forEach(effect -> effect.onLaunch(object));
+        deploymentProperties.projectileEffects().forEach(effect -> effect.onLaunch(deployerEntity, object));
 
         audioEmitter.playSounds(deploymentProperties.throwSounds(), deployLocation);
 

@@ -20,9 +20,6 @@ public class SoundEffect extends BaseProjectileEffect {
         this.sounds = sounds;
     }
 
-    public void onLaunch(@NotNull Projectile projectile) {
-    }
-
     public void performEffect(@NotNull Projectile projectile) {
         audioEmitter.playSounds(sounds, projectile.getLocation());
     }

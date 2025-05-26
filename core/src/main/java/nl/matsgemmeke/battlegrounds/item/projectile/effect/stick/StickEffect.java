@@ -23,9 +23,6 @@ public class StickEffect extends BaseProjectileEffect {
         this.stickSounds = stickSounds;
     }
 
-    public void onLaunch(@NotNull Projectile projectile) {
-    }
-
     public void performEffect(@NotNull Projectile projectile) {
         audioEmitter.playSounds(stickSounds, projectile.getLocation());
 
