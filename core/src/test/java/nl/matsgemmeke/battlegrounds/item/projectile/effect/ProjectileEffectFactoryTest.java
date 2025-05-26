@@ -112,12 +112,10 @@ public class ProjectileEffectFactoryTest {
     @Test
     public void createReturnsInstanceOfTrailEffect() {
         TrailEffect trailEffect = mock(TrailEffect.class);
-        Long delay = 1L;
-        List<Long> intervals = List.of(5L, 10L);
         Integer maxActivations = 2;
         ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null);
 
-        ProjectileEffectSpec spec = new ProjectileEffectSpec("TRAIL", delay, intervals, null, null, null, maxActivations, particleEffectSpec, null);
+        ProjectileEffectSpec spec = new ProjectileEffectSpec("TRAIL", null, null, null, null, null, maxActivations, particleEffectSpec, null);
         when(trailEffectFactory.create(any(TrailProperties.class))).thenReturn(trailEffect);
 
         ProjectileEffectFactory factory = new ProjectileEffectFactory(contextProvider, particleEffectMapper, trailEffectFactory, triggerFactory);
@@ -127,8 +125,6 @@ public class ProjectileEffectFactoryTest {
         verify(trailEffectFactory).create(trailPropertiesCaptor.capture());
 
         TrailProperties properties = trailPropertiesCaptor.getValue();
-        assertThat(properties.delay()).isEqualTo(delay);
-        assertThat(properties.intervals()).isEqualTo(intervals);
         assertThat(properties.maxActivations()).isEqualTo(maxActivations);
         assertThat(properties.particleEffect().particle()).isEqualTo(Particle.FLAME);
 

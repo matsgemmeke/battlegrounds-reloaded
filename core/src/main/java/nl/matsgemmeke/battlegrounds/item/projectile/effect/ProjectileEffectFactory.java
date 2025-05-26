@@ -100,12 +100,10 @@ public class ProjectileEffectFactory {
             }
             case TRAIL -> {
                 ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect(), "particleEffect", type);
-                Long delay = this.validateSpecVar(spec.delay(), "delay", type);
-                List<Long> intervals = this.validateSpecVar(spec.intervals(), "intervals", type);
                 Integer maxActivations = this.validateSpecVar(spec.maxActivations(), "maxActivations", type);
 
                 ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
-                TrailProperties properties = new TrailProperties(particleEffect, delay, intervals, maxActivations);
+                TrailProperties properties = new TrailProperties(particleEffect, maxActivations);
 
                 return trailEffectFactory.create(properties);
             }

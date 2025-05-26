@@ -51,6 +51,7 @@ import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
+import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -81,6 +82,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(GameContextProvider.class).in(Singleton.class);
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
+        binder.bind(ParticleEffectSpawner.class).in(Singleton.class);
         binder.bind(Scheduler.class).in(Singleton.class);
         binder.bind(TaskRunner.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
