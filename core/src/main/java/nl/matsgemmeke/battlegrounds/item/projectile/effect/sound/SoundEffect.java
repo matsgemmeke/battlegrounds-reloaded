@@ -1,56 +1,29 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
-import org.bukkit.entity.Entity;
-import org.bukkit.scheduler.BukkitTask;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.BaseProjectileEffect;
 import org.jetbrains.annotations.NotNull;
 
-public class SoundEffect implements ProjectileEffect {
+import java.util.List;
 
-    private static final long RUNNABLE_PERIOD = 1L;
+public class SoundEffect extends BaseProjectileEffect {
 
     @NotNull
     private final AudioEmitter audioEmitter;
     @NotNull
-    private final SoundProperties properties;
-    @NotNull
-    private final TaskRunner taskRunner;
-    private BukkitTask task;
-    private long elapsedTicks;
+    private final List<GameSound> sounds;
 
-    @Inject
-    public SoundEffect(@NotNull TaskRunner taskRunner, @Assisted @NotNull SoundProperties properties, @Assisted @NotNull AudioEmitter audioEmitter) {
+    public SoundEffect(@NotNull AudioEmitter audioEmitter, @NotNull List<GameSound> sounds) {
         this.audioEmitter = audioEmitter;
-        this.taskRunner = taskRunner;
-        this.properties = properties;
-        this.elapsedTicks = 0;
+        this.sounds = sounds;
     }
 
     public void onLaunch(@NotNull Projectile projectile) {
-        task = taskRunner.runTaskTimer(() -> this.runCheck(projectile), properties.delay(), RUNNABLE_PERIOD);
     }
 
-    public void onLaunch(@NotNull Entity deployerEntity, @NotNull Projectile projectile) {
-        throw new UnsupportedOperationException();
-    }
-
-    private void runCheck(@NotNull Projectile projectile) {
-        if (!projectile.exists()) {
-            task.cancel();
-            return;
-        }
-
-        elapsedTicks++;
-
-        if (!properties.intervals().contains(elapsedTicks)) {
-            return;
-        }
-
-        audioEmitter.playSounds(properties.sounds(), projectile.getLocation());
+    public void performEffect(@NotNull Projectile projectile) {
+        audioEmitter.playSounds(sounds, projectile.getLocation());
     }
 }

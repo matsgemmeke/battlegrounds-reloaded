@@ -35,22 +35,18 @@ public class BounceEffectTest {
     private static final double HORIZONTAL_FRICTION = 1.0;
     private static final double VERTICAL_FRICTION = 1.0;
     private static final int AMOUNT_OF_BOUNCES = 1;
-    private static final long CHECK_DELAY = 0L;
-    private static final long CHECK_PERIOD = 1L;
 
     private BounceProperties properties;
     private Entity deployerEntity;
     private Projectile projectile;
-    private Set<Trigger> triggers;
     private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
-        properties = new BounceProperties(AMOUNT_OF_BOUNCES, HORIZONTAL_FRICTION, VERTICAL_FRICTION, CHECK_DELAY, CHECK_PERIOD);
+        properties = new BounceProperties(AMOUNT_OF_BOUNCES, HORIZONTAL_FRICTION, VERTICAL_FRICTION);
         deployerEntity = mock(Entity.class);
         projectile = mock(Projectile.class);
         trigger = mock(Trigger.class);
-        triggers = Set.of(trigger);
     }
 
     @Test
@@ -65,7 +61,8 @@ public class BounceEffectTest {
         when(projectile.getVelocity()).thenReturn(velocity);
         when(projectile.getWorld()).thenReturn(world);
 
-        BounceEffect effect = new BounceEffect(properties, triggers);
+        BounceEffect effect = new BounceEffect(properties);
+        effect.addTrigger(trigger);
         effect.onLaunch(deployerEntity, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
@@ -93,7 +90,8 @@ public class BounceEffectTest {
         when(projectile.getVelocity()).thenReturn(velocity);
         when(projectile.getWorld()).thenReturn(world);
 
-        BounceEffect effect = new BounceEffect(properties, triggers);
+        BounceEffect effect = new BounceEffect(properties);
+        effect.addTrigger(trigger);
         effect.onLaunch(deployerEntity, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
@@ -122,7 +120,7 @@ public class BounceEffectTest {
 
     @ParameterizedTest
     @MethodSource("blockProjectileScenarios")
-    public void onLaunchAltersProjectileVelocity(BlockFace hitBlockFace, Vector velocity, Vector reflection) {
+    public void onLaunchStartsTriggerWithObserverThatAltersProjectileVelocity(BlockFace hitBlockFace, Vector velocity, Vector reflection) {
         Location projectileLocation = new Location(null, 0, 0, 0);
 
         Block block = mock(Block.class);
@@ -137,7 +135,8 @@ public class BounceEffectTest {
         when(projectile.getVelocity()).thenReturn(velocity);
         when(projectile.getWorld()).thenReturn(world);
 
-        BounceEffect effect = new BounceEffect(properties, triggers);
+        BounceEffect effect = new BounceEffect(properties);
+        effect.addTrigger(trigger);
         effect.onLaunch(deployerEntity, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);

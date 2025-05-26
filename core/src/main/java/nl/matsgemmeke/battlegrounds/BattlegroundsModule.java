@@ -33,8 +33,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
@@ -51,6 +49,7 @@ import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
+import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -84,6 +83,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(GameContextProvider.class).in(Singleton.class);
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
+        binder.bind(Scheduler.class).in(Singleton.class);
         binder.bind(TaskRunner.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
 
@@ -132,9 +132,6 @@ public class BattlegroundsModule implements Module {
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
                 .build(DefaultPlayerRegistryFactory.class));
 
-        binder.install(new FactoryModuleBuilder()
-                .implement(ProjectileEffect.class, SoundEffect.class)
-                .build(SoundEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileEffect.class, StickEffect.class)
                 .build(StickEffectFactory.class));
