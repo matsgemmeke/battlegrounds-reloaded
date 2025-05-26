@@ -33,8 +33,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -132,9 +130,6 @@ public class BattlegroundsModule implements Module {
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
                 .build(DefaultPlayerRegistryFactory.class));
 
-        binder.install(new FactoryModuleBuilder()
-                .implement(ProjectileEffect.class, StickEffect.class)
-                .build(StickEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileEffect.class, TrailEffect.class)
                 .build(TrailEffectFactory.class));

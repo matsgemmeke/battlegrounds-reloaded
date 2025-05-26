@@ -14,8 +14,7 @@ import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickProperties;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
@@ -32,8 +31,6 @@ public class ProjectileEffectFactory {
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
     @NotNull
-    private final StickEffectFactory stickEffectFactory;
-    @NotNull
     private final TrailEffectFactory trailEffectFactory;
     @NotNull
     private final TriggerFactory triggerFactory;
@@ -42,13 +39,11 @@ public class ProjectileEffectFactory {
     public ProjectileEffectFactory(
             @NotNull GameContextProvider contextProvider,
             @NotNull ParticleEffectMapper particleEffectMapper,
-            @NotNull StickEffectFactory stickEffectFactory,
             @NotNull TrailEffectFactory trailEffectFactory,
             @NotNull TriggerFactory triggerFactory
     ) {
         this.contextProvider = contextProvider;
         this.particleEffectMapper = particleEffectMapper;
-        this.stickEffectFactory = stickEffectFactory;
         this.trailEffectFactory = trailEffectFactory;
         this.triggerFactory = triggerFactory;
     }
@@ -91,12 +86,17 @@ public class ProjectileEffectFactory {
             }
             case STICK -> {
                 List<GameSound> stickSounds = DefaultGameSound.parseSounds(spec.sounds());
-                Long delay = this.validateSpecVar(spec.delay(), "delay", type);
+                List<TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers(), "triggers", type);
 
-                StickProperties properties = new StickProperties(stickSounds, delay);
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
+                StickEffect stickEffect = new StickEffect(audioEmitter, stickSounds);
 
-                return stickEffectFactory.create(properties, audioEmitter);
+                for (TriggerSpec triggerSpec : triggerSpecs) {
+                    Trigger trigger = triggerFactory.create(triggerSpec, gameKey);
+                    stickEffect.addTrigger(trigger);
+                }
+
+                return stickEffect;
             }
             case TRAIL -> {
                 ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect(), "particleEffect", type);
