@@ -44,8 +44,6 @@ public class ProjectileEffectSpecLoader {
     @NotNull
     public ProjectileEffectSpec loadSpec(@NotNull String baseRoute) {
         String typeRoute = this.createRoute(baseRoute, TYPE_ROUTE);
-        String delayRoute = this.createRoute(baseRoute, DELAY_ROUTE);
-        String intervalsRoute = this.createRoute(baseRoute, INTERVALS_ROUTE);
         String soundsRoute = this.createRoute(baseRoute, SOUNDS_ROUTE);
         String horizontalFrictionRoute = this.createRoute(baseRoute, HORIZONTAL_FRICTION_ROUTE);
         String verticalFrictionRoute = this.createRoute(baseRoute, VERTICAL_FRICTION_ROUTE);
@@ -58,16 +56,6 @@ public class ProjectileEffectSpecLoader {
                 .value(yamlReader.getString(typeRoute))
                 .validate(new RequiredValidator<>())
                 .validate(new OneOfValidator<>(ALLOWED_PROJECTILE_EFFECT_TYPES))
-                .resolve();
-        Long delay = new FieldSpecResolver<Long>()
-                .route(delayRoute)
-                .value(yamlReader.getOptionalLong(delayRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("SOUND", "TRAIL")))
-                .resolve();
-        List<Long> intervals = new FieldSpecResolver<List<Long>>()
-                .route(intervalsRoute)
-                .value(yamlReader.getOptionalLongList(intervalsRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("SOUND", "TRAIL")))
                 .resolve();
         String sounds = new FieldSpecResolver<String>()
                 .route(soundsRoute)
@@ -103,7 +91,7 @@ public class ProjectileEffectSpecLoader {
             triggerSpecs.add(triggerSpec);
         }
 
-        return new ProjectileEffectSpec(type, delay, intervals, sounds, horizontalFriction, verticalFriction, maxActivations, particleEffectSpec, triggerSpecs);
+        return new ProjectileEffectSpec(type, sounds, horizontalFriction, verticalFriction, maxActivations, particleEffectSpec, triggerSpecs);
     }
 
     @NotNull

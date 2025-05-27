@@ -51,7 +51,7 @@ public class ProjectileEffectFactoryTest {
         Double verticalFriction = 3.0;
         Integer maxActivations = 3;
         TriggerSpec triggerSpec = new TriggerSpec("TIMED", 10L, null, null, null);
-        ProjectileEffectSpec spec = new ProjectileEffectSpec("BOUNCE", null, null, null, horizontalFriction, verticalFriction, maxActivations, null, List.of(triggerSpec));
+        ProjectileEffectSpec spec = new ProjectileEffectSpec("BOUNCE", null, horizontalFriction, verticalFriction, maxActivations, null, List.of(triggerSpec));
 
         Trigger trigger = mock(Trigger.class);
         when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(trigger);
@@ -77,7 +77,7 @@ public class ProjectileEffectFactoryTest {
     public void createReturnsInstanceOfSoundEffect() {
         String sounds = "AMBIENT_CAVE-1-1-0";
         TriggerSpec triggerSpec = new TriggerSpec("TIMED", 10L, null, null, null);
-        ProjectileEffectSpec spec = new ProjectileEffectSpec("SOUND", null, null, sounds, null, null, null, null, List.of(triggerSpec));
+        ProjectileEffectSpec spec = new ProjectileEffectSpec("SOUND", sounds, null, null, null, null, List.of(triggerSpec));
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
@@ -95,7 +95,7 @@ public class ProjectileEffectFactoryTest {
     public void createReturnsInstanceOfStickEffect() {
         String stickSounds = "AMBIENT_CAVE-1-1-0";
         TriggerSpec triggerSpec = new TriggerSpec("FLOOR_HIT", 10L, 1L, null, null);
-        ProjectileEffectSpec projectileEffectSpec = new ProjectileEffectSpec("STICK", null, null, stickSounds, null, null, null, null, List.of(triggerSpec));
+        ProjectileEffectSpec projectileEffectSpec = new ProjectileEffectSpec("STICK", stickSounds, null, null, null, null, List.of(triggerSpec));
 
         Trigger trigger = mock(Trigger.class);
         when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(trigger);
@@ -113,9 +113,10 @@ public class ProjectileEffectFactoryTest {
     public void createReturnsInstanceOfTrailEffect() {
         TrailEffect trailEffect = mock(TrailEffect.class);
         Integer maxActivations = 2;
+        TriggerSpec triggerSpec = new TriggerSpec("FLOOR_HIT", 10L, 1L, null, null);
         ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null);
 
-        ProjectileEffectSpec spec = new ProjectileEffectSpec("TRAIL", null, null, null, null, null, maxActivations, particleEffectSpec, null);
+        ProjectileEffectSpec spec = new ProjectileEffectSpec("TRAIL", null, null, null, maxActivations, particleEffectSpec, List.of(triggerSpec));
         when(trailEffectFactory.create(any(TrailProperties.class))).thenReturn(trailEffect);
 
         ProjectileEffectFactory factory = new ProjectileEffectFactory(contextProvider, particleEffectMapper, trailEffectFactory, triggerFactory);
@@ -133,7 +134,7 @@ public class ProjectileEffectFactoryTest {
 
     @Test
     public void createThrowsProjectileEffectCreationExceptionWhenRequiredSpecValueIsNull() {
-        ProjectileEffectSpec spec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null, null, null);
+        ProjectileEffectSpec spec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null);
 
         ProjectileEffectFactory factory = new ProjectileEffectFactory(contextProvider, particleEffectMapper, trailEffectFactory, triggerFactory);
 

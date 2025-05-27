@@ -55,7 +55,7 @@ public class EquipmentControlsFactoryTest {
 
         DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, throwPropertiesSpec, null, null, null);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
-        ProjectileEffectSpec projectileEffectSpec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null, null, null);
+        ProjectileEffectSpec projectileEffectSpec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec, List.of(projectileEffectSpec));
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);

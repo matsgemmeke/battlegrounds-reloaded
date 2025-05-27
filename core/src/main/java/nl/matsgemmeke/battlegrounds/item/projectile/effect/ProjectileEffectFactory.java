@@ -60,12 +60,9 @@ public class ProjectileEffectFactory {
                 List<TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers(), "triggers", type);
 
                 BounceProperties properties = new BounceProperties(amountOfBounces, horizontalFriction, verticalFriction);
-                BounceEffect bounceEffect = new BounceEffect(properties);
 
-                for (TriggerSpec triggerSpec : triggerSpecs) {
-                    Trigger trigger = triggerFactory.create(triggerSpec, gameKey);
-                    bounceEffect.addTrigger(trigger);
-                }
+                BounceEffect bounceEffect = new BounceEffect(properties);
+                this.addTriggers(bounceEffect, gameKey, triggerSpecs);
 
                 return bounceEffect;
             }
@@ -74,12 +71,9 @@ public class ProjectileEffectFactory {
                 List<TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers(), "triggers", type);
 
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-                SoundEffect soundEffect = new SoundEffect(audioEmitter, sounds);
 
-                for (TriggerSpec triggerSpec : triggerSpecs) {
-                    Trigger trigger = triggerFactory.create(triggerSpec, gameKey);
-                    soundEffect.addTrigger(trigger);
-                }
+                SoundEffect soundEffect = new SoundEffect(audioEmitter, sounds);
+                this.addTriggers(soundEffect, gameKey, triggerSpecs);
 
                 return soundEffect;
 
@@ -89,23 +83,24 @@ public class ProjectileEffectFactory {
                 List<TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers(), "triggers", type);
 
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-                StickEffect stickEffect = new StickEffect(audioEmitter, stickSounds);
 
-                for (TriggerSpec triggerSpec : triggerSpecs) {
-                    Trigger trigger = triggerFactory.create(triggerSpec, gameKey);
-                    stickEffect.addTrigger(trigger);
-                }
+                StickEffect stickEffect = new StickEffect(audioEmitter, stickSounds);
+                this.addTriggers(stickEffect, gameKey, triggerSpecs);
 
                 return stickEffect;
             }
             case TRAIL -> {
                 ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect(), "particleEffect", type);
                 Integer maxActivations = this.validateSpecVar(spec.maxActivations(), "maxActivations", type);
+                List<TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers(), "triggers", type);
 
                 ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
                 TrailProperties properties = new TrailProperties(particleEffect, maxActivations);
 
-                return trailEffectFactory.create(properties);
+                ProjectileEffect trailEffect = trailEffectFactory.create(properties);
+                this.addTriggers(trailEffect, gameKey, triggerSpecs);
+
+                return trailEffect;
             }
             default -> throw new ProjectileEffectCreationException("Unknown projectile effect type '%s'".formatted(spec.type()));
         }
@@ -127,5 +122,12 @@ public class ProjectileEffectFactory {
         }
 
         return value;
+    }
+
+    private void addTriggers(@NotNull ProjectileEffect projectileEffect, @NotNull GameKey gameKey, @NotNull List<TriggerSpec> triggerSpecs) {
+        for (TriggerSpec triggerSpec : triggerSpecs) {
+            Trigger trigger = triggerFactory.create(triggerSpec, gameKey);
+            projectileEffect.addTrigger(trigger);
+        }
     }
 }

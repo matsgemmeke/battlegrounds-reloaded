@@ -11,10 +11,6 @@ import java.util.List;
  * Represents the immutable, validated configuration for a projectile effect.
  *
  * @param type               the particle effect type
- * @param delay              the delay in ticks, will only be non-null when type equals to {@code SOUND} or
- *                           {@code TRAIL}
- * @param intervals          the list of interval in ticks, will only be non-null when type equals to {@code SOUND} or
- *                           {@code TRAIL}
  * @param sounds             the sounds used during the execution of the effect
  * @param horizontalFriction the amount of horizontal friction, will only be non-null when type equals to
  *                           {@code BOUNCE}
@@ -28,8 +24,6 @@ import java.util.List;
  */
 public record ProjectileEffectSpec(
         @NotNull String type,
-        @Nullable Long delay,
-        @Nullable List<Long> intervals,
         @Nullable String sounds,
         @Nullable Double horizontalFriction,
         @Nullable Double verticalFriction,

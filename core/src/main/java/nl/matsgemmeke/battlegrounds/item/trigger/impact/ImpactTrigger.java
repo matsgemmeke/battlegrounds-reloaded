@@ -44,6 +44,11 @@ public class ImpactTrigger extends BaseTrigger {
         Vector velocity = target.getVelocity();
         Location projectileLocation = target.getLocation();
 
+        // Stop the current check if the projectile does not move, because we cannot cast a ray trace with zero magnitude
+        if (velocity.isZero()) {
+            return;
+        }
+
         World world = target.getWorld();
         RayTraceResult rayTraceResult = world.rayTraceBlocks(projectileLocation, velocity, RAY_TRACE_MAX_DISTANCE);
 

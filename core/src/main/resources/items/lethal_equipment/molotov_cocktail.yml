@@ -60,8 +60,6 @@ projectile:
   effects:
     trail:
       type: TRAIL
-      delay: 5
-      intervals: [2]
       triggers:
         scheduled:
           type: SCHEDULED

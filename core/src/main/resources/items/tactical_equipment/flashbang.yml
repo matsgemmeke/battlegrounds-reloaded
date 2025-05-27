@@ -31,7 +31,7 @@ effect:
     type: BLINDNESS
   power: 1.0
   spread-fire: false
-  trigger:
+  triggers:
     scheduled:
       type: SCHEDULED
       offset-delays: [60]

@@ -60,7 +60,7 @@ public class EquipmentSpecLoaderTest {
         ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 200L, 100L, 20L, 10L);
         ItemEffectSpec effectSpec = new ItemEffectSpec("EXPLOSION", List.of(triggerSpec), rangeProfileSpec, 5.0, 1.0, 3.0, 0.5, 2L, 200L, 100L, null, 2.0f, true, false, particleEffectSpec, potionEffectSpec, activationPatternSpec);
 
-        ProjectileEffectSpec projectileEffectSpec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null, null, null);
+        ProjectileEffectSpec projectileEffectSpec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null);
 
         String throwAction = "LEFT_CLICK";
         String cookAction = "RIGHT_CLICK";

@@ -73,6 +73,27 @@ public class ImpactTriggerTest {
     }
 
     @Test
+    public void activateStartsScheduleWithTaskThatDoesNotNotifyObservers() {
+        TriggerContext context = new TriggerContext(entity, target);
+        Vector velocity = new Vector();
+
+        when(target.exists()).thenReturn(true);
+        when(target.getVelocity()).thenReturn(velocity);
+
+        ImpactTrigger trigger = new ImpactTrigger(schedule);
+        trigger.addObserver(observer);
+        trigger.activate(context);
+
+        ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
+        verify(schedule).addTask(scheduleTaskCaptor.capture());
+
+        scheduleTaskCaptor.getValue().run();
+
+        verify(observer, never()).onActivate();
+        verify(schedule).start();
+    }
+
+    @Test
     public void activateStartsScheduleWithTaskThatDoesNotNotifyObserversWhenCastRayTraceResultIsNull() {
         TriggerContext context = new TriggerContext(entity, target);
         Location targetLocation = new Location(null, 1, 1, 1);
