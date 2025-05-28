@@ -33,12 +33,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -53,16 +47,11 @@ import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTriggerFactory;
-import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTriggerFactory;
-import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.timed.TimedTriggerFactory;
+import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
+import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -93,6 +82,8 @@ public class BattlegroundsModule implements Module {
         binder.bind(GameContextProvider.class).in(Singleton.class);
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
+        binder.bind(ParticleEffectSpawner.class).in(Singleton.class);
+        binder.bind(Scheduler.class).in(Singleton.class);
         binder.bind(TaskRunner.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
 
@@ -142,15 +133,6 @@ public class BattlegroundsModule implements Module {
                 .build(DefaultPlayerRegistryFactory.class));
 
         binder.install(new FactoryModuleBuilder()
-                .implement(ProjectileEffect.class, BounceEffect.class)
-                .build(BounceEffectFactory.class));
-        binder.install(new FactoryModuleBuilder()
-                .implement(ProjectileEffect.class, SoundEffect.class)
-                .build(SoundEffectFactory.class));
-        binder.install(new FactoryModuleBuilder()
-                .implement(ProjectileEffect.class, StickEffect.class)
-                .build(StickEffectFactory.class));
-        binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileEffect.class, TrailEffect.class)
                 .build(TrailEffectFactory.class));
 
@@ -160,16 +142,6 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ReloadSystem.class, ManualInsertionReloadSystem.class)
                 .build(ManualInsertionReloadSystemFactory.class));
-
-        binder.install(new FactoryModuleBuilder()
-                .implement(Trigger.class, EnemyProximityTrigger.class)
-                .build(EnemyProximityTriggerFactory.class));
-        binder.install(new FactoryModuleBuilder()
-                .implement(Trigger.class, FloorHitTrigger.class)
-                .build(FloorHitTriggerFactory.class));
-        binder.install(new FactoryModuleBuilder()
-                .implement(Trigger.class, TimedTrigger.class)
-                .build(TimedTriggerFactory.class));
 
         // File bindings
         binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);

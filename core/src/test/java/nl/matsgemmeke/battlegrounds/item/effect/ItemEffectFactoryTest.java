@@ -61,7 +61,7 @@ public class ItemEffectFactoryTest {
         gunFireSimulationEffectFactory = mock(GunFireSimulationEffectFactory.class);
         particleEffectMapper = new ParticleEffectMapper();
         smokeScreenEffectFactory = mock(SmokeScreenEffectFactory.class);
-        triggerSpec = new TriggerSpec("TIMED", null, null, 20L);
+        triggerSpec = new TriggerSpec("TIMED", 20L, null, null, null);
 
         triggerFactory = mock(TriggerFactory.class);
         when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(mock(Trigger.class));
@@ -239,7 +239,7 @@ public class ItemEffectFactoryTest {
 
     @Test
     public void createThrowsItemEffectCreationExceptionWhenRequiredSpecValueIsNull() {
-        TriggerSpec triggerSpec = new TriggerSpec("ENEMY_PROXIMITY", 5.0, 10L, null);
+        TriggerSpec triggerSpec = new TriggerSpec("ENEMY_PROXIMITY", 5L, 1L, null, 5.0);
         ItemEffectSpec effectSpec = new ItemEffectSpec("EXPLOSION", List.of(triggerSpec), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, smokeScreenEffectFactory, triggerFactory);

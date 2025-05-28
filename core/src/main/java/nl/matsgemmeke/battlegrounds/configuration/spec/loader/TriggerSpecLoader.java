@@ -13,11 +13,12 @@ import java.util.Set;
 
 public class TriggerSpecLoader {
 
-    private static final List<String> ALLOWED_TYPE_VALUES = List.of("ACTIVATOR", "ENEMY_PROXIMITY", "FLOOR_HIT", "TIMED");
+    private static final List<String> ALLOWED_TYPE_VALUES = List.of("ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT", "SCHEDULED");
     private static final String TYPE_ROUTE = "type";
-    private static final String CHECK_RANGE_ROUTE = "check-range";
-    private static final String CHECK_INTERVAL_ROUTE = "check-interval";
-    private static final String DELAY_UNTIL_ACTIVATION_ROUTE = "delay-until-activation";
+    private static final String DELAY_ROUTE = "delay";
+    private static final String INTERVAL_ROUTE = "interval";
+    private static final String OFFSET_DELAYS_ROUTE = "offset-delays";
+    private static final String RANGE_ROUTE = "range";
 
     @NotNull
     private final YamlReader yamlReader;
@@ -29,9 +30,10 @@ public class TriggerSpecLoader {
     @NotNull
     public TriggerSpec loadSpec(@NotNull String baseRoute) {
         String typeRoute = this.createRoute(baseRoute, TYPE_ROUTE);
-        String checkRangeRoute = this.createRoute(baseRoute, CHECK_RANGE_ROUTE);
-        String checkIntervalRoute = this.createRoute(baseRoute, CHECK_INTERVAL_ROUTE);
-        String delayUntilActivationRoute = this.createRoute(baseRoute, DELAY_UNTIL_ACTIVATION_ROUTE);
+        String delayRoute = this.createRoute(baseRoute, DELAY_ROUTE);
+        String intervalRoute = this.createRoute(baseRoute, INTERVAL_ROUTE);
+        String offsetDelaysRoute = this.createRoute(baseRoute, OFFSET_DELAYS_ROUTE);
+        String rangeRoute = this.createRoute(baseRoute, RANGE_ROUTE);
 
         String type = new FieldSpecResolver<String>()
                 .route(typeRoute)
@@ -39,23 +41,28 @@ public class TriggerSpecLoader {
                 .validate(new RequiredValidator<>())
                 .validate(new OneOfValidator<>(ALLOWED_TYPE_VALUES))
                 .resolve();
-        Double checkRange = new FieldSpecResolver<Double>()
-                .route(checkRangeRoute)
-                .value(yamlReader.getOptionalDouble(checkRangeRoute).orElse(null))
+        Long delay = new FieldSpecResolver<Long>()
+                .route(delayRoute)
+                .value(yamlReader.getOptionalLong(delayRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT")))
+                .resolve();
+        Long interval = new FieldSpecResolver<Long>()
+                .route(intervalRoute)
+                .value(yamlReader.getOptionalLong(intervalRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT")))
+                .resolve();
+        List<Long> offsetDelays = new FieldSpecResolver<List<Long>>()
+                .route(offsetDelaysRoute)
+                .value(yamlReader.getOptionalLongList(offsetDelaysRoute).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, "SCHEDULED"))
+                .resolve();
+        Double range = new FieldSpecResolver<Double>()
+                .route(rangeRoute)
+                .value(yamlReader.getOptionalDouble(rangeRoute).orElse(null))
                 .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, "ENEMY_PROXIMITY"))
                 .resolve();
-        Long checkInterval = new FieldSpecResolver<Long>()
-                .route(checkIntervalRoute)
-                .value(yamlReader.getOptionalLong(checkIntervalRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, Set.of("ENEMY_PROMIXITY", "FLOOR_HIT")))
-                .resolve();
-        Long delayUntilActivation = new FieldSpecResolver<Long>()
-                .route(delayUntilActivationRoute)
-                .value(yamlReader.getOptionalLong(delayUntilActivationRoute).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(typeRoute, type, "TIMED"))
-                .resolve();
 
-        return new TriggerSpec(type, checkRange, checkInterval, delayUntilActivation);
+        return new TriggerSpec(type, delay, interval, offsetDelays, range);
     }
 
     @NotNull

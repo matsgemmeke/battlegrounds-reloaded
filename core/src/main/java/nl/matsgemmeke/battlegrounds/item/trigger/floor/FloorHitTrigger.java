@@ -1,47 +1,40 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.floor;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.trigger.BaseTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import org.bukkit.block.Block;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 public class FloorHitTrigger extends BaseTrigger {
 
     private static final double Y_SUBTRACTION = 0.01;
-    private static final long RUNNABLE_DELAY = 0L;
 
-    private boolean activated;
-    private BukkitTask task;
-    private final long periodBetweenChecks;
     @NotNull
-    private final TaskRunner taskRunner;
+    private final Schedule schedule;
+    private boolean started;
 
-    @Inject
-    public FloorHitTrigger(@NotNull TaskRunner taskRunner, @Assisted long periodBetweenChecks) {
-        this.taskRunner = taskRunner;
-        this.periodBetweenChecks = periodBetweenChecks;
-        this.activated = false;
+    public FloorHitTrigger(@NotNull Schedule schedule) {
+        this.schedule = schedule;
+        this.started = false;
     }
 
-    public boolean isActivated() {
-        return activated;
+    public boolean isStarted() {
+        return started;
     }
 
-    public void activate(@NotNull TriggerContext context) {
-        activated = true;
-        task = taskRunner.runTaskTimer(() -> this.runCheck(context), RUNNABLE_DELAY, periodBetweenChecks);
+    public void start(@NotNull TriggerContext context) {
+        schedule.addTask(() -> this.runCheck(context));
+        schedule.start();
+        started = true;
     }
 
     private void runCheck(@NotNull TriggerContext context) {
         TriggerTarget target = context.target();
 
         if (!target.exists()) {
-            task.cancel();
+            this.stop();
             return;
         }
 
@@ -53,15 +46,10 @@ public class FloorHitTrigger extends BaseTrigger {
         }
 
         this.notifyObservers();
-        task.cancel();
     }
 
-    public void deactivate() {
-        if (task == null) {
-            return;
-        }
-
-        activated = false;
-        task.cancel();
+    public void stop() {
+        schedule.stop();
+        started = false;
     }
 }

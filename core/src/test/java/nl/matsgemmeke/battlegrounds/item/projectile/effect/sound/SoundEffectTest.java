@@ -1,80 +1,51 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class SoundEffectTest {
 
-    private static final List<GameSound> SOUNDS = Collections.emptyList();
-    private static final List<Long> INTERVALS = List.of(10L, 19L, 27L, 34L, 40L, 45L, 49L, 52L, 54L, 56L, 58L);
-    private static final Long DELAY = 1L;
-
     private AudioEmitter audioEmitter;
-    private SoundProperties properties;
-    private TaskRunner taskRunner;
+    private Entity deployerEntity;
+    private List<GameSound> sounds;
+    private Projectile projectile;
+    private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        properties = new SoundProperties(SOUNDS, DELAY, INTERVALS);
-        taskRunner = mock(TaskRunner.class);
+        deployerEntity = mock(Entity.class);
+        sounds = List.of(mock(GameSound.class));
+        projectile = mock(Projectile.class);
+        trigger = mock(Trigger.class);
     }
 
     @Test
-    public void onLaunchStopsCheckOnceProjectileNoLongerExists() {
-        Projectile projectile = mock(Projectile.class);
-        when(projectile.exists()).thenReturn(false);
-
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(DELAY), eq(1L))).thenReturn(task);
-
-        SoundEffect effect = new SoundEffect(taskRunner, properties, audioEmitter);
-        effect.onLaunch(projectile);
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(DELAY), eq(1L));
-
-        runnableCaptor.getValue().run();
-
-        verify(task).cancel();
-        verifyNoInteractions(audioEmitter);
-    }
-
-    @Test
-    public void onLaunchPlaysSoundBasedOnIntervals() {
-        Location projectileLocation = new Location(null, 1, 1, 1);
-
-        Projectile projectile = mock(Projectile.class);
-        when(projectile.exists()).thenReturn(true);
+    public void onLaunchStartsTriggerWithObserverThatPlaysSounds() {
+        Location projectileLocation = new Location(null, 1, 2, 3);
         when(projectile.getLocation()).thenReturn(projectileLocation);
 
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
+        SoundEffect effect = new SoundEffect(audioEmitter, sounds);
+        effect.addTrigger(trigger);
+        effect.onLaunch(deployerEntity, projectile);
 
-        SoundEffect effect = new SoundEffect(taskRunner, properties, audioEmitter);
-        effect.onLaunch(projectile);
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(trigger).addObserver(triggerObserverCaptor.capture());
 
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(DELAY), eq(1L));
+        triggerObserverCaptor.getValue().onActivate();
 
-        for (int i = 0; i < 60; i++) {
-            runnableCaptor.getValue().run();
-        }
-
-        verify(audioEmitter, times(INTERVALS.size())).playSounds(SOUNDS, projectileLocation);
+        verify(audioEmitter).playSounds(sounds, projectileLocation);
     }
 }

@@ -30,9 +30,9 @@ effect:
   max-duration: 300
   min-duration: 200
   triggers:
-    timed:
-      delay-until-activation: 60
-      type: TIMED
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [60]
   type: GUN_FIRE_SIMULATION
 equipment-type: TACTICAL
 item:
@@ -48,8 +48,11 @@ projectile:
   effects:
     bounce:
       type: BOUNCE
+      triggers:
+        impact:
+          type: IMPACT
+          delay: 0
+          interval: 1
       max-activations: 1
-      check-delay: 0
-      check-period: 1
       horizontal-friction: 3.0
       vertical-friction: 2.0

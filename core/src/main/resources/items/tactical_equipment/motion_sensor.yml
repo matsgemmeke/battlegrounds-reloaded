@@ -25,9 +25,10 @@ effect:
   activation-sounds: BLOCK_NOTE_BLOCK_BIT-1-2-0
   triggers:
     enemy-proximity:
-      check-interval: 10
-      check-range: 2.5
       type: ENEMY_PROXIMITY
+      delay: 10
+      interval: 10
+      range: 2.5
   type: SOUND_NOTIFICATION
 equipment-type: TACTICAL
 item:

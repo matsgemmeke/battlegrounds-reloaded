@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,6 +54,10 @@ public class PrimeDeploymentObject implements DeploymentObject {
     @NotNull
     public Location getLocation() {
         return deployerEntity.getLocation().add(0, HAND_HEIGHT_OFFSET, 0);
+    }
+
+    public Vector getVelocity() {
+        return deployerEntity.getVelocity();
     }
 
     @NotNull

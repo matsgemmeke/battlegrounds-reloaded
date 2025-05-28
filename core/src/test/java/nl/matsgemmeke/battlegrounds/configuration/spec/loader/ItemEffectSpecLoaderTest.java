@@ -24,7 +24,7 @@ public class ItemEffectSpecLoaderTest {
     public void loadSpecReturnsItemEffectSpecContainingValidatedValues() {
         String type = "COMBUSTION";
         Set<String> triggerRoutes = Set.of("activator");
-        TriggerSpec triggerSpec = new TriggerSpec("ACTIVATOR", null, null, null);
+        TriggerSpec triggerSpec = new TriggerSpec("TIMED", 20L, null, null, null);
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 
         Double minSize = 1.0;

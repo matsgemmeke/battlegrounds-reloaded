@@ -82,7 +82,7 @@ public class ExplosionEffectTest {
         triggerObserverCaptor.getValue().onActivate();
         effect.activateInstantly();
 
-        verify(trigger, never()).deactivate();
+        verify(trigger, never()).stop();
     }
 
     @Test
@@ -100,7 +100,7 @@ public class ExplosionEffectTest {
         effect.activateInstantly();
 
         verify(source).remove();
-        verify(trigger).deactivate();
+        verify(trigger).stop();
         verify(world).createExplosion(sourceLocation, POWER, SET_FIRE, BREAK_BLOCKS, entity);
     }
 
@@ -110,7 +110,7 @@ public class ExplosionEffectTest {
         effect.addTrigger(trigger);
         effect.cancelActivation();
 
-        verify(trigger, never()).deactivate();
+        verify(trigger, never()).stop();
     }
 
     @Test
@@ -131,7 +131,7 @@ public class ExplosionEffectTest {
         triggerObserverCaptor.getValue().onActivate();
         effect.cancelActivation();
 
-        verify(trigger, never()).deactivate();
+        verify(trigger, never()).stop();
     }
 
     @Test
@@ -141,7 +141,7 @@ public class ExplosionEffectTest {
         effect.prime(context);
         effect.cancelActivation();
 
-        verify(trigger).deactivate();
+        verify(trigger).stop();
     }
 
     @Test
@@ -218,10 +218,10 @@ public class ExplosionEffectTest {
         effect.prime(context);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
-        verify(trigger, times(1)).activate(triggerContextCaptor.capture());
+        verify(trigger, times(1)).start(triggerContextCaptor.capture());
 
         TriggerContext triggerContext = triggerContextCaptor.getValue();
-        assertThat(triggerContext.deployerEntity()).isEqualTo(entity);
+        assertThat(triggerContext.entity()).isEqualTo(entity);
         assertThat(triggerContext.target()).isEqualTo(source);
     }
 

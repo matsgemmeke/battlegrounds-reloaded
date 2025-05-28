@@ -103,7 +103,7 @@ public class CombustionEffectTest {
         triggerObserverCaptor.getValue().onActivate();
         effect.activateInstantly();
 
-        verify(trigger, never()).deactivate();
+        verify(trigger, never()).stop();
     }
 
     @Test
@@ -120,7 +120,7 @@ public class CombustionEffectTest {
         effect.prime(context);
         effect.activateInstantly();
 
-        verify(trigger).deactivate();
+        verify(trigger).stop();
         verify(source).remove();
     }
 
@@ -130,7 +130,7 @@ public class CombustionEffectTest {
         effect.addTrigger(trigger);
         effect.cancelActivation();
 
-        verify(trigger, never()).deactivate();
+        verify(trigger, never()).stop();
     }
 
     @Test
@@ -151,7 +151,7 @@ public class CombustionEffectTest {
         triggerObserverCaptor.getValue().onActivate();
         effect.cancelActivation();
 
-        verify(trigger, never()).deactivate();
+        verify(trigger, never()).stop();
     }
 
     @Test
@@ -161,7 +161,7 @@ public class CombustionEffectTest {
         effect.prime(context);
         effect.cancelActivation();
 
-        verify(trigger).deactivate();
+        verify(trigger).stop();
     }
 
     @Test

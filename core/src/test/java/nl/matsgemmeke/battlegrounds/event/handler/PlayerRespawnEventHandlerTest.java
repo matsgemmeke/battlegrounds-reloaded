@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +40,7 @@ public class PlayerRespawnEventHandlerTest {
         PlayerRespawnEventHandler eventHandler = new PlayerRespawnEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        assertEquals(respawnLocation, event.getRespawnLocation());
+        assertThat(event.getRespawnLocation()).isEqualTo(respawnLocation);
     }
 
     @Test
@@ -70,14 +70,15 @@ public class PlayerRespawnEventHandlerTest {
         PlayerRespawnEventHandler eventHandler = new PlayerRespawnEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        assertEquals(respawnLocation, event.getRespawnLocation());
+        assertThat(event.getRespawnLocation()).isEqualTo(respawnLocation);
     }
 
     @Test
     public void handleSetsRespawnLocationIfPlayerHasSpawnPoint() {
         GameKey gameKey = GameKey.ofTrainingMode();
-        Location respawnLocation = new Location(null, 1, 1, 1);
-        Location spawnPointLocation = new Location(mock(World.class), 2, 2, 2);
+        World world = mock(World.class);
+        Location respawnLocation = new Location(world, 1, 1, 1);
+        Location spawnPointLocation = new Location(world, 2, 2, 2);
         UUID entityId = UUID.randomUUID();
 
         Player player = mock(Player.class);
@@ -102,6 +103,6 @@ public class PlayerRespawnEventHandlerTest {
         PlayerRespawnEventHandler eventHandler = new PlayerRespawnEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        assertEquals(spawnPointLocation, event.getRespawnLocation());
+        assertThat(event.getRespawnLocation()).isEqualTo(spawnPointLocation);
     }
 }

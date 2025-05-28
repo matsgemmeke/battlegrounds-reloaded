@@ -39,9 +39,10 @@ effect:
   spread-fire: false
   triggers:
     enemy-proximity:
-      check-interval: 2
-      check-range: 2.5
       type: ENEMY_PROXIMITY
+      delay: 0
+      interval: 2
+      range: 2.5
   type: EXPLOSION
 equipment-type: LETHAL
 item:

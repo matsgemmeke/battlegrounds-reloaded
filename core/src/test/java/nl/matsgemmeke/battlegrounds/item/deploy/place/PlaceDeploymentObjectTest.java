@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,6 +84,16 @@ public class PlaceDeploymentObjectTest {
         assertThat(objectLocation.getX()).isEqualTo(1.5);
         assertThat(objectLocation.getY()).isEqualTo(2.5);
         assertThat(objectLocation.getZ()).isEqualTo(3.5);
+    }
+
+    @Test
+    public void getVelocityAlwaysReturnZeroVector() {
+        PlaceDeploymentObject object = new PlaceDeploymentObject(block, material);
+        Vector velocity = object.getVelocity();
+
+        assertThat(velocity.getX()).isZero();
+        assertThat(velocity.getY()).isZero();
+        assertThat(velocity.getZ()).isZero();
     }
 
     @Test

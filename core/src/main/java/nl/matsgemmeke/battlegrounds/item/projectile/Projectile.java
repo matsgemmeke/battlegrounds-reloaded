@@ -1,24 +1,15 @@
 package nl.matsgemmeke.battlegrounds.item.projectile;
 
-import org.bukkit.Location;
-import org.bukkit.World;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public interface Projectile {
-
-    boolean exists();
-
-    @NotNull
-    Location getLocation();
+public interface Projectile extends TriggerTarget {
 
     @NotNull
     Vector getVelocity();
 
     void setVelocity(@NotNull Vector velocity);
-
-    @NotNull
-    World getWorld();
 
     boolean hasGravity();
 
