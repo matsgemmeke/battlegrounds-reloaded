@@ -77,7 +77,7 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Test
     public void shouldCancelEventIfEntityContextDoesNotAllowDamageFromDamagerContext() {
-        GameKey entityGameKey = GameKey.ofTrainingMode();
+        GameKey entityGameKey = GameKey.ofOpenMode();
         when(contextProvider.getGameKey(entityUUID)).thenReturn(entityGameKey);
         when(contextProvider.getGameKey(damagerUUID)).thenReturn(null);
 
@@ -97,7 +97,7 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Test
     public void shouldNotHandleEventIfDamageCauseDoesNotMap() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         when(contextProvider.getGameKey(entityUUID)).thenReturn(gameKey);
         when(contextProvider.getGameKey(damagerUUID)).thenReturn(gameKey);
 
@@ -117,7 +117,7 @@ public class EntityDamageByEntityEventHandlerTest {
 
     @Test
     public void handlingEventSetsEventDamageBasedOnResultOfDamageProcessor() {
-        GameKey gameKey =  GameKey.ofTrainingMode();
+        GameKey gameKey =  GameKey.ofOpenMode();
         when(contextProvider.getGameKey(damagerUUID)).thenReturn(gameKey);
         when(contextProvider.getGameKey(entityUUID)).thenReturn(gameKey);
 

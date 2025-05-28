@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game;
 import nl.matsgemmeke.battlegrounds.game.component.entity.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
-import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
+import nl.matsgemmeke.battlegrounds.game.training.OpenMode;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,22 +38,22 @@ public class GameContextProvider {
     }
 
     /**
-     * Assigns a training mode instance to the provider. This will only assign the training mode once, as there should
-     * only be one instance. Returns {@code true} if the instance was assigned, and {@code false} if there already is
-     * an assigned instance.
+     * Assigns the open mode instance to the provider. This will only assign the open mode once, as there should only
+     * be one instance. Returns {@code true} if the instance was assigned, and {@code false} if there already is an
+     * assigned instance.
      *
-     * @param trainingMode the training mode to be assigned
+     * @param openMode the open mode instance
      * @return whether the instance was assigned
      */
-    public boolean assignTrainingMode(@NotNull TrainingMode trainingMode) {
-        GameKey gameKey = GameKey.ofTrainingMode();
-        boolean containsTrainingMode = games.keySet().stream().anyMatch(k -> k.equals(gameKey));
+    public boolean assignOpenMode(@NotNull OpenMode openMode) {
+        GameKey gameKey = GameKey.ofOpenMode();
+        boolean containsOpenMode = games.keySet().stream().anyMatch(k -> k.equals(gameKey));
 
-        if (containsTrainingMode) {
+        if (containsOpenMode) {
             return false;
         }
 
-        games.put(gameKey, trainingMode);
+        games.put(gameKey, openMode);
         gameComponents.put(gameKey, new HashMap<>());
         return true;
     }

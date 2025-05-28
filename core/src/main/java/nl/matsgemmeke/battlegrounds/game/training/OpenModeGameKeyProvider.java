@@ -21,9 +21,9 @@ import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
-import nl.matsgemmeke.battlegrounds.game.training.component.TrainingModeTargetFinder;
-import nl.matsgemmeke.battlegrounds.game.training.component.damage.TrainingModeDamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.training.component.spawn.TrainingModeSpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.training.component.OpenModeTargetFinder;
+import nl.matsgemmeke.battlegrounds.game.training.component.damage.OpenModeDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.training.component.spawn.OpenModeSpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
 import org.bukkit.Bukkit;
@@ -31,7 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class TrainingModeGameKeyProvider implements Provider<GameKey> {
+public class OpenModeGameKeyProvider implements Provider<GameKey> {
 
     @NotNull
     private final BattlegroundsConfiguration configuration;
@@ -45,7 +45,7 @@ public class TrainingModeGameKeyProvider implements Provider<GameKey> {
     private final Provider<CollisionDetector> collisionDetectorProvider;
 
     @Inject
-    public TrainingModeGameKeyProvider(
+    public OpenModeGameKeyProvider(
             @NotNull BattlegroundsConfiguration configuration,
             @NotNull EventDispatcher eventDispatcher,
             @NotNull GameContextProvider contextProvider,
@@ -60,48 +60,48 @@ public class TrainingModeGameKeyProvider implements Provider<GameKey> {
     }
 
     public GameKey get() {
-        TrainingMode trainingMode = new TrainingMode();
-        trainingMode.addItemBehavior(new EquipmentBehavior(trainingMode.getEquipmentStorage()));
-        trainingMode.addItemBehavior(new GunBehavior(trainingMode.getGunStorage()));
+        OpenMode openMode = new OpenMode();
+        openMode.addItemBehavior(new EquipmentBehavior(openMode.getEquipmentStorage()));
+        openMode.addItemBehavior(new GunBehavior(openMode.getGunStorage()));
 
-        GameKey trainingModeKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
 
         // Registry components
-        EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(trainingMode.getEquipmentStorage());
-        GunRegistry gunRegistry = new DefaultGunRegistry(trainingMode.getGunStorage());
-        PlayerRegistry playerRegistry = playerRegistryFactory.create(trainingMode.getPlayerStorage());
+        EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(openMode.getEquipmentStorage());
+        GunRegistry gunRegistry = new DefaultGunRegistry(openMode.getGunStorage());
+        PlayerRegistry playerRegistry = playerRegistryFactory.create(openMode.getPlayerStorage());
 
         // Info provider components
         DeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
-        GunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(trainingMode.getGunStorage());
+        GunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(openMode.getGunStorage());
 
         // All other components
-        ActionHandler actionHandler = new DefaultActionHandler(trainingMode, playerRegistry);
+        ActionHandler actionHandler = new DefaultActionHandler(openMode, playerRegistry);
         AudioEmitter audioEmitter = new DefaultAudioEmitter();
         CollisionDetector collisionDetector = collisionDetectorProvider.get();
-        SpawnPointProvider spawnPointProvider = new TrainingModeSpawnPointProvider(trainingMode.getSpawnPointStorage());
+        SpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(openMode.getSpawnPointStorage());
 
-        DamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeKey, deploymentInfoProvider);
-        TargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerRegistry);
+        DamageProcessor damageProcessor = new OpenModeDamageProcessor(gameKey, deploymentInfoProvider);
+        TargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
 
-        contextProvider.assignTrainingMode(trainingMode);
+        contextProvider.assignOpenMode(openMode);
 
-        contextProvider.registerComponent(trainingModeKey, ActionHandler.class, actionHandler);
-        contextProvider.registerComponent(trainingModeKey, AudioEmitter.class, audioEmitter);
-        contextProvider.registerComponent(trainingModeKey, CollisionDetector.class, collisionDetector);
-        contextProvider.registerComponent(trainingModeKey, DamageProcessor.class, damageProcessor);
-        contextProvider.registerComponent(trainingModeKey, DeploymentInfoProvider.class, deploymentInfoProvider);
-        contextProvider.registerComponent(trainingModeKey, EquipmentRegistry.class, equipmentRegistry);
-        contextProvider.registerComponent(trainingModeKey, GunInfoProvider.class, gunInfoProvider);
-        contextProvider.registerComponent(trainingModeKey, GunRegistry.class, gunRegistry);
-        contextProvider.registerComponent(trainingModeKey, PlayerRegistry.class, playerRegistry);
-        contextProvider.registerComponent(trainingModeKey, SpawnPointProvider.class, spawnPointProvider);
-        contextProvider.registerComponent(trainingModeKey, TargetFinder.class, targetFinder);
+        contextProvider.registerComponent(gameKey, ActionHandler.class, actionHandler);
+        contextProvider.registerComponent(gameKey, AudioEmitter.class, audioEmitter);
+        contextProvider.registerComponent(gameKey, CollisionDetector.class, collisionDetector);
+        contextProvider.registerComponent(gameKey, DamageProcessor.class, damageProcessor);
+        contextProvider.registerComponent(gameKey, DeploymentInfoProvider.class, deploymentInfoProvider);
+        contextProvider.registerComponent(gameKey, EquipmentRegistry.class, equipmentRegistry);
+        contextProvider.registerComponent(gameKey, GunInfoProvider.class, gunInfoProvider);
+        contextProvider.registerComponent(gameKey, GunRegistry.class, gunRegistry);
+        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
+        contextProvider.registerComponent(gameKey, SpawnPointProvider.class, spawnPointProvider);
+        contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
 
-        this.registerEventHandlers(trainingModeKey);
-        this.registerPlayers(trainingModeKey);
+        this.registerEventHandlers(gameKey);
+        this.registerPlayers(gameKey);
 
-        return trainingModeKey;
+        return gameKey;
     }
 
     private void registerEventHandlers(@NotNull GameKey gameKey) {

@@ -61,7 +61,7 @@ public class EquipmentFactoryTest {
         deploymentHandlerFactory = mock(DeploymentHandlerFactory.class);
         controlsFactory = mock(EquipmentControlsFactory.class);
         equipmentRegistry = mock(EquipmentRegistry.class);
-        gameKey = GameKey.ofTrainingMode();
+        gameKey = GameKey.ofOpenMode();
         effectFactory = mock(ItemEffectFactory.class);
         itemFactory = mock(ItemFactory.class);
         keyCreator = mock(NamespacedKeyCreator.class);

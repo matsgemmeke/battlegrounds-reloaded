@@ -29,7 +29,7 @@ public class GiveWeaponCommandTest {
     @BeforeEach
     public void setUp() {
         this.contextProvider = mock(GameContextProvider.class);
-        this.gameKey = GameKey.ofTrainingMode();
+        this.gameKey = GameKey.ofOpenMode();
         this.player = mock(Player.class);
         this.weaponCreator = mock(WeaponCreator.class);
 

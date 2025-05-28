@@ -19,22 +19,22 @@ public class PlayerJoinEventHandler implements EventHandler<PlayerJoinEvent> {
     @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
-    private final GameKey trainingModeGameKey;
+    private final GameKey openModeGameKey;
 
     @Inject
     public PlayerJoinEventHandler(
             @NotNull BattlegroundsConfiguration config,
             @NotNull GameContextProvider contextProvider,
-            @Named("TrainingMode") @NotNull GameKey trainingModeGameKey
+            @Named("OpenMode") @NotNull GameKey openModeGameKey
     ) {
         this.config = config;
         this.contextProvider = contextProvider;
-        this.trainingModeGameKey = trainingModeGameKey;
+        this.openModeGameKey = openModeGameKey;
     }
 
     public void handle(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        PlayerRegistry playerRegistry = contextProvider.getComponent(trainingModeGameKey, PlayerRegistry.class);
+        PlayerRegistry playerRegistry = contextProvider.getComponent(openModeGameKey, PlayerRegistry.class);
 
         GamePlayer gamePlayer = playerRegistry.registerEntity(player);
         gamePlayer.setPassive(config.isEnabledRegisterPlayersAsPassive());

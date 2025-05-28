@@ -15,7 +15,7 @@ public class NegateDefaultExplosionDamageCheckTest {
     public void shouldNotAlterDamageForEventsWithoutDefaultExplosionDamageCause() {
         Entity damager = mock(Entity.class);
         Entity entity = mock(Entity.class);
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
 
         double damage = 10.0;
 
@@ -31,7 +31,7 @@ public class NegateDefaultExplosionDamageCheckTest {
     public void negateExplosionDamageForEventsWithDefaultExplosionDamageCause() {
         Entity damager = mock(Entity.class);
         Entity entity = mock(Entity.class);
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
 
         DamageEvent event = new DamageEvent(damager, gameKey, entity, gameKey, DamageType.EXPLOSIVE_DAMAGE, 100.0);
 

@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.training.component;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.entity.TrainingModeEntity;
+import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
@@ -16,14 +16,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class TrainingModeTargetFinder implements TargetFinder {
+public class OpenModeTargetFinder implements TargetFinder {
 
     @NotNull
     private final DeploymentInfoProvider deploymentInfoProvider;
     @NotNull
     private final PlayerRegistry playerRegistry;
 
-    public TrainingModeTargetFinder(
+    public OpenModeTargetFinder(
             @NotNull DeploymentInfoProvider deploymentInfoProvider,
             @NotNull PlayerRegistry playerRegistry
     ) {
@@ -64,7 +64,7 @@ public class TrainingModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity) {
-                targets.add(new TrainingModeEntity((LivingEntity) entity));
+                targets.add(new OpenModeEntity((LivingEntity) entity));
             }
         }
 
@@ -85,7 +85,7 @@ public class TrainingModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity) {
-                targets.add(new TrainingModeEntity((LivingEntity) entity));
+                targets.add(new OpenModeEntity((LivingEntity) entity));
             }
         }
 

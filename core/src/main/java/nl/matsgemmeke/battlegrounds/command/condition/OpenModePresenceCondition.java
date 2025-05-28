@@ -15,25 +15,25 @@ import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TrainingModePresenceCondition implements Condition<BukkitCommandIssuer> {
+public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer> {
 
     @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
-    private final GameKey trainingModeGameKey;
+    private final GameKey openModeGameKey;
     @NotNull
     private final Translator translator;
 
     @Inject
-    public TrainingModePresenceCondition(@NotNull GameContextProvider contextProvider, @Named("TrainingMode") @NotNull GameKey trainingModeGameKey, @NotNull Translator translator) {
+    public OpenModePresenceCondition(@NotNull GameContextProvider contextProvider, @Named("OpenMode") @NotNull GameKey openModeGameKey, @NotNull Translator translator) {
         this.contextProvider = contextProvider;
-        this.trainingModeGameKey = trainingModeGameKey;
+        this.openModeGameKey = openModeGameKey;
         this.translator = translator;
     }
 
     public void validateCondition(ConditionContext<BukkitCommandIssuer> conditionContext) throws InvalidCommandArgument {
         Player player = conditionContext.getIssuer().getPlayer();
-        PlayerRegistry playerRegistry = contextProvider.getComponent(trainingModeGameKey, PlayerRegistry.class);
+        PlayerRegistry playerRegistry = contextProvider.getComponent(openModeGameKey, PlayerRegistry.class);
 
         if (playerRegistry.isRegistered(player)) {
             return;

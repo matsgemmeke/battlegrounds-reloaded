@@ -16,21 +16,21 @@ public class PlayerJoinEventHandlerTest {
 
     private BattlegroundsConfiguration config;
     private GameContextProvider contextProvider;
-    private GameKey trainingModeGameKey;
+    private GameKey openModeGameKey;
     private PlayerRegistry playerRegistry;
 
     @BeforeEach
     public void setUp() {
         config = mock(BattlegroundsConfiguration.class);
-        trainingModeGameKey = GameKey.ofTrainingMode();
+        openModeGameKey = GameKey.ofOpenMode();
         playerRegistry = mock(PlayerRegistry.class);
 
         contextProvider = mock(GameContextProvider.class);
-        when(contextProvider.getComponent(trainingModeGameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
+        when(contextProvider.getComponent(openModeGameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
     }
 
     @Test
-    public void addsPlayerToTrainingModeUponJoiningAndSetsPassiveBasedOnConfiguration() {
+    public void addsPlayerToOpenModeUponJoiningAndSetsPassiveBasedOnConfiguration() {
         Player player = mock(Player.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
@@ -39,7 +39,7 @@ public class PlayerJoinEventHandlerTest {
 
         PlayerJoinEvent event = new PlayerJoinEvent(player, "test");
 
-        PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(config, contextProvider, trainingModeGameKey);
+        PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(config, contextProvider, openModeGameKey);
         eventHandler.handle(event);
 
         verify(gamePlayer).setPassive(true);

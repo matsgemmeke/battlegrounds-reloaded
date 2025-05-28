@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.command.*;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentWeaponIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.TrainingModePresenceCondition;
+import nl.matsgemmeke.battlegrounds.command.condition.OpenModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
@@ -74,7 +74,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         // Register custom conditions to ACF
         var commandConditions = commandManager.getCommandConditions();
-        commandConditions.addCondition("training-mode-presence", injector.getInstance(TrainingModePresenceCondition.class));
+        commandConditions.addCondition("open-mode-presence", injector.getInstance(OpenModePresenceCondition.class));
         commandConditions.addCondition(Integer.class, "existent-session-id", injector.getInstance(ExistentSessionIdCondition.class));
         commandConditions.addCondition(String.class, "existent-weapon-id", injector.getInstance(ExistentWeaponIdCondition.class));
         commandConditions.addCondition(Integer.class, "nonexistent-session-id", injector.getInstance(NonexistentSessionIdCondition.class));

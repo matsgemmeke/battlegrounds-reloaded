@@ -8,14 +8,14 @@ import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TrainingModeEntity implements GameEntity {
+public class OpenModeEntity implements GameEntity {
 
     @Nullable
     private Damage lastDamage;
     @NotNull
     private final LivingEntity entity;
 
-    public TrainingModeEntity(@NotNull LivingEntity entity) {
+    public OpenModeEntity(@NotNull LivingEntity entity) {
         this.entity = entity;
     }
 

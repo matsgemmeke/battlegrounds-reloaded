@@ -54,7 +54,7 @@ public class EntityPickupItemEventHandlerTest {
 
     @Test
     public void handleShouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         Player player = mock(Player.class);
 
         ItemStack itemStack = mock(ItemStack.class);
@@ -78,7 +78,7 @@ public class EntityPickupItemEventHandlerTest {
 
     @Test
     public void handleShouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         Player player = mock(Player.class);
 
         ItemStack itemStack = mock(ItemStack.class);

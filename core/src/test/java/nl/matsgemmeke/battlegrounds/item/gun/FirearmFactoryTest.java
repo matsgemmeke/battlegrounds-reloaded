@@ -69,7 +69,7 @@ public class FirearmFactoryTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         config = mock(BattlegroundsConfiguration.class);
-        gameKey = GameKey.ofTrainingMode();
+        gameKey = GameKey.ofOpenMode();
         gunRegistry = mock(GunRegistry.class);
         controlsFactory = mock(FirearmControlsFactory.class);
         fireModeFactory = mock(FireModeFactory.class);

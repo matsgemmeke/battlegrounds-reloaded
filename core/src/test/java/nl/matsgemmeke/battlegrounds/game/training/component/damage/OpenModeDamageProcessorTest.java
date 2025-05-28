@@ -16,22 +16,22 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class TrainingModeDamageProcessorTest {
+public class OpenModeDamageProcessorTest {
 
     private DeploymentInfoProvider deploymentInfoProvider;
-    private GameKey trainingModeGameKey;
+    private GameKey openModeGameKey;
 
     @BeforeEach
     public void setUp() {
         deploymentInfoProvider = mock(DeploymentInfoProvider.class);
-        trainingModeGameKey = GameKey.ofTrainingMode();
+        openModeGameKey = GameKey.ofOpenMode();
     }
 
     @Test
     public void shouldNotAllowDamageFromDifferentContext() {
         GameKey otherGameKey = GameKey.ofSession(1);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
         boolean allowed = damageProcessor.isDamageAllowed(otherGameKey);
 
         assertFalse(allowed);
@@ -39,9 +39,9 @@ public class TrainingModeDamageProcessorTest {
 
     @Test
     public void shouldAllowDamageInSameContext() {
-        GameKey otherGameKey = trainingModeGameKey;
+        GameKey otherGameKey = openModeGameKey;
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
         boolean allowed = damageProcessor.isDamageAllowed(otherGameKey);
 
         assertTrue(allowed);
@@ -49,7 +49,7 @@ public class TrainingModeDamageProcessorTest {
 
     @Test
     public void shouldAllowDamageFromNullContext() {
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
         boolean allowed = damageProcessor.isDamageAllowed(null);
 
         assertTrue(allowed);
@@ -63,7 +63,7 @@ public class TrainingModeDamageProcessorTest {
         DamageCheck damageCheck = mock(DamageCheck.class);
         DamageEvent damageEvent = new DamageEvent(damager, null, entity, null, DamageType.BULLET_DAMAGE, 10.0);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
         damageProcessor.addDamageCheck(damageCheck);
         damageProcessor.processDamage(damageEvent);
 
@@ -77,7 +77,7 @@ public class TrainingModeDamageProcessorTest {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         when(deploymentObject.isImmuneTo(DamageType.EXPLOSIVE_DAMAGE)).thenReturn(true);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject, never()).damage(any(Damage.class));
@@ -91,7 +91,7 @@ public class TrainingModeDamageProcessorTest {
         when(deploymentObject.getHealth()).thenReturn(10.0);
         when(deploymentObject.isImmuneTo(DamageType.EXPLOSIVE_DAMAGE)).thenReturn(false);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject).damage(damage);
@@ -108,7 +108,7 @@ public class TrainingModeDamageProcessorTest {
 
         when(deploymentInfoProvider.getDeployableItem(deploymentObject)).thenReturn(null);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject).damage(damage);
@@ -125,7 +125,7 @@ public class TrainingModeDamageProcessorTest {
         DeployableItem deployableItem = mock(DeployableItem.class);
         when(deploymentInfoProvider.getDeployableItem(deploymentObject)).thenReturn(deployableItem);
 
-        TrainingModeDamageProcessor damageProcessor = new TrainingModeDamageProcessor(trainingModeGameKey, deploymentInfoProvider);
+        OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
         damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
 
         verify(deploymentObject).damage(damage);

@@ -57,7 +57,7 @@ public class ItemEffectFactoryTest {
     public void setUp() {
         combustionEffectFactory = mock(CombustionEffectFactory.class);
         contextProvider = mock(GameContextProvider.class);
-        gameKey = GameKey.ofTrainingMode();
+        gameKey = GameKey.ofOpenMode();
         gunFireSimulationEffectFactory = mock(GunFireSimulationEffectFactory.class);
         particleEffectMapper = new ParticleEffectMapper();
         smokeScreenEffectFactory = mock(SmokeScreenEffectFactory.class);

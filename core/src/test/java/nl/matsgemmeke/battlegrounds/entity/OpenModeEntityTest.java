@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
-public class TrainingModeEntityTest {
+public class OpenModeEntityTest {
 
     private LivingEntity entity;
 
@@ -28,8 +28,8 @@ public class TrainingModeEntityTest {
 
     @Test
     public void getLastDamageReturnsNullIfEntityHasNotTakenDamage() {
-        TrainingModeEntity trainingModeEntity = new TrainingModeEntity(entity);
-        Damage lastDamage = trainingModeEntity.getLastDamage();
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        Damage lastDamage = openModeEntity.getLastDamage();
 
         assertNull(lastDamage);
     }
@@ -41,9 +41,9 @@ public class TrainingModeEntityTest {
         when(entity.getHealth()).thenReturn(20.0);
         when(entity.isDead()).thenReturn(false);
 
-        TrainingModeEntity trainingModeEntity = new TrainingModeEntity(entity);
-        trainingModeEntity.damage(damage);
-        Damage lastDamage = trainingModeEntity.getLastDamage();
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        openModeEntity.damage(damage);
+        Damage lastDamage = openModeEntity.getLastDamage();
 
         assertEquals(damage, lastDamage);
     }
@@ -68,8 +68,8 @@ public class TrainingModeEntityTest {
 
         Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
 
-        TrainingModeEntity trainingModeEntity = new TrainingModeEntity(entity);
-        double damageDealt = trainingModeEntity.damage(damage);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        double damageDealt = openModeEntity.damage(damage);
 
         assertEquals(expectedDamageDealt, damageDealt);
 
@@ -82,8 +82,8 @@ public class TrainingModeEntityTest {
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
 
-        TrainingModeEntity trainingModeEntity = new TrainingModeEntity(entity);
-        double damageDealt = trainingModeEntity.damage(damage);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        double damageDealt = openModeEntity.damage(damage);
 
         assertEquals(0.0, damageDealt);
 
@@ -96,8 +96,8 @@ public class TrainingModeEntityTest {
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
 
-        TrainingModeEntity trainingModeEntity = new TrainingModeEntity(entity);
-        double damageDealt = trainingModeEntity.damage(damage);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        double damageDealt = openModeEntity.damage(damage);
 
         assertEquals(0.0, damageDealt);
 

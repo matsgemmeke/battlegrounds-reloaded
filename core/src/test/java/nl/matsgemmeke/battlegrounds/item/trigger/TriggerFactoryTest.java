@@ -38,7 +38,7 @@ public class TriggerFactoryTest {
     @BeforeEach
     public void setUp() {
         contextProvider = mock(GameContextProvider.class);
-        gameKey = GameKey.ofTrainingMode();
+        gameKey = GameKey.ofOpenMode();
         scheduler = mock(Scheduler.class);
     }
 

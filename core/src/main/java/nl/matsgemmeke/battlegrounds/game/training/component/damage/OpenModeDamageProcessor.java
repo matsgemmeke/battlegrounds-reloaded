@@ -14,17 +14,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrainingModeDamageProcessor implements DamageProcessor {
+public class OpenModeDamageProcessor implements DamageProcessor {
 
     @NotNull
     private final DeploymentInfoProvider deploymentInfoProvider;
     @NotNull
-    private final GameKey trainingModeKey;
+    private final GameKey gameKey;
     @NotNull
     private final List<DamageCheck> damageChecks;
 
-    public TrainingModeDamageProcessor(@NotNull GameKey trainingModeKey, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
-        this.trainingModeKey = trainingModeKey;
+    public OpenModeDamageProcessor(@NotNull GameKey gameKey, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
+        this.gameKey = gameKey;
         this.deploymentInfoProvider = deploymentInfoProvider;
         this.damageChecks = new ArrayList<>();
     }
@@ -34,9 +34,9 @@ public class TrainingModeDamageProcessor implements DamageProcessor {
     }
 
     public boolean isDamageAllowed(@Nullable GameKey gameKey) {
-        // Damage in training mode is allowed if both entities are in training mode, or if one of the entities has no
-        // game key, meaning it's a normal open world entity
-        return trainingModeKey == gameKey || gameKey == null;
+        // Damage in open mode is allowed if both entities are in open mode, or if one of the entities has no game key,
+        // meaning it's a normal open world entity
+        return gameKey == null || gameKey == this.gameKey;
     }
 
     @NotNull

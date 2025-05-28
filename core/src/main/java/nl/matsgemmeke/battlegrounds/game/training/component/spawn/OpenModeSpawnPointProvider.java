@@ -12,13 +12,13 @@ import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.UUID;
 
-public class TrainingModeSpawnPointProvider implements SpawnPointProvider {
+public class OpenModeSpawnPointProvider implements SpawnPointProvider {
 
     @NotNull
     private SpawnPointStorage spawnPointStorage;
 
     @Inject
-    public TrainingModeSpawnPointProvider(@NotNull SpawnPointStorage spawnPointStorage) {
+    public OpenModeSpawnPointProvider(@NotNull SpawnPointStorage spawnPointStorage) {
         this.spawnPointStorage = spawnPointStorage;
     }
 

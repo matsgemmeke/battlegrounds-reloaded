@@ -2,10 +2,10 @@ package nl.matsgemmeke.battlegrounds.game.training;
 
 import org.junit.jupiter.api.Test;
 
-public class TrainingModeTest {
+public class OpenModeTest {
 
     @Test
     public void shouldReturnInstanceOfGameContext() {
-        TrainingMode trainingMode = new TrainingMode();
+        OpenMode openMode = new OpenMode();
     }
 }

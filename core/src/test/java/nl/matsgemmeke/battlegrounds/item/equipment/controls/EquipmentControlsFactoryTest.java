@@ -40,7 +40,7 @@ public class EquipmentControlsFactoryTest {
     @BeforeEach
     public void setUp() {
         contextProvider = mock(GameContextProvider.class);
-        gameKey = GameKey.ofTrainingMode();
+        gameKey = GameKey.ofOpenMode();
         projectileEffectFactory = mock(ProjectileEffectFactory.class);
 
         equipment = mock(Equipment.class);

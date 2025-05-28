@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class TrainingModeSpawnPointProviderTest {
+public class OpenModeSpawnPointProviderTest {
 
     private SpawnPointStorage spawnPointStorage;
 
@@ -28,7 +28,7 @@ public class TrainingModeSpawnPointProviderTest {
 
         spawnPointStorage.setCustomSpawnPoint(entityId, spawnPoint);
 
-        TrainingModeSpawnPointProvider spawnPointProvider = new TrainingModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
         boolean hasSpawnPoint = spawnPointProvider.hasSpawnPoint(entityId);
 
         assertTrue(hasSpawnPoint);
@@ -38,7 +38,7 @@ public class TrainingModeSpawnPointProviderTest {
     public void hasSpawnPointReturnsFalseIfGivenEntityIdDoesNotHaveCustomSpawnPoint() {
         UUID entityId = UUID.randomUUID();
 
-        TrainingModeSpawnPointProvider spawnPointProvider = new TrainingModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
         boolean hasSpawnPoint = spawnPointProvider.hasSpawnPoint(entityId);
 
         assertFalse(hasSpawnPoint);
@@ -51,7 +51,7 @@ public class TrainingModeSpawnPointProviderTest {
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        TrainingModeSpawnPointProvider spawnPointProvider = new TrainingModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
 
         assertThrows(IllegalStateException.class, () -> spawnPointProvider.respawnEntity(entity));
     }
@@ -69,7 +69,7 @@ public class TrainingModeSpawnPointProviderTest {
 
         spawnPointStorage.setCustomSpawnPoint(entityId, spawnPoint);
 
-        TrainingModeSpawnPointProvider spawnPointProvider = new TrainingModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
         Location respawnLocation = spawnPointProvider.respawnEntity(entity);
 
         assertEquals(spawnPointLocation, respawnLocation);
@@ -83,7 +83,7 @@ public class TrainingModeSpawnPointProviderTest {
         SpawnPoint spawnPoint = mock(SpawnPoint.class);
         UUID entityId = UUID.randomUUID();
 
-        TrainingModeSpawnPointProvider spawnPointProvider = new TrainingModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
         spawnPointProvider.setCustomSpawnPoint(entityId, spawnPoint);
 
         assertTrue(spawnPointProvider.hasSpawnPoint(entityId));

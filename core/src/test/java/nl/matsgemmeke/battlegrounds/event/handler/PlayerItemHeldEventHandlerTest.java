@@ -40,7 +40,7 @@ public class PlayerItemHeldEventHandlerTest {
 
     @Test
     public void handleShouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         ItemStack changeFrom = new ItemStack(Material.IRON_HOE);
         ItemStack changeTo = new ItemStack(Material.IRON_HOE);
 
@@ -67,7 +67,7 @@ public class PlayerItemHeldEventHandlerTest {
 
     @Test
     public void handleShouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         ItemStack changeFrom = new ItemStack(Material.IRON_HOE);
         ItemStack changeTo = new ItemStack(Material.IRON_HOE);
 

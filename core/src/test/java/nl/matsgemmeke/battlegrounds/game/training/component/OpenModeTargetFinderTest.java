@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TrainingModeTargetFinderTest {
+public class OpenModeTargetFinderTest {
 
     private DeploymentInfoProvider deploymentInfoProvider;
     private PlayerRegistry playerRegistry;
@@ -52,7 +52,7 @@ public class TrainingModeTargetFinderTest {
 
         when(deploymentInfoProvider.getAllDeploymentObjects()).thenReturn(List.of(objectInsideRange, objectOutsideRange));
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerRegistry);
+        OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
         List<DeploymentObject> deploymentObjects = targetFinder.findDeploymentObjects(entityId, location, range);
 
         assertEquals(1, deploymentObjects.size());
@@ -65,7 +65,7 @@ public class TrainingModeTargetFinderTest {
         UUID entityId = UUID.randomUUID();
         Location location = new Location(null, 1.0, 1.0, 1.0);
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerRegistry);
+        OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
         Collection<GameEntity> targets = targetFinder.findEnemyTargets(entityId, location, 0.1);
 
         assertThat(targets).isEmpty();
@@ -97,7 +97,7 @@ public class TrainingModeTargetFinderTest {
         when(playerRegistry.findByUUID(entityId)).thenReturn(gamePlayer);
         when(playerRegistry.findByUUID(targetId)).thenReturn(target);
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerRegistry);
+        OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
         Collection<GameEntity> targets = targetFinder.findEnemyTargets(entityId, location, range);
 
         assertEquals(1, targets.size());
@@ -110,7 +110,7 @@ public class TrainingModeTargetFinderTest {
         UUID entityId = UUID.randomUUID();
         Location location = new Location(null, 1.0, 1.0, 1.0);
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerRegistry);
+        OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
         Collection<GameEntity> targets = targetFinder.findTargets(entityId, location, 0.1);
 
         assertTrue(targets.isEmpty());
@@ -134,7 +134,7 @@ public class TrainingModeTargetFinderTest {
         when(playerRegistry.findByUUID(targetId)).thenReturn(target);
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(targetEntity));
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerRegistry);
+        OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
         List<GameEntity> targets = targetFinder.findTargets(entityId, location, range);
 
         assertEquals(1, targets.size());
@@ -159,7 +159,7 @@ public class TrainingModeTargetFinderTest {
         when(playerRegistry.findByUUID(targetId)).thenReturn(target);
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(targetEntity));
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerRegistry);
+        OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
         List<GameEntity> targets = targetFinder.findTargets(entityId, location, range);
 
         assertTrue(targets.isEmpty());
@@ -178,7 +178,7 @@ public class TrainingModeTargetFinderTest {
 
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(entity));
 
-        TrainingModeTargetFinder targetFinder = new TrainingModeTargetFinder(deploymentInfoProvider, playerRegistry);
+        OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
         List<GameEntity> targets = targetFinder.findTargets(entityId, location, range);
 
         assertEquals(1, targets.size());

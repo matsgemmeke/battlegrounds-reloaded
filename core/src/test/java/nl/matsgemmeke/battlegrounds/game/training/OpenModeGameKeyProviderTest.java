@@ -24,7 +24,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class TrainingModeGameKeyProviderTest {
+public class OpenModeGameKeyProviderTest {
 
     private BattlegroundsConfiguration configuration;
     private EventDispatcher eventDispatcher;
@@ -49,7 +49,7 @@ public class TrainingModeGameKeyProviderTest {
     }
 
     @Test
-    public void getCreatesNewTrainingModeContextAndAssignsItToTheContextProvider() {
+    public void getCreatesNewOpenModeInstanceAndAssignsItToTheContextProvider() {
         Player player = mock(Player.class);
         bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
 
@@ -64,13 +64,13 @@ public class TrainingModeGameKeyProviderTest {
         when(playerRegistryFactory.create(any())).thenReturn(playerRegistry);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
-        TrainingModeGameKeyProvider provider = new TrainingModeGameKeyProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory, collisionDetectorProvider);
+        OpenModeGameKeyProvider provider = new OpenModeGameKeyProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory, collisionDetectorProvider);
         GameKey gameKey = provider.get();
 
         ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);
         verify(eventDispatcher).registerEventHandler(eq(EntityDamageEvent.class), entityDamageEventHandlerCaptor.capture());
 
-        assertEquals("TRAINING-MODE", gameKey.toString());
+        assertEquals("OPEN-MODE", gameKey.toString());
 
         verify(gamePlayer).setPassive(true);
     }

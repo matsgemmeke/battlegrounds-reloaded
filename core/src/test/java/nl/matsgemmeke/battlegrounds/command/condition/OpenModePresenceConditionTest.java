@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TrainingModePresenceConditionTest {
+public class OpenModePresenceConditionTest {
 
     private BukkitCommandIssuer issuer;
     private ConditionContext<BukkitCommandIssuer> conditionContext;
     private GameContextProvider contextProvider;
-    private GameKey trainingModeGameKey;
+    private GameKey openModeGameKey;
     private Player player;
     private PlayerRegistry playerRegistry;
     private Translator translator;
@@ -30,7 +30,7 @@ public class TrainingModePresenceConditionTest {
     @BeforeEach
     public void setUp() {
         playerRegistry = mock(PlayerRegistry.class);
-        trainingModeGameKey = GameKey.ofTrainingMode();
+        openModeGameKey = GameKey.ofOpenMode();
         player = mock(Player.class);
         translator = mock(Translator.class);
 
@@ -41,23 +41,23 @@ public class TrainingModePresenceConditionTest {
         when(conditionContext.getIssuer()).thenReturn(issuer);
 
         contextProvider = mock(GameContextProvider.class);
-        when(contextProvider.getComponent(trainingModeGameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
+        when(contextProvider.getComponent(openModeGameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
     }
 
     @Test
-    public void shouldPassWhenPlayerIsInTrainingMode() {
+    public void shouldPassWhenPlayerIsInOpenMode() {
         when(playerRegistry.isRegistered(player)).thenReturn(true);
 
-        TrainingModePresenceCondition condition = new TrainingModePresenceCondition(contextProvider, trainingModeGameKey, translator);
+        OpenModePresenceCondition condition = new OpenModePresenceCondition(contextProvider, openModeGameKey, translator);
         condition.validateCondition(conditionContext);
     }
 
     @Test
-    public void shouldNotPassWhenPlayerIsNotInTrainingMode() {
+    public void shouldNotPassWhenPlayerIsNotInOpenMode() {
         when(playerRegistry.isRegistered(player)).thenReturn(false);
         when(translator.translate(TranslationKey.NOT_IN_TRAINING_MODE.getPath())).thenReturn(new TextTemplate("message"));
 
-        TrainingModePresenceCondition condition = new TrainingModePresenceCondition(contextProvider, trainingModeGameKey, translator);
+        OpenModePresenceCondition condition = new OpenModePresenceCondition(contextProvider, openModeGameKey, translator);
 
         assertThrows(ConditionFailedException.class, () -> condition.validateCondition(conditionContext));
     }

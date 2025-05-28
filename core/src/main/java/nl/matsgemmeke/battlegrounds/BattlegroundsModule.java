@@ -21,7 +21,7 @@ import nl.matsgemmeke.battlegrounds.game.component.DefaultCollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.training.TrainingModeGameKeyProvider;
+import nl.matsgemmeke.battlegrounds.game.training.OpenModeGameKeyProvider;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
@@ -90,8 +90,8 @@ public class BattlegroundsModule implements Module {
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
         binder.bind(GameKey.class)
-                .annotatedWith(Names.named("TrainingMode"))
-                .toProvider(TrainingModeGameKeyProvider.class)
+                .annotatedWith(Names.named("OpenMode"))
+                .toProvider(OpenModeGameKeyProvider.class)
                 .in(Singleton.class);
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
