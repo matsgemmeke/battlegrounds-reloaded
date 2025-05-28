@@ -17,30 +17,30 @@ public class EnemyProximityTrigger extends BaseTrigger {
     private final Schedule schedule;
     @NotNull
     private final TargetFinder targetFinder;
-    private boolean activated;
+    private boolean started;
 
     public EnemyProximityTrigger(@NotNull Schedule schedule, @NotNull TargetFinder targetFinder, double checkingRange) {
         this.schedule = schedule;
         this.targetFinder = targetFinder;
         this.checkingRange = checkingRange;
-        this.activated = false;
+        this.started = false;
     }
 
-    public boolean isActivated() {
-        return activated;
+    public boolean isStarted() {
+        return started;
     }
 
-    public void activate(@NotNull TriggerContext context) {
+    public void start(@NotNull TriggerContext context) {
         schedule.addTask(() -> this.runCheck(context));
         schedule.start();
-        activated = true;
+        started = true;
     }
 
     private void runCheck(@NotNull TriggerContext context) {
         TriggerTarget target = context.target();
 
         if (!target.exists()) {
-            this.deactivate();
+            this.stop();
             return;
         }
 
@@ -53,8 +53,8 @@ public class EnemyProximityTrigger extends BaseTrigger {
         this.notifyObservers();
     }
 
-    public void deactivate() {
+    public void stop() {
         schedule.stop();
-        activated = false;
+        started = false;
     }
 }

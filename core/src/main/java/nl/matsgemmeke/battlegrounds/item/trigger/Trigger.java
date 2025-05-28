@@ -5,28 +5,28 @@ import org.jetbrains.annotations.NotNull;
 public interface Trigger {
 
     /**
-     * Activates the trigger, so it start monitoring the given {@link TriggerContext}.
-     *
-     * @param context the trigger context
-     */
-    void activate(@NotNull TriggerContext context);
-
-    /**
-     * Adds an observer to the trigger that gets notified when the trigger executes.
+     * Adds an observer to the trigger that gets notified when the trigger activates.
      *
      * @param observer the observer function
      */
     void addObserver(@NotNull TriggerObserver observer);
 
     /**
-     * Deactivates the trigger and cancels the monitoring.
+     * Gets whether the trigger system is currently started and monitoring.
+     *
+     * @return whether the trigger is started
      */
-    void deactivate();
+    boolean isStarted();
 
     /**
-     * Gets whether the trigger system is currently activated and monitoring.
+     * Starts the trigger by monitoring the given {@link TriggerContext}.
      *
-     * @return whether the trigger is activated
+     * @param context the trigger context
      */
-    boolean isActivated();
+    void start(@NotNull TriggerContext context);
+
+    /**
+     * Stops the trigger and cancels the monitoring.
+     */
+    void stop();
 }

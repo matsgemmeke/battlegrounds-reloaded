@@ -11,30 +11,30 @@ public class FloorHitTrigger extends BaseTrigger {
 
     private static final double Y_SUBTRACTION = 0.01;
 
-    private boolean activated;
     @NotNull
     private final Schedule schedule;
+    private boolean started;
 
     public FloorHitTrigger(@NotNull Schedule schedule) {
         this.schedule = schedule;
-        this.activated = false;
+        this.started = false;
     }
 
-    public boolean isActivated() {
-        return activated;
+    public boolean isStarted() {
+        return started;
     }
 
-    public void activate(@NotNull TriggerContext context) {
+    public void start(@NotNull TriggerContext context) {
         schedule.addTask(() -> this.runCheck(context));
         schedule.start();
-        activated = true;
+        started = true;
     }
 
     private void runCheck(@NotNull TriggerContext context) {
         TriggerTarget target = context.target();
 
         if (!target.exists()) {
-            this.deactivate();
+            this.stop();
             return;
         }
 
@@ -48,8 +48,8 @@ public class FloorHitTrigger extends BaseTrigger {
         this.notifyObservers();
     }
 
-    public void deactivate() {
+    public void stop() {
         schedule.stop();
-        activated = false;
+        started = false;
     }
 }

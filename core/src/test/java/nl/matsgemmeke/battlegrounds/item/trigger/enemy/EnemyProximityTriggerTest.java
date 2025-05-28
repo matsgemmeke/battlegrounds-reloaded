@@ -40,35 +40,35 @@ public class EnemyProximityTriggerTest {
     }
 
     @Test
-    public void isActivatedReturnsFalseWhenNotActivated() {
+    public void isStartedReturnsFalseWhenNotStarted() {
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(schedule, targetFinder, RANGE);
-        boolean activated = trigger.isActivated();
+        boolean started = trigger.isStarted();
 
-        assertThat(activated).isFalse();
+        assertThat(started).isFalse();
     }
 
     @Test
-    public void isActivatedReturnsTrueWhenActivated() {
+    public void isStartedReturnsTrueWhenStarted() {
         Entity entity = mock(Entity.class);
         TriggerTarget target = mock(TriggerTarget.class);
         TriggerContext context = new TriggerContext(entity, target);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(schedule, targetFinder, RANGE);
-        trigger.activate(context);
-        boolean activated = trigger.isActivated();
+        trigger.start(context);
+        boolean started = trigger.isStarted();
 
-        assertThat(activated).isTrue();
+        assertThat(started).isTrue();
     }
 
     @Test
-    public void activateStartsScheduleWithTaskThatStopsCheckingOnceTargetNoLongerExists() {
+    public void startStartsScheduleWithTaskThatStopsCheckingOnceTargetNoLongerExists() {
         TriggerContext context = new TriggerContext(entity, target);
 
         when(target.exists()).thenReturn(false);
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(schedule, targetFinder, RANGE);
         trigger.addObserver(observer);
-        trigger.activate(context);
+        trigger.start(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
         verify(schedule).addTask(scheduleTaskCaptor.capture());
@@ -81,7 +81,7 @@ public class EnemyProximityTriggerTest {
     }
 
     @Test
-    public void activateStartsScheduleWithTaskThatDoesNothingWhenNoEnemyTargetsAreInsideRange() {
+    public void startStartsScheduleWithTaskThatDoesNothingWhenNoEnemyTargetsAreInsideRange() {
         Location targetLocation = new Location(null, 1, 1, 1);
         UUID entityId = UUID.randomUUID();
 
@@ -94,7 +94,7 @@ public class EnemyProximityTriggerTest {
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(schedule, targetFinder, RANGE);
         trigger.addObserver(observer);
-        trigger.activate(context);
+        trigger.start(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
         verify(schedule).addTask(scheduleTaskCaptor.capture());
@@ -106,7 +106,7 @@ public class EnemyProximityTriggerTest {
     }
 
     @Test
-    public void activateStartsScheduleWithTaskThatNotifiesObserversWhenEnemyTargetsAreInsideRange() {
+    public void startStartsScheduleWithTaskThatNotifiesObserversWhenEnemyTargetsAreInsideRange() {
         Location targetLocation = new Location(null, 1, 1, 1);
         UUID entityId = UUID.randomUUID();
 
@@ -119,7 +119,7 @@ public class EnemyProximityTriggerTest {
 
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(schedule, targetFinder, RANGE);
         trigger.addObserver(observer);
-        trigger.activate(context);
+        trigger.start(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
         verify(schedule).addTask(scheduleTaskCaptor.capture());
@@ -131,9 +131,9 @@ public class EnemyProximityTriggerTest {
     }
 
     @Test
-    public void deactivateStopsSchedule() {
+    public void stopStopsSchedule() {
         EnemyProximityTrigger trigger = new EnemyProximityTrigger(schedule, targetFinder, RANGE);
-        trigger.deactivate();
+        trigger.stop();
 
         verify(schedule).stop();
     }

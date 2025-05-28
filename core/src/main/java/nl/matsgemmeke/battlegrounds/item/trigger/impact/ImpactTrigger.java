@@ -16,28 +16,28 @@ public class ImpactTrigger extends BaseTrigger {
 
     @NotNull
     private final Schedule schedule;
-    private boolean activated;
+    private boolean started;
 
     public ImpactTrigger(@NotNull Schedule schedule) {
         this.schedule = schedule;
-        this.activated = false;
+        this.started = false;
     }
 
-    public boolean isActivated() {
-        return activated;
+    public boolean isStarted() {
+        return started;
     }
 
-    public void activate(@NotNull TriggerContext context) {
+    public void start(@NotNull TriggerContext context) {
         schedule.addTask(() -> this.runCheck(context));
         schedule.start();
-        activated = true;
+        started = true;
     }
 
     private void runCheck(@NotNull TriggerContext context) {
         TriggerTarget target = context.target();
 
         if (!target.exists()) {
-            this.deactivate();
+            this.stop();
             return;
         }
 
@@ -62,8 +62,8 @@ public class ImpactTrigger extends BaseTrigger {
         this.notifyObservers();
     }
 
-    public void deactivate() {
+    public void stop() {
         schedule.stop();
-        activated = false;
+        started = false;
     }
 }

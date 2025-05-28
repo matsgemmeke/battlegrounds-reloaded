@@ -33,29 +33,29 @@ public class FloorHitTriggerTest {
     }
 
     @Test
-    public void isActivatedReturnsFalseWhenTriggerIsNotActivated() {
+    public void isStartedReturnsFalseWhenTriggerIsNotStarted() {
         FloorHitTrigger trigger = new FloorHitTrigger(schedule);
-        boolean activated = trigger.isActivated();
+        boolean started = trigger.isStarted();
 
-        assertThat(activated).isFalse();
+        assertThat(started).isFalse();
     }
 
     @Test
-    public void isActivatedReturnsTrueWhenTriggerIsActivated() {
+    public void isStartedReturnsTrueWhenTriggerIsStarted() {
         FloorHitTrigger trigger = new FloorHitTrigger(schedule);
-        trigger.activate(context);
-        boolean activated = trigger.isActivated();
+        trigger.start(context);
+        boolean started = trigger.isStarted();
 
-        assertThat(activated).isTrue();
+        assertThat(started).isTrue();
     }
 
     @Test
-    public void activateStartsScheduleWithTaskThatStopsCheckingOnceTargetNoLongerExists() {
+    public void startStartsScheduleWithTaskThatStopsCheckingOnceTargetNoLongerExists() {
         when(target.exists()).thenReturn(false);
 
         FloorHitTrigger trigger = new FloorHitTrigger(schedule);
         trigger.addObserver(observer);
-        trigger.activate(context);
+        trigger.start(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
         verify(schedule).addTask(scheduleTaskCaptor.capture());
@@ -68,7 +68,7 @@ public class FloorHitTriggerTest {
     }
 
     @Test
-    public void activateStartsScheduleWithTaskThatNotifiesObserversOnceBlockBelowObjectIsNotPassable() {
+    public void startStartsScheduleWithTaskThatNotifiesObserversOnceBlockBelowObjectIsNotPassable() {
         World world = mock(World.class);
         Location targetLocation = new Location(world, 1, 1, 1);
 
@@ -81,7 +81,7 @@ public class FloorHitTriggerTest {
 
         FloorHitTrigger trigger = new FloorHitTrigger(schedule);
         trigger.addObserver(observer);
-        trigger.activate(context);
+        trigger.start(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
         verify(schedule).addTask(scheduleTaskCaptor.capture());
@@ -95,9 +95,9 @@ public class FloorHitTriggerTest {
     }
 
     @Test
-    public void deactivateStopsSchedule() {
+    public void stopStopsSchedule() {
         FloorHitTrigger trigger = new FloorHitTrigger(schedule);
-        trigger.deactivate();
+        trigger.stop();
 
         verify(schedule).stop();
     }

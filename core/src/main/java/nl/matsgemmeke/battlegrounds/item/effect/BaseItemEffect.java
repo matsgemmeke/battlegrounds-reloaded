@@ -29,7 +29,7 @@ public abstract class BaseItemEffect implements ItemEffect {
         }
 
         activated = true;
-        triggers.forEach(Trigger::deactivate);
+        triggers.forEach(Trigger::stop);
         this.perform(currentContext);
     }
 
@@ -42,7 +42,7 @@ public abstract class BaseItemEffect implements ItemEffect {
             return;
         }
 
-        triggers.forEach(Trigger::deactivate);
+        triggers.forEach(Trigger::stop);
     }
 
     public void deploy(@NotNull ItemEffectSource source) {
@@ -76,7 +76,7 @@ public abstract class BaseItemEffect implements ItemEffect {
                 activated = true;
                 this.perform(currentContext);
             });
-            trigger.activate(triggerContext);
+            trigger.start(triggerContext);
         }
     }
 

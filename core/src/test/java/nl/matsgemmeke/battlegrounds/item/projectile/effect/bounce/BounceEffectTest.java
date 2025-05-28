@@ -73,7 +73,7 @@ public class BounceEffectTest {
                 .hasMessage("Expected the projectile to hit a block, but the ray trace is null");
 
         verify(projectile, never()).setVelocity(any(Vector.class));
-        verify(trigger).activate(any(TriggerContext.class));
+        verify(trigger).start(any(TriggerContext.class));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class BounceEffectTest {
                 .hasMessage("Expected the projectile to hit a block, but the hit block face is null");
 
         verify(projectile, never()).setVelocity(any(Vector.class));
-        verify(trigger).activate(any(TriggerContext.class));
+        verify(trigger).start(any(TriggerContext.class));
     }
 
     @DisplayName("Projectile reflection scenarios")
@@ -145,6 +145,6 @@ public class BounceEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         verify(projectile).setVelocity(reflection);
-        verify(trigger).deactivate();
+        verify(trigger).stop();
     }
 }

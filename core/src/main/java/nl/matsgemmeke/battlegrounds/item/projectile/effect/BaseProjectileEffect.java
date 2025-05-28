@@ -23,7 +23,7 @@ public abstract class BaseProjectileEffect implements ProjectileEffect {
     }
 
     protected void deactivateTriggers() {
-        triggers.forEach(Trigger::deactivate);
+        triggers.forEach(Trigger::stop);
     }
 
     public void onLaunch(@NotNull Entity deployerEntity, @NotNull Projectile projectile) {
@@ -31,7 +31,7 @@ public abstract class BaseProjectileEffect implements ProjectileEffect {
 
         for (Trigger trigger : triggers) {
             trigger.addObserver(() -> this.performEffect(projectile));
-            trigger.activate(context);
+            trigger.start(context);
         }
     }
 

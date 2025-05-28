@@ -10,38 +10,38 @@ public class ScheduledTrigger extends BaseTrigger {
     private final boolean continuous;
     @NotNull
     private final Schedule schedule;
-    private boolean activated;
+    private boolean started;
 
     public ScheduledTrigger(@NotNull Schedule schedule, boolean continuous) {
         this.schedule = schedule;
         this.continuous = continuous;
-        this.activated = false;
+        this.started = false;
     }
 
-    public boolean isActivated() {
-        return activated;
+    public boolean isStarted() {
+        return started;
     }
 
-    public void activate(@NotNull TriggerContext context) {
-        if (activated) {
+    public void start(@NotNull TriggerContext context) {
+        if (started) {
             return;
         }
 
-        schedule.addTask(this::execute);
+        schedule.addTask(this::activate);
         schedule.start();
-        activated = true;
+        started = true;
     }
 
-    private void execute() {
+    private void activate() {
         this.notifyObservers();
 
         if (!continuous) {
-            this.deactivate();
+            this.stop();
         }
     }
 
-    public void deactivate() {
+    public void stop() {
         schedule.stop();
-        activated = false;
+        started = false;
     }
 }

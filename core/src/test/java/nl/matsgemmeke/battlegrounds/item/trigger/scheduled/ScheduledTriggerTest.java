@@ -27,36 +27,36 @@ public class ScheduledTriggerTest {
     }
 
     @Test
-    public void isActivatedReturnsFalseWhenNotActivated() {
+    public void isStartedReturnsFalseWhenNotStarted() {
         ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
-        boolean activated = trigger.isActivated();
+        boolean started = trigger.isStarted();
 
-        assertThat(activated).isFalse();
+        assertThat(started).isFalse();
     }
 
     @Test
-    public void isActivatedReturnsTrueWhenActivated() {
+    public void isStartedReturnsTrueWhenStarted() {
         ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
-        trigger.activate(context);
-        boolean activated = trigger.isActivated();
+        trigger.start(context);
+        boolean started = trigger.isStarted();
 
-        assertThat(activated).isTrue();
+        assertThat(started).isTrue();
     }
 
     @Test
-    public void activateDoesNotStartScheduleTwiceWhenAlreadyActivated() {
+    public void startDoesNotStartScheduleTwiceWhenAlreadyActivated() {
         ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
-        trigger.activate(context);
-        trigger.activate(context);
+        trigger.start(context);
+        trigger.start(context);
 
         verify(schedule, times(1)).start();
     }
 
     @Test
-    public void activateStartsScheduleWithTaskThatNotifiesObservablesAndStopsScheduleWhenNotContinuous() {
+    public void startStartsScheduleWithTaskThatNotifiesObservablesAndStopsScheduleWhenNotContinuous() {
         ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
         trigger.addObserver(observer);
-        trigger.activate(context);
+        trigger.start(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
         verify(schedule).addTask(scheduleTaskCaptor.capture());
@@ -69,10 +69,10 @@ public class ScheduledTriggerTest {
     }
 
     @Test
-    public void activateStartsScheduleWithTaskThatNotifiesObservablesAndDoesNotStopScheduleWhenContinuous() {
+    public void startStartsScheduleWithTaskThatNotifiesObservablesAndDoesNotStopScheduleWhenContinuous() {
         ScheduledTrigger trigger = new ScheduledTrigger(schedule, true);
         trigger.addObserver(observer);
-        trigger.activate(context);
+        trigger.start(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
         verify(schedule).addTask(scheduleTaskCaptor.capture());
@@ -85,9 +85,9 @@ public class ScheduledTriggerTest {
     }
 
     @Test
-    public void deactivateStopsSchedule() {
+    public void stopStopsSchedule() {
         ScheduledTrigger trigger = new ScheduledTrigger(schedule, false);
-        trigger.deactivate();
+        trigger.stop();
 
         verify(schedule).stop();
     }
