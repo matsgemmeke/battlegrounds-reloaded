@@ -55,7 +55,7 @@ public class OpenModePresenceConditionTest {
     @Test
     public void shouldNotPassWhenPlayerIsNotInOpenMode() {
         when(playerRegistry.isRegistered(player)).thenReturn(false);
-        when(translator.translate(TranslationKey.NOT_IN_TRAINING_MODE.getPath())).thenReturn(new TextTemplate("message"));
+        when(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath())).thenReturn(new TextTemplate("message"));
 
         OpenModePresenceCondition condition = new OpenModePresenceCondition(contextProvider, openModeGameKey, translator);
 

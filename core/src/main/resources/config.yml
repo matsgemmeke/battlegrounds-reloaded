@@ -16,6 +16,6 @@ item-gun-damage-amplifier: 1.0
 # gun with an empty magazine.
 item-gun-trigger-sounds: UI_BUTTON_CLICK-0.5-2-0
 
-# Whether players start off as passive when they join training mode. Passive players cannot take damage from other
-# players using the plugin's custom items. However, they can still damage one another through "normal" attacks.
-training-mode-register-players-as-passive: false
+# Whether players start off as passive when they join open mode. Passive players cannot take damage from other players
+# using the plugin's custom items. However, they can still damage one another through normal attacks.
+open-mode-register-players-as-passive: false

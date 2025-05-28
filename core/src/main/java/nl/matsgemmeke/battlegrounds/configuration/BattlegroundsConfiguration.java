@@ -33,7 +33,7 @@ public class BattlegroundsConfiguration extends BasePluginConfiguration {
     }
 
     public boolean isEnabledRegisterPlayersAsPassive() {
-        return this.checkConfigurationValue("training-mode-register-players-as-passive", false);
+        return this.checkConfigurationValue("open-mode-register-players-as-passive", false);
     }
 
     @NotNull

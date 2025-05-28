@@ -32,7 +32,7 @@ public class OpenModeSpawnPointProvider implements SpawnPointProvider {
         SpawnPoint spawnPoint = spawnPointStorage.getCustomSpawnPoint(entityId);
 
         if (spawnPoint == null) {
-            throw new IllegalStateException(MessageFormat.format("Cannot respawn entity {0} in training mode if it has no custom respawn location", entity.getName()));
+            throw new IllegalStateException(MessageFormat.format("Cannot respawn entity {0} in open mode if it has no custom respawn location", entity.getName()));
         }
 
         spawnPoint.onSpawn(entity);

@@ -39,6 +39,6 @@ public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer>
             return;
         }
 
-        throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_TRAINING_MODE.getPath()).getText());
+        throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath()).getText());
     }
 }

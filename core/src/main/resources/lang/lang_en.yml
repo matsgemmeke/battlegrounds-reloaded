@@ -13,7 +13,7 @@ admin:
 
 commands:
   description-createsession: "Creates a new session with the given id"
-  description-giveweapon: "Gives a weapon for training mode"
+  description-giveweapon: "Gives a weapon for open mode"
   description-reload: "Reloads all configuration files"
   description-removesession: "Removes a session and all of its arenas"
   description-setmainlobby: "Sets the main lobby location"
@@ -21,4 +21,4 @@ commands:
   weapon-given: "&6You have been given a %bg_weapon%."
 
 errors:
-  not-in-training-mode: "&cUnable to perform action; you are not in training mode."
+  not-in-open-mode: "&cUnable to perform action; you are not in open mode."
