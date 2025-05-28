@@ -21,7 +21,7 @@ import nl.matsgemmeke.battlegrounds.game.component.DefaultCollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.training.OpenModeGameKeyProvider;
+import nl.matsgemmeke.battlegrounds.game.openmode.OpenModeGameKeyProvider;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;

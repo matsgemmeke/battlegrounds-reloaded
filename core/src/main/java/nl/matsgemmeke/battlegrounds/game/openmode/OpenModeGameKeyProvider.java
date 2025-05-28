@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.training;
+package nl.matsgemmeke.battlegrounds.game.openmode;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -21,9 +21,9 @@ import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
-import nl.matsgemmeke.battlegrounds.game.training.component.OpenModeTargetFinder;
-import nl.matsgemmeke.battlegrounds.game.training.component.damage.OpenModeDamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.training.component.spawn.OpenModeSpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.spawn.OpenModeSpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
 import org.bukkit.Bukkit;

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.training;
+package nl.matsgemmeke.battlegrounds.game.openmode;
 
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
 

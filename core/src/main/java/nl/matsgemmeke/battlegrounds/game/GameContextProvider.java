@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.component.entity.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
-import nl.matsgemmeke.battlegrounds.game.training.OpenMode;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

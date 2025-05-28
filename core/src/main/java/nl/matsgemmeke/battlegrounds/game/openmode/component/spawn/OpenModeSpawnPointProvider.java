@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.training.component.spawn;
+package nl.matsgemmeke.battlegrounds.game.openmode.component.spawn;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;

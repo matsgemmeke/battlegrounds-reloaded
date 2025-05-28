@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.training.component.damage;
+package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;

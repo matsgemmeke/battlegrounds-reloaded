@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.training;
+package nl.matsgemmeke.battlegrounds.game.openmode;
 
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.training.component.spawn;
+package nl.matsgemmeke.battlegrounds.game.openmode.component.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
