@@ -81,6 +81,7 @@ public class SequenceScheduleTest {
         runnableCaptor.getValue().run();
 
         verify(scheduleTask, times(1)).run();
+        verify(bukkitTask).cancel();
     }
 
     @Test

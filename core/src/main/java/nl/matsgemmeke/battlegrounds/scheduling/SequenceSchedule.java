@@ -64,6 +64,12 @@ public class SequenceSchedule implements Schedule {
 
         if (offsetTicks.contains(elapsedTicks)) {
             scheduleTasks.forEach(ScheduleTask::run);
+
+            long maxOffsetTick = offsetTicks.stream().max(Long::compareTo).get();
+
+            if (elapsedTicks >= maxOffsetTick) {
+                this.stop();
+            }
         }
     }
 
