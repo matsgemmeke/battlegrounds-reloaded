@@ -26,6 +26,7 @@ public class EquipmentSpecLoader {
 
     private static final List<String> ALLOWED_DAMAGE_TYPE_VALUES = List.of("bullet-damage", "explosive-damage", "fire-damage");
 
+    private static final String ID_ROUTE = "id";
     private static final String NAME_ROUTE = "name";
     private static final String DESCRIPTION_ROUTE = "description";
 
@@ -95,6 +96,11 @@ public class EquipmentSpecLoader {
 
     @NotNull
     public EquipmentSpec loadSpec() {
+        String id = new FieldSpecResolver<String>()
+                .route(ID_ROUTE)
+                .value(yamlReader.getString(ID_ROUTE))
+                .validate(new RequiredValidator<>())
+                .resolve();
         String name = new FieldSpecResolver<String>()
                 .route(NAME_ROUTE)
                 .value(yamlReader.getString(NAME_ROUTE))
@@ -292,7 +298,7 @@ public class EquipmentSpecLoader {
             throwItemSpec = new ItemStackSpec(throwItemMaterial, throwItemDisplayName, throwItemDamage);
         }
 
-        return new EquipmentSpec(name, description, displayItemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploymentSpec, effectSpec, projectileEffectSpecs);
+        return new EquipmentSpec(id, name, description, displayItemSpec, activatorItemSpec, throwItemSpec, controlsSpec, deploymentSpec, effectSpec, projectileEffectSpecs);
     }
 
     @NotNull

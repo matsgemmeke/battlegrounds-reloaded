@@ -24,6 +24,7 @@ public class EquipmentSpecLoaderTest {
 
     @Test
     public void createSpecReturnsEquipmentSpecContainingValuesFromYamlReader() {
+        String id = "TEST_EQUIPMENT";
         String name = "Test Equipment";
 
         String displayItemMaterial = "SHEARS";
@@ -68,6 +69,7 @@ public class EquipmentSpecLoaderTest {
         String activateAction = "RIGHT_CLICK";
 
         YamlReader yamlReader = mock(YamlReader.class);
+        when(yamlReader.getString("id")).thenReturn(id);
         when(yamlReader.getString("name")).thenReturn(name);
         when(yamlReader.getString("description")).thenReturn(null);
 
@@ -128,6 +130,7 @@ public class EquipmentSpecLoaderTest {
         EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader, projectileEffectSpecLoader);
         EquipmentSpec spec = specLoader.loadSpec();
 
+        assertThat(spec.id()).isEqualTo(id);
         assertThat(spec.name()).isEqualTo(name);
         assertThat(spec.description()).isNull();
 

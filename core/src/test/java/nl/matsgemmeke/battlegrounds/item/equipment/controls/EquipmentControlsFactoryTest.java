@@ -180,6 +180,6 @@ public class EquipmentControlsFactoryTest {
         ItemStackSpec displayItemSpec = new ItemStackSpec("STICK", "Test Item", 1);
         ItemEffectSpec itemEffectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", Collections.emptyList(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        return new EquipmentSpec("Test Equipment", null, displayItemSpec, null, null, controlsSpec, deploymentSpec, itemEffectSpec, projectileEffectSpecs);
+        return new EquipmentSpec("TEST_EQUIPMENT", "Test Equipment", null, displayItemSpec, null, null, controlsSpec, deploymentSpec, itemEffectSpec, projectileEffectSpecs);
     }
 }

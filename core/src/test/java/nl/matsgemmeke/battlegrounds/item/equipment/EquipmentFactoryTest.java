@@ -106,6 +106,7 @@ public class EquipmentFactoryTest {
         Equipment equipment = factory.create(spec, gameKey, gamePlayer);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
+        assertThat(equipment.getId()).isEqualTo("TEST_EQUIPMENT");
         assertThat(equipment.getName()).isEqualTo("name");
         assertThat(equipment.getDescription()).isEqualTo("description");
 
@@ -120,7 +121,7 @@ public class EquipmentFactoryTest {
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, activatorItemSpec, null, controlsSpec, deploymentSpec, effectSpec, List.of());
+        EquipmentSpec spec = new EquipmentSpec("TEST_EQUIPMENT", "name", "description", displayItemSpec, activatorItemSpec, null, controlsSpec, deploymentSpec, effectSpec, List.of());
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
@@ -149,7 +150,7 @@ public class EquipmentFactoryTest {
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, throwItemSpec, controlsSpec, deploymentSpec, effectSpec, List.of());
+        EquipmentSpec spec = new EquipmentSpec("TEST_EQUIPMENT", "name", "description", displayItemSpec, null, throwItemSpec, controlsSpec, deploymentSpec, effectSpec, List.of());
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
@@ -180,7 +181,7 @@ public class EquipmentFactoryTest {
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, manualActivationSpec);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
+        EquipmentSpec spec = new EquipmentSpec("TEST_EQUIPMENT", "name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
@@ -209,7 +210,7 @@ public class EquipmentFactoryTest {
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, destroyEffectSpec, Map.of(), null, null, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
+        EquipmentSpec spec = new EquipmentSpec("TEST_EQUIPMENT", "name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
@@ -244,6 +245,6 @@ public class EquipmentFactoryTest {
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        return new EquipmentSpec("name", "description", itemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
+        return new EquipmentSpec("TEST_EQUIPMENT", "name", "description", itemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
     }
 }

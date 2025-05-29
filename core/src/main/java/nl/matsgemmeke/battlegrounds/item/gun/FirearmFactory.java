@@ -110,7 +110,7 @@ public class FirearmFactory {
         DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
         TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        DefaultFirearm firearm = new DefaultFirearm(spec.id(), audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setName(spec.name());
         firearm.setDescription(spec.description());
         firearm.setHeadshotDamageMultiplier(spec.headshotDamageMultiplier());

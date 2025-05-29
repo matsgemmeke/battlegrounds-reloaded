@@ -16,6 +16,8 @@ import static org.mockito.Mockito.*;
 
 public class DefaultEquipmentTest {
 
+    private static final String EQUIPMENT_ID = "TEST_EQUIPMENT";
+
     @Test
     public void activateDeploymentActivatesDeploymentHandler() {
         Player player = mock(Player.class);
@@ -24,7 +26,7 @@ public class DefaultEquipmentTest {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         when(holder.getEntity()).thenReturn(player);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDeploymentHandler(deploymentHandler);
         equipment.activateDeployment(holder);
 
@@ -38,7 +40,7 @@ public class DefaultEquipmentTest {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandler.getDeploymentObject()).thenReturn(deploymentObject);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDeploymentHandler(deploymentHandler);
         DeploymentObject result = equipment.getDeploymentObject();
 
@@ -47,7 +49,7 @@ public class DefaultEquipmentTest {
 
     @Test
     public void isActivatorReadyReturnsFalseWhenActivatorIsNull() {
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setActivator(null);
         boolean activatorReady = equipment.isActivatorReady();
 
@@ -59,7 +61,7 @@ public class DefaultEquipmentTest {
         Activator activator = mock(Activator.class);
         when(activator.isReady()).thenReturn(false);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setActivator(activator);
         boolean activatorReady = equipment.isActivatorReady();
 
@@ -71,7 +73,7 @@ public class DefaultEquipmentTest {
         Activator activator = mock(Activator.class);
         when(activator.isReady()).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setActivator(activator);
         boolean activatorReady = equipment.isActivatorReady();
 
@@ -83,7 +85,7 @@ public class DefaultEquipmentTest {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandler.isAwaitingDeployment()).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDeploymentHandler(deploymentHandler);
         boolean awaitingDeployment = equipment.isAwaitingDeployment();
 
@@ -95,7 +97,7 @@ public class DefaultEquipmentTest {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandler.isAwaitingDeployment()).thenReturn(false);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDeploymentHandler(deploymentHandler);
         boolean awaitingDeployment = equipment.isAwaitingDeployment();
 
@@ -107,7 +109,7 @@ public class DefaultEquipmentTest {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandler.isDeployed()).thenReturn(false);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDeploymentHandler(deploymentHandler);
         boolean deployed = equipment.isDeployed();
 
@@ -119,7 +121,7 @@ public class DefaultEquipmentTest {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandler.isDeployed()).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDeploymentHandler(deploymentHandler);
         boolean deployed = equipment.isDeployed();
 
@@ -133,7 +135,7 @@ public class DefaultEquipmentTest {
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.matchesTemplate(itemStack)).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDisplayItemTemplate(displayItemTemplate);
 
         boolean matches = equipment.isMatching(itemStack);
@@ -148,7 +150,7 @@ public class DefaultEquipmentTest {
         Activator activator = mock(Activator.class);
         when(activator.isMatching(itemStack)).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setActivator(activator);
 
         boolean matches = equipment.isMatching(itemStack);
@@ -166,7 +168,7 @@ public class DefaultEquipmentTest {
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.matchesTemplate(itemStack)).thenReturn(false);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setActivator(activator);
         equipment.setDisplayItemTemplate(displayItemTemplate);
 
@@ -179,7 +181,7 @@ public class DefaultEquipmentTest {
     public void destroyDeploymentDelegatesToDeploymentHandler() {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDeploymentHandler(deploymentHandler);
         equipment.destroyDeployment();
 
@@ -193,7 +195,7 @@ public class DefaultEquipmentTest {
         ItemFunction<EquipmentHolder> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.getControls().addControl(Action.LEFT_CLICK, function);
         equipment.setHolder(holder);
         equipment.onLeftClick();
@@ -208,7 +210,7 @@ public class DefaultEquipmentTest {
         ItemFunction<EquipmentHolder> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.getControls().addControl(Action.RIGHT_CLICK, function);
         equipment.setHolder(holder);
         equipment.onRightClick();
@@ -225,7 +227,7 @@ public class DefaultEquipmentTest {
         Player player = mock(Player.class);
         when(holder.getEntity()).thenReturn(player);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDeploymentHandler(deploymentHandler);
         equipment.performDeployment(deployment, holder);
 
@@ -234,7 +236,7 @@ public class DefaultEquipmentTest {
 
     @Test
     public void doesNotUpdateIfDisplayItemTemplateIsNull() {
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setDisplayItemTemplate(null);
         boolean updated = equipment.update();
 
@@ -249,7 +251,7 @@ public class DefaultEquipmentTest {
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(itemStack);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
         equipment.setHolder(holder);
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.setName("test");

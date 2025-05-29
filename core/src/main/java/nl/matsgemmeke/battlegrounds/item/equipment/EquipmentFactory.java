@@ -92,7 +92,7 @@ public class EquipmentFactory {
 
     @NotNull
     private Equipment createInstance(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey) {
-        DefaultEquipment equipment = new DefaultEquipment();
+        DefaultEquipment equipment = new DefaultEquipment(spec.id());
         equipment.setName(spec.name());
         equipment.setDescription(spec.description());
 

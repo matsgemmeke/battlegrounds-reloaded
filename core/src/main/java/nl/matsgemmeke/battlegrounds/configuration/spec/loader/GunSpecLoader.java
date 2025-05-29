@@ -23,6 +23,7 @@ public class GunSpecLoader {
     private static final List<String> ALLOWED_RECOIL_TYPE_VALUES = List.of("CAMERA_MOVEMENT", "RANDOM_SPREAD");
     private static final List<String> ALLOWED_SPREAD_PATTERN_TYPE_VALUES = List.of("BUCKSHOT");
 
+    private static final String ID_ROUTE = "id";
     private static final String NAME_ROUTE = "name";
     private static final String DESCRIPTION_ROUTE = "description";
 
@@ -83,6 +84,11 @@ public class GunSpecLoader {
 
     @NotNull
     public GunSpec loadSpec() {
+        String id = new FieldSpecResolver<String>()
+                .route(ID_ROUTE)
+                .value(yamlReader.getString(ID_ROUTE))
+                .validate(new RequiredValidator<>())
+                .resolve();
         String name = new FieldSpecResolver<String>()
                 .route(NAME_ROUTE)
                 .value(yamlReader.getString(NAME_ROUTE))
@@ -295,6 +301,6 @@ public class GunSpecLoader {
             spreadPatternSpec = new SpreadPatternSpec(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpec(name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, rangeProfileSpec, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
+        return new GunSpec(id, name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, rangeProfileSpec, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
     }
 }

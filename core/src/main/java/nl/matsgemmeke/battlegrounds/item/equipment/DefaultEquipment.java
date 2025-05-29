@@ -34,7 +34,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @Nullable
     private ProjectileProperties projectileProperties;
 
-    public DefaultEquipment() {
+    public DefaultEquipment(@NotNull String id) {
+        super(id);
         this.controls = new ItemControls<>();
         this.deploymentObjects = new ArrayList<>();
     }

@@ -16,6 +16,7 @@ import java.util.List;
  * validated. Instances of this record hold all the necessary configuration values which are guaranteed to be valid at
  * the time of instantiation.
  *
+ * @param id                the equipment id
  * @param name              the display name of the equipment item
  * @param description       the description of the equipment item
  * @param displayItem       the item stack specification for the display item, held by the user
@@ -27,6 +28,7 @@ import java.util.List;
  * @param projectileEffects the list of projectile effect specifications
  */
 public record EquipmentSpec(
+        @NotNull String id,
         @NotNull String name,
         @Nullable String description,
         @NotNull ItemStackSpec displayItem,

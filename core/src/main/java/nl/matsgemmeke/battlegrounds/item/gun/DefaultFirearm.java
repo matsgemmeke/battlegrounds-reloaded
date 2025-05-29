@@ -44,7 +44,8 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @NotNull
     private TargetFinder targetFinder;
 
-    public DefaultFirearm(@NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector, @NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder) {
+    public DefaultFirearm(@NotNull String id, @NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector, @NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder) {
+        super(id);
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
         this.damageProcessor = damageProcessor;
