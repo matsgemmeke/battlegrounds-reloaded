@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
 import org.bukkit.entity.Player;
@@ -10,8 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class GameContextProviderTest {
 
@@ -226,5 +226,19 @@ public class GameContextProviderTest {
         boolean sessionExists = contextProvider.sessionExists(id);
 
         assertTrue(sessionExists);
+    }
+
+    @Test
+    public void shutdownSavesOpenModeState() {
+        GameKey gameKey = GameKey.ofOpenMode();
+        OpenMode openMode = new OpenMode();
+        StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.assignOpenMode(openMode);
+        contextProvider.registerComponent(gameKey, StatePersistenceHandler.class, statePersistenceHandler);
+        contextProvider.shutdown();
+
+        verify(statePersistenceHandler).saveState();
     }
 }

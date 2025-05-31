@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public class DefaultPlayerRegistry implements PlayerRegistry {
@@ -37,6 +38,11 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     @Nullable
     public GamePlayer findByUUID(@NotNull UUID uuid) {
         return playerStorage.getEntity(uuid);
+    }
+
+    @NotNull
+    public Collection<GamePlayer> getAll() {
+        return playerStorage.getEntities();
     }
 
     public boolean isRegistered(@NotNull Player player) {

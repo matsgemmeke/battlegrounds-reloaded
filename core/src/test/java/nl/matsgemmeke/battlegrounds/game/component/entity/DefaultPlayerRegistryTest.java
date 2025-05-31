@@ -7,8 +7,10 @@ import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -70,6 +72,21 @@ public class DefaultPlayerRegistryTest {
         GamePlayer result = playerRegistry.findByUUID(uuid);
 
         assertEquals(gamePlayer, result);
+    }
+
+    @Test
+    public void getAllReturnsPlayersFromStorage() {
+        UUID playerUuid = UUID.randomUUID();
+
+        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
+        when(gamePlayer.getEntity().getUniqueId()).thenReturn(playerUuid);
+
+        playerStorage.addEntity(gamePlayer);
+
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerStorage);
+        Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
+
+        assertThat(gamePlayers).containsExactly(gamePlayer);
     }
 
     @Test

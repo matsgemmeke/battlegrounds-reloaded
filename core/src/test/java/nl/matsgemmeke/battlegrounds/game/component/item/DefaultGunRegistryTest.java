@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
@@ -33,6 +34,19 @@ public class DefaultGunRegistryTest {
 
         assertEquals(1, guns.size());
         assertEquals(gun, guns.get(0));
+    }
+
+    @Test
+    public void getAssignedItemsReturnsAssignedItemsFromStorage() {
+        Gun gun = mock(Gun.class);
+        GunHolder holder = mock(GunHolder.class);
+
+        gunStorage.addAssignedItem(gun, holder);
+
+        DefaultGunRegistry gunRegistry = new DefaultGunRegistry(gunStorage);
+        List<Gun> assignedItems = gunRegistry.getAssignedItems(holder);
+
+        assertThat(assignedItems).containsExactly(gun);
     }
 
     @Test

@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.spawn;
 
-import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
@@ -17,7 +16,6 @@ public class OpenModeSpawnPointProvider implements SpawnPointProvider {
     @NotNull
     private SpawnPointStorage spawnPointStorage;
 
-    @Inject
     public OpenModeSpawnPointProvider(@NotNull SpawnPointStorage spawnPointStorage) {
         this.spawnPointStorage = spawnPointStorage;
     }

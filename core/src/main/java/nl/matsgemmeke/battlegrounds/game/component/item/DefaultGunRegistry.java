@@ -10,7 +10,7 @@ import java.util.List;
 public class DefaultGunRegistry implements GunRegistry {
 
     @NotNull
-    private ItemStorage<Gun, GunHolder> gunStorage;
+    private final ItemStorage<Gun, GunHolder> gunStorage;
 
     public DefaultGunRegistry(@NotNull ItemStorage<Gun, GunHolder> gunStorage) {
         this.gunStorage = gunStorage;
@@ -19,6 +19,11 @@ public class DefaultGunRegistry implements GunRegistry {
     @NotNull
     public List<Gun> findAll() {
         return gunStorage.getAllItems();
+    }
+
+    @NotNull
+    public List<Gun> getAssignedItems(@NotNull GunHolder holder) {
+        return gunStorage.getAssignedItems(holder);
     }
 
     public void registerItem(@NotNull Gun gun) {

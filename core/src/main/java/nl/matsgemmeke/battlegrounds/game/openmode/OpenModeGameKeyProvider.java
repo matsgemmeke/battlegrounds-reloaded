@@ -20,10 +20,12 @@ import nl.matsgemmeke.battlegrounds.game.component.item.DefaultGunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.spawn.OpenModeSpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
 import org.bukkit.Bukkit;
@@ -42,6 +44,8 @@ public class OpenModeGameKeyProvider implements Provider<GameKey> {
     @NotNull
     private final DefaultPlayerRegistryFactory playerRegistryFactory;
     @NotNull
+    private final OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory;
+    @NotNull
     private final Provider<CollisionDetector> collisionDetectorProvider;
 
     @Inject
@@ -50,12 +54,14 @@ public class OpenModeGameKeyProvider implements Provider<GameKey> {
             @NotNull EventDispatcher eventDispatcher,
             @NotNull GameContextProvider contextProvider,
             @NotNull DefaultPlayerRegistryFactory playerRegistryFactory,
+            @NotNull OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory,
             @NotNull Provider<CollisionDetector> collisionDetectorProvider
     ) {
         this.configuration = configuration;
         this.eventDispatcher = eventDispatcher;
         this.contextProvider = contextProvider;
         this.playerRegistryFactory = playerRegistryFactory;
+        this.statePersistenceHandlerFactory = statePersistenceHandlerFactory;
         this.collisionDetectorProvider = collisionDetectorProvider;
     }
 
@@ -80,6 +86,7 @@ public class OpenModeGameKeyProvider implements Provider<GameKey> {
         AudioEmitter audioEmitter = new DefaultAudioEmitter();
         CollisionDetector collisionDetector = collisionDetectorProvider.get();
         SpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(openMode.getSpawnPointStorage());
+        StatePersistenceHandler statePersistanceHandler = statePersistenceHandlerFactory.create(gunRegistry, playerRegistry);
 
         DamageProcessor damageProcessor = new OpenModeDamageProcessor(gameKey, deploymentInfoProvider);
         TargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
@@ -96,6 +103,7 @@ public class OpenModeGameKeyProvider implements Provider<GameKey> {
         contextProvider.registerComponent(gameKey, GunRegistry.class, gunRegistry);
         contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
         contextProvider.registerComponent(gameKey, SpawnPointProvider.class, spawnPointProvider);
+        contextProvider.registerComponent(gameKey, StatePersistenceHandler.class, statePersistanceHandler);
         contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
 
         this.registerEventHandlers(gameKey);

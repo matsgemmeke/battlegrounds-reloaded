@@ -56,6 +56,6 @@ public class WeaponCreatorTest {
         ScopeSpec scopeSpec = new ScopeSpec(List.of(-0.1f, -0.2f), null, null, null);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("pattern type", 1, 0.5f, 0.5f);
 
-        return new GunSpec("test", null, 1, 1, 1, rangeProfileSpec, 1.0, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
+        return new GunSpec("TEST_GUN", "Test Gun", null, 1, 1, 1, rangeProfileSpec, 1.0, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
     }
 }

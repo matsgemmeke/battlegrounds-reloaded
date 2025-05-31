@@ -9,7 +9,10 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -31,6 +34,7 @@ public class OpenModeGameKeyProviderTest {
     private GameContextProvider contextProvider;
     private DefaultPlayerRegistryFactory playerRegistryFactory;
     private Provider<CollisionDetector> collisionDetectorProvider;
+    private OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory;
     private MockedStatic<Bukkit> bukkit;
 
     @BeforeEach
@@ -40,6 +44,7 @@ public class OpenModeGameKeyProviderTest {
         contextProvider = new GameContextProvider();
         playerRegistryFactory = mock(DefaultPlayerRegistryFactory.class);
         collisionDetectorProvider = mock();
+        statePersistenceHandlerFactory = mock(OpenModeStatePersistenceHandlerFactory.class);
         bukkit = mockStatic(Bukkit.class);
     }
 
@@ -54,6 +59,7 @@ public class OpenModeGameKeyProviderTest {
         bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
+        StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
@@ -62,9 +68,10 @@ public class OpenModeGameKeyProviderTest {
         when(collisionDetectorProvider.get()).thenReturn(collisionDetector);
 
         when(playerRegistryFactory.create(any())).thenReturn(playerRegistry);
+        when(statePersistenceHandlerFactory.create(any(GunRegistry.class), eq(playerRegistry))).thenReturn(statePersistenceHandler);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
-        OpenModeGameKeyProvider provider = new OpenModeGameKeyProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory, collisionDetectorProvider);
+        OpenModeGameKeyProvider provider = new OpenModeGameKeyProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory, statePersistenceHandlerFactory, collisionDetectorProvider);
         GameKey gameKey = provider.get();
 
         ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);

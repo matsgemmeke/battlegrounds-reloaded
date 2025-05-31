@@ -10,7 +10,7 @@ import java.util.List;
 public class DefaultEquipmentRegistry implements EquipmentRegistry {
 
     @NotNull
-    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
+    private final ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
 
     public DefaultEquipmentRegistry(@NotNull ItemStorage<Equipment, EquipmentHolder> equipmentStorage) {
         this.equipmentStorage = equipmentStorage;
@@ -19,6 +19,11 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
     @NotNull
     public List<Equipment> findAll() {
         return equipmentStorage.getAllItems();
+    }
+
+    @NotNull
+    public List<Equipment> getAssignedItems(@NotNull EquipmentHolder holder) {
+        return equipmentStorage.getAssignedItems(holder);
     }
 
     public void registerItem(@NotNull Equipment equipment) {
