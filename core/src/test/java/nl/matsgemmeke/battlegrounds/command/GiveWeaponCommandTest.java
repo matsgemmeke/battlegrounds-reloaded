@@ -21,7 +21,6 @@ import static org.mockito.Mockito.*;
 public class GiveWeaponCommandTest {
 
     private GameContextProvider contextProvider;
-    private GameKey gameKey;
     private Player player;
     private Translator translator;
     private WeaponCreator weaponCreator;
@@ -29,7 +28,6 @@ public class GiveWeaponCommandTest {
     @BeforeEach
     public void setUp() {
         this.contextProvider = mock(GameContextProvider.class);
-        this.gameKey = GameKey.ofOpenMode();
         this.player = mock(Player.class);
         this.weaponCreator = mock(WeaponCreator.class);
 
@@ -54,11 +52,11 @@ public class GiveWeaponCommandTest {
         when(weapon.getItemStack()).thenReturn(itemStack);
         when(weapon.getName()).thenReturn("test");
 
-        when(contextProvider.getComponent(gameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
+        when(contextProvider.getComponent(GameKey.ofOpenMode(), PlayerRegistry.class)).thenReturn(playerRegistry);
         when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
-        when(weaponCreator.createWeapon(gamePlayer, gameKey, weaponId)).thenReturn(weapon);
+        when(weaponCreator.createWeapon(gamePlayer, GameKey.ofOpenMode(), weaponId)).thenReturn(weapon);
 
-        GiveWeaponCommand command = new GiveWeaponCommand(contextProvider, gameKey, translator, weaponCreator);
+        GiveWeaponCommand command = new GiveWeaponCommand(contextProvider, translator, weaponCreator);
         command.execute(player, weaponId);
 
         verify(inventory).addItem(itemStack);

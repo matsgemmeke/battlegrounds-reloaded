@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
@@ -22,14 +21,10 @@ public class PlayerJoinEventHandler implements EventHandler<PlayerJoinEvent> {
     private final GameKey openModeGameKey;
 
     @Inject
-    public PlayerJoinEventHandler(
-            @NotNull BattlegroundsConfiguration config,
-            @NotNull GameContextProvider contextProvider,
-            @Named("OpenMode") @NotNull GameKey openModeGameKey
-    ) {
+    public PlayerJoinEventHandler(@NotNull BattlegroundsConfiguration config, @NotNull GameContextProvider contextProvider) {
         this.config = config;
         this.contextProvider = contextProvider;
-        this.openModeGameKey = openModeGameKey;
+        this.openModeGameKey = GameKey.ofOpenMode();
     }
 
     public void handle(@NotNull PlayerJoinEvent event) {

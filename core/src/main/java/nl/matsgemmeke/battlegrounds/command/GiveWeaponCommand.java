@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import com.google.inject.Inject;
-import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -29,15 +28,14 @@ public class GiveWeaponCommand extends CommandSource {
     @Inject
     public GiveWeaponCommand(
             @NotNull GameContextProvider contextProvider,
-            @Named("OpenMode") @NotNull GameKey openModeGameKey,
             @NotNull Translator translator,
             @NotNull WeaponCreator weaponCreator
     ) {
         super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText(), "bg giveweapon <weapon>");
         this.contextProvider = contextProvider;
-        this.openModeGameKey = openModeGameKey;
         this.translator = translator;
         this.weaponCreator = weaponCreator;
+        this.openModeGameKey = GameKey.ofOpenMode();
     }
 
     public void execute(@NotNull Player player, @NotNull String weaponId) {

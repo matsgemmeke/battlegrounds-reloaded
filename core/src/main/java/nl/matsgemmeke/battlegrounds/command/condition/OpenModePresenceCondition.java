@@ -6,7 +6,6 @@ import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
@@ -25,10 +24,10 @@ public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer>
     private final Translator translator;
 
     @Inject
-    public OpenModePresenceCondition(@NotNull GameContextProvider contextProvider, @Named("OpenMode") @NotNull GameKey openModeGameKey, @NotNull Translator translator) {
+    public OpenModePresenceCondition(@NotNull GameContextProvider contextProvider, @NotNull Translator translator) {
         this.contextProvider = contextProvider;
-        this.openModeGameKey = openModeGameKey;
         this.translator = translator;
+        this.openModeGameKey = GameKey.ofOpenMode();
     }
 
     public void validateCondition(ConditionContext<BukkitCommandIssuer> conditionContext) throws InvalidCommandArgument {

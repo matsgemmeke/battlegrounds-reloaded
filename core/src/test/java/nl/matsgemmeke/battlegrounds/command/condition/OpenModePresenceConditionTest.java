@@ -22,7 +22,6 @@ public class OpenModePresenceConditionTest {
     private BukkitCommandIssuer issuer;
     private ConditionContext<BukkitCommandIssuer> conditionContext;
     private GameContextProvider contextProvider;
-    private GameKey openModeGameKey;
     private Player player;
     private PlayerRegistry playerRegistry;
     private Translator translator;
@@ -30,7 +29,6 @@ public class OpenModePresenceConditionTest {
     @BeforeEach
     public void setUp() {
         playerRegistry = mock(PlayerRegistry.class);
-        openModeGameKey = GameKey.ofOpenMode();
         player = mock(Player.class);
         translator = mock(Translator.class);
 
@@ -41,14 +39,14 @@ public class OpenModePresenceConditionTest {
         when(conditionContext.getIssuer()).thenReturn(issuer);
 
         contextProvider = mock(GameContextProvider.class);
-        when(contextProvider.getComponent(openModeGameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
+        when(contextProvider.getComponent(GameKey.ofOpenMode(), PlayerRegistry.class)).thenReturn(playerRegistry);
     }
 
     @Test
     public void shouldPassWhenPlayerIsInOpenMode() {
         when(playerRegistry.isRegistered(player)).thenReturn(true);
 
-        OpenModePresenceCondition condition = new OpenModePresenceCondition(contextProvider, openModeGameKey, translator);
+        OpenModePresenceCondition condition = new OpenModePresenceCondition(contextProvider, translator);
         condition.validateCondition(conditionContext);
     }
 
@@ -57,7 +55,7 @@ public class OpenModePresenceConditionTest {
         when(playerRegistry.isRegistered(player)).thenReturn(false);
         when(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath())).thenReturn(new TextTemplate("message"));
 
-        OpenModePresenceCondition condition = new OpenModePresenceCondition(contextProvider, openModeGameKey, translator);
+        OpenModePresenceCondition condition = new OpenModePresenceCondition(contextProvider, translator);
 
         assertThrows(ConditionFailedException.class, () -> condition.validateCondition(conditionContext));
     }

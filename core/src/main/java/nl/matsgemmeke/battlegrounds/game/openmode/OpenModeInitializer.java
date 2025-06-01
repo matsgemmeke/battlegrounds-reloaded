@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class OpenModeGameKeyProvider implements Provider<GameKey> {
+public class OpenModeInitializer {
 
     @NotNull
     private final BattlegroundsConfiguration configuration;
@@ -49,7 +49,7 @@ public class OpenModeGameKeyProvider implements Provider<GameKey> {
     private final Provider<CollisionDetector> collisionDetectorProvider;
 
     @Inject
-    public OpenModeGameKeyProvider(
+    public OpenModeInitializer(
             @NotNull BattlegroundsConfiguration configuration,
             @NotNull EventDispatcher eventDispatcher,
             @NotNull GameContextProvider contextProvider,
@@ -65,7 +65,7 @@ public class OpenModeGameKeyProvider implements Provider<GameKey> {
         this.collisionDetectorProvider = collisionDetectorProvider;
     }
 
-    public GameKey get() {
+    public void initialize() {
         OpenMode openMode = new OpenMode();
         openMode.addItemBehavior(new EquipmentBehavior(openMode.getEquipmentStorage()));
         openMode.addItemBehavior(new GunBehavior(openMode.getGunStorage()));
@@ -108,8 +108,6 @@ public class OpenModeGameKeyProvider implements Provider<GameKey> {
 
         this.registerEventHandlers(gameKey);
         this.registerPlayers(gameKey);
-
-        return gameKey;
     }
 
     private void registerEventHandlers(@NotNull GameKey gameKey) {

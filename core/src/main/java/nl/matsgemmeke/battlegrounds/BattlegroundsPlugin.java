@@ -13,6 +13,7 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.openmode.OpenModeInitializer;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -63,6 +64,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         injector = Guice.createInjector(module);
         contextProvider = injector.getInstance(GameContextProvider.class);
+
+        OpenModeInitializer openModeInitializer = injector.getInstance(OpenModeInitializer.class);
+        openModeInitializer.initialize();
 
         this.setUpEventHandlers();
         this.setUpCommands();

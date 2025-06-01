@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
@@ -24,10 +23,9 @@ import org.mockito.MockedStatic;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class OpenModeGameKeyProviderTest {
+public class OpenModeInitializerTest {
 
     private BattlegroundsConfiguration configuration;
     private EventDispatcher eventDispatcher;
@@ -71,13 +69,11 @@ public class OpenModeGameKeyProviderTest {
         when(statePersistenceHandlerFactory.create(any(GunRegistry.class), eq(playerRegistry))).thenReturn(statePersistenceHandler);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
-        OpenModeGameKeyProvider provider = new OpenModeGameKeyProvider(configuration, eventDispatcher, contextProvider, playerRegistryFactory, statePersistenceHandlerFactory, collisionDetectorProvider);
-        GameKey gameKey = provider.get();
+        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, contextProvider, playerRegistryFactory, statePersistenceHandlerFactory, collisionDetectorProvider);
+        openModeInitializer.initialize();
 
         ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);
         verify(eventDispatcher).registerEventHandler(eq(EntityDamageEvent.class), entityDamageEventHandlerCaptor.capture());
-
-        assertEquals("OPEN-MODE", gameKey.toString());
 
         verify(gamePlayer).setPassive(true);
     }
