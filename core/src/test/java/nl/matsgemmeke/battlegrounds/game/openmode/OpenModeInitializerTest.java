@@ -76,5 +76,6 @@ public class OpenModeInitializerTest {
         verify(eventDispatcher).registerEventHandler(eq(EntityDamageEvent.class), entityDamageEventHandlerCaptor.capture());
 
         verify(gamePlayer).setPassive(true);
+        verify(statePersistenceHandler).loadState(gamePlayer);
     }
 }

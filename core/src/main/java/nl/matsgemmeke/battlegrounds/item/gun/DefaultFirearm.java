@@ -206,6 +206,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
         }
 
         this.update();
+        holder.setHeldItem(itemStack);
         return true;
     }
 

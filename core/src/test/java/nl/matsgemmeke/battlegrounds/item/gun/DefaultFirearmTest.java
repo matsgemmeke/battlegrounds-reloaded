@@ -450,7 +450,7 @@ public class DefaultFirearmTest {
         Procedure onReload = procedureCaptor.getValue();
         onReload.apply();
 
-        verify(holder).setHeldItem(itemStack);
+        verify(performer).setHeldItem(itemStack);
         verify(reloadSystem).performReload(performer, onReload);
     }
 
@@ -832,25 +832,5 @@ public class DefaultFirearmTest {
         boolean updated = firearm.update();
 
         assertFalse(updated);
-    }
-
-    @Test
-    public void shouldChangeDisplayNameWhenUpdatingAmmo() {
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-
-        ItemTemplate itemTemplate = mock(ItemTemplate.class);
-        when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
-
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
-
-        DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setAmmunitionStorage(ammunitionStorage);
-        firearm.setHolder(holder);
-        firearm.setItemTemplate(itemTemplate);
-        firearm.setName("name");
-
-        firearm.updateAmmoDisplay();
-
-        verify(holder).setHeldItem(itemStack);
     }
 }

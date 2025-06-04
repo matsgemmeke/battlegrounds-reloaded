@@ -184,7 +184,10 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     }
 
     public void reload(@NotNull ReloadPerformer performer) {
-        reloadSystem.performReload(performer, this::update);
+        reloadSystem.performReload(performer, () -> {
+            this.update();
+            performer.setHeldItem(itemStack);
+        });
     }
 
     public boolean startShootCycle() {
@@ -198,11 +201,6 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
 
         Map<String, Object> values = this.getTemplateValues();
         itemStack = itemTemplate.createItemStack(values);
-
-        if (holder != null) {
-            holder.setHeldItem(itemStack);
-        }
-
         return true;
     }
 
@@ -213,9 +211,5 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
                 "magazine_ammo", ammunitionStorage.getMagazineAmmo(),
                 "reserve_ammo", ammunitionStorage.getReserveAmmo()
         );
-    }
-
-    public void updateAmmoDisplay() {
-        this.update();
     }
 }

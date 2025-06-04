@@ -6,16 +6,18 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "gun")
 public class Gun {
 
-    @DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
+    @DatabaseField(columnName = "id", generatedId = true)
     private int id;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(columnName = "player_uuid", canBeNull = false)
     private String playerUuid;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(columnName = "gun_id", canBeNull = false)
     private String gunId;
-    @DatabaseField(canBeNull = false, defaultValue = "0")
+    @DatabaseField(columnName = "magazine_ammo", canBeNull = false, defaultValue = "0")
     private int magazineAmmo;
-    @DatabaseField(canBeNull = false, defaultValue = "0")
+    @DatabaseField(columnName = "reserve_ammo", canBeNull = false, defaultValue = "0")
     private int reserveAmmo;
+    @DatabaseField(columnName = "item_slot", canBeNull = false, defaultValue = "0")
+    private int itemSlot;
 
     public Gun() {
     }
@@ -58,5 +60,13 @@ public class Gun {
 
     public void setReserveAmmo(int reserveAmmo) {
         this.reserveAmmo = reserveAmmo;
+    }
+
+    public int getItemSlot() {
+        return itemSlot;
+    }
+
+    public void setItemSlot(int itemSlot) {
+        this.itemSlot = itemSlot;
     }
 }

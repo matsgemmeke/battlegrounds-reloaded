@@ -5,6 +5,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 /**
  * Represents an entity that is capable of holding and operating a {@link Item}.
  */
@@ -17,6 +19,15 @@ public interface ItemHolder extends GameEntity {
      */
     @NotNull
     ItemStack getHeldItem();
+
+    /**
+     * Gets the item slot in which a given {@link ItemStack} is located in the holder's inventory.
+     *
+     * @param itemStack the item stack
+     * @return          an optional containing the item slot, or an empty optional when the item cannot be found
+     */
+    @NotNull
+    Optional<Integer> getItemSlot(@NotNull ItemStack itemStack);
 
     /**
      * Removes an {@link ItemStack} from the holder.

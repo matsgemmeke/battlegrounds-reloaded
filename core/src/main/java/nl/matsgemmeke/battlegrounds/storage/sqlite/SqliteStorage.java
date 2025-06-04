@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.storage.sqlite;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 import nl.matsgemmeke.battlegrounds.storage.Storage;
 import nl.matsgemmeke.battlegrounds.storage.entity.Gun;
 import nl.matsgemmeke.battlegrounds.storage.state.GamePlayerState;
@@ -22,6 +23,22 @@ public class SqliteStorage implements Storage, StateStorage {
         this.gunDao = gunDao;
     }
 
+    @NotNull
+    public GamePlayerState findGamePlayerStateByPlayerUuid(@NotNull UUID playerUuid) {
+        try {
+            PreparedQuery<Gun> statement = gunDao.queryBuilder()
+                    .where().eq("player_uuid", playerUuid.toString())
+                    .prepare();
+            List<GunState> gunStates = gunDao.query(statement).stream()
+                    .map(this::convertGunToGunState)
+                    .toList();
+
+            return new GamePlayerState(playerUuid, gunStates);
+        } catch (SQLException e) {
+            throw new StateStorageException(e.getMessage());
+        }
+    }
+
     public void saveGamePlayerState(@NotNull GamePlayerState gamePlayerState) {
         List<Gun> guns = gamePlayerState.gunStates().stream()
                 .map(gunState -> this.convertGunStateToGun(gamePlayerState.playerUuid(), gunState))
@@ -35,12 +52,18 @@ public class SqliteStorage implements Storage, StateStorage {
     }
 
     @NotNull
+    private GunState convertGunToGunState(@NotNull Gun gun) {
+        return new GunState(gun.getGunId(), gun.getMagazineAmmo(), gun.getReserveAmmo(), gun.getItemSlot());
+    }
+
+    @NotNull
     private Gun convertGunStateToGun(@NotNull UUID playerUuid, @NotNull GunState gunState) {
         Gun gun = new Gun();
         gun.setPlayerUuid(playerUuid.toString());
         gun.setGunId(gunState.gunId());
         gun.setMagazineAmmo(gunState.magazineAmmo());
         gun.setReserveAmmo(gunState.reserveAmmo());
+        gun.setItemSlot(gunState.itemSlot());
         return gun;
     }
 }

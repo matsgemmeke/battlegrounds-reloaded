@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -45,13 +46,33 @@ public class WeaponCreator {
     }
 
     /**
+     * Creates a {@link Gun} for a given player in a specific game. The newly created gun will automatically be
+     * assigned to the player.
+     *
+     * @param gunId                    the gun id
+     * @param gamePlayer               the player to which the gun will be assigned to
+     * @param gameKey                  the game key
+     * @throws WeaponNotFoundException when the weapon creator does not contain a specification for the given gun id
+     * @return                         a gun instance that is created based of the given weapon id
+     */
+    @NotNull
+    public Gun createGun(@NotNull String gunId, @NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey) {
+        if (!gunSpecs.containsKey(gunId)) {
+            throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the id '%s'".formatted(gunId));
+        }
+
+        GunSpec gunSpec = gunSpecs.get(gunId);
+        return firearmFactory.create(gunSpec, gameKey, gamePlayer);
+    }
+
+    /**
      * Attempts to create a {@link Weapon} for a given player. This newly created weapon will automatically be assigned
      * to the player
      *
      * @param gamePlayer the player to create the weapon for
      * @param gameKey the game key of the game where the player is in
      * @param weaponId the weapon id
-     * @throws IllegalArgumentException when the instance does not contain a specification for the given weapon id
+     * @throws WeaponNotFoundException when the instance does not contain a specification for the given weapon id
      * @return a weapon instance that is created based of the specification of the given weapon id
      */
     @NotNull
@@ -68,7 +89,7 @@ public class WeaponCreator {
             return firearmFactory.create(spec, gameKey, gamePlayer);
         }
 
-        throw new IllegalArgumentException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponId));
+        throw new WeaponNotFoundException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponId));
     }
 
     /**
@@ -85,5 +106,15 @@ public class WeaponCreator {
         return Stream.of(equipmentSpecs.keySet(), gunSpecs.keySet())
                 .flatMap(Collection::stream)
                 .toList();
+    }
+
+    /**
+     * Gets whether a gun specification is loaded with a specific id.
+     *
+     * @param gunId the gun id
+     * @return      whether a specification with the given id exists
+     */
+    public boolean gunExists(@NotNull String gunId) {
+        return gunSpecs.containsKey(gunId);
     }
 }

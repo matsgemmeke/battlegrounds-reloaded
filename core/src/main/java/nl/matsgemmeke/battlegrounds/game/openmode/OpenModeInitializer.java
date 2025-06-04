@@ -119,10 +119,13 @@ public class OpenModeInitializer {
 
     private void registerPlayers(@NotNull GameKey gameKey) {
         PlayerRegistry playerRegistry = contextProvider.getComponent(gameKey, PlayerRegistry.class);
+        StatePersistenceHandler statePersistenceHandler = contextProvider.getComponent(gameKey, StatePersistenceHandler.class);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             GamePlayer gamePlayer = playerRegistry.registerEntity(player);
             gamePlayer.setPassive(configuration.isEnabledRegisterPlayersAsPassive());
+
+            statePersistenceHandler.loadState(gamePlayer);
         }
     }
 }

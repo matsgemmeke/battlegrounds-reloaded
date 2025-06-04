@@ -10,12 +10,14 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class DefaultGamePlayer implements GamePlayer {
@@ -156,6 +158,21 @@ public class DefaultGamePlayer implements GamePlayer {
     @NotNull
     public Location getDeployLocation() {
         return player.getEyeLocation();
+    }
+
+    @NotNull
+    public Optional<Integer> getItemSlot(@NotNull ItemStack itemStack) {
+        Inventory inventory = player.getInventory();
+        ItemStack[] contents = inventory.getContents();
+
+        for (int slot = 0; slot < contents.length; slot++) {
+            ItemStack item = contents[slot];
+            if (item != null && item.isSimilar(itemStack)) {
+                return Optional.of(slot);
+            }
+        }
+
+        return Optional.empty();
     }
 
     @NotNull
