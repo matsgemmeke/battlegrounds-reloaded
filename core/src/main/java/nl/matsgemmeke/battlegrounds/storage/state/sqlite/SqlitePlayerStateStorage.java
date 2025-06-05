@@ -1,8 +1,7 @@
-package nl.matsgemmeke.battlegrounds.storage.sqlite;
+package nl.matsgemmeke.battlegrounds.storage.state.sqlite;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
-import nl.matsgemmeke.battlegrounds.storage.Storage;
 import nl.matsgemmeke.battlegrounds.storage.entity.Gun;
 import nl.matsgemmeke.battlegrounds.storage.state.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
@@ -14,12 +13,12 @@ import java.sql.*;
 import java.util.List;
 import java.util.UUID;
 
-public class SqliteStorage implements Storage, PlayerStateStorage {
+public class SqlitePlayerStateStorage implements PlayerStateStorage {
 
     @NotNull
     private final Dao<Gun, Integer> gunDao;
 
-    public SqliteStorage(@NotNull Dao<Gun, Integer> gunDao) {
+    public SqlitePlayerStateStorage(@NotNull Dao<Gun, Integer> gunDao) {
         this.gunDao = gunDao;
     }
 

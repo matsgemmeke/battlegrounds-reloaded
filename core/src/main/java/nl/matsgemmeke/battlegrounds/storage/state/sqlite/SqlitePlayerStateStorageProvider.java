@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.storage.sqlite;
+package nl.matsgemmeke.battlegrounds.storage.state.sqlite;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -14,17 +14,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class SqliteStorageProvider implements Provider<SqliteStorage> {
+public class SqlitePlayerStateStorageProvider implements Provider<SqlitePlayerStateStorage> {
 
     @NotNull
     private final DatabaseConfiguration databaseConfiguration;
 
     @Inject
-    public SqliteStorageProvider(@NotNull DatabaseConfiguration databaseConfiguration) {
+    public SqlitePlayerStateStorageProvider(@NotNull DatabaseConfiguration databaseConfiguration) {
         this.databaseConfiguration = databaseConfiguration;
     }
 
-    public SqliteStorage get() {
+    public SqlitePlayerStateStorage get() {
         String connectionUrl = databaseConfiguration.getSqliteConnectionUrl();
 
         Dao<Gun, Integer> gunDao;
@@ -38,6 +38,6 @@ public class SqliteStorageProvider implements Provider<SqliteStorage> {
             throw new StorageSetupException(e.getMessage());
         }
 
-        return new SqliteStorage(gunDao);
+        return new SqlitePlayerStateStorage(gunDao);
     }
 }

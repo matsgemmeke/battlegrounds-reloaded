@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.storage.sqlite;
+package nl.matsgemmeke.battlegrounds.storage.state.sqlite;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class SqliteStorageTest {
+public class SqlitePlayerStateStorageTest {
 
     private static final UUID PLAYER_UUID = UUID.randomUUID();
     private static final String GUN_ID = "TEST_GUN";
@@ -48,7 +48,7 @@ public class SqliteStorageTest {
         Dao<Gun, Integer> gunDao = mock(RETURNS_DEEP_STUBS);
         when(gunDao.queryBuilder().where().eq("player_uuid", PLAYER_UUID.toString()).prepare()).thenThrow(new SQLException("error"));
 
-        SqliteStorage storage = new SqliteStorage(gunDao);
+        SqlitePlayerStateStorage storage = new SqlitePlayerStateStorage(gunDao);
 
         assertThatThrownBy(() -> storage.findPlayerStateByPlayerUuid(PLAYER_UUID)).isInstanceOf(StateStorageException.class).hasMessage("error");
     }
@@ -65,7 +65,7 @@ public class SqliteStorageTest {
 
         gunDao.create(gun);
 
-        SqliteStorage storage = new SqliteStorage(gunDao);
+        SqlitePlayerStateStorage storage = new SqlitePlayerStateStorage(gunDao);
         PlayerState playerState = storage.findPlayerStateByPlayerUuid(PLAYER_UUID);
 
         assertThat(playerState.playerUuid()).isEqualTo(PLAYER_UUID);
@@ -81,7 +81,7 @@ public class SqliteStorageTest {
         GunState gunState = new GunState(GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         PlayerState playerState = new PlayerState(PLAYER_UUID, List.of(gunState));
 
-        SqliteStorage storage = new SqliteStorage(gunDao);
+        SqlitePlayerStateStorage storage = new SqlitePlayerStateStorage(gunDao);
         storage.savePlayerState(playerState);
 
         List<Gun> savedGuns = gunDao.queryForAll();
@@ -102,7 +102,7 @@ public class SqliteStorageTest {
         Dao<Gun, Integer> gunDao = mock();
         when(gunDao.create(anyCollection())).thenThrow(new SQLException("error"));
 
-        SqliteStorage storage = new SqliteStorage(gunDao);
+        SqlitePlayerStateStorage storage = new SqlitePlayerStateStorage(gunDao);
 
         assertThatThrownBy(() -> storage.savePlayerState(playerState)).isInstanceOf(StateStorageException.class).hasMessage("error");
     }
