@@ -50,7 +50,7 @@ import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.storage.sqlite.SqliteStorageProvider;
-import nl.matsgemmeke.battlegrounds.storage.state.StateStorage;
+import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -94,10 +94,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
-        binder.bind(StateStorage.class)
-                .annotatedWith(Names.named("SQLite"))
-                .toProvider(SqliteStorageProvider.class)
-                .in(Singleton.class);
+        binder.bind(PlayerStateStorage.class).toProvider(SqliteStorageProvider.class).in(Singleton.class);
         binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(Singleton.class);
 
         // Component bindings

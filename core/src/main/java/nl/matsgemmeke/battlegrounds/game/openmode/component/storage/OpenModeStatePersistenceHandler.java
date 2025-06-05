@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.storage;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
@@ -10,9 +9,9 @@ import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.storage.state.GamePlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.GunState;
-import nl.matsgemmeke.battlegrounds.storage.state.StateStorage;
+import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
+import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -33,20 +32,20 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     @NotNull
     private final PlayerRegistry playerRegistry;
     @NotNull
-    private final StateStorage stateStorage;
+    private final PlayerStateStorage playerStateStorage;
     @NotNull
     private final WeaponCreator weaponCreator;
 
     @Inject
     public OpenModeStatePersistenceHandler(
             @NotNull Logger logger,
-            @Named("SQLite") @NotNull StateStorage stateStorage,
+            @NotNull PlayerStateStorage playerStateStorage,
             @NotNull WeaponCreator weaponCreator,
             @Assisted @NotNull GunRegistry gunRegistry,
             @Assisted @NotNull PlayerRegistry playerRegistry
     ) {
         this.logger = logger;
-        this.stateStorage = stateStorage;
+        this.playerStateStorage = playerStateStorage;
         this.weaponCreator = weaponCreator;
         this.gunRegistry = gunRegistry;
         this.playerRegistry = playerRegistry;
@@ -54,9 +53,9 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
 
     public void loadState(@NotNull GamePlayer gamePlayer) {
         UUID playerUuid = gamePlayer.getEntity().getUniqueId();
-        GamePlayerState gamePlayerState = stateStorage.findGamePlayerStateByPlayerUuid(playerUuid);
+        PlayerState playerState = playerStateStorage.findPlayerStateByPlayerUuid(playerUuid);
 
-        for (GunState gunState : gamePlayerState.gunStates()) {
+        for (GunState gunState : playerState.gunStates()) {
             this.loadGunState(gamePlayer, gunState);
         }
     }
@@ -79,19 +78,19 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     }
 
     public void saveState() {
-        playerRegistry.getAll().forEach(this::saveGamePlayerState);
+        playerRegistry.getAll().forEach(this::savePlayerState);
     }
 
-    private void saveGamePlayerState(@NotNull GamePlayer gamePlayer) {
+    private void savePlayerState(@NotNull GamePlayer gamePlayer) {
         List<GunState> gunStates = gunRegistry.getAssignedItems(gamePlayer).stream()
                 .map(gun -> this.convertToGunState(gamePlayer, gun))
                 .flatMap(Optional::stream)
                 .toList();
 
         UUID uuid = gamePlayer.getEntity().getUniqueId();
-        GamePlayerState gamePlayerState = new GamePlayerState(uuid, gunStates);
+        PlayerState playerState = new PlayerState(uuid, gunStates);
 
-        stateStorage.saveGamePlayerState(gamePlayerState);
+        playerStateStorage.savePlayerState(playerState);
     }
 
     @NotNull

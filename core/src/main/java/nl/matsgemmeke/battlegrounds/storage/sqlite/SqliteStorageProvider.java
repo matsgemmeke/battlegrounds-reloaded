@@ -17,15 +17,15 @@ import java.sql.SQLException;
 public class SqliteStorageProvider implements Provider<SqliteStorage> {
 
     @NotNull
-    private final DatabaseConfiguration databaseConfig;
+    private final DatabaseConfiguration databaseConfiguration;
 
     @Inject
-    public SqliteStorageProvider(@NotNull DatabaseConfiguration databaseConfig) {
-        this.databaseConfig = databaseConfig;
+    public SqliteStorageProvider(@NotNull DatabaseConfiguration databaseConfiguration) {
+        this.databaseConfiguration = databaseConfiguration;
     }
 
     public SqliteStorage get() {
-        String connectionUrl = databaseConfig.getSqliteConnectionUrl();
+        String connectionUrl = databaseConfiguration.getSqliteConnectionUrl();
 
         Dao<Gun, Integer> gunDao;
 

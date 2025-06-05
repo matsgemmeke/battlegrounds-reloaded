@@ -4,9 +4,9 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import nl.matsgemmeke.battlegrounds.storage.Storage;
 import nl.matsgemmeke.battlegrounds.storage.entity.Gun;
-import nl.matsgemmeke.battlegrounds.storage.state.GamePlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.GunState;
-import nl.matsgemmeke.battlegrounds.storage.state.StateStorage;
+import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
+import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
 import nl.matsgemmeke.battlegrounds.storage.state.StateStorageException;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.UUID;
 
-public class SqliteStorage implements Storage, StateStorage {
+public class SqliteStorage implements Storage, PlayerStateStorage {
 
     @NotNull
     private final Dao<Gun, Integer> gunDao;
@@ -24,7 +24,7 @@ public class SqliteStorage implements Storage, StateStorage {
     }
 
     @NotNull
-    public GamePlayerState findGamePlayerStateByPlayerUuid(@NotNull UUID playerUuid) {
+    public PlayerState findPlayerStateByPlayerUuid(@NotNull UUID playerUuid) {
         try {
             PreparedQuery<Gun> statement = gunDao.queryBuilder()
                     .where().eq("player_uuid", playerUuid.toString())
@@ -33,15 +33,15 @@ public class SqliteStorage implements Storage, StateStorage {
                     .map(this::convertGunToGunState)
                     .toList();
 
-            return new GamePlayerState(playerUuid, gunStates);
+            return new PlayerState(playerUuid, gunStates);
         } catch (SQLException e) {
             throw new StateStorageException(e.getMessage());
         }
     }
 
-    public void saveGamePlayerState(@NotNull GamePlayerState gamePlayerState) {
-        List<Gun> guns = gamePlayerState.gunStates().stream()
-                .map(gunState -> this.convertGunStateToGun(gamePlayerState.playerUuid(), gunState))
+    public void savePlayerState(@NotNull PlayerState playerState) {
+        List<Gun> guns = playerState.gunStates().stream()
+                .map(gunState -> this.convertGunStateToGun(playerState.playerUuid(), gunState))
                 .toList();
 
         try {
