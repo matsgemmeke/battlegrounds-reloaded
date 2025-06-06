@@ -10,7 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.storage.state.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
-import nl.matsgemmeke.battlegrounds.storage.state.StateStorageException;
+import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -98,7 +98,7 @@ public class OpenModeStatePersistenceHandlerTest {
     }
 
     @Test
-    public void saveStateSavesCollectedDataWithCorrespondingItemSlotsToStateStorage() throws StateStorageException {
+    public void saveStateSavesCollectedDataWithCorrespondingItemSlotsToStateStorage() {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
         ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
 
@@ -190,5 +190,20 @@ public class OpenModeStatePersistenceHandlerTest {
         assertThat(savedPlayerState.gunStates()).isEmpty();
 
         verify(logger).severe("Cannot save state for gun TEST_GUN of player TestPlayer, since its item slot cannot be determined");
+    }
+
+    @Test
+    public void saveStateLogsErrorMessageWhenFailingToSaveAnyPlayerState() {
+        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
+        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
+
+        when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of());
+        when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
+        doThrow(new PlayerStateStorageException("error")).when(playerStateStorage).savePlayerState(any(PlayerState.class));
+
+        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, gunRegistry, playerRegistry);
+        statePersistenceHandler.saveState();
+
+        verify(logger).severe("Failed to save current state of 1 player(s). Caused by: error");
     }
 }

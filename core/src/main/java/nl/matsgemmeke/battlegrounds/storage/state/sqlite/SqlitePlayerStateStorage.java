@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.storage.entity.Gun;
 import nl.matsgemmeke.battlegrounds.storage.state.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
-import nl.matsgemmeke.battlegrounds.storage.state.StateStorageException;
+import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
@@ -22,6 +22,19 @@ public class SqlitePlayerStateStorage implements PlayerStateStorage {
         this.gunDao = gunDao;
     }
 
+    public void deletePlayerState(@NotNull UUID playerUuid) {
+        try {
+            PreparedQuery<Gun> statement = gunDao.queryBuilder()
+                    .where().eq("player_uuid", playerUuid.toString())
+                    .prepare();
+            List<Gun> guns = gunDao.query(statement);
+
+            gunDao.delete(guns);
+        } catch (SQLException e) {
+            throw new PlayerStateStorageException(e.getMessage());
+        }
+    }
+
     @NotNull
     public PlayerState findPlayerStateByPlayerUuid(@NotNull UUID playerUuid) {
         try {
@@ -34,19 +47,20 @@ public class SqlitePlayerStateStorage implements PlayerStateStorage {
 
             return new PlayerState(playerUuid, gunStates);
         } catch (SQLException e) {
-            throw new StateStorageException(e.getMessage());
+            throw new PlayerStateStorageException(e.getMessage());
         }
     }
 
     public void savePlayerState(@NotNull PlayerState playerState) {
+        UUID playerUuid = playerState.playerUuid();
         List<Gun> guns = playerState.gunStates().stream()
-                .map(gunState -> this.convertGunStateToGun(playerState.playerUuid(), gunState))
+                .map(gunState -> this.convertGunStateToGun(playerUuid, gunState))
                 .toList();
 
         try {
             gunDao.create(guns);
         } catch (SQLException e) {
-            throw new StateStorageException(e.getMessage());
+            throw new PlayerStateStorageException(e.getMessage());
         }
     }
 

@@ -8,7 +8,7 @@ import com.j256.ormlite.table.TableUtils;
 import nl.matsgemmeke.battlegrounds.storage.entity.Gun;
 import nl.matsgemmeke.battlegrounds.storage.state.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
-import nl.matsgemmeke.battlegrounds.storage.state.StateStorageException;
+import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,24 +43,36 @@ public class SqlitePlayerStateStorageTest {
     }
 
     @Test
-    public void findPlayerStateByPlayerUuidThrowsStateStorageExceptionWhenFailingToReadData() throws SQLException {
+    public void deletePlayerStateDeletesDataFromDao() throws SQLException {
+        int id = 1;
+        Gun gun = this.createGun(id);
+
+        gunDao.create(gun);
+
+        SqlitePlayerStateStorage storage = new SqlitePlayerStateStorage(gunDao);
+        storage.deletePlayerState(PLAYER_UUID);
+
+        List<Gun> savedGuns = gunDao.queryForAll();
+
+        assertThat(savedGuns).isEmpty();
+    }
+
+    @Test
+    public void deletePlayerStateThrowsPlayerStateStorageExceptionWhenFailingToDeleteData() throws SQLException {
         Dao<Gun, Integer> gunDao = mock(RETURNS_DEEP_STUBS);
         when(gunDao.queryBuilder().where().eq("player_uuid", PLAYER_UUID.toString()).prepare()).thenThrow(new SQLException("error"));
 
         SqlitePlayerStateStorage storage = new SqlitePlayerStateStorage(gunDao);
 
-        assertThatThrownBy(() -> storage.findPlayerStateByPlayerUuid(PLAYER_UUID)).isInstanceOf(StateStorageException.class).hasMessage("error");
+        assertThatThrownBy(() -> storage.deletePlayerState(PLAYER_UUID))
+                .isInstanceOf(PlayerStateStorageException.class)
+                .hasMessage("error");
     }
 
     @Test
     public void findPlayerStateByPlayerUuidReturnsGamePlayerStateInstanceWithDataFromDao() throws SQLException {
-        Gun gun = new Gun();
-        gun.setId(1);
-        gun.setPlayerUuid(PLAYER_UUID.toString());
-        gun.setGunId(GUN_ID);
-        gun.setMagazineAmmo(GUN_MAGAZINE_AMMO);
-        gun.setReserveAmmo(GUN_RESERVE_AMMO);
-        gun.setItemSlot(GUN_ITEM_SLOT);
+        int id = 1;
+        Gun gun = this.createGun(id);
 
         gunDao.create(gun);
 
@@ -74,6 +85,18 @@ public class SqlitePlayerStateStorageTest {
         assertThat(playerState.gunStates().get(0).magazineAmmo()).isEqualTo(GUN_MAGAZINE_AMMO);
         assertThat(playerState.gunStates().get(0).reserveAmmo()).isEqualTo(GUN_RESERVE_AMMO);
         assertThat(playerState.gunStates().get(0).itemSlot()).isEqualTo(GUN_ITEM_SLOT);
+    }
+
+    @Test
+    public void findPlayerStateByPlayerUuidThrowsPlayerStateStorageExceptionWhenFailingToReadData() throws SQLException {
+        Dao<Gun, Integer> gunDao = mock(RETURNS_DEEP_STUBS);
+        when(gunDao.queryBuilder().where().eq("player_uuid", PLAYER_UUID.toString()).prepare()).thenThrow(new SQLException("error"));
+
+        SqlitePlayerStateStorage storage = new SqlitePlayerStateStorage(gunDao);
+
+        assertThatThrownBy(() -> storage.findPlayerStateByPlayerUuid(PLAYER_UUID))
+                .isInstanceOf(PlayerStateStorageException.class)
+                .hasMessage("error");
     }
 
     @Test
@@ -96,14 +119,26 @@ public class SqlitePlayerStateStorageTest {
 
     @Test
     public void savePlayerStateThrowsStateStorageExceptionWhenFailingToSaveData() throws SQLException {
-        UUID playerUuid = UUID.randomUUID();
-        PlayerState playerState = new PlayerState(playerUuid, List.of());
+        PlayerState playerState = new PlayerState(PLAYER_UUID, List.of());
 
-        Dao<Gun, Integer> gunDao = mock();
+        Dao<Gun, Integer> gunDao = mock(RETURNS_DEEP_STUBS);
         when(gunDao.create(anyCollection())).thenThrow(new SQLException("error"));
 
         SqlitePlayerStateStorage storage = new SqlitePlayerStateStorage(gunDao);
 
-        assertThatThrownBy(() -> storage.savePlayerState(playerState)).isInstanceOf(StateStorageException.class).hasMessage("error");
+        assertThatThrownBy(() -> storage.savePlayerState(playerState))
+                .isInstanceOf(PlayerStateStorageException.class)
+                .hasMessage("error");
+    }
+
+    private Gun createGun(int id) {
+        Gun gun = new Gun();
+        gun.setId(id);
+        gun.setPlayerUuid(PLAYER_UUID.toString());
+        gun.setGunId(GUN_ID);
+        gun.setMagazineAmmo(GUN_MAGAZINE_AMMO);
+        gun.setReserveAmmo(GUN_RESERVE_AMMO);
+        gun.setItemSlot(GUN_ITEM_SLOT);
+        return gun;
     }
 }

@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.storage.state.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
+import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +79,23 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     }
 
     public void saveState() {
-        playerRegistry.getAll().forEach(this::savePlayerState);
+        logger.info("Saving current state of open mode");
+
+        int failedSaves = 0;
+        String errorMessage = null;
+
+        for (GamePlayer gamePlayer : playerRegistry.getAll()) {
+            try {
+                this.savePlayerState(gamePlayer);
+            } catch (PlayerStateStorageException e) {
+                failedSaves++;
+                errorMessage = e.getMessage();
+            }
+        }
+
+        if (failedSaves > 0) {
+            logger.severe("Failed to save current state of %s player(s). Caused by: %s".formatted(failedSaves, errorMessage));
+        }
     }
 
     private void savePlayerState(@NotNull GamePlayer gamePlayer) {
@@ -87,9 +104,10 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
                 .flatMap(Optional::stream)
                 .toList();
 
-        UUID uuid = gamePlayer.getEntity().getUniqueId();
-        PlayerState playerState = new PlayerState(uuid, gunStates);
+        UUID playerUuid = gamePlayer.getEntity().getUniqueId();
+        PlayerState playerState = new PlayerState(playerUuid, gunStates);
 
+        playerStateStorage.deletePlayerState(playerUuid);
         playerStateStorage.savePlayerState(playerState);
     }
 

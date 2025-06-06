@@ -6,6 +6,8 @@ import java.util.UUID;
 
 public interface PlayerStateStorage {
 
+    void deletePlayerState(@NotNull UUID playerUuid);
+
     @NotNull
     PlayerState findPlayerStateByPlayerUuid(@NotNull UUID playerUuid);
 
