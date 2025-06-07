@@ -7,14 +7,14 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-public class SpawnPointStorageTest {
+public class SpawnPointContainerTest {
 
     @Test
     public void getCustomSpawnPointReturnsNullIfThereIsNoCustomSpawnPointSetForGivenEntityId() {
         UUID entityId = UUID.randomUUID();
 
-        SpawnPointStorage storage = new SpawnPointStorage();
-        SpawnPoint spawnPoint = storage.getCustomSpawnPoint(entityId);
+        SpawnPointContainer container = new SpawnPointContainer();
+        SpawnPoint spawnPoint = container.getCustomSpawnPoint(entityId);
 
         assertNull(spawnPoint);
     }
@@ -24,10 +24,10 @@ public class SpawnPointStorageTest {
         SpawnPoint spawnPoint = mock(SpawnPoint.class);
         UUID entityId = UUID.randomUUID();
 
-        SpawnPointStorage storage = new SpawnPointStorage();
-        storage.setCustomSpawnPoint(entityId, spawnPoint);
+        SpawnPointContainer container = new SpawnPointContainer();
+        container.setCustomSpawnPoint(entityId, spawnPoint);
 
-        SpawnPoint result = storage.getCustomSpawnPoint(entityId);
+        SpawnPoint result = container.getCustomSpawnPoint(entityId);
 
         assertNotNull(result);
         assertEquals(spawnPoint, result);

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class EntityStorageTest {
+public class EntityContainerTest {
 
     private GamePlayer gamePlayer;
     private Player player;
@@ -32,30 +32,30 @@ public class EntityStorageTest {
 
     @Test
     public void shouldAddEntityToCollection() {
-        EntityStorage<GamePlayer> storage = new EntityStorage<>();
-        storage.addEntity(gamePlayer);
+        EntityContainer<GamePlayer> container = new EntityContainer<>();
+        container.addEntity(gamePlayer);
 
-        assertEquals(gamePlayer, storage.getEntity(player));
+        assertEquals(gamePlayer, container.getEntity(player));
     }
 
     @Test
     public void shouldReturnNullIfThereIsNoCorrespondingEntity() {
         GamePlayer otherPlayer = this.createNewGamePlayer();
 
-        EntityStorage<GamePlayer> storage = new EntityStorage<>();
-        storage.addEntity(otherPlayer);
+        EntityContainer<GamePlayer> container = new EntityContainer<>();
+        container.addEntity(otherPlayer);
 
-        assertNull(storage.getEntity(player));
+        assertNull(container.getEntity(player));
     }
 
     @Test
     public void shouldReturnAllStoredInstances() {
         GamePlayer otherPlayer = this.createNewGamePlayer();
 
-        EntityStorage<GamePlayer> storage = new EntityStorage<>();
-        storage.addEntity(otherPlayer);
+        EntityContainer<GamePlayer> container = new EntityContainer<>();
+        container.addEntity(otherPlayer);
 
-        Collection<GamePlayer> players = storage.getEntities();
+        Collection<GamePlayer> players = container.getEntities();
 
         assertEquals(1, players.size());
     }
@@ -72,10 +72,10 @@ public class EntityStorageTest {
 
     @Test
     public void shouldRemoveEntityFromCollection() {
-        EntityStorage<GamePlayer> storage = new EntityStorage<>();
-        storage.addEntity(gamePlayer);
-        storage.removeEntity(uuid);
+        EntityContainer<GamePlayer> container = new EntityContainer<>();
+        container.addEntity(gamePlayer);
+        container.removeEntity(uuid);
 
-        assertNull(storage.getEntity(uuid));
+        assertNull(container.getEntity(uuid));
     }
 }

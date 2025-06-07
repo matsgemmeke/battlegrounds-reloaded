@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class SpawnPointStorage {
+public class SpawnPointContainer {
 
     @NotNull
     private Map<UUID, SpawnPoint> customSpawnPointLocations;
 
-    public SpawnPointStorage() {
+    public SpawnPointContainer() {
         this.customSpawnPointLocations = new HashMap<>();
     }
 

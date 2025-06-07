@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,13 +15,13 @@ public class EquipmentBehaviorTest {
 
     private Equipment equipment;
     private GamePlayer gamePlayer;
-    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
+    private ItemContainer<Equipment, EquipmentHolder> equipmentContainer;
     private ItemStack itemStack;
 
     @BeforeEach
     public void setUp() {
         gamePlayer = mock(GamePlayer.class);
-        equipmentStorage = new ItemStorage<>();
+        equipmentContainer = new ItemContainer<>();
         itemStack = new ItemStack(Material.SHEARS);
 
         equipment = mock(Equipment.class);
@@ -32,9 +32,9 @@ public class EquipmentBehaviorTest {
     public void shouldCallFunctionOnEquipmentWhenLeftClicked() {
         when(equipment.getHolder()).thenReturn(gamePlayer);
 
-        equipmentStorage.addAssignedItem(equipment, gamePlayer);
+        equipmentContainer.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
         boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
@@ -44,7 +44,7 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenLeftClickedButEquipmentIsNotRegistered() {
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
         boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -54,9 +54,9 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenLeftClickedButHolderDoesNotMatch() {
-        equipmentStorage.addAssignedItem(equipment, gamePlayer);
+        equipmentContainer.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
         boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -68,9 +68,9 @@ public class EquipmentBehaviorTest {
     public void shouldCallFunctionOnEquipmentWhenRightClicked() {
         when(equipment.getHolder()).thenReturn(gamePlayer);
 
-        equipmentStorage.addAssignedItem(equipment, gamePlayer);
+        equipmentContainer.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
         boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
@@ -80,7 +80,7 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenRightClickedButEquipmentIsNotRegistered() {
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
         boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
@@ -90,9 +90,9 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenRightClickedButHolderDoesNotMatch() {
-        equipmentStorage.addAssignedItem(equipment, gamePlayer);
+        equipmentContainer.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentStorage);
+        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
         boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);

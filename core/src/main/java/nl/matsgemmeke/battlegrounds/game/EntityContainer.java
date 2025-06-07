@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class EntityStorage<T extends GameEntity> {
+public class EntityContainer<T extends GameEntity> {
 
     @NotNull
     private Map<UUID, T> entities;
 
-    public EntityStorage() {
+    public EntityContainer() {
         this.entities = new HashMap<>();
     }
 

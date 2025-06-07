@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ItemStorageTest {
+public class ItemContainerTest {
 
     @Test
     public void getAllItemsReturnsListContainingAllEntriesFromAssignedAndUnassignedList() {
@@ -20,11 +20,11 @@ public class ItemStorageTest {
         Gun unassignedGun = mock(Gun.class);
         GunHolder holder = mock(GunHolder.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        storage.addUnassignedItem(unassignedGun);
-        storage.addAssignedItem(assignedGun, holder);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        container.addUnassignedItem(unassignedGun);
+        container.addAssignedItem(assignedGun, holder);
 
-        List<Gun> guns = storage.getAllItems();
+        List<Gun> guns = container.getAllItems();
 
         assertEquals(2, guns.size());
         assertEquals(assignedGun, guns.get(0));
@@ -38,10 +38,10 @@ public class ItemStorageTest {
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        storage.addUnassignedItem(gun);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        container.addUnassignedItem(gun);
 
-        Gun result = storage.getUnassignedItem(itemStack);
+        Gun result = container.getUnassignedItem(itemStack);
 
         assertEquals(gun, result);
     }
@@ -52,10 +52,10 @@ public class ItemStorageTest {
 
         Gun gun = mock(Gun.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        storage.addUnassignedItem(gun);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        container.addUnassignedItem(gun);
 
-        Gun result = storage.getUnassignedItem(itemStack);
+        Gun result = container.getUnassignedItem(itemStack);
 
         assertNull(result);
     }
@@ -69,10 +69,10 @@ public class ItemStorageTest {
 
         GunHolder holder = mock(GunHolder.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        storage.addAssignedItem(gun, holder);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        container.addAssignedItem(gun, holder);
 
-        Gun result = storage.getAssignedItem(holder, itemStack);
+        Gun result = container.getAssignedItem(holder, itemStack);
 
         assertEquals(gun, result);
     }
@@ -83,8 +83,8 @@ public class ItemStorageTest {
         
         GunHolder holder = mock(GunHolder.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        Gun result = storage.getAssignedItem(holder, itemStack);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        Gun result = container.getAssignedItem(holder, itemStack);
         
         assertNull(result);
     }
@@ -96,10 +96,10 @@ public class ItemStorageTest {
         Gun gun = mock(Gun.class);
         GunHolder holder = mock(GunHolder.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        storage.addAssignedItem(gun, holder);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        container.addAssignedItem(gun, holder);
 
-        Gun result = storage.getAssignedItem(holder, notAdded);
+        Gun result = container.getAssignedItem(holder, notAdded);
 
         assertNull(result);
     }
@@ -108,8 +108,8 @@ public class ItemStorageTest {
     public void getAssignedItemsReturnsEmptyListIfInstanceDoesNotContainRecordWithGivenHolder() {
         GunHolder holder = mock(GunHolder.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        List<Gun> assignedGuns = storage.getAssignedItems(holder);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        List<Gun> assignedGuns = container.getAssignedItems(holder);
 
         assertEquals(0, assignedGuns.size());
     }
@@ -119,10 +119,10 @@ public class ItemStorageTest {
         Gun gun = mock(Gun.class);
         GunHolder holder = mock(GunHolder.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        storage.addAssignedItem(gun, holder);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        container.addAssignedItem(gun, holder);
 
-        List<Gun> assignedGuns = storage.getAssignedItems(holder);
+        List<Gun> assignedGuns = container.getAssignedItems(holder);
 
         assertEquals(1, assignedGuns.size());
         assertEquals(gun, assignedGuns.get(0));
@@ -135,11 +135,11 @@ public class ItemStorageTest {
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        storage.addUnassignedItem(gun);
-        storage.removeUnassignedItem(gun);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        container.addUnassignedItem(gun);
+        container.removeUnassignedItem(gun);
 
-        Gun result = storage.getUnassignedItem(itemStack);
+        Gun result = container.getUnassignedItem(itemStack);
 
         assertNull(result);
     }
@@ -150,10 +150,10 @@ public class ItemStorageTest {
 
         GunHolder holder = mock(GunHolder.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        storage.addAssignedItem(gun, holder);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        container.addAssignedItem(gun, holder);
 
-        boolean result = storage.removeAssignedItem(gun, holder);
+        boolean result = container.removeAssignedItem(gun, holder);
 
         assertTrue(result);
     }
@@ -164,8 +164,8 @@ public class ItemStorageTest {
 
         GunHolder holder = mock(GunHolder.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        boolean result = storage.removeAssignedItem(gun, holder);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        boolean result = container.removeAssignedItem(gun, holder);
 
         assertFalse(result);
     }
@@ -176,10 +176,10 @@ public class ItemStorageTest {
 
         GunHolder holder = mock(GunHolder.class);
 
-        ItemStorage<Gun, GunHolder> storage = new ItemStorage<>();
-        storage.addAssignedItem(mock(Gun.class), holder);
+        ItemContainer<Gun, GunHolder> container = new ItemContainer<>();
+        container.addAssignedItem(mock(Gun.class), holder);
 
-        boolean result = storage.removeAssignedItem(gun, holder);
+        boolean result = container.removeAssignedItem(gun, holder);
 
         assertFalse(result);
     }

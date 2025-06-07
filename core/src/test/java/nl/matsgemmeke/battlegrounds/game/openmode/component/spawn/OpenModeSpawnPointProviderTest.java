@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
-import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
+import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointContainer;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +14,11 @@ import static org.mockito.Mockito.*;
 
 public class OpenModeSpawnPointProviderTest {
 
-    private SpawnPointStorage spawnPointStorage;
+    private SpawnPointContainer spawnPointContainer;
 
     @BeforeEach
     public void setUp() {
-        spawnPointStorage = new SpawnPointStorage();
+        spawnPointContainer = new SpawnPointContainer();
     }
 
     @Test
@@ -26,9 +26,9 @@ public class OpenModeSpawnPointProviderTest {
         SpawnPoint spawnPoint = mock(SpawnPoint.class);
         UUID entityId = UUID.randomUUID();
 
-        spawnPointStorage.setCustomSpawnPoint(entityId, spawnPoint);
+        spawnPointContainer.setCustomSpawnPoint(entityId, spawnPoint);
 
-        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointContainer);
         boolean hasSpawnPoint = spawnPointProvider.hasSpawnPoint(entityId);
 
         assertTrue(hasSpawnPoint);
@@ -38,7 +38,7 @@ public class OpenModeSpawnPointProviderTest {
     public void hasSpawnPointReturnsFalseIfGivenEntityIdDoesNotHaveCustomSpawnPoint() {
         UUID entityId = UUID.randomUUID();
 
-        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointContainer);
         boolean hasSpawnPoint = spawnPointProvider.hasSpawnPoint(entityId);
 
         assertFalse(hasSpawnPoint);
@@ -51,7 +51,7 @@ public class OpenModeSpawnPointProviderTest {
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointContainer);
 
         assertThrows(IllegalStateException.class, () -> spawnPointProvider.respawnEntity(entity));
     }
@@ -67,9 +67,9 @@ public class OpenModeSpawnPointProviderTest {
         SpawnPoint spawnPoint = mock(SpawnPoint.class);
         when(spawnPoint.getLocation()).thenReturn(spawnPointLocation);
 
-        spawnPointStorage.setCustomSpawnPoint(entityId, spawnPoint);
+        spawnPointContainer.setCustomSpawnPoint(entityId, spawnPoint);
 
-        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointContainer);
         Location respawnLocation = spawnPointProvider.respawnEntity(entity);
 
         assertEquals(spawnPointLocation, respawnLocation);
@@ -83,7 +83,7 @@ public class OpenModeSpawnPointProviderTest {
         SpawnPoint spawnPoint = mock(SpawnPoint.class);
         UUID entityId = UUID.randomUUID();
 
-        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointStorage);
+        OpenModeSpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(spawnPointContainer);
         spawnPointProvider.setCustomSpawnPoint(entityId, spawnPoint);
 
         assertTrue(spawnPointProvider.hasSpawnPoint(entityId));

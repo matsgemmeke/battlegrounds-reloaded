@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
-import nl.matsgemmeke.battlegrounds.game.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.jetbrains.annotations.NotNull;
@@ -10,28 +10,28 @@ import java.util.List;
 public class DefaultGunRegistry implements GunRegistry {
 
     @NotNull
-    private final ItemStorage<Gun, GunHolder> gunStorage;
+    private final ItemContainer<Gun, GunHolder> gunContainer;
 
-    public DefaultGunRegistry(@NotNull ItemStorage<Gun, GunHolder> gunStorage) {
-        this.gunStorage = gunStorage;
+    public DefaultGunRegistry(@NotNull ItemContainer<Gun, GunHolder> gunContainer) {
+        this.gunContainer = gunContainer;
     }
 
     @NotNull
     public List<Gun> findAll() {
-        return gunStorage.getAllItems();
+        return gunContainer.getAllItems();
     }
 
     @NotNull
     public List<Gun> getAssignedItems(@NotNull GunHolder holder) {
-        return gunStorage.getAssignedItems(holder);
+        return gunContainer.getAssignedItems(holder);
     }
 
     public void registerItem(@NotNull Gun gun) {
-        gunStorage.addUnassignedItem(gun);
+        gunContainer.addUnassignedItem(gun);
     }
 
     public void registerItem(@NotNull Gun gun, @NotNull GunHolder holder) {
-        gunStorage.addAssignedItem(gun, holder);
+        gunContainer.addAssignedItem(gun, holder);
     }
 
     public void unassignItem(@NotNull Gun gun) {
@@ -41,7 +41,7 @@ public class DefaultGunRegistry implements GunRegistry {
             return;
         }
 
-        gunStorage.removeAssignedItem(gun, holder);
-        gunStorage.addUnassignedItem(gun);
+        gunContainer.removeAssignedItem(gun, holder);
+        gunContainer.addUnassignedItem(gun);
     }
 }

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.info.gun;
 
-import nl.matsgemmeke.battlegrounds.game.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
@@ -12,15 +12,15 @@ import java.util.List;
 public class DefaultGunInfoProvider implements GunInfoProvider {
 
     @NotNull
-    private ItemStorage<Gun, GunHolder> gunStorage;
+    private ItemContainer<Gun, GunHolder> gunContainer;
 
-    public DefaultGunInfoProvider(@NotNull ItemStorage<Gun, GunHolder> gunStorage) {
-        this.gunStorage = gunStorage;
+    public DefaultGunInfoProvider(@NotNull ItemContainer<Gun, GunHolder> gunContainer) {
+        this.gunContainer = gunContainer;
     }
 
     @Nullable
     public GunFireSimulationInfo getGunFireSimulationInfo(@NotNull GunHolder holder) {
-        Gun gun = gunStorage.getAssignedItems(holder).stream().findFirst().orElse(null);
+        Gun gun = gunContainer.getAssignedItems(holder).stream().findFirst().orElse(null);
 
         if (gun == null) {
             return null;

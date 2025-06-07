@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
+import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointContainer;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -15,32 +15,32 @@ import java.util.Set;
 public abstract class BaseGame implements Game {
 
     @NotNull
-    protected EntityStorage<GamePlayer> playerStorage;
+    protected EntityContainer<GamePlayer> playerContainer;
     @NotNull
-    protected ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
+    protected ItemContainer<Equipment, EquipmentHolder> equipmentContainer;
     @NotNull
-    protected ItemStorage<Gun, GunHolder> gunStorage;
+    protected ItemContainer<Gun, GunHolder> gunContainer;
     @NotNull
     protected Set<ItemBehavior> itemBehaviors;
     @NotNull
-    protected SpawnPointStorage spawnPointStorage;
+    protected SpawnPointContainer spawnPointContainer;
 
     public BaseGame() {
-        this.equipmentStorage = new ItemStorage<>();
-        this.gunStorage = new ItemStorage<>();
+        this.equipmentContainer = new ItemContainer<>();
+        this.gunContainer = new ItemContainer<>();
         this.itemBehaviors = new HashSet<>();
-        this.playerStorage = new EntityStorage<>();
-        this.spawnPointStorage = new SpawnPointStorage();
+        this.playerContainer = new EntityContainer<>();
+        this.spawnPointContainer = new SpawnPointContainer();
     }
 
     @NotNull
-    public ItemStorage<Equipment, EquipmentHolder> getEquipmentStorage() {
-        return equipmentStorage;
+    public ItemContainer<Equipment, EquipmentHolder> getEquipmentContainer() {
+        return equipmentContainer;
     }
 
     @NotNull
-    public ItemStorage<Gun, GunHolder> getGunStorage() {
-        return gunStorage;
+    public ItemContainer<Gun, GunHolder> getGunContainer() {
+        return gunContainer;
     }
 
     @NotNull
@@ -49,13 +49,13 @@ public abstract class BaseGame implements Game {
     }
 
     @NotNull
-    public EntityStorage<GamePlayer> getPlayerStorage() {
-        return playerStorage;
+    public EntityContainer<GamePlayer> getPlayerContainer() {
+        return playerContainer;
     }
 
     @NotNull
-    public SpawnPointStorage getSpawnPointStorage() {
-        return spawnPointStorage;
+    public SpawnPointContainer getSpawnPointContainer() {
+        return spawnPointContainer;
     }
 
     public void addItemBehavior(@NotNull ItemBehavior itemBehavior) {

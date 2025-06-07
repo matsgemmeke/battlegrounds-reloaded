@@ -14,14 +14,14 @@ import java.util.stream.Stream;
 /**
  * Stores and handles states of a specific subtype of item.
  */
-public class ItemStorage<T extends Item, U extends ItemHolder> {
+public class ItemContainer<T extends Item, U extends ItemHolder> {
 
     @NotNull
     private ConcurrentMap<U, List<T>> assignedItems;
     @NotNull
     private List<T> unassignedItems;
 
-    public ItemStorage() {
+    public ItemContainer() {
         this.assignedItems = new ConcurrentHashMap<>();
         this.unassignedItems = new ArrayList<>();
     }

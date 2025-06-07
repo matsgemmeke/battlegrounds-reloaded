@@ -67,25 +67,25 @@ public class OpenModeInitializer {
 
     public void initialize() {
         OpenMode openMode = new OpenMode();
-        openMode.addItemBehavior(new EquipmentBehavior(openMode.getEquipmentStorage()));
-        openMode.addItemBehavior(new GunBehavior(openMode.getGunStorage()));
+        openMode.addItemBehavior(new EquipmentBehavior(openMode.getEquipmentContainer()));
+        openMode.addItemBehavior(new GunBehavior(openMode.getGunContainer()));
 
         GameKey gameKey = GameKey.ofOpenMode();
 
         // Registry components
-        EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(openMode.getEquipmentStorage());
-        GunRegistry gunRegistry = new DefaultGunRegistry(openMode.getGunStorage());
-        PlayerRegistry playerRegistry = playerRegistryFactory.create(openMode.getPlayerStorage());
+        EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(openMode.getEquipmentContainer());
+        GunRegistry gunRegistry = new DefaultGunRegistry(openMode.getGunContainer());
+        PlayerRegistry playerRegistry = playerRegistryFactory.create(openMode.getPlayerContainer());
 
         // Info provider components
         DeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
-        GunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(openMode.getGunStorage());
+        GunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(openMode.getGunContainer());
 
         // All other components
         ActionHandler actionHandler = new DefaultActionHandler(openMode, playerRegistry);
         AudioEmitter audioEmitter = new DefaultAudioEmitter();
         CollisionDetector collisionDetector = collisionDetectorProvider.get();
-        SpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(openMode.getSpawnPointStorage());
+        SpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(openMode.getSpawnPointContainer());
         StatePersistenceHandler statePersistanceHandler = statePersistenceHandlerFactory.create(gunRegistry, playerRegistry);
 
         DamageProcessor damageProcessor = new OpenModeDamageProcessor(gameKey, deploymentInfoProvider);
