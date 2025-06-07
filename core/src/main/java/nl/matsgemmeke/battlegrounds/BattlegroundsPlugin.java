@@ -108,6 +108,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         eventDispatcher.registerEventHandler(PlayerInteractEvent.class, injector.getInstance(PlayerInteractEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerItemHeldEvent.class, injector.getInstance(PlayerItemHeldEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerJoinEvent.class, injector.getInstance(PlayerJoinEventHandler.class));
+        eventDispatcher.registerEventHandler(PlayerQuitEvent.class, injector.getInstance(PlayerQuitEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerRespawnEvent.class, injector.getInstance(PlayerRespawnEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerSwapHandItemsEvent.class, injector.getInstance(PlayerSwapHandItemsEventHandler.class));
     }

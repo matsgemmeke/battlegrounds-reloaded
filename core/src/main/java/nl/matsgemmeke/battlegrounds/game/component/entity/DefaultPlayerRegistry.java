@@ -15,9 +15,9 @@ import java.util.UUID;
 public class DefaultPlayerRegistry implements PlayerRegistry {
 
     @NotNull
-    private DefaultGamePlayerFactory gamePlayerFactory;
+    private final DefaultGamePlayerFactory gamePlayerFactory;
     @NotNull
-    private EntityStorage<GamePlayer> playerStorage;
+    private final EntityStorage<GamePlayer> playerStorage;
 
     @Inject
     public DefaultPlayerRegistry(@NotNull DefaultGamePlayerFactory gamePlayerFactory, @Assisted @NotNull EntityStorage<GamePlayer> playerStorage) {
@@ -51,6 +51,10 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
 
     public boolean isRegistered(@NotNull UUID uuid) {
         return playerStorage.getEntity(uuid) != null;
+    }
+
+    public void deregister(@NotNull UUID playerUuid) {
+        playerStorage.removeEntity(playerUuid);
     }
 
     @NotNull

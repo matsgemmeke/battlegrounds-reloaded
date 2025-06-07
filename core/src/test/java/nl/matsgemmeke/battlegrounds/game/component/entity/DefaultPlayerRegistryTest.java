@@ -123,6 +123,25 @@ public class DefaultPlayerRegistryTest {
     }
 
     @Test
+    public void deregisterRemovesGivenPlayerUuidFromPlayerContainer() {
+        UUID playerUuid = UUID.randomUUID();
+
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(playerUuid);
+
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getEntity()).thenReturn(player);
+
+        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerStorage);
+        playerRegistry.registerEntity(player);
+        playerRegistry.deregister(playerUuid);
+
+        assertThat(playerRegistry.findByUUID(playerUuid)).isNull();
+    }
+
+    @Test
     public void registerEntityCreatesNewInstanceOfGamePlayerAndRegisterToGameStorage() {
         UUID uuid = UUID.randomUUID();
 
