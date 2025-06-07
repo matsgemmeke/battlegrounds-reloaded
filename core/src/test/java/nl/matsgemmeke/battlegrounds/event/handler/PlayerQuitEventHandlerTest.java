@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ public class PlayerQuitEventHandlerTest {
     @Test
     public void handlePerformsDeregisterWhenPlayerIsInGame() {
         GameKey gameKey = GameKey.ofOpenMode();
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
+        PlayerLifecycleHandler playerLifecycleHandler = mock(PlayerLifecycleHandler.class);
         UUID playerUuid = UUID.randomUUID();
 
         Player player = mock(Player.class);
@@ -46,11 +46,11 @@ public class PlayerQuitEventHandlerTest {
         PlayerQuitEvent event = new PlayerQuitEvent(player, null);
 
         when(contextProvider.getGameKey(player)).thenReturn(gameKey);
-        when(contextProvider.getComponent(gameKey, PlayerRegistry.class)).thenReturn(playerRegistry);
+        when(contextProvider.getComponent(gameKey, PlayerLifecycleHandler.class)).thenReturn(playerLifecycleHandler);
 
         PlayerQuitEventHandler eventHandler = new PlayerQuitEventHandler(contextProvider);
         eventHandler.handle(event);
 
-        verify(playerRegistry).deregister(playerUuid);
+        verify(playerLifecycleHandler).handlePlayerLeave(playerUuid);
     }
 }

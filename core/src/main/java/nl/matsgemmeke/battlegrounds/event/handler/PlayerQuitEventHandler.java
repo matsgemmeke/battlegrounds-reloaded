@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class PlayerQuitEventHandler implements EventHandler<PlayerQuitEvent> {
             return;
         }
 
-        PlayerRegistry playerRegistry = contextProvider.getComponent(gameKey, PlayerRegistry.class);
-        playerRegistry.deregister(player.getUniqueId());
+        PlayerLifecycleHandler playerLifecycleHandler = contextProvider.getComponent(gameKey, PlayerLifecycleHandler.class);
+        playerLifecycleHandler.handlePlayerLeave(player.getUniqueId());
     }
 }

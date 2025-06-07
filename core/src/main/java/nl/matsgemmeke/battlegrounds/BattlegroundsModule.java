@@ -20,7 +20,10 @@ import nl.matsgemmeke.battlegrounds.game.component.DefaultCollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandlerFactory;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
@@ -99,6 +102,10 @@ public class BattlegroundsModule implements Module {
 
         // Component bindings
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class);
+
+        binder.install(new FactoryModuleBuilder()
+                .implement(PlayerLifecycleHandler.class, OpenModePlayerLifecycleHandler.class)
+                .build(OpenModePlayerLifecycleHandlerFactory.class));
 
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
