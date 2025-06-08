@@ -9,10 +9,10 @@ import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.storage.state.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
+import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
 
     public void loadPlayerState(@NotNull GamePlayer gamePlayer) {
         UUID playerUuid = gamePlayer.getEntity().getUniqueId();
-        PlayerState playerState = playerStateStorage.findPlayerStateByPlayerUuid(playerUuid);
+        PlayerState playerState = playerStateStorage.getPlayerState(playerUuid);
 
         for (GunState gunState : playerState.gunStates()) {
             this.loadGunState(gamePlayer, gunState);
@@ -113,6 +113,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
 
     @NotNull
     private Optional<GunState> convertToGunState(@NotNull GamePlayer gamePlayer, @NotNull Gun gun) {
+        UUID playerUuid = gamePlayer.getEntity().getUniqueId();
         String id = gun.getId();
         int magazineAmmo = gun.getAmmunitionStorage().getMagazineAmmo();
         int reserveAmmo = gun.getAmmunitionStorage().getReserveAmmo();
@@ -130,6 +131,6 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
             return Optional.empty();
         }
 
-        return Optional.of(new GunState(id, magazineAmmo, reserveAmmo, itemSlot.get()));
+        return Optional.of(new GunState(playerUuid, id, magazineAmmo, reserveAmmo, itemSlot.get()));
     }
 }

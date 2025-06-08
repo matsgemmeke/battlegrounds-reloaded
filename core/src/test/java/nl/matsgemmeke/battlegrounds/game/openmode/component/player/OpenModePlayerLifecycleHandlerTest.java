@@ -26,6 +26,19 @@ public class OpenModePlayerLifecycleHandlerTest {
     }
 
     @Test
+    public void handlePlayerJoinDoesNotRegisterPlayerWhenAlreadyRegistered() {
+        Player player = mock(Player.class);
+
+        when(playerRegistry.isRegistered(player)).thenReturn(true);
+
+        OpenModePlayerLifecycleHandler playerLifecycleHandler = new OpenModePlayerLifecycleHandler(configuration, playerRegistry, statePersistenceHandler);
+        playerLifecycleHandler.handlePlayerJoin(player);
+
+        verify(playerRegistry, never()).registerEntity(any(Player.class));
+        verifyNoInteractions(statePersistenceHandler);
+    }
+
+    @Test
     public void handlePlayerJoinRegistersPlayerAndLoadsState() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         Player player = mock(Player.class);
@@ -41,12 +54,29 @@ public class OpenModePlayerLifecycleHandlerTest {
     }
 
     @Test
-    public void handlePlayerLeaveDeregistersPlayerAndSavesState() {
+    public void handlePlayerLeaveDoesNotDeregisterPlayerWhenNotRegistered() {
         UUID playerUuid = UUID.randomUUID();
+
+        when(playerRegistry.findByUUID(playerUuid)).thenReturn(null);
 
         OpenModePlayerLifecycleHandler playerLifecycleHandler = new OpenModePlayerLifecycleHandler(configuration, playerRegistry, statePersistenceHandler);
         playerLifecycleHandler.handlePlayerLeave(playerUuid);
 
+        verify(playerRegistry, never()).deregister(any(UUID.class));
+        verifyNoInteractions(statePersistenceHandler);
+    }
+
+    @Test
+    public void handlePlayerLeaveDeregistersPlayerAndSavesState() {
+        UUID playerUuid = UUID.randomUUID();
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+
+        when(playerRegistry.findByUUID(playerUuid)).thenReturn(gamePlayer);
+
+        OpenModePlayerLifecycleHandler playerLifecycleHandler = new OpenModePlayerLifecycleHandler(configuration, playerRegistry, statePersistenceHandler);
+        playerLifecycleHandler.handlePlayerLeave(playerUuid);
+
+        verify(statePersistenceHandler).savePlayerState(gamePlayer);
         verify(playerRegistry).deregister(playerUuid);
     }
 }

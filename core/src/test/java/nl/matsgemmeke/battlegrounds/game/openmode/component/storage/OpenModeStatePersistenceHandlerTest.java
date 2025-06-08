@@ -7,10 +7,10 @@ import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
-import nl.matsgemmeke.battlegrounds.storage.state.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
+import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -51,7 +51,7 @@ public class OpenModeStatePersistenceHandlerTest {
 
     @Test
     public void loadPlayerStateAssignsItemsToGamePlayerBasedOnSavedState() {
-        GunState gunState = new GunState(GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
+        GunState gunState = new GunState(PLAYER_UUID, GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         PlayerState gamePlayerState = new PlayerState(PLAYER_UUID, List.of(gunState));
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(0, 0, 0, 0);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
@@ -65,7 +65,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
         when(gun.getItemStack()).thenReturn(itemStack);
 
-        when(playerStateStorage.findPlayerStateByPlayerUuid(PLAYER_UUID)).thenReturn(gamePlayerState);
+        when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(gamePlayerState);
         when(weaponCreator.createGun(GUN_ID, gamePlayer, GameKey.ofOpenMode())).thenReturn(gun);
         when(weaponCreator.gunExists(GUN_ID)).thenReturn(true);
 
@@ -81,14 +81,14 @@ public class OpenModeStatePersistenceHandlerTest {
 
     @Test
     public void loadPlayerStateLogsErrorMessageWhenLoadingGunStateWhoseGunIdDoesNotExist() {
-        GunState gunState = new GunState(GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
+        GunState gunState = new GunState(PLAYER_UUID, GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         PlayerState playerState = new PlayerState(PLAYER_UUID, List.of(gunState));
 
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
         when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
-        when(playerStateStorage.findPlayerStateByPlayerUuid(PLAYER_UUID)).thenReturn(playerState);
+        when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(playerState);
         when(weaponCreator.gunExists(GUN_ID)).thenReturn(false);
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, gunRegistry, playerRegistry);

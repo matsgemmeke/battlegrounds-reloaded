@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.storage.entity;
+package nl.matsgemmeke.battlegrounds.storage.state.gun.sqlite;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

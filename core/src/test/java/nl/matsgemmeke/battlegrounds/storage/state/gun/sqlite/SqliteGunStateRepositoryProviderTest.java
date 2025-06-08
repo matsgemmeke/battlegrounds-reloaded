@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.storage.state.sqlite;
+package nl.matsgemmeke.battlegrounds.storage.state.gun.sqlite;
 
 import nl.matsgemmeke.battlegrounds.storage.DatabaseConfiguration;
 import nl.matsgemmeke.battlegrounds.storage.StorageSetupException;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class SqlitePlayerStateStorageProviderTest {
+public class SqliteGunStateRepositoryProviderTest {
 
     private static final String CONNECTION_URL = "jdbc:h2:mem:test";
 
@@ -30,7 +30,7 @@ public class SqlitePlayerStateStorageProviderTest {
         try (MockedConstruction<JdbcConnection> jdbcConnectionConstructor = mockConstructionWithAnswer(JdbcConnection.class, invocation -> {
             throw new SQLException("error");
         })) {
-            SqlitePlayerStateStorageProvider provider = new SqlitePlayerStateStorageProvider(databaseConfig);
+            SqliteGunStateRepositoryProvider provider = new SqliteGunStateRepositoryProvider(databaseConfig);
 
             assertThatThrownBy(provider::get).isInstanceOf(StorageSetupException.class).hasMessage("error");
             assertThat(jdbcConnectionConstructor.constructed()).hasSize(1);
@@ -39,9 +39,9 @@ public class SqlitePlayerStateStorageProviderTest {
 
     @Test
     public void getReturnsSqliteStorageWithInjectedDaoInstances() {
-        SqlitePlayerStateStorageProvider provider = new SqlitePlayerStateStorageProvider(databaseConfig);
-        SqlitePlayerStateStorage playerStateStorage = provider.get();
+        SqliteGunStateRepositoryProvider provider = new SqliteGunStateRepositoryProvider(databaseConfig);
+        SqliteGunStateRepository gunStateRepository = provider.get();
 
-        assertThat(playerStateStorage).isNotNull();
+        assertThat(gunStateRepository).isNotNull();
     }
 }
