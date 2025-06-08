@@ -124,6 +124,26 @@ public class EventListenerTest {
     }
 
     @Test
+    public void onPlayerKickDispatchesEventToEventDispatcher() {
+        PlayerKickEvent event = mock(PlayerKickEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onPlayerKick(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
+    }
+
+    @Test
+    public void onPlayerQuitDispatchesEventToEventDispatcher() {
+        PlayerQuitEvent event = mock(PlayerQuitEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onPlayerQuit(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
+    }
+
+    @Test
     public void onPlayerRespawnDispatchesEventToEventDispatcher() {
         PlayerRespawnEvent event = mock(PlayerRespawnEvent.class);
 
