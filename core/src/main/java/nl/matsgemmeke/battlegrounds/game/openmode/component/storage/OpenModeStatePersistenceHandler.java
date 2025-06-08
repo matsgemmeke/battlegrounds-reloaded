@@ -52,7 +52,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         this.playerRegistry = playerRegistry;
     }
 
-    public void loadState(@NotNull GamePlayer gamePlayer) {
+    public void loadPlayerState(@NotNull GamePlayer gamePlayer) {
         UUID playerUuid = gamePlayer.getEntity().getUniqueId();
         PlayerState playerState = playerStateStorage.findPlayerStateByPlayerUuid(playerUuid);
 
@@ -78,6 +78,19 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         player.getInventory().setItem(gunState.itemSlot(), gun.getItemStack());
     }
 
+    public void savePlayerState(@NotNull GamePlayer gamePlayer) {
+        List<GunState> gunStates = gunRegistry.getAssignedItems(gamePlayer).stream()
+                .map(gun -> this.convertToGunState(gamePlayer, gun))
+                .flatMap(Optional::stream)
+                .toList();
+
+        UUID playerUuid = gamePlayer.getEntity().getUniqueId();
+        PlayerState playerState = new PlayerState(playerUuid, gunStates);
+
+        playerStateStorage.deletePlayerState(playerUuid);
+        playerStateStorage.savePlayerState(playerState);
+    }
+
     public void saveState() {
         logger.info("Saving current state of open mode");
 
@@ -96,19 +109,6 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         if (failedSaves > 0) {
             logger.severe("Failed to save current state of %s player(s). Caused by: %s".formatted(failedSaves, errorMessage));
         }
-    }
-
-    private void savePlayerState(@NotNull GamePlayer gamePlayer) {
-        List<GunState> gunStates = gunRegistry.getAssignedItems(gamePlayer).stream()
-                .map(gun -> this.convertToGunState(gamePlayer, gun))
-                .flatMap(Optional::stream)
-                .toList();
-
-        UUID playerUuid = gamePlayer.getEntity().getUniqueId();
-        PlayerState playerState = new PlayerState(playerUuid, gunStates);
-
-        playerStateStorage.deletePlayerState(playerUuid);
-        playerStateStorage.savePlayerState(playerState);
     }
 
     @NotNull

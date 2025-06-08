@@ -33,13 +33,26 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
     }
 
     public void handlePlayerJoin(@NotNull Player player) {
+        if (playerRegistry.isRegistered(player)) {
+            return;
+        }
+
         boolean passive = configuration.isEnabledRegisterPlayersAsPassive();
 
         GamePlayer gamePlayer = playerRegistry.registerEntity(player);
         gamePlayer.setPassive(passive);
+
+        statePersistenceHandler.loadPlayerState(gamePlayer);
     }
 
     public void handlePlayerLeave(@NotNull UUID playerUuid) {
+        GamePlayer gamePlayer = playerRegistry.findByUUID(playerUuid);
+
+        if (gamePlayer == null) {
+            return;
+        }
+
+        statePersistenceHandler.savePlayerState(gamePlayer);
         playerRegistry.deregister(playerUuid);
     }
 }

@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 public interface StatePersistenceHandler {
 
-    void loadState(@NotNull GamePlayer gamePlayer);
+    void loadPlayerState(@NotNull GamePlayer gamePlayer);
+
+    void savePlayerState(@NotNull GamePlayer gamePlayer);
 
     void saveState();
 }

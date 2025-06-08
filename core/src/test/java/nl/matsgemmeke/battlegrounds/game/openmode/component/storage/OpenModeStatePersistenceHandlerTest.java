@@ -50,7 +50,7 @@ public class OpenModeStatePersistenceHandlerTest {
     }
 
     @Test
-    public void loadStateAssignsItemsToGamePlayerBasedOnSavedState() {
+    public void loadPlayerStateAssignsItemsToGamePlayerBasedOnSavedState() {
         GunState gunState = new GunState(GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         PlayerState gamePlayerState = new PlayerState(PLAYER_UUID, List.of(gunState));
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(0, 0, 0, 0);
@@ -70,7 +70,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(weaponCreator.gunExists(GUN_ID)).thenReturn(true);
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, gunRegistry, playerRegistry);
-        statePersistenceHandler.loadState(gamePlayer);
+        statePersistenceHandler.loadPlayerState(gamePlayer);
 
         assertThat(ammunitionStorage.getMagazineAmmo()).isEqualTo(GUN_MAGAZINE_AMMO);
         assertThat(ammunitionStorage.getReserveAmmo()).isEqualTo(GUN_RESERVE_AMMO);
@@ -80,7 +80,7 @@ public class OpenModeStatePersistenceHandlerTest {
     }
 
     @Test
-    public void loadStateLogsErrorMessageWhenLoadingGunStateWhoseGunIdDoesNotExist() {
+    public void loadPlayerStateLogsErrorMessageWhenLoadingGunStateWhoseGunIdDoesNotExist() {
         GunState gunState = new GunState(GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         PlayerState playerState = new PlayerState(PLAYER_UUID, List.of(gunState));
 
@@ -92,7 +92,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(weaponCreator.gunExists(GUN_ID)).thenReturn(false);
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, gunRegistry, playerRegistry);
-        statePersistenceHandler.loadState(gamePlayer);
+        statePersistenceHandler.loadPlayerState(gamePlayer);
 
         verify(logger).severe("Attempted to load gun 'TEST_GUN' from the open mode of player TestPlayer, but it does not exist anymore");
     }

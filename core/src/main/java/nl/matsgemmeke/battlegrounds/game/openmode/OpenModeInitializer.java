@@ -133,7 +133,7 @@ public class OpenModeInitializer {
             GamePlayer gamePlayer = playerRegistry.registerEntity(player);
             gamePlayer.setPassive(configuration.isEnabledRegisterPlayersAsPassive());
 
-            statePersistenceHandler.loadState(gamePlayer);
+            statePersistenceHandler.loadPlayerState(gamePlayer);
         }
     }
 }
