@@ -92,7 +92,7 @@ public class OpenModeInitializer {
         AudioEmitter audioEmitter = new DefaultAudioEmitter();
         CollisionDetector collisionDetector = collisionDetectorProvider.get();
         SpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(openMode.getSpawnPointContainer());
-        StatePersistenceHandler statePersistanceHandler = statePersistenceHandlerFactory.create(gunRegistry, playerRegistry);
+        StatePersistenceHandler statePersistanceHandler = statePersistenceHandlerFactory.create(equipmentRegistry, gunRegistry, playerRegistry);
         PlayerLifecycleHandler playerLifecycleHandler = playerLifecycleHandlerFactory.create(playerRegistry, statePersistanceHandler);
 
         DamageProcessor damageProcessor = new OpenModeDamageProcessor(gameKey, deploymentInfoProvider);

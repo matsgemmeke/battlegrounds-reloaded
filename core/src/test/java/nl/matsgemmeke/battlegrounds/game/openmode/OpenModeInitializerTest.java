@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
@@ -72,7 +73,7 @@ public class OpenModeInitializerTest {
 
         when(playerLifecycleHandlerFactory.create(playerRegistry, statePersistenceHandler)).thenReturn(playerLifecycleHandler);
         when(playerRegistryFactory.create(any())).thenReturn(playerRegistry);
-        when(statePersistenceHandlerFactory.create(any(GunRegistry.class), eq(playerRegistry))).thenReturn(statePersistenceHandler);
+        when(statePersistenceHandlerFactory.create(any(EquipmentRegistry.class), any(GunRegistry.class), eq(playerRegistry))).thenReturn(statePersistenceHandler);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
         OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, contextProvider, playerRegistryFactory, playerLifecycleHandlerFactory, statePersistenceHandlerFactory, collisionDetectorProvider);

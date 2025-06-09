@@ -5,13 +5,16 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
+import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
+import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentState;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +29,8 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
 
+    @NotNull
+    private final EquipmentRegistry equipmentRegistry;
     @NotNull
     private final GunRegistry gunRegistry;
     @NotNull
@@ -42,12 +47,14 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
             @NotNull Logger logger,
             @NotNull PlayerStateStorage playerStateStorage,
             @NotNull WeaponCreator weaponCreator,
+            @Assisted @NotNull EquipmentRegistry equipmentRegistry,
             @Assisted @NotNull GunRegistry gunRegistry,
             @Assisted @NotNull PlayerRegistry playerRegistry
     ) {
         this.logger = logger;
         this.playerStateStorage = playerStateStorage;
         this.weaponCreator = weaponCreator;
+        this.equipmentRegistry = equipmentRegistry;
         this.gunRegistry = gunRegistry;
         this.playerRegistry = playerRegistry;
     }
@@ -83,9 +90,13 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
                 .map(gun -> this.convertToGunState(gamePlayer, gun))
                 .flatMap(Optional::stream)
                 .toList();
+        List<EquipmentState> equipmentStates = equipmentRegistry.getAssignedItems(gamePlayer).stream()
+                .map(equipment -> this.convertToEquipmentState(gamePlayer, equipment))
+                .flatMap(Optional::stream)
+                .toList();
 
         UUID playerUuid = gamePlayer.getEntity().getUniqueId();
-        PlayerState playerState = new PlayerState(playerUuid, gunStates);
+        PlayerState playerState = new PlayerState(playerUuid, gunStates, equipmentStates);
 
         playerStateStorage.deletePlayerState(playerUuid);
         playerStateStorage.savePlayerState(playerState);
@@ -124,7 +135,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
             return Optional.empty();
         }
 
-        Optional<Integer> itemSlot = gamePlayer.getItemSlot(gun.getItemStack());
+        Optional<Integer> itemSlot = gamePlayer.getItemSlot(itemStack);
 
         if (itemSlot.isEmpty()) {
             logger.severe("Cannot save state for gun %s of player %s, since its item slot cannot be determined".formatted(id, gamePlayer.getName()));
@@ -132,5 +143,26 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         }
 
         return Optional.of(new GunState(playerUuid, id, magazineAmmo, reserveAmmo, itemSlot.get()));
+    }
+
+    @NotNull
+    private Optional<EquipmentState> convertToEquipmentState(@NotNull GamePlayer gamePlayer, @NotNull Equipment equipment) {
+        UUID playerUuid = gamePlayer.getEntity().getUniqueId();
+        String id = equipment.getId();
+        ItemStack itemStack = equipment.getItemStack();
+
+        if (itemStack == null) {
+            logger.severe("Cannot save state for equipment %s of player %s, since it has no item stack".formatted(id, gamePlayer.getName()));
+            return Optional.empty();
+        }
+
+        Optional<Integer> itemSlot = gamePlayer.getItemSlot(itemStack);
+
+        if (itemSlot.isEmpty()) {
+            logger.severe("Cannot save state for equipment %s of player %s, since its item slot cannot be determined".formatted(id, gamePlayer.getName()));
+            return Optional.empty();
+        }
+
+        return Optional.of(new EquipmentState(playerUuid, id, itemSlot.get()));
     }
 }
