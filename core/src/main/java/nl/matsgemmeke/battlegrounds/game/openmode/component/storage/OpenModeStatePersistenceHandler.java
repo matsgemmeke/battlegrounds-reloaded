@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.storage;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
@@ -44,7 +45,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
 
     @Inject
     public OpenModeStatePersistenceHandler(
-            @NotNull Logger logger,
+            @Named("Battlegrounds") @NotNull Logger logger,
             @NotNull PlayerStateStorage playerStateStorage,
             @NotNull WeaponCreator weaponCreator,
             @Assisted @NotNull EquipmentRegistry equipmentRegistry,
@@ -63,9 +64,8 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         UUID playerUuid = gamePlayer.getEntity().getUniqueId();
         PlayerState playerState = playerStateStorage.getPlayerState(playerUuid);
 
-        for (GunState gunState : playerState.gunStates()) {
-            this.loadGunState(gamePlayer, gunState);
-        }
+        playerState.gunStates().forEach(gunState -> this.loadGunState(gamePlayer, gunState));
+        playerState.equipmentStates().forEach(equipmentState -> this.loadEquipmentState(gamePlayer, equipmentState));
     }
 
     private void loadGunState(@NotNull GamePlayer gamePlayer, @NotNull GunState gunState) {
@@ -83,6 +83,21 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
 
         Player player = gamePlayer.getEntity();
         player.getInventory().setItem(gunState.itemSlot(), gun.getItemStack());
+    }
+
+    private void loadEquipmentState(@NotNull GamePlayer gamePlayer, @NotNull EquipmentState equipmentState) {
+        String equipmentId = equipmentState.equipmentId();
+
+        if (!weaponCreator.equipmentExists(equipmentId)) {
+            logger.severe("Attempted to load equipment '%s' from the open mode of player %s, but it does not exist anymore".formatted(equipmentId, gamePlayer.getName()));
+            return;
+        }
+
+        Equipment equipment = weaponCreator.createEquipment(equipmentId, gamePlayer, GAME_KEY);
+        equipment.update();
+
+        Player player = gamePlayer.getEntity();
+        player.getInventory().setItem(equipmentState.itemSlot(), equipment.getItemStack());
     }
 
     public void savePlayerState(@NotNull GamePlayer gamePlayer) {

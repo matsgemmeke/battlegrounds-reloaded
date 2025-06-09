@@ -259,7 +259,5 @@ public class DefaultEquipmentTest {
         boolean updated = equipment.update();
 
         assertTrue(updated);
-
-        verify(holder).setHeldItem(itemStack);
     }
 }

@@ -183,11 +183,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
         Map<String, Object> values = this.getTemplateValues();
         itemStack = displayItemTemplate.createItemStack(values);
-
-        if (holder != null) {
-            holder.setHeldItem(itemStack);
-        }
-
         return true;
     }
 

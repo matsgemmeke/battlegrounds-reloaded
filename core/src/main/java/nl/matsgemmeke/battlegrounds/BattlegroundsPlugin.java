@@ -60,7 +60,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         this.setUpLogging();
 
         File dataFolder = this.getDataFolder();
-        BattlegroundsModule module = new BattlegroundsModule(dataFolder, internals, this, pluginManager);
+        BattlegroundsModule module = new BattlegroundsModule(dataFolder, internals, logger, this, pluginManager);
 
         injector = Guice.createInjector(module);
         contextProvider = injector.getInstance(GameContextProvider.class);

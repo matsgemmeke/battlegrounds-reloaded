@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -46,6 +47,27 @@ public class WeaponCreator {
     }
 
     /**
+     * Creates an {@link Equipment} item for a given player in a specific game. The newly created equipment item will
+     * automatically be assigned to the player.
+     *
+     * @param equipmentId              the equipment id
+     * @param gamePlayer               the player to which the equipment will be assigned to
+     * @param gameKey                  the game key
+     * @throws WeaponNotFoundException when the WeaponCreator does not contain a specification for the given equipment
+     *                                 id
+     * @return                         an equipment instance that is created based of the given equipment id
+     */
+    @NotNull
+    public Equipment createEquipment(@NotNull String equipmentId, @NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey) {
+        if (!equipmentSpecs.containsKey(equipmentId)) {
+            throw new WeaponNotFoundException("The weapon creator does not contain a specification for an equipment item by the id '%s'".formatted(equipmentId));
+        }
+
+        EquipmentSpec equipmentSpec = equipmentSpecs.get(equipmentId);
+        return equipmentFactory.create(equipmentSpec, gameKey, gamePlayer);
+    }
+
+    /**
      * Creates a {@link Gun} for a given player in a specific game. The newly created gun will automatically be
      * assigned to the player.
      *
@@ -53,7 +75,7 @@ public class WeaponCreator {
      * @param gamePlayer               the player to which the gun will be assigned to
      * @param gameKey                  the game key
      * @throws WeaponNotFoundException when the weapon creator does not contain a specification for the given gun id
-     * @return                         a gun instance that is created based of the given weapon id
+     * @return                         a gun instance that is created based of the given gun id
      */
     @NotNull
     public Gun createGun(@NotNull String gunId, @NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey) {
@@ -109,10 +131,20 @@ public class WeaponCreator {
     }
 
     /**
+     * Gets whether an equipment specification is loaded with a specific id.
+     *
+     * @param equipmentId the equipment id
+     * @return            whether an equipment specification with the given id exists
+     */
+    public boolean equipmentExists(@NotNull String equipmentId) {
+        return equipmentSpecs.containsKey(equipmentId);
+    }
+
+    /**
      * Gets whether a gun specification is loaded with a specific id.
      *
      * @param gunId the gun id
-     * @return      whether a specification with the given id exists
+     * @return      whether a gun specification with the given id exists
      */
     public boolean gunExists(@NotNull String gunId) {
         return gunSpecs.containsKey(gunId);
