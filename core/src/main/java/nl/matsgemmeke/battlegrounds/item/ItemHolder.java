@@ -21,13 +21,13 @@ public interface ItemHolder extends GameEntity {
     ItemStack getHeldItem();
 
     /**
-     * Gets the item slot in which a given {@link ItemStack} is located in the holder's inventory.
+     * Gets the item slot in which a given matchable item is located in the user's inventory.
      *
-     * @param itemStack the item stack
-     * @return          an optional containing the item slot, or an empty optional when the item cannot be found
+     * @param item the matchable item
+     * @return     an optional containing the item slot, or an empty optional when the item cannot be found
      */
     @NotNull
-    Optional<Integer> getItemSlot(@NotNull ItemStack itemStack);
+    Optional<Integer> getItemSlot(@NotNull Matchable item);
 
     /**
      * Removes an {@link ItemStack} from the holder.

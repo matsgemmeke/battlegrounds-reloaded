@@ -5,10 +5,12 @@ controls:
   throw: LEFT_CLICK
 deploy:
   health: 50.0
-  on-destroy:
-    activate: false
-    remove: true
-    reset: false
+  on-destruction:
+    activate-effect: false
+    remove-deployment: true
+    undo-effect: false
+  on-cleanup:
+    remove-deployment: false
   resistances:
     bullet-damage: 0
     explosive-damage: 0

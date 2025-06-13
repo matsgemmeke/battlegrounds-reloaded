@@ -207,7 +207,7 @@ public class WeaponCreatorTest {
     private EquipmentSpec createEquipmentSpec(String equipmentId) {
         ItemStackSpec dislayItemSpec = new ItemStackSpec("STICK", "name", 1);
         nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec controlsSpec = new nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null);
-        DeploymentSpec deploymentSpec = new DeploymentSpec(20.0, false, false, false, null, Map.of(), null, null, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(20.0, false, false, false, false, null, Map.of(), null, null, null, null);
         ItemEffectSpec itemEffectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         List<ProjectileEffectSpec> projectileEffectSpecs = List.of();
 

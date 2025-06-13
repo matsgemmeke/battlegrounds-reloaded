@@ -4,8 +4,10 @@ controls:
   throw: LEFT_CLICK
 deploy:
   health: 50.0
-  on-destroy:
-    activate: true
+  on-destruction:
+    activate-effect: true
+    remove-deployment: true
+    undo-effect: false
     particle-effect:
       block-data: STONE
       count: 10
@@ -14,8 +16,8 @@ deploy:
       offset-y: 0.25
       offset-z: 0.25
       particle: BLOCK_CRACK
-    remove: true
-    reset: false
+  on-cleanup:
+    remove-deployment: false
   resistances:
     fire-damage: 0
   throwing:

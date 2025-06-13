@@ -9,9 +9,10 @@ import java.util.List;
 
 public record DeploymentProperties(
         @NotNull List<GameSound> manualActivationSounds,
-        @Nullable ParticleEffect destroyParticleEffect,
-        boolean activateEffectOnDestroy,
-        boolean removeOnDestroy,
-        boolean resetEffectOnDestroy,
+        @Nullable ParticleEffect destructionParticleEffect,
+        boolean activateEffectOnDestruction,
+        boolean removeDeploymentOnDestruction,
+        boolean undoEffectOnDestruction,
+        boolean removeDeploymentOnCleanup,
         long manualActivationDelay
 ) { }

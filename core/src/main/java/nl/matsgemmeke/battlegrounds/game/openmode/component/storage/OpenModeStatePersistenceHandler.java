@@ -146,18 +146,11 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         ItemStack itemStack = gun.getItemStack();
 
         if (itemStack == null) {
-            logger.severe("Cannot save state for gun %s of player %s, since it has no item stack".formatted(id, gamePlayer.getName()));
             return Optional.empty();
         }
 
-        Optional<Integer> itemSlot = gamePlayer.getItemSlot(itemStack);
-
-        if (itemSlot.isEmpty()) {
-            logger.severe("Cannot save state for gun %s of player %s, since its item slot cannot be determined".formatted(id, gamePlayer.getName()));
-            return Optional.empty();
-        }
-
-        return Optional.of(new GunState(playerUuid, id, magazineAmmo, reserveAmmo, itemSlot.get()));
+        Optional<Integer> itemSlot = gamePlayer.getItemSlot(gun);
+        return itemSlot.map(itemSlotValue -> new GunState(playerUuid, id, magazineAmmo, reserveAmmo, itemSlotValue));
     }
 
     @NotNull
@@ -167,17 +160,10 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         ItemStack itemStack = equipment.getItemStack();
 
         if (itemStack == null) {
-            logger.severe("Cannot save state for equipment %s of player %s, since it has no item stack".formatted(id, gamePlayer.getName()));
             return Optional.empty();
         }
 
-        Optional<Integer> itemSlot = gamePlayer.getItemSlot(itemStack);
-
-        if (itemSlot.isEmpty()) {
-            logger.severe("Cannot save state for equipment %s of player %s, since its item slot cannot be determined".formatted(id, gamePlayer.getName()));
-            return Optional.empty();
-        }
-
-        return Optional.of(new EquipmentState(playerUuid, id, itemSlot.get()));
+        Optional<Integer> itemSlot = gamePlayer.getItemSlot(equipment);
+        return itemSlot.map(integer -> new EquipmentState(playerUuid, id, integer));
     }
 }

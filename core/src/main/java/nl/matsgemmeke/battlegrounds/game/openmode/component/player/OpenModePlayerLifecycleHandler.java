@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import org.bukkit.entity.Player;
@@ -17,6 +18,8 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
     @NotNull
     private final BattlegroundsConfiguration configuration;
     @NotNull
+    private final ItemLifecycleHandler itemLifecycleHandler;
+    @NotNull
     private final PlayerRegistry playerRegistry;
     @NotNull
     private final StatePersistenceHandler statePersistenceHandler;
@@ -24,10 +27,12 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
     @Inject
     public OpenModePlayerLifecycleHandler(
             @NotNull BattlegroundsConfiguration configuration,
+            @Assisted @NotNull ItemLifecycleHandler itemLifecycleHandler,
             @Assisted @NotNull PlayerRegistry playerRegistry,
             @Assisted @NotNull StatePersistenceHandler statePersistenceHandler
     ) {
         this.configuration = configuration;
+        this.itemLifecycleHandler = itemLifecycleHandler;
         this.playerRegistry = playerRegistry;
         this.statePersistenceHandler = statePersistenceHandler;
     }
@@ -53,6 +58,7 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
         }
 
         statePersistenceHandler.savePlayerState(gamePlayer);
+        itemLifecycleHandler.cleanupItems(gamePlayer);
         playerRegistry.deregister(playerUuid);
     }
 }

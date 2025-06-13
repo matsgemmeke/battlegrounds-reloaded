@@ -4,18 +4,20 @@ controls:
   throw: LEFT_CLICK
 deploy:
   health: 50.0
-  on-destroy:
-    activate: false
+  on-destruction:
+    activate-effect: false
+    remove-deployment: true
+    undo-effect: false
     particle-effect:
       block-data: REDSTONE_TORCH
       count: 5
-      extra: 0
+      extra: 0ji
       offset-x: 0.25
       offset-y: 0.25
       offset-z: 0.25
       particle: BLOCK_CRACK
-    remove: true
-    reset: true
+  on-cleanup:
+    remove-deployment: false
   throwing:
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0

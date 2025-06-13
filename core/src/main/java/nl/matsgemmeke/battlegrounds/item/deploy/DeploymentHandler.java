@@ -16,13 +16,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class DeploymentHandler {
 
-    @Nullable
-    private Activator activator;
     @NotNull
     private final AudioEmitter audioEmitter;
-    private boolean deployed;
-    @Nullable
-    private DeploymentObject deploymentObject;
     @NotNull
     private final DeploymentProperties deploymentProperties;
     @NotNull
@@ -31,6 +26,11 @@ public class DeploymentHandler {
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
     private final TaskRunner taskRunner;
+    @Nullable
+    private Activator activator;
+    private boolean deployed;
+    @Nullable
+    private DeploymentObject deploymentObject;
 
     @Inject
     public DeploymentHandler(
@@ -70,27 +70,37 @@ public class DeploymentHandler {
         taskRunner.runTaskLater(effect::activateInstantly, deploymentProperties.manualActivationDelay());
     }
 
+    public void cleanupDeployment() {
+        if (deploymentObject == null || !deploymentProperties.removeDeploymentOnCleanup()) {
+            return;
+        }
+
+        deployed = false;
+        deploymentObject.remove();
+    }
+
     public void destroyDeployment() {
         if (deploymentObject == null) {
             return;
         }
 
+        deployed = false;
         effect.cancelActivation();
 
-        if (deploymentProperties.activateEffectOnDestroy()
+        if (deploymentProperties.activateEffectOnDestruction()
                 && (deploymentObject.getLastDamage() == null || deploymentObject.getLastDamage().type() != DamageType.ENVIRONMENTAL_DAMAGE)) {
             effect.activateInstantly();
         }
 
-        if (deploymentProperties.removeOnDestroy()) {
+        if (deploymentProperties.removeDeploymentOnDestruction()) {
             deploymentObject.remove();
         }
 
-        if (deploymentProperties.resetEffectOnDestroy()) {
-            effect.reset();
+        if (deploymentProperties.undoEffectOnDestruction()) {
+            effect.undo();
         }
 
-        ParticleEffect particleEffect = deploymentProperties.destroyParticleEffect();
+        ParticleEffect particleEffect = deploymentProperties.destructionParticleEffect();
 
         if (particleEffect != null) {
             particleEffectSpawner.spawnParticleEffect(particleEffect, deploymentObject.getWorld(), deploymentObject.getLocation());

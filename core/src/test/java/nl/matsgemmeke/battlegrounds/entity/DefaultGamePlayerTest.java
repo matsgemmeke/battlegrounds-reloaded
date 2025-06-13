@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.entity;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.Matchable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -196,10 +197,13 @@ public class DefaultGamePlayerTest {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         ItemStack[] contents = new ItemStack[] { null, itemStack, null };
 
+        Matchable item = mock(Matchable.class);
+        when(item.isMatching(itemStack)).thenReturn(true);
+
         when(player.getInventory().getContents()).thenReturn(contents);
 
         DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
-        Optional<Integer> itemSlot = gamePlayer.getItemSlot(itemStack);
+        Optional<Integer> itemSlot = gamePlayer.getItemSlot(item);
 
         assertThat(itemSlot).hasValue(1);
     }
@@ -207,12 +211,15 @@ public class DefaultGamePlayerTest {
     @Test
     public void getItemSlotReturnsEmptyOptionalWhenNoneOfTheInventoryContentsMatchWithGivenItemStack() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-        ItemStack[] contents = new ItemStack[] { null, null, null };
+        ItemStack[] contents = new ItemStack[] { null, itemStack, null };
+
+        Matchable item = mock(Matchable.class);
+        when(item.isMatching(itemStack)).thenReturn(false);
 
         when(player.getInventory().getContents()).thenReturn(contents);
 
         DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
-        Optional<Integer> itemSlot = gamePlayer.getItemSlot(itemStack);
+        Optional<Integer> itemSlot = gamePlayer.getItemSlot(item);
 
         assertThat(itemSlot).isEmpty();
     }

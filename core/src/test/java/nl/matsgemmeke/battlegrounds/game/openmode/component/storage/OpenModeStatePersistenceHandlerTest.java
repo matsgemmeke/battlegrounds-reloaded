@@ -162,31 +162,24 @@ public class OpenModeStatePersistenceHandlerTest {
         assertThat(savedPlayerState.playerUuid()).isEqualTo(PLAYER_UUID);
         assertThat(savedPlayerState.gunStates()).isEmpty();
         assertThat(savedPlayerState.equipmentStates()).isEmpty();
-
-        verify(logger).severe("Cannot save state for gun TEST_GUN of player TestPlayer, since it has no item stack");
-        verify(logger).severe("Cannot save state for equipment TEST_EQUIPMENT of player TestPlayer, since it has no item stack");
     }
 
     @Test
     public void savePlayerStateLogsErrorWhenSavingCollectedDataWithItemsWhoseItemSlotCannotBeDetermined() {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
-        ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
-        ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
-        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
-        when(gamePlayer.getItemSlot(gunItemStack)).thenReturn(Optional.empty());
-        when(gamePlayer.getItemSlot(equipmentItemStack)).thenReturn(Optional.empty());
-        when(gamePlayer.getName()).thenReturn("TestPlayer");
 
         Gun gun = mock(Gun.class);
         when(gun.getId()).thenReturn(GUN_ID);
         when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
-        when(gun.getItemStack()).thenReturn(gunItemStack);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
-        when(equipment.getItemStack()).thenReturn(equipmentItemStack);
+
+        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
+        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
+        when(gamePlayer.getItemSlot(gun)).thenReturn(Optional.empty());
+        when(gamePlayer.getItemSlot(equipment)).thenReturn(Optional.empty());
+        when(gamePlayer.getName()).thenReturn("TestPlayer");
 
         when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(gun));
         when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
@@ -202,9 +195,6 @@ public class OpenModeStatePersistenceHandlerTest {
         assertThat(savedPlayerState.playerUuid()).isEqualTo(PLAYER_UUID);
         assertThat(savedPlayerState.gunStates()).isEmpty();
         assertThat(savedPlayerState.equipmentStates()).isEmpty();
-
-        verify(logger).severe("Cannot save state for gun TEST_GUN of player TestPlayer, since its item slot cannot be determined");
-        verify(logger).severe("Cannot save state for equipment TEST_EQUIPMENT of player TestPlayer, since its item slot cannot be determined");
     }
 
     @Test
@@ -212,11 +202,6 @@ public class OpenModeStatePersistenceHandlerTest {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
         ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
         ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
-        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
-        when(gamePlayer.getItemSlot(gunItemStack)).thenReturn(Optional.of(GUN_ITEM_SLOT));
-        when(gamePlayer.getItemSlot(equipmentItemStack)).thenReturn(Optional.of(EQUIPMENT_ITEM_SLOT));
 
         Gun gun = mock(Gun.class);
         when(gun.getId()).thenReturn(GUN_ID);
@@ -226,6 +211,11 @@ public class OpenModeStatePersistenceHandlerTest {
         Equipment equipment = mock(Equipment.class);
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(equipment.getItemStack()).thenReturn(equipmentItemStack);
+
+        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
+        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
+        when(gamePlayer.getItemSlot(gun)).thenReturn(Optional.of(GUN_ITEM_SLOT));
+        when(gamePlayer.getItemSlot(equipment)).thenReturn(Optional.of(EQUIPMENT_ITEM_SLOT));
 
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
         when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(gun));

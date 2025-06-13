@@ -40,11 +40,12 @@ public class EquipmentSpecLoader {
     private static final String ACTIVATE_ACTION_ROUTE = "controls.activate";
 
     private static final String HEALTH_ROUTE = "deploy.health";
-    private static final String DESTROY_ON_ACTIVATE_ROUTE = "deploy.on-destroy.activate";
-    private static final String DESTROY_ON_REMOVE_ROUTE = "deploy.on-destroy.remove";
-    private static final String DESTROY_ON_RESET_ROUTE = "deploy.on-destroy.reset";
+    private static final String ACTIVATE_EFFECT_ON_DESTRUCTION_ROUTE = "deploy.on-destruction.activate-effect";
+    private static final String REMOVE_DEPLOYMENT_ON_DESTRUCTION_ROUTE = "deploy.on-destruction.remove-deployment";
+    private static final String UNDO_EFFECT_ON_DESTRUCTION_ROUTE = "deploy.on-destruction.undo-effect";
+    private static final String REMOVE_DEPLOYMENT_ON_CLEANUP_ROUTE = "deploy.on-cleanup.remove-deployment";
     private static final String RESISTANCES_ROUTE = "deploy.resistances";
-    private static final String DESTROY_PARTICLE_EFFECT_ROUTE = "deploy.on-destroy.particle-effect";
+    private static final String DESTRUCTION_PARTICLE_EFFECT_ROUTE = "deploy.on-destruction.particle-effect";
 
     private static final String THROW_PROPERTIES_ROUTE = "deploy.throwing";
     private static final String THROW_SOUNDS_ROUTE = "deploy.throwing.throw-sounds";
@@ -154,17 +155,21 @@ public class EquipmentSpecLoader {
                 .value(yamlReader.getOptionalDouble(HEALTH_ROUTE).orElse(null))
                 .validate(new RequiredValidator<>())
                 .resolve();
-        Boolean destroyOnActivate = new FieldSpecResolver<Boolean>()
-                .route(DESTROY_ON_ACTIVATE_ROUTE)
-                .value(yamlReader.getOptionalBoolean(DESTROY_ON_ACTIVATE_ROUTE).orElse(false))
+        Boolean activateEffectOnDestruction = new FieldSpecResolver<Boolean>()
+                .route(ACTIVATE_EFFECT_ON_DESTRUCTION_ROUTE)
+                .value(yamlReader.getOptionalBoolean(ACTIVATE_EFFECT_ON_DESTRUCTION_ROUTE).orElse(false))
                 .resolve();
-        Boolean destroyOnRemove = new FieldSpecResolver<Boolean>()
-                .route(DESTROY_ON_REMOVE_ROUTE)
-                .value(yamlReader.getOptionalBoolean(DESTROY_ON_REMOVE_ROUTE).orElse(false))
+        Boolean removeDeploymentOnDestruction = new FieldSpecResolver<Boolean>()
+                .route(REMOVE_DEPLOYMENT_ON_DESTRUCTION_ROUTE)
+                .value(yamlReader.getOptionalBoolean(REMOVE_DEPLOYMENT_ON_DESTRUCTION_ROUTE).orElse(false))
                 .resolve();
-        Boolean destroyOnReset = new FieldSpecResolver<Boolean>()
-                .route(DESTROY_ON_RESET_ROUTE)
-                .value(yamlReader.getOptionalBoolean(DESTROY_ON_RESET_ROUTE).orElse(false))
+        Boolean undoEffectOnDestruction = new FieldSpecResolver<Boolean>()
+                .route(UNDO_EFFECT_ON_DESTRUCTION_ROUTE)
+                .value(yamlReader.getOptionalBoolean(UNDO_EFFECT_ON_DESTRUCTION_ROUTE).orElse(false))
+                .resolve();
+        Boolean removeDeploymentOnCleanup = new FieldSpecResolver<Boolean>()
+                .route(REMOVE_DEPLOYMENT_ON_CLEANUP_ROUTE)
+                .value(yamlReader.getOptionalBoolean(REMOVE_DEPLOYMENT_ON_CLEANUP_ROUTE).orElse(false))
                 .resolve();
         Map<String, Double> resistances = new FieldSpecResolver<Map<String, Double>>()
                 .route(RESISTANCES_ROUTE)
@@ -172,10 +177,10 @@ public class EquipmentSpecLoader {
                 .validate(new MapOneOfValidator<>(ALLOWED_DAMAGE_TYPE_VALUES))
                 .resolve();
 
-        ParticleEffectSpec destroyEffect = null;
+        ParticleEffectSpec destructionParticleEffectSpec = null;
 
-        if (yamlReader.contains(DESTROY_PARTICLE_EFFECT_ROUTE)) {
-            destroyEffect = particleEffectSpecLoader.loadSpec(DESTROY_PARTICLE_EFFECT_ROUTE);
+        if (yamlReader.contains(DESTRUCTION_PARTICLE_EFFECT_ROUTE)) {
+            destructionParticleEffectSpec = particleEffectSpecLoader.loadSpec(DESTRUCTION_PARTICLE_EFFECT_ROUTE);
         }
 
         ThrowPropertiesSpec throwPropertiesSpec = null;
@@ -243,7 +248,7 @@ public class EquipmentSpecLoader {
             manualActivationSpec = new ManualActivationSpec(activationDelay, activationSounds);
         }
 
-        DeploymentSpec deploymentSpec = new DeploymentSpec(health, destroyOnActivate, destroyOnRemove, destroyOnReset, destroyEffect, resistances, throwPropertiesSpec, cookPropertiesSpec, placePropertiesSpec, manualActivationSpec);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(health, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnCleanup, destructionParticleEffectSpec, resistances, throwPropertiesSpec, cookPropertiesSpec, placePropertiesSpec, manualActivationSpec);
         ItemEffectSpec effectSpec = itemEffectSpecLoader.loadSpec(EFFECT_ROUTE);
         List<ProjectileEffectSpec> projectileEffectSpecs = new ArrayList<>();
 

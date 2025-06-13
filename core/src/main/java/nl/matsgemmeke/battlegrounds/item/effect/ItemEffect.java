@@ -54,7 +54,7 @@ public interface ItemEffect {
     void prime(@NotNull ItemEffectContext context);
 
     /**
-     * Resets the performance of the effect.
+     * Undoes the performance of the effect.
      */
-    default void reset() { }
+    default void undo() { }
 }

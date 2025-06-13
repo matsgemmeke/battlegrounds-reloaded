@@ -9,10 +9,12 @@ deploy:
   manual-activation:
     delay: 5
     sounds: UI_BUTTON_CLICK-1-1.5-0
-  on-destroy:
-    activate: false
-    remove: true
-    reset: false
+  on-destruction:
+    activate-effect: false
+    remove-deployment: true
+    undo-effect: false
+  on-cleanup:
+    remove-deployment: true
   placing:
     cooldown: 10
     material: WARPED_BUTTON

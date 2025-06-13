@@ -26,9 +26,10 @@ import static org.mockito.Mockito.when;
 
 public class EquipmentControlsFactoryTest {
 
-    private static final boolean DESTROY_ON_ACTIVATE = true;
-    private static final boolean DESTROY_ON_REMOVE = false;
-    private static final boolean DESTROY_ON_RESET = false;
+    private static final boolean ACTIVATE_EFFECT_ON_DESTRUCTION = true;
+    private static final boolean REMOVE_DEPLOYMENT_ON_DESTRUCTION = false;
+    private static final boolean UNDO_EFFECT_ON_DESTRUCTION = false;
+    private static final boolean REMOVE_DEPLOYMENT_ON_CLEANUP = false;
     private static final double HEALTH = 50.0;
     private static final Map<String, Double> RESISTANCES = Map.of("bullet-damage", 0.5);
 
@@ -53,7 +54,7 @@ public class EquipmentControlsFactoryTest {
         long cooldown = 20L;
         ThrowPropertiesSpec throwPropertiesSpec = new ThrowPropertiesSpec(null, velocity, cooldown);
 
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, throwPropertiesSpec, null, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, throwPropertiesSpec, null, null, null);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
         ProjectileEffectSpec projectileEffectSpec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec, List.of(projectileEffectSpec));
@@ -72,7 +73,7 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createThrowsEquipmentControlsCreationExceptionWhenThrowActionHasValueButThrowItemTemplateIsNull() {
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, null, null);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
 
@@ -87,7 +88,7 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createThrowsEquipmentControlsCreationExceptionWhenThrowActionHasValueButThrowPropertiesIsNull() {
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, null, null);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
 
@@ -109,7 +110,7 @@ public class EquipmentControlsFactoryTest {
 
         CookPropertiesSpec cookPropertiesSpec = new CookPropertiesSpec(null);
 
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, throwPropertiesSpec, cookPropertiesSpec, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, throwPropertiesSpec, cookPropertiesSpec, null, null);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
 
@@ -127,7 +128,7 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createThrowsEquipmentControlsCreationExceptionWhenCookActionHasValueButCookPropertiesIsNull() {
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, null, null);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
 
@@ -144,7 +145,7 @@ public class EquipmentControlsFactoryTest {
         long cooldown = 20L;
         PlacePropertiesSpec placePropertiesSpec = new PlacePropertiesSpec(material, null, cooldown);
 
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, placePropertiesSpec, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, placePropertiesSpec, null);
         ControlsSpec controlsSpec = new ControlsSpec(null, null, "RIGHT_CLICK", null);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
 
@@ -159,7 +160,7 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithActivateFunction() {
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, DESTROY_ON_ACTIVATE, DESTROY_ON_REMOVE, DESTROY_ON_RESET, null, RESISTANCES, null, null, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, null, null);
         ControlsSpec controlsSpec = new ControlsSpec(null, null, null, "RIGHT_CLICK");
         EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
 

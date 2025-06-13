@@ -5,10 +5,12 @@ controls:
   throw: LEFT_CLICK
 deploy:
   health: 50.0
-  on-destroy:
-    activate: true
-    remove: false
-    reset: false
+  on-destruction:
+    activate-effect: true
+    remove-deployment: false
+    undo-effect: false
+  on-cleanup:
+    remove-deployment: false
   throwing:
     cook-sounds: ENTITY_TNT_PRIMED-1-2-0
     cooldown: 30

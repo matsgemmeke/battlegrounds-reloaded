@@ -111,6 +111,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         deploymentHandler.activateDeployment(holder, holder.getEntity());
     }
 
+    public void cleanup() {
+        deploymentHandler.cleanupDeployment();
+    }
+
     public void destroyDeployment() {
         deploymentHandler.destroyDeployment();
     }

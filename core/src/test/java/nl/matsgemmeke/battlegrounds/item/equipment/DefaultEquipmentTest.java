@@ -34,6 +34,17 @@ public class DefaultEquipmentTest {
     }
 
     @Test
+    public void cleanupDelegatesToDeploymentHandler() {
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+
+        DefaultEquipment equipment = new DefaultEquipment(EQUIPMENT_ID);
+        equipment.setDeploymentHandler(deploymentHandler);
+        equipment.cleanup();
+
+        verify(deploymentHandler).cleanupDeployment();
+    }
+
+    @Test
     public void getDeploymentObjectReturnsDeploymentObjectFromDeploymentHandler() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
 

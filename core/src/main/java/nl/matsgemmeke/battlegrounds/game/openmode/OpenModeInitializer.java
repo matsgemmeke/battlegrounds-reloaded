@@ -15,10 +15,7 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryF
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.item.DefaultEquipmentRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.item.DefaultGunRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.*;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
@@ -93,7 +90,9 @@ public class OpenModeInitializer {
         CollisionDetector collisionDetector = collisionDetectorProvider.get();
         SpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(openMode.getSpawnPointContainer());
         StatePersistenceHandler statePersistanceHandler = statePersistenceHandlerFactory.create(equipmentRegistry, gunRegistry, playerRegistry);
-        PlayerLifecycleHandler playerLifecycleHandler = playerLifecycleHandlerFactory.create(playerRegistry, statePersistanceHandler);
+
+        ItemLifecycleHandler itemLifecycleHandler = new DefaultItemLifecycleHandler(equipmentRegistry);
+        PlayerLifecycleHandler playerLifecycleHandler = playerLifecycleHandlerFactory.create(itemLifecycleHandler, playerRegistry, statePersistanceHandler);
 
         DamageProcessor damageProcessor = new OpenModeDamageProcessor(gameKey, deploymentInfoProvider);
         TargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);

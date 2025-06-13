@@ -150,9 +150,10 @@ public class EquipmentFactory {
 
     @NotNull
     private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull ItemEffectSpec effectSpec, @NotNull GameKey gameKey, @Nullable Activator activator) {
-        boolean activateEffectOnDestroy = deploymentSpec.activateEffectOnDestroy();
-        boolean removeOnDestroy = deploymentSpec.removeOnDestroy();
-        boolean resetEffectOnDestroy = deploymentSpec.resetEffectOnDestroy();
+        boolean activateEffectOnDestruction = deploymentSpec.activateEffectOnDestruction();
+        boolean removeDeploymentOnDestruction = deploymentSpec.removeDeploymentOnDestruction();
+        boolean undoEffectOnDestruction = deploymentSpec.undoEffectOnDestruction();
+        boolean removeDeploymentOnCleanup = deploymentSpec.removeDeploymentOnCleanup();
 
         List<GameSound> manualActivationSounds = Collections.emptyList();
         long manualActivationDelay = 0L;
@@ -162,13 +163,13 @@ public class EquipmentFactory {
             manualActivationDelay = deploymentSpec.manualActivation().delay();
         }
 
-        ParticleEffect destroyEffect = null;
+        ParticleEffect destructionParticleEffect = null;
 
-        if (deploymentSpec.destroyEffect() != null) {
-            destroyEffect = particleEffectMapper.map(deploymentSpec.destroyEffect());
+        if (deploymentSpec.destructionParticleEffect() != null) {
+            destructionParticleEffect = particleEffectMapper.map(deploymentSpec.destructionParticleEffect());
         }
 
-        DeploymentProperties deploymentProperties = new DeploymentProperties(manualActivationSounds, destroyEffect, activateEffectOnDestroy, removeOnDestroy, resetEffectOnDestroy, manualActivationDelay);
+        DeploymentProperties deploymentProperties = new DeploymentProperties(manualActivationSounds, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnCleanup, manualActivationDelay);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
         ItemEffect effect = effectFactory.create(effectSpec, gameKey);
