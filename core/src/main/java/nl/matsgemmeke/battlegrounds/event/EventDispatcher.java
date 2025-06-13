@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event;
 
 import com.google.inject.Inject;
+import jakarta.inject.Named;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
@@ -17,14 +18,14 @@ import java.util.logging.Logger;
 public class EventDispatcher {
 
     @NotNull
-    private Logger logger;
+    private final Logger logger;
     @NotNull
-    private Map<Class<? extends Event>, List<EventHandlerMethod>> eventMethods;
+    private final Map<Class<? extends Event>, List<EventHandlerMethod>> eventMethods;
     @NotNull
-    private PluginManager pluginManager;
+    private final PluginManager pluginManager;
 
     @Inject
-    public EventDispatcher(@NotNull PluginManager pluginManager, @NotNull Logger logger) {
+    public EventDispatcher(@NotNull PluginManager pluginManager, @Named("Battlegrounds") @NotNull Logger logger) {
         this.pluginManager = pluginManager;
         this.logger = logger;
         this.eventMethods = new HashMap<>();

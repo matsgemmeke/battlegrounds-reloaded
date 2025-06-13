@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointStorage;
+import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointContainer;
 import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
@@ -24,20 +24,20 @@ public interface Game {
     void addItemBehavior(@NotNull ItemBehavior behavior);
 
     /**
-     * Gets the item storage for equipment items.
+     * Gets the item container which keeps equipment items.
      *
-     * @return the equipment storage
+     * @return the equipment container
      */
     @NotNull
-    ItemStorage<Equipment, EquipmentHolder> getEquipmentStorage();
+    ItemContainer<Equipment, EquipmentHolder> getEquipmentContainer();
 
     /**
-     * Gets the item storage for gun items.
+     * Gets the item container which keeps gun items.
      *
-     * @return the gun storage
+     * @return the gun container
      */
     @NotNull
-    ItemStorage<Gun, GunHolder> getGunStorage();
+    ItemContainer<Gun, GunHolder> getGunContainer();
 
     /**
      * Gets the item behaviors registered to the game.
@@ -48,18 +48,18 @@ public interface Game {
     Collection<ItemBehavior> getItemBehaviors();
 
     /**
-     * Gets the player storage of the game.
+     * Gets the entity container which keeps {@link GamePlayer} instances.
      *
-     * @return the player storage of the game
+     * @return the player container
      */
     @NotNull
-    EntityStorage<GamePlayer> getPlayerStorage();
+    EntityContainer<GamePlayer> getPlayerContainer();
 
     /**
-     * Gets the spawn point storage of the game.
+     * Gets the spawn point container.
      *
-     * @return the spawn point storage of the game
+     * @return the spawn point container of the game
      */
     @NotNull
-    SpawnPointStorage getSpawnPointStorage();
+    SpawnPointContainer getSpawnPointContainer();
 }

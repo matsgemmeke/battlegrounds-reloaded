@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * validated. Instances of this record hold all the necessary configuration values which are guaranteed to be valid at
  * the time of instantiation.
  *
+ * @param id the gun id
  * @param name the display name of the gun
  * @param description the description of the gun
  * @param magazineSize the size of the gun's magazine
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * @param spreadPattern the specification for the spread pattern
  */
 public record GunSpec(
+        @NotNull String id,
         @NotNull String name,
         @Nullable String description,
         @NotNull Integer magazineSize,

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.info.gun;
 
-import nl.matsgemmeke.battlegrounds.game.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
@@ -17,18 +17,18 @@ import static org.mockito.Mockito.when;
 
 public class DefaultGunInfoProviderTest {
 
-    private ItemStorage<Gun, GunHolder> gunStorage;
+    private ItemContainer<Gun, GunHolder> gunContainer;
 
     @BeforeEach
     public void setUp() {
-        gunStorage = new ItemStorage<>();
+        gunContainer = new ItemContainer<>();
     }
 
     @Test
     public void getGunFireSimulationInfoReturnsNullIfGivenHolderDoesNotHaveGuns() {
         GunHolder holder = mock(GunHolder.class);
 
-        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunStorage);
+        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunContainer);
         GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(holder);
 
         assertNull(gunFireSimulationInfo);
@@ -48,9 +48,9 @@ public class DefaultGunInfoProviderTest {
 
         GunHolder holder = mock(GunHolder.class);
 
-        gunStorage.addAssignedItem(gun, holder);
+        gunContainer.addAssignedItem(gun, holder);
 
-        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunStorage);
+        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunContainer);
         GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(holder);
 
         assertNotNull(gunFireSimulationInfo);

@@ -10,6 +10,13 @@ import org.jetbrains.annotations.Nullable;
 public interface Item extends Matchable {
 
     /**
+     * Gets the unique id of the item.
+     *
+     * @return the item id
+     */
+    String getId();
+
+    /**
      * Gets the description of the item.
      *
      * @return the item description

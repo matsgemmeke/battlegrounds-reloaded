@@ -11,7 +11,7 @@ public enum TranslationKey {
     DESCRIPTION_SETMAINLOBBY("commands.description-setmainlobby"),
     HELP_MENU_TITLE("commands.help-menu-title"),
     MAIN_LOBBY_SET("admin.main-lobby-set"),
-    NOT_IN_TRAINING_MODE("errors.not-in-training-mode"),
+    NOT_IN_OPEN_MODE("errors.not-in-open-mode"),
     RELOAD_FAILED("admin.reload-failed"),
     RELOAD_SUCCESS("admin.reload-success"),
     SESSION_ALREADY_EXISTS("admin.session-already-exists"),

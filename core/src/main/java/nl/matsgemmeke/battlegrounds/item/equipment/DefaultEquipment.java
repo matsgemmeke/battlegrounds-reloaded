@@ -34,7 +34,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @Nullable
     private ProjectileProperties projectileProperties;
 
-    public DefaultEquipment() {
+    public DefaultEquipment(@NotNull String id) {
+        super(id);
         this.controls = new ItemControls<>();
         this.deploymentObjects = new ArrayList<>();
     }
@@ -110,6 +111,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         deploymentHandler.activateDeployment(holder, holder.getEntity());
     }
 
+    public void cleanup() {
+        deploymentHandler.cleanupDeployment();
+    }
+
     public void destroyDeployment() {
         deploymentHandler.destroyDeployment();
     }
@@ -182,11 +187,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
         Map<String, Object> values = this.getTemplateValues();
         itemStack = displayItemTemplate.createItemStack(values);
-
-        if (holder != null) {
-            holder.setHeldItem(itemStack);
-        }
-
         return true;
     }
 

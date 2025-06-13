@@ -39,7 +39,7 @@ public class ProjectileEffectFactoryTest {
     @BeforeEach
     public void setUp() {
         contextProvider = mock(GameContextProvider.class);
-        gameKey = GameKey.ofTrainingMode();
+        gameKey = GameKey.ofOpenMode();
         particleEffectMapper = new ParticleEffectMapper();
         trailEffectFactory = mock(TrailEffectFactory.class);
         triggerFactory = mock(TriggerFactory.class);

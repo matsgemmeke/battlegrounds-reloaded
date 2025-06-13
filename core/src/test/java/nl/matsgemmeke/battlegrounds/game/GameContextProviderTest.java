@@ -2,16 +2,16 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
-import nl.matsgemmeke.battlegrounds.game.training.TrainingMode;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class GameContextProviderTest {
 
@@ -27,24 +27,23 @@ public class GameContextProviderTest {
     }
 
     @Test
-    public void assignTrainingModeAddsTrainingModeAndReturnsTrue() {
-        TrainingMode trainingMode = mock(TrainingMode.class);
+    public void assignOpenModeAddsOpenModeAndReturnsTrue() {
+        OpenMode openMode = mock(OpenMode.class);
 
         GameContextProvider contextProvider = new GameContextProvider();
-        boolean assigned = contextProvider.assignTrainingMode(trainingMode);
+        boolean assigned = contextProvider.assignOpenMode(openMode);
 
         assertTrue(assigned);
     }
 
     @Test
-    public void assignTrainingModeDoesNotAddTrainingModeAndReturnsFalseIfAlreadyAssigned() {
-        TrainingMode trainingMode = mock(TrainingMode.class);
-        TrainingMode otherTrainingMode = mock(TrainingMode.class);
+    public void assignOpenModeDoesNotAddOpenModeAndReturnsFalseWhenAlreadyAssigned() {
+        OpenMode openMode = mock(OpenMode.class);
+        OpenMode otherOpenMode = mock(OpenMode.class);
 
         GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.assignTrainingMode(trainingMode);
-
-        boolean assigned = contextProvider.assignTrainingMode(otherTrainingMode);
+        contextProvider.assignOpenMode(openMode);
+        boolean assigned = contextProvider.assignOpenMode(otherOpenMode);
 
         assertFalse(assigned);
     }
@@ -87,7 +86,7 @@ public class GameContextProviderTest {
     @Test
     public void getGameKeyReturnsCorrespondingGameKeyForGivenPlayer() {
         Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         Player player = mock(Player.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
@@ -105,7 +104,7 @@ public class GameContextProviderTest {
     @Test
     public void getGameKeyReturnsNullIfGivenPlayerIsNotInAnyGame() {
         Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         Player player = mock(Player.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
@@ -123,7 +122,7 @@ public class GameContextProviderTest {
     @Test
     public void getGameKeyReturnsCorrespondingGameKeyForGivenUUID() {
         Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         UUID uuid = UUID.randomUUID();
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
@@ -141,7 +140,7 @@ public class GameContextProviderTest {
     @Test
     public void getGameKeyReturnsNullIfGivenUUIDIsNotRegisteredInAnyGame() {
         Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         UUID uuid = UUID.randomUUID();
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
@@ -227,5 +226,19 @@ public class GameContextProviderTest {
         boolean sessionExists = contextProvider.sessionExists(id);
 
         assertTrue(sessionExists);
+    }
+
+    @Test
+    public void shutdownSavesOpenModeState() {
+        GameKey gameKey = GameKey.ofOpenMode();
+        OpenMode openMode = new OpenMode();
+        StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.assignOpenMode(openMode);
+        contextProvider.registerComponent(gameKey, StatePersistenceHandler.class, statePersistenceHandler);
+        contextProvider.shutdown();
+
+        verify(statePersistenceHandler).saveState();
     }
 }

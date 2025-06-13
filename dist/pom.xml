@@ -73,6 +73,10 @@
                             <pattern>dev.dejvokep.boostedyaml</pattern>
                             <shadedPattern>nl.matsgemmeke.libs.boostedyaml</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.j256.ormlite</pattern>
+                            <shadedPattern>nl.matsgemmeke.libs.ormlite</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>

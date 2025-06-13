@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
-import nl.matsgemmeke.battlegrounds.game.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.jetbrains.annotations.NotNull;
@@ -10,23 +10,28 @@ import java.util.List;
 public class DefaultEquipmentRegistry implements EquipmentRegistry {
 
     @NotNull
-    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
+    private final ItemContainer<Equipment, EquipmentHolder> equipmentContainer;
 
-    public DefaultEquipmentRegistry(@NotNull ItemStorage<Equipment, EquipmentHolder> equipmentStorage) {
-        this.equipmentStorage = equipmentStorage;
+    public DefaultEquipmentRegistry(@NotNull ItemContainer<Equipment, EquipmentHolder> equipmentContainer) {
+        this.equipmentContainer = equipmentContainer;
     }
 
     @NotNull
     public List<Equipment> findAll() {
-        return equipmentStorage.getAllItems();
+        return equipmentContainer.getAllItems();
+    }
+
+    @NotNull
+    public List<Equipment> getAssignedItems(@NotNull EquipmentHolder holder) {
+        return equipmentContainer.getAssignedItems(holder);
     }
 
     public void registerItem(@NotNull Equipment equipment) {
-        equipmentStorage.addUnassignedItem(equipment);
+        equipmentContainer.addUnassignedItem(equipment);
     }
 
     public void registerItem(@NotNull Equipment equipment, @NotNull EquipmentHolder holder) {
-        equipmentStorage.addAssignedItem(equipment, holder);
+        equipmentContainer.addAssignedItem(equipment, holder);
     }
 
     public void unassignItem(@NotNull Equipment equipment) {
@@ -36,7 +41,7 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
             return;
         }
 
-        equipmentStorage.removeAssignedItem(equipment, holder);
-        equipmentStorage.addUnassignedItem(equipment);
+        equipmentContainer.removeAssignedItem(equipment, holder);
+        equipmentContainer.addUnassignedItem(equipment);
     }
 }

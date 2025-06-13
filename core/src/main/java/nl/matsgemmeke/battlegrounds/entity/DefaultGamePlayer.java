@@ -6,16 +6,19 @@ import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.Matchable;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class DefaultGamePlayer implements GamePlayer {
@@ -156,6 +159,21 @@ public class DefaultGamePlayer implements GamePlayer {
     @NotNull
     public Location getDeployLocation() {
         return player.getEyeLocation();
+    }
+
+    @NotNull
+    public Optional<Integer> getItemSlot(@NotNull Matchable item) {
+        Inventory inventory = player.getInventory();
+        ItemStack[] contents = inventory.getContents();
+
+        for (int slot = 0; slot < contents.length; slot++) {
+            ItemStack itemStack = contents[slot];
+            if (itemStack != null && item.isMatching(itemStack)) {
+                return Optional.of(slot);
+            }
+        }
+
+        return Optional.empty();
     }
 
     @NotNull

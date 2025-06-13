@@ -12,13 +12,13 @@ public class GameKey {
     }
 
     @NotNull
-    public static GameKey ofSession(int id) {
-        return new GameKey("SESSION-" + id);
+    public static GameKey ofOpenMode() {
+        return new GameKey("OPEN-MODE");
     }
 
     @NotNull
-    public static GameKey ofTrainingMode() {
-        return new GameKey("TRAINING-MODE");
+    public static GameKey ofSession(int id) {
+        return new GameKey("SESSION-" + id);
     }
 
     @Override

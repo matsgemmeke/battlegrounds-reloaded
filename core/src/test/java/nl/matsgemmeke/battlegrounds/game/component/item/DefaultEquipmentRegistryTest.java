@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
-import nl.matsgemmeke.battlegrounds.game.ItemStorage;
+import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Material;
@@ -10,25 +10,26 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 public class DefaultEquipmentRegistryTest {
 
-    private ItemStorage<Equipment, EquipmentHolder> equipmentStorage;
+    private ItemContainer<Equipment, EquipmentHolder> equipmentContainer;
 
     @BeforeEach
     public void setUp() {
-        equipmentStorage = new ItemStorage<>();
+        equipmentContainer = new ItemContainer<>();
     }
 
     @Test
-    public void findAllReturnsAllEquipmentItemsFromTheStorage() {
+    public void findAllReturnsAllEquipmentItemsFromContainer() {
         Equipment equipment = mock(Equipment.class);
-        equipmentStorage.addUnassignedItem(equipment);
+        equipmentContainer.addUnassignedItem(equipment);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentStorage);
+        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentContainer);
         List<Equipment> equipmentList = equipmentRegistry.findAll();
 
         assertEquals(1, equipmentList.size());
@@ -36,30 +37,43 @@ public class DefaultEquipmentRegistryTest {
     }
 
     @Test
-    public void registerItemRegistersUnassignedEquipmentToStorage() {
+    public void getAssignedItemsReturnsAssignedItemsFromContainer() {
+        Equipment equipment = mock(Equipment.class);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        equipmentContainer.addAssignedItem(equipment, holder);
+
+        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentContainer);
+        List<Equipment> assignedItems = equipmentRegistry.getAssignedItems(holder);
+
+        assertThat(assignedItems).containsExactly(equipment);
+    }
+
+    @Test
+    public void registerItemRegistersUnassignedEquipmentToContainer() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.isMatching(itemStack)).thenReturn(true);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentStorage);
+        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentContainer);
         equipmentRegistry.registerItem(equipment);
 
-        assertEquals(equipment, equipmentStorage.getUnassignedItem(itemStack));
+        assertEquals(equipment, equipmentContainer.getUnassignedItem(itemStack));
     }
 
     @Test
-    public void registerItemRegistersAssignedEquipmentToStorage() {
+    public void registerItemRegistersAssignedEquipmentToContainer() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.isMatching(itemStack)).thenReturn(true);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentStorage);
+        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentContainer);
         equipmentRegistry.registerItem(equipment, holder);
 
-        assertEquals(equipment, equipmentStorage.getAssignedItem(holder, itemStack));
+        assertEquals(equipment, equipmentContainer.getAssignedItem(holder, itemStack));
     }
 
     @Test
@@ -70,10 +84,10 @@ public class DefaultEquipmentRegistryTest {
         when(equipment.getHolder()).thenReturn(null);
         when(equipment.isMatching(itemStack)).thenReturn(true);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentStorage);
+        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentContainer);
         equipmentRegistry.unassignItem(equipment);
 
-        assertNull(equipmentStorage.getUnassignedItem(itemStack));
+        assertNull(equipmentContainer.getUnassignedItem(itemStack));
     }
 
     @Test
@@ -85,12 +99,12 @@ public class DefaultEquipmentRegistryTest {
         when(equipment.getHolder()).thenReturn(holder);
         when(equipment.isMatching(itemStack)).thenReturn(true);
 
-        equipmentStorage.addAssignedItem(equipment, holder);
+        equipmentContainer.addAssignedItem(equipment, holder);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentStorage);
+        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(equipmentContainer);
         equipmentRegistry.unassignItem(equipment);
 
-        assertNull(equipmentStorage.getAssignedItem(holder, itemStack));
-        assertEquals(equipment, equipmentStorage.getUnassignedItem(itemStack));
+        assertNull(equipmentContainer.getAssignedItem(holder, itemStack));
+        assertEquals(equipment, equipmentContainer.getUnassignedItem(itemStack));
     }
 }

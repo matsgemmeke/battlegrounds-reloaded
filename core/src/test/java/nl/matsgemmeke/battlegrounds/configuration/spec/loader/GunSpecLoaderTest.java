@@ -28,17 +28,18 @@ public class GunSpecLoaderTest {
 
     @Test
     public void createSpecThrowsInvalidFieldSpecExceptionWhenValueFromYamlDoesNotPassValidator() {
-        when(yamlReader.getString("name")).thenReturn(null);
+        when(yamlReader.getString("id")).thenReturn(null);
 
         GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
 
         assertThatThrownBy(specLoader::loadSpec)
                 .isInstanceOf(InvalidFieldSpecException.class)
-                .hasMessage("Missing required value at 'name'");
+                .hasMessage("Missing required value at 'id'");
     }
 
     @Test
     public void createSpecReturnsGunSpecContainingValuesFromYamlReader() {
+        String id = "TEST_GUN";
         String name = "Test Gun";
 
         Integer magazineSize = 10;
@@ -73,6 +74,7 @@ public class GunSpecLoaderTest {
         Float horizontalSpread = 0.4f;
         Float verticalSpread = 0.5f;
 
+        when(yamlReader.getString("id")).thenReturn(id);
         when(yamlReader.getString("name")).thenReturn(name);
         when(yamlReader.getString("description")).thenReturn(null);
 
@@ -128,6 +130,7 @@ public class GunSpecLoaderTest {
         GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
         GunSpec spec = specLoader.loadSpec();
 
+        assertThat(spec.id()).isEqualTo(id);
         assertThat(spec.name()).isEqualTo(name);
         assertThat(spec.description()).isNull();
 

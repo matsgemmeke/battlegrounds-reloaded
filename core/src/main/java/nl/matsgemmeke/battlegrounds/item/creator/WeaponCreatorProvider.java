@@ -37,7 +37,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             @NotNull EquipmentFactory equipmentFactory,
             @NotNull FirearmFactory firearmFactory,
             @Named("ItemsFolder") @NotNull File itemsFolder,
-            @NotNull Logger logger
+            @Named("Battlegrounds") @NotNull Logger logger
     ) {
         this.equipmentFactory = equipmentFactory;
         this.firearmFactory = firearmFactory;

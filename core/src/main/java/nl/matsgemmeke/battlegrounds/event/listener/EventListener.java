@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class EventListener implements Listener {
 
     @NotNull
-    private EventDispatcher eventDispatcher;
+    private final EventDispatcher eventDispatcher;
 
     @Inject
     public EventListener(@NotNull EventDispatcher eventDispatcher) {
@@ -68,6 +68,16 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
+        this.dispatchEvent(event);
+    }
+
+    @EventHandler
+    public void onPlayerKick(@NotNull PlayerKickEvent event) {
+        this.dispatchEvent(event);
+    }
+
+    @EventHandler
+    public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
         this.dispatchEvent(event);
     }
 

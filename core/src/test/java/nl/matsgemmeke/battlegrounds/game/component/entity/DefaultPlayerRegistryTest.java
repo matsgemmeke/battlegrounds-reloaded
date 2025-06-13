@@ -2,25 +2,27 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.EntityStorage;
+import nl.matsgemmeke.battlegrounds.game.EntityContainer;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultPlayerRegistryTest {
 
     private DefaultGamePlayerFactory gamePlayerFactory;
-    private EntityStorage<GamePlayer> playerStorage;
+    private EntityContainer<GamePlayer> playerContainer;
 
     @BeforeEach
     public void setUp() {
         gamePlayerFactory = mock(DefaultGamePlayerFactory.class);
-        playerStorage = new EntityStorage<>();
+        playerContainer = new EntityContainer<>();
     }
 
     @Test
@@ -30,9 +32,9 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        playerStorage.addEntity(gamePlayer);
+        playerContainer.addEntity(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerStorage);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerContainer);
         GamePlayer result = playerRegistry.findByEntity(player);
 
         assertEquals(gamePlayer, result);
@@ -46,9 +48,9 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        playerStorage.addEntity(gamePlayer);
+        playerContainer.addEntity(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerStorage);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerContainer);
         GamePlayer result = playerRegistry.findByEntity(otherPlayer);
 
         assertNull(result);
@@ -64,12 +66,27 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        playerStorage.addEntity(gamePlayer);
+        playerContainer.addEntity(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerStorage);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerContainer);
         GamePlayer result = playerRegistry.findByUUID(uuid);
 
         assertEquals(gamePlayer, result);
+    }
+
+    @Test
+    public void getAllReturnsPlayersFromStorage() {
+        UUID playerUuid = UUID.randomUUID();
+
+        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
+        when(gamePlayer.getEntity().getUniqueId()).thenReturn(playerUuid);
+
+        playerContainer.addEntity(gamePlayer);
+
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerContainer);
+        Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
+
+        assertThat(gamePlayers).containsExactly(gamePlayer);
     }
 
     @Test
@@ -79,9 +96,9 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        playerStorage.addEntity(gamePlayer);
+        playerContainer.addEntity(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerStorage);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerContainer);
         boolean registered = playerRegistry.isRegistered(player);
 
         assertTrue(registered);
@@ -97,12 +114,31 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        playerStorage.addEntity(gamePlayer);
+        playerContainer.addEntity(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerStorage);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerContainer);
         boolean registered = playerRegistry.isRegistered(uuid);
 
         assertTrue(registered);
+    }
+
+    @Test
+    public void deregisterRemovesGivenPlayerUuidFromPlayerContainer() {
+        UUID playerUuid = UUID.randomUUID();
+
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(playerUuid);
+
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getEntity()).thenReturn(player);
+
+        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerContainer);
+        playerRegistry.registerEntity(player);
+        playerRegistry.deregister(playerUuid);
+
+        assertThat(playerRegistry.findByUUID(playerUuid)).isNull();
     }
 
     @Test
@@ -117,9 +153,9 @@ public class DefaultPlayerRegistryTest {
 
         when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerStorage);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, playerContainer);
         GamePlayer created = playerRegistry.registerEntity(player);
 
-        assertEquals(playerStorage.getEntity(player), created);
+        assertEquals(playerContainer.getEntity(player), created);
     }
 }

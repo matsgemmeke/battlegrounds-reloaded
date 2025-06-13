@@ -51,7 +51,7 @@ public class PlayerInteractEventHandlerTest {
 
     @Test
     public void handleShouldCallLeftClickFunctionAndCancelEventBasedOnResult() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, itemStack, null, null);
 
@@ -71,7 +71,7 @@ public class PlayerInteractEventHandlerTest {
 
     @Test
     public void handleShouldCallRightClickFunctionAndCancelEventBasedOnResult() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, itemStack, null, null);
 

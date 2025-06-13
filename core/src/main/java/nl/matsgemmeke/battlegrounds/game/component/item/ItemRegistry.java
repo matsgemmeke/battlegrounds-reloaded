@@ -19,6 +19,15 @@ public interface ItemRegistry<T extends Item, S extends ItemHolder> {
     List <T> findAll();
 
     /**
+     * Gets all registered items that are assigned to a given holder.
+     *
+     * @param holder the item holder
+     * @return a list of items assigned to the holder
+     */
+    @NotNull
+    List<T> getAssignedItems(@NotNull S holder);
+
+    /**
      * Registers an item to the game.
      *
      * @param item the item to be registered

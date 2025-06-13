@@ -5,6 +5,7 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public interface EntityRegistry<T extends GameEntity, S extends Entity> {
@@ -14,6 +15,9 @@ public interface EntityRegistry<T extends GameEntity, S extends Entity> {
 
     @Nullable
     T findByUUID(@NotNull UUID uuid);
+
+    @NotNull
+    Collection<T> getAll();
 
     boolean isRegistered(@NotNull S entity);
 

@@ -45,7 +45,7 @@ public class PlayerRespawnEventHandlerTest {
 
     @Test
     public void handleDoesNotAlterEventIfThereIsNoSpawnPointForThePlayer() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         Location respawnLocation = new Location(null, 1, 1, 1);
         UUID entityId = UUID.randomUUID();
 
@@ -75,7 +75,7 @@ public class PlayerRespawnEventHandlerTest {
 
     @Test
     public void handleSetsRespawnLocationIfPlayerHasSpawnPoint() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         World world = mock(World.class);
         Location respawnLocation = new Location(world, 1, 1, 1);
         Location spawnPointLocation = new Location(world, 2, 2, 2);

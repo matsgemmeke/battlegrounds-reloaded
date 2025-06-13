@@ -15,13 +15,17 @@ import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.DefaultCollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.training.TrainingModeGameKeyProvider;
+import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandlerFactory;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
@@ -48,6 +52,10 @@ import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactor
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentStateRepository;
+import nl.matsgemmeke.battlegrounds.storage.state.equipment.sqlite.SqliteEquipmentStateRepositoryProvider;
+import nl.matsgemmeke.battlegrounds.storage.state.gun.GunStateRepository;
+import nl.matsgemmeke.battlegrounds.storage.state.gun.sqlite.SqliteGunStateRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -56,17 +64,20 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 public class BattlegroundsModule implements Module {
 
     private final File dataFolder;
     private final InternalsProvider internals;
+    private final Logger logger;
     private final Plugin plugin;
     private final PluginManager pluginManager;
 
-    public BattlegroundsModule(File dataFolder, InternalsProvider internals, Plugin plugin, PluginManager pluginManager) {
+    public BattlegroundsModule(File dataFolder, InternalsProvider internals, Logger logger, Plugin plugin, PluginManager pluginManager) {
         this.dataFolder = dataFolder;
         this.internals = internals;
+        this.logger = logger;
         this.plugin = plugin;
         this.pluginManager = pluginManager;
     }
@@ -74,6 +85,7 @@ public class BattlegroundsModule implements Module {
     public void configure(Binder binder) {
         // Instance bindings
         binder.bind(InternalsProvider.class).toInstance(internals);
+        binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
 
@@ -89,16 +101,18 @@ public class BattlegroundsModule implements Module {
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
-        binder.bind(GameKey.class)
-                .annotatedWith(Names.named("TrainingMode"))
-                .toProvider(TrainingModeGameKeyProvider.class)
-                .in(Singleton.class);
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
+        binder.bind(EquipmentStateRepository.class).toProvider(SqliteEquipmentStateRepositoryProvider.class).in(Singleton.class);
+        binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(Singleton.class);
 
         // Component bindings
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class);
+
+        binder.install(new FactoryModuleBuilder()
+                .implement(PlayerLifecycleHandler.class, OpenModePlayerLifecycleHandler.class)
+                .build(OpenModePlayerLifecycleHandlerFactory.class));
 
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
@@ -131,6 +145,9 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
                 .build(DefaultPlayerRegistryFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(StatePersistenceHandler.class, OpenModeStatePersistenceHandler.class)
+                .build(OpenModeStatePersistenceHandlerFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileEffect.class, TrailEffect.class)

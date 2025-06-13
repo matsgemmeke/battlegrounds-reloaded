@@ -61,7 +61,7 @@ public class EquipmentFactoryTest {
         deploymentHandlerFactory = mock(DeploymentHandlerFactory.class);
         controlsFactory = mock(EquipmentControlsFactory.class);
         equipmentRegistry = mock(EquipmentRegistry.class);
-        gameKey = GameKey.ofTrainingMode();
+        gameKey = GameKey.ofOpenMode();
         effectFactory = mock(ItemEffectFactory.class);
         itemFactory = mock(ItemFactory.class);
         keyCreator = mock(NamespacedKeyCreator.class);
@@ -106,6 +106,7 @@ public class EquipmentFactoryTest {
         Equipment equipment = factory.create(spec, gameKey, gamePlayer);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
+        assertThat(equipment.getId()).isEqualTo("TEST_EQUIPMENT");
         assertThat(equipment.getName()).isEqualTo("name");
         assertThat(equipment.getDescription()).isEqualTo("description");
 
@@ -117,10 +118,10 @@ public class EquipmentFactoryTest {
         ItemStackSpec displayItemSpec = new ItemStackSpec("STICK", "name", 1);
         ItemStackSpec activatorItemSpec = new ItemStackSpec("STONE", "&fActivator", 2);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, false, null, Map.of(), null, null, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, activatorItemSpec, null, controlsSpec, deploymentSpec, effectSpec, List.of());
+        EquipmentSpec spec = new EquipmentSpec("TEST_EQUIPMENT", "name", "description", displayItemSpec, activatorItemSpec, null, controlsSpec, deploymentSpec, effectSpec, List.of());
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
@@ -146,10 +147,10 @@ public class EquipmentFactoryTest {
         ItemStackSpec displayItemSpec = new ItemStackSpec("STICK", "name", 1);
         ItemStackSpec throwItemSpec = new ItemStackSpec("STONE", "&fThrow item", 2);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, false, null, Map.of(), null, null, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, throwItemSpec, controlsSpec, deploymentSpec, effectSpec, List.of());
+        EquipmentSpec spec = new EquipmentSpec("TEST_EQUIPMENT", "name", "description", displayItemSpec, null, throwItemSpec, controlsSpec, deploymentSpec, effectSpec, List.of());
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
@@ -177,10 +178,10 @@ public class EquipmentFactoryTest {
         ItemStackSpec displayItemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
         ManualActivationSpec manualActivationSpec = new ManualActivationSpec(10L, null);
-        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, manualActivationSpec);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, false, null, Map.of(), null, null, null, manualActivationSpec);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
+        EquipmentSpec spec = new EquipmentSpec("TEST_EQUIPMENT", "name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
@@ -202,14 +203,14 @@ public class EquipmentFactoryTest {
     }
 
     @Test
-    public void createReturnsEquipmentWithDestroyEffect() {
+    public void createReturnsEquipmentWithDestructionParticleEffect() {
         ItemStackSpec displayItemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        ParticleEffectSpec destroyEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
-        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, destroyEffectSpec, Map.of(), null, null, null, null);
+        ParticleEffectSpec destructionParticleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, false, destructionParticleEffectSpec, Map.of(), null, null, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
-        EquipmentSpec spec = new EquipmentSpec("name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
+        EquipmentSpec spec = new EquipmentSpec("TEST_EQUIPMENT", "name", "description", displayItemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
@@ -229,21 +230,21 @@ public class EquipmentFactoryTest {
         DeploymentProperties deploymentProperties = deploymentPropertiesCaptor.getValue();
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
-        assertThat(deploymentProperties.destroyParticleEffect()).isNotNull();
-        assertThat(deploymentProperties.destroyParticleEffect().particle()).isEqualTo(Particle.BLOCK_CRACK);
-        assertThat(deploymentProperties.destroyParticleEffect().count()).isEqualTo(destroyEffectSpec.count());
-        assertThat(deploymentProperties.destroyParticleEffect().offsetX()).isEqualTo(destroyEffectSpec.offsetX());
-        assertThat(deploymentProperties.destroyParticleEffect().offsetY()).isEqualTo(destroyEffectSpec.offsetY());
-        assertThat(deploymentProperties.destroyParticleEffect().offsetZ()).isEqualTo(destroyEffectSpec.offsetZ());
-        assertThat(deploymentProperties.destroyParticleEffect().extra()).isEqualTo(destroyEffectSpec.extra());
-        assertThat(deploymentProperties.destroyParticleEffect().blockDataMaterial()).isEqualTo(Material.STONE);
+        assertThat(deploymentProperties.destructionParticleEffect()).isNotNull();
+        assertThat(deploymentProperties.destructionParticleEffect().particle()).isEqualTo(Particle.BLOCK_CRACK);
+        assertThat(deploymentProperties.destructionParticleEffect().count()).isEqualTo(destructionParticleEffectSpec.count());
+        assertThat(deploymentProperties.destructionParticleEffect().offsetX()).isEqualTo(destructionParticleEffectSpec.offsetX());
+        assertThat(deploymentProperties.destructionParticleEffect().offsetY()).isEqualTo(destructionParticleEffectSpec.offsetY());
+        assertThat(deploymentProperties.destructionParticleEffect().offsetZ()).isEqualTo(destructionParticleEffectSpec.offsetZ());
+        assertThat(deploymentProperties.destructionParticleEffect().extra()).isEqualTo(destructionParticleEffectSpec.extra());
+        assertThat(deploymentProperties.destructionParticleEffect().blockDataMaterial()).isEqualTo(Material.STONE);
     }
 
     private EquipmentSpec createEquipmentSpec() {
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, null, Map.of(), null, null, null, null);
+        DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, false, null, Map.of(), null, null, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        return new EquipmentSpec("name", "description", itemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
+        return new EquipmentSpec("TEST_EQUIPMENT", "name", "description", itemSpec, null, null, controlsSpec, deploymentSpec, effectSpec, List.of());
     }
 }

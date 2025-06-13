@@ -39,7 +39,7 @@ public class PlayerSwapHandItemsEventHandlerTest {
 
     @Test
     public void handleShouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         ItemStack swapFrom = new ItemStack(Material.IRON_HOE);
         ItemStack swapTo = new ItemStack(Material.IRON_HOE);
 
@@ -61,7 +61,7 @@ public class PlayerSwapHandItemsEventHandlerTest {
 
     @Test
     public void handleShouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
         ItemStack swapFrom = new ItemStack(Material.IRON_HOE);
         ItemStack swapTo = new ItemStack(Material.IRON_HOE);
 

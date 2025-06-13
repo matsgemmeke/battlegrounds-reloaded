@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.entity;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.Matchable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,6 +18,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +34,7 @@ public class DefaultGamePlayerTest {
     @BeforeEach
     public void setUp() {
         this.internals = mock(InternalsProvider.class);
-        this.player = mock(Player.class);
+        this.player = mock(Player.class, RETURNS_DEEP_STUBS);
     }
 
     @Test
@@ -188,6 +190,38 @@ public class DefaultGamePlayerTest {
         Location deployLocation = gamePlayer.getDeployLocation();
 
         assertThat(deployLocation).isEqualTo(eyeLocation);
+    }
+
+    @Test
+    public void getItemSlotReturnsOptionalWithSlotNumberOfMatchingItemStack() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack[] contents = new ItemStack[] { null, itemStack, null };
+
+        Matchable item = mock(Matchable.class);
+        when(item.isMatching(itemStack)).thenReturn(true);
+
+        when(player.getInventory().getContents()).thenReturn(contents);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
+        Optional<Integer> itemSlot = gamePlayer.getItemSlot(item);
+
+        assertThat(itemSlot).hasValue(1);
+    }
+
+    @Test
+    public void getItemSlotReturnsEmptyOptionalWhenNoneOfTheInventoryContentsMatchWithGivenItemStack() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack[] contents = new ItemStack[] { null, itemStack, null };
+
+        Matchable item = mock(Matchable.class);
+        when(item.isMatching(itemStack)).thenReturn(false);
+
+        when(player.getInventory().getContents()).thenReturn(contents);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
+        Optional<Integer> itemSlot = gamePlayer.getItemSlot(item);
+
+        assertThat(itemSlot).isEmpty();
     }
 
     @Test

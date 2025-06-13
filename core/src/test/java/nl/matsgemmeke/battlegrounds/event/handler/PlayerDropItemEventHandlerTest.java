@@ -42,7 +42,7 @@ public class PlayerDropItemEventHandlerTest {
 
     @Test
     public void shouldCancelEventIfActionHandlerDoesNotPerformTheAction() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
 
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         when(item.getItemStack()).thenReturn(itemStack);
@@ -63,7 +63,7 @@ public class PlayerDropItemEventHandlerTest {
 
     @Test
     public void shouldNotAlterCancelledEventIfActionHandlerDoesPerformTheAction() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+        GameKey gameKey = GameKey.ofOpenMode();
 
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         when(item.getItemStack()).thenReturn(itemStack);

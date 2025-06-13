@@ -15,10 +15,10 @@ public class GameKeyTest {
     }
 
     @Test
-    public void toStringReturnsCorrectValueForTrainingModeKeys() {
-        GameKey gameKey = GameKey.ofTrainingMode();
+    public void toStringReturnsCorrectValueForOpenModeKeys() {
+        GameKey gameKey = GameKey.ofOpenMode();
         String value = gameKey.toString();
 
-        assertEquals("TRAINING-MODE", value);
+        assertEquals("OPEN-MODE", value);
     }
 }

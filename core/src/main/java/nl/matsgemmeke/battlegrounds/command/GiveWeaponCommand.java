@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import com.google.inject.Inject;
-import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -20,7 +19,7 @@ public class GiveWeaponCommand extends CommandSource {
     @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
-    private final GameKey trainingModeKey;
+    private final GameKey openModeGameKey;
     @NotNull
     private final Translator translator;
     @NotNull
@@ -29,21 +28,20 @@ public class GiveWeaponCommand extends CommandSource {
     @Inject
     public GiveWeaponCommand(
             @NotNull GameContextProvider contextProvider,
-            @Named("TrainingMode") @NotNull GameKey trainingModeKey,
             @NotNull Translator translator,
             @NotNull WeaponCreator weaponCreator
     ) {
         super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText(), "bg giveweapon <weapon>");
         this.contextProvider = contextProvider;
-        this.trainingModeKey = trainingModeKey;
         this.translator = translator;
         this.weaponCreator = weaponCreator;
+        this.openModeGameKey = GameKey.ofOpenMode();
     }
 
     public void execute(@NotNull Player player, @NotNull String weaponId) {
-        PlayerRegistry playerRegistry = contextProvider.getComponent(trainingModeKey, PlayerRegistry.class);
+        PlayerRegistry playerRegistry = contextProvider.getComponent(openModeGameKey, PlayerRegistry.class);
         GamePlayer gamePlayer = playerRegistry.findByEntity(player);
-        Weapon weapon = weaponCreator.createWeapon(gamePlayer, trainingModeKey, weaponId);
+        Weapon weapon = weaponCreator.createWeapon(gamePlayer, openModeGameKey, weaponId);
 
         player.getInventory().addItem(weapon.getItemStack());
 
