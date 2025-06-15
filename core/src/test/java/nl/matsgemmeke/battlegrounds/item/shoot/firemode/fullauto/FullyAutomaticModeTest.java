@@ -1,8 +1,8 @@
-package nl.matsgemmeke.battlegrounds.item.shoot.burst;
+package nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
-import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.AutomaticFireCycleRunnable;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,10 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class BurstModeTest {
+public class FullyAutomaticModeTest {
 
-    private int rateOfFire;
-    private int shotsAmount;
     private Shootable item;
     private TaskRunner taskRunner;
 
@@ -23,21 +21,23 @@ public class BurstModeTest {
     public void setUp() {
         item = mock(Shootable.class);
         taskRunner = mock(TaskRunner.class);
-        rateOfFire = 600;
-        shotsAmount = 3;
     }
 
     @Test
     public void activatesWithCorrectDelayAndPeriod() {
-        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
+        int rateOfFire = 1200;
+
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
         fireMode.activateCycle();
 
-        verify(taskRunner).runTaskTimer(any(BukkitRunnable.class), eq(0L), eq(2L));
+        verify(taskRunner).runTaskTimer(any(AutomaticFireCycleRunnable.class), eq(0L), eq(1L));
     }
 
     @Test
     public void shouldNotCancelIfNotActivated() {
-        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
+        int rateOfFire = 600;
+
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
         boolean cancelled = fireMode.cancelCycle();
 
         assertFalse(cancelled);
@@ -49,7 +49,9 @@ public class BurstModeTest {
 
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
 
-        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
+        int rateOfFire = 600;
+
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
         fireMode.activateCycle();
         boolean cancelled = fireMode.cancelCycle();
 
@@ -60,18 +62,22 @@ public class BurstModeTest {
 
     @Test
     public void shouldNotBeCyclingIfNotActivated() {
-        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
+        int rateOfFire = 600;
+
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
 
         assertFalse(fireMode.isCycling());
     }
 
     @Test
     public void shouldBeCyclingIfActivated() {
+        int rateOfFire = 600;
+
         BukkitTask task = mock(BukkitTask.class);
 
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
 
-        BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
         fireMode.activateCycle();
 
         assertTrue(fireMode.isCycling());

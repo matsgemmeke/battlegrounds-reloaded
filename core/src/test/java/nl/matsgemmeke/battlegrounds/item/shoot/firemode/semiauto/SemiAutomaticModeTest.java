@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.shoot.semiauto;
+package nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;

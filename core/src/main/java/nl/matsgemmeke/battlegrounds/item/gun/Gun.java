@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.reload.Reloadable;
 import nl.matsgemmeke.battlegrounds.item.scope.Scopable;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

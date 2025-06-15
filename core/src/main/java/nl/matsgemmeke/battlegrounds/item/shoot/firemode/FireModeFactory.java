@@ -1,10 +1,11 @@
-package nl.matsgemmeke.battlegrounds.item.shoot;
+package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
-import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstModeFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto.FullyAutomaticModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto.SemiAutomaticModeFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**

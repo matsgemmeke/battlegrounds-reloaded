@@ -1,11 +1,11 @@
-package nl.matsgemmeke.battlegrounds.item.shoot.burst;
+package nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.shoot.AutomaticFireCycleRunnable;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.AutomaticFireCycleRunnable;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

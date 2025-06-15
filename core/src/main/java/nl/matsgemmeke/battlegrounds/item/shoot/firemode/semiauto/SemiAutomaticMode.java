@@ -1,10 +1,10 @@
-package nl.matsgemmeke.battlegrounds.item.shoot.semiauto;
+package nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import org.jetbrains.annotations.NotNull;
 
 public class SemiAutomaticMode implements FireMode {

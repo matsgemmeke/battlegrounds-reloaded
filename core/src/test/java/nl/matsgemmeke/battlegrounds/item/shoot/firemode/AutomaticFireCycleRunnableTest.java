@@ -1,5 +1,6 @@
-package nl.matsgemmeke.battlegrounds.item.shoot;
+package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 
+import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.shoot;
+package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 
 public interface FireMode {
 

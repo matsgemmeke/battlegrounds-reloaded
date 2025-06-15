@@ -1,7 +1,7 @@
-package nl.matsgemmeke.battlegrounds.item.shoot.semiauto;
+package nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto;
 
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import org.jetbrains.annotations.NotNull;
 
 public interface SemiAutomaticModeFactory {
