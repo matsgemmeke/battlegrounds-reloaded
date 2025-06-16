@@ -5,12 +5,12 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.AutomaticFireCycleRunnable;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.BaseFireMode;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BurstMode implements FireMode {
+public class BurstMode extends BaseFireMode {
 
     @Nullable
     private BukkitTask currentTask;
@@ -38,7 +38,7 @@ public class BurstMode implements FireMode {
         return rateOfFire;
     }
 
-    public boolean activateCycle() {
+    public boolean startCycle() {
         int ticksPerSecond = 20;
         // Convert rate of fire to amount of rounds fired per second
         int shotsPerSecond = rateOfFire / 60;

@@ -31,7 +31,7 @@ public class SemiAutomaticModeTest {
     @Test
     public void shouldShootItemOnceWhenActivated() {
         SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
-        boolean activated = fireMode.activateCycle();
+        boolean activated = fireMode.startCycle();
 
         verify(item).shoot();
         verify(taskRunner).runTaskLater(any(Runnable.class), eq(DELAY_BETWEEN_SHOTS));
@@ -42,8 +42,8 @@ public class SemiAutomaticModeTest {
     @Test
     public void doNothingIfItemIsCoolingDown() {
         SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
-        fireMode.activateCycle();
-        boolean activated = fireMode.activateCycle();
+        fireMode.startCycle();
+        boolean activated = fireMode.startCycle();
 
         assertFalse(activated);
 
@@ -62,9 +62,9 @@ public class SemiAutomaticModeTest {
     @Test
     public void shouldResetDelayWhenCancelling() {
         SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
-        fireMode.activateCycle();
+        fireMode.startCycle();
         boolean cancelled = fireMode.cancelCycle();
-        fireMode.activateCycle();
+        fireMode.startCycle();
 
         assertTrue(cancelled);
 
@@ -101,7 +101,7 @@ public class SemiAutomaticModeTest {
     @Test
     public void shouldNotBeCyclingAfterActivation() {
         SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
-        fireMode.activateCycle();
+        fireMode.startCycle();
 
         assertFalse(fireMode.isCycling());
     }

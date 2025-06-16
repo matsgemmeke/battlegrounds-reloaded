@@ -86,11 +86,11 @@ public class ItemTemplate {
     /**
      * Constructs a new {@link ItemStack} instance while using template values.
      *
-     * @param values the template values
+     * @param placeholderValues the placeholder values
      * @return the constructed item stack
      */
     @NotNull
-    public ItemStack createItemStack(@NotNull Map<String, Object> values) {
+    public ItemStack createItemStack(@NotNull Map<String, Object> placeholderValues) {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
 
@@ -104,7 +104,7 @@ public class ItemTemplate {
         }
 
         if (displayNameTemplate != null) {
-            String displayName = ChatColor.translateAlternateColorCodes('&', displayNameTemplate.replace(values));
+            String displayName = ChatColor.translateAlternateColorCodes('&', displayNameTemplate.replace(placeholderValues));
             itemMeta.setDisplayName(displayName);
         }
 

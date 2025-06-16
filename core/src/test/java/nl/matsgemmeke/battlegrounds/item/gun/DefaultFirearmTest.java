@@ -782,7 +782,7 @@ public class DefaultFirearmTest {
     @Test
     public void startShootCycleReturnsFalseIfFireModeCycleDoesNotStart() {
         FireMode fireMode = mock(FireMode.class);
-        when(fireMode.activateCycle()).thenReturn(false);
+        when(fireMode.startCycle()).thenReturn(false);
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setFireMode(fireMode);
@@ -794,7 +794,7 @@ public class DefaultFirearmTest {
     @Test
     public void startShootCycleReturnsTrueIfFireModeCycleStarts() {
         FireMode fireMode = mock(FireMode.class);
-        when(fireMode.activateCycle()).thenReturn(true);
+        when(fireMode.startCycle()).thenReturn(true);
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setFireMode(fireMode);

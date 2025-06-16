@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.BaseFireMode;
 import org.jetbrains.annotations.NotNull;
 
-public class SemiAutomaticMode implements FireMode {
+public class SemiAutomaticMode extends BaseFireMode {
 
     private static final int TICKS_PER_MINUTE = 1200;
 
@@ -26,7 +26,7 @@ public class SemiAutomaticMode implements FireMode {
         this.delaying = false;
     }
 
-    public boolean activateCycle() {
+    public boolean startCycle() {
         if (delaying) {
             return false;
         }

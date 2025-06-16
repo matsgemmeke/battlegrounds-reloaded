@@ -191,7 +191,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     }
 
     public boolean startShootCycle() {
-        return fireMode.activateCycle();
+        return fireMode.startCycle();
     }
 
     public boolean update() {

@@ -2,12 +2,14 @@ package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 
 public interface FireMode {
 
+    void addShotObserver(ShotObserver observer);
+
     /**
-     * Activates a shooting cycle.
+     * Starts a shooting cycle.
      *
-     * @return whether the cycle was activated
+     * @return whether the cycle was started
      */
-    boolean activateCycle();
+    boolean startCycle();
 
     /**
      * Attempts to cancel the current shooting cycle.

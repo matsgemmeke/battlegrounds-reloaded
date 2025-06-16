@@ -5,12 +5,12 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.AutomaticFireCycleRunnable;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.BaseFireMode;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FullyAutomaticMode implements FireMode {
+public class FullyAutomaticMode extends BaseFireMode {
 
     @Nullable
     private BukkitTask currentTask;
@@ -31,7 +31,7 @@ public class FullyAutomaticMode implements FireMode {
         return rateOfFire;
     }
 
-    public boolean activateCycle() {
+    public boolean startCycle() {
         // The amount of interaction events per second received when holding down the right mouse button
         int interactionsPerSecond = 5;
         // The interval between interactions in ticks

@@ -28,7 +28,7 @@ public class FullyAutomaticModeTest {
         int rateOfFire = 1200;
 
         FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
-        fireMode.activateCycle();
+        fireMode.startCycle();
 
         verify(taskRunner).runTaskTimer(any(AutomaticFireCycleRunnable.class), eq(0L), eq(1L));
     }
@@ -52,7 +52,7 @@ public class FullyAutomaticModeTest {
         int rateOfFire = 600;
 
         FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
-        fireMode.activateCycle();
+        fireMode.startCycle();
         boolean cancelled = fireMode.cancelCycle();
 
         assertTrue(cancelled);
@@ -78,7 +78,7 @@ public class FullyAutomaticModeTest {
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
 
         FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
-        fireMode.activateCycle();
+        fireMode.startCycle();
 
         assertTrue(fireMode.isCycling());
     }

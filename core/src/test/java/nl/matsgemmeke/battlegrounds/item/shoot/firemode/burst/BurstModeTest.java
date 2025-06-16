@@ -29,7 +29,7 @@ public class BurstModeTest {
     @Test
     public void activatesWithCorrectDelayAndPeriod() {
         BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
-        fireMode.activateCycle();
+        fireMode.startCycle();
 
         verify(taskRunner).runTaskTimer(any(BukkitRunnable.class), eq(0L), eq(2L));
     }
@@ -49,7 +49,7 @@ public class BurstModeTest {
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
 
         BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
-        fireMode.activateCycle();
+        fireMode.startCycle();
         boolean cancelled = fireMode.cancelCycle();
 
         assertTrue(cancelled);
@@ -71,7 +71,7 @@ public class BurstModeTest {
         when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
 
         BurstMode fireMode = new BurstMode(taskRunner, item, shotsAmount, rateOfFire);
-        fireMode.activateCycle();
+        fireMode.startCycle();
 
         assertTrue(fireMode.isCycling());
     }
