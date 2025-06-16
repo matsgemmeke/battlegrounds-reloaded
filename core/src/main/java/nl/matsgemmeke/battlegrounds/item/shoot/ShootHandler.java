@@ -36,6 +36,18 @@ public class ShootHandler {
         performer.setHeldItem(itemStack);
     }
 
+    public boolean cancel() {
+        return fireMode.cancelCycle();
+    }
+
+    public int getRateOfFire() {
+        return fireMode.getRateOfFire();
+    }
+
+    public boolean isShooting() {
+        return fireMode.isCycling();
+    }
+
     public void shoot(@NotNull ShotPerformer performer) {
         this.performer = performer;
         fireMode.startCycle();

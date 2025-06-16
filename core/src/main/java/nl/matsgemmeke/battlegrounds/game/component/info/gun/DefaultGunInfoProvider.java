@@ -12,7 +12,7 @@ import java.util.List;
 public class DefaultGunInfoProvider implements GunInfoProvider {
 
     @NotNull
-    private ItemContainer<Gun, GunHolder> gunContainer;
+    private final ItemContainer<Gun, GunHolder> gunContainer;
 
     public DefaultGunInfoProvider(@NotNull ItemContainer<Gun, GunHolder> gunContainer) {
         this.gunContainer = gunContainer;
@@ -27,7 +27,7 @@ public class DefaultGunInfoProvider implements GunInfoProvider {
         }
 
         List<GameSound> shotSounds = gun.getShotSounds();
-        int rateOfFire = gun.getFireMode().getRateOfFire();
+        int rateOfFire = gun.getRateOfFire();
 
         return new GunFireSimulationInfo(shotSounds, rateOfFire);
     }

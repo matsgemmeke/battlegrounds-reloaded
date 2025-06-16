@@ -11,7 +11,8 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
+import nl.matsgemmeke.battlegrounds.item.shoot.ShotPerformer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +23,6 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
 
     protected double damageAmplifier;
     protected AmmunitionStorage ammunitionStorage;
-    protected FireMode fireMode;
     @Nullable
     protected GunHolder holder;
     @NotNull
@@ -35,6 +35,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     protected ReloadSystem reloadSystem;
     @Nullable
     protected ScopeAttachment scopeAttachment;
+    private ShootHandler shootHandler;
 
     public BaseGun(@NotNull String id) {
         super(id);
@@ -121,6 +122,14 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         this.scopeAttachment = scopeAttachment;
     }
 
+    public ShootHandler getShootHandler() {
+        return shootHandler;
+    }
+
+    public void setShootHandler(ShootHandler shootHandler) {
+        this.shootHandler = shootHandler;
+    }
+
     public boolean applyScope(@NotNull ScopeUser scopeUser) {
         return scopeAttachment != null && scopeAttachment.applyEffect(scopeUser);
     }
@@ -133,12 +142,16 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         return scopeAttachment != null && scopeAttachment.removeEffect();
     }
 
-    public boolean cancelShootingCycle() {
-        return fireMode.cancelCycle();
+    public boolean cancelShooting() {
+        return shootHandler.cancel();
     }
 
     public boolean changeScopeMagnification() {
         return scopeAttachment != null && scopeAttachment.nextMagnification();
+    }
+
+    public int getRateOfFire() {
+        return shootHandler.getRateOfFire();
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {
@@ -156,7 +169,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     }
 
     public boolean isShooting() {
-        return fireMode.isCycling();
+        return shootHandler.isShooting();
     }
 
     public boolean isUsingScope() {
@@ -190,8 +203,8 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         });
     }
 
-    public boolean startShootCycle() {
-        return fireMode.startCycle();
+    public void shoot(@NotNull ShotPerformer performer) {
+        shootHandler.shoot(performer);
     }
 
     public boolean update() {

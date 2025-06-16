@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpec;
@@ -25,8 +26,10 @@ import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeProperties;
+import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
@@ -115,6 +118,10 @@ public class FirearmFactory {
         firearm.setDescription(spec.description());
         firearm.setHeadshotDamageMultiplier(spec.headshotDamageMultiplier());
 
+        ItemTemplate itemTemplate = this.createItemTemplate(spec.item());
+        ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
+        firearm.setItemTemplate(itemTemplate);
+
         double damageAmplifier = config.getGunDamageAmplifier();
         firearm.setDamageAmplifier(damageAmplifier);
 
@@ -138,7 +145,11 @@ public class FirearmFactory {
         firearm.setControls(controls);
 
         FireMode fireMode = fireModeFactory.create(spec.fireMode(), firearm);
-        firearm.setFireMode(fireMode);
+
+        ShootHandler shootHandler = new ShootHandler(fireMode, itemRepresentation);
+        shootHandler.registerObservers();
+
+        firearm.setShootHandler(shootHandler);
 
         RecoilSpec recoilSpec = spec.recoil();
         ScopeSpec scopeSpec = spec.scope();
@@ -166,20 +177,22 @@ public class FirearmFactory {
             firearm.setSpreadPattern(spreadPattern);
         }
 
+        firearm.update();
+
+        return firearm;
+    }
+
+    @NotNull
+    private ItemTemplate createItemTemplate(@NotNull ItemStackSpec spec) {
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        Material material = Material.valueOf(spec.item().material());
-        String displayName = spec.item().displayName();
-        int damage = spec.item().damage();
+        Material material = Material.valueOf(spec.material());
+        String displayName = spec.displayName();
+        int damage = spec.damage();
 
         ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDamage(damage);
         itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
-
-        // Set and update the item stack
-        firearm.setItemTemplate(itemTemplate);
-        firearm.update();
-
-        return firearm;
+        return itemTemplate;
     }
 }

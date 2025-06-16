@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * An item that can shoot.
  */
@@ -11,7 +13,7 @@ public interface Shootable {
      *
      * @return whether the shooting cycle was successfully cancelled
      */
-    boolean cancelShootingCycle();
+    boolean cancelShooting();
 
     /**
      * Gets whether the shooting mechanism of the item is capable of shooting.
@@ -34,10 +36,5 @@ public interface Shootable {
      */
     boolean shoot();
 
-    /**
-     * Makes the item shoot.
-     *
-     * @return whether the item has shot
-     */
-    boolean startShootCycle();
+    void shoot(@NotNull ShotPerformer performer);
 }

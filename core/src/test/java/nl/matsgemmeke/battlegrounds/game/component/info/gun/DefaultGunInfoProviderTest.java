@@ -4,7 +4,6 @@ import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,11 +38,8 @@ public class DefaultGunInfoProviderTest {
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 600;
 
-        FireMode fireMode = mock(FireMode.class);
-        when(fireMode.getRateOfFire()).thenReturn(rateOfFire);
-
         Gun gun = mock(Gun.class);
-        when(gun.getFireMode()).thenReturn(fireMode);
+        when(gun.getRateOfFire()).thenReturn(rateOfFire);
         when(gun.getShotSounds()).thenReturn(shotSounds);
 
         GunHolder holder = mock(GunHolder.class);
