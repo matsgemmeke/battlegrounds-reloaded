@@ -15,6 +15,9 @@ import static org.mockito.Mockito.*;
 
 public class RepeatingScheduleTest {
 
+    private static final long INTERVAL = 1L;
+    private static final long DELAY = 5L;
+
     private BukkitScheduler bukkitScheduler;
     private Plugin plugin;
 
@@ -24,6 +27,24 @@ public class RepeatingScheduleTest {
 
         plugin = mock(Plugin.class, Mockito.RETURNS_DEEP_STUBS);
         when(plugin.getServer().getScheduler()).thenReturn(bukkitScheduler);
+    }
+
+    @Test
+    public void clearTasksRemovesAllTasksFromSchedule() {
+        ScheduleTask scheduleTask = mock(ScheduleTask.class);
+
+        RepeatingSchedule schedule = new RepeatingSchedule(plugin);
+        schedule.setDelay(DELAY);
+        schedule.setInterval(INTERVAL);
+        schedule.addTask(scheduleTask);
+        schedule.start();
+        schedule.clearTasks();
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(bukkitScheduler).runTaskTimer(eq(plugin), runnableCaptor.capture(), eq(DELAY), eq(INTERVAL));
+        runnableCaptor.getValue().run();
+
+        verify(scheduleTask, never()).run();
     }
 
     @Test

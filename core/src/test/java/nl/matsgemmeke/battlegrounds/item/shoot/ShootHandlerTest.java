@@ -31,7 +31,7 @@ public class ShootHandlerTest {
         ArgumentCaptor<ShotObserver> shotObserverCaptor = ArgumentCaptor.forClass(ShotObserver.class);
         verify(fireMode).addShotObserver(shotObserverCaptor.capture());
 
-        shotObserverCaptor.getValue().onShotActivate();
+        shotObserverCaptor.getValue().onShotFired();
 
         verify(fireMode).startCycle();
     }

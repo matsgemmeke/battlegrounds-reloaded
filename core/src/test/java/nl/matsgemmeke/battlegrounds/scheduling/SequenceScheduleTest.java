@@ -19,6 +19,8 @@ import static org.mockito.Mockito.verify;
 
 public class SequenceScheduleTest {
 
+    private static final List<Long> OFFSET_TICKS = List.of(2L);
+
     private BukkitScheduler bukkitScheduler;
     private Plugin plugin;
 
@@ -28,6 +30,24 @@ public class SequenceScheduleTest {
 
         plugin = mock(Plugin.class, Mockito.RETURNS_DEEP_STUBS);
         when(plugin.getServer().getScheduler()).thenReturn(bukkitScheduler);
+    }
+
+    @Test
+    public void clearTasksRemovesAllTasksFromSchedule() {
+        ScheduleTask scheduleTask = mock(ScheduleTask.class);
+
+        SequenceSchedule schedule = new SequenceSchedule(plugin);
+        schedule.setOffsetTicks(OFFSET_TICKS);
+        schedule.addTask(scheduleTask);
+        schedule.start();
+        schedule.clearTasks();
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(bukkitScheduler).runTaskTimer(eq(plugin), runnableCaptor.capture(), eq(0L), eq(1L));
+        runnableCaptor.getValue().run();
+        runnableCaptor.getValue().run();
+
+        verify(scheduleTask, never()).run();
     }
 
     @Test
@@ -63,14 +83,13 @@ public class SequenceScheduleTest {
 
     @Test
     public void startRunsTaskTimerThatRunsScheduleTasksEveryTimeAfterGivenDelaysHaveElapsed() {
-        List<Long> offsetTicks = List.of(2L);
         ScheduleTask scheduleTask = mock(ScheduleTask.class);
 
         BukkitTask bukkitTask = mock(BukkitTask.class);
         when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), eq(0L), eq(1L))).thenReturn(bukkitTask);
 
         SequenceSchedule schedule = new SequenceSchedule(plugin);
-        schedule.setOffsetTicks(offsetTicks);
+        schedule.setOffsetTicks(OFFSET_TICKS);
         schedule.addTask(scheduleTask);
         schedule.start();
 

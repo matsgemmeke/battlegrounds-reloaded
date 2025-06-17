@@ -14,11 +14,11 @@ public abstract class BaseFireMode implements FireMode {
         this.shotObservers = new ArrayList<>();
     }
 
-    public void addShotObserver(ShotObserver observer) {
+    public void addShotObserver(@NotNull ShotObserver observer) {
         shotObservers.add(observer);
     }
 
     public void notifyShotObservers() {
-        shotObservers.forEach(ShotObserver::onShotActivate);
+        shotObservers.forEach(ShotObserver::onShotFired);
     }
 }

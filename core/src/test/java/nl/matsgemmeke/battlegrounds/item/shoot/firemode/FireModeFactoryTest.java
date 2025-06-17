@@ -7,11 +7,19 @@ import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto.FullyAutomaticModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto.SemiAutomaticMode;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto.SemiAutomaticModeFactory;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,14 +27,14 @@ public class FireModeFactoryTest {
 
     private BurstModeFactory burstModeFactory;
     private FullyAutomaticModeFactory fullyAutomaticModeFactory;
-    private SemiAutomaticModeFactory semiAutomaticModeFactory;
+    private Scheduler scheduler;
     private Shootable item;
 
     @BeforeEach
     public void setUp() {
         burstModeFactory = mock(BurstModeFactory.class);
         fullyAutomaticModeFactory = mock(FullyAutomaticModeFactory.class);
-        semiAutomaticModeFactory = mock(SemiAutomaticModeFactory.class);
+        scheduler = mock(Scheduler.class);
         item = mock(Shootable.class);
     }
 
@@ -40,7 +48,7 @@ public class FireModeFactoryTest {
         BurstMode fireMode = mock(BurstMode.class);
         when(burstModeFactory.create(item, amountOfShots, rateOfFire)).thenReturn(fireMode);
 
-        FireModeFactory factory = new FireModeFactory(burstModeFactory, fullyAutomaticModeFactory, semiAutomaticModeFactory);
+        FireModeFactory factory = new FireModeFactory(burstModeFactory, fullyAutomaticModeFactory, scheduler);
         FireMode result = factory.create(spec, item);
 
         assertThat(result).isEqualTo(fireMode);
@@ -55,24 +63,35 @@ public class FireModeFactoryTest {
         FullyAutomaticMode fireMode = mock(FullyAutomaticMode.class);
         when(fullyAutomaticModeFactory.create(item, rateOfFire)).thenReturn(fireMode);
 
-        FireModeFactory factory = new FireModeFactory(burstModeFactory, fullyAutomaticModeFactory, semiAutomaticModeFactory);
+        FireModeFactory factory = new FireModeFactory(burstModeFactory, fullyAutomaticModeFactory, scheduler);
         FireMode result = factory.create(spec, item);
 
         assertThat(result).isEqualTo(fireMode);
     }
 
-    @Test
-    public void createReturnsSemiAutomaticModeInstance() {
-        long delayBetweenShots = 4L;
+    @NotNull
+    private static Stream<Arguments> rateOfFireExpectations() {
+        return Stream.of(
+                arguments(0, 1200),
+                arguments(1, 600),
+                arguments(2, 400),
+                arguments(3, 300),
+                arguments(9, 120)
+        );
+    }
 
+    @ParameterizedTest
+    @MethodSource("rateOfFireExpectations")
+    public void createReturnsSemiAutomaticModeInstanceWithCalculatedRateOfFire(long delayBetweenShots, int expectedRateOfFire) {
         FireModeSpec spec = new FireModeSpec("SEMI_AUTOMATIC", null, null, delayBetweenShots);
 
-        SemiAutomaticMode fireMode = mock(SemiAutomaticMode.class);
-        when(semiAutomaticModeFactory.create(item, delayBetweenShots)).thenReturn(fireMode);
+        Schedule cooldownSchedule = mock(Schedule.class);
+        when(scheduler.createSingleRunSchedule(delayBetweenShots)).thenReturn(cooldownSchedule);
 
-        FireModeFactory factory = new FireModeFactory(burstModeFactory, fullyAutomaticModeFactory, semiAutomaticModeFactory);
+        FireModeFactory factory = new FireModeFactory(burstModeFactory, fullyAutomaticModeFactory, scheduler);
         FireMode result = factory.create(spec, item);
 
-        assertThat(result).isEqualTo(fireMode);
+        assertThat(result).isInstanceOf(SemiAutomaticMode.class);
+        assertThat(result.getRateOfFire()).isEqualTo(expectedRateOfFire);
     }
 }

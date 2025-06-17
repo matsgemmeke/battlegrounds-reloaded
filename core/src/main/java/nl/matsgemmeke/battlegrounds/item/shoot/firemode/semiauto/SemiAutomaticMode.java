@@ -1,56 +1,52 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.BaseFireMode;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import org.jetbrains.annotations.NotNull;
 
 public class SemiAutomaticMode extends BaseFireMode {
 
-    private static final int TICKS_PER_MINUTE = 1200;
-
-    private boolean delaying;
-    private final long delayBetweenShots;
+    private boolean cycling;
     @NotNull
-    private final Shootable item;
-    @NotNull
-    private final TaskRunner taskRunner;
+    private final Schedule cooldownSchedule;
+    private final int rateOfFire;
 
-    @Inject
-    public SemiAutomaticMode(@NotNull TaskRunner taskRunner, @Assisted @NotNull Shootable item, @Assisted long delayBetweenShots) {
-        this.taskRunner = taskRunner;
-        this.item = item;
-        this.delayBetweenShots = delayBetweenShots;
-        this.delaying = false;
+    public SemiAutomaticMode(@NotNull Schedule cooldownSchedule, int rateOfFire) {
+        this.cooldownSchedule = cooldownSchedule;
+        this.rateOfFire = rateOfFire;
+        this.cycling = false;
+    }
+
+    public int getRateOfFire() {
+        return rateOfFire;
+    }
+
+    public boolean isCycling() {
+        return cycling;
     }
 
     public boolean startCycle() {
-        if (delaying) {
+        if (cycling) {
             return false;
         }
 
-        delaying = true;
-        item.shoot();
-        taskRunner.runTaskLater(this::cancelCycle, delayBetweenShots);
+        cycling = true;
+
+        cooldownSchedule.clearTasks();
+        cooldownSchedule.addTask(this::cancelCycle);
+        cooldownSchedule.start();
+
+        this.notifyShotObservers();
         return true;
     }
 
     public boolean cancelCycle() {
-        if (!delaying) {
+        if (!cycling) {
             return false;
         }
 
-        delaying = false;
+        cycling = false;
+        cooldownSchedule.stop();
         return true;
-    }
-
-    public int getRateOfFire() {
-        return Math.floorDiv(TICKS_PER_MINUTE, (int) delayBetweenShots + 1);
-    }
-
-    public boolean isCycling() {
-        return false;
     }
 }

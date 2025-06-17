@@ -6,6 +6,8 @@ public interface Schedule {
 
     void addTask(@NotNull ScheduleTask task);
 
+    void clearTasks();
+
     boolean isRunning();
 
     void start();

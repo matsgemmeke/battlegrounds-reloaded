@@ -30,6 +30,23 @@ public class SingleRunScheduleTest {
     }
 
     @Test
+    public void clearTasksRemovesAllTasksFromSchedule() {
+        ScheduleTask scheduleTask = mock(ScheduleTask.class);
+
+        SingleRunSchedule schedule = new SingleRunSchedule(plugin);
+        schedule.setDelay(DELAY);
+        schedule.addTask(scheduleTask);
+        schedule.start();
+        schedule.clearTasks();
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(bukkitScheduler).runTaskLater(eq(plugin), runnableCaptor.capture(), eq(DELAY));
+        runnableCaptor.getValue().run();
+
+        verify(scheduleTask, never()).run();
+    }
+
+    @Test
     public void isRunningReturnsFalseWhenNotRunning() {
         SingleRunSchedule schedule = new SingleRunSchedule(plugin);
         boolean running = schedule.isRunning();

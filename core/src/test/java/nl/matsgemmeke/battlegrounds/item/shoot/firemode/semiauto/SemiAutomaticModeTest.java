@@ -1,108 +1,93 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.ShotObserver;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class SemiAutomaticModeTest {
 
-    private static final long DELAY_BETWEEN_SHOTS = 1L;
+    private static final int RATE_OF_FIRE = 300;
 
-    private Shootable item;
-    private TaskRunner taskRunner;
+    private Schedule cooldownSchedule;
 
     @BeforeEach
     public void setUp() {
-        item = mock(Shootable.class);
-        taskRunner = mock(TaskRunner.class);
+        cooldownSchedule = mock(Schedule.class);
     }
 
     @Test
-    public void shouldShootItemOnceWhenActivated() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
-        boolean activated = fireMode.startCycle();
+    public void isCyclingReturnsFalseWhenNotStarted() {
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(cooldownSchedule, RATE_OF_FIRE);
+        boolean cycling = fireMode.isCycling();
 
-        verify(item).shoot();
-        verify(taskRunner).runTaskLater(any(Runnable.class), eq(DELAY_BETWEEN_SHOTS));
-
-        assertTrue(activated);
+        assertThat(cycling).isFalse();
     }
 
     @Test
-    public void doNothingIfItemIsCoolingDown() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
+    public void isCyclingReturnsTrueWhenHavingStarted() {
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(cooldownSchedule, RATE_OF_FIRE);
         fireMode.startCycle();
-        boolean activated = fireMode.startCycle();
+        boolean cycling = fireMode.isCycling();
 
-        assertFalse(activated);
-
-        verify(item, times(1)).shoot();
-        verify(taskRunner, times(1)).runTaskLater(any(Runnable.class), eq(DELAY_BETWEEN_SHOTS));
+        assertThat(cycling).isTrue();
     }
 
     @Test
-    public void shouldNotCancelIfNotActivated() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
+    public void startCycleReturnsTrueAndCallsObserversWhenHavingStarted() {
+        ShotObserver shotObserver = mock(ShotObserver.class);
+
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(cooldownSchedule, RATE_OF_FIRE);
+        fireMode.addShotObserver(shotObserver);
+        boolean started = fireMode.startCycle();
+
+        ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
+        verify(cooldownSchedule).addTask(scheduleTaskCaptor.capture());
+        scheduleTaskCaptor.getValue().run();
+
+        assertThat(started).isTrue();
+
+        verify(shotObserver).onShotFired();
+        verify(cooldownSchedule).start();
+        verify(cooldownSchedule).stop();
+    }
+
+    @Test
+    public void startCycleDoesNotNotifyObserversWhenAlreadyCycling() {
+        ShotObserver shotObserver = mock(ShotObserver.class);
+
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(cooldownSchedule, RATE_OF_FIRE);
+        fireMode.startCycle();
+        fireMode.addShotObserver(shotObserver);
+        boolean started = fireMode.startCycle();
+
+        assertThat(started).isFalse();
+
+        verifyNoInteractions(shotObserver);
+        verify(cooldownSchedule, times(1)).start();
+    }
+
+    @Test
+    public void cancelCycleReturnsFalseWhenNotStarted() {
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(cooldownSchedule, RATE_OF_FIRE);
         boolean cancelled = fireMode.cancelCycle();
 
-        assertFalse(cancelled);
+        assertThat(cancelled).isFalse();
     }
 
     @Test
-    public void shouldResetDelayWhenCancelling() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
+    public void cancelCycleReturnsTrueWhenStarted() {
+        SemiAutomaticMode fireMode = new SemiAutomaticMode(cooldownSchedule, RATE_OF_FIRE);
         fireMode.startCycle();
         boolean cancelled = fireMode.cancelCycle();
-        fireMode.startCycle();
 
-        assertTrue(cancelled);
+        assertThat(cancelled).isTrue();
 
-        verify(item, times(2)).shoot();
-    }
-
-    @NotNull
-    private static Stream<Arguments> rateOfFireExpectations() {
-        return Stream.of(
-                arguments(0, 1200),
-                arguments(1, 600),
-                arguments(2, 400),
-                arguments(3, 300),
-                arguments(9, 120)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("rateOfFireExpectations")
-    public void getRateOfFireShouldReturnPossibleAmountOfShotsWithDelay(long delay, int expectedRateOfFire) {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, delay);
-        int rateOfFire = fireMode.getRateOfFire();
-
-        assertEquals(expectedRateOfFire, rateOfFire);
-    }
-
-    @Test
-    public void shouldNeverBeCycling() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
-
-        assertFalse(fireMode.isCycling());
-    }
-
-    @Test
-    public void shouldNotBeCyclingAfterActivation() {
-        SemiAutomaticMode fireMode = new SemiAutomaticMode(taskRunner, item, DELAY_BETWEEN_SHOTS);
-        fireMode.startCycle();
-
-        assertFalse(fireMode.isCycling());
+        verify(cooldownSchedule).stop();
     }
 }
