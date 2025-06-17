@@ -1,8 +1,20 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface FireMode {
 
-    void addShotObserver(ShotObserver observer);
+    /**
+     * Registers a {@link ShotObserver} to be notified whenever a shot is fired as part of this {@code FireMode}'s
+     * firing cycle.
+     * <p>
+     * Observers are typically used to perform actions such as spawning projectiles, playing effects, or applying
+     * recoil when a shot occurs. Multiple observers may be registered and will be notified in the order they were
+     * added.
+     *
+     * @param observer the observer to register
+     */
+    void addShotObserver(@NotNull ShotObserver observer);
 
     /**
      * Starts a shooting cycle.
