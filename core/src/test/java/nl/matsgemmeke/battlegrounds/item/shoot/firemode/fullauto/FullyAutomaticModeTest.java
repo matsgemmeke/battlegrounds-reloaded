@@ -1,85 +1,97 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.AutomaticFireCycleRunnable;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
+import nl.matsgemmeke.battlegrounds.item.shoot.firemode.ShotObserver;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class FullyAutomaticModeTest {
 
-    private Shootable item;
-    private TaskRunner taskRunner;
+    private static final int RATE_OF_FIRE = 600;
+
+    private Schedule shotSchedule;
+    private Schedule cooldownSchedule;
 
     @BeforeEach
     public void setUp() {
-        item = mock(Shootable.class);
-        taskRunner = mock(TaskRunner.class);
+        shotSchedule = mock(Schedule.class);
+        cooldownSchedule = mock(Schedule.class);
     }
 
     @Test
-    public void activatesWithCorrectDelayAndPeriod() {
-        int rateOfFire = 1200;
+    public void isCyclingReturnsFalseWhenNotStarted() {
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(shotSchedule, cooldownSchedule, RATE_OF_FIRE);
+        boolean cycling = fireMode.isCycling();
 
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
+        assertThat(cycling).isFalse();
+    }
+
+    @Test
+    public void isCyclingReturnsTrueWhenHavingStarted() {
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(shotSchedule, cooldownSchedule, RATE_OF_FIRE);
         fireMode.startCycle();
+        boolean cycling = fireMode.isCycling();
 
-        verify(taskRunner).runTaskTimer(any(AutomaticFireCycleRunnable.class), eq(0L), eq(1L));
+        assertThat(cycling).isTrue();
     }
 
     @Test
-    public void shouldNotCancelIfNotActivated() {
-        int rateOfFire = 600;
+    public void startCycleDoesNotStartSchedulesWhenHavingAlreadyStarted() {
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(shotSchedule, cooldownSchedule, RATE_OF_FIRE);
+        fireMode.startCycle();
+        boolean started = fireMode.startCycle();
 
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
+        assertThat(started).isFalse();
+
+        verify(shotSchedule, times(1)).start();
+        verify(cooldownSchedule, times(1)).start();
+    }
+
+    @Test
+    public void startCycleStartsShotScheduleThatNotifiesObserversAndCooldownScheduleThatStopsCycle() {
+        ShotObserver shotObserver = mock(ShotObserver.class);
+
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(shotSchedule, cooldownSchedule, RATE_OF_FIRE);
+        fireMode.addShotObserver(shotObserver);
+        boolean started = fireMode.startCycle();
+
+        ArgumentCaptor<ScheduleTask> notifyObserversScheduleTask = ArgumentCaptor.forClass(ScheduleTask.class);
+        verify(shotSchedule).addTask(notifyObserversScheduleTask.capture());
+        notifyObserversScheduleTask.getValue().run();
+
+        ArgumentCaptor<ScheduleTask> cancelCycleScheduleTask = ArgumentCaptor.forClass(ScheduleTask.class);
+        verify(cooldownSchedule).addTask(cancelCycleScheduleTask.capture());
+        cancelCycleScheduleTask.getValue().run();
+
+        assertThat(started).isTrue();
+
+        verify(shotObserver).onShotFired();
+        verify(shotSchedule).stop();
+        verify(cooldownSchedule).stop();
+    }
+
+    @Test
+    public void cancelCycleReturnFalseWhenNotStarted() {
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(shotSchedule, cooldownSchedule, RATE_OF_FIRE);
         boolean cancelled = fireMode.cancelCycle();
 
-        assertFalse(cancelled);
+        assertThat(cancelled).isFalse();
     }
 
     @Test
-    public void cancelingStopsCurrentCycle() {
-        BukkitTask task = mock(BukkitTask.class);
-
-        when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
-
-        int rateOfFire = 600;
-
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
+    public void cancelCycleReturnTrueAndCancelsCycleWhenHavingStarted() {
+        FullyAutomaticMode fireMode = new FullyAutomaticMode(shotSchedule, cooldownSchedule, RATE_OF_FIRE);
         fireMode.startCycle();
         boolean cancelled = fireMode.cancelCycle();
 
-        assertTrue(cancelled);
+        assertThat(cancelled).isTrue();
 
-        verify(task).cancel();
-    }
-
-    @Test
-    public void shouldNotBeCyclingIfNotActivated() {
-        int rateOfFire = 600;
-
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
-
-        assertFalse(fireMode.isCycling());
-    }
-
-    @Test
-    public void shouldBeCyclingIfActivated() {
-        int rateOfFire = 600;
-
-        BukkitTask task = mock(BukkitTask.class);
-
-        when(taskRunner.runTaskTimer(any(BukkitRunnable.class), anyLong(), anyLong())).thenReturn(task);
-
-        FullyAutomaticMode fireMode = new FullyAutomaticMode(taskRunner, item, rateOfFire);
-        fireMode.startCycle();
-
-        assertTrue(fireMode.isCycling());
+        verify(shotSchedule).stop();
+        verify(cooldownSchedule).stop();
     }
 }

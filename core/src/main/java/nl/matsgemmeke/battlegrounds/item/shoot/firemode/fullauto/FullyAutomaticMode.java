@@ -1,68 +1,57 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.AutomaticFireCycleRunnable;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.BaseFireMode;
-import org.bukkit.scheduler.BukkitTask;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class FullyAutomaticMode extends BaseFireMode {
 
-    @Nullable
-    private BukkitTask currentTask;
+    private boolean cycling;
+    @NotNull
+    private final Schedule shotSchedule;
+    @NotNull
+    private final Schedule cooldownSchedule;
     private final int rateOfFire;
-    @NotNull
-    private final Shootable item;
-    @NotNull
-    private final TaskRunner taskRunner;
 
-    @Inject
-    public FullyAutomaticMode(@NotNull TaskRunner taskRunner, @Assisted @NotNull Shootable item, @Assisted int rateOfFire) {
-        this.taskRunner = taskRunner;
-        this.item = item;
+    public FullyAutomaticMode(@NotNull Schedule shotSchedule, @NotNull Schedule cooldownSchedule, int rateOfFire) {
+        this.shotSchedule = shotSchedule;
+        this.cooldownSchedule = cooldownSchedule;
         this.rateOfFire = rateOfFire;
+        this.cycling = false;
     }
 
     public int getRateOfFire() {
         return rateOfFire;
     }
 
-    public boolean startCycle() {
-        // The amount of interaction events per second received when holding down the right mouse button
-        int interactionsPerSecond = 5;
-        // The interval between interactions in ticks
-        int interactionsInterval = 4;
-        // Convert rate of fire to amount of rounds fired per second
-        int roundsPerSecond = rateOfFire / 60;
-        // Amount of rounds to be fired for one click cycle
-        int amountOfRounds = roundsPerSecond / interactionsPerSecond;
-        // Amount of ticks between the rounds being fired
-        long period = interactionsInterval / amountOfRounds;
-        long delay = 0;
+    public boolean isCycling() {
+        return cycling;
+    }
 
-        currentTask = taskRunner.runTaskTimer(
-                new AutomaticFireCycleRunnable(item, amountOfRounds, this::cancelCycle),
-                delay,
-                period
-        );
+    public boolean startCycle() {
+        if (cycling) {
+            return false;
+        }
+
+        cycling = true;
+
+        shotSchedule.clearTasks();
+        shotSchedule.addTask(this::notifyShotObservers);
+        shotSchedule.start();
+        cooldownSchedule.clearTasks();
+        cooldownSchedule.addTask(this::cancelCycle);
+        cooldownSchedule.start();
         return true;
     }
 
     public boolean cancelCycle() {
-        if (currentTask == null) {
+        if (!cycling) {
             return false;
         }
 
-        currentTask.cancel();
-        currentTask = null;
+        cycling = false;
+        shotSchedule.stop();
+        cooldownSchedule.stop();
         return true;
-    }
-
-    public boolean isCycling() {
-        return currentTask != null;
     }
 }
