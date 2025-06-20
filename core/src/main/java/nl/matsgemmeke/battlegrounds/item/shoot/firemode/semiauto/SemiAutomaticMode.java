@@ -6,10 +6,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class SemiAutomaticMode extends BaseFireMode {
 
-    private boolean cycling;
     @NotNull
     private final Schedule cooldownSchedule;
     private final int rateOfFire;
+    private boolean cycling;
 
     public SemiAutomaticMode(@NotNull Schedule cooldownSchedule, int rateOfFire) {
         this.cooldownSchedule = cooldownSchedule;

@@ -53,7 +53,7 @@ public class GunSpecLoader {
     private static final String FIRE_MODE_TYPE_ROUTE = "shooting.fire-mode.type";
     private static final String FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE = "shooting.fire-mode.amount-of-shots";
     private static final String FIRE_MODE_RATE_OF_FIRE_ROUTE = "shooting.fire-mode.rate-of-fire";
-    private static final String FIRE_MODE_DELAY_BETWEEN_SHOTS_ROUTE = "shooting.fire-mode.delay-between-shots";
+    private static final String FIRE_MODE_CYCLE_COOLDOWN_ROUTE = "shooting.fire-mode.cycle-cooldown";
 
     private static final String RECOIL_TYPE_ROUTE = "shooting.recoil.type";
     private static final String RECOIL_HORIZONTAL_ROUTE = "shooting.recoil.horizontal";
@@ -209,9 +209,9 @@ public class GunSpecLoader {
                 .validate(new RequiredIfFieldEqualsValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, Set.of("BURST_MODE", "FULLY_AUTOMATIC")))
                 .resolve();
         Long delayBetweenShots = new FieldSpecResolver<Long>()
-                .route(FIRE_MODE_DELAY_BETWEEN_SHOTS_ROUTE)
-                .value(yamlReader.getOptionalLong(FIRE_MODE_DELAY_BETWEEN_SHOTS_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, "SEMI_AUTOMATIC"))
+                .route(FIRE_MODE_CYCLE_COOLDOWN_ROUTE)
+                .value(yamlReader.getOptionalLong(FIRE_MODE_CYCLE_COOLDOWN_ROUTE).orElse(null))
+                .validate(new RequiredIfFieldEqualsValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, Set.of("BURST_MODE", "SEMI_AUTOMATIC")))
                 .resolve();
         FireModeSpec fireModeSpec = new FireModeSpec(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
 

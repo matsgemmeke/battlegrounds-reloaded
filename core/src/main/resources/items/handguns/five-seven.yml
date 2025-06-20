@@ -21,7 +21,7 @@ reloading:
   type: MAGAZINE
 shooting:
   fire-mode:
-    delay-between-shots: 2
+    cycle-cooldown: 2
     type: SEMI_AUTOMATIC
   headshot-damage-multiplier: 1.4
   range:

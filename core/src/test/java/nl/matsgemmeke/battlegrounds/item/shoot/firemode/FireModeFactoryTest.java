@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstMode;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto.SemiAutomaticMode;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
@@ -25,13 +25,11 @@ import static org.mockito.Mockito.when;
 
 public class FireModeFactoryTest {
 
-    private BurstModeFactory burstModeFactory;
     private Scheduler scheduler;
     private Shootable item;
 
     @BeforeEach
     public void setUp() {
-        burstModeFactory = mock(BurstModeFactory.class);
         scheduler = mock(Scheduler.class);
         item = mock(Shootable.class);
     }
@@ -40,27 +38,35 @@ public class FireModeFactoryTest {
     public void createReturnsBurstModeInstance() {
         int amountOfShots = 3;
         int rateOfFire = 600;
+        long cycleCooldown = 20L;
+        FireModeSpec spec = new FireModeSpec("BURST_MODE", amountOfShots, rateOfFire, cycleCooldown);
 
-        FireModeSpec spec = new FireModeSpec("BURST_MODE", amountOfShots, rateOfFire, null);
+        Schedule shotSchedule = mock(Schedule.class);
+        Schedule cooldownSchedule = mock(Schedule.class);
 
-        BurstMode fireMode = mock(BurstMode.class);
-        when(burstModeFactory.create(item, amountOfShots, rateOfFire)).thenReturn(fireMode);
+        when(scheduler.createRepeatingSchedule(0L, 2L)).thenReturn(shotSchedule);
+        when(scheduler.createSingleRunSchedule(cycleCooldown)).thenReturn(cooldownSchedule);
 
-        FireModeFactory factory = new FireModeFactory(burstModeFactory, scheduler);
-        FireMode result = factory.create(spec, item);
+        FireModeFactory factory = new FireModeFactory(scheduler);
+        FireMode fireMode = factory.create(spec, item);
 
-        assertThat(result).isEqualTo(fireMode);
+        assertThat(fireMode).isInstanceOf(BurstMode.class);
     }
 
-    @Test
-    public void createThrowsFireModeCreationExceptionWhenTypeEqualsFullyAutomaticAndRateOfFireValueInSpecIsNull() {
-        FireModeSpec spec = new FireModeSpec("FULLY_AUTOMATIC", null, null, null);
+    @ParameterizedTest
+    @CsvSource(value = {
+            "null,null,null,amountOfShots",
+            "3,null,null,rateOfFire",
+            "3,600,null,cycleCooldown"
+    }, nullValues = "null")
+    public void createThrowsFireModeCreationExceptionWhenTypeEqualsBurstModeAndRequiredVarsInSpecAreNull(Integer amountOfShots, Integer rateOfFire, Long cycleCooldown, String missingVar) {
+        FireModeSpec spec = new FireModeSpec("BURST_MODE", amountOfShots, rateOfFire, cycleCooldown);
 
-        FireModeFactory factory = new FireModeFactory(burstModeFactory, scheduler);
+        FireModeFactory factory = new FireModeFactory(scheduler);
 
         assertThatThrownBy(() -> factory.create(spec, item))
                 .isInstanceOf(FireModeCreationException.class)
-                .hasMessage("Cannot create FULLY_AUTOMATIC because of invalid spec: Required 'rateOfFire' value is missing");
+                .hasMessage("Cannot create BURST_MODE because of invalid spec: Required '" + missingVar + "' value is missing");
     }
 
     @NotNull
@@ -83,7 +89,7 @@ public class FireModeFactoryTest {
         when(scheduler.createRepeatingSchedule(0L, expectedInterval)).thenReturn(shotSchedule);
         when(scheduler.createSingleRunSchedule(expectedCooldownDuration)).thenReturn(cooldownSchedule);
 
-        FireModeFactory factory = new FireModeFactory(burstModeFactory, scheduler);
+        FireModeFactory factory = new FireModeFactory(scheduler);
         FireMode fireMode = factory.create(spec, item);
 
         assertThat(fireMode).isInstanceOf(FullyAutomaticMode.class);
@@ -93,11 +99,11 @@ public class FireModeFactoryTest {
     public void createThrowsFireModeCreationExceptionWhenTypeEqualsSemiAutomaticAndDelayBetweenShotsValueInSpecIsNull() {
         FireModeSpec spec = new FireModeSpec("SEMI_AUTOMATIC", null, null, null);
 
-        FireModeFactory factory = new FireModeFactory(burstModeFactory, scheduler);
+        FireModeFactory factory = new FireModeFactory(scheduler);
 
         assertThatThrownBy(() -> factory.create(spec, item))
                 .isInstanceOf(FireModeCreationException.class)
-                .hasMessage("Cannot create SEMI_AUTOMATIC because of invalid spec: Required 'delayBetweenShots' value is missing");
+                .hasMessage("Cannot create SEMI_AUTOMATIC because of invalid spec: Required 'cycleCooldown' value is missing");
     }
 
     @NotNull
@@ -119,7 +125,7 @@ public class FireModeFactoryTest {
         Schedule cooldownSchedule = mock(Schedule.class);
         when(scheduler.createSingleRunSchedule(delayBetweenShots)).thenReturn(cooldownSchedule);
 
-        FireModeFactory factory = new FireModeFactory(burstModeFactory, scheduler);
+        FireModeFactory factory = new FireModeFactory(scheduler);
         FireMode result = factory.create(spec, item);
 
         assertThat(result).isInstanceOf(SemiAutomaticMode.class);

@@ -1,71 +1,70 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.AutomaticFireCycleRunnable;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.BaseFireMode;
-import org.bukkit.scheduler.BukkitTask;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class BurstMode extends BaseFireMode {
 
-    @Nullable
-    private BukkitTask currentTask;
+    @NotNull
+    private final Schedule shotSchedule;
+    @NotNull
+    private final Schedule cooldownSchedule;
     private final int amountOfShots;
     private final int rateOfFire;
-    @NotNull
-    private final Shootable item;
-    @NotNull
-    private final TaskRunner taskRunner;
+    private boolean cycling;
+    private int shotCount;
 
-    @Inject
-    public BurstMode(
-            @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull Shootable item,
-            @Assisted("AmountOfShots") int amountOfShots,
-            @Assisted("RateOfFire") int rateOfFire
-    ) {
-        this.taskRunner = taskRunner;
-        this.item = item;
+    public BurstMode(@NotNull Schedule shotSchedule, @NotNull Schedule cooldownSchedule, int amountOfShots, int rateOfFire) {
+        this.shotSchedule = shotSchedule;
+        this.cooldownSchedule = cooldownSchedule;
         this.amountOfShots = amountOfShots;
         this.rateOfFire = rateOfFire;
+        this.cycling = false;
     }
 
     public int getRateOfFire() {
         return rateOfFire;
     }
 
-    public boolean startCycle() {
-        int ticksPerSecond = 20;
-        // Convert rate of fire to amount of rounds fired per second
-        int shotsPerSecond = rateOfFire / 60;
-        // Amount of ticks between the rounds being fired
-        long period = ticksPerSecond / shotsPerSecond;
-        long delay = 0;
-
-        currentTask = taskRunner.runTaskTimer(
-                new AutomaticFireCycleRunnable(item, amountOfShots, this::cancelCycle),
-                delay,
-                period
-        );
-        return true;
+    public boolean isCycling() {
+        return cycling;
     }
 
-    public boolean cancelCycle() {
-        if (currentTask == null) {
+    public boolean startCycle() {
+        if (cycling) {
             return false;
         }
 
-        currentTask.cancel();
-        currentTask = null;
+        cycling = true;
+        shotCount = 0;
 
+        shotSchedule.clearTasks();
+        shotSchedule.addTask(this::fireShot);
+        shotSchedule.start();
+        cooldownSchedule.clearTasks();
+        cooldownSchedule.addTask(this::cancelCycle);
+        cooldownSchedule.start();
         return true;
     }
 
-    public boolean isCycling() {
-        return currentTask != null;
+    private void fireShot() {
+        shotCount++;
+        this.notifyShotObservers();
+
+        if (shotCount >= amountOfShots) {
+            shotSchedule.stop();
+        }
+    }
+
+    public boolean cancelCycle() {
+        if (!cycling) {
+            return false;
+        }
+
+        cycling = false;
+        shotSchedule.stop();
+        cooldownSchedule.stop();
+        return true;
     }
 }

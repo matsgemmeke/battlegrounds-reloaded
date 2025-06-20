@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class FullyAutomaticMode extends BaseFireMode {
 
-    private boolean cycling;
     @NotNull
     private final Schedule shotSchedule;
     @NotNull
     private final Schedule cooldownSchedule;
     private final int rateOfFire;
+    private boolean cycling;
 
     public FullyAutomaticMode(@NotNull Schedule shotSchedule, @NotNull Schedule cooldownSchedule, int rateOfFire) {
         this.shotSchedule = shotSchedule;

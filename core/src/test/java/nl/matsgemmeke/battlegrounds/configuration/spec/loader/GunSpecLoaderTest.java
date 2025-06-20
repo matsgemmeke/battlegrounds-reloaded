@@ -105,7 +105,7 @@ public class GunSpecLoaderTest {
         when(yamlReader.getString("shooting.fire-mode.type")).thenReturn(fireModeType);
         when(yamlReader.getOptionalInt("shooting.fire-mode.amount-of-shots")).thenReturn(Optional.empty());
         when(yamlReader.getOptionalInt("shooting.fire-mode.rate-of-fire")).thenReturn(Optional.of(rateOfFire));
-        when(yamlReader.getOptionalLong("shooting.fire-mode.delay-between-shots")).thenReturn(Optional.empty());
+        when(yamlReader.getOptionalLong("shooting.fire-mode.cycle-cooldown")).thenReturn(Optional.empty());
 
         when(yamlReader.contains("shooting.recoil")).thenReturn(true);
         when(yamlReader.getString("shooting.recoil.type")).thenReturn(recoilType);
@@ -161,7 +161,7 @@ public class GunSpecLoaderTest {
         assertThat(spec.fireMode().type()).isEqualTo(fireModeType);
         assertThat(spec.fireMode().amountOfShots()).isNull();
         assertThat(spec.fireMode().rateOfFire()).isEqualTo(rateOfFire);
-        assertThat(spec.fireMode().delayBetweenShots()).isNull();
+        assertThat(spec.fireMode().cycleCooldown()).isNull();
 
         assertThat(spec.recoil()).isNotNull();
         assertThat(spec.recoil().type()).isEqualTo(recoilType);

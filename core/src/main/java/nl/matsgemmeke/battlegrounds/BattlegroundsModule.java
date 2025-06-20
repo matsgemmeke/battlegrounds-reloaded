@@ -44,9 +44,6 @@ import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstMode;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstModeFactory;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.sqlite.SqliteEquipmentStateRepositoryProvider;
@@ -113,10 +110,6 @@ public class BattlegroundsModule implements Module {
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
                 .build(DeploymentHandlerFactory.class));
-
-        binder.install(new FactoryModuleBuilder()
-                .implement(FireMode.class, BurstMode.class)
-                .build(BurstModeFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)
