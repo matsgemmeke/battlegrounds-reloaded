@@ -8,25 +8,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Timer;
 
 /**
- * Factory class responsible for instantiating {@link RecoilProducer} implementation classes.
+ * Factory class responsible for instantiating {@link Recoil} implementation classes.
  */
-public class RecoilProducerFactory {
+public class RecoilFactory {
 
     @NotNull
     private BattlegroundsConfiguration config;
 
     @Inject
-    public RecoilProducerFactory(@NotNull BattlegroundsConfiguration config) {
+    public RecoilFactory(@NotNull BattlegroundsConfiguration config) {
         this.config = config;
     }
 
     /**
-     * Creates a new {@link RecoilProducer} instance based on configuration values.
+     * Creates a new {@link Recoil} instance based on configuration values.
      *
      * @param spec the specification
-     * @return a new producer instance
+     * @return a new recoil instance
      */
-    public RecoilProducer create(@NotNull RecoilSpec spec) {
+    public Recoil create(@NotNull RecoilSpec spec) {
         RecoilType recoilType = RecoilType.valueOf(spec.type());
 
         Float[] horizontalRecoilValues = spec.horizontalRecoilValues().toArray(Float[]::new);
@@ -60,6 +60,6 @@ public class RecoilProducerFactory {
             }
         }
 
-        throw new RecoilProducerCreationException("Invalid recoil type '%s'".formatted(recoilType));
+        throw new RecoilCreationException("Invalid recoil type '%s'".formatted(recoilType));
     }
 }

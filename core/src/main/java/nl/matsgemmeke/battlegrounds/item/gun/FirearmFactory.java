@@ -17,13 +17,13 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
+import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
-import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
-import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
@@ -58,7 +58,7 @@ public class FirearmFactory {
     @NotNull
     private final NamespacedKeyCreator keyCreator;
     @NotNull
-    private final RecoilProducerFactory recoilProducerFactory;
+    private final RecoilFactory recoilFactory;
     @NotNull
     private final ReloadSystemFactory reloadSystemFactory;
     @NotNull
@@ -71,7 +71,7 @@ public class FirearmFactory {
             @NotNull FirearmControlsFactory controlsFactory,
             @NotNull FireModeFactory fireModeFactory,
             @NotNull NamespacedKeyCreator keyCreator,
-            @NotNull RecoilProducerFactory recoilProducerFactory,
+            @NotNull RecoilFactory recoilFactory,
             @NotNull ReloadSystemFactory reloadSystemFactory,
             @NotNull SpreadPatternFactory spreadPatternFactory
     ) {
@@ -80,7 +80,7 @@ public class FirearmFactory {
         this.controlsFactory = controlsFactory;
         this.fireModeFactory = fireModeFactory;
         this.keyCreator = keyCreator;
-        this.recoilProducerFactory = recoilProducerFactory;
+        this.recoilFactory = recoilFactory;
         this.reloadSystemFactory = reloadSystemFactory;
         this.spreadPatternFactory = spreadPatternFactory;
     }
@@ -156,8 +156,8 @@ public class FirearmFactory {
         SpreadPatternSpec spreadPatternSpec = spec.spreadPattern();
 
         if (recoilSpec != null) {
-            RecoilProducer recoilProducer = recoilProducerFactory.create(recoilSpec);
-            firearm.setRecoilProducer(recoilProducer);
+            Recoil recoil = recoilFactory.create(recoilSpec);
+            firearm.setRecoil(recoil);
         }
 
         if (scopeSpec != null) {

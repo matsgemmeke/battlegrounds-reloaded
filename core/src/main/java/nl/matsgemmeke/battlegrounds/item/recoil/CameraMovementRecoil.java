@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 import java.util.Timer;
 
-public class CameraMovementRecoil implements RecoilProducer {
+public class CameraMovementRecoil implements Recoil {
 
     private Float[] horizontalRecoilValues;
     private Float[] verticalRecoilValues;

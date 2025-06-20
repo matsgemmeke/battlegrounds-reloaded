@@ -1,12 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
+import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
@@ -31,7 +31,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     protected ItemTemplate itemTemplate;
     protected RangeProfile rangeProfile;
     @Nullable
-    protected RecoilProducer recoilProducer;
+    protected Recoil recoil;
     protected ReloadSystem reloadSystem;
     @Nullable
     protected ScopeAttachment scopeAttachment;
@@ -96,12 +96,12 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     }
 
     @Nullable
-    public RecoilProducer getRecoilProducer() {
-        return recoilProducer;
+    public Recoil getRecoil() {
+        return recoil;
     }
 
-    public void setRecoilProducer(@Nullable RecoilProducer recoilProducer) {
-        this.recoilProducer = recoilProducer;
+    public void setRecoil(@Nullable Recoil recoil) {
+        this.recoil = recoil;
     }
 
     @NotNull

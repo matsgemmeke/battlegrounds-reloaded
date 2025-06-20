@@ -187,8 +187,8 @@ public class DefaultFirearm extends BaseGun implements Firearm {
         ammunitionStorage.setMagazineAmmo(ammunitionStorage.getMagazineAmmo() - 1);
         audioEmitter.playSounds(shotSounds, direction);
 
-        if (recoilProducer != null) {
-            direction = recoilProducer.produceRecoil(holder, direction);
+        if (recoil != null) {
+            direction = recoil.produceRecoil(holder, direction);
         }
 
         for (Location projectileDirection : this.getProjectileDirections(direction)) {

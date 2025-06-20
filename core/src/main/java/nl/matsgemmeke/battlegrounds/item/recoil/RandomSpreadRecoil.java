@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public class RandomSpreadRecoil implements RecoilProducer {
+public class RandomSpreadRecoil implements Recoil {
 
     private Float[] horizontalRecoilValues;
     private Float[] verticalRecoilValues;

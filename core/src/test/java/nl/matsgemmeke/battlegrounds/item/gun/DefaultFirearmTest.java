@@ -8,13 +8,13 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
@@ -498,22 +498,22 @@ public class DefaultFirearmTest {
     public void shouldProduceRecoilWhenShooting() {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
         RangeProfile rangeProfile = new RangeProfile(0, 0, 0, 0, 0, 0);
-        RecoilProducer recoilProducer = mock(RecoilProducer.class);
+        Recoil recoil = mock(Recoil.class);
         World world = mock(World.class);
         Location startingLocation = new Location(world, 1.0, 1.0, 1.0);
 
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        when(recoilProducer.produceRecoil(eq(holder), any(Location.class))).thenReturn(startingLocation);
+        when(recoil.produceRecoil(eq(holder), any(Location.class))).thenReturn(startingLocation);
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
         firearm.setRangeProfile(rangeProfile);
-        firearm.setRecoilProducer(recoilProducer);
+        firearm.setRecoil(recoil);
         firearm.shoot();
 
-        verify(recoilProducer).produceRecoil(eq(holder), any(Location.class));
+        verify(recoil).produceRecoil(eq(holder), any(Location.class));
     }
 
     @Test
