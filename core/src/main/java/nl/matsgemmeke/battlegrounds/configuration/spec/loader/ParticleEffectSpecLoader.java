@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.DustOptionsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
@@ -18,12 +19,16 @@ public class ParticleEffectSpecLoader {
     private static final String OFFSET_Z_ROUTE = "offset-z";
     private static final String EXTRA_ROUTE = "extra";
     private static final String BLOCK_DATA_ROUTE = "block-data";
+    private static final String DUST_OPTIONS_ROUTE = "dust-options";
 
+    @NotNull
+    private final DustOptionsSpecLoader dustOptionsSpecLoader;
     @NotNull
     private final YamlReader yamlReader;
 
-    public ParticleEffectSpecLoader(@NotNull YamlReader yamlReader) {
+    public ParticleEffectSpecLoader(@NotNull YamlReader yamlReader, @NotNull DustOptionsSpecLoader dustOptionsSpecLoader) {
         this.yamlReader = yamlReader;
+        this.dustOptionsSpecLoader = dustOptionsSpecLoader;
     }
 
     @NotNull
@@ -35,6 +40,7 @@ public class ParticleEffectSpecLoader {
         String offsetZRoute = this.createRoute(baseRoute, OFFSET_Z_ROUTE);
         String extraRoute = this.createRoute(baseRoute, EXTRA_ROUTE);
         String blockDataRoute = this.createRoute(baseRoute, BLOCK_DATA_ROUTE);
+        String dustOptionsRoute = this.createRoute(baseRoute, DUST_OPTIONS_ROUTE);
 
         String particle = new FieldSpecResolver<String>()
                 .route(particleRoute)
@@ -72,7 +78,13 @@ public class ParticleEffectSpecLoader {
                 .validate(new EnumValidator<>(Material.class))
                 .resolve();
 
-        return new ParticleEffectSpec(particle, count, offsetX, offsetY, offsetZ, extra, blockData);
+        DustOptionsSpec dustOptionsSpec = null;
+
+        if (yamlReader.contains(dustOptionsRoute)) {
+            dustOptionsSpec = dustOptionsSpecLoader.loadSpec(dustOptionsRoute);
+        }
+
+        return new ParticleEffectSpec(particle, count, offsetX, offsetY, offsetZ, extra, blockData, dustOptionsSpec);
     }
 
     @NotNull

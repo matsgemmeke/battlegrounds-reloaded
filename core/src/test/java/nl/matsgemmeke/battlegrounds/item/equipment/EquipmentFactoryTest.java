@@ -206,7 +206,7 @@ public class EquipmentFactoryTest {
     public void createReturnsEquipmentWithDestructionParticleEffect() {
         ItemStackSpec displayItemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK");
-        ParticleEffectSpec destructionParticleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
+        ParticleEffectSpec destructionParticleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE", null);
         DeploymentSpec deploymentSpec = new DeploymentSpec(50.0, true, false, false, false, destructionParticleEffectSpec, Map.of(), null, null, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 

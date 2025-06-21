@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.DustOptionsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,7 @@ public class ParticleEffectSpecLoaderTest {
         Double offsetZ = 0.3;
         Double extra = 0.0;
         String blockData = "STONE";
+        DustOptionsSpec dustOptionsSpec = new DustOptionsSpec("#ab1234", 1);
 
         YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("base-route.particle")).thenReturn(particle);
@@ -32,8 +34,12 @@ public class ParticleEffectSpecLoaderTest {
         when(yamlReader.getOptionalDouble("base-route.offset-z")).thenReturn(Optional.of(offsetZ));
         when(yamlReader.getOptionalDouble("base-route.extra")).thenReturn(Optional.of(extra));
         when(yamlReader.getString("base-route.block-data")).thenReturn(blockData);
+        when(yamlReader.contains("base-route.dust-options")).thenReturn(true);
 
-        ParticleEffectSpecLoader specLoader = new ParticleEffectSpecLoader(yamlReader);
+        DustOptionsSpecLoader dustOptionsSpecLoader = mock(DustOptionsSpecLoader.class);
+        when(dustOptionsSpecLoader.loadSpec("base-route.dust-options")).thenReturn(dustOptionsSpec);
+
+        ParticleEffectSpecLoader specLoader = new ParticleEffectSpecLoader(yamlReader, dustOptionsSpecLoader);
         ParticleEffectSpec spec = specLoader.loadSpec(BASE_ROUTE);
 
         assertThat(spec.particle()).isEqualTo(particle);
@@ -43,5 +49,6 @@ public class ParticleEffectSpecLoaderTest {
         assertThat(spec.offsetZ()).isEqualTo(offsetZ);
         assertThat(spec.extra()).isEqualTo(extra);
         assertThat(spec.blockData()).isEqualTo(blockData);
+        assertThat(spec.dustOptions()).isEqualTo(dustOptionsSpec);
     }
 }

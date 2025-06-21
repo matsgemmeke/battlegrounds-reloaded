@@ -1,9 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.mapper;
 
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.DustOptionsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.jetbrains.annotations.NotNull;
 
 public class ParticleEffectMapper {
@@ -25,6 +28,17 @@ public class ParticleEffectMapper {
             blockDataMaterial = Material.valueOf(blockDataMaterialValue);
         }
 
-        return new ParticleEffect(particle, spec.count(), spec.offsetX(), spec.offsetY(), spec.offsetZ(), spec.extra(), blockDataMaterial);
+        DustOptions dustOptions = null;
+        DustOptionsSpec dustOptionsSpec = spec.dustOptions();
+
+        if (dustOptionsSpec != null) {
+            java.awt.Color javaColor = java.awt.Color.decode(dustOptionsSpec.color());
+            Color color = Color.fromRGB(javaColor.getRed(), javaColor.getGreen(), javaColor.getBlue());
+            int size = dustOptionsSpec.size();
+
+            dustOptions = new DustOptions(color, size);
+        }
+
+        return new ParticleEffect(particle, spec.count(), spec.offsetX(), spec.offsetY(), spec.offsetZ(), spec.extra(), blockDataMaterial, dustOptions);
     }
 }

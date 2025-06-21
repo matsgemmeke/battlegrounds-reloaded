@@ -191,7 +191,7 @@ public class ItemEffectFactoryTest {
 
     @Test
     public void createInstanceForSmokeScreenEffectType() {
-        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("CAMPFIRE_COSY_SMOKE", 1, 0.1, 0.1, 0.1, 0.0, null);
+        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("CAMPFIRE_COSY_SMOKE", 1, 0.1, 0.1, 0.1, 0.0, null, null);
         ItemEffectSpec effectSpec = new ItemEffectSpec("SMOKE_SCREEN", List.of(triggerSpec), null, 2.5, 5.0, 5.0, 0.5, 5L, 100L, 200L, null, null, null, null, particleEffectSpec, null, null);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);

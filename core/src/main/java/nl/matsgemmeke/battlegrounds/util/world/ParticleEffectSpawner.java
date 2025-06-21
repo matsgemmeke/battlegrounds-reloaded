@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.NotNull;
@@ -24,12 +25,15 @@ public class ParticleEffectSpawner {
         double offsetY = particleEffect.offsetY();
         double offsetZ = particleEffect.offsetZ();
         double extra = particleEffect.extra();
+
         Material material = particleEffect.blockDataMaterial();
+        DustOptions dustOptions = particleEffect.dustOptions();
 
         if (material != null) {
             BlockData blockData = material.createBlockData();
-
             world.spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra, blockData);
+        } else if (dustOptions != null) {
+            world.spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra, dustOptions);
         } else {
             world.spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra);
         }

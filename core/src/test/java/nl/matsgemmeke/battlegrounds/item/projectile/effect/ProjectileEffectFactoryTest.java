@@ -114,7 +114,7 @@ public class ProjectileEffectFactoryTest {
         TrailEffect trailEffect = mock(TrailEffect.class);
         Integer maxActivations = 2;
         TriggerSpec triggerSpec = new TriggerSpec("FLOOR_HIT", 10L, 1L, null, null);
-        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null);
+        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
 
         ProjectileEffectSpec spec = new ProjectileEffectSpec("TRAIL", null, null, null, maxActivations, particleEffectSpec, List.of(triggerSpec));
         when(trailEffectFactory.create(any(TrailProperties.class))).thenReturn(trailEffect);

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 public class TrailEffectTest {
 
     private static final int MAX_ACTIVATIONS = 2;
-    private static final ParticleEffect PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0, 0, 0, 0, null);
+    private static final ParticleEffect PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0, 0, 0, 0, null, null);
 
     private Entity deployerEntity;
     private ParticleEffectSpawner particleEffectSpawner;

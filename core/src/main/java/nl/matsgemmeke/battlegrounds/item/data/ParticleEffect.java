@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.data;
 
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,5 +13,6 @@ public record ParticleEffect(
         double offsetY,
         double offsetZ,
         double extra,
-        @Nullable Material blockDataMaterial
+        @Nullable Material blockDataMaterial,
+        @Nullable DustOptions dustOptions
 ) { }

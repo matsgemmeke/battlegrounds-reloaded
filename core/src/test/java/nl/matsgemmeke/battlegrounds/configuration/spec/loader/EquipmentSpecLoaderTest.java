@@ -45,7 +45,7 @@ public class EquipmentSpecLoaderTest {
         Boolean undoEffectOnDestruction = false;
         Boolean removeDeploymentOnCleanup = false;
         Map<String, Object> resistances = Map.of("explosive-damage", 0.5);
-        ParticleEffectSpec destructionParticleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
+        ParticleEffectSpec destructionParticleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE", null);
 
         Double throwVelocity = 2.0;
         Long throwCooldown = 20L;
@@ -57,7 +57,7 @@ public class EquipmentSpecLoaderTest {
 
         TriggerSpec triggerSpec = new TriggerSpec("TIMED", 1L, null, null, null);
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(35.0, 10.0, 25.0, 20.0, 15.0, 30.0);
-        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 10, 0.1, 0.2, 0.3, 0.0, null);
+        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 10, 0.1, 0.2, 0.3, 0.0, null, null);
         PotionEffectSpec potionEffectSpec = new PotionEffectSpec("BLINDNESS", 100, 1, true, false, true);
         ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 200L, 100L, 20L, 10L);
         ItemEffectSpec effectSpec = new ItemEffectSpec("EXPLOSION", List.of(triggerSpec), rangeProfileSpec, 5.0, 1.0, 3.0, 0.5, 2L, 200L, 100L, null, 2.0f, true, false, particleEffectSpec, potionEffectSpec, activationPatternSpec);

@@ -23,7 +23,7 @@ public class ProjectileEffectSpecLoaderTest {
         Double horizontalFriction = 3.0;
         Double verticalFriction = 2.0;
         Integer maxActivations = 3;
-        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null);
+        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
         Set<String> triggerRoutes = Set.of("floor-hit");
         TriggerSpec triggerSpec = new TriggerSpec("FLOOR_HIT", 5L, 1L, null, null);
 

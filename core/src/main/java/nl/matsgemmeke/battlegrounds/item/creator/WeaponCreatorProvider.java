@@ -132,8 +132,10 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             YamlReader yamlReader = new YamlReader(file, null);
             yamlReader.load();
 
+            DustOptionsSpecLoader dustOptionsSpecLoader = new DustOptionsSpecLoader(yamlReader);
+            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader, dustOptionsSpecLoader);
+
             ActivationPatternSpecLoader activationPatternSpecLoader = new ActivationPatternSpecLoader(yamlReader);
-            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader);
             PotionEffectSpecLoader potionEffectSpecLoader = new PotionEffectSpecLoader(yamlReader);
             RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
             TriggerSpecLoader triggerSpecLoader = new TriggerSpecLoader(yamlReader);
