@@ -24,6 +24,18 @@ shooting:
     rate-of-fire: 600
     type: FULLY_AUTOMATIC
   headshot-damage-multiplier: 1.4
+  projectile:
+    type: BULLET
+    trajectory-particle-effect:
+      particle: REDSTONE
+      count: 1
+      offset-x: 0.0
+      offset-y: 0.0
+      offset-z: 0.0
+      extra: 0
+      dust-options:
+        color: '#ffffff'
+        size: 1
   range:
     long-range:
       damage: 20.0
