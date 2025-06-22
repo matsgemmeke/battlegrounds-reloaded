@@ -1,10 +1,11 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;

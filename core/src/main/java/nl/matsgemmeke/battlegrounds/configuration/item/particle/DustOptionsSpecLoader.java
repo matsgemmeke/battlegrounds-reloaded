@@ -1,8 +1,7 @@
-package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
+package nl.matsgemmeke.battlegrounds.configuration.item.particle;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.DustOptionsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RegexValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
 import org.jetbrains.annotations.NotNull;

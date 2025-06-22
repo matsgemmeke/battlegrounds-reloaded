@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
+package nl.matsgemmeke.battlegrounds.configuration.item.particle;
 
 import java.util.Collections;
 import java.util.EnumSet;

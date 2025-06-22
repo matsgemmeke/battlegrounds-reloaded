@@ -1,7 +1,5 @@
-package nl.matsgemmeke.battlegrounds.configuration.spec.item;
+package nl.matsgemmeke.battlegrounds.configuration.item.particle;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.loader.ParticleEffectOptionType;
-import nl.matsgemmeke.battlegrounds.configuration.spec.loader.ParticleEffectOptions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ManualActivationSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;

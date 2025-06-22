@@ -1,8 +1,6 @@
-package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
+package nl.matsgemmeke.battlegrounds.configuration.item.particle;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.DustOptionsSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

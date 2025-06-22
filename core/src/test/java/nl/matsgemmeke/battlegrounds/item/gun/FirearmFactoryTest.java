@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;

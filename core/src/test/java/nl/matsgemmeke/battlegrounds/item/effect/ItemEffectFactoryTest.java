@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.PotionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;

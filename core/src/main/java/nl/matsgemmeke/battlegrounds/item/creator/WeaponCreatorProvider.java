@@ -6,6 +6,8 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.DustOptionsSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;

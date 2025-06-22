@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.spec.item;
+package nl.matsgemmeke.battlegrounds.configuration.item.particle;
 
 import org.jetbrains.annotations.NotNull;
 

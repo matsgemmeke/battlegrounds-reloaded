@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

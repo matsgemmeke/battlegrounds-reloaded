@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.mapper;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.DustOptionsSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.DustOptionsSpec;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import org.bukkit.Color;
 import org.bukkit.Material;

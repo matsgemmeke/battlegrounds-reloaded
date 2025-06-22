@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import jakarta.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ShootingSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;

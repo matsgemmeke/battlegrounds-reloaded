@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.OneOfValidator;
