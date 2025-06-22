@@ -3,10 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ScopeSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -30,8 +27,7 @@ import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
-import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -54,13 +50,13 @@ public class FirearmFactory {
     @NotNull
     private final FirearmControlsFactory controlsFactory;
     @NotNull
-    private final FireModeFactory fireModeFactory;
-    @NotNull
     private final NamespacedKeyCreator keyCreator;
     @NotNull
     private final RecoilFactory recoilFactory;
     @NotNull
     private final ReloadSystemFactory reloadSystemFactory;
+    @NotNull
+    private final ShootHandlerFactory shootHandlerFactory;
     @NotNull
     private final SpreadPatternFactory spreadPatternFactory;
 
@@ -69,19 +65,19 @@ public class FirearmFactory {
             @NotNull BattlegroundsConfiguration config,
             @NotNull GameContextProvider contextProvider,
             @NotNull FirearmControlsFactory controlsFactory,
-            @NotNull FireModeFactory fireModeFactory,
             @NotNull NamespacedKeyCreator keyCreator,
             @NotNull RecoilFactory recoilFactory,
             @NotNull ReloadSystemFactory reloadSystemFactory,
+            @NotNull ShootHandlerFactory shootHandlerFactory,
             @NotNull SpreadPatternFactory spreadPatternFactory
     ) {
         this.config = config;
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
-        this.fireModeFactory = fireModeFactory;
         this.keyCreator = keyCreator;
         this.recoilFactory = recoilFactory;
         this.reloadSystemFactory = reloadSystemFactory;
+        this.shootHandlerFactory = shootHandlerFactory;
         this.spreadPatternFactory = spreadPatternFactory;
     }
 
@@ -135,20 +131,13 @@ public class FirearmFactory {
         RangeProfile rangeProfile = new RangeProfile(spec.rangeProfile().longRangeDamage(), spec.rangeProfile().longRangeDistance(), spec.rangeProfile().mediumRangeDamage(), spec.rangeProfile().mediumRangeDistance(), spec.rangeProfile().shortRangeDamage(), spec.rangeProfile().shortRangeDistance());
         firearm.setRangeProfile(rangeProfile);
 
-        List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds());
-        firearm.setShotSounds(shotSounds);
-
         ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reload(), firearm, audioEmitter);
         firearm.setReloadSystem(reloadSystem);
 
         ItemControls<GunHolder> controls = controlsFactory.create(spec.controls(), firearm);
         firearm.setControls(controls);
 
-        FireMode fireMode = fireModeFactory.create(spec.fireMode(), firearm);
-
-        ShootHandler shootHandler = new ShootHandler(fireMode, itemRepresentation);
-        shootHandler.registerObservers();
-
+        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting(), gameKey, itemRepresentation);
         firearm.setShootHandler(shootHandler);
 
         RecoilSpec recoilSpec = spec.recoil();

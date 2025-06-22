@@ -13,13 +13,11 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
 
 public class GunSpecLoader {
 
     private static final List<String> ALLOWED_ACTION_VALUES = List.of("CHANGE_FROM", "CHANGE_TO", "DROP_ITEM", "LEFT_CLICK", "PICKUP_ITEM", "RIGHT_CLICK", "SWAP_FROM", "SWAP_TO");
     private static final List<String> ALLOWED_RELOAD_TYPE_VALUES = List.of("MAGAZINE", "MANUAL_INSERTION");
-    private static final List<String> ALLOWED_FIRE_MODE_TYPE_VALUES = List.of("BURST_MODE", "FULLY_AUTOMATIC", "SEMI_AUTOMATIC");
     private static final List<String> ALLOWED_RECOIL_TYPE_VALUES = List.of("CAMERA_MOVEMENT", "RANDOM_SPREAD");
     private static final List<String> ALLOWED_SPREAD_PATTERN_TYPE_VALUES = List.of("BUCKSHOT");
 
@@ -34,7 +32,7 @@ public class GunSpecLoader {
     private static final String RANGE_PROFILE_ROUTE = "shooting.range";
     private static final String HEADSHOT_DAMAGE_MULTIPLIER_ROUTE = "shooting.headshot-damage-multiplier";
 
-    private static final String SHOT_SOUNDS_ROUTE = "shooting.shot-sounds";
+    private static final String SHOOTING_SECTION_ROUTE = "shooting";
 
     private static final String RELOAD_TYPE_ROUTE = "reloading.type";
     private static final String RELOAD_SOUNDS_ROUTE = "reloading.reload-sounds";
@@ -49,11 +47,6 @@ public class GunSpecLoader {
     private static final String USE_SCOPE_ACTION_ROUTE = "controls.scope-use";
     private static final String STOP_SCOPE_ACTION_ROUTE = "controls.scope-stop";
     private static final String CHANGE_SCOPE_MAGNIFICATION_ACTION_ROUTE = "controls.scope-change-magnification";
-
-    private static final String FIRE_MODE_TYPE_ROUTE = "shooting.fire-mode.type";
-    private static final String FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE = "shooting.fire-mode.amount-of-shots";
-    private static final String FIRE_MODE_RATE_OF_FIRE_ROUTE = "shooting.fire-mode.rate-of-fire";
-    private static final String FIRE_MODE_CYCLE_COOLDOWN_ROUTE = "shooting.fire-mode.cycle-cooldown";
 
     private static final String RECOIL_TYPE_ROUTE = "shooting.recoil.type";
     private static final String RECOIL_HORIZONTAL_ROUTE = "shooting.recoil.horizontal";
@@ -75,11 +68,14 @@ public class GunSpecLoader {
     @NotNull
     private final RangeProfileSpecLoader rangeProfileSpecLoader;
     @NotNull
+    private final ShootingSpecLoader shootingSpecLoader;
+    @NotNull
     private final YamlReader yamlReader;
 
-    public GunSpecLoader(@NotNull YamlReader yamlReader, @NotNull RangeProfileSpecLoader rangeProfileSpecLoader) {
+    public GunSpecLoader(@NotNull YamlReader yamlReader, @NotNull RangeProfileSpecLoader rangeProfileSpecLoader, @NotNull ShootingSpecLoader shootingSpecLoader) {
         this.yamlReader = yamlReader;
         this.rangeProfileSpecLoader = rangeProfileSpecLoader;
+        this.shootingSpecLoader = shootingSpecLoader;
     }
 
     @NotNull
@@ -123,10 +119,7 @@ public class GunSpecLoader {
                 .validate(new RequiredValidator<>())
                 .resolve();
 
-        String shotSounds = new FieldSpecResolver<String>()
-                .route(SHOT_SOUNDS_ROUTE)
-                .value(yamlReader.getString(SHOT_SOUNDS_ROUTE))
-                .resolve();
+        ShootingSpec shootingSpec = shootingSpecLoader.loadSpec(SHOOTING_SECTION_ROUTE);
 
         String reloadType = new FieldSpecResolver<String>()
                 .route(RELOAD_TYPE_ROUTE)
@@ -191,29 +184,6 @@ public class GunSpecLoader {
                 .validate(new OneOfValidator<>(ALLOWED_ACTION_VALUES))
                 .resolve();
         ControlsSpec controlsSpec = new ControlsSpec(reloadAction, shootAction, useScopeAction, stopScopeAction, changeScopeMagnificationAction);
-
-        String fireModeType = new FieldSpecResolver<String>()
-                .route(FIRE_MODE_TYPE_ROUTE)
-                .value(yamlReader.getString(FIRE_MODE_TYPE_ROUTE))
-                .validate(new RequiredValidator<>())
-                .validate(new OneOfValidator<>(ALLOWED_FIRE_MODE_TYPE_VALUES))
-                .resolve();
-        Integer amountOfShots = new FieldSpecResolver<Integer>()
-                .route(FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE)
-                .value(yamlReader.getOptionalInt(FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, "BURST_MODE"))
-                .resolve();
-        Integer rateOfFire = new FieldSpecResolver<Integer>()
-                .route(FIRE_MODE_RATE_OF_FIRE_ROUTE)
-                .value(yamlReader.getOptionalInt(FIRE_MODE_RATE_OF_FIRE_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, Set.of("BURST_MODE", "FULLY_AUTOMATIC")))
-                .resolve();
-        Long delayBetweenShots = new FieldSpecResolver<Long>()
-                .route(FIRE_MODE_CYCLE_COOLDOWN_ROUTE)
-                .value(yamlReader.getOptionalLong(FIRE_MODE_CYCLE_COOLDOWN_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, Set.of("BURST_MODE", "SEMI_AUTOMATIC")))
-                .resolve();
-        FireModeSpec fireModeSpec = new FireModeSpec(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
 
         RecoilSpec recoilSpec = null;
         ScopeSpec scopeSpec = null;
@@ -301,6 +271,6 @@ public class GunSpecLoader {
             spreadPatternSpec = new SpreadPatternSpec(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
         }
 
-        return new GunSpec(id, name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, rangeProfileSpec, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
+        return new GunSpec(id, name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, rangeProfileSpec, headshotDamageMultiplier, shootingSpec, reloadSpec, itemSpec, controlsSpec, recoilSpec, scopeSpec, spreadPatternSpec);
     }
 }

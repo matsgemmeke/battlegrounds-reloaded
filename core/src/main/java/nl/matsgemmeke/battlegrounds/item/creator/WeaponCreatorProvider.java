@@ -156,7 +156,11 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
             RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
 
-            GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
+            DustOptionsSpecLoader dustOptionsSpecLoader = new DustOptionsSpecLoader(yamlReader);
+            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader, dustOptionsSpecLoader);
+            ShootingSpecLoader shootingSpecLoader = new ShootingSpecLoader(yamlReader, particleEffectSpecLoader);
+
+            GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader, shootingSpecLoader);
             GunSpec spec = specLoader.loadSpec();
 
             creator.addGunSpec(id, spec);

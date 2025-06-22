@@ -193,15 +193,20 @@ public class WeaponCreatorTest {
 
     private GunSpec createGunSpec(String gunId) {
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(10.0, 35.0, 20.0, 25.0, 30.0, 15.0);
+
+        FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
+        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
+        ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
+        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, null);
+
         ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
         ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
         ControlsSpec controlsSpec = new ControlsSpec("reload", "shoot", null, null, null);
-        FireModeSpec fireModeSpec = new FireModeSpec("test", null, null, null);
         RecoilSpec recoilSpec = new RecoilSpec("recoil type", List.of(), List.of(), null, null, null);
         ScopeSpec scopeSpec = new ScopeSpec(List.of(-0.1f, -0.2f), null, null, null);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("pattern type", 1, 0.5f, 0.5f);
 
-        return new GunSpec(gunId, "Test Gun", null, 1, 1, 1, rangeProfileSpec, 1.0, null, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
+        return new GunSpec(gunId, "Test Gun", null, 1, 1, 1, rangeProfileSpec, 1.0, shootingSpec, reloadSpec, itemSpec, controlsSpec, recoilSpec, scopeSpec, spreadPatternSpec);
     }
 
     private EquipmentSpec createEquipmentSpec(String equipmentId) {

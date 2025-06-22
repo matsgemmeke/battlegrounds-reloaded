@@ -72,15 +72,19 @@ public class ParticleEffectSpecLoader {
                 .route(extraRoute)
                 .value(yamlReader.getOptionalDouble(extraRoute).orElse(null))
                 .resolve();
-        String blockData = new FieldSpecResolver<String>()
-                .route(blockDataRoute)
-                .value(yamlReader.getString(blockDataRoute))
-                .validate(new EnumValidator<>(Material.class))
-                .resolve();
 
+        String blockData = null;
         DustOptionsSpec dustOptionsSpec = null;
 
-        if (yamlReader.contains(dustOptionsRoute)) {
+        if (yamlReader.contains(blockDataRoute) && ParticleEffectOptions.isOptionSupported(particle, ParticleEffectOptionType.BLOCK_DATA)) {
+            blockData = new FieldSpecResolver<String>()
+                    .route(blockDataRoute)
+                    .value(yamlReader.getString(blockDataRoute))
+                    .validate(new EnumValidator<>(Material.class))
+                    .resolve();
+        }
+
+        if (yamlReader.contains(dustOptionsRoute) && ParticleEffectOptions.isOptionSupported(particle, ParticleEffectOptionType.DUST_OPTIONS)) {
             dustOptionsSpec = dustOptionsSpecLoader.loadSpec(dustOptionsRoute);
         }
 

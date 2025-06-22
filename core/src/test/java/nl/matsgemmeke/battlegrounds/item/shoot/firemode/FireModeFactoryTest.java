@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
-import nl.matsgemmeke.battlegrounds.item.shoot.Shootable;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto.SemiAutomaticMode;
@@ -26,12 +25,10 @@ import static org.mockito.Mockito.when;
 public class FireModeFactoryTest {
 
     private Scheduler scheduler;
-    private Shootable item;
 
     @BeforeEach
     public void setUp() {
         scheduler = mock(Scheduler.class);
-        item = mock(Shootable.class);
     }
 
     @Test
@@ -48,7 +45,7 @@ public class FireModeFactoryTest {
         when(scheduler.createSingleRunSchedule(cycleCooldown)).thenReturn(cooldownSchedule);
 
         FireModeFactory factory = new FireModeFactory(scheduler);
-        FireMode fireMode = factory.create(spec, item);
+        FireMode fireMode = factory.create(spec);
 
         assertThat(fireMode).isInstanceOf(BurstMode.class);
     }
@@ -64,7 +61,7 @@ public class FireModeFactoryTest {
 
         FireModeFactory factory = new FireModeFactory(scheduler);
 
-        assertThatThrownBy(() -> factory.create(spec, item))
+        assertThatThrownBy(() -> factory.create(spec))
                 .isInstanceOf(FireModeCreationException.class)
                 .hasMessage("Cannot create BURST_MODE because of invalid spec: Required '" + missingVar + "' value is missing");
     }
@@ -90,7 +87,7 @@ public class FireModeFactoryTest {
         when(scheduler.createSingleRunSchedule(expectedCooldownDuration)).thenReturn(cooldownSchedule);
 
         FireModeFactory factory = new FireModeFactory(scheduler);
-        FireMode fireMode = factory.create(spec, item);
+        FireMode fireMode = factory.create(spec);
 
         assertThat(fireMode).isInstanceOf(FullyAutomaticMode.class);
     }
@@ -101,7 +98,7 @@ public class FireModeFactoryTest {
 
         FireModeFactory factory = new FireModeFactory(scheduler);
 
-        assertThatThrownBy(() -> factory.create(spec, item))
+        assertThatThrownBy(() -> factory.create(spec))
                 .isInstanceOf(FireModeCreationException.class)
                 .hasMessage("Cannot create SEMI_AUTOMATIC because of invalid spec: Required 'cycleCooldown' value is missing");
     }
@@ -126,7 +123,7 @@ public class FireModeFactoryTest {
         when(scheduler.createSingleRunSchedule(delayBetweenShots)).thenReturn(cooldownSchedule);
 
         FireModeFactory factory = new FireModeFactory(scheduler);
-        FireMode result = factory.create(spec, item);
+        FireMode result = factory.create(spec);
 
         assertThat(result).isInstanceOf(SemiAutomaticMode.class);
         assertThat(result.getRateOfFire()).isEqualTo(expectedRateOfFire);

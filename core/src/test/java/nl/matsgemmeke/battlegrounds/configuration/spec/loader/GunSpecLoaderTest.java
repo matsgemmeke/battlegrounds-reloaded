@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,11 +18,13 @@ import static org.mockito.Mockito.when;
 public class GunSpecLoaderTest {
 
     private RangeProfileSpecLoader rangeProfileSpecLoader;
+    private ShootingSpecLoader shootingSpecLoader;
     private YamlReader yamlReader;
 
     @BeforeEach
     public void setUp() {
         rangeProfileSpecLoader = mock(RangeProfileSpecLoader.class);
+        shootingSpecLoader = mock(ShootingSpecLoader.class);
         yamlReader = mock(YamlReader.class);
     }
 
@@ -30,7 +32,7 @@ public class GunSpecLoaderTest {
     public void createSpecThrowsInvalidFieldSpecExceptionWhenValueFromYamlDoesNotPassValidator() {
         when(yamlReader.getString("id")).thenReturn(null);
 
-        GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
+        GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader, shootingSpecLoader);
 
         assertThatThrownBy(specLoader::loadSpec)
                 .isInstanceOf(InvalidFieldSpecException.class)
@@ -50,6 +52,11 @@ public class GunSpecLoaderTest {
 
         Double headshotDamageMultiplier = 2.0;
 
+        FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
+        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
+        ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
+        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, null);
+
         String reloadType = "MAGAZINE";
         Long reloadDuration = 50L;
 
@@ -59,9 +66,6 @@ public class GunSpecLoaderTest {
 
         String reloadAction = "LEFT_CLICK";
         String shootAction = "RIGHT_CLICK";
-
-        String fireModeType = "FULLY_AUTOMATIC";
-        Integer rateOfFire = 600;
 
         String recoilType = "RANDOM_SPREAD";
         List<Float> horizontalRecoilValues = List.of(0.1f);
@@ -86,7 +90,7 @@ public class GunSpecLoaderTest {
 
         when(yamlReader.getDouble("shooting.headshot-damage-multiplier")).thenReturn(headshotDamageMultiplier);
 
-        when(yamlReader.getString("shooting.shot-sounds")).thenReturn(null);
+        when(shootingSpecLoader.loadSpec("shooting")).thenReturn(shootingSpec);
 
         when(yamlReader.getString("reloading.type")).thenReturn(reloadType);
         when(yamlReader.getString("reloading.reload-sounds")).thenReturn(null);
@@ -101,11 +105,6 @@ public class GunSpecLoaderTest {
         when(yamlReader.getString("controls.scope-use")).thenReturn(null);
         when(yamlReader.getString("controls.scope-stop")).thenReturn(null);
         when(yamlReader.getString("controls.scope-change-magnification")).thenReturn(null);
-
-        when(yamlReader.getString("shooting.fire-mode.type")).thenReturn(fireModeType);
-        when(yamlReader.getOptionalInt("shooting.fire-mode.amount-of-shots")).thenReturn(Optional.empty());
-        when(yamlReader.getOptionalInt("shooting.fire-mode.rate-of-fire")).thenReturn(Optional.of(rateOfFire));
-        when(yamlReader.getOptionalLong("shooting.fire-mode.cycle-cooldown")).thenReturn(Optional.empty());
 
         when(yamlReader.contains("shooting.recoil")).thenReturn(true);
         when(yamlReader.getString("shooting.recoil.type")).thenReturn(recoilType);
@@ -127,7 +126,7 @@ public class GunSpecLoaderTest {
         when(yamlReader.getOptionalFloat("shooting.spread-pattern.horizontal-spread")).thenReturn(Optional.of(horizontalSpread));
         when(yamlReader.getOptionalFloat("shooting.spread-pattern.vertical-spread")).thenReturn(Optional.of(verticalSpread));
 
-        GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
+        GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader, shootingSpecLoader);
         GunSpec spec = specLoader.loadSpec();
 
         assertThat(spec.id()).isEqualTo(id);
@@ -142,7 +141,7 @@ public class GunSpecLoaderTest {
 
         assertThat(spec.headshotDamageMultiplier()).isEqualTo(headshotDamageMultiplier);
 
-        assertThat(spec.shotSounds()).isNull();
+        assertThat(spec.shooting()).isEqualTo(shootingSpec);
 
         assertThat(spec.reload().type()).isEqualTo(reloadType);
         assertThat(spec.reload().reloadSounds()).isNull();
@@ -157,11 +156,6 @@ public class GunSpecLoaderTest {
         assertThat(spec.controls().useScopeAction()).isNull();
         assertThat(spec.controls().stopScopeAction()).isNull();
         assertThat(spec.controls().changeScopeMagnificationAction()).isNull();
-
-        assertThat(spec.fireMode().type()).isEqualTo(fireModeType);
-        assertThat(spec.fireMode().amountOfShots()).isNull();
-        assertThat(spec.fireMode().rateOfFire()).isEqualTo(rateOfFire);
-        assertThat(spec.fireMode().cycleCooldown()).isNull();
 
         assertThat(spec.recoil()).isNotNull();
         assertThat(spec.recoil().type()).isEqualTo(recoilType);
