@@ -15,15 +15,15 @@ public class ItemRepresentation {
     @NotNull
     private final ItemTemplate itemTemplate;
     @NotNull
-    private final Map<PlaceholderKey, String> placeholders;
+    private final Map<Placeholder, String> placeholders;
 
     public ItemRepresentation(@NotNull ItemTemplate itemTemplate) {
         this.itemTemplate = itemTemplate;
         this.placeholders = new HashMap<>();
     }
 
-    public void setPlaceholder(@NotNull PlaceholderKey key, @NotNull String value) {
-        placeholders.put(key, value);
+    public void setPlaceholder(@NotNull Placeholder placeholder, @NotNull String value) {
+        placeholders.put(placeholder, value);
     }
 
     @NotNull

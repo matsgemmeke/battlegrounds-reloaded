@@ -37,13 +37,13 @@ public class ItemRepresentationTest {
         when(itemTemplate.createItemStack(anyMap())).thenReturn(itemStack);
 
         ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
-        itemRepresentation.setPlaceholder(PlaceholderKey.ITEM_NAME, "Test");
+        itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, "Test");
         ItemStack result = itemRepresentation.update();
 
         verify(itemTemplate).createItemStack(placeholderValuesCaptor.capture());
         Map<String, Object> placeholderValues = placeholderValuesCaptor.getValue();
 
         assertThat(result).isEqualTo(itemStack);
-        assertThat(placeholderValues).containsExactly(entry("item_name", "Test"));
+        assertThat(placeholderValues).containsExactly(entry("name", "Test"));
     }
 }

@@ -24,6 +24,7 @@ import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
+import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
@@ -116,6 +117,8 @@ public class FirearmFactory {
 
         ItemTemplate itemTemplate = this.createItemTemplate(spec.item());
         ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
+        itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, spec.name());
+
         firearm.setItemTemplate(itemTemplate);
 
         double damageAmplifier = config.getGunDamageAmplifier();
@@ -137,7 +140,7 @@ public class FirearmFactory {
         ItemControls<GunHolder> controls = controlsFactory.create(spec.controls(), firearm);
         firearm.setControls(controls);
 
-        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting(), gameKey, itemRepresentation);
+        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting(), gameKey, ammunitionStorage, itemRepresentation);
         firearm.setShootHandler(shootHandler);
 
         RecoilSpec recoilSpec = spec.recoil();

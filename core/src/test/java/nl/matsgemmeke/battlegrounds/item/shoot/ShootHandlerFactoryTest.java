@@ -6,9 +6,10 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.item.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ShootingSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireModeFactory;
@@ -30,6 +31,7 @@ public class ShootHandlerFactoryTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
 
+    private AmmunitionStorage ammunitionStorage;
     private BulletLauncherFactory bulletLauncherFactory;
     private FireModeFactory fireModeFactory;
     private GameContextProvider contextProvider;
@@ -37,6 +39,7 @@ public class ShootHandlerFactoryTest {
 
     @BeforeEach
     public void setUp() {
+        ammunitionStorage = new AmmunitionStorage(10, 20, 10, 20);
         bulletLauncherFactory = mock(BulletLauncherFactory.class);
         fireModeFactory = mock(FireModeFactory.class);
         contextProvider = mock(GameContextProvider.class);
@@ -45,6 +48,7 @@ public class ShootHandlerFactoryTest {
 
     @Test
     public void createReturnsNewShootHandlerInstanceWithTrajectoryParticleEffect() {
+        AudioEmitter audioEmitter = mock(AudioEmitter.class);
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
         FireMode fireMode = mock(FireMode.class);
         ItemRepresentation itemRepresentation = mock(ItemRepresentation.class);
@@ -55,25 +59,27 @@ public class ShootHandlerFactoryTest {
         ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
         ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, null);
 
-        when(bulletLauncherFactory.create(any(BulletProperties.class), eq(collisionDetector))).thenReturn(projectileLauncher);
+        when(bulletLauncherFactory.create(any(BulletProperties.class), eq(audioEmitter), eq(collisionDetector))).thenReturn(projectileLauncher);
+        when(contextProvider.getComponent(GAME_KEY, AudioEmitter.class)).thenReturn(audioEmitter);
         when(contextProvider.getComponent(GAME_KEY, CollisionDetector.class)).thenReturn(collisionDetector);
         when(fireModeFactory.create(fireModeSpec)).thenReturn(fireMode);
 
         ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(bulletLauncherFactory, fireModeFactory, contextProvider, particleEffectMapper);
-        shootHandlerFactory.create(shootingSpec, GAME_KEY, itemRepresentation);
+        shootHandlerFactory.create(shootingSpec, GAME_KEY, ammunitionStorage, itemRepresentation);
 
         ArgumentCaptor<BulletProperties> bulletPropertiesCaptor = ArgumentCaptor.forClass(BulletProperties.class);
-        verify(bulletLauncherFactory).create(bulletPropertiesCaptor.capture(), eq(collisionDetector));
+        verify(bulletLauncherFactory).create(bulletPropertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector));
 
-        ParticleEffect trajectoryParticleEffect = bulletPropertiesCaptor.getValue().trajectoryParticleEffect();
-        assertThat(trajectoryParticleEffect.particle()).isEqualTo(Particle.FLAME);
-        assertThat(trajectoryParticleEffect.count()).isEqualTo(1);
-        assertThat(trajectoryParticleEffect.offsetX()).isEqualTo(0.1);
-        assertThat(trajectoryParticleEffect.offsetY()).isEqualTo(0.2);
-        assertThat(trajectoryParticleEffect.offsetZ()).isEqualTo(0.3);
-        assertThat(trajectoryParticleEffect.extra()).isEqualTo(0.0);
-        assertThat(trajectoryParticleEffect.blockDataMaterial()).isNull();
-        assertThat(trajectoryParticleEffect.dustOptions()).isNull();
+        BulletProperties properties = bulletPropertiesCaptor.getValue();
+        assertThat(properties.trajectoryParticleEffect().particle()).isEqualTo(Particle.FLAME);
+        assertThat(properties.trajectoryParticleEffect().count()).isEqualTo(1);
+        assertThat(properties.trajectoryParticleEffect().offsetX()).isEqualTo(0.1);
+        assertThat(properties.trajectoryParticleEffect().offsetY()).isEqualTo(0.2);
+        assertThat(properties.trajectoryParticleEffect().offsetZ()).isEqualTo(0.3);
+        assertThat(properties.trajectoryParticleEffect().extra()).isEqualTo(0.0);
+        assertThat(properties.trajectoryParticleEffect().blockDataMaterial()).isNull();
+        assertThat(properties.trajectoryParticleEffect().dustOptions()).isNull();
+        assertThat(properties.shotSounds()).isEmpty();
 
         verify(fireMode).addShotObserver(any(ShotObserver.class));
     }

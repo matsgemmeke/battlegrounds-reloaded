@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet;
 
 import com.google.inject.assistedinject.Assisted;
 import jakarta.inject.Inject;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -17,6 +18,8 @@ public class BulletLauncher implements ProjectileLauncher {
     private static final double DISTANCE_START = 0.5;
 
     @NotNull
+    private final AudioEmitter audioEmitter;
+    @NotNull
     private final BulletProperties bulletProperties;
     @NotNull
     private final CollisionDetector collisionDetector;
@@ -27,10 +30,12 @@ public class BulletLauncher implements ProjectileLauncher {
     public BulletLauncher(
             @NotNull ParticleEffectSpawner particleEffectSpawner,
             @Assisted @NotNull BulletProperties bulletProperties,
+            @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull CollisionDetector collisionDetector
     ) {
         this.particleEffectSpawner = particleEffectSpawner;
         this.bulletProperties = bulletProperties;
+        this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
     }
 
@@ -39,6 +44,8 @@ public class BulletLauncher implements ProjectileLauncher {
         double projectileRange = 50.0;
 
         Location projectileLocation = launchDirection.clone();
+
+        audioEmitter.playSounds(bulletProperties.shotSounds(), projectileLocation);
 
         do {
             Vector vector = projectileLocation.getDirection().multiply(distance);

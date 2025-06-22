@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
+import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import org.bukkit.Location;
@@ -10,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class ShootHandler {
 
+    @NotNull
+    private final AmmunitionStorage ammunitionStorage;
     @NotNull
     private final FireMode fireMode;
     @NotNull
@@ -22,10 +26,12 @@ public class ShootHandler {
     public ShootHandler(
             @NotNull FireMode fireMode,
             @NotNull ProjectileLauncher projectileLauncher,
+            @NotNull AmmunitionStorage ammunitionStorage,
             @NotNull ItemRepresentation itemRepresentation
     ) {
         this.fireMode = fireMode;
         this.projectileLauncher = projectileLauncher;
+        this.ammunitionStorage = ammunitionStorage;
         this.itemRepresentation = itemRepresentation;
     }
 
@@ -34,9 +40,14 @@ public class ShootHandler {
     }
 
     private void onShotActivate() {
-        if (performer == null) {
+        int magazineAmmo = ammunitionStorage.getMagazineAmmo();
+
+        if (performer == null || magazineAmmo <= 0) {
             return;
         }
+
+        ammunitionStorage.setMagazineAmmo(magazineAmmo - 1);
+        itemRepresentation.setPlaceholder(Placeholder.MAGAZINE_AMMO, String.valueOf(ammunitionStorage.getMagazineAmmo()));
 
         Location launchDirection = performer.getShootingDirection();
         projectileLauncher.launch(launchDirection);
