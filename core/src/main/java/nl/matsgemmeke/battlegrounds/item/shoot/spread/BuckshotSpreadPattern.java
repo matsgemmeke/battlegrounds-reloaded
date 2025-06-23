@@ -23,11 +23,11 @@ public class BuckshotSpreadPattern implements SpreadPattern {
     }
 
     @NotNull
-    public Iterable<Location> getProjectileDirections(@NotNull Location aimDirection) {
+    public Iterable<Location> getProjectileDirections(@NotNull Location shootingDirection) {
         List<Location> directions = new ArrayList<>();
 
         for (int i = 1; i <= pelletAmount; i++) {
-            Location direction = aimDirection.clone();
+            Location direction = shootingDirection.clone();
 
             float randomHorSpread = random.nextFloat(horizontalSpread);
             float randomVerSpread = random.nextFloat(verticalSpread);
