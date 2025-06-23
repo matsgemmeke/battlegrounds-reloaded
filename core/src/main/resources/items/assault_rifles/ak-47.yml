@@ -51,5 +51,7 @@ shooting:
     kickback-duration: 200
     type: CAMERA_MOVEMENT
     vertical: [-2.0, -2.5, -3.0]
+  spread-pattern:
+    type: SINGLE_PROJECTILE
   shot-sounds: BLOCK_PISTON_CONTRACT-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
   suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-0.3-2-0, ENTITY_FIREWORK_BLAST-3-1-0

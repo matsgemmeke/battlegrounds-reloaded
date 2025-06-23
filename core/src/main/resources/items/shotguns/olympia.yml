@@ -24,11 +24,6 @@ shooting:
     cycle-cooldown: 6
     type: SEMI_AUTOMATIC
   headshot-damage-multiplier: 1.1
-  pattern:
-    horizontal-spread: 1.5
-    pellet-amount: 8
-    type: BUCKSHOT
-    vertical-spread: 1.5
   projectile:
     type: BULLET
     trajectory-particle-effect:
@@ -56,5 +51,10 @@ shooting:
     kickback-duration: 300
     type: CAMERA_MOVEMENT
     vertical: [-8.0, -10.0, -12.0]
+  spread-pattern:
+    type: BUCKSHOT
+    projectile-amount: 8
+    horizontal-spread: 1.5
+    vertical-spread: 1.5
   shot-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
   suppressed-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
