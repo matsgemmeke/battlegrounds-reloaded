@@ -49,8 +49,8 @@ public class ShootHandler {
         ammunitionStorage.setMagazineAmmo(magazineAmmo - 1);
         itemRepresentation.setPlaceholder(Placeholder.MAGAZINE_AMMO, String.valueOf(ammunitionStorage.getMagazineAmmo()));
 
-        Location launchDirection = performer.getShootingDirection();
-        projectileLauncher.launch(launchDirection);
+        Location shootingDirection = performer.getShootingDirection();
+        projectileLauncher.launch(shootingDirection);
 
         ItemStack itemStack = itemRepresentation.update();
         performer.setHeldItem(itemStack);

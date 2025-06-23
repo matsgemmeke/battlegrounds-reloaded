@@ -11,9 +11,9 @@ public interface SpreadPattern {
     /**
      * Gets all directions the pattern would shoot a projectile to for one single shot.
      *
-     * @param aimDirection the original aiming direction
+     * @param shootingDirection the original shooting direction
      * @return an iterable containing locations as projectile directions
      */
     @NotNull
-    Iterable<Location> getProjectileDirections(@NotNull Location aimDirection);
+    Iterable<Location> getProjectileDirections(@NotNull Location shootingDirection);
 }
