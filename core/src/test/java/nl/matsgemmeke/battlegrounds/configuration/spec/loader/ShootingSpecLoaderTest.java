@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ShootingSpec;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +23,7 @@ public class ShootingSpecLoaderTest {
         String fireModeType = "FULLY_AUTOMATIC";
         int rateOfFire = 600;
         ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
+        SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("BUCKSHOT", 5, 0.5f, 0.5f);
 
         YamlReader yamlReader = mock(YamlReader.class);
         when(yamlReader.getString("base-route.shot-sounds")).thenReturn(null);
@@ -32,7 +35,10 @@ public class ShootingSpecLoaderTest {
         ParticleEffectSpecLoader particleEffectSpecLoader = mock(ParticleEffectSpecLoader.class);
         when(particleEffectSpecLoader.loadSpec("base-route.projectile.trajectory-particle-effect")).thenReturn(trajectoryParticleEffectSpec);
 
-        ShootingSpecLoader shootingSpecLoader = new ShootingSpecLoader(yamlReader, particleEffectSpecLoader);
+        SpreadPatternSpecLoader spreadPatternSpecLoader = mock(SpreadPatternSpecLoader.class);
+        when(spreadPatternSpecLoader.loadSpec("base-route.spread-pattern")).thenReturn(spreadPatternSpec);
+
+        ShootingSpecLoader shootingSpecLoader = new ShootingSpecLoader(yamlReader, particleEffectSpecLoader, spreadPatternSpecLoader);
         ShootingSpec spec = shootingSpecLoader.loadSpec(BASE_ROUTE);
 
         assertThat(spec.shotSounds()).isNull();
@@ -41,5 +47,6 @@ public class ShootingSpecLoaderTest {
         assertThat(spec.fireMode().cycleCooldown()).isNull();
         assertThat(spec.fireMode().rateOfFire()).isEqualTo(rateOfFire);
         assertThat(spec.projectile().trajectoryParticleEffect()).isEqualTo(trajectoryParticleEffectSpec);
+        assertThat(spec.spreadPattern()).isEqualTo(spreadPatternSpec);
     }
 }

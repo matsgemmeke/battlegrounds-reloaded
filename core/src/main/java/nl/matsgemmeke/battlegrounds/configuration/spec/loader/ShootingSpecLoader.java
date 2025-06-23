@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ProjectileSpec;
@@ -28,14 +30,23 @@ public class ShootingSpecLoader {
 
     private static final String PROJECTILE_TRAJECTORY_PARTICLE_EFFECT_ROUTE = "projectile.trajectory-particle-effect";
 
+    private static final String SPREAD_PATTERN_ROUTE = "spread-pattern";
+
     @NotNull
     private final ParticleEffectSpecLoader particleEffectSpecLoader;
     @NotNull
+    private final SpreadPatternSpecLoader spreadPatternSpecLoader;
+    @NotNull
     private final YamlReader yamlReader;
 
-    public ShootingSpecLoader(@NotNull YamlReader yamlReader, @NotNull ParticleEffectSpecLoader particleEffectSpecLoader) {
+    public ShootingSpecLoader(
+            @NotNull YamlReader yamlReader,
+            @NotNull ParticleEffectSpecLoader particleEffectSpecLoader,
+            @NotNull SpreadPatternSpecLoader spreadPatternSpecLoader
+    ) {
         this.yamlReader = yamlReader;
         this.particleEffectSpecLoader = particleEffectSpecLoader;
+        this.spreadPatternSpecLoader = spreadPatternSpecLoader;
     }
 
     @NotNull
@@ -46,6 +57,7 @@ public class ShootingSpecLoader {
         String fireModeRateOfFireRoute = this.createRoute(baseRoute, FIRE_MODE_RATE_OF_FIRE_ROUTE);
         String fireModeCycleCooldownRoute = this.createRoute(baseRoute, FIRE_MODE_CYCLE_COOLDOWN_ROUTE);
         String projectileTrajectoryParticleEffectRoute = this.createRoute(baseRoute, PROJECTILE_TRAJECTORY_PARTICLE_EFFECT_ROUTE);
+        String spreadPatternRoute = this.createRoute(baseRoute, SPREAD_PATTERN_ROUTE);
 
         String shotSounds = new FieldSpecResolver<String>()
                 .route(shotSoundsRoute)
@@ -78,7 +90,9 @@ public class ShootingSpecLoader {
         ParticleEffectSpec projectileTrajectoryParticleEffectSpec = particleEffectSpecLoader.loadSpec(projectileTrajectoryParticleEffectRoute);
         ProjectileSpec projectileSpec = new ProjectileSpec(projectileTrajectoryParticleEffectSpec);
 
-        return new ShootingSpec(fireModeSpec, projectileSpec, shotSounds);
+        SpreadPatternSpec spreadPatternSpec = spreadPatternSpecLoader.loadSpec(spreadPatternRoute);
+
+        return new ShootingSpec(fireModeSpec, projectileSpec, spreadPatternSpec, shotSounds);
     }
 
     @NotNull

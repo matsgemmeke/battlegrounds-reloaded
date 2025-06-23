@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
@@ -56,7 +57,8 @@ public class GunSpecLoaderTest {
         FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
         ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
         ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
-        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, null);
+        SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("SINGLE_PROJECTILE", null, null, null);
+        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, spreadPatternSpec, null);
 
         String reloadType = "MAGAZINE";
         Long reloadDuration = 50L;
@@ -171,11 +173,5 @@ public class GunSpecLoaderTest {
         assertThat(spec.scope().useSounds()).isNull();
         assertThat(spec.scope().stopSounds()).isNull();
         assertThat(spec.scope().changeMagnificationSounds()).isNull();
-
-        assertThat(spec.spreadPattern()).isNotNull();
-        assertThat(spec.spreadPattern().type()).isEqualTo(spreadPatternType);
-        assertThat(spec.spreadPattern().projectileAmount()).isEqualTo(projectileAmount);
-        assertThat(spec.spreadPattern().horizontalSpread()).isEqualTo(horizontalSpread);
-        assertThat(spec.spreadPattern().verticalSpread()).isEqualTo(verticalSpread);
     }
 }

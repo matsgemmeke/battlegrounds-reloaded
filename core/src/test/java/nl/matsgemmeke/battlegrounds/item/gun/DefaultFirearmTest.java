@@ -687,7 +687,7 @@ public class DefaultFirearmTest {
         when(holder.getShootingDirection()).thenReturn(shootingDirection);
 
         SpreadPattern pattern = mock(SpreadPattern.class);
-        when(pattern.getProjectileDirections(shootingDirection)).thenReturn(List.of(shootingDirection, shootingDirection));
+        when(pattern.getShootingDirections(shootingDirection)).thenReturn(List.of(shootingDirection, shootingDirection));
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setAmmunitionStorage(ammunitionStorage);

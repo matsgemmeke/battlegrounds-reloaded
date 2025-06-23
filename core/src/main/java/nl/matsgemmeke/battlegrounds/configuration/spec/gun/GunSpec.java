@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
  * @param controls                 the specification for the gun's controls
  * @param recoil                   the specification for the recoil
  * @param scope                    the specification for the scope
- * @param spreadPattern            the specification for the spread pattern
  */
 public record GunSpec(
         @NotNull String id,
@@ -41,6 +40,5 @@ public record GunSpec(
         @NotNull ItemStackSpec item,
         @NotNull ControlsSpec controls,
         @Nullable RecoilSpec recoil,
-        @Nullable ScopeSpec scope,
-        @Nullable SpreadPatternSpec spreadPattern
+        @Nullable ScopeSpec scope
 ) { }

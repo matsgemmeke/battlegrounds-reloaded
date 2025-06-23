@@ -6,12 +6,15 @@ import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.ShotObserver;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -21,6 +24,7 @@ public class ShootHandlerTest {
     private FireMode fireMode;
     private ItemRepresentation itemRepresentation;
     private ProjectileLauncher projectileLauncher;
+    private SpreadPattern spreadPattern;
 
     @BeforeEach
     public void setUp() {
@@ -28,6 +32,7 @@ public class ShootHandlerTest {
         fireMode = mock(FireMode.class);
         itemRepresentation = mock(ItemRepresentation.class);
         projectileLauncher = mock(ProjectileLauncher.class);
+        spreadPattern = mock(SpreadPattern.class);
     }
 
     @Test
@@ -39,8 +44,9 @@ public class ShootHandlerTest {
         when(performer.getShootingDirection()).thenReturn(shootingDirection);
 
         when(itemRepresentation.update()).thenReturn(itemStack);
+        when(spreadPattern.getShootingDirections(shootingDirection)).thenReturn(List.of(shootingDirection));
 
-        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, ammunitionStorage, itemRepresentation);
+        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation);
         shootHandler.registerObservers();
         shootHandler.shoot(performer);
 
@@ -61,7 +67,7 @@ public class ShootHandlerTest {
 
         ammunitionStorage.setMagazineAmmo(0);
 
-        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, ammunitionStorage, itemRepresentation);
+        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation);
         shootHandler.registerObservers();
         shootHandler.shoot(performer);
 

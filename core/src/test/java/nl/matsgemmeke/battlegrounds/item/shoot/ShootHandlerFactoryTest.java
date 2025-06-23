@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.ShootingSpec;
@@ -17,6 +18,8 @@ import nl.matsgemmeke.battlegrounds.item.shoot.firemode.ShotObserver;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletProperties;
+import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
+import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import org.bukkit.Particle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +39,7 @@ public class ShootHandlerFactoryTest {
     private FireModeFactory fireModeFactory;
     private GameContextProvider contextProvider;
     private ParticleEffectMapper particleEffectMapper;
+    private SpreadPatternFactory spreadPatternFactory;
 
     @BeforeEach
     public void setUp() {
@@ -44,6 +48,7 @@ public class ShootHandlerFactoryTest {
         fireModeFactory = mock(FireModeFactory.class);
         contextProvider = mock(GameContextProvider.class);
         particleEffectMapper = new ParticleEffectMapper();
+        spreadPatternFactory = mock(SpreadPatternFactory.class);
     }
 
     @Test
@@ -53,18 +58,21 @@ public class ShootHandlerFactoryTest {
         FireMode fireMode = mock(FireMode.class);
         ItemRepresentation itemRepresentation = mock(ItemRepresentation.class);
         ProjectileLauncher projectileLauncher = mock(ProjectileLauncher.class);
+        SpreadPattern spreadPattern = mock(SpreadPattern.class);
 
         FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
         ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.1, 0.2, 0.3, 0.0, null, null);
         ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
-        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, null);
+        SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("SINGLE_PROJECTILE", null, null, null);
+        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, spreadPatternSpec, null);
 
         when(bulletLauncherFactory.create(any(BulletProperties.class), eq(audioEmitter), eq(collisionDetector))).thenReturn(projectileLauncher);
         when(contextProvider.getComponent(GAME_KEY, AudioEmitter.class)).thenReturn(audioEmitter);
         when(contextProvider.getComponent(GAME_KEY, CollisionDetector.class)).thenReturn(collisionDetector);
         when(fireModeFactory.create(fireModeSpec)).thenReturn(fireMode);
+        when(spreadPatternFactory.create(spreadPatternSpec)).thenReturn(spreadPattern);
 
-        ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(bulletLauncherFactory, fireModeFactory, contextProvider, particleEffectMapper);
+        ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(bulletLauncherFactory, fireModeFactory, contextProvider, particleEffectMapper, spreadPatternFactory);
         shootHandlerFactory.create(shootingSpec, GAME_KEY, ammunitionStorage, itemRepresentation);
 
         ArgumentCaptor<BulletProperties> bulletPropertiesCaptor = ArgumentCaptor.forClass(BulletProperties.class);

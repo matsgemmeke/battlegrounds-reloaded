@@ -5,10 +5,13 @@ import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ShootHandler {
 
@@ -20,17 +23,21 @@ public class ShootHandler {
     private final ItemRepresentation itemRepresentation;
     @NotNull
     private final ProjectileLauncher projectileLauncher;
+    @NotNull
+    private final SpreadPattern spreadPattern;
     @Nullable
     private ShotPerformer performer;
 
     public ShootHandler(
             @NotNull FireMode fireMode,
             @NotNull ProjectileLauncher projectileLauncher,
+            @NotNull SpreadPattern spreadPattern,
             @NotNull AmmunitionStorage ammunitionStorage,
             @NotNull ItemRepresentation itemRepresentation
     ) {
         this.fireMode = fireMode;
         this.projectileLauncher = projectileLauncher;
+        this.spreadPattern = spreadPattern;
         this.ammunitionStorage = ammunitionStorage;
         this.itemRepresentation = itemRepresentation;
     }
@@ -50,7 +57,8 @@ public class ShootHandler {
         itemRepresentation.setPlaceholder(Placeholder.MAGAZINE_AMMO, String.valueOf(ammunitionStorage.getMagazineAmmo()));
 
         Location shootingDirection = performer.getShootingDirection();
-        projectileLauncher.launch(shootingDirection);
+        List<Location> shootingDirections = spreadPattern.getShootingDirections(shootingDirection);
+        shootingDirections.forEach(projectileLauncher::launch);
 
         ItemStack itemStack = itemRepresentation.update();
         performer.setHeldItem(itemStack);

@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -145,7 +146,7 @@ public class FirearmFactory {
 
         RecoilSpec recoilSpec = spec.recoil();
         ScopeSpec scopeSpec = spec.scope();
-        SpreadPatternSpec spreadPatternSpec = spec.spreadPattern();
+        SpreadPatternSpec spreadPatternSpec = spec.shooting().spreadPattern();
 
         if (recoilSpec != null) {
             Recoil recoil = recoilFactory.create(recoilSpec);

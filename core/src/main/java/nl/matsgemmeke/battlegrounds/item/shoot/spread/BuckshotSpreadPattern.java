@@ -9,11 +9,11 @@ import java.util.Random;
 
 public class BuckshotSpreadPattern implements SpreadPattern {
 
-    private float horizontalSpread;
-    private float verticalSpread;
-    private int pelletAmount;
+    private final float horizontalSpread;
+    private final float verticalSpread;
+    private final int pelletAmount;
     @NotNull
-    private Random random;
+    private final Random random;
 
     public BuckshotSpreadPattern(int pelletAmount, float horizontalSpread, float verticalSpread) {
         this.pelletAmount = pelletAmount;
@@ -23,7 +23,7 @@ public class BuckshotSpreadPattern implements SpreadPattern {
     }
 
     @NotNull
-    public Iterable<Location> getProjectileDirections(@NotNull Location shootingDirection) {
+    public List<Location> getShootingDirections(@NotNull Location shootingDirection) {
         List<Location> directions = new ArrayList<>();
 
         for (int i = 1; i <= pelletAmount; i++) {

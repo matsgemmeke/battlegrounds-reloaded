@@ -8,7 +8,7 @@ import java.util.List;
 public class SingleProjectileSpreadPattern implements SpreadPattern {
 
     @NotNull
-    public Iterable<Location> getProjectileDirections(@NotNull Location shootingDirection) {
+    public List<Location> getShootingDirections(@NotNull Location shootingDirection) {
         return List.of(shootingDirection);
     }
 }

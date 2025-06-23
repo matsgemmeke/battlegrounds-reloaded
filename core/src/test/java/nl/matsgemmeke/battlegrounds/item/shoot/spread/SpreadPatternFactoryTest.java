@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.spread;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

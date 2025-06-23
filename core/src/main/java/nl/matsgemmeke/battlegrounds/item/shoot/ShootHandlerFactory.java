@@ -18,6 +18,8 @@ import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireModeFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletProperties;
+import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
+import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -32,18 +34,22 @@ public class ShootHandlerFactory {
     private final GameContextProvider contextProvider;
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
+    @NotNull
+    private final SpreadPatternFactory spreadPatternFactory;
 
     @Inject
     public ShootHandlerFactory(
             @NotNull BulletLauncherFactory bulletLauncherFactory,
             @NotNull FireModeFactory fireModeFactory,
             @NotNull GameContextProvider contextProvider,
-            @NotNull ParticleEffectMapper particleEffectMapper
+            @NotNull ParticleEffectMapper particleEffectMapper,
+            @NotNull SpreadPatternFactory spreadPatternFactory
     ) {
         this.bulletLauncherFactory = bulletLauncherFactory;
         this.fireModeFactory = fireModeFactory;
         this.contextProvider = contextProvider;
         this.particleEffectMapper = particleEffectMapper;
+        this.spreadPatternFactory = spreadPatternFactory;
     }
 
     @NotNull
@@ -52,6 +58,7 @@ public class ShootHandlerFactory {
         CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
 
         FireMode fireMode = fireModeFactory.create(spec.fireMode());
+        SpreadPattern spreadPattern = spreadPatternFactory.create(spec.spreadPattern());
 
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds());
 
@@ -65,7 +72,7 @@ public class ShootHandlerFactory {
         BulletProperties bulletProperties = new BulletProperties(trajectoryParticleEffect, shotSounds);
         ProjectileLauncher projectileLauncher = bulletLauncherFactory.create(bulletProperties, audioEmitter, collisionDetector);
 
-        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, ammunitionStorage, itemRepresentation);
+        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation);
         shootHandler.registerObservers();
         return shootHandler;
     }

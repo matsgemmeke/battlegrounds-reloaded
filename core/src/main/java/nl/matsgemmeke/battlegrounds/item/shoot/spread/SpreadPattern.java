@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.shoot.spread;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * Defines the different directions for projectiles that consist of multiple parts.
  */
@@ -15,5 +17,5 @@ public interface SpreadPattern {
      * @return an iterable containing locations as projectile directions
      */
     @NotNull
-    Iterable<Location> getProjectileDirections(@NotNull Location shootingDirection);
+    List<Location> getShootingDirections(@NotNull Location shootingDirection);
 }

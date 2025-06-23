@@ -233,7 +233,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
     private Iterable<Location> getProjectileDirections(@NotNull Location aimDirection) {
         if (spreadPattern != null) {
-            return spreadPattern.getProjectileDirections(aimDirection);
+            return spreadPattern.getShootingDirections(aimDirection);
         } else {
             return List.of(aimDirection);
         }
