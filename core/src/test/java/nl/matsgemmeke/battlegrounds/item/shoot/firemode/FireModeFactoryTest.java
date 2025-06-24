@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto.SemiAutomaticMode;

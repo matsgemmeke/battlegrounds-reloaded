@@ -1,11 +1,8 @@
-package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
+package nl.matsgemmeke.battlegrounds.configuration.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ShootingSpec;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;

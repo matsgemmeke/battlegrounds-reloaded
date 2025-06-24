@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;

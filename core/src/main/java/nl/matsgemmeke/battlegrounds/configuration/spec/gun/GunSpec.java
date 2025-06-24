@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.gun;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

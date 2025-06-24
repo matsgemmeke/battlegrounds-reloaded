@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.FireModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ProjectileSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ShootingSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;

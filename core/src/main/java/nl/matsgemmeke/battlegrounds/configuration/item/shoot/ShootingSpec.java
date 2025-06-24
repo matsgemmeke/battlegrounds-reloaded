@@ -1,6 +1,5 @@
-package nl.matsgemmeke.battlegrounds.configuration.spec.item;
+package nl.matsgemmeke.battlegrounds.configuration.item.shoot;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

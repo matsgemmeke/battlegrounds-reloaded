@@ -2,6 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.FireModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;

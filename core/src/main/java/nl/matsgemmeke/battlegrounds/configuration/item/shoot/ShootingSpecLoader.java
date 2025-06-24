@@ -1,14 +1,9 @@
-package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
+package nl.matsgemmeke.battlegrounds.configuration.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.FireModeSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ProjectileSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ShootingSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.OneOfValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredIfFieldEqualsValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
