@@ -47,10 +47,10 @@ shooting:
       damage: 35.0
       distance: 20.0
   recoil:
-    horizontal: [-1.0, 0.0, 1.0]
-    kickback-duration: 200
     type: CAMERA_MOVEMENT
+    horizontal: [-1.0, 0.0, 1.0]
     vertical: [-1.5, -2.0, -2.5]
+    kickback-duration: 200
   spread-pattern:
     type: SINGLE_PROJECTILE
   shot-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0

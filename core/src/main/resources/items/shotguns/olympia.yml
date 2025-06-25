@@ -47,10 +47,10 @@ shooting:
       damage: 50.0
       distance: 10.0
   recoil:
-    horizontal: [-2.0, 0.5, 2.0]
-    kickback-duration: 300
     type: CAMERA_MOVEMENT
+    horizontal: [-2.0, 0.5, 2.0]
     vertical: [-8.0, -10.0, -12.0]
+    kickback-duration: 300
   spread-pattern:
     type: BUCKSHOT
     projectile-amount: 8
