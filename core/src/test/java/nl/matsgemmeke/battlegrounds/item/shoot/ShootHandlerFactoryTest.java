@@ -1,10 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.FireModeSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ProjectileSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.*;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -24,6 +21,8 @@ import org.bukkit.Particle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -63,8 +62,9 @@ public class ShootHandlerFactoryTest {
         FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
         ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.1, 0.2, 0.3, 0.0, null, null);
         ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
+        RecoilSpec recoilSpec = new RecoilSpec("RANDOM_SPREAD", List.of(0.1f), List.of(0.2f), null, null, null);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("SINGLE_PROJECTILE", null, null, null);
-        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, spreadPatternSpec, null);
+        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);
 
         when(bulletLauncherFactory.create(any(BulletProperties.class), eq(audioEmitter), eq(collisionDetector))).thenReturn(projectileLauncher);
         when(contextProvider.getComponent(GAME_KEY, AudioEmitter.class)).thenReturn(audioEmitter);

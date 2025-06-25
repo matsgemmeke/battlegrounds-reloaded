@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.RecoilSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

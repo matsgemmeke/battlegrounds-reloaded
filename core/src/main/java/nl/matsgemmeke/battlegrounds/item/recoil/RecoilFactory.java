@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.RecoilSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.RecoilSpec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Timer;

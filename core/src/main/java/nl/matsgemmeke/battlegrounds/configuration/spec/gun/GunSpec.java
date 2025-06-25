@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
  * @param reload                   the specification for the reload system
  * @param item                     the specification for the display item, held by the user
  * @param controls                 the specification for the gun's controls
- * @param recoil                   the specification for the recoil
  * @param scope                    the specification for the scope
  */
 public record GunSpec(
@@ -40,6 +39,5 @@ public record GunSpec(
         @NotNull ReloadSpec reload,
         @NotNull ItemStackSpec item,
         @NotNull ControlsSpec controls,
-        @Nullable RecoilSpec recoil,
         @Nullable ScopeSpec scope
 ) { }

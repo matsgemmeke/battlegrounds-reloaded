@@ -57,8 +57,9 @@ public class GunSpecLoaderTest {
         FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
         ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
         ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
+        RecoilSpec recoilSpec = new RecoilSpec("RANDOM_SPREAD", List.of(0.1f), List.of(0.2f), null, null, null);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("SINGLE_PROJECTILE", null, null, null);
-        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, spreadPatternSpec, null);
+        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);
 
         String reloadType = "MAGAZINE";
         Long reloadDuration = 50L;
@@ -70,16 +71,7 @@ public class GunSpecLoaderTest {
         String reloadAction = "LEFT_CLICK";
         String shootAction = "RIGHT_CLICK";
 
-        String recoilType = "RANDOM_SPREAD";
-        List<Float> horizontalRecoilValues = List.of(0.1f);
-        List<Float> verticalRecoilValues = List.of(0.2f);
-
         List<Float> magnifications = List.of(-0.1f, -0.2f);
-
-        String spreadPatternType = "BUCKSHOT";
-        Integer projectileAmount = 3;
-        Float horizontalSpread = 0.4f;
-        Float verticalSpread = 0.5f;
 
         when(yamlReader.getString("id")).thenReturn(id);
         when(yamlReader.getString("name")).thenReturn(name);
@@ -109,25 +101,11 @@ public class GunSpecLoaderTest {
         when(yamlReader.getString("controls.scope-stop")).thenReturn(null);
         when(yamlReader.getString("controls.scope-change-magnification")).thenReturn(null);
 
-        when(yamlReader.contains("shooting.recoil")).thenReturn(true);
-        when(yamlReader.getString("shooting.recoil.type")).thenReturn(recoilType);
-        when(yamlReader.getOptionalFloatList("shooting.recoil.horizontal")).thenReturn(Optional.of(horizontalRecoilValues));
-        when(yamlReader.getOptionalFloatList("shooting.recoil.vertical")).thenReturn(Optional.of(verticalRecoilValues));
-        when(yamlReader.getOptionalLong("shooting.recoil.kickback-duration")).thenReturn(Optional.empty());
-        when(yamlReader.getOptionalFloat("shooting.recoil.recovery-rate")).thenReturn(Optional.empty());
-        when(yamlReader.getOptionalLong("shooting.recoil.recovery-duration")).thenReturn(Optional.empty());
-
         when(yamlReader.contains("scope")).thenReturn(true);
         when(yamlReader.getOptionalFloatList("scope.magnifications")).thenReturn(Optional.of(magnifications));
         when(yamlReader.getString("scope.use-sounds")).thenReturn(null);
         when(yamlReader.getString("scope.stop-sounds")).thenReturn(null);
         when(yamlReader.getString("scope.change-magnification-sounds")).thenReturn(null);
-
-        when(yamlReader.contains("shooting.spread-pattern")).thenReturn(true);
-        when(yamlReader.getString("shooting.spread-pattern.type")).thenReturn(spreadPatternType);
-        when(yamlReader.getOptionalInt("shooting.spread-pattern.projectile-amount")).thenReturn(Optional.of(projectileAmount));
-        when(yamlReader.getOptionalFloat("shooting.spread-pattern.horizontal-spread")).thenReturn(Optional.of(horizontalSpread));
-        when(yamlReader.getOptionalFloat("shooting.spread-pattern.vertical-spread")).thenReturn(Optional.of(verticalSpread));
 
         GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader, shootingSpecLoader);
         GunSpec spec = specLoader.loadSpec();
@@ -159,14 +137,6 @@ public class GunSpecLoaderTest {
         assertThat(spec.controls().useScopeAction()).isNull();
         assertThat(spec.controls().stopScopeAction()).isNull();
         assertThat(spec.controls().changeScopeMagnificationAction()).isNull();
-
-        assertThat(spec.recoil()).isNotNull();
-        assertThat(spec.recoil().type()).isEqualTo(recoilType);
-        assertThat(spec.recoil().horizontalRecoilValues()).isEqualTo(horizontalRecoilValues);
-        assertThat(spec.recoil().verticalRecoilValues()).isEqualTo(verticalRecoilValues);
-        assertThat(spec.recoil().kickbackDuration()).isNull();
-        assertThat(spec.recoil().recoveryRate()).isEqualTo(0.0f);
-        assertThat(spec.recoil().recoveryDuration()).isEqualTo(0L);
 
         assertThat(spec.scope()).isNotNull();
         assertThat(spec.scope().magnifications()).isEqualTo(magnifications);

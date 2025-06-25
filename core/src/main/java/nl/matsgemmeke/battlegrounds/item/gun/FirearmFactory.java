@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -15,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
-import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
@@ -30,7 +28,6 @@ import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -144,14 +141,7 @@ public class FirearmFactory {
         ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting(), gameKey, ammunitionStorage, itemRepresentation);
         firearm.setShootHandler(shootHandler);
 
-        RecoilSpec recoilSpec = spec.recoil();
         ScopeSpec scopeSpec = spec.scope();
-        SpreadPatternSpec spreadPatternSpec = spec.shooting().spreadPattern();
-
-        if (recoilSpec != null) {
-            Recoil recoil = recoilFactory.create(recoilSpec);
-            firearm.setRecoil(recoil);
-        }
 
         if (scopeSpec != null) {
             List<Float> magnifications = scopeSpec.magnifications();
@@ -163,11 +153,6 @@ public class FirearmFactory {
             DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
 
             firearm.setScopeAttachment(scopeAttachment);
-        }
-
-        if (spreadPatternSpec != null) {
-            SpreadPattern spreadPattern = spreadPatternFactory.create(spreadPatternSpec);
-            firearm.setSpreadPattern(spreadPattern);
         }
 
         firearm.update();
