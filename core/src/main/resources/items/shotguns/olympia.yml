@@ -11,7 +11,7 @@ description: Double-barrel over/under shotgun. Effective at medium to close rang
 gun-type: SHOTGUN
 item:
   damage: 23
-  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   material: IRON_HOE
 level-unlocked: 1
 price: 1100

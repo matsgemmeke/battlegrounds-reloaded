@@ -37,9 +37,9 @@ equipment-type: TACTICAL
 item:
   display:
     damage: 8
-    display-name: "&f%name%"
+    display-name: '&f%name%'
     material: SHEARS
   throw:
     damage: 8
-    display-name: "&f%name%"
+    display-name: '&f%name%'
     material: SHEARS

@@ -11,7 +11,7 @@ description: Fully automatic with good accuracy. Effective at close to medium ra
 gun-type: SUBMACHINE_GUN
 item:
   damage: 8
-  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   material: IRON_HOE
 level-unlocked: 1
 price: 1200

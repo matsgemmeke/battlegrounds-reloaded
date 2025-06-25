@@ -50,9 +50,9 @@ equipment-type: LETHAL
 item:
   display:
     damage: 5
-    display-name: "&f%name%"
+    display-name: '&f%name%'
     material: SHEARS
   throw:
     damage: 5
-    display-name: "&f%name%"
+    display-name: '&f%name%'
     material: SHEARS

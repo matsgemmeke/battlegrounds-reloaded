@@ -11,7 +11,7 @@ description: Double-action revolver pistol. Uses a 6 round cylinder feed system.
 gun-type: HANDGUN
 item:
   damage: 5
-  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   material: IRON_HOE
 level-unlocked: 18
 price: 600

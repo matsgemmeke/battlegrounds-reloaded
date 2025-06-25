@@ -14,7 +14,7 @@ description: Bolt-action sniper rifle. Effective at long range.
 gun-type: SNIPER_RIFLE
 item:
   damage: 32
-  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   material: IRON_HOE
 level-unlocked: 27
 price: 4750
