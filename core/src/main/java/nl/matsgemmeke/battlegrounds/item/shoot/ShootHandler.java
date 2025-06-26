@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
+import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
@@ -23,6 +24,8 @@ public class ShootHandler {
     private final ItemRepresentation itemRepresentation;
     @NotNull
     private final ProjectileLauncher projectileLauncher;
+    @Nullable
+    private final Recoil recoil;
     @NotNull
     private final SpreadPattern spreadPattern;
     @Nullable
@@ -33,10 +36,12 @@ public class ShootHandler {
             @NotNull ProjectileLauncher projectileLauncher,
             @NotNull SpreadPattern spreadPattern,
             @NotNull AmmunitionStorage ammunitionStorage,
-            @NotNull ItemRepresentation itemRepresentation
+            @NotNull ItemRepresentation itemRepresentation,
+            @Nullable Recoil recoil
     ) {
         this.fireMode = fireMode;
         this.projectileLauncher = projectileLauncher;
+        this.recoil = recoil;
         this.spreadPattern = spreadPattern;
         this.ammunitionStorage = ammunitionStorage;
         this.itemRepresentation = itemRepresentation;
@@ -59,6 +64,10 @@ public class ShootHandler {
         Location shootingDirection = performer.getShootingDirection();
         List<Location> shootingDirections = spreadPattern.getShootingDirections(shootingDirection);
         shootingDirections.forEach(projectileLauncher::launch);
+
+        if (recoil != null) {
+            recoil.produceRecoil(performer, shootingDirection);
+        }
 
         ItemStack itemStack = itemRepresentation.update();
         performer.setHeldItem(itemStack);

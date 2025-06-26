@@ -13,7 +13,7 @@ import java.util.Timer;
 public class RecoilFactory {
 
     @NotNull
-    private BattlegroundsConfiguration config;
+    private final BattlegroundsConfiguration config;
 
     @Inject
     public RecoilFactory(@NotNull BattlegroundsConfiguration config) {

@@ -16,14 +16,12 @@ import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.FirearmControlsFactory;
-import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.Reloadable;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireModeFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -62,10 +60,8 @@ public class FirearmFactoryTest {
     private ItemFactory itemFactory;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
-    private RecoilFactory recoilFactory;
     private ReloadSystemFactory reloadSystemFactory;
     private ShootHandlerFactory shootHandlerFactory;
-    private SpreadPatternFactory spreadPatternFactory;
 
     @BeforeEach
     public void setUp() {
@@ -76,10 +72,8 @@ public class FirearmFactoryTest {
         controlsFactory = mock(FirearmControlsFactory.class);
         fireModeFactory = mock(FireModeFactory.class);
         itemFactory = mock(ItemFactory.class);
-        recoilFactory = mock(RecoilFactory.class);
         reloadSystemFactory = mock(ReloadSystemFactory.class);
         shootHandlerFactory = mock(ShootHandlerFactory.class);
-        spreadPatternFactory = mock(SpreadPatternFactory.class);
 
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
         DamageProcessor damageProcessor = mock(DamageProcessor.class);
@@ -141,7 +135,7 @@ public class FirearmFactoryTest {
 
         when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, keyCreator, recoilFactory, reloadSystemFactory, shootHandlerFactory, spreadPatternFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, keyCreator, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(gunSpec, gameKey);
 
         assertThat(firearm).isInstanceOf(DefaultFirearm.class);
@@ -184,7 +178,7 @@ public class FirearmFactoryTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, keyCreator, recoilFactory, reloadSystemFactory, shootHandlerFactory, spreadPatternFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, keyCreator, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(gunSpec, gameKey);
 
         assertInstanceOf(DefaultFirearm.class, firearm);
@@ -220,7 +214,7 @@ public class FirearmFactoryTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(reloadSpec), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, keyCreator, recoilFactory, reloadSystemFactory, shootHandlerFactory, spreadPatternFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, keyCreator, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(gunSpec, gameKey, gamePlayer);
 
         assertInstanceOf(DefaultFirearm.class, firearm);

@@ -14,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
-import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -28,7 +27,6 @@ import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
@@ -51,13 +49,9 @@ public class FirearmFactory {
     @NotNull
     private final NamespacedKeyCreator keyCreator;
     @NotNull
-    private final RecoilFactory recoilFactory;
-    @NotNull
     private final ReloadSystemFactory reloadSystemFactory;
     @NotNull
     private final ShootHandlerFactory shootHandlerFactory;
-    @NotNull
-    private final SpreadPatternFactory spreadPatternFactory;
 
     @Inject
     public FirearmFactory(
@@ -65,19 +59,15 @@ public class FirearmFactory {
             @NotNull GameContextProvider contextProvider,
             @NotNull FirearmControlsFactory controlsFactory,
             @NotNull NamespacedKeyCreator keyCreator,
-            @NotNull RecoilFactory recoilFactory,
             @NotNull ReloadSystemFactory reloadSystemFactory,
-            @NotNull ShootHandlerFactory shootHandlerFactory,
-            @NotNull SpreadPatternFactory spreadPatternFactory
+            @NotNull ShootHandlerFactory shootHandlerFactory
     ) {
         this.config = config;
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
         this.keyCreator = keyCreator;
-        this.recoilFactory = recoilFactory;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
-        this.spreadPatternFactory = spreadPatternFactory;
     }
 
     @NotNull

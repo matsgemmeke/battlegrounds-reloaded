@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import jakarta.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.RecoilSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -11,6 +12,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
+import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
@@ -35,6 +38,8 @@ public class ShootHandlerFactory {
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
     @NotNull
+    private final RecoilFactory recoilFactory;
+    @NotNull
     private final SpreadPatternFactory spreadPatternFactory;
 
     @Inject
@@ -43,12 +48,14 @@ public class ShootHandlerFactory {
             @NotNull FireModeFactory fireModeFactory,
             @NotNull GameContextProvider contextProvider,
             @NotNull ParticleEffectMapper particleEffectMapper,
+            @NotNull RecoilFactory recoilFactory,
             @NotNull SpreadPatternFactory spreadPatternFactory
     ) {
         this.bulletLauncherFactory = bulletLauncherFactory;
         this.fireModeFactory = fireModeFactory;
         this.contextProvider = contextProvider;
         this.particleEffectMapper = particleEffectMapper;
+        this.recoilFactory = recoilFactory;
         this.spreadPatternFactory = spreadPatternFactory;
     }
 
@@ -72,7 +79,14 @@ public class ShootHandlerFactory {
         BulletProperties bulletProperties = new BulletProperties(trajectoryParticleEffect, shotSounds);
         ProjectileLauncher projectileLauncher = bulletLauncherFactory.create(bulletProperties, audioEmitter, collisionDetector);
 
-        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation);
+        Recoil recoil = null;
+        RecoilSpec recoilSpec = spec.recoil();
+
+        if (recoilSpec != null) {
+            recoil = recoilFactory.create(recoilSpec);
+        }
+
+        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation, recoil);
         shootHandler.registerObservers();
         return shootHandler;
     }

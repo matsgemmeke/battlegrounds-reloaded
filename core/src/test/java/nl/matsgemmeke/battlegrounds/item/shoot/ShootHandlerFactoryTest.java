@@ -7,6 +7,8 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
+import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
@@ -38,6 +40,7 @@ public class ShootHandlerFactoryTest {
     private FireModeFactory fireModeFactory;
     private GameContextProvider contextProvider;
     private ParticleEffectMapper particleEffectMapper;
+    private RecoilFactory recoilFactory;
     private SpreadPatternFactory spreadPatternFactory;
 
     @BeforeEach
@@ -47,6 +50,7 @@ public class ShootHandlerFactoryTest {
         fireModeFactory = mock(FireModeFactory.class);
         contextProvider = mock(GameContextProvider.class);
         particleEffectMapper = new ParticleEffectMapper();
+        recoilFactory = mock(RecoilFactory.class);
         spreadPatternFactory = mock(SpreadPatternFactory.class);
     }
 
@@ -62,9 +66,8 @@ public class ShootHandlerFactoryTest {
         FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
         ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.1, 0.2, 0.3, 0.0, null, null);
         ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
-        RecoilSpec recoilSpec = new RecoilSpec("RANDOM_SPREAD", List.of(0.1f), List.of(0.2f), null, null, null);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("SINGLE_PROJECTILE", null, null, null);
-        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);
+        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, null, spreadPatternSpec, null);
 
         when(bulletLauncherFactory.create(any(BulletProperties.class), eq(audioEmitter), eq(collisionDetector))).thenReturn(projectileLauncher);
         when(contextProvider.getComponent(GAME_KEY, AudioEmitter.class)).thenReturn(audioEmitter);
@@ -72,7 +75,7 @@ public class ShootHandlerFactoryTest {
         when(fireModeFactory.create(fireModeSpec)).thenReturn(fireMode);
         when(spreadPatternFactory.create(spreadPatternSpec)).thenReturn(spreadPattern);
 
-        ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(bulletLauncherFactory, fireModeFactory, contextProvider, particleEffectMapper, spreadPatternFactory);
+        ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(bulletLauncherFactory, fireModeFactory, contextProvider, particleEffectMapper, recoilFactory, spreadPatternFactory);
         shootHandlerFactory.create(shootingSpec, GAME_KEY, ammunitionStorage, itemRepresentation);
 
         ArgumentCaptor<BulletProperties> bulletPropertiesCaptor = ArgumentCaptor.forClass(BulletProperties.class);
@@ -87,6 +90,42 @@ public class ShootHandlerFactoryTest {
         assertThat(properties.trajectoryParticleEffect().extra()).isEqualTo(0.0);
         assertThat(properties.trajectoryParticleEffect().blockDataMaterial()).isNull();
         assertThat(properties.trajectoryParticleEffect().dustOptions()).isNull();
+        assertThat(properties.shotSounds()).isEmpty();
+
+        verify(fireMode).addShotObserver(any(ShotObserver.class));
+    }
+
+    @Test
+    public void createReturnsNewShootHandlerInstanceWithRecoil() {
+        AudioEmitter audioEmitter = mock(AudioEmitter.class);
+        CollisionDetector collisionDetector = mock(CollisionDetector.class);
+        FireMode fireMode = mock(FireMode.class);
+        ItemRepresentation itemRepresentation = mock(ItemRepresentation.class);
+        ProjectileLauncher projectileLauncher = mock(ProjectileLauncher.class);
+        Recoil recoil = mock(Recoil.class);
+        SpreadPattern spreadPattern = mock(SpreadPattern.class);
+
+        FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
+        ProjectileSpec projectileSpec = new ProjectileSpec(null);
+        RecoilSpec recoilSpec = new RecoilSpec("RANDOM_SPREAD", List.of(0.1f), List.of(0.2f), null, null, null);
+        SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("SINGLE_PROJECTILE", null, null, null);
+        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);
+
+        when(bulletLauncherFactory.create(any(BulletProperties.class), eq(audioEmitter), eq(collisionDetector))).thenReturn(projectileLauncher);
+        when(contextProvider.getComponent(GAME_KEY, AudioEmitter.class)).thenReturn(audioEmitter);
+        when(contextProvider.getComponent(GAME_KEY, CollisionDetector.class)).thenReturn(collisionDetector);
+        when(fireModeFactory.create(fireModeSpec)).thenReturn(fireMode);
+        when(recoilFactory.create(recoilSpec)).thenReturn(recoil);
+        when(spreadPatternFactory.create(spreadPatternSpec)).thenReturn(spreadPattern);
+
+        ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(bulletLauncherFactory, fireModeFactory, contextProvider, particleEffectMapper, recoilFactory, spreadPatternFactory);
+        shootHandlerFactory.create(shootingSpec, GAME_KEY, ammunitionStorage, itemRepresentation);
+
+        ArgumentCaptor<BulletProperties> bulletPropertiesCaptor = ArgumentCaptor.forClass(BulletProperties.class);
+        verify(bulletLauncherFactory).create(bulletPropertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector));
+
+        BulletProperties properties = bulletPropertiesCaptor.getValue();
+        assertThat(properties.trajectoryParticleEffect()).isNull();
         assertThat(properties.shotSounds()).isEmpty();
 
         verify(fireMode).addShotObserver(any(ShotObserver.class));
