@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.*;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
@@ -197,8 +196,7 @@ public class WeaponCreatorTest {
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(10.0, 35.0, 20.0, 25.0, 30.0, 15.0);
 
         FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
-        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
-        ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
+        ProjectileSpec projectileSpec = new ProjectileSpec("BULLET", null, null);
         RecoilSpec recoilSpec = new RecoilSpec("RANDOM_SPREAD", List.of(0.1f), List.of(0.2f), null, null, null);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("BUCKSHOT", 1, 0.5f, 0.5f);
         ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);

@@ -6,6 +6,6 @@ import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import java.util.List;
 
 public record BulletProperties(
-        ParticleEffect trajectoryParticleEffect,
-        List<GameSound> shotSounds
+        List<GameSound> shotSounds,
+        ParticleEffect trajectoryParticleEffect
 ) { }

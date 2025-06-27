@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.validation.OneOfValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredIfFieldEqualsValidator;
@@ -24,7 +22,7 @@ public class ShootingSpecLoader {
     private static final String FIRE_MODE_RATE_OF_FIRE_ROUTE = "fire-mode.rate-of-fire";
     private static final String FIRE_MODE_CYCLE_COOLDOWN_ROUTE = "fire-mode.cycle-cooldown";
 
-    private static final String PROJECTILE_TRAJECTORY_PARTICLE_EFFECT_ROUTE = "projectile.trajectory-particle-effect";
+    private static final String PROJECTILE_ROUTE = "projectile";
 
     private static final String RECOIL_TYPE_ROUTE = "recoil.type";
     private static final String RECOIL_HORIZONTAL_ROUTE = "recoil.horizontal";
@@ -36,7 +34,7 @@ public class ShootingSpecLoader {
     private static final String SPREAD_PATTERN_ROUTE = "spread-pattern";
 
     @NotNull
-    private final ParticleEffectSpecLoader particleEffectSpecLoader;
+    private final ProjectileSpecLoader projectileSpecLoader;
     @NotNull
     private final SpreadPatternSpecLoader spreadPatternSpecLoader;
     @NotNull
@@ -44,11 +42,11 @@ public class ShootingSpecLoader {
 
     public ShootingSpecLoader(
             @NotNull YamlReader yamlReader,
-            @NotNull ParticleEffectSpecLoader particleEffectSpecLoader,
+            @NotNull ProjectileSpecLoader projectileSpecLoader,
             @NotNull SpreadPatternSpecLoader spreadPatternSpecLoader
     ) {
         this.yamlReader = yamlReader;
-        this.particleEffectSpecLoader = particleEffectSpecLoader;
+        this.projectileSpecLoader = projectileSpecLoader;
         this.spreadPatternSpecLoader = spreadPatternSpecLoader;
     }
 
@@ -60,9 +58,7 @@ public class ShootingSpecLoader {
         String fireModeAmountOfShotsRoute = this.createRoute(baseRoute, FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE);
         String fireModeRateOfFireRoute = this.createRoute(baseRoute, FIRE_MODE_RATE_OF_FIRE_ROUTE);
         String fireModeCycleCooldownRoute = this.createRoute(baseRoute, FIRE_MODE_CYCLE_COOLDOWN_ROUTE);
-
-        String projectileTrajectoryParticleEffectRoute = this.createRoute(baseRoute, PROJECTILE_TRAJECTORY_PARTICLE_EFFECT_ROUTE);
-
+        String projectileRoute = this.createRoute(baseRoute, PROJECTILE_ROUTE);
         String recoilTypeRoute = this.createRoute(baseRoute, RECOIL_TYPE_ROUTE);
         String recoilHorizontalRoute = this.createRoute(baseRoute, RECOIL_HORIZONTAL_ROUTE);
         String recoilVerticalRoute = this.createRoute(baseRoute, RECOIL_VERTICAL_ROUTE);
@@ -100,8 +96,7 @@ public class ShootingSpecLoader {
                 .resolve();
         FireModeSpec fireModeSpec = new FireModeSpec(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
 
-        ParticleEffectSpec projectileTrajectoryParticleEffectSpec = particleEffectSpecLoader.loadSpec(projectileTrajectoryParticleEffectRoute);
-        ProjectileSpec projectileSpec = new ProjectileSpec(projectileTrajectoryParticleEffectSpec);
+        ProjectileSpec projectileSpec = projectileSpecLoader.loadSpec(projectileRoute);
 
         String recoilType = new FieldSpecResolver<String>()
                 .route(recoilTypeRoute)

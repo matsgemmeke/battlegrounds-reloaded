@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.DustOptionsSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ProjectileSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
@@ -158,12 +159,13 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             YamlReader yamlReader = new YamlReader(file, null);
             yamlReader.load();
 
-            RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
-
             DustOptionsSpecLoader dustOptionsSpecLoader = new DustOptionsSpecLoader(yamlReader);
             ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader, dustOptionsSpecLoader);
+            RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
+
+            ProjectileSpecLoader projectileSpecLoader = new ProjectileSpecLoader(yamlReader, particleEffectSpecLoader);
             SpreadPatternSpecLoader spreadPatternSpecLoader = new SpreadPatternSpecLoader(yamlReader);
-            ShootingSpecLoader shootingSpecLoader = new ShootingSpecLoader(yamlReader, particleEffectSpecLoader, spreadPatternSpecLoader);
+            ShootingSpecLoader shootingSpecLoader = new ShootingSpecLoader(yamlReader, projectileSpecLoader, spreadPatternSpecLoader);
 
             GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader, shootingSpecLoader);
             GunSpec spec = specLoader.loadSpec();

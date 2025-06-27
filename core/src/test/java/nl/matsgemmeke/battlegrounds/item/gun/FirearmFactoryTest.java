@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.*;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
@@ -113,8 +112,7 @@ public class FirearmFactoryTest {
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(10.0, 35.0, 20.0, 25.0, 30.0, 15.0);
 
         FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
-        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
-        ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
+        ProjectileSpec projectileSpec = new ProjectileSpec("BULLET", null, null);
         RecoilSpec recoilSpec = this.createRecoilSpec();
         SpreadPatternSpec spreadPatternSpec = this.createSpreadPatternSpec();
         ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);
@@ -157,8 +155,7 @@ public class FirearmFactoryTest {
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(10.0, 35.0, 20.0, 25.0, 30.0, 15.0);
 
         FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
-        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
-        ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
+        ProjectileSpec projectileSpec = new ProjectileSpec("BULLET", null, null);
         RecoilSpec recoilSpec = this.createRecoilSpec();
         SpreadPatternSpec spreadPatternSpec = this.createSpreadPatternSpec();
         ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);
@@ -194,8 +191,7 @@ public class FirearmFactoryTest {
         RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(10.0, 35.0, 20.0, 25.0, 30.0, 15.0);
 
         FireModeSpec fireModeSpec = new FireModeSpec("SEMI_AUTOMATIC", null, null, 5L);
-        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
-        ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
+        ProjectileSpec projectileSpec = new ProjectileSpec("BULLET", null, null);
         RecoilSpec recoilSpec = this.createRecoilSpec();
         SpreadPatternSpec spreadPatternSpec = this.createSpreadPatternSpec();
         ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);

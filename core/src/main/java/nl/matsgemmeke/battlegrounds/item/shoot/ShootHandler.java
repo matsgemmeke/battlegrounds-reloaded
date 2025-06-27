@@ -60,6 +60,8 @@ public class ShootHandler {
 
         ammunitionStorage.setMagazineAmmo(magazineAmmo - 1);
         itemRepresentation.setPlaceholder(Placeholder.MAGAZINE_AMMO, String.valueOf(ammunitionStorage.getMagazineAmmo()));
+        // TODO: Remove this once reloading uses the ItemRepresentation
+        itemRepresentation.setPlaceholder(Placeholder.RESERVE_AMMO, String.valueOf(ammunitionStorage.getReserveAmmo()));
 
         Location shootingDirection = performer.getShootingDirection();
         List<Location> shootingDirections = spreadPattern.getShootingDirections(shootingDirection);

@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,7 +18,7 @@ public class ShootingSpecLoaderTest {
     public void createSpecReturnsShootingSpecContainingValidatedValues() {
         String fireModeType = "FULLY_AUTOMATIC";
         int rateOfFire = 600;
-        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
+        ProjectileSpec projectileSpec = new ProjectileSpec("BULLET", null, null);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("BUCKSHOT", 5, 0.5f, 0.5f);
 
         String recoilType = "RANDOM_SPREAD";
@@ -42,13 +40,13 @@ public class ShootingSpecLoaderTest {
         when(yamlReader.getOptionalFloat("base-route.recoil.recovery-rate")).thenReturn(Optional.empty());
         when(yamlReader.getOptionalLong("base-route.recoil.recovery-duration")).thenReturn(Optional.empty());
 
-        ParticleEffectSpecLoader particleEffectSpecLoader = mock(ParticleEffectSpecLoader.class);
-        when(particleEffectSpecLoader.loadSpec("base-route.projectile.trajectory-particle-effect")).thenReturn(trajectoryParticleEffectSpec);
+        ProjectileSpecLoader projectileSpecLoader = mock(ProjectileSpecLoader.class);
+        when(projectileSpecLoader.loadSpec("base-route.projectile")).thenReturn(projectileSpec);
 
         SpreadPatternSpecLoader spreadPatternSpecLoader = mock(SpreadPatternSpecLoader.class);
         when(spreadPatternSpecLoader.loadSpec("base-route.spread-pattern")).thenReturn(spreadPatternSpec);
 
-        ShootingSpecLoader shootingSpecLoader = new ShootingSpecLoader(yamlReader, particleEffectSpecLoader, spreadPatternSpecLoader);
+        ShootingSpecLoader shootingSpecLoader = new ShootingSpecLoader(yamlReader, projectileSpecLoader, spreadPatternSpecLoader);
         ShootingSpec spec = shootingSpecLoader.loadSpec(BASE_ROUTE);
 
         assertThat(spec.shotSounds()).isNull();
@@ -58,7 +56,7 @@ public class ShootingSpecLoaderTest {
         assertThat(spec.fireMode().cycleCooldown()).isNull();
         assertThat(spec.fireMode().rateOfFire()).isEqualTo(rateOfFire);
 
-        assertThat(spec.projectile().trajectoryParticleEffect()).isEqualTo(trajectoryParticleEffectSpec);
+        assertThat(spec.projectile()).isEqualTo(projectileSpec);
 
         assertThat(spec.recoil()).isNotNull();
         assertThat(spec.recoil().type()).isEqualTo(recoilType);

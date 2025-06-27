@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.*;
 import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
@@ -55,8 +54,7 @@ public class GunSpecLoaderTest {
         Double headshotDamageMultiplier = 2.0;
 
         FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
-        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.0, 0.0, 0.0, 0.0, null, null);
-        ProjectileSpec projectileSpec = new ProjectileSpec(trajectoryParticleEffectSpec);
+        ProjectileSpec projectileSpec = new ProjectileSpec("BULLET", null, null);
         RecoilSpec recoilSpec = new RecoilSpec("RANDOM_SPREAD", List.of(0.1f), List.of(0.2f), null, null, null);
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("SINGLE_PROJECTILE", null, null, null);
         ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);
