@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.spread;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.SpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpec;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SpreadPatternFactory {
 
@@ -9,14 +10,26 @@ public class SpreadPatternFactory {
     public SpreadPattern create(@NotNull SpreadPatternSpec spec) {
         SpreadPatternType spreadPatternType = SpreadPatternType.valueOf(spec.type());
 
-        int projectileAmount = spec.projectileAmount();
-        float horizontalSpread = spec.horizontalSpread();
-        float verticalSpread = spec.verticalSpread();
+        switch (spreadPatternType) {
+            case BUCKSHOT -> {
+                int projectileAmount = this.validateSpecVar(spec.projectileAmount(), "projectileAmount", spreadPatternType);
+                float horizontalSpread = this.validateSpecVar(spec.horizontalSpread(), "horizontalSpread", spreadPatternType);
+                float verticalSpread = this.validateSpecVar(spec.verticalSpread(), "verticalSpread", spreadPatternType);
 
-        if (spreadPatternType == SpreadPatternType.BUCKSHOT) {
-            return new BuckshotSpreadPattern(projectileAmount, horizontalSpread, verticalSpread);
+                return new BuckshotSpreadPattern(projectileAmount, horizontalSpread, verticalSpread);
+            }
+            case SINGLE_PROJECTILE -> {
+                return new SingleProjectileSpreadPattern();
+            }
+            default -> throw new SpreadPatternCreationException("Invalid spread pattern type \"" + spec.type() + "\"");
+        }
+    }
+
+    private <T> T validateSpecVar(@Nullable T value, @NotNull String valueName, @NotNull Object spreadPatternType) {
+        if (value == null) {
+            throw new SpreadPatternCreationException("Cannot create spread pattern with type %s because of invalid spec: Required '%s' value is missing".formatted(spreadPatternType, valueName));
         }
 
-        throw new IllegalArgumentException("Invalid spread pattern type \"" + spec.type() + "\"");
+        return value;
     }
 }

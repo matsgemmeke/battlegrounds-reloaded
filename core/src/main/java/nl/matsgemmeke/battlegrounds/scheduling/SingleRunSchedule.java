@@ -40,6 +40,10 @@ public class SingleRunSchedule implements Schedule {
         scheduleTasks.add(task);
     }
 
+    public void clearTasks() {
+        scheduleTasks.clear();
+    }
+
     public boolean isRunning() {
         return bukkitTask != null;
     }

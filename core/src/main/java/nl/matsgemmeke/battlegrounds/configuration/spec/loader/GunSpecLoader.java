@@ -1,27 +1,24 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.FieldSpecResolver;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.OneOfValidator;
-import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredIfFieldEqualsValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.RequiredValidator;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
 
 public class GunSpecLoader {
 
     private static final List<String> ALLOWED_ACTION_VALUES = List.of("CHANGE_FROM", "CHANGE_TO", "DROP_ITEM", "LEFT_CLICK", "PICKUP_ITEM", "RIGHT_CLICK", "SWAP_FROM", "SWAP_TO");
     private static final List<String> ALLOWED_RELOAD_TYPE_VALUES = List.of("MAGAZINE", "MANUAL_INSERTION");
-    private static final List<String> ALLOWED_FIRE_MODE_TYPE_VALUES = List.of("BURST_MODE", "FULLY_AUTOMATIC", "SEMI_AUTOMATIC");
-    private static final List<String> ALLOWED_RECOIL_TYPE_VALUES = List.of("CAMERA_MOVEMENT", "RANDOM_SPREAD");
-    private static final List<String> ALLOWED_SPREAD_PATTERN_TYPE_VALUES = List.of("BUCKSHOT");
 
     private static final String ID_ROUTE = "id";
     private static final String NAME_ROUTE = "name";
@@ -34,7 +31,7 @@ public class GunSpecLoader {
     private static final String RANGE_PROFILE_ROUTE = "shooting.range";
     private static final String HEADSHOT_DAMAGE_MULTIPLIER_ROUTE = "shooting.headshot-damage-multiplier";
 
-    private static final String SHOT_SOUNDS_ROUTE = "shooting.shot-sounds";
+    private static final String SHOOTING_SECTION_ROUTE = "shooting";
 
     private static final String RELOAD_TYPE_ROUTE = "reloading.type";
     private static final String RELOAD_SOUNDS_ROUTE = "reloading.reload-sounds";
@@ -49,37 +46,23 @@ public class GunSpecLoader {
     private static final String USE_SCOPE_ACTION_ROUTE = "controls.scope-use";
     private static final String STOP_SCOPE_ACTION_ROUTE = "controls.scope-stop";
     private static final String CHANGE_SCOPE_MAGNIFICATION_ACTION_ROUTE = "controls.scope-change-magnification";
-
-    private static final String FIRE_MODE_TYPE_ROUTE = "shooting.fire-mode.type";
-    private static final String FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE = "shooting.fire-mode.amount-of-shots";
-    private static final String FIRE_MODE_RATE_OF_FIRE_ROUTE = "shooting.fire-mode.rate-of-fire";
-    private static final String FIRE_MODE_DELAY_BETWEEN_SHOTS_ROUTE = "shooting.fire-mode.delay-between-shots";
-
-    private static final String RECOIL_TYPE_ROUTE = "shooting.recoil.type";
-    private static final String RECOIL_HORIZONTAL_ROUTE = "shooting.recoil.horizontal";
-    private static final String RECOIL_VERTICAL_ROUTE = "shooting.recoil.vertical";
-    private static final String RECOIL_KICKBACK_DURATION_ROUTE = "shooting.recoil.kickback-duration";
-    private static final String RECOIL_RECOVERY_RATE_ROUTE = "shooting.recoil.recovery-rate";
-    private static final String RECOIL_RECOVERY_DURATION_ROUTE = "shooting.recoil.recovery-duration";
     
     private static final String SCOPE_MAGNIFICATIONS_ROUTE = "scope.magnifications";
     private static final String SCOPE_USE_SOUNDS_ROUTE = "scope.use-sounds";
     private static final String SCOPE_STOP_SOUNDS_ROUTE = "scope.stop-sounds";
     private static final String SCOPE_CHANGE_MAGNIFICATION_SOUNDS_ROUTE = "scope.change-magnification-sounds";
 
-    private static final String SPREAD_PATTERN_TYPE_ROUTE = "shooting.spread-pattern.type";
-    private static final String SPREAD_PATTERN_PROJECTILE_AMOUNT_ROUTE = "shooting.spread-pattern.projectile-amount";
-    private static final String SPREAD_PATTERN_HORIZONTAL_SPREAD_ROUTE = "shooting.spread-pattern.horizontal-spread";
-    private static final String SPREAD_PATTERN_VERTICAL_SPREAD_ROUTE = "shooting.spread-pattern.vertical-spread";
-
     @NotNull
     private final RangeProfileSpecLoader rangeProfileSpecLoader;
     @NotNull
+    private final ShootingSpecLoader shootingSpecLoader;
+    @NotNull
     private final YamlReader yamlReader;
 
-    public GunSpecLoader(@NotNull YamlReader yamlReader, @NotNull RangeProfileSpecLoader rangeProfileSpecLoader) {
+    public GunSpecLoader(@NotNull YamlReader yamlReader, @NotNull RangeProfileSpecLoader rangeProfileSpecLoader, @NotNull ShootingSpecLoader shootingSpecLoader) {
         this.yamlReader = yamlReader;
         this.rangeProfileSpecLoader = rangeProfileSpecLoader;
+        this.shootingSpecLoader = shootingSpecLoader;
     }
 
     @NotNull
@@ -123,10 +106,7 @@ public class GunSpecLoader {
                 .validate(new RequiredValidator<>())
                 .resolve();
 
-        String shotSounds = new FieldSpecResolver<String>()
-                .route(SHOT_SOUNDS_ROUTE)
-                .value(yamlReader.getString(SHOT_SOUNDS_ROUTE))
-                .resolve();
+        ShootingSpec shootingSpec = shootingSpecLoader.loadSpec(SHOOTING_SECTION_ROUTE);
 
         String reloadType = new FieldSpecResolver<String>()
                 .route(RELOAD_TYPE_ROUTE)
@@ -192,66 +172,7 @@ public class GunSpecLoader {
                 .resolve();
         ControlsSpec controlsSpec = new ControlsSpec(reloadAction, shootAction, useScopeAction, stopScopeAction, changeScopeMagnificationAction);
 
-        String fireModeType = new FieldSpecResolver<String>()
-                .route(FIRE_MODE_TYPE_ROUTE)
-                .value(yamlReader.getString(FIRE_MODE_TYPE_ROUTE))
-                .validate(new RequiredValidator<>())
-                .validate(new OneOfValidator<>(ALLOWED_FIRE_MODE_TYPE_VALUES))
-                .resolve();
-        Integer amountOfShots = new FieldSpecResolver<Integer>()
-                .route(FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE)
-                .value(yamlReader.getOptionalInt(FIRE_MODE_AMOUNT_OF_SHOTS_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, "BURST_MODE"))
-                .resolve();
-        Integer rateOfFire = new FieldSpecResolver<Integer>()
-                .route(FIRE_MODE_RATE_OF_FIRE_ROUTE)
-                .value(yamlReader.getOptionalInt(FIRE_MODE_RATE_OF_FIRE_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, Set.of("BURST_MODE", "FULLY_AUTOMATIC")))
-                .resolve();
-        Long delayBetweenShots = new FieldSpecResolver<Long>()
-                .route(FIRE_MODE_DELAY_BETWEEN_SHOTS_ROUTE)
-                .value(yamlReader.getOptionalLong(FIRE_MODE_DELAY_BETWEEN_SHOTS_ROUTE).orElse(null))
-                .validate(new RequiredIfFieldEqualsValidator<>(FIRE_MODE_TYPE_ROUTE, fireModeType, "SEMI_AUTOMATIC"))
-                .resolve();
-        FireModeSpec fireModeSpec = new FireModeSpec(fireModeType, amountOfShots, rateOfFire, delayBetweenShots);
-
-        RecoilSpec recoilSpec = null;
         ScopeSpec scopeSpec = null;
-        SpreadPatternSpec spreadPatternSpec = null;
-
-        if (yamlReader.contains("shooting.recoil")) {
-            String recoilType = new FieldSpecResolver<String>()
-                    .route(RECOIL_TYPE_ROUTE)
-                    .value(yamlReader.getString(RECOIL_TYPE_ROUTE))
-                    .validate(new RequiredValidator<>())
-                    .validate(new OneOfValidator<>(ALLOWED_RECOIL_TYPE_VALUES))
-                    .resolve();
-            List<Float> horizontalRecoilValues = new FieldSpecResolver<List<Float>>()
-                    .route(RECOIL_HORIZONTAL_ROUTE)
-                    .value(yamlReader.getOptionalFloatList(RECOIL_HORIZONTAL_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
-                    .resolve();
-            List<Float> verticalRecoilValues = new FieldSpecResolver<List<Float>>()
-                    .route(RECOIL_VERTICAL_ROUTE)
-                    .value(yamlReader.getOptionalFloatList(RECOIL_VERTICAL_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
-                    .resolve();
-            Long kickbackDuration = new FieldSpecResolver<Long>()
-                    .route(RECOIL_KICKBACK_DURATION_ROUTE)
-                    .value(yamlReader.getOptionalLong(RECOIL_KICKBACK_DURATION_ROUTE).orElse(null))
-                    .validate(new RequiredIfFieldEqualsValidator<>(RECOIL_TYPE_ROUTE, recoilType, "CAMERA_MOVEMENT"))
-                    .resolve();
-            Float recoveryRate = new FieldSpecResolver<Float>()
-                    .route(RECOIL_RECOVERY_RATE_ROUTE)
-                    .value(yamlReader.getOptionalFloat(RECOIL_RECOVERY_RATE_ROUTE).orElse(0.0f))
-                    .resolve();
-            Long recoveryDuration = new FieldSpecResolver<Long>()
-                    .route(RECOIL_RECOVERY_DURATION_ROUTE)
-                    .value(yamlReader.getOptionalLong(RECOIL_RECOVERY_DURATION_ROUTE).orElse(0L))
-                    .resolve();
-
-            recoilSpec = new RecoilSpec(recoilType, horizontalRecoilValues, verticalRecoilValues, kickbackDuration, recoveryRate, recoveryDuration);
-        }
         
         if (yamlReader.contains("scope")) {
             List<Float> magnifications = new FieldSpecResolver<List<Float>>()
@@ -275,32 +196,6 @@ public class GunSpecLoader {
             scopeSpec = new ScopeSpec(magnifications, useSounds, stopSounds, changeMagnficationSounds);
         }
 
-        if (yamlReader.contains("shooting.spread-pattern")) {
-            String spreadPatternType = new FieldSpecResolver<String>()
-                    .route(SPREAD_PATTERN_TYPE_ROUTE)
-                    .value(yamlReader.getString(SPREAD_PATTERN_TYPE_ROUTE))
-                    .validate(new RequiredValidator<>())
-                    .validate(new OneOfValidator<>(ALLOWED_SPREAD_PATTERN_TYPE_VALUES))
-                    .resolve();
-            Integer projectileAmount = new FieldSpecResolver<Integer>()
-                    .route(SPREAD_PATTERN_PROJECTILE_AMOUNT_ROUTE)
-                    .value(yamlReader.getOptionalInt(SPREAD_PATTERN_PROJECTILE_AMOUNT_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
-                    .resolve();
-            Float horizontalSpread = new FieldSpecResolver<Float>()
-                    .route(SPREAD_PATTERN_HORIZONTAL_SPREAD_ROUTE)
-                    .value(yamlReader.getOptionalFloat(SPREAD_PATTERN_HORIZONTAL_SPREAD_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
-                    .resolve();
-            Float verticalSpread = new FieldSpecResolver<Float>()
-                    .route(SPREAD_PATTERN_VERTICAL_SPREAD_ROUTE)
-                    .value(yamlReader.getOptionalFloat(SPREAD_PATTERN_VERTICAL_SPREAD_ROUTE).orElse(null))
-                    .validate(new RequiredValidator<>())
-                    .resolve();
-
-            spreadPatternSpec = new SpreadPatternSpec(spreadPatternType, projectileAmount, horizontalSpread, verticalSpread);
-        }
-
-        return new GunSpec(id, name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, rangeProfileSpec, headshotDamageMultiplier, shotSounds, reloadSpec, itemSpec, controlsSpec, fireModeSpec, recoilSpec, scopeSpec, spreadPatternSpec);
+        return new GunSpec(id, name, description, magazineSize, maxMagazineAmount, defaultMagazineAmount, rangeProfileSpec, headshotDamageMultiplier, shootingSpec, reloadSpec, itemSpec, controlsSpec, scopeSpec);
     }
 }

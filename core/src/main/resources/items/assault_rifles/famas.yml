@@ -11,7 +11,7 @@ description: Fully automatic with high rate of fire. Effective at medium range.
 gun-type: ASSAULT_RIFLE
 item:
   damage: 16
-  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   material: IRON_HOE
 level-unlocked: 5
 price: 2250
@@ -24,6 +24,18 @@ shooting:
     rate-of-fire: 600
     type: FULLY_AUTOMATIC
   headshot-damage-multiplier: 1.5
+  projectile:
+    type: BULLET
+    trajectory-particle-effect:
+      particle: REDSTONE
+      count: 1
+      offset-x: 0.0
+      offset-y: 0.0
+      offset-z: 0.0
+      extra: 0
+      dust-options:
+        color: '#ffffff'
+        size: 1
   range:
     long-range:
       damage: 25.0
@@ -35,9 +47,11 @@ shooting:
       damage: 35.0
       distance: 20.0
   recoil:
-    horizontal: [0.0, 0.5, 1.0]
-    kickback-duration: 200
     type: CAMERA_MOVEMENT
+    horizontal: [0.0, 0.5, 1.0]
     vertical: [-2.0, -2.5, -3.0]
+    kickback-duration: 200
+  spread-pattern:
+    type: SINGLE_PROJECTILE
   shot-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
   suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-0.3-2-0, ENTITY_FIREWORK_BLAST-3-1-0

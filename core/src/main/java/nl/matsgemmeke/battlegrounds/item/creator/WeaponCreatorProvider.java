@@ -6,6 +6,11 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.DustOptionsSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ProjectileSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpecLoader;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
@@ -132,8 +137,10 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             YamlReader yamlReader = new YamlReader(file, null);
             yamlReader.load();
 
+            DustOptionsSpecLoader dustOptionsSpecLoader = new DustOptionsSpecLoader(yamlReader);
+            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader, dustOptionsSpecLoader);
+
             ActivationPatternSpecLoader activationPatternSpecLoader = new ActivationPatternSpecLoader(yamlReader);
-            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader);
             PotionEffectSpecLoader potionEffectSpecLoader = new PotionEffectSpecLoader(yamlReader);
             RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
             TriggerSpecLoader triggerSpecLoader = new TriggerSpecLoader(yamlReader);
@@ -152,9 +159,15 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             YamlReader yamlReader = new YamlReader(file, null);
             yamlReader.load();
 
+            DustOptionsSpecLoader dustOptionsSpecLoader = new DustOptionsSpecLoader(yamlReader);
+            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader, dustOptionsSpecLoader);
             RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
 
-            GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader);
+            ProjectileSpecLoader projectileSpecLoader = new ProjectileSpecLoader(yamlReader, particleEffectSpecLoader);
+            SpreadPatternSpecLoader spreadPatternSpecLoader = new SpreadPatternSpecLoader(yamlReader);
+            ShootingSpecLoader shootingSpecLoader = new ShootingSpecLoader(yamlReader, projectileSpecLoader, spreadPatternSpecLoader);
+
+            GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader, shootingSpecLoader);
             GunSpec spec = specLoader.loadSpec();
 
             creator.addGunSpec(id, spec);

@@ -15,7 +15,7 @@ public class PotionEffectSpecLoaderTest {
     private static final String BASE_ROUTE = "base-route";
 
     @Test
-    public void createSpecReturnsRangeProfileSpecContainingValidatedValues() {
+    public void createSpecReturnsPotionEffectSpecContainingValidatedValues() {
         String type = "BLINDNESS";
         Integer duration = 10;
         Integer amplifier = 1;

@@ -11,7 +11,7 @@ description: Semi-automatic pistol. Versatile and strong overall with a large ma
 gun-type: HANDGUN
 item:
   damage: 2
-  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   material: IRON_HOE
 level-unlocked: 1
 price: 750
@@ -21,9 +21,21 @@ reloading:
   type: MAGAZINE
 shooting:
   fire-mode:
-    delay-between-shots: 2
+    cycle-cooldown: 2
     type: SEMI_AUTOMATIC
   headshot-damage-multiplier: 1.4
+  projectile:
+    type: BULLET
+    trajectory-particle-effect:
+      particle: REDSTONE
+      count: 1
+      offset-x: 0.0
+      offset-y: 0.0
+      offset-z: 0.0
+      extra: 0
+      dust-options:
+        color: '#ffffff'
+        size: 1
   range:
     long-range:
       damage: 22.0
@@ -35,9 +47,11 @@ shooting:
       damage: 42.0
       distance: 10.0
   recoil:
-    horizontal: [-0.5, 0.0, 0.5]
-    kickback-duration: 200
     type: CAMERA_MOVEMENT
+    horizontal: [-0.5, 0.0, 0.5]
     vertical: [-1.5, -2.0, -2.5]
+    kickback-duration: 200
+  spread-pattern:
+    type: SINGLE_PROJECTILE
   shot-sounds: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
   suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0

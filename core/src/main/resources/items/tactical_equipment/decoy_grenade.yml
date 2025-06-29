@@ -40,11 +40,11 @@ equipment-type: TACTICAL
 item:
   display:
     damage: 10
-    display-name: "&f%name%"
+    display-name: '&f%name%'
     material: SHEARS
   throw:
     damage: 10
-    display-name: "&f%name%"
+    display-name: '&f%name%'
     material: SHEARS
 projectile:
   effects:

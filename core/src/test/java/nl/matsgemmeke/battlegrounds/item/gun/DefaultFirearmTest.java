@@ -8,18 +8,19 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.recoil.RecoilProducer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
+import nl.matsgemmeke.battlegrounds.item.shoot.ShotPerformer;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.*;
@@ -35,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -118,13 +120,13 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    public void cancelShootingCycleCancelsFireModeCycle() {
-        FireMode fireMode = mock(FireMode.class);
-        when(fireMode.cancelCycle()).thenReturn(true);
+    public void cancelShootingCycleCancelsShootHandler() {
+        ShootHandler shootHandler = mock(ShootHandler.class);
+        when(shootHandler.cancel()).thenReturn(true);
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setFireMode(fireMode);
-        boolean cancelled = firearm.cancelShootingCycle();
+        firearm.setShootHandler(shootHandler);
+        boolean cancelled = firearm.cancelShooting();
 
         assertTrue(cancelled);
     }
@@ -159,6 +161,20 @@ public class DefaultFirearmTest {
         boolean changed = firearm.changeScopeMagnification();
 
         assertTrue(changed);
+    }
+
+    @Test
+    public void getRateOfFireReturnsRateOfFireValueFromShootHandler() {
+        int rateOfFire = 600;
+
+        ShootHandler shootHandler = mock(ShootHandler.class);
+        when(shootHandler.getRateOfFire()).thenReturn(rateOfFire);
+
+        DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setShootHandler(shootHandler);
+        int result = firearm.getRateOfFire();
+
+        assertThat(result).isEqualTo(rateOfFire);
     }
 
     @Test
@@ -270,24 +286,24 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    public void isShootingReturnsTrueIfFireModeIsCycling() {
-        FireMode fireMode = mock(FireMode.class);
-        when(fireMode.isCycling()).thenReturn(true);
+    public void isShootingReturnsTrueWhenShootHandlerIsShooting() {
+        ShootHandler shootHandler = mock(ShootHandler.class);
+        when(shootHandler.isShooting()).thenReturn(true);
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setFireMode(fireMode);
+        firearm.setShootHandler(shootHandler);
         boolean shooting = firearm.isShooting();
 
         assertTrue(shooting);
     }
 
     @Test
-    public void isShootingReturnsFalseIfFireModeIsNotCycling() {
-        FireMode fireMode = mock(FireMode.class);
-        when(fireMode.isCycling()).thenReturn(false);
+    public void isShootingReturnsFalseWhenShootHandlerIsNotShooting() {
+        ShootHandler shootHandler = mock(ShootHandler.class);
+        when(shootHandler.isShooting()).thenReturn(false);
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setFireMode(fireMode);
+        firearm.setShootHandler(shootHandler);
         boolean shooting = firearm.isShooting();
 
         assertFalse(shooting);
@@ -482,22 +498,22 @@ public class DefaultFirearmTest {
     public void shouldProduceRecoilWhenShooting() {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
         RangeProfile rangeProfile = new RangeProfile(0, 0, 0, 0, 0, 0);
-        RecoilProducer recoilProducer = mock(RecoilProducer.class);
+        Recoil recoil = mock(Recoil.class);
         World world = mock(World.class);
         Location startingLocation = new Location(world, 1.0, 1.0, 1.0);
 
         when(holder.getShootingDirection()).thenReturn(startingLocation);
 
-        when(recoilProducer.produceRecoil(eq(holder), any(Location.class))).thenReturn(startingLocation);
+        when(recoil.produceRecoil(eq(holder), any(Location.class))).thenReturn(startingLocation);
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setAmmunitionStorage(ammunitionStorage);
         firearm.setHolder(holder);
         firearm.setRangeProfile(rangeProfile);
-        firearm.setRecoilProducer(recoilProducer);
+        firearm.setRecoil(recoil);
         firearm.shoot();
 
-        verify(recoilProducer).produceRecoil(eq(holder), any(Location.class));
+        verify(recoil).produceRecoil(eq(holder), any(Location.class));
     }
 
     @Test
@@ -671,7 +687,7 @@ public class DefaultFirearmTest {
         when(holder.getShootingDirection()).thenReturn(shootingDirection);
 
         SpreadPattern pattern = mock(SpreadPattern.class);
-        when(pattern.getProjectileDirections(shootingDirection)).thenReturn(List.of(shootingDirection, shootingDirection));
+        when(pattern.getShootingDirections(shootingDirection)).thenReturn(List.of(shootingDirection, shootingDirection));
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setAmmunitionStorage(ammunitionStorage);
@@ -780,27 +796,15 @@ public class DefaultFirearmTest {
     }
 
     @Test
-    public void startShootCycleReturnsFalseIfFireModeCycleDoesNotStart() {
-        FireMode fireMode = mock(FireMode.class);
-        when(fireMode.activateCycle()).thenReturn(false);
+    public void shootDelegatesToShootHandler() {
+        ShootHandler shootHandler = mock(ShootHandler.class);
+        ShotPerformer performer = mock(ShotPerformer.class);
 
         DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setFireMode(fireMode);
-        boolean started = firearm.startShootCycle();
+        firearm.setShootHandler(shootHandler);
+        firearm.shoot(performer);
 
-        assertFalse(started);
-    }
-
-    @Test
-    public void startShootCycleReturnsTrueIfFireModeCycleStarts() {
-        FireMode fireMode = mock(FireMode.class);
-        when(fireMode.activateCycle()).thenReturn(true);
-
-        DefaultFirearm firearm = new DefaultFirearm(GUN_ID, audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setFireMode(fireMode);
-        boolean started = firearm.startShootCycle();
-
-        assertTrue(started);
+        verify(shootHandler).shoot(performer);
     }
 
     @Test

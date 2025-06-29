@@ -59,15 +59,15 @@ public class ShootFunctionTest {
     }
 
     @Test
-    public void cancelCancelsGunShootingCycle() {
-        when(gun.cancelShootingCycle()).thenReturn(true);
+    public void cancelCancelsGunShooting() {
+        when(gun.cancelShooting()).thenReturn(true);
 
         ShootFunction function = new ShootFunction(gun);
         boolean cancelled = function.cancel();
 
         assertTrue(cancelled);
 
-        verify(gun).cancelShootingCycle();
+        verify(gun).cancelShooting();
     }
 
     @Test
@@ -95,6 +95,6 @@ public class ShootFunctionTest {
 
         assertTrue(performed);
 
-        verify(gun).startShootCycle();
+        verify(gun).shoot(holder);
     }
 }

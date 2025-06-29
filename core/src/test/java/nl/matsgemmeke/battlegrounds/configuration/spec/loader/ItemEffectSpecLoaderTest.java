@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec.loader;
 
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.PotionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.RangeProfileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ActivationPatternSpec;
@@ -39,7 +40,7 @@ public class ItemEffectSpecLoaderTest {
         Boolean damageBlocks = true;
         Boolean spreadFire = false;
 
-        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE");
+        ParticleEffectSpec particleEffectSpec = new ParticleEffectSpec("BLOCK_CRACK", 10, 0.1, 0.2, 0.3, 0.0, "STONE", null);
         PotionEffectSpec potionEffectSpec = new PotionEffectSpec("BLINDNESS", 100, 1, true, false, true);
         ActivationPatternSpec activationPatternSpec = new ActivationPatternSpec(2L, 100L, 200L, 10L, 20L);
 

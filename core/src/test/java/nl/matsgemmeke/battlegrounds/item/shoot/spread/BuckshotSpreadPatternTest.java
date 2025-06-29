@@ -16,7 +16,7 @@ public class BuckshotSpreadPatternTest {
         Location location = new Location(null, 0, 0, 0);
 
         BuckshotSpreadPattern pattern = new BuckshotSpreadPattern(pelletAmount, 1.0f, 1.0f);
-        Iterable<Location> directions = pattern.getProjectileDirections(location);
+        Iterable<Location> directions = pattern.getShootingDirections(location);
 
         assertEquals(pelletAmount, Iterators.size(directions.iterator()));
     }
@@ -26,7 +26,7 @@ public class BuckshotSpreadPatternTest {
         Location location = new Location(null, 0, 0, 0, 10.0f, 10.0f);
 
         BuckshotSpreadPattern pattern = new BuckshotSpreadPattern(10, 10.0f, 10.0f);
-        Iterable<Location> directions = pattern.getProjectileDirections(location);
+        Iterable<Location> directions = pattern.getShootingDirections(location);
 
         for (Location direction : directions) {
             assertTrue(direction.getYaw() >= 0.0f);

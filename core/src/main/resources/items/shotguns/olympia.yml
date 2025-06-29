@@ -11,7 +11,7 @@ description: Double-barrel over/under shotgun. Effective at medium to close rang
 gun-type: SHOTGUN
 item:
   damage: 23
-  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   material: IRON_HOE
 level-unlocked: 1
 price: 1100
@@ -21,14 +21,21 @@ reloading:
   type: MANUAL_INSERTION
 shooting:
   fire-mode:
-    delay-between-shots: 6
+    cycle-cooldown: 6
     type: SEMI_AUTOMATIC
   headshot-damage-multiplier: 1.1
-  pattern:
-    horizontal-spread: 1.5
-    pellet-amount: 8
-    type: BUCKSHOT
-    vertical-spread: 1.5
+  projectile:
+    type: BULLET
+    trajectory-particle-effect:
+      particle: REDSTONE
+      count: 1
+      offset-x: 0.0
+      offset-y: 0.0
+      offset-z: 0.0
+      extra: 0
+      dust-options:
+        color: '#ffffff'
+        size: 1
   range:
     long-range:
       damage: 10.0
@@ -40,9 +47,14 @@ shooting:
       damage: 50.0
       distance: 10.0
   recoil:
-    horizontal: [-2.0, 0.5, 2.0]
-    kickback-duration: 300
     type: CAMERA_MOVEMENT
+    horizontal: [-2.0, 0.5, 2.0]
     vertical: [-8.0, -10.0, -12.0]
+    kickback-duration: 300
+  spread-pattern:
+    type: BUCKSHOT
+    projectile-amount: 8
+    horizontal-spread: 1.5
+    vertical-spread: 1.5
   shot-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
   suppressed-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0

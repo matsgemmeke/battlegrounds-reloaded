@@ -32,7 +32,7 @@ public class DeploymentHandlerTest {
     private static final boolean REMOVE_DEPLOYMENT_ON_CLEANUP = true;
     private static final List<GameSound> ACTIVATION_SOUNDS = Collections.emptyList();
     private static final long MANUAL_ACTIVATION_DELAY = 10L;
-    private static final ParticleEffect DESTRUCTION_PARTICLE_EFFECT = new ParticleEffect(Particle.ASH, 1, 0, 0, 0, 0, null);
+    private static final ParticleEffect DESTRUCTION_PARTICLE_EFFECT = new ParticleEffect(Particle.ASH, 1, 0, 0, 0, 0, null, null);
 
     private AudioEmitter audioEmitter;
     private Deployer deployer;

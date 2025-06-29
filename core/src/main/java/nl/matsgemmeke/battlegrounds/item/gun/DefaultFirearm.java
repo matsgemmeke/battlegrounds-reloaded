@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
@@ -50,15 +49,6 @@ public class DefaultFirearm extends BaseGun implements Firearm {
         this.collisionDetector = collisionDetector;
         this.damageProcessor = damageProcessor;
         this.targetFinder = targetFinder;
-    }
-
-    @NotNull
-    public FireMode getFireMode() {
-        return fireMode;
-    }
-
-    public void setFireMode(@NotNull FireMode fireMode) {
-        this.fireMode = fireMode;
     }
 
     public double getHeadshotDamageMultiplier() {
@@ -197,8 +187,8 @@ public class DefaultFirearm extends BaseGun implements Firearm {
         ammunitionStorage.setMagazineAmmo(ammunitionStorage.getMagazineAmmo() - 1);
         audioEmitter.playSounds(shotSounds, direction);
 
-        if (recoilProducer != null) {
-            direction = recoilProducer.produceRecoil(holder, direction);
+        if (recoil != null) {
+            direction = recoil.produceRecoil(holder, direction);
         }
 
         for (Location projectileDirection : this.getProjectileDirections(direction)) {
@@ -243,7 +233,7 @@ public class DefaultFirearm extends BaseGun implements Firearm {
 
     private Iterable<Location> getProjectileDirections(@NotNull Location aimDirection) {
         if (spreadPattern != null) {
-            return spreadPattern.getProjectileDirections(aimDirection);
+            return spreadPattern.getShootingDirections(aimDirection);
         } else {
             return List.of(aimDirection);
         }

@@ -44,13 +44,9 @@ import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
-import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstMode;
-import nl.matsgemmeke.battlegrounds.item.shoot.burst.BurstModeFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticMode;
-import nl.matsgemmeke.battlegrounds.item.shoot.fullauto.FullyAutomaticModeFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticMode;
-import nl.matsgemmeke.battlegrounds.item.shoot.semiauto.SemiAutomaticModeFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.sqlite.SqliteEquipmentStateRepositoryProvider;
@@ -119,16 +115,6 @@ public class BattlegroundsModule implements Module {
                 .build(DeploymentHandlerFactory.class));
 
         binder.install(new FactoryModuleBuilder()
-                .implement(FireMode.class, BurstMode.class)
-                .build(BurstModeFactory.class));
-        binder.install(new FactoryModuleBuilder()
-                .implement(FireMode.class, FullyAutomaticMode.class)
-                .build(FullyAutomaticModeFactory.class));
-        binder.install(new FactoryModuleBuilder()
-                .implement(FireMode.class, SemiAutomaticMode.class)
-                .build(SemiAutomaticModeFactory.class));
-
-        binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)
                 .build(DefaultGamePlayerFactory.class));
 
@@ -152,6 +138,10 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileEffect.class, TrailEffect.class)
                 .build(TrailEffectFactory.class));
+
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileLauncher.class, BulletLauncher.class)
+                .build(BulletLauncherFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(ReloadSystem.class, MagazineReloadSystem.class)

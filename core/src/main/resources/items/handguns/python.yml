@@ -11,7 +11,7 @@ description: Double-action revolver pistol. Uses a 6 round cylinder feed system.
 gun-type: HANDGUN
 item:
   damage: 5
-  display-name: "&f%name% %magazine_ammo%/%reserve_ammo%"
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   material: IRON_HOE
 level-unlocked: 18
 price: 600
@@ -21,9 +21,21 @@ reloading:
   type: MANUAL_INSERTION
 shooting:
   fire-mode:
-    delay-between-shots: 4
+    cycle-cooldown: 4
     type: SEMI_AUTOMATIC
   headshot-damage-multiplier: 1.5
+  projectile:
+    type: BULLET
+    trajectory-particle-effect:
+      particle: REDSTONE
+      count: 1
+      offset-x: 0.0
+      offset-y: 0.0
+      offset-z: 0.0
+      extra: 0
+      dust-options:
+        color: '#ffffff'
+        size: 1
   range:
     long-range:
       damage: 30.0
@@ -35,9 +47,11 @@ shooting:
       damage: 50.0
       distance: 10.0
   recoil:
-    horizontal: [0.0, 0.5, 1.0]
-    kickback-duration: 200
     type: CAMERA_MOVEMENT
+    horizontal: [0.0, 0.5, 1.0]
     vertical: [-3.0, -3.5, -4.0]
+    kickback-duration: 200
+  spread-pattern:
+    type: SINGLE_PROJECTILE
   shot-sounds: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
   suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0

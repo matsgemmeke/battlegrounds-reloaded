@@ -52,11 +52,11 @@ equipment-type: LETHAL
 item:
   display:
     damage: 4
-    display-name: "&f%name%"
+    display-name: '&f%name%'
     material: SHEARS
   throw:
     damage: 4
-    display-name: "&f%name%"
+    display-name: '&f%name%'
     material: SHEARS
 projectile:
   effects:

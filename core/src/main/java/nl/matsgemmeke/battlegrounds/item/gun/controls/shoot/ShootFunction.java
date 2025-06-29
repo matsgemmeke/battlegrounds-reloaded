@@ -27,7 +27,7 @@ public class ShootFunction implements ItemFunction<GunHolder> {
     }
 
     public boolean cancel() {
-        return gun.cancelShootingCycle();
+        return gun.cancelShooting();
     }
 
     public boolean perform(@NotNull GunHolder holder) {
@@ -35,7 +35,7 @@ public class ShootFunction implements ItemFunction<GunHolder> {
             return false;
         }
 
-        gun.startShootCycle();
+        gun.shoot(holder);
         return true;
     }
 }

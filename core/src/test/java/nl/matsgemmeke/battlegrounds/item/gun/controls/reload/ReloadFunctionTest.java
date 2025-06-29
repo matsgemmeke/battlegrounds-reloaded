@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls.reload;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import nl.matsgemmeke.battlegrounds.item.shoot.FireMode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
