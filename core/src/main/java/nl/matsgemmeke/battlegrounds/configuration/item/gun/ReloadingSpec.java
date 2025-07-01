@@ -9,7 +9,7 @@ public class ReloadingSpec {
     @EnumValue(ReloadType.class)
     public String type;
     @Required
-    public Integer duration;
+    public Long duration;
     public String reloadSounds;
 
     private enum ReloadType {

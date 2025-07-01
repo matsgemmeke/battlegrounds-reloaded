@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ReloadSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.ReloadingSpec;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
@@ -37,13 +37,15 @@ public class ReloadSystemFactoryTest {
 
     @Test
     public void createMakesReloadSystemInstanceForMagazineReload() {
-        ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", "ENTITY_BLAZE_HURT-3-2-0", 50L);
+        ReloadingSpec spec = new ReloadingSpec();
+        spec.type = "MAGAZINE";
+        spec.duration = 50L;
 
         MagazineReloadSystem reloadSystem = mock(MagazineReloadSystem.class);
         when(magazineReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage), eq(audioEmitter))).thenReturn(reloadSystem);
 
         ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
-        ReloadSystem result = factory.create(reloadSpec, gun, audioEmitter);
+        ReloadSystem result = factory.create(spec, gun, audioEmitter);
 
         ArgumentCaptor<ReloadProperties> propertiesCaptor = ArgumentCaptor.forClass(ReloadProperties.class);
         verify(magazineReloadSystemFactory).create(propertiesCaptor.capture(), eq(ammunitionStorage), eq(audioEmitter));
@@ -55,14 +57,16 @@ public class ReloadSystemFactoryTest {
     }
 
     @Test
-    public void createMakesReloadSystemInstanceForManualReload() {
-        ReloadSpec reloadSpec = new ReloadSpec("MANUAL_INSERTION", "ENTITY_BLAZE_HURT-3-2-0", 50L);
+    public void createMakesReloadSystemInstanceForManualInsertionReload() {
+        ReloadingSpec spec = new ReloadingSpec();
+        spec.type = "MANUAL_INSERTION";
+        spec.duration = 50L;
 
         ManualInsertionReloadSystem reloadSystem = mock(ManualInsertionReloadSystem.class);
         when(manualInsertionReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage), eq(audioEmitter))).thenReturn(reloadSystem);
 
         ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
-        ReloadSystem result = factory.create(reloadSpec, gun, audioEmitter);
+        ReloadSystem result = factory.create(spec, gun, audioEmitter);
 
         ArgumentCaptor<ReloadProperties> propertiesCaptor = ArgumentCaptor.forClass(ReloadProperties.class);
         verify(manualInsertionReloadSystemFactory).create(propertiesCaptor.capture(), eq(ammunitionStorage), eq(audioEmitter));

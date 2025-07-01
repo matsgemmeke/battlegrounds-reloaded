@@ -36,7 +36,7 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.price).isEqualTo(1200);
 
         assertThat(gunSpec.ammo.magazineSize).isEqualTo(30);
-        assertThat(gunSpec.ammo.defaultSupply).isEqualTo(3);
+        assertThat(gunSpec.ammo.defaultMagazineAmount).isEqualTo(3);
         assertThat(gunSpec.ammo.maxMagazineAmount).isEqualTo(8);
 
         assertThat(gunSpec.controls.reload).isEqualTo("LEFT_CLICK");

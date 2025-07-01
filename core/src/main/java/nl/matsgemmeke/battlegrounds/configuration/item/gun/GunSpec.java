@@ -23,6 +23,7 @@ public class GunSpec {
     public ItemSpec item;
     @Required
     public ReloadingSpec reloading;
+    public ScopeSpec scope;
     @Required
     public ShootingSpec shooting;
 }

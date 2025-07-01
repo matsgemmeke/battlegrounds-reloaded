@@ -9,6 +9,8 @@ public class ProjectileSpec {
     @Required
     @EnumValue(ProjectileType.class)
     public String type;
+    public String shotSounds;
+    public String suppressedShotSounds;
     public Double headshotDamageMultiplier;
     public ParticleEffectSpec trajectoryParticleEffect;
 

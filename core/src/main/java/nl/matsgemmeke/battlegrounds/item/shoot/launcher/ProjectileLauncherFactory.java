@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
@@ -39,16 +39,16 @@ public class ProjectileLauncherFactory {
 
     @NotNull
     public ProjectileLauncher create(@NotNull ProjectileSpec spec, @NotNull GameKey gameKey) {
-        ProjectileLauncherType projectileLauncherType = ProjectileLauncherType.valueOf(spec.type());
+        ProjectileLauncherType projectileLauncherType = ProjectileLauncherType.valueOf(spec.type);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
         CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
 
         switch (projectileLauncherType) {
             case BULLET -> {
-                List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds());
+                List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);
                 ParticleEffect trajectoryParticleEffect = null;
-                ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect();
+                ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect;
 
                 if (trajectoryParticleEffectSpec != null) {
                     trajectoryParticleEffect = particleEffectMapper.map(trajectoryParticleEffectSpec);

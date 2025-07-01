@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,9 @@ public class FirearmControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithRequiredControls() {
-        ControlsSpec spec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null, null);
+        ControlsSpec spec = new ControlsSpec();
+        spec.reload = "LEFT_CLICK";
+        spec.shoot = "RIGHT_CLICK";
 
         FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
         ItemControls<GunHolder> controls = controlsFactory.create(spec, firearm);
@@ -30,7 +32,11 @@ public class FirearmControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithUseScopeAndStopScopeControls() {
-        ControlsSpec spec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "LEFT_CLICK", null);
+        ControlsSpec spec = new ControlsSpec();
+        spec.reload = "LEFT_CLICK";
+        spec.shoot = "RIGHT_CLICK";
+        spec.scopeUse = "RIGHT_CLICK";
+        spec.scopeStop = "LEFT_CLICK";
 
         FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
         ItemControls<GunHolder> controls = controlsFactory.create(spec, firearm);
@@ -40,7 +46,12 @@ public class FirearmControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithChangeScopeMagnificationControls() {
-        ControlsSpec spec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", "RIGHT_CLICK", "LEFT_CLICK", "SWAP_FROM");
+        ControlsSpec spec = new ControlsSpec();
+        spec.reload = "LEFT_CLICK";
+        spec.shoot = "RIGHT_CLICK";
+        spec.scopeUse = "RIGHT_CLICK";
+        spec.scopeStop = "LEFT_CLICK";
+        spec.changeScopeMagnification = "SWAP_FROM";
 
         FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
         ItemControls<GunHolder> controls = controlsFactory.create(spec, firearm);

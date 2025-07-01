@@ -18,6 +18,7 @@ public class ParticleEffectSpec {
     public Double offsetY;
     @Required
     public Double offsetZ;
+    @Required
     public Double extra;
     @EnumValue(Material.class)
     public String blockData;

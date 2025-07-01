@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.FireModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto.SemiAutomaticMode;
@@ -33,16 +33,17 @@ public class FireModeFactoryTest {
 
     @Test
     public void createReturnsBurstModeInstance() {
-        int amountOfShots = 3;
-        int rateOfFire = 600;
-        long cycleCooldown = 20L;
-        FireModeSpec spec = new FireModeSpec("BURST_MODE", amountOfShots, rateOfFire, cycleCooldown);
+        FireModeSpec spec = new FireModeSpec();
+        spec.type = "BURST_MODE";
+        spec.amountOfShots = 3;
+        spec.rateOfFire = 600;
+        spec.cycleCooldown = 20L;
 
         Schedule shotSchedule = mock(Schedule.class);
         Schedule cooldownSchedule = mock(Schedule.class);
 
         when(scheduler.createRepeatingSchedule(0L, 2L)).thenReturn(shotSchedule);
-        when(scheduler.createSingleRunSchedule(cycleCooldown)).thenReturn(cooldownSchedule);
+        when(scheduler.createSingleRunSchedule(20L)).thenReturn(cooldownSchedule);
 
         FireModeFactory factory = new FireModeFactory(scheduler);
         FireMode fireMode = factory.create(spec);
@@ -57,7 +58,11 @@ public class FireModeFactoryTest {
             "3,600,null,cycleCooldown"
     }, nullValues = "null")
     public void createThrowsFireModeCreationExceptionWhenTypeEqualsBurstModeAndRequiredVarsInSpecAreNull(Integer amountOfShots, Integer rateOfFire, Long cycleCooldown, String missingVar) {
-        FireModeSpec spec = new FireModeSpec("BURST_MODE", amountOfShots, rateOfFire, cycleCooldown);
+        FireModeSpec spec = new FireModeSpec();
+        spec.type = "BURST_MODE";
+        spec.amountOfShots = amountOfShots;
+        spec.rateOfFire = rateOfFire;
+        spec.cycleCooldown = cycleCooldown;
 
         FireModeFactory factory = new FireModeFactory(scheduler);
 
@@ -79,9 +84,12 @@ public class FireModeFactoryTest {
     @ParameterizedTest
     @MethodSource("fullyAutomaticRateOfFireExpectations")
     public void createReturnsFullyAutomaticModeInstance(int rateOfFire, long expectedInterval, long expectedCooldownDuration) {
-        FireModeSpec spec = new FireModeSpec("FULLY_AUTOMATIC", null, rateOfFire, null);
         Schedule shotSchedule = mock(Schedule.class);
         Schedule cooldownSchedule = mock(Schedule.class);
+
+        FireModeSpec spec = new FireModeSpec();
+        spec.type = "FULLY_AUTOMATIC";
+        spec.rateOfFire = rateOfFire;
 
         when(scheduler.createRepeatingSchedule(0L, expectedInterval)).thenReturn(shotSchedule);
         when(scheduler.createSingleRunSchedule(expectedCooldownDuration)).thenReturn(cooldownSchedule);
@@ -94,7 +102,8 @@ public class FireModeFactoryTest {
 
     @Test
     public void createThrowsFireModeCreationExceptionWhenTypeEqualsSemiAutomaticAndDelayBetweenShotsValueInSpecIsNull() {
-        FireModeSpec spec = new FireModeSpec("SEMI_AUTOMATIC", null, null, null);
+        FireModeSpec spec = new FireModeSpec();
+        spec.type = "SEMI_AUTOMATIC";
 
         FireModeFactory factory = new FireModeFactory(scheduler);
 
@@ -116,11 +125,13 @@ public class FireModeFactoryTest {
 
     @ParameterizedTest
     @MethodSource("semiAutomaticRateOfFireExpectations")
-    public void createReturnsSemiAutomaticModeInstanceWithCalculatedRateOfFire(long delayBetweenShots, int expectedRateOfFire) {
-        FireModeSpec spec = new FireModeSpec("SEMI_AUTOMATIC", null, null, delayBetweenShots);
+    public void createReturnsSemiAutomaticModeInstanceWithCalculatedRateOfFire(long cycleCooldown, int expectedRateOfFire) {
+        FireModeSpec spec = new FireModeSpec();
+        spec.type = "SEMI_AUTOMATIC";
+        spec.cycleCooldown = cycleCooldown;
 
         Schedule cooldownSchedule = mock(Schedule.class);
-        when(scheduler.createSingleRunSchedule(delayBetweenShots)).thenReturn(cooldownSchedule);
+        when(scheduler.createSingleRunSchedule(cycleCooldown)).thenReturn(cooldownSchedule);
 
         FireModeFactory factory = new FireModeFactory(scheduler);
         FireMode result = factory.create(spec);

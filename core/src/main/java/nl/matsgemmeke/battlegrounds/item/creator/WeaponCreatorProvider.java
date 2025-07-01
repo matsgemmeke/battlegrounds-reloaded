@@ -6,15 +6,15 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.DustOptionsSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ProjectileSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.SpreadPatternSpecLoader;
 import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
+import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.loader.*;
+import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
+import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
@@ -36,16 +36,20 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
     private final FirearmFactory firearmFactory;
     @NotNull
     private final Logger logger;
+    @NotNull
+    private final SpecDeserializer specDeserializer;
 
     @Inject
     public WeaponCreatorProvider(
             @NotNull EquipmentFactory equipmentFactory,
             @NotNull FirearmFactory firearmFactory,
+            @NotNull SpecDeserializer specDeserializer,
             @Named("ItemsFolder") @NotNull File itemsFolder,
             @Named("Battlegrounds") @NotNull Logger logger
     ) {
         this.equipmentFactory = equipmentFactory;
         this.firearmFactory = firearmFactory;
+        this.specDeserializer = specDeserializer;
         this.itemsFolder = itemsFolder;
         this.logger = logger;
     }
@@ -125,7 +129,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.addItemSpec(creator, itemFile, document);
         } catch (IOException | IllegalArgumentException e) {
             logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
-        } catch (InvalidFieldSpecException e) {
+        } catch (InvalidFieldSpecException | ValidationException e) {
             logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
         }
     }
@@ -156,21 +160,10 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         }
 
         if (document.getString("gun-type") != null) {
-            YamlReader yamlReader = new YamlReader(file, null);
-            yamlReader.load();
+            GunSpec gunSpec = specDeserializer.deserializeSpec(file, GunSpec.class);
+            ObjectValidator.validate(gunSpec);
 
-            DustOptionsSpecLoader dustOptionsSpecLoader = new DustOptionsSpecLoader(yamlReader);
-            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader, dustOptionsSpecLoader);
-            RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
-
-            ProjectileSpecLoader projectileSpecLoader = new ProjectileSpecLoader(yamlReader, particleEffectSpecLoader);
-            SpreadPatternSpecLoader spreadPatternSpecLoader = new SpreadPatternSpecLoader(yamlReader);
-            ShootingSpecLoader shootingSpecLoader = new ShootingSpecLoader(yamlReader, projectileSpecLoader, spreadPatternSpecLoader);
-
-            GunSpecLoader specLoader = new GunSpecLoader(yamlReader, rangeProfileSpecLoader, shootingSpecLoader);
-            GunSpec spec = specLoader.loadSpec();
-
-            creator.addGunSpec(id, spec);
+            creator.addGunSpec(id, gunSpec);
             return;
         }
 

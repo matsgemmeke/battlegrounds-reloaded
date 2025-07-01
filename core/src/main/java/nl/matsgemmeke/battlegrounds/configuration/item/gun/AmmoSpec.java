@@ -7,7 +7,7 @@ public class AmmoSpec {
     @Required
     public Integer magazineSize;
     @Required
-    public Integer defaultSupply;
+    public Integer defaultMagazineAmount;
     @Required
     public Integer maxMagazineAmount;
 }

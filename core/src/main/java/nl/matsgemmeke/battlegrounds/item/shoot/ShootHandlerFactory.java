@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import jakarta.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.RecoilSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ShootingSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.RecoilSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.ShootingSpec;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
@@ -42,12 +42,12 @@ public class ShootHandlerFactory {
 
     @NotNull
     public ShootHandler create(@NotNull ShootingSpec spec, @NotNull GameKey gameKey, @NotNull AmmunitionStorage ammunitionStorage, @NotNull ItemRepresentation itemRepresentation) {
-        FireMode fireMode = fireModeFactory.create(spec.fireMode());
-        ProjectileLauncher projectileLauncher = projectileLauncherFactory.create(spec.projectile(), gameKey);
-        SpreadPattern spreadPattern = spreadPatternFactory.create(spec.spreadPattern());
+        FireMode fireMode = fireModeFactory.create(spec.fireMode);
+        ProjectileLauncher projectileLauncher = projectileLauncherFactory.create(spec.projectile, gameKey);
+        SpreadPattern spreadPattern = spreadPatternFactory.create(spec.spreadPattern);
 
         Recoil recoil = null;
-        RecoilSpec recoilSpec = spec.recoil();
+        RecoilSpec recoilSpec = spec.recoil;
 
         if (recoilSpec != null) {
             recoil = recoilFactory.create(recoilSpec);
