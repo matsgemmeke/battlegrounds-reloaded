@@ -1,7 +1,7 @@
 id: OLYMPIA
 name: Olympia
 ammo:
-  default-supply: 9
+  default-magazine-amount: 9
   magazine-size: 2
   max-magazine-amount: 19
 controls:
@@ -23,9 +23,9 @@ shooting:
   fire-mode:
     cycle-cooldown: 6
     type: SEMI_AUTOMATIC
-  headshot-damage-multiplier: 1.1
   projectile:
     type: BULLET
+    headshot-damage-multiplier: 1.1
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1

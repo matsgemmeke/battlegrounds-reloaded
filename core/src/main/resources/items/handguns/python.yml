@@ -1,7 +1,7 @@
 id: PYTHON
 name: Python
 ammo:
-  default-supply: 3
+  default-magazine-amount: 3
   magazine-size: 6
   max-magazine-amount: 8
 controls:
@@ -23,9 +23,9 @@ shooting:
   fire-mode:
     cycle-cooldown: 4
     type: SEMI_AUTOMATIC
-  headshot-damage-multiplier: 1.5
   projectile:
     type: BULLET
+    headshot-damage-multiplier: 1.5
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1

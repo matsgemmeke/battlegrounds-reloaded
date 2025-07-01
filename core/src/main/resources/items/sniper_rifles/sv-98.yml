@@ -1,7 +1,7 @@
 id: SV-98
 name: SV-98
 ammo:
-  default-supply: 3
+  default-magazine-amount: 3
   magazine-size: 10
   max-magazine-amount: 8
 controls:
@@ -31,9 +31,9 @@ shooting:
   fire-mode:
     cycle-cooldown: 20
     type: SEMI_AUTOMATIC
-  headshot-damage-multiplier: 2.0
   projectile:
     type: BULLET
+    headshot-damage-multiplier: 2.0
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1

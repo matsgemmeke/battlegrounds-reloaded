@@ -1,7 +1,7 @@
 id: AK-47
 name: AK-47
 ammo:
-  default-supply: 3
+  default-magazine-amount: 3
   magazine-size: 30
   max-magazine-amount: 8
 controls:
@@ -23,9 +23,9 @@ shooting:
   fire-mode:
     rate-of-fire: 600
     type: FULLY_AUTOMATIC
-  headshot-damage-multiplier: 1.5
   projectile:
     type: BULLET
+    headshot-damage-multiplier: 1.5
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1
