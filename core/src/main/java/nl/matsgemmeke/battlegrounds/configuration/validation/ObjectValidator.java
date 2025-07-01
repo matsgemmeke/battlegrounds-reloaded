@@ -9,13 +9,14 @@ import java.util.Map;
 
 public class ObjectValidator {
 
-    private static Map<Class<? extends Annotation>, FieldValidator> validators = new HashMap<>();
+    private static Map<Class<? extends Annotation>, FieldValidator<?>> validators = new HashMap<>();
 
     static {
         registerValidator(Required.class, new RequiredFieldValidator());
+        registerValidator(EnumValue.class, new EnumValueValidator());
     }
 
-    public static void registerValidator(Class<? extends Annotation> annotation, FieldValidator validator) {
+    public static void registerValidator(Class<? extends Annotation> annotation, FieldValidator<?> validator) {
         validators.put(annotation, validator);
     }
 
@@ -34,7 +35,7 @@ public class ObjectValidator {
                 FieldValidator validator = validators.get(annotation.annotationType());
 
                 if (validator != null) {
-                    validator.validate(fieldName, fieldValue);
+                    validator.validate(fieldName, fieldValue, annotation);
                 }
             }
         }

@@ -1,10 +1,14 @@
 package nl.matsgemmeke.battlegrounds.configuration.item;
 
+import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 
 public class ParticleEffectSpec {
 
     @Required
+    @EnumValue(Particle.class)
     public String particle;
     @Required
     public Integer count;
@@ -15,6 +19,7 @@ public class ParticleEffectSpec {
     @Required
     public Double offsetZ;
     public Double extra;
+    @EnumValue(Material.class)
     public String blockData;
     public DustOptionsSpec dustOptions;
 }

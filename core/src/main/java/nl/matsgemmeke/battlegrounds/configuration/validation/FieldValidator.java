@@ -3,7 +3,9 @@ package nl.matsgemmeke.battlegrounds.configuration.validation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface FieldValidator {
+import java.lang.annotation.Annotation;
 
-    void validate(@NotNull String name, @Nullable Object value);
+public interface FieldValidator<T extends Annotation> {
+
+    void validate(@NotNull String name, @Nullable Object value, @NotNull T annotation);
 }
