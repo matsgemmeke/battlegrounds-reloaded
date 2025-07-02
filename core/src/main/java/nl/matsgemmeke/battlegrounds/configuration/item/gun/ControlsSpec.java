@@ -6,16 +6,16 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class ControlsSpec {
 
     @Required
-    @EnumValue(ActionValue.class)
+    @EnumValue(type = ActionValue.class)
     public String reload;
     @Required
-    @EnumValue(ActionValue.class)
+    @EnumValue(type = ActionValue.class)
     public String shoot;
-    @EnumValue(ActionValue.class)
+    @EnumValue(type = ActionValue.class)
     public String scopeUse;
-    @EnumValue(ActionValue.class)
+    @EnumValue(type = ActionValue.class)
     public String scopeStop;
-    @EnumValue(ActionValue.class)
+    @EnumValue(type = ActionValue.class)
     public String changeScopeMagnification;
 
     private enum ActionValue {

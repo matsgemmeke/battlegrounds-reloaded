@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class ReloadingSpec {
 
     @Required
-    @EnumValue(ReloadType.class)
+    @EnumValue(type = ReloadType.class)
     public String type;
     @Required
     public Long duration;

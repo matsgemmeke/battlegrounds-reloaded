@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class ProjectileSpec {
 
     @Required
-    @EnumValue(ProjectileType.class)
+    @EnumValue(type = ProjectileType.class)
     public String type;
     public String shotSounds;
     public String suppressedShotSounds;

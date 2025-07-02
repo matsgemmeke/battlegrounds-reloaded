@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class SpreadPatternSpec {
 
     @Required
-    @EnumValue(SpreadPatternType.class)
+    @EnumValue(type = SpreadPatternType.class)
     public String type;
     public Integer projectileAmount;
     public Float horizontalSpread;

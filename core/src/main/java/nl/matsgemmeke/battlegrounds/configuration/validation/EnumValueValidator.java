@@ -13,7 +13,7 @@ public class EnumValueValidator implements FieldValidator<EnumValue> {
             return;
         }
 
-        Class<? extends Enum<?>> type = annotation.value();
+        Class<? extends Enum<?>> type = annotation.type();
 
         if (Arrays.stream(type.getEnumConstants()).anyMatch(e -> e.name().equals(fieldValue))) {
             return;

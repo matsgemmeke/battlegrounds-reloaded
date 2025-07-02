@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class FireModeSpec {
 
     @Required
-    @EnumValue(FireModeType.class)
+    @EnumValue(type = FireModeType.class)
     public String type;
     public Integer amountOfShots;
     public Integer rateOfFire;

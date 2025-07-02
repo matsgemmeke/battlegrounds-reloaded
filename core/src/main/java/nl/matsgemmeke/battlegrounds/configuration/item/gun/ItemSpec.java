@@ -7,7 +7,7 @@ import org.bukkit.Material;
 public class ItemSpec {
 
     @Required
-    @EnumValue(Material.class)
+    @EnumValue(type = Material.class)
     public String material;
     @Required
     public String displayName;

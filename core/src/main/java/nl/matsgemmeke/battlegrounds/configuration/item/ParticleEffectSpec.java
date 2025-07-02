@@ -8,7 +8,7 @@ import org.bukkit.Particle;
 public class ParticleEffectSpec {
 
     @Required
-    @EnumValue(Particle.class)
+    @EnumValue(type = Particle.class)
     public String particle;
     @Required
     public Integer count;
@@ -20,7 +20,7 @@ public class ParticleEffectSpec {
     public Double offsetZ;
     @Required
     public Double extra;
-    @EnumValue(Material.class)
+    @EnumValue(type = Material.class)
     public String blockData;
     public DustOptionsSpec dustOptions;
 }

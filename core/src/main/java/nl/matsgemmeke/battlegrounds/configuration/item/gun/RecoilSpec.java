@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class RecoilSpec {
 
     @Required
-    @EnumValue(RecoilType.class)
+    @EnumValue(type = RecoilType.class)
     public String type;
     @Required
     public Float[] horizontal;
