@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.RecoilSpec;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.Timer;
 
 /**
@@ -34,9 +35,9 @@ public class RecoilFactory {
 
         switch (recoilType) {
             case CAMERA_MOVEMENT -> {
-                long kickbackDuration = spec.kickbackDuration;
-                float recoveryRate = spec.recoveryRate;
-                long recoveryDuration = spec.recoveryDuration;
+                long kickbackDuration = Optional.ofNullable(spec.kickbackDuration).orElse(0L);
+                float recoveryRate = Optional.ofNullable(spec.recoveryRate).orElse(0.0f);
+                long recoveryDuration = Optional.ofNullable(spec.recoveryDuration).orElse(0L);
                 long rotationDuration = config.getCameraMovementRecoilDurationInMilliseconds();
 
                 Timer timer = new Timer();

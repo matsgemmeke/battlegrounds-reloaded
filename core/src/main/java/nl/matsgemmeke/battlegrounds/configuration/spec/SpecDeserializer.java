@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
@@ -28,7 +29,7 @@ public class SpecDeserializer {
         SpecPropertyUtils propertyUtils = new SpecPropertyUtils();
         propertyUtils.setSkipMissingProperties(true);
 
-        Constructor constructor = new Constructor(type);
+        Constructor constructor = new Constructor(type, new LoaderOptions());
         constructor.setPropertyUtils(propertyUtils);
 
         DumperOptions dumperOptions = new DumperOptions();
