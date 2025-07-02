@@ -18,6 +18,7 @@ public class ObjectValidator {
     static {
         registerValidator(Required.class, new RequiredFieldValidator());
         registerValidator(EnumValue.class, new EnumValueValidator());
+        registerValidator(Regex.class, new RegexFieldValidator());
     }
 
     public static void registerValidator(Class<? extends Annotation> annotation, FieldValidator<?> validator) {
@@ -32,7 +33,7 @@ public class ObjectValidator {
             try {
                 fieldValue = field.get(object);
             } catch (IllegalAccessException e) {
-                throw new ValidationException("Cannot validate field '%s' because it is not marked public".formatted(fieldName));
+                throw new ValidationException("Cannot validate field '%s': %s".formatted(fieldName, e.getMessage()));
             }
 
             for (Annotation annotation : field.getAnnotations()) {
@@ -44,6 +45,10 @@ public class ObjectValidator {
                     ValidationContext context = new ValidationContext(fieldName, fieldValue, otherFields);
                     validator.validate(context, annotation);
                 }
+            }
+
+            if (fieldValue != null && containsNestedVariables(fieldValue)) {
+                validate(fieldValue);
             }
         }
     }
@@ -63,5 +68,9 @@ public class ObjectValidator {
         } catch (IllegalAccessException e) {
             throw new ValidationException("Unable to extract field '%s': %s".formatted(field.getName(), e.getMessage()));
         }
+    }
+
+    private static boolean containsNestedVariables(Object fieldValue) {
+        return fieldValue.getClass().getName().endsWith("Spec");
     }
 }

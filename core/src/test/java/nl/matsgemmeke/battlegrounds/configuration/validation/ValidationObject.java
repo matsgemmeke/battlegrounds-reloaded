@@ -8,4 +8,6 @@ public class ValidationObject {
     public String required;
     @EnumValue(Particle.class)
     public String enumValue;
+    @Regex(pattern = "^[a-c]{3}")
+    public String regex;
 }
