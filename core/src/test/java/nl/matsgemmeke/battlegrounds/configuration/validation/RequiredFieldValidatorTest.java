@@ -2,29 +2,34 @@ package nl.matsgemmeke.battlegrounds.configuration.validation;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 public class RequiredFieldValidatorTest {
 
     @Test
-    public void validateThrowsValidationExceptionWhenValueIsNull() {
-        Required annotation = mock(Required.class);
+    public void validateThrowsValidationExceptionWhenValueIsNull() throws NoSuchFieldException {
+        ValidationObject object = new ValidationObject();
+        Required annotation = object.getClass().getDeclaredField("required").getAnnotation(Required.class);
+        ValidationContext context = new ValidationContext("required", null, Map.of());
 
         RequiredFieldValidator validator = new RequiredFieldValidator();
 
-        assertThatThrownBy(() -> validator.validate("test", null, annotation))
+        assertThatThrownBy(() -> validator.validate(context, annotation))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("Field 'test' is required but no value is provided");
+                .hasMessage("Field 'required' is required but no value is provided");
     }
 
     @Test
-    public void validateDoesNothingWhenValueIsNotNull() {
-        Required annotation = mock(Required.class);
+    public void validateDoesNothingWhenValueIsNotNull() throws NoSuchFieldException {
+        ValidationObject object = new ValidationObject();
+        Required annotation = object.getClass().getDeclaredField("required").getAnnotation(Required.class);
+        ValidationContext context = new ValidationContext("required", "test", Map.of());
 
         RequiredFieldValidator validator = new RequiredFieldValidator();
 
-        assertThatCode(() -> validator.validate("test", "value", annotation)).doesNotThrowAnyException();
+        assertThatCode(() -> validator.validate(context, annotation)).doesNotThrowAnyException();
     }
 }

@@ -1,0 +1,11 @@
+package nl.matsgemmeke.battlegrounds.configuration.validation;
+
+import org.bukkit.Particle;
+
+public class ValidationObject {
+
+    @Required
+    public String required;
+    @EnumValue(Particle.class)
+    public String enumValue;
+}

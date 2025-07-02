@@ -4,8 +4,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ObjectValidator {
 
@@ -35,9 +39,29 @@ public class ObjectValidator {
                 FieldValidator validator = validators.get(annotation.annotationType());
 
                 if (validator != null) {
-                    validator.validate(fieldName, fieldValue, annotation);
+                    Map<String, Object> otherFields = extractOtherFields(object, field);
+
+                    ValidationContext context = new ValidationContext(fieldName, fieldValue, otherFields);
+                    validator.validate(context, annotation);
                 }
             }
+        }
+    }
+
+    private static Map<String, Object> extractOtherFields(Object object, Field excludeField) {
+        return Arrays.stream(object.getClass().getDeclaredFields())
+                .filter(field -> !field.equals(excludeField))
+                .peek(field -> field.setAccessible(true))
+                .map(field -> Map.entry(field.getName(), extractFieldValue(object, field)))
+                .filter(entry -> entry.getValue().isPresent())
+                .collect(Collectors.toMap(Entry::getKey, entry -> entry.getValue().get()));
+    }
+
+    private static Optional<Object> extractFieldValue(Object object, Field field) {
+        try {
+            return Optional.ofNullable(field.get(object));
+        } catch (IllegalAccessException e) {
+            throw new ValidationException("Unable to extract field '%s': %s".formatted(field.getName(), e.getMessage()));
         }
     }
 }

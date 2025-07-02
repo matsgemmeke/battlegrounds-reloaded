@@ -1,23 +1,24 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
 public class EnumValueValidator implements FieldValidator<EnumValue> {
 
-    public void validate(@NotNull String name, @Nullable Object value, @NotNull EnumValue annotation) {
-        if (value == null) {
+    public void validate(@NotNull ValidationContext context, @NotNull EnumValue annotation) {
+        Object fieldValue = context.fieldValue();
+
+        if (fieldValue == null) {
             return;
         }
 
         Class<? extends Enum<?>> type = annotation.value();
 
-        if (Arrays.stream(type.getEnumConstants()).anyMatch(e -> e.name().equals(value))) {
+        if (Arrays.stream(type.getEnumConstants()).anyMatch(e -> e.name().equals(fieldValue))) {
             return;
         }
 
-        throw new ValidationException("Invalid %s value '%s' for field '%s'".formatted(type.getSimpleName(), value, name));
+        throw new ValidationException("Invalid %s value '%s' for field '%s'".formatted(type.getSimpleName(), fieldValue, context.fieldName()));
     }
 }

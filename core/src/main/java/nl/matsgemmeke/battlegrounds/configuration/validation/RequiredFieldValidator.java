@@ -1,15 +1,14 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class RequiredFieldValidator implements FieldValidator<Required> {
 
-    public void validate(@NotNull String name, @Nullable Object value, @NotNull Required annotation) {
-        if (value != null) {
+    public void validate(@NotNull ValidationContext context, @NotNull Required annotation) {
+        if (context.fieldValue() != null) {
             return;
         }
 
-        throw new ValidationException("Field '%s' is required but no value is provided".formatted(name));
+        throw new ValidationException("Field '%s' is required but no value is provided".formatted(context.fieldName()));
     }
 }
