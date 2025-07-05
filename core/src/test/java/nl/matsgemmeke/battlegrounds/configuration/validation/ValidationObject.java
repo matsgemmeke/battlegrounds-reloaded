@@ -10,4 +10,9 @@ public class ValidationObject {
     public String enumValue;
     @Regex(pattern = "^[a-c]{3}")
     public String regex;
+    @ConditionalRequired(conditionalField = "conditionalField", expectedValue = "expected")
+    public String conditionalRequiredWithExpectedValue;
+    @ConditionalRequired(conditionalField = "conditionalField")
+    public String conditionalRequiredWithoutExpectedValue;
+    public String conditionalField;
 }
