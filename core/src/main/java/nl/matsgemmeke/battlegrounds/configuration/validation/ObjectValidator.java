@@ -19,6 +19,7 @@ public class ObjectValidator {
         registerValidator(Required.class, new RequiredFieldValidator());
         registerValidator(EnumValue.class, new EnumValueValidator());
         registerValidator(Regex.class, new RegexFieldValidator());
+        registerValidator(ConditionalRequired.class, new ConditionalRequiredValidator());
     }
 
     public static void registerValidator(Class<? extends Annotation> annotation, FieldValidator<?> validator) {

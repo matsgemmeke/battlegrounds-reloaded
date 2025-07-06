@@ -10,25 +10,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class ConditionalRequiredValidatorTest {
 
     @Test
-    public void validateDoesNothingWhenConditionalRequiredHasExpectedValueAndFieldValueIsNotNull() throws NoSuchFieldException {
+    public void validateDoesNothingWhenConditionalFieldHasNoValue() throws NoSuchFieldException {
         ValidationObject object = new ValidationObject();
-        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithExpectedValue").getAnnotation(ConditionalRequired.class);
-
-        Map<String, Object> otherFields = Map.of("conditionalField", "expected");
-        ValidationContext context = new ValidationContext("conditionalRequiredWithExpectedValue", "test", otherFields);
-
-        ConditionalRequiredValidator validator = new ConditionalRequiredValidator();
-
-        assertThatCode(() -> validator.validate(context, annotation)).doesNotThrowAnyException();
-    }
-
-    @Test
-    public void validateDoesNothingWhenConditionalRequiredHasExpectedValueAndConditionalFieldDoesNotExist() throws NoSuchFieldException {
-        ValidationObject object = new ValidationObject();
-        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithExpectedValue").getAnnotation(ConditionalRequired.class);
+        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithMatchValue").getAnnotation(ConditionalRequired.class);
 
         Map<String, Object> otherFields = Map.of();
-        ValidationContext context = new ValidationContext("conditionalRequiredWithExpectedValue", "test", otherFields);
+        ValidationContext context = new ValidationContext("conditionalRequiredWithMatchValue", null, otherFields);
 
         ConditionalRequiredValidator validator = new ConditionalRequiredValidator();
 
@@ -36,27 +23,40 @@ public class ConditionalRequiredValidatorTest {
     }
 
     @Test
-    public void validateThrowsValidatioExceptionWhenConditionalRequiredHasExpectedValueAndFieldValueIsNull() throws NoSuchFieldException {
+    public void validateDoesNothingWhenFieldValueIsNotNull() throws NoSuchFieldException {
         ValidationObject object = new ValidationObject();
-        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithExpectedValue").getAnnotation(ConditionalRequired.class);
+        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithMatchValue").getAnnotation(ConditionalRequired.class);
 
-        Map<String, Object> otherFields = Map.of("conditionalField", "expected");
-        ValidationContext context = new ValidationContext("conditionalRequiredWithExpectedValue", null, otherFields);
+        Map<String, Object> otherFields = Map.of("conditionalField", "test");
+        ValidationContext context = new ValidationContext("conditionalRequiredWithMatchValue", "the value", otherFields);
+
+        ConditionalRequiredValidator validator = new ConditionalRequiredValidator();
+
+        assertThatCode(() -> validator.validate(context, annotation)).doesNotThrowAnyException();
+    }
+
+    @Test
+    public void validateThrowsValidationExceptionWhenConditionalFieldWithoutMatchValueExistsAndFieldValueIsNull() throws NoSuchFieldException {
+        ValidationObject object = new ValidationObject();
+        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithoutMatchValue").getAnnotation(ConditionalRequired.class);
+
+        Map<String, Object> otherFields = Map.of("conditionalField", "test");
+        ValidationContext context = new ValidationContext("conditionalRequiredWithoutMatchValue", null, otherFields);
 
         ConditionalRequiredValidator validator = new ConditionalRequiredValidator();
 
         assertThatThrownBy(() -> validator.validate(context, annotation))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("Field 'conditionalRequiredWithExpectedValue' is required when 'conditionalField' equals to 'expected'");
+                .hasMessage("Field 'conditionalRequiredWithoutMatchValue' is required when 'conditionalField' is set");
     }
 
     @Test
-    public void validateDoesNothingWhenConditionalRequiredHasNoExpectedValueAndFieldValueIsNotNull() throws NoSuchFieldException {
+    public void validateDoesNothingWhenConditionalFieldWithMatchValueExistsWithValueThatDoesNotMatchAndFieldValueIsNull() throws NoSuchFieldException {
         ValidationObject object = new ValidationObject();
-        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithoutExpectedValue").getAnnotation(ConditionalRequired.class);
+        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithMatchValue").getAnnotation(ConditionalRequired.class);
 
-        Map<String, Object> otherFields = Map.of("conditionalField", "expected");
-        ValidationContext context = new ValidationContext("conditionalRequiredWithoutExpectedValue", "test", otherFields);
+        Map<String, Object> otherFields = Map.of("conditionalField", "value that does not match");
+        ValidationContext context = new ValidationContext("conditionalRequiredWithMatchValue", null, otherFields);
 
         ConditionalRequiredValidator validator = new ConditionalRequiredValidator();
 
@@ -64,30 +64,17 @@ public class ConditionalRequiredValidatorTest {
     }
 
     @Test
-    public void validateDoesNothingWhenConditionalRequiredHasNoExpectedValueAndConditionalFieldDoesNotExist() throws NoSuchFieldException {
+    public void validateThrowsValidationExceptionWhenConditionalFieldWithMatchValueExistsAndFieldValueIsNull() throws NoSuchFieldException {
         ValidationObject object = new ValidationObject();
-        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithoutExpectedValue").getAnnotation(ConditionalRequired.class);
+        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithMatchValue").getAnnotation(ConditionalRequired.class);
 
-        Map<String, Object> otherFields = Map.of();
-        ValidationContext context = new ValidationContext("conditionalRequiredWithoutExpectedValue", null, otherFields);
-
-        ConditionalRequiredValidator validator = new ConditionalRequiredValidator();
-
-        assertThatCode(() -> validator.validate(context, annotation)).doesNotThrowAnyException();
-    }
-
-    @Test
-    public void validateThrowsValidatioExceptionWhenConditionalRequiredHasNoExpectedValueAndFieldValueIsNull() throws NoSuchFieldException {
-        ValidationObject object = new ValidationObject();
-        ConditionalRequired annotation = object.getClass().getDeclaredField("conditionalRequiredWithoutExpectedValue").getAnnotation(ConditionalRequired.class);
-
-        Map<String, Object> otherFields = Map.of("conditionalField", "expected");
-        ValidationContext context = new ValidationContext("conditionalRequiredWithoutExpectedValue", null, otherFields);
+        Map<String, Object> otherFields = Map.of("conditionalField", "test");
+        ValidationContext context = new ValidationContext("conditionalRequiredWithMatchValue", null, otherFields);
 
         ConditionalRequiredValidator validator = new ConditionalRequiredValidator();
 
         assertThatThrownBy(() -> validator.validate(context, annotation))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("Field 'conditionalRequiredWithoutExpectedValue' is required when 'conditionalField' is set");
+                .hasMessage("Field 'conditionalRequiredWithMatchValue' is required when 'conditionalField' equals 'test'");
     }
 }

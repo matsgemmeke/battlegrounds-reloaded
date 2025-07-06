@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ConditionalRequired {
 
-    String conditionalField();
+    String conditionalFieldName();
 
-    String expectedValue() default "";
+    String[] matchValues() default {};
 }

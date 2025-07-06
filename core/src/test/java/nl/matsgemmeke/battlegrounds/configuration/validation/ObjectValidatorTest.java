@@ -13,7 +13,7 @@ public class ObjectValidatorTest {
 
         assertThatThrownBy(() -> ObjectValidator.validate(privateSpec))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("Cannot validate field 'secret' because it is not marked public");
+                .hasMessage("Cannot validate field 'secret': class nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator cannot access a member of class nl.matsgemmeke.battlegrounds.configuration.validation.PrivateSpec with modifiers \"private\"");
     }
 
     @Test
