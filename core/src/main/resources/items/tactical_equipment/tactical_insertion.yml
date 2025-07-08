@@ -1,7 +1,7 @@
 id: TACTICAL_INSERTION
 name: Tactical Insertion
 controls:
-  throw: LEFT_CLICK
+  throwing: LEFT_CLICK
 deploy:
   health: 50.0
   on-destruction:
@@ -11,7 +11,7 @@ deploy:
     particle-effect:
       block-data: REDSTONE_TORCH
       count: 5
-      extra: 0ji
+      extra: 0.0
       offset-x: 0.25
       offset-y: 0.25
       offset-z: 0.25
@@ -30,12 +30,12 @@ effect:
       offset-delays: [1]
   type: MARK_SPAWN_POINT
 equipment-type: TACTICAL
-item:
-  display:
+items:
+  display-item:
     damage: 11
     display-name: '&f%name%'
     material: SHEARS
-  throw:
+  throw-item:
     damage: 11
     display-name: '&f%name%'
     material: SHEARS

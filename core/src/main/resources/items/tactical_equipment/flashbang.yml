@@ -2,7 +2,7 @@ id: FLASHBANG
 name: Flashbang
 controls:
   cook: RIGHT_CLICK
-  throw: LEFT_CLICK
+  throwing: LEFT_CLICK
 deploy:
   health: 50.0
   on-destruction:
@@ -39,12 +39,12 @@ effect:
       offset-delays: [60]
   type: FLASH
 equipment-type: TACTICAL
-item:
-  display:
+items:
+  display-item:
     damage: 6
     display-name: '&f%name%'
     material: SHEARS
-  throw:
+  throw-item:
     damage: 6
     display-name: '&f%name%'
     material: SHEARS

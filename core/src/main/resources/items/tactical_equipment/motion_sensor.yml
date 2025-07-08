@@ -1,7 +1,7 @@
 id: MOTION_SENSOR
 name: Motion Sensor
 controls:
-  throw: LEFT_CLICK
+  throwing: LEFT_CLICK
 deploy:
   health: 50.0
   on-destruction:
@@ -34,12 +34,12 @@ effect:
       range: 2.5
   type: SOUND_NOTIFICATION
 equipment-type: TACTICAL
-item:
-  display:
+items:
+  display-item:
     damage: 8
     display-name: '&f%name%'
     material: SHEARS
-  throw:
+  throw-item:
     damage: 8
     display-name: '&f%name%'
     material: SHEARS

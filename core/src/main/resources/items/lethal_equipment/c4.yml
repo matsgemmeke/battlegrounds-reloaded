@@ -3,7 +3,7 @@ name: C4
 controls:
   activate: RIGHT_CLICK
   place: RIGHT_CLICK
-  throw: LEFT_CLICK
+  throwing: LEFT_CLICK
 deploy:
   health: 50.0
   manual-activation:
@@ -44,16 +44,16 @@ effect:
   spread-fire: false
   type: EXPLOSION
 equipment-type: LETHAL
-item:
-  display:
+items:
+  display-item:
     damage: 2
     display-name: '&f%name%'
     material: SHEARS
-  activator:
+  activator-item:
     damage: 3
     display-name: '&fDetonator'
     material: SHEARS
-  throw:
+  throw-item:
     damage: 2
     display-name: '&f%name%'
     material: SHEARS

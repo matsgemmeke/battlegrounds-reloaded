@@ -1,7 +1,7 @@
 id: CLAYMORE
 name: Claymore
 controls:
-  throw: LEFT_CLICK
+  throwing: LEFT_CLICK
 deploy:
   health: 50.0
   on-destruction:
@@ -47,12 +47,12 @@ effect:
       range: 2.5
   type: EXPLOSION
 equipment-type: LETHAL
-item:
-  display:
+items:
+  display-item:
     damage: 5
     display-name: '&f%name%'
     material: SHEARS
-  throw:
+  throw-item:
     damage: 5
     display-name: '&f%name%'
     material: SHEARS
