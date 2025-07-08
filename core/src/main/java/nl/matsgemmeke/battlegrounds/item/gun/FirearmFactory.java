@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.item.gun;
+package nl.matsgemmeke.battlegrounds.configuration.item;
 
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;

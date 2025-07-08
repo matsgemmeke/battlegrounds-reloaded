@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.ItemSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
