@@ -48,15 +48,14 @@ items:
     damage: 6
     display-name: '&f%name%'
     material: SHEARS
-projectile:
-  effects:
-    bounce:
-      type: BOUNCE
-      triggers:
-        impact:
-          type: IMPACT
-          delay: 0
-          interval: 1
-      max-activations: 1
-      horizontal-friction: 3.0
-      vertical-friction: 2.0
+projectile-effects:
+  bounce:
+    type: BOUNCE
+    triggers:
+      impact:
+        type: IMPACT
+        delay: 0
+        interval: 1
+    max-activations: 1
+    horizontal-friction: 3.0
+    vertical-friction: 2.0
