@@ -38,6 +38,11 @@ public class SpecDeserializer {
         Representer representer = new Representer(dumperOptions);
 
         Yaml yaml = new Yaml(constructor, representer);
-        return yaml.loadAs(inputStream, type);
+
+        try {
+            return yaml.loadAs(inputStream, type);
+        } catch (Exception e) {
+            throw new SpecDeserializationException("An error occurred while deserializing file %s: %s".formatted(file.getName(), e.getMessage()));
+        }
     }
 }
