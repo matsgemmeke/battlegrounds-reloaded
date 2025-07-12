@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class EquipmentSpec {
@@ -23,5 +24,5 @@ public class EquipmentSpec {
     public DeploymentSpec deploy;
     @Required
     public ItemEffectSpec effect;
-    public Map<String, ProjectileEffectSpec> projectileEffects;
+    public Map<String, ProjectileEffectSpec> projectileEffects = new HashMap<>();
 }

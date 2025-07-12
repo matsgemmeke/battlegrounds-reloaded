@@ -4,6 +4,8 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.ConditionalRequired
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 
+import java.util.List;
+
 public class TriggerSpec {
 
     @Required
@@ -14,7 +16,7 @@ public class TriggerSpec {
     @ConditionalRequired(conditionalFieldName = "type", matchValues = { "ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT" })
     public Long interval;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "SCHEDULED")
-    public Long[] offsetDelays;
+    public List<Long> offsetDelays;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "ENEMY_PROXIMITY")
     public Double range;
 

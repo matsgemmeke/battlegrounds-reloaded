@@ -1,12 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
-import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ProjectileEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
@@ -19,8 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,8 +24,8 @@ import static org.mockito.Mockito.when;
 public class WeaponCreatorTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-    private static final String EQUIPMENT_ID = "TEST_EQUIPMENT";
-    private static final String GUN_ID = "TEST_GUN";
+    private static final String EQUIPMENT_ID = "FRAG_GRENADE";
+    private static final String GUN_ID = "MP5";
 
     private EquipmentFactory equipmentFactory;
     private FirearmFactory firearmFactory;
@@ -55,7 +49,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void createEquipmentReturnsEquipmentInstanceBasedOnGivenEquipmentId() {
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(EQUIPMENT_ID);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Equipment equipment = mock(Equipment.class);
@@ -97,7 +91,7 @@ public class WeaponCreatorTest {
     @Test
     public void createWeaponReturnsEquipmentInstanceBasedOnGivenEquipmentId() {
         Equipment equipment = mock(Equipment.class);
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(EQUIPMENT_ID);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(equipmentFactory.create(equipmentSpec, GAME_KEY, gamePlayer)).thenReturn(equipment);
@@ -164,7 +158,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void equipmentExistsReturnsTrueWhenEquipmentSpecByGivenIdExists() {
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(EQUIPMENT_ID);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec();
 
         WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
         weaponCreator.addEquipmentSpec(EQUIPMENT_ID, equipmentSpec);
@@ -192,20 +186,17 @@ public class WeaponCreatorTest {
         assertThat(gunExists).isTrue();
     }
 
+    private EquipmentSpec createEquipmentSpec() {
+        File file = new File("src/main/resources/items/lethal_equipment/frag_grenade.yml");
+
+        SpecDeserializer specDeserializer = new SpecDeserializer();
+        return specDeserializer.deserializeSpec(file, EquipmentSpec.class);
+    }
+
     private GunSpec createGunSpec() {
         File file = new File("src/main/resources/items/submachine_guns/mp5.yml");
 
         SpecDeserializer specDeserializer = new SpecDeserializer();
         return specDeserializer.deserializeSpec(file, GunSpec.class);
-    }
-
-    private EquipmentSpec createEquipmentSpec(String equipmentId) {
-        ItemStackSpec dislayItemSpec = new ItemStackSpec("STICK", "name", 1);
-        nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec controlsSpec = new nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null);
-        DeploymentSpec deploymentSpec = new DeploymentSpec(20.0, false, false, false, false, null, Map.of(), null, null, null, null);
-        ItemEffectSpec itemEffectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        List<ProjectileEffectSpec> projectileEffectSpecs = List.of();
-
-        return new EquipmentSpec(equipmentId, "Test Equipment", null, dislayItemSpec, null, null, controlsSpec, deploymentSpec, itemEffectSpec, projectileEffectSpecs);
     }
 }

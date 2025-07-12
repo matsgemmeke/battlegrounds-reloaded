@@ -5,14 +5,9 @@ import com.google.inject.Provider;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
-import nl.matsgemmeke.battlegrounds.configuration.YamlReader;
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.DustOptionsSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpecLoader;
-import nl.matsgemmeke.battlegrounds.configuration.spec.InvalidFieldSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
-import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.loader.*;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
@@ -129,7 +124,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.addItemSpec(creator, itemFile, document);
         } catch (IOException | IllegalArgumentException e) {
             logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
-        } catch (InvalidFieldSpecException | ValidationException e) {
+        } catch (ValidationException e) {
             logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
         }
     }
@@ -138,24 +133,10 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         String id = document.getString("id");
 
         if (document.getString("equipment-type") != null) {
-            YamlReader yamlReader = new YamlReader(file, null);
-            yamlReader.load();
+            EquipmentSpec equipmentSpec = specDeserializer.deserializeSpec(file, EquipmentSpec.class);
+            ObjectValidator.validate(equipmentSpec);
 
-            DustOptionsSpecLoader dustOptionsSpecLoader = new DustOptionsSpecLoader(yamlReader);
-            ParticleEffectSpecLoader particleEffectSpecLoader = new ParticleEffectSpecLoader(yamlReader, dustOptionsSpecLoader);
-
-            ActivationPatternSpecLoader activationPatternSpecLoader = new ActivationPatternSpecLoader(yamlReader);
-            PotionEffectSpecLoader potionEffectSpecLoader = new PotionEffectSpecLoader(yamlReader);
-            RangeProfileSpecLoader rangeProfileSpecLoader = new RangeProfileSpecLoader(yamlReader);
-            TriggerSpecLoader triggerSpecLoader = new TriggerSpecLoader(yamlReader);
-
-            ItemEffectSpecLoader itemEffectSpecLoader = new ItemEffectSpecLoader(yamlReader, activationPatternSpecLoader, particleEffectSpecLoader, potionEffectSpecLoader, rangeProfileSpecLoader, triggerSpecLoader);
-            ProjectileEffectSpecLoader projectileEffectSpecLoader = new ProjectileEffectSpecLoader(yamlReader, particleEffectSpecLoader, triggerSpecLoader);
-
-            EquipmentSpecLoader specLoader = new EquipmentSpecLoader(yamlReader, itemEffectSpecLoader, particleEffectSpecLoader, projectileEffectSpecLoader);
-            EquipmentSpec spec = specLoader.loadSpec();
-
-            creator.addEquipmentSpec(id, spec);
+            creator.addEquipmentSpec(id, equipmentSpec);
             return;
         }
 
@@ -167,6 +148,6 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             return;
         }
 
-        throw new IllegalStateException("File has no specified item type");
+        logger.severe("An error occurred while loading item '%s': no item type is specified".formatted(id));
     }
 }

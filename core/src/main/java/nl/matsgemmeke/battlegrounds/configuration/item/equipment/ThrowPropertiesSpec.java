@@ -8,5 +8,6 @@ public class ThrowPropertiesSpec {
     public Double velocity;
     @Required
     public Long cooldown;
+    public String cookSounds;
     public String throwSounds;
 }

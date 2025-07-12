@@ -121,6 +121,18 @@ public class WeaponCreatorProviderTest {
     }
 
     @Test
+    public void getLogsErrorMessagesWhenItemFileContainsNoItemTypeSpecification() {
+        File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_without_type");
+
+        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactory, firearmFactory, specDeserializer, itemsFolder, logger);
+        WeaponCreator weaponCreator = provider.get();
+
+        assertThat(weaponCreator.exists("MP5")).isFalse();
+
+        verify(logger).severe("An error occurred while loading item 'MP5': no item type is specified");
+    }
+
+    @Test
     public void getCopiesResourcesFilesIfItemsDirectoryDoesNotYetExist() {
         File itemsFolder = new File(tempDirectory.getPath() + "/items");
 

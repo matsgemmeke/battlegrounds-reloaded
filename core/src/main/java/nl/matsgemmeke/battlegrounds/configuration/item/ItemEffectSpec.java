@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.ConditionalRequired
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ItemEffectSpec {
@@ -11,7 +12,7 @@ public class ItemEffectSpec {
     @Required
     @EnumValue(type = ItemEffectType.class)
     public String type;
-    public Map<String, TriggerSpec> triggers;
+    public Map<String, TriggerSpec> triggers = new HashMap<>();
     public String activationSounds;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "EXPLOSION")
     public RangeProfileSpec range;
@@ -23,6 +24,8 @@ public class ItemEffectSpec {
     public Double density;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = { "COMBUSTION", "SMOKE_SCREEN" })
     public Double growth;
+    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "COMBUSTION", "SMOKE_SCREEN" })
+    public Long growthInterval;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = { "COMBUSTION", "GUN_FIRE_SIMULAITON", "SMOKE_SCREEN" })
     public Long minDuration;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = { "COMBUSTION", "GUN_FIRE_SIMULAITON", "SMOKE_SCREEN" })

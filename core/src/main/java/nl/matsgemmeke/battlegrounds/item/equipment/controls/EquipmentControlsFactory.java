@@ -1,11 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.CookPropertiesSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.PlacePropertiesSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ProjectileEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ThrowPropertiesSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.PlacePropertiesSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.ThrowPropertiesSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
@@ -55,22 +54,22 @@ public class EquipmentControlsFactory {
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
-        String throwActionValue = spec.controls().throwAction();
-        String cookActionValue = spec.controls().cookAction();
-        String placeActionValue = spec.controls().placeAction();
-        String activateActionValue = spec.controls().activateAction();
+        String throwActionValue = spec.controls.throwing;
+        String cookActionValue = spec.controls.cook;
+        String placeActionValue = spec.controls.place;
+        String activateActionValue = spec.controls.activate;
 
         if (throwActionValue != null) {
+            ThrowPropertiesSpec throwProperties = spec.deploy.throwing;
+
+            if (throwProperties == null) {
+                throw new EquipmentControlsCreationException("Cannot create controls for 'throw', the equipment specification does not contain the required throw properties");
+            }
+
             if (cookActionValue != null) {
                 Action cookAction = Action.valueOf(cookActionValue);
-                CookPropertiesSpec cookProperties = spec.deployment().cookProperties();
 
-                // The specification files should already be validated, so this acts as a double check
-                if (cookProperties == null) {
-                    throw new EquipmentControlsCreationException("Cannot create controls for 'cook', the equipment specification does not contain the required properties");
-                }
-
-                List<GameSound> cookSounds = DefaultGameSound.parseSounds(cookProperties.cookSounds());
+                List<GameSound> cookSounds = DefaultGameSound.parseSounds(throwProperties.cookSounds);
                 PrimeDeployment deployment = new PrimeDeployment(audioEmitter, cookSounds);
                 CookFunction cookFunction = new CookFunction(equipment, deployment);
 
@@ -79,26 +78,21 @@ public class EquipmentControlsFactory {
 
             Action throwAction = Action.valueOf(throwActionValue);
             ItemTemplate itemTemplate = equipment.getThrowItemTemplate();
-            ThrowPropertiesSpec throwProperties = spec.deployment().throwProperties();
 
             // The specification files should already be validated, so this acts as a double check
             if (itemTemplate == null) {
                 throw new EquipmentControlsCreationException("Cannot create controls for 'throw', the equipment specification does not contain the required throw item template");
             }
 
-            if (throwProperties == null) {
-                throw new EquipmentControlsCreationException("Cannot create controls for 'throw', the equipment specification does not contain the required throw properties");
-            }
-
-            List<GameSound> throwSounds = DefaultGameSound.parseSounds(throwProperties.throwSounds());
-            Map<DamageType, Double> resistances = this.getResistances(spec.deployment().resistances());
-            double health = spec.deployment().health();
-            double velocity = throwProperties.velocity();
-            long cooldown = throwProperties.cooldown();
+            List<GameSound> throwSounds = DefaultGameSound.parseSounds(throwProperties.throwSounds);
+            Map<DamageType, Double> resistances = this.getResistances(spec.deploy.resistances);
+            double health = spec.deploy.health;
+            double velocity = throwProperties.velocity;
+            long cooldown = throwProperties.cooldown;
 
             List<ProjectileEffect> projectileEffects = new ArrayList<>();
 
-            for (ProjectileEffectSpec projectileEffectSpec : spec.projectileEffects()) {
+            for (ProjectileEffectSpec projectileEffectSpec : spec.projectileEffects.values()) {
                 projectileEffects.add(projectileEffectFactory.create(projectileEffectSpec, gameKey));
             }
 
@@ -111,17 +105,17 @@ public class EquipmentControlsFactory {
 
         if (placeActionValue != null) {
             Action placeAction = Action.valueOf(placeActionValue);
-            PlacePropertiesSpec placeProperties = spec.deployment().placeProperties();
+            PlacePropertiesSpec placeProperties = spec.deploy.placing;
 
             if (placeProperties == null) {
                 throw new EquipmentControlsCreationException("Cannot create controls for 'place', the equipment specification does not contain the required place properties");
             }
 
-            List<GameSound> placeSounds = DefaultGameSound.parseSounds(placeProperties.placeSounds());
-            Map<DamageType, Double> resistances = this.getResistances(spec.deployment().resistances());
-            Material material = Material.valueOf(placeProperties.material());
-            double health = spec.deployment().health();
-            long cooldown = placeProperties.cooldown();
+            List<GameSound> placeSounds = DefaultGameSound.parseSounds(placeProperties.placeSounds);
+            Map<DamageType, Double> resistances = this.getResistances(spec.deploy.resistances);
+            Material material = Material.valueOf(placeProperties.material);
+            double health = spec.deploy.health;
+            long cooldown = placeProperties.cooldown;
 
             PlaceDeploymentProperties deploymentProperties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);
             PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
