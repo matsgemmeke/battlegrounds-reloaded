@@ -15,7 +15,7 @@ public class RangeProfileTest {
 
     @Test
     public void shouldReturnShortDamageForShortDistance() {
-        RangeProfile rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
+        RangeProfile rangeProfile = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
         double distance = 1.0;
 
         double result = rangeProfile.getDamageByDistance(distance);
@@ -25,7 +25,7 @@ public class RangeProfileTest {
 
     @Test
     public void shouldReturnMediumDamageForMediumDistance() {
-        RangeProfile rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
+        RangeProfile rangeProfile = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
         double distance = 4.0;
 
         double result = rangeProfile.getDamageByDistance(distance);
@@ -35,7 +35,7 @@ public class RangeProfileTest {
 
     @Test
     public void shouldReturnLongDamageForLongDistance() {
-        RangeProfile rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
+        RangeProfile rangeProfile = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
         double distance = 8.0;
 
         double result = rangeProfile.getDamageByDistance(distance);
@@ -45,7 +45,7 @@ public class RangeProfileTest {
 
     @Test
     public void shouldReturnZeroDamageForDistancesOutsideOfLongRange() {
-        RangeProfile rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
+        RangeProfile rangeProfile = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
         double distance = 100.0;
 
         double result = rangeProfile.getDamageByDistance(distance);

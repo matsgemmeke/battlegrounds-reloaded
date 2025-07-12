@@ -53,7 +53,7 @@ public class ExplosionEffectTest {
     public void setUp() {
         damageProcessor = mock(DamageProcessor.class);
         properties = new ExplosionProperties(POWER, SET_FIRE, BREAK_BLOCKS);
-        rangeProfile = new RangeProfile(LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE);
+        rangeProfile = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);
         trigger = mock(Trigger.class);
 

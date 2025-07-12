@@ -28,6 +28,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +47,8 @@ public class ItemEffectFactory {
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
     @NotNull
+    private final RangeProfileMapper rangeProfileMapper;
+    @NotNull
     private final SmokeScreenEffectFactory smokeScreenEffectFactory;
     @NotNull
     private final TriggerFactory triggerFactory;
@@ -56,6 +59,7 @@ public class ItemEffectFactory {
             @NotNull CombustionEffectFactory combustionEffectFactory,
             @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory,
             @NotNull ParticleEffectMapper particleEffectMapper,
+            @NotNull RangeProfileMapper rangeProfileMapper,
             @NotNull SmokeScreenEffectFactory smokeScreenEffectFactory,
             @NotNull TriggerFactory triggerFactory
     ) {
@@ -63,6 +67,7 @@ public class ItemEffectFactory {
         this.combustionEffectFactory = combustionEffectFactory;
         this.gunFireSimulationEffectFactory = gunFireSimulationEffectFactory;
         this.particleEffectMapper = particleEffectMapper;
+        this.rangeProfileMapper = rangeProfileMapper;
         this.smokeScreenEffectFactory = smokeScreenEffectFactory;
         this.triggerFactory = triggerFactory;
     }
@@ -85,7 +90,7 @@ public class ItemEffectFactory {
                 RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
 
                 CombustionProperties properties = new CombustionProperties(activationSounds, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
-                RangeProfile rangeProfile = new RangeProfile(rangeProfileSpec.longRange.damage, rangeProfileSpec.longRange.distance, rangeProfileSpec.mediumRange.damage, rangeProfileSpec.mediumRange.distance, rangeProfileSpec.shortRange.damage, rangeProfileSpec.shortRange.distance);
+                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
 
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
                 CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
