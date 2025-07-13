@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
 
 public class ObjectValidator {
 
-    private static Map<Class<? extends Annotation>, FieldValidator<?>> validators = new HashMap<>();
+    private static Map<Class<? extends Annotation>, Validator<?>> validators = new HashMap<>();
 
     static {
-        registerValidator(Required.class, new RequiredFieldValidator());
+        registerValidator(Required.class, new RequiredValidator());
         registerValidator(EnumValue.class, new EnumValueValidator());
-        registerValidator(Regex.class, new RegexFieldValidator());
+        registerValidator(Regex.class, new RegexValidator());
         registerValidator(ConditionalRequired.class, new ConditionalRequiredValidator());
     }
 
-    public static void registerValidator(Class<? extends Annotation> annotation, FieldValidator<?> validator) {
+    public static void registerValidator(Class<? extends Annotation> annotation, Validator<?> validator) {
         validators.put(annotation, validator);
     }
 
@@ -38,7 +38,7 @@ public class ObjectValidator {
             }
 
             for (Annotation annotation : field.getAnnotations()) {
-                FieldValidator validator = validators.get(annotation.annotationType());
+                Validator validator = validators.get(annotation.annotationType());
 
                 if (validator != null) {
                     Map<String, Object> otherFields = extractOtherFields(object, field);

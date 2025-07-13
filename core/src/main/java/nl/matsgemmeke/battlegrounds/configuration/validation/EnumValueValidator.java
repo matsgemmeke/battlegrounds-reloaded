@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public class EnumValueValidator implements FieldValidator<EnumValue> {
+public class EnumValueValidator implements Validator<EnumValue> {
 
     public void validate(@NotNull ValidationContext context, @NotNull EnumValue annotation) {
         Object fieldValue = context.fieldValue();

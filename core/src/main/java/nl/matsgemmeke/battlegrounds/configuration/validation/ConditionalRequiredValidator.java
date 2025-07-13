@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class ConditionalRequiredValidator implements FieldValidator<ConditionalRequired> {
+public class ConditionalRequiredValidator implements Validator<ConditionalRequired> {
 
     public void validate(@NotNull ValidationContext context, @NotNull ConditionalRequired annotation) {
         Object fieldValue = context.fieldValue();

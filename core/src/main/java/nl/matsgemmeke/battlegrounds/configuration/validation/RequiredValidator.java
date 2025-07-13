@@ -1,18 +1,14 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+public class RequiredValidator implements Validator<Required> {
 
-public class RequiredValidator<T> implements Validator<T> {
-
-    @NotNull
-    public Optional<String> validate(@NotNull String route, @Nullable T value) {
-        if (value == null) {
-            return Optional.of("Missing required value at '%s'".formatted(route));
+    public void validate(@NotNull ValidationContext context, @NotNull Required annotation) {
+        if (context.fieldValue() != null) {
+            return;
         }
 
-        return Optional.empty();
+        throw new ValidationException("Field '%s' is required but no value is provided".formatted(context.fieldName()));
     }
 }

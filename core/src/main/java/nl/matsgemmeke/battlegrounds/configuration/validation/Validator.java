@@ -1,31 +1,27 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+import java.lang.annotation.Annotation;
 
 /**
  * Represents a validation rule that can be applied to a configuration value.
  * <p>
- * A {@code Validator} checks whether a given value meets certain criteria and, if not, returns an error message
+ * A {@code Validator} checks whether a given value meets certain criteria and, if not, throws a validation error
  * describing the failure.
  *
- * @param <T> the type of the value to validate
+ * @param <T> the annotation type that is used on the value being validated
  */
-public interface Validator<T> {
+public interface Validator<T extends Annotation> {
 
     /**
-     * Validates the given value and returns an optional error message.
+     * Validates a field on an object.
      * <p>
-     * If the value is valid, this method returns {@link Optional#empty()}. If the value is invalid, it returns an
-     * {@link Optional} containing a descriptive error message. The {@code route} parameter provides the path to the
-     * value in the configuration, allowing the validator to include it in error messages for better context.
+     * If the field is valid, this method will not throw any errors. If the field is invalid, a validation error such
+     * as {@link ValidationException} will be thrown, depending on the implementing class.
      *
-     * @param route the path to the value in the configuration
-     * @param value the value to validate (may be {@code null})
-     * @return an {@link Optional} containing an error message if validation fails, or empty if valid
+     * @param context the context of the validation
+     * @param annotation the annotation placed on the field that is being validated
      */
-    @NotNull
-    Optional<String> validate(@NotNull String route, @Nullable T value);
+    void validate(@NotNull ValidationContext context, @NotNull T annotation);
 }
