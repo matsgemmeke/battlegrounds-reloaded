@@ -1,7 +1,7 @@
 id: OLYMPIA
 name: Olympia
 ammo:
-  default-supply: 9
+  default-magazine-amount: 9
   magazine-size: 2
   max-magazine-amount: 19
 controls:
@@ -23,9 +23,11 @@ shooting:
   fire-mode:
     cycle-cooldown: 6
     type: SEMI_AUTOMATIC
-  headshot-damage-multiplier: 1.1
   projectile:
     type: BULLET
+    headshot-damage-multiplier: 1.1
+    shot-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+    suppressed-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1
@@ -56,5 +58,3 @@ shooting:
     projectile-amount: 8
     horizontal-spread: 1.5
     vertical-spread: 1.5
-  shot-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
-  suppressed-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0

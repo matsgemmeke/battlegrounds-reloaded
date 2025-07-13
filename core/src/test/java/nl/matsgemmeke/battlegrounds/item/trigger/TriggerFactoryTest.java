@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
@@ -44,21 +44,28 @@ public class TriggerFactoryTest {
 
     private static Stream<Arguments> invalidTriggerSpecCases() {
         return Stream.of(
-                arguments(new TriggerSpec("ENEMY_PROXIMITY", null, INTERVAL, null, RANGE), "delay"),
-                arguments(new TriggerSpec("ENEMY_PROXIMITY", DELAY, null, null, RANGE), "interval"),
-                arguments(new TriggerSpec("ENEMY_PROXIMITY", DELAY, INTERVAL, null, null), "range"),
-                arguments(new TriggerSpec("FLOOR_HIT", null, INTERVAL, null, null), "delay"),
-                arguments(new TriggerSpec("FLOOR_HIT", DELAY, null, null, null), "interval"),
-                arguments(new TriggerSpec("IMPACT", null, INTERVAL, null, null), "delay"),
-                arguments(new TriggerSpec("IMPACT", DELAY, null, null, null), "interval"),
-                arguments(new TriggerSpec("SCHEDULED", null, null, null, null), "offsetDelays")
+                arguments("ENEMY_PROXIMITY", null, INTERVAL, null, RANGE, "delay"),
+                arguments("ENEMY_PROXIMITY", DELAY, null, null, RANGE, "interval"),
+                arguments("ENEMY_PROXIMITY", DELAY, INTERVAL, null, null, "range"),
+                arguments("FLOOR_HIT", null, INTERVAL, null, null, "delay"),
+                arguments("FLOOR_HIT", DELAY, null, null, null, "interval"),
+                arguments("IMPACT", null, INTERVAL, null, null, "delay"),
+                arguments("IMPACT", DELAY, null, null, null, "interval"),
+                arguments("SCHEDULED", null, null, null, null, "offsetDelays")
         );
     }
 
     @ParameterizedTest
     @MethodSource("invalidTriggerSpecCases")
-    public void createThrowsTriggerCreationExceptionWhenRequiredValuesInSpecAreNull(TriggerSpec spec, String requiredValue) {
-        String expectedErrorMessage = "Cannot create trigger %s because of invalid spec: Required '%s' value is missing".formatted(spec.type(), requiredValue);
+    public void createThrowsTriggerCreationExceptionWhenRequiredValuesInSpecAreNull(String type, Long delay, Long interval, List<Long> offsetDelays, Double range, String requiredValue) {
+        TriggerSpec spec = new TriggerSpec();
+        spec.type = type;
+        spec.delay = delay;
+        spec.interval = interval;
+        spec.offsetDelays = offsetDelays;
+        spec.range = range;
+
+        String expectedErrorMessage = "Cannot create trigger %s because of invalid spec: Required '%s' value is missing".formatted(type, requiredValue);
 
         TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
 
@@ -69,7 +76,11 @@ public class TriggerFactoryTest {
 
     @Test
     public void createReturnsEnemyProximityTriggerInstanceWhenTripperTypeEqualsEnemyProximity() {
-        TriggerSpec spec = new TriggerSpec("ENEMY_PROXIMITY", DELAY, INTERVAL, null, RANGE);
+        TriggerSpec spec = new TriggerSpec();
+        spec.type = "ENEMY_PROXIMITY";
+        spec.delay = DELAY;
+        spec.interval = INTERVAL;
+        spec.range = RANGE;
 
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
@@ -85,7 +96,11 @@ public class TriggerFactoryTest {
 
     @Test
     public void createReturnsFloorHitTriggerInstanceWhenTriggerTypeEqualsFloorHit() {
-        TriggerSpec spec = new TriggerSpec("FLOOR_HIT", DELAY, INTERVAL, null, RANGE);
+        TriggerSpec spec = new TriggerSpec();
+        spec.type = "FLOOR_HIT";
+        spec.delay = DELAY;
+        spec.interval = INTERVAL;
+        spec.range = RANGE;
 
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
@@ -98,7 +113,10 @@ public class TriggerFactoryTest {
 
     @Test
     public void createReturnsImpactTriggerInstanceWhenTriggerTypeEqualsImpact() {
-        TriggerSpec spec = new TriggerSpec("IMPACT", DELAY, INTERVAL, null, null);
+        TriggerSpec spec = new TriggerSpec();
+        spec.type = "IMPACT";
+        spec.delay = DELAY;
+        spec.interval = INTERVAL;
 
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
@@ -111,8 +129,9 @@ public class TriggerFactoryTest {
 
     @Test
     public void createReturnsScheduledTriggerInstanceWithSingleRunScheduleWhenTriggerTypeEqualsDelayed() {
-        List<Long> offsetDelays = List.of(DELAY);
-        TriggerSpec spec = new TriggerSpec("SCHEDULED", null, null, offsetDelays, null);
+        TriggerSpec spec = new TriggerSpec();
+        spec.type = "SCHEDULED";
+        spec.offsetDelays = List.of(DELAY);
 
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
@@ -125,11 +144,12 @@ public class TriggerFactoryTest {
 
     @Test
     public void createReturnsScheduledTriggerInstanceWithSequenceScheduleWhenTriggerTypeEqualsDelayed() {
-        List<Long> offsetDelays = List.of(10L, 20L);
-        TriggerSpec spec = new TriggerSpec("SCHEDULED", null, null, offsetDelays, null);
+        TriggerSpec spec = new TriggerSpec();
+        spec.type = "SCHEDULED";
+        spec.offsetDelays = List.of(10L, 20L);
 
         Schedule schedule = mock(Schedule.class);
-        when(scheduler.createSequenceSchedule(offsetDelays)).thenReturn(schedule);
+        when(scheduler.createSequenceSchedule(spec.offsetDelays)).thenReturn(schedule);
 
         TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
         Trigger trigger = factory.create(spec, gameKey);

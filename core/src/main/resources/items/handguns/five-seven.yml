@@ -1,7 +1,7 @@
 id: FIVE-SEVEN
 name: Five-seven
 ammo:
-  default-supply: 3
+  default-magazine-amount: 3
   magazine-size: 20
   max-magazine-amount: 8
 controls:
@@ -23,9 +23,11 @@ shooting:
   fire-mode:
     cycle-cooldown: 2
     type: SEMI_AUTOMATIC
-  headshot-damage-multiplier: 1.4
   projectile:
     type: BULLET
+    headshot-damage-multiplier: 1.4
+    shot-sounds: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
+    suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1
@@ -53,5 +55,3 @@ shooting:
     kickback-duration: 200
   spread-pattern:
     type: SINGLE_PROJECTILE
-  shot-sounds: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
-  suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0

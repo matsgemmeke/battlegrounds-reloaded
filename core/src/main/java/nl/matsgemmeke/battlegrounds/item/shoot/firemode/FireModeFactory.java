@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.firemode;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.FireModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.burst.BurstMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.fullauto.FullyAutomaticMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.semiauto.SemiAutomaticMode;
@@ -39,13 +39,13 @@ public class FireModeFactory {
      */
     @NotNull
     public FireMode create(@NotNull FireModeSpec spec) {
-        FireModeType fireModeType = FireModeType.valueOf(spec.type());
+        FireModeType fireModeType = FireModeType.valueOf(spec.type);
 
         switch (fireModeType) {
             case BURST_MODE -> {
-                int amountOfShots = this.validateSpecVar(spec.amountOfShots(), "amountOfShots", fireModeType);
-                int rateOfFire = this.validateSpecVar(spec.rateOfFire(), "rateOfFire", fireModeType);
-                long cycleCooldown = this.validateSpecVar(spec.cycleCooldown(), "cycleCooldown", fireModeType);
+                int amountOfShots = this.validateSpecVar(spec.amountOfShots, "amountOfShots", fireModeType);
+                int rateOfFire = this.validateSpecVar(spec.rateOfFire, "rateOfFire", fireModeType);
+                long cycleCooldown = this.validateSpecVar(spec.cycleCooldown, "cycleCooldown", fireModeType);
 
                 // Convert rate of fire to amount of rounds fired per second
                 int shotsPerSecond = rateOfFire / 60;
@@ -58,7 +58,7 @@ public class FireModeFactory {
                 return new BurstMode(shotSchedule, cooldownSchedule, amountOfShots, rateOfFire);
             }
             case FULLY_AUTOMATIC -> {
-                int rateOfFire = this.validateSpecVar(spec.rateOfFire(), "rateOfFire", fireModeType);
+                int rateOfFire = this.validateSpecVar(spec.rateOfFire, "rateOfFire", fireModeType);
 
                 // Convert rate of fire to amount of shots fired per second
                 int shotsPerSecond = rateOfFire / 60;
@@ -75,7 +75,7 @@ public class FireModeFactory {
                 return new FullyAutomaticMode(shotSchedule, cooldownSchedule, rateOfFire);
             }
             case SEMI_AUTOMATIC -> {
-                long cycleCooldown = this.validateSpecVar(spec.cycleCooldown(), "cycleCooldown", fireModeType);
+                long cycleCooldown = this.validateSpecVar(spec.cycleCooldown, "cycleCooldown", fireModeType);
                 int rateOfFire = Math.floorDiv(TICKS_PER_MINUTE, (int) cycleCooldown + 1);
 
                 Schedule cooldownSchedule = scheduler.createSingleRunSchedule(cycleCooldown);

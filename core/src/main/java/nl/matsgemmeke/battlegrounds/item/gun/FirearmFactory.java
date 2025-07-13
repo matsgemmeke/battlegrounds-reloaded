@@ -2,8 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -14,6 +15,7 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -33,6 +35,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,6 +52,8 @@ public class FirearmFactory {
     @NotNull
     private final NamespacedKeyCreator keyCreator;
     @NotNull
+    private final RangeProfileMapper rangeProfileMapper;
+    @NotNull
     private final ReloadSystemFactory reloadSystemFactory;
     @NotNull
     private final ShootHandlerFactory shootHandlerFactory;
@@ -59,6 +64,7 @@ public class FirearmFactory {
             @NotNull GameContextProvider contextProvider,
             @NotNull FirearmControlsFactory controlsFactory,
             @NotNull NamespacedKeyCreator keyCreator,
+            @NotNull RangeProfileMapper rangeProfileMapper,
             @NotNull ReloadSystemFactory reloadSystemFactory,
             @NotNull ShootHandlerFactory shootHandlerFactory
     ) {
@@ -66,6 +72,7 @@ public class FirearmFactory {
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
         this.keyCreator = keyCreator;
+        this.rangeProfileMapper = rangeProfileMapper;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
     }
@@ -98,46 +105,46 @@ public class FirearmFactory {
         DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
         TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-        DefaultFirearm firearm = new DefaultFirearm(spec.id(), audioEmitter, collisionDetector, damageProcessor, targetFinder);
-        firearm.setName(spec.name());
-        firearm.setDescription(spec.description());
-        firearm.setHeadshotDamageMultiplier(spec.headshotDamageMultiplier());
+        DefaultFirearm firearm = new DefaultFirearm(spec.id, audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        firearm.setName(spec.name);
+        firearm.setDescription(spec.description);
+        firearm.setHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
 
-        ItemTemplate itemTemplate = this.createItemTemplate(spec.item());
+        ItemTemplate itemTemplate = this.createItemTemplate(spec.item);
         ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
-        itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, spec.name());
+        itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, spec.name);
 
         firearm.setItemTemplate(itemTemplate);
 
         double damageAmplifier = config.getGunDamageAmplifier();
         firearm.setDamageAmplifier(damageAmplifier);
 
-        int magazineSize = spec.magazineSize();
-        int reserveAmmo = spec.defaultMagazineAmount() * magazineSize;
-        int maxAmmo = spec.maxMagazineAmount() * magazineSize;
+        int magazineSize = spec.ammo.magazineSize;
+        int reserveAmmo = spec.ammo.defaultMagazineAmount * magazineSize;
+        int maxAmmo = spec.ammo.maxMagazineAmount * magazineSize;
 
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
         firearm.setAmmunitionStorage(ammunitionStorage);
 
-        RangeProfile rangeProfile = new RangeProfile(spec.rangeProfile().longRangeDamage(), spec.rangeProfile().longRangeDistance(), spec.rangeProfile().mediumRangeDamage(), spec.rangeProfile().mediumRangeDistance(), spec.rangeProfile().shortRangeDamage(), spec.rangeProfile().shortRangeDistance());
+        RangeProfile rangeProfile = rangeProfileMapper.map(spec.shooting.range);
         firearm.setRangeProfile(rangeProfile);
 
-        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reload(), firearm, audioEmitter);
+        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, firearm, audioEmitter);
         firearm.setReloadSystem(reloadSystem);
 
-        ItemControls<GunHolder> controls = controlsFactory.create(spec.controls(), firearm);
+        ItemControls<GunHolder> controls = controlsFactory.create(spec.controls, firearm);
         firearm.setControls(controls);
 
-        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting(), gameKey, ammunitionStorage, itemRepresentation);
+        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, gameKey, ammunitionStorage, itemRepresentation);
         firearm.setShootHandler(shootHandler);
 
-        ScopeSpec scopeSpec = spec.scope();
+        ScopeSpec scopeSpec = spec.scope;
 
         if (scopeSpec != null) {
-            List<Float> magnifications = scopeSpec.magnifications();
-            List<GameSound> useSounds = DefaultGameSound.parseSounds(scopeSpec.useSounds());
-            List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSpec.stopSounds());
-            List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSpec.changeMagnificationSounds());
+            List<Float> magnifications = Arrays.asList(scopeSpec.magnifications);
+            List<GameSound> useSounds = DefaultGameSound.parseSounds(scopeSpec.useSounds);
+            List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSpec.stopSounds);
+            List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSpec.changeMagnificationSounds);
 
             ScopeProperties properties = new ScopeProperties(magnifications, useSounds, stopSounds, changeMagnificationSounds);
             DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
@@ -151,12 +158,12 @@ public class FirearmFactory {
     }
 
     @NotNull
-    private ItemTemplate createItemTemplate(@NotNull ItemStackSpec spec) {
+    private ItemTemplate createItemTemplate(@NotNull ItemSpec spec) {
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
-        Material material = Material.valueOf(spec.material());
-        String displayName = spec.displayName();
-        int damage = spec.damage();
+        Material material = Material.valueOf(spec.material);
+        String displayName = spec.displayName;
+        int damage = spec.damage;
 
         ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
         itemTemplate.setDamage(damage);

@@ -1,12 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.particle.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.ProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.item.mapper.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletProperties;
@@ -38,8 +38,7 @@ public class ProjectileLauncherFactoryTest {
     @Test
     public void createReturnsInstanceOfBulletLauncher() {
         BulletLauncher bulletLauncher = mock(BulletLauncher.class);
-        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec("FLAME", 1, 0.1, 0.2, 0.3, 0.0, null, null);
-        ProjectileSpec projectileSpec = new ProjectileSpec("BULLET", null, trajectoryParticleEffectSpec);
+        ProjectileSpec projectileSpec = this.createBulletProjectileSpec();
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
@@ -64,5 +63,20 @@ public class ProjectileLauncherFactoryTest {
         assertThat(bulletProperties.trajectoryParticleEffect().extra()).isEqualTo(0.0);
 
         assertThat(projectileLauncher).isEqualTo(bulletLauncher);
+    }
+
+    private ProjectileSpec createBulletProjectileSpec() {
+        ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec();
+        trajectoryParticleEffectSpec.particle = "FLAME";
+        trajectoryParticleEffectSpec.count = 1;
+        trajectoryParticleEffectSpec.offsetX = 0.1;
+        trajectoryParticleEffectSpec.offsetY = 0.2;
+        trajectoryParticleEffectSpec.offsetZ = 0.3;
+        trajectoryParticleEffectSpec.extra = 0.0;
+
+        ProjectileSpec projectileSpec = new ProjectileSpec();
+        projectileSpec.type = "BULLET";
+        projectileSpec.trajectoryParticleEffect = trajectoryParticleEffectSpec;
+        return projectileSpec;
     }
 }

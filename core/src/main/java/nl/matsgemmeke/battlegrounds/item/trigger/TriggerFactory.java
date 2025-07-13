@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.TriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
@@ -31,13 +31,13 @@ public class TriggerFactory {
 
     @NotNull
     public Trigger create(@NotNull TriggerSpec spec, @NotNull GameKey gameKey) {
-        TriggerType triggerType = TriggerType.valueOf(spec.type());
+        TriggerType triggerType = TriggerType.valueOf(spec.type);
 
         switch (triggerType) {
             case ENEMY_PROXIMITY -> {
-                long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
-                long interval = this.validateNotNull(spec.interval(), "interval", triggerType);
-                double range = this.validateNotNull(spec.range(), "range", triggerType);
+                long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
+                long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
+                double range = this.validateSpecVar(spec.range, "range", triggerType);
 
                 Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
@@ -45,21 +45,21 @@ public class TriggerFactory {
                 return new EnemyProximityTrigger(schedule, targetFinder, range);
             }
             case FLOOR_HIT -> {
-                long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
-                long interval = this.validateNotNull(spec.interval(), "interval", triggerType);
+                long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
+                long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
                 Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
 
                 return new FloorHitTrigger(schedule);
             }
             case IMPACT -> {
-                Long delay = this.validateNotNull(spec.delay(), "delay", triggerType);
-                Long interval = this.validateNotNull(spec.interval(), "interval", triggerType);
+                Long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
+                Long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
                 Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
 
                 return new ImpactTrigger(schedule);
             }
             case SCHEDULED -> {
-                List<Long> offsetDelays = this.validateNotNull(spec.offsetDelays(), "offsetDelays", triggerType);
+                List<Long> offsetDelays = this.validateSpecVar(spec.offsetDelays, "offsetDelays", triggerType);
                 Schedule schedule;
 
                 boolean continuous = offsetDelays.size() > 1;
@@ -74,10 +74,10 @@ public class TriggerFactory {
             }
         }
 
-        throw new TriggerCreationException("Unknown trigger type '%s'".formatted(spec.type()));
+        throw new TriggerCreationException("Unknown trigger type '%s'".formatted(spec.type));
     }
 
-    private <T> T validateNotNull(@Nullable T value, @NotNull String valueName, @NotNull Object triggerType) {
+    private <T> T validateSpecVar(@Nullable T value, @NotNull String valueName, @NotNull Object triggerType) {
         if (value == null) {
             throw new TriggerCreationException("Cannot create trigger %s because of invalid spec: Required '%s' value is missing".formatted(triggerType, valueName));
         }

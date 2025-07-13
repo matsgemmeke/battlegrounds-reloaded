@@ -1,7 +1,7 @@
 id: SEMTEX
 name: Semtex
 controls:
-  throw: LEFT_CLICK
+  throwing: LEFT_CLICK
 deploy:
   health: 50.0
   on-destruction:
@@ -40,29 +40,28 @@ effect:
       offset-delays: [60]
   type: EXPLOSION
 equipment-type: LETHAL
-item:
-  display:
+items:
+  display-item:
     damage: 9
     display-name: '&f%name%'
     material: SHEARS
-  throw:
+  throw-item:
     damage: 9
     display-name: '&f%name%'
     material: SHEARS
-projectile:
-  effects:
-    sound:
-      type: SOUND
-      triggers:
-        scheduled:
-          type: SCHEDULED
-          offset-delays: [10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58]
-      sounds: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
-    stick:
-      type: STICK
-      triggers:
-        impact:
-          type: IMPACT
-          delay: 0
-          interval: 1
-      stick-sounds: ITEM_FLINTANDSTEEL_USE-0.5-2-0
+projectile-effects:
+  sound:
+    type: SOUND
+    triggers:
+      scheduled:
+        type: SCHEDULED
+        offset-delays: [ 10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58 ]
+    sounds: ENTITY_EXPERIENCE_ORB_PICKUP-1-2-0
+  stick:
+    type: STICK
+    triggers:
+      impact:
+        type: IMPACT
+        delay: 0
+        interval: 1
+    stick-sounds: ITEM_FLINTANDSTEEL_USE-0.5-2-0

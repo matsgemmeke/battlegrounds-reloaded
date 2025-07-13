@@ -2,25 +2,34 @@ package nl.matsgemmeke.battlegrounds.configuration.validation;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
+import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class RequiredValidatorTest {
 
     @Test
-    public void validateReturnsNoErrorWhenGivenValueIsNotNull() {
-        RequiredValidator<String> validator = new RequiredValidator<>();
-        Optional<String> error = validator.validate("test", "any value");
+    public void validateThrowsValidationExceptionWhenValueIsNull() throws NoSuchFieldException {
+        ValidationObject object = new ValidationObject();
+        Required annotation = object.getClass().getDeclaredField("required").getAnnotation(Required.class);
+        ValidationContext context = new ValidationContext("required", null, Map.of());
 
-        assertThat(error).isEmpty();
+        RequiredValidator validator = new RequiredValidator();
+
+        assertThatThrownBy(() -> validator.validate(context, annotation))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Field 'required' is required but no value is provided");
     }
 
     @Test
-    public void validateReturnsErrorMessageWhenGivenValueIsNull() {
-        RequiredValidator<String> validator = new RequiredValidator<>();
-        Optional<String> error = validator.validate("test", null);
+    public void validateDoesNothingWhenValueIsNotNull() throws NoSuchFieldException {
+        ValidationObject object = new ValidationObject();
+        Required annotation = object.getClass().getDeclaredField("required").getAnnotation(Required.class);
+        ValidationContext context = new ValidationContext("required", "test", Map.of());
 
-        assertThat(error).hasValue("Missing required value at 'test'");
+        RequiredValidator validator = new RequiredValidator();
+
+        assertThatCode(() -> validator.validate(context, annotation)).doesNotThrowAnyException();
     }
 }

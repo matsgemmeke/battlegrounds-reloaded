@@ -1,25 +1,16 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+public class RegexValidator implements Validator<Regex> {
 
-public class RegexValidator implements Validator<String> {
+    public void validate(@NotNull ValidationContext context, @NotNull Regex annotation) {
+        String fieldValue = String.valueOf(context.fieldValue());
 
-    @NotNull
-    private final String regex;
-
-    public RegexValidator(@NotNull String regex) {
-        this.regex = regex;
-    }
-
-    @NotNull
-    public Optional<String> validate(@NotNull String route, @Nullable String value) {
-        if (value != null && !value.matches(regex)) {
-            return Optional.of("The value '%s' at route '%s' does not match the required format".formatted(value, route));
+        if (fieldValue.equals("null") || fieldValue.matches(annotation.pattern())) {
+            return;
         }
 
-        return Optional.empty();
+        throw new ValidationException("The value '%s' for field '%s' does not match the required pattern".formatted(fieldValue, context.fieldName()));
     }
 }

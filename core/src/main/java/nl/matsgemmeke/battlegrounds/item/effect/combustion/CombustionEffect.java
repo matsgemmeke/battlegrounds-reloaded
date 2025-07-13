@@ -120,7 +120,7 @@ public class CombustionEffect extends BaseItemEffect {
     }
 
     private void inflictDamage(@NotNull UUID entityId, @NotNull Location location) {
-        for (GameEntity target : targetFinder.findTargets(entityId, location, rangeProfile.getLongRangeDistance())) {
+        for (GameEntity target : targetFinder.findTargets(entityId, location, rangeProfile.longRangeDistance())) {
             Location targetLocation = target.getLocation();
 
             double distance = location.distance(targetLocation);

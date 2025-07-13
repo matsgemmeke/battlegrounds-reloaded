@@ -1,10 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
-import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.ItemStackSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.*;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -15,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFacto
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -50,14 +48,7 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithThrowFunction() {
-        double velocity = 1.5;
-        long cooldown = 20L;
-        ThrowPropertiesSpec throwPropertiesSpec = new ThrowPropertiesSpec(null, velocity, cooldown);
-
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, throwPropertiesSpec, null, null, null);
-        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
-        ProjectileEffectSpec projectileEffectSpec = new ProjectileEffectSpec("BOUNCE", null, null, null, null, null, null);
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec, List.of(projectileEffectSpec));
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
@@ -73,9 +64,7 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createThrowsEquipmentControlsCreationExceptionWhenThrowActionHasValueButThrowItemTemplateIsNull() {
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, null, null);
-        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
 
         when(equipment.getThrowItemTemplate()).thenReturn(null);
 
@@ -88,9 +77,8 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createThrowsEquipmentControlsCreationExceptionWhenThrowActionHasValueButThrowPropertiesIsNull() {
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, null, null);
-        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", null, null, null);
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
+        equipmentSpec.deploy.throwing = null;
 
         ItemTemplate throwItemTemplate = mock(ItemTemplate.class);
         when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
@@ -104,15 +92,7 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithCookFunction() {
-        double velocity = 1.5;
-        long cooldown = 20L;
-        ThrowPropertiesSpec throwPropertiesSpec = new ThrowPropertiesSpec(null, velocity, cooldown);
-
-        CookPropertiesSpec cookPropertiesSpec = new CookPropertiesSpec(null);
-
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, throwPropertiesSpec, cookPropertiesSpec, null, null);
-        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null);
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
@@ -127,27 +107,10 @@ public class EquipmentControlsFactoryTest {
     }
 
     @Test
-    public void createThrowsEquipmentControlsCreationExceptionWhenCookActionHasValueButCookPropertiesIsNull() {
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, null, null);
-        ControlsSpec controlsSpec = new ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null);
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
-
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory);
-
-        assertThatThrownBy(() -> factory.create(equipmentSpec, equipment, gameKey))
-                .isInstanceOf(EquipmentControlsCreationException.class)
-                .hasMessage("Cannot create controls for 'cook', the equipment specification does not contain the required properties");
-    }
-
-    @Test
     public void createMakesItemControlsWithPlaceFunction() {
-        String material = "STICK";
-        long cooldown = 20L;
-        PlacePropertiesSpec placePropertiesSpec = new PlacePropertiesSpec(material, null, cooldown);
-
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, placePropertiesSpec, null);
-        ControlsSpec controlsSpec = new ControlsSpec(null, null, "RIGHT_CLICK", null);
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
+        equipmentSpec.controls.activate = null;
+        equipmentSpec.controls.throwing = null;
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
@@ -160,9 +123,9 @@ public class EquipmentControlsFactoryTest {
 
     @Test
     public void createMakesItemControlsWithActivateFunction() {
-        DeploymentSpec deploymentSpec = new DeploymentSpec(HEALTH, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, null, RESISTANCES, null, null, null, null);
-        ControlsSpec controlsSpec = new ControlsSpec(null, null, null, "RIGHT_CLICK");
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(controlsSpec, deploymentSpec);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
+        equipmentSpec.controls.place = null;
+        equipmentSpec.controls.throwing = null;
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
@@ -173,14 +136,10 @@ public class EquipmentControlsFactoryTest {
         assertThat(controls).isNotNull();
     }
 
-    private EquipmentSpec createEquipmentSpec(ControlsSpec controlsSpec, DeploymentSpec deploymentSpec) {
-        return this.createEquipmentSpec(controlsSpec, deploymentSpec, Collections.emptyList());
-    }
+    private EquipmentSpec createEquipmentSpec(String filePath) {
+        File file = new File(filePath);
 
-    private EquipmentSpec createEquipmentSpec(ControlsSpec controlsSpec, DeploymentSpec deploymentSpec, List<ProjectileEffectSpec> projectileEffectSpecs) {
-        ItemStackSpec displayItemSpec = new ItemStackSpec("STICK", "Test Item", 1);
-        ItemEffectSpec itemEffectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", Collections.emptyList(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-
-        return new EquipmentSpec("TEST_EQUIPMENT", "Test Equipment", null, displayItemSpec, null, null, controlsSpec, deploymentSpec, itemEffectSpec, projectileEffectSpecs);
+        SpecDeserializer specDeserializer = new SpecDeserializer();
+        return specDeserializer.deserializeSpec(file, EquipmentSpec.class);
     }
 }

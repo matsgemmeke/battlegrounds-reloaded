@@ -2,9 +2,10 @@ package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.RecoilSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.RecoilSpec;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.Timer;
 
 /**
@@ -27,16 +28,16 @@ public class RecoilFactory {
      * @return a new recoil instance
      */
     public Recoil create(@NotNull RecoilSpec spec) {
-        RecoilType recoilType = RecoilType.valueOf(spec.type());
+        RecoilType recoilType = RecoilType.valueOf(spec.type);
 
-        Float[] horizontalRecoilValues = spec.horizontalRecoilValues().toArray(Float[]::new);
-        Float[] verticalRecoilValues = spec.verticalRecoilValues().toArray(Float[]::new);
+        Float[] horizontalRecoilValues = spec.horizontal;
+        Float[] verticalRecoilValues = spec.vertical;
 
         switch (recoilType) {
             case CAMERA_MOVEMENT -> {
-                long kickbackDuration = spec.kickbackDuration();
-                float recoveryRate = spec.recoveryRate();
-                long recoveryDuration = spec.recoveryDuration();
+                long kickbackDuration = Optional.ofNullable(spec.kickbackDuration).orElse(0L);
+                float recoveryRate = Optional.ofNullable(spec.recoveryRate).orElse(0.0f);
+                long recoveryDuration = Optional.ofNullable(spec.recoveryDuration).orElse(0L);
                 long rotationDuration = config.getCameraMovementRecoilDurationInMilliseconds();
 
                 Timer timer = new Timer();

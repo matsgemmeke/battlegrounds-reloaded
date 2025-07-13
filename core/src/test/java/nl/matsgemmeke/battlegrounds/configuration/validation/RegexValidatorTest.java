@@ -2,35 +2,45 @@ package nl.matsgemmeke.battlegrounds.configuration.validation;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
+import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class RegexValidatorTest {
 
-    private static final String SIMPLE_REGEX = "[abc]+";
-
     @Test
-    public void validateReturnsNoErrorMessageWhenGivenValueIsNull() {
-        RegexValidator validator = new RegexValidator(SIMPLE_REGEX);
-        Optional<String> error = validator.validate("test", null);
+    public void validateDoesNothingWhenFieldValueIsNull() throws NoSuchFieldException {
+        ValidationObject object = new ValidationObject();
+        Regex annotation = object.getClass().getDeclaredField("regex").getAnnotation(Regex.class);
+        ValidationContext context = new ValidationContext("regex", null, Map.of());
 
-        assertThat(error).isEmpty();
+        RegexValidator validator = new RegexValidator();
+
+        assertThatCode(() -> validator.validate(context, annotation)).doesNotThrowAnyException();
     }
 
     @Test
-    public void validateReturnsNoErrorMessageWhenGivenValueMatchesRegex() {
-        RegexValidator validator = new RegexValidator(SIMPLE_REGEX);
-        Optional<String> error = validator.validate("test", "abc");
+    public void validateDoesNothingWhenFieldValueHasCorrectPattern() throws NoSuchFieldException {
+        ValidationObject object = new ValidationObject();
+        Regex annotation = object.getClass().getDeclaredField("regex").getAnnotation(Regex.class);
+        ValidationContext context = new ValidationContext("regex", "abc", Map.of());
 
-        assertThat(error).isEmpty();
+        RegexValidator validator = new RegexValidator();
+
+        assertThatCode(() -> validator.validate(context, annotation)).doesNotThrowAnyException();
     }
 
     @Test
-    public void validateReturnsErrorMessageWhenGivenValueDoesNotMatchRegex() {
-        RegexValidator validator = new RegexValidator(SIMPLE_REGEX);
-        Optional<String> error = validator.validate("test", "def");
+    public void validateThrowsValidationExceptionWhenFieldValueDoesNotHaveCorrectPattern() throws NoSuchFieldException {
+        ValidationObject object = new ValidationObject();
+        Regex annotation = object.getClass().getDeclaredField("regex").getAnnotation(Regex.class);
+        ValidationContext context = new ValidationContext("regex", "def", Map.of());
 
-        assertThat(error).hasValue("The value 'def' at route 'test' does not match the required format");
+        RegexValidator validator = new RegexValidator();
+
+        assertThatThrownBy(() -> validator.validate(context, annotation))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("The value 'def' for field 'regex' does not match the required pattern");
     }
 }

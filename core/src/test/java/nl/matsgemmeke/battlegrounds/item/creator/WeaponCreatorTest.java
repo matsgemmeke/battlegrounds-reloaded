@@ -1,13 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.shoot.*;
-import nl.matsgemmeke.battlegrounds.configuration.spec.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.ControlsSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.gun.GunSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.*;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.DeploymentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.deploy.ProjectileEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.spec.item.effect.ItemEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
@@ -19,8 +14,7 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Map;
+import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,8 +24,8 @@ import static org.mockito.Mockito.when;
 public class WeaponCreatorTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-    private static final String EQUIPMENT_ID = "TEST_EQUIPMENT";
-    private static final String GUN_ID = "TEST_GUN";
+    private static final String EQUIPMENT_ID = "FRAG_GRENADE";
+    private static final String GUN_ID = "MP5";
 
     private EquipmentFactory equipmentFactory;
     private FirearmFactory firearmFactory;
@@ -55,7 +49,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void createEquipmentReturnsEquipmentInstanceBasedOnGivenEquipmentId() {
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(EQUIPMENT_ID);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Equipment equipment = mock(Equipment.class);
@@ -81,7 +75,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void createGunReturnsGunInstanceBasedOnGivenGunId() {
-        GunSpec gunSpec = this.createGunSpec(GUN_ID);
+        GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Firearm firearm = mock(Firearm.class);
@@ -97,7 +91,7 @@ public class WeaponCreatorTest {
     @Test
     public void createWeaponReturnsEquipmentInstanceBasedOnGivenEquipmentId() {
         Equipment equipment = mock(Equipment.class);
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(EQUIPMENT_ID);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(equipmentFactory.create(equipmentSpec, GAME_KEY, gamePlayer)).thenReturn(equipment);
@@ -112,7 +106,7 @@ public class WeaponCreatorTest {
     @Test
     public void createWeaponReturnsGunInstanceBasedOnGivenGunId() {
         Firearm firearm = mock(Firearm.class);
-        GunSpec gunSpec = this.createGunSpec(GUN_ID);
+        GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(firearmFactory.create(gunSpec, GAME_KEY, gamePlayer)).thenReturn(firearm);
@@ -137,7 +131,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void existsReturnsTrueWhenSpecificationOfGivenWeaponIdExists() {
-        GunSpec gunSpec = this.createGunSpec(GUN_ID);
+        GunSpec gunSpec = this.createGunSpec();
 
         WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
         weaponCreator.addGunSpec(GUN_ID, gunSpec);
@@ -164,7 +158,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void equipmentExistsReturnsTrueWhenEquipmentSpecByGivenIdExists() {
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec(EQUIPMENT_ID);
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec();
 
         WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
         weaponCreator.addEquipmentSpec(EQUIPMENT_ID, equipmentSpec);
@@ -183,7 +177,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void gunExistsReturnsTrueWhenGunSpecByGivenIdExists() {
-        GunSpec gunSpec = this.createGunSpec(GUN_ID);
+        GunSpec gunSpec = this.createGunSpec();
 
         WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
         weaponCreator.addGunSpec(GUN_ID, gunSpec);
@@ -192,30 +186,17 @@ public class WeaponCreatorTest {
         assertThat(gunExists).isTrue();
     }
 
-    private GunSpec createGunSpec(String gunId) {
-        RangeProfileSpec rangeProfileSpec = new RangeProfileSpec(10.0, 35.0, 20.0, 25.0, 30.0, 15.0);
+    private EquipmentSpec createEquipmentSpec() {
+        File file = new File("src/main/resources/items/lethal_equipment/frag_grenade.yml");
 
-        FireModeSpec fireModeSpec = new FireModeSpec("FULLY_AUTOMATIC", null, 600, null);
-        ProjectileSpec projectileSpec = new ProjectileSpec("BULLET", null, null);
-        RecoilSpec recoilSpec = new RecoilSpec("RANDOM_SPREAD", List.of(0.1f), List.of(0.2f), null, null, null);
-        SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec("BUCKSHOT", 1, 0.5f, 0.5f);
-        ShootingSpec shootingSpec = new ShootingSpec(fireModeSpec, projectileSpec, recoilSpec, spreadPatternSpec, null);
-
-        ReloadSpec reloadSpec = new ReloadSpec("MAGAZINE", null, 20L);
-        ItemStackSpec itemSpec = new ItemStackSpec("STICK", "name", 1);
-        ControlsSpec controlsSpec = new ControlsSpec("reload", "shoot", null, null, null);
-        ScopeSpec scopeSpec = new ScopeSpec(List.of(-0.1f, -0.2f), null, null, null);
-
-        return new GunSpec(gunId, "Test Gun", null, 1, 1, 1, rangeProfileSpec, 1.0, shootingSpec, reloadSpec, itemSpec, controlsSpec, scopeSpec);
+        SpecDeserializer specDeserializer = new SpecDeserializer();
+        return specDeserializer.deserializeSpec(file, EquipmentSpec.class);
     }
 
-    private EquipmentSpec createEquipmentSpec(String equipmentId) {
-        ItemStackSpec dislayItemSpec = new ItemStackSpec("STICK", "name", 1);
-        nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec controlsSpec = new nl.matsgemmeke.battlegrounds.configuration.spec.equipment.ControlsSpec("LEFT_CLICK", "RIGHT_CLICK", null, null);
-        DeploymentSpec deploymentSpec = new DeploymentSpec(20.0, false, false, false, false, null, Map.of(), null, null, null, null);
-        ItemEffectSpec itemEffectSpec = new ItemEffectSpec("MARK_SPAWN_POINT", List.of(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        List<ProjectileEffectSpec> projectileEffectSpecs = List.of();
+    private GunSpec createGunSpec() {
+        File file = new File("src/main/resources/items/submachine_guns/mp5.yml");
 
-        return new EquipmentSpec(equipmentId, "Test Equipment", null, dislayItemSpec, null, null, controlsSpec, deploymentSpec, itemEffectSpec, projectileEffectSpecs);
+        SpecDeserializer specDeserializer = new SpecDeserializer();
+        return specDeserializer.deserializeSpec(file, GunSpec.class);
     }
 }
