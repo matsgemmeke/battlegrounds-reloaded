@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.mapper;
+package nl.matsgemmeke.battlegrounds.item.mapper.particle;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.DustOptionsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
@@ -24,14 +24,14 @@ public class ParticleEffectMapper {
         Material blockDataMaterial = null;
         String blockDataMaterialValue = spec.blockData;
 
-        if (blockDataMaterialValue != null) {
+        if (blockDataMaterialValue != null && ParticleEffectOptions.isOptionSupported(particle, ParticleEffectOptionType.BLOCK_DATA)) {
             blockDataMaterial = Material.valueOf(blockDataMaterialValue);
         }
 
         DustOptions dustOptions = null;
         DustOptionsSpec dustOptionsSpec = spec.dustOptions;
 
-        if (dustOptionsSpec != null) {
+        if (dustOptionsSpec != null && ParticleEffectOptions.isOptionSupported(particle, ParticleEffectOptionType.DUST_OPTIONS)) {
             java.awt.Color javaColor = java.awt.Color.decode(dustOptionsSpec.color);
             Color color = Color.fromRGB(javaColor.getRed(), javaColor.getGreen(), javaColor.getBlue());
             float size = dustOptionsSpec.size;

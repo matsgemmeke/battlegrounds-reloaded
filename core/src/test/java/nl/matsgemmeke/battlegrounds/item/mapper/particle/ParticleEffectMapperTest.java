@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.mapper;
+package nl.matsgemmeke.battlegrounds.item.mapper.particle;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.DustOptionsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
@@ -35,17 +35,34 @@ public class ParticleEffectMapperTest {
     }
 
     @Test
+    public void mapReturnsParticleEffectInstanceWithoutBlockDataWhenParticleDoesNotSupportIt() {
+        ParticleEffectSpec spec = this.createParticleEffectSpec("FLAME", "STONE", null);
+
+        ParticleEffectMapper mapper = new ParticleEffectMapper();
+        ParticleEffect particleEffect = mapper.map(spec);
+
+        assertThat(particleEffect.particle()).isEqualTo(Particle.FLAME);
+        assertThat(particleEffect.count()).isEqualTo(COUNT);
+        assertThat(particleEffect.offsetX()).isEqualTo(OFFSET_X);
+        assertThat(particleEffect.offsetY()).isEqualTo(OFFSET_Y);
+        assertThat(particleEffect.offsetZ()).isEqualTo(OFFSET_Z);
+        assertThat(particleEffect.extra()).isEqualTo(EXTRA);
+        assertThat(particleEffect.blockDataMaterial()).isNull();
+        assertThat(particleEffect.dustOptions()).isNull();
+    }
+
+    @Test
     public void mapReturnsParticleEffectInstanceWithDustOptions() {
         DustOptionsSpec dustOptionsSpec = new DustOptionsSpec();
         dustOptionsSpec.color = "#ab1234";
         dustOptionsSpec.size = 1.0f;
 
-        ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec("BLOCK_CRACK", null, dustOptionsSpec);
+        ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec("REDSTONE", null, dustOptionsSpec);
 
         ParticleEffectMapper mapper = new ParticleEffectMapper();
         ParticleEffect particleEffect = mapper.map(particleEffectSpec);
 
-        assertThat(particleEffect.particle()).isEqualTo(Particle.BLOCK_CRACK);
+        assertThat(particleEffect.particle()).isEqualTo(Particle.REDSTONE);
         assertThat(particleEffect.count()).isEqualTo(COUNT);
         assertThat(particleEffect.offsetX()).isEqualTo(OFFSET_X);
         assertThat(particleEffect.offsetY()).isEqualTo(OFFSET_Y);
@@ -59,8 +76,12 @@ public class ParticleEffectMapperTest {
     }
 
     @Test
-    public void mapReturnsParticleEffectInstanceWithoutAdditionalData() {
-        ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec("FLAME", null, null);
+    public void mapReturnsParticleEffectInstanceWithoutDustOptionsWhenParticleDoesNotSupportIt() {
+        DustOptionsSpec dustOptionsSpec = new DustOptionsSpec();
+        dustOptionsSpec.color = "#ab1234";
+        dustOptionsSpec.size = 1.0f;
+
+        ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec("FLAME", null, dustOptionsSpec);
 
         ParticleEffectMapper mapper = new ParticleEffectMapper();
         ParticleEffect particleEffect = mapper.map(particleEffectSpec);
