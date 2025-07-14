@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.gun;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
@@ -12,9 +13,11 @@ public class ProjectileSpec {
     public Double headshotDamageMultiplier;
     public String shotSounds;
     public String suppressedShotSounds;
+    @Required
+    public ItemEffectSpec effect;
     public ParticleEffectSpec trajectoryParticleEffect;
 
     private enum ProjectileType {
-        BULLET
+        BULLET, ROCKET
     }
 }

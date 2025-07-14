@@ -61,6 +61,13 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.shooting.projectile.type).isEqualTo("BULLET");
         assertThat(gunSpec.shooting.projectile.headshotDamageMultiplier).isEqualTo(1.4);
 
+        assertThat(gunSpec.shooting.projectile.effect.range.shortRange.damage).isEqualTo(35.0);
+        assertThat(gunSpec.shooting.projectile.effect.range.shortRange.distance).isEqualTo(20.0);
+        assertThat(gunSpec.shooting.projectile.effect.range.mediumRange.damage).isEqualTo(28.0);
+        assertThat(gunSpec.shooting.projectile.effect.range.mediumRange.distance).isEqualTo(45.0);
+        assertThat(gunSpec.shooting.projectile.effect.range.longRange.damage).isEqualTo(20.0);
+        assertThat(gunSpec.shooting.projectile.effect.range.longRange.distance).isEqualTo(70.0);
+
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.particle).isEqualTo("REDSTONE");
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.count).isEqualTo(1);
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.offsetX).isEqualTo(0.0);
@@ -70,13 +77,6 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.blockData).isNull();
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.dustOptions.color).isEqualTo("#ffffff");
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.dustOptions.size).isEqualTo(1);
-
-        assertThat(gunSpec.shooting.range.shortRange.damage).isEqualTo(35.0);
-        assertThat(gunSpec.shooting.range.shortRange.distance).isEqualTo(20.0);
-        assertThat(gunSpec.shooting.range.mediumRange.damage).isEqualTo(28.0);
-        assertThat(gunSpec.shooting.range.mediumRange.distance).isEqualTo(45.0);
-        assertThat(gunSpec.shooting.range.longRange.damage).isEqualTo(20.0);
-        assertThat(gunSpec.shooting.range.longRange.distance).isEqualTo(70.0);
 
         assertThat(gunSpec.shooting.recoil.type).isEqualTo("CAMERA_MOVEMENT");
         assertThat(gunSpec.shooting.recoil.horizontal).containsExactly(-1.0f, 0.0f, 1.0f);

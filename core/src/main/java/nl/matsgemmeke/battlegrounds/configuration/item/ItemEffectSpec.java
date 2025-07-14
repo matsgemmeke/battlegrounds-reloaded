@@ -14,7 +14,7 @@ public class ItemEffectSpec {
     public String type;
     public Map<String, TriggerSpec> triggers = new HashMap<>();
     public String activationSounds;
-    @ConditionalRequired(conditionalFieldName = "type", matchValues = "EXPLOSION")
+    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "DAMAGE", "EXPLOSION" })
     public RangeProfileSpec range;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "SMOKE_SCREEN")
     public Double minSize;
@@ -44,6 +44,6 @@ public class ItemEffectSpec {
     public ActivationPatternSpec activationPattern;
 
     private enum ItemEffectType {
-        COMBUSTION, EXPLOSION, FLASH, GUN_FIRE_SIMULATION, MARK_SPAWN_POINT, SMOKE_SCREEN, SOUND_NOTIFICATION
+        COMBUSTION, DAMAGE, EXPLOSION, FLASH, GUN_FIRE_SIMULATION, MARK_SPAWN_POINT, SMOKE_SCREEN, SOUND_NOTIFICATION
     }
 }

@@ -15,10 +15,8 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
-import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -52,8 +50,6 @@ public class FirearmFactory {
     @NotNull
     private final NamespacedKeyCreator keyCreator;
     @NotNull
-    private final RangeProfileMapper rangeProfileMapper;
-    @NotNull
     private final ReloadSystemFactory reloadSystemFactory;
     @NotNull
     private final ShootHandlerFactory shootHandlerFactory;
@@ -64,7 +60,6 @@ public class FirearmFactory {
             @NotNull GameContextProvider contextProvider,
             @NotNull FirearmControlsFactory controlsFactory,
             @NotNull NamespacedKeyCreator keyCreator,
-            @NotNull RangeProfileMapper rangeProfileMapper,
             @NotNull ReloadSystemFactory reloadSystemFactory,
             @NotNull ShootHandlerFactory shootHandlerFactory
     ) {
@@ -72,7 +67,6 @@ public class FirearmFactory {
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
         this.keyCreator = keyCreator;
-        this.rangeProfileMapper = rangeProfileMapper;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
     }
@@ -125,9 +119,6 @@ public class FirearmFactory {
 
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
         firearm.setAmmunitionStorage(ammunitionStorage);
-
-        RangeProfile rangeProfile = rangeProfileMapper.map(spec.shooting.range);
-        firearm.setRangeProfile(rangeProfile);
 
         ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, firearm, audioEmitter);
         firearm.setReloadSystem(reloadSystem);
