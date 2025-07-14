@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -116,7 +117,9 @@ public class DeploymentHandler {
         }
 
         if (!effect.isPrimed()) {
-            effect.prime(new ItemEffectContext(deployer, deployerEntity, deploymentObject));
+            Location initiationLocation = deployer.getDeployLocation();
+
+            effect.prime(new ItemEffectContext(deployer, deployerEntity, initiationLocation, deploymentObject));
         } else {
             effect.deploy(deploymentObject);
         }
