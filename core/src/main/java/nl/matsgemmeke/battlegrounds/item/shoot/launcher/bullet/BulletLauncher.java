@@ -4,6 +4,7 @@ import com.google.inject.assistedinject.Assisted;
 import jakarta.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Effect;
@@ -20,7 +21,7 @@ public class BulletLauncher implements ProjectileLauncher {
     @NotNull
     private final AudioEmitter audioEmitter;
     @NotNull
-    private final BulletProperties bulletProperties;
+    private final BulletProperties properties;
     @NotNull
     private final CollisionDetector collisionDetector;
     @NotNull
@@ -29,12 +30,12 @@ public class BulletLauncher implements ProjectileLauncher {
     @Inject
     public BulletLauncher(
             @NotNull ParticleEffectSpawner particleEffectSpawner,
-            @Assisted @NotNull BulletProperties bulletProperties,
+            @Assisted @NotNull BulletProperties properties,
             @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull CollisionDetector collisionDetector
     ) {
         this.particleEffectSpawner = particleEffectSpawner;
-        this.bulletProperties = bulletProperties;
+        this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
     }
@@ -45,7 +46,7 @@ public class BulletLauncher implements ProjectileLauncher {
 
         Location projectileLocation = launchDirection.clone();
 
-        audioEmitter.playSounds(bulletProperties.shotSounds(), projectileLocation);
+        audioEmitter.playSounds(properties.shotSounds(), projectileLocation);
 
         do {
             Vector vector = projectileLocation.getDirection().multiply(distance);
@@ -58,7 +59,11 @@ public class BulletLauncher implements ProjectileLauncher {
                 break;
             }
 
-            particleEffectSpawner.spawnParticleEffect(bulletProperties.trajectoryParticleEffect(), projectileLocation.getBlock().getWorld(), projectileLocation);
+            ParticleEffect trajectoryParticleEffect = properties.trajectoryParticleEffect();
+
+            if (trajectoryParticleEffect != null) {
+                particleEffectSpawner.spawnParticleEffect(trajectoryParticleEffect, projectileLocation);
+            }
 
             projectileLocation.subtract(vector);
 

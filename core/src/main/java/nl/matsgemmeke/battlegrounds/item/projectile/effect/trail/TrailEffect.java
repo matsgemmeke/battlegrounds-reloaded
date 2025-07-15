@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.BaseProjectileEffect;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 public class TrailEffect extends BaseProjectileEffect {
@@ -24,8 +23,7 @@ public class TrailEffect extends BaseProjectileEffect {
 
     public void performEffect(@NotNull Projectile projectile) {
         Location location = projectile.getLocation();
-        World world = projectile.getWorld();
 
-        particleEffectSpawner.spawnParticleEffect(properties.particleEffect(), world, location);
+        particleEffectSpawner.spawnParticleEffect(properties.particleEffect(), location);
     }
 }

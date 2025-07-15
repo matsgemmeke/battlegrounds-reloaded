@@ -238,19 +238,17 @@ public class DeploymentHandlerTest {
 
     @Test
     public void destroyDeploymentDisplaysParticleEffectWhenDestructionParticleEffectPropertyIsNotNull() {
-        World world = mock(World.class);
-        Location objectLocation = new Location(world, 1, 1, 1);
+        Location objectLocation = new Location(null, 1, 1, 1);
 
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getLocation()).thenReturn(objectLocation);
-        when(deploymentObject.getWorld()).thenReturn(world);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
         verify(effect).cancelActivation();
-        verify(particleEffectSpawner).spawnParticleEffect(DESTRUCTION_PARTICLE_EFFECT, world, objectLocation);
+        verify(particleEffectSpawner).spawnParticleEffect(DESTRUCTION_PARTICLE_EFFECT, objectLocation);
     }
 
     @Test

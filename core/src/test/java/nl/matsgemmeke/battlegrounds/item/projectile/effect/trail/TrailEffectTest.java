@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,10 +37,7 @@ public class TrailEffectTest {
     @Test
     public void onLaunchStartsTriggersWithObserverThatSpawnsParticleAtProjectileLocation() {
         Location projectileLocation = new Location(null, 0, 0, 0);
-        World world = mock(World.class);
-
         when(projectile.getLocation()).thenReturn(projectileLocation);
-        when(projectile.getWorld()).thenReturn(world);
 
         TrailEffect effect = new TrailEffect(particleEffectSpawner, properties);
         effect.addTrigger(trigger);
@@ -52,6 +48,6 @@ public class TrailEffectTest {
 
         triggerObserverCaptor.getValue().onActivate();
 
-        verify(particleEffectSpawner).spawnParticleEffect(PARTICLE_EFFECT, world, projectileLocation);
+        verify(particleEffectSpawner).spawnParticleEffect(PARTICLE_EFFECT, projectileLocation);
     }
 }

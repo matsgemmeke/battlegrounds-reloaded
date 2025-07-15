@@ -104,7 +104,7 @@ public class DeploymentHandler {
         ParticleEffect particleEffect = deploymentProperties.destructionParticleEffect();
 
         if (particleEffect != null) {
-            particleEffectSpawner.spawnParticleEffect(particleEffect, deploymentObject.getWorld(), deploymentObject.getLocation());
+            particleEffectSpawner.spawnParticleEffect(particleEffect, deploymentObject.getLocation());
         }
     }
 
