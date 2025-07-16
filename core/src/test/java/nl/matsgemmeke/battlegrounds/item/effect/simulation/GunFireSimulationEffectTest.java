@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import org.bukkit.Location;
@@ -20,6 +19,8 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -51,39 +52,13 @@ public class GunFireSimulationEffectTest {
     }
 
     @Test
-    public void activateSimulatesGenericGunFireForEntityThatIsUnableToHoldGuns() {
-        EquipmentHolder equipmentHolder = mock(EquipmentHolder.class);
-        Entity entity = mock(Entity.class);
-        Location sourceLocation = new Location(null, 1, 1, 1);
-
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
-
-        ItemEffectContext context = new ItemEffectContext(equipmentHolder, entity, source);
-
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, audioEmitter, gunInfoProvider, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
-
-        runnableCaptor.getValue().run();
-
-        verify(audioEmitter).playSounds(GENERIC_SHOTS_SOUNDS, sourceLocation);
-    }
-
-    @Test
-    public void activateSimulatesGenericGunFireForEntityThatDoesNotCarryAnyGuns() {
+    public void activateSimulatesGenericGunFireWhenGunInfoProviderHasNoInformationForEntity() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        Entity entity = mock(Entity.class);
+        UUID entityId = UUID.randomUUID();
         Location sourceLocation = new Location(null, 1, 1, 1);
+
+        Entity entity = mock(Entity.class);
+        when(entity.getUniqueId()).thenReturn(entityId);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
@@ -91,7 +66,7 @@ public class GunFireSimulationEffectTest {
 
         ItemEffectContext context = new ItemEffectContext(gamePlayer, entity, source);
 
-        when(gunInfoProvider.getGunFireSimulationInfo(gamePlayer)).thenReturn(null);
+        when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.empty());
 
         GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, audioEmitter, gunInfoProvider, properties);
         effect.addTrigger(trigger);
@@ -113,8 +88,11 @@ public class GunFireSimulationEffectTest {
     @Test
     public void activateStopsSimulatesGunFireOnceEffectSourceNoLongerExists() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        Entity entity = mock(Entity.class);
+        UUID entityId = UUID.randomUUID();
         Location sourceLocation = new Location(null, 1, 1, 1);
+
+        Entity entity = mock(Entity.class);
+        when(entity.getUniqueId()).thenReturn(entityId);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
@@ -126,7 +104,7 @@ public class GunFireSimulationEffectTest {
         int rateOfFire = 120;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 
-        when(gunInfoProvider.getGunFireSimulationInfo(gamePlayer)).thenReturn(gunFireSimulationInfo);
+        when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.of(gunFireSimulationInfo));
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
@@ -152,8 +130,11 @@ public class GunFireSimulationEffectTest {
     @Test
     public void activateSimulatesGunFireOnceAndRemovesEffectSourceWhenFinished() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        Entity entity = mock(Entity.class);
+        UUID entityId = UUID.randomUUID();
         Location sourceLocation = new Location(null, 1, 1, 1);
+
+        Entity entity = mock(Entity.class);
+        when(entity.getUniqueId()).thenReturn(entityId);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
@@ -165,7 +146,7 @@ public class GunFireSimulationEffectTest {
         int rateOfFire = 1200;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 
-        when(gunInfoProvider.getGunFireSimulationInfo(gamePlayer)).thenReturn(gunFireSimulationInfo);
+        when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.of(gunFireSimulationInfo));
 
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);

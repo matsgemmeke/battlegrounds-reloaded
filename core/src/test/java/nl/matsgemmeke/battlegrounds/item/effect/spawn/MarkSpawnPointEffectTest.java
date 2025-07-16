@@ -21,28 +21,25 @@ public class MarkSpawnPointEffectTest {
 
     private Deployer deployer;
     private Entity entity;
-    private ItemEffectContext context;
     private ItemEffectSource source;
     private SpawnPointProvider spawnPointProvider;
     private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
-        spawnPointProvider = mock(SpawnPointProvider.class);
-        trigger = mock(Trigger.class);
-
         deployer = mock(Deployer.class);
         entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
-        context = new ItemEffectContext(deployer, entity, source);
+        spawnPointProvider = mock(SpawnPointProvider.class);
+        trigger = mock(Trigger.class);
     }
 
     @Test
     public void primeCreatesNewCustomSpawnPointAndAssignsToDeployer() {
         UUID entityId = UUID.randomUUID();
-        Location deployLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+        Location initiationLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+        ItemEffectContext context = new ItemEffectContext(deployer, entity, initiationLocation, source);
 
-        when(deployer.getDeployLocation()).thenReturn(deployLocation);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);
@@ -69,9 +66,9 @@ public class MarkSpawnPointEffectTest {
     @Test
     public void resetResetsSpawnPointIfEffectIsPerformed() {
         UUID entityId = UUID.randomUUID();
-        Location deployLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+        Location initationLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+        ItemEffectContext context = new ItemEffectContext(deployer, entity, initationLocation, source);
 
-        when(deployer.getDeployLocation()).thenReturn(deployLocation);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);

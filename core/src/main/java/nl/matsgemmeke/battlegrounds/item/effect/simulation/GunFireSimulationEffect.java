@@ -7,16 +7,16 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 public class GunFireSimulationEffect extends BaseItemEffect {
 
@@ -54,24 +54,18 @@ public class GunFireSimulationEffect extends BaseItemEffect {
     }
 
     public void perform(@NotNull ItemEffectContext context) {
-        Deployer deployer = context.getDeployer();
+        UUID entityId = context.getEntity().getUniqueId();
+        Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId);
 
-        if (!(deployer instanceof GunHolder holder)) {
+        if (gunFireSimulationInfo.isEmpty()) {
             this.simulateGenericGunFire(context);
             return;
         }
 
-        GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(holder);
-
-        if (gunFireSimulationInfo == null) {
-            this.simulateGenericGunFire(context);
-            return;
-        }
-
-        double roundsPerSecond = (double) gunFireSimulationInfo.rateOfFire() / 60;
+        double roundsPerSecond = (double) gunFireSimulationInfo.get().rateOfFire() / 60;
         int interval = (int) (TICKS_PER_SECOND / roundsPerSecond);
 
-        this.simulateGunFire(context, gunFireSimulationInfo.shotSounds(), interval);
+        this.simulateGunFire(context, gunFireSimulationInfo.get().shotSounds(), interval);
     }
 
     private void simulateGenericGunFire(@NotNull ItemEffectContext context) {
