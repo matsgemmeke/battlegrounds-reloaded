@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class SoundNotificationEffect extends BaseItemEffect {
+public class SoundNotificationEffect extends BaseEffect {
 
     @NotNull
     private Iterable<GameSound> sounds;

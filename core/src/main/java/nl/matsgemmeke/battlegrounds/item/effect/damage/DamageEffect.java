@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class DamageEffect extends BaseItemEffect {
+public class DamageEffect extends BaseEffect {
 
     private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.3;
     private static final double ENTITY_FINDING_RANGE = 0.1;

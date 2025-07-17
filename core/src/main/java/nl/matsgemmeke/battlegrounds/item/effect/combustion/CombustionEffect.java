@@ -10,7 +10,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class CombustionEffect extends BaseItemEffect {
+public class CombustionEffect extends BaseEffect {
 
     private static final long RUNNABLE_DELAY = 0L;
     private static final String BURN_BLOCKS_METADATA_KEY = "battlegrounds-burn-blocks";

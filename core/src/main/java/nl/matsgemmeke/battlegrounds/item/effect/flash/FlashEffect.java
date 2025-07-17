@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.flash;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class FlashEffect extends BaseItemEffect {
+public class FlashEffect extends BaseEffect {
 
     @NotNull
     private FlashProperties properties;

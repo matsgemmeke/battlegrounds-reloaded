@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseItemEffect implements ItemEffect {
+public abstract class BaseEffect implements Effect {
 
     private boolean activated;
     private boolean primed;
@@ -17,7 +17,7 @@ public abstract class BaseItemEffect implements ItemEffect {
     @NotNull
     protected final List<Trigger> triggers;
 
-    public BaseItemEffect() {
+    public BaseEffect() {
         this.activated = false;
         this.primed = false;
         this.triggers = new ArrayList<>();

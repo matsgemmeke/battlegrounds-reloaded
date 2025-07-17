@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.scheduler.BukkitTask;
@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-public class GunFireSimulationEffect extends BaseItemEffect {
+public class GunFireSimulationEffect extends BaseEffect {
 
     private static final int TICKS_PER_SECOND = 20;
     private static final long TIMER_DELAY = 0L;

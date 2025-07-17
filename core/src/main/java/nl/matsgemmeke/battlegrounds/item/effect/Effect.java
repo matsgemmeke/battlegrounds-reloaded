@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import org.jetbrains.annotations.NotNull;
 
-public interface ItemEffect {
+public interface Effect {
 
     /**
      * Activates the effect instantly, overriding any other procedures.

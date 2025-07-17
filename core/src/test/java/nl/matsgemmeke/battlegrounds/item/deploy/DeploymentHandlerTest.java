@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.Effect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
@@ -39,9 +39,9 @@ public class DeploymentHandlerTest {
     private Deployment deployment;
     private DeploymentObject deploymentObject;
     private DeploymentProperties deploymentProperties;
+    private Effect effect;
     private Entity deployerEntity;
     private ParticleEffectSpawner particleEffectSpawner;
-    private ItemEffect effect;
     private TaskRunner taskRunner;
 
     @BeforeEach
@@ -51,8 +51,8 @@ public class DeploymentHandlerTest {
         deploymentObject = mock(DeploymentObject.class);
         deployerEntity = mock(Entity.class);
         deploymentProperties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, MANUAL_ACTIVATION_DELAY);
+        effect = mock(Effect.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
-        effect = mock(ItemEffect.class);
         taskRunner = mock(TaskRunner.class);
 
         deployer = mock(Deployer.class);

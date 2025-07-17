@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.DefaultActivator;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.Effect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
@@ -87,11 +87,11 @@ public class EquipmentFactoryTest {
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
-        ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
+        Effect effect = mock(Effect.class);
+        when(effectFactory.create(spec.effect, gameKey)).thenReturn(effect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(effect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, keyCreator, particleEffectMapper);
         Equipment equipment = factory.create(spec, gameKey, gamePlayer);
@@ -110,11 +110,11 @@ public class EquipmentFactoryTest {
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
-        ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
+        Effect effect = mock(Effect.class);
+        when(effectFactory.create(spec.effect, gameKey)).thenReturn(effect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(itemEffect))).thenReturn(deploymentHandler);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(effect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, keyCreator, particleEffectMapper);
         Equipment equipment = factory.create(spec, gameKey);

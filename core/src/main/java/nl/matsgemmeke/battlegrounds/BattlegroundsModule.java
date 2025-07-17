@@ -29,7 +29,7 @@ import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStat
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.Effect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
@@ -119,13 +119,13 @@ public class BattlegroundsModule implements Module {
                 .build(DefaultGamePlayerFactory.class));
 
         binder.install(new FactoryModuleBuilder()
-                .implement(ItemEffect.class, CombustionEffect.class)
+                .implement(Effect.class, CombustionEffect.class)
                 .build(CombustionEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
-                .implement(ItemEffect.class, GunFireSimulationEffect.class)
+                .implement(Effect.class, GunFireSimulationEffect.class)
                 .build(GunFireSimulationEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
-                .implement(ItemEffect.class, SmokeScreenEffect.class)
+                .implement(Effect.class, SmokeScreenEffect.class)
                 .build(SmokeScreenEffectFactory.class));
 
         binder.install(new FactoryModuleBuilder()

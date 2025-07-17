@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.Effect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
@@ -22,7 +22,7 @@ public class DeploymentHandler {
     @NotNull
     private final DeploymentProperties deploymentProperties;
     @NotNull
-    private final ItemEffect effect;
+    private final Effect effect;
     @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
@@ -39,7 +39,7 @@ public class DeploymentHandler {
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull DeploymentProperties deploymentProperties,
             @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull ItemEffect effect
+            @Assisted @NotNull Effect effect
     ) {
         this.particleEffectSpawner = particleEffectSpawner;
         this.taskRunner = taskRunner;

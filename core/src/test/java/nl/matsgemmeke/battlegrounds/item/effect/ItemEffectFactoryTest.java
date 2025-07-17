@@ -90,11 +90,11 @@ public class ItemEffectFactoryTest {
         when(contextProvider.getComponent(gameKey, CollisionDetector.class)).thenReturn(collisionDetector);
         when(contextProvider.getComponent(gameKey, TargetFinder.class)).thenReturn(targetFinder);
 
-        ItemEffect combustionEffect = mock(CombustionEffect.class);
+        Effect combustionEffect = mock(CombustionEffect.class);
         when(combustionEffectFactory.create(any(CombustionProperties.class), any(RangeProfile.class), eq(audioEmitter), eq(collisionDetector), eq(targetFinder))).thenReturn(combustionEffect);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
-        ItemEffect itemEffect = factory.create(spec, gameKey);
+        Effect effect = factory.create(spec, gameKey);
 
         ArgumentCaptor<CombustionProperties> propertiesCaptor = ArgumentCaptor.forClass(CombustionProperties.class);
         ArgumentCaptor<RangeProfile> rangeProfileCaptor = ArgumentCaptor.forClass(RangeProfile.class);
@@ -119,7 +119,7 @@ public class ItemEffectFactoryTest {
         assertThat(rangeProfile.longRangeDamage()).isEqualTo(rangeProfileSpec.longRange.damage);
         assertThat(rangeProfile.longRangeDistance()).isEqualTo(rangeProfileSpec.longRange.distance);
 
-        assertThat(itemEffect).isEqualTo(combustionEffect);
+        assertThat(effect).isEqualTo(combustionEffect);
     }
 
     @Test
@@ -141,9 +141,9 @@ public class ItemEffectFactoryTest {
         when(contextProvider.getComponent(gameKey, TargetFinder.class)).thenReturn(targetFinder);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
-        ItemEffect itemEffect = factory.create(spec, gameKey);
+        Effect effect = factory.create(spec, gameKey);
 
-        assertThat(itemEffect).isInstanceOf(ExplosionEffect.class);
+        assertThat(effect).isInstanceOf(ExplosionEffect.class);
     }
 
     @Test
@@ -163,9 +163,9 @@ public class ItemEffectFactoryTest {
         when(contextProvider.getComponent(gameKey, TargetFinder.class)).thenReturn(targetFinder);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
-        ItemEffect itemEffect = factory.create(spec, gameKey);
+        Effect effect = factory.create(spec, gameKey);
 
-        assertThat(itemEffect).isInstanceOf(FlashEffect.class);
+        assertThat(effect).isInstanceOf(FlashEffect.class);
 
     }
 
@@ -186,11 +186,11 @@ public class ItemEffectFactoryTest {
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
         when(contextProvider.getComponent(gameKey, GunInfoProvider.class)).thenReturn(gunInfoProvider);
 
-        ItemEffect gunFireSimulationEffect = mock(GunFireSimulationEffect.class);
+        Effect gunFireSimulationEffect = mock(GunFireSimulationEffect.class);
         when(gunFireSimulationEffectFactory.create(eq(audioEmitter), eq(gunInfoProvider), any(GunFireSimulationProperties.class))).thenReturn(gunFireSimulationEffect);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
-        ItemEffect itemEffect = factory.create(spec, gameKey);
+        Effect effect = factory.create(spec, gameKey);
 
         ArgumentCaptor<GunFireSimulationProperties> propertiesCaptor = ArgumentCaptor.forClass(GunFireSimulationProperties.class);
         verify(gunFireSimulationEffectFactory).create(eq(audioEmitter), eq(gunInfoProvider), propertiesCaptor.capture());
@@ -204,7 +204,7 @@ public class ItemEffectFactoryTest {
         assertThat(properties.maxTotalDuration()).isEqualTo(spec.maxDuration);
         assertThat(properties.minTotalDuration()).isEqualTo(spec.minDuration);
 
-        assertThat(itemEffect).isEqualTo(gunFireSimulationEffect);
+        assertThat(effect).isEqualTo(gunFireSimulationEffect);
     }
 
     @Test
@@ -217,9 +217,9 @@ public class ItemEffectFactoryTest {
         when(contextProvider.getComponent(gameKey, SpawnPointProvider.class)).thenReturn(spawnPointProvider);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
-        ItemEffect itemEffect = factory.create(spec, gameKey);
+        Effect effect = factory.create(spec, gameKey);
 
-        assertThat(itemEffect).isInstanceOf(MarkSpawnPointEffect.class);
+        assertThat(effect).isInstanceOf(MarkSpawnPointEffect.class);
     }
 
     @Test
@@ -244,11 +244,11 @@ public class ItemEffectFactoryTest {
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
         when(contextProvider.getComponent(gameKey, CollisionDetector.class)).thenReturn(collisionDetector);
 
-        ItemEffect smokeScreenEffect = mock(SmokeScreenEffect.class);
+        Effect smokeScreenEffect = mock(SmokeScreenEffect.class);
         when(smokeScreenEffectFactory.create(any(SmokeScreenProperties.class), eq(audioEmitter), eq(collisionDetector))).thenReturn(smokeScreenEffect);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
-        ItemEffect itemEffect = factory.create(spec, gameKey);
+        Effect effect = factory.create(spec, gameKey);
 
         ArgumentCaptor<SmokeScreenProperties> propertiesCaptor = ArgumentCaptor.forClass(SmokeScreenProperties.class);
         verify(smokeScreenEffectFactory).create(propertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector));
@@ -268,7 +268,7 @@ public class ItemEffectFactoryTest {
         assertThat(properties.particleEffect().offsetZ()).isEqualTo(particleEffectSpec.offsetZ);
         assertThat(properties.particleEffect().extra()).isEqualTo(particleEffectSpec.extra);
 
-        assertThat(itemEffect).isEqualTo(smokeScreenEffect);
+        assertThat(effect).isEqualTo(smokeScreenEffect);
     }
 
     @Test
@@ -279,9 +279,9 @@ public class ItemEffectFactoryTest {
         spec.activationSounds = "AMBIENT_CAVE-1-1-0";
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
-        ItemEffect itemEffect = factory.create(spec, gameKey);
+        Effect effect = factory.create(spec, gameKey);
 
-        assertThat(itemEffect).isInstanceOf(SoundNotificationEffect.class);
+        assertThat(effect).isInstanceOf(SoundNotificationEffect.class);
     }
 
     @Test
