@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ItemEffectFactory {
+public class EffectFactory {
 
     @NotNull
     private final CombustionEffectFactory combustionEffectFactory;
@@ -54,7 +54,7 @@ public class ItemEffectFactory {
     private final TriggerFactory triggerFactory;
 
     @Inject
-    public ItemEffectFactory(
+    public EffectFactory(
             @NotNull GameContextProvider contextProvider,
             @NotNull CombustionEffectFactory combustionEffectFactory,
             @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory,
@@ -166,7 +166,7 @@ public class ItemEffectFactory {
 
                 effect = new SoundNotificationEffect(sounds);
             }
-            default -> throw new ItemEffectCreationException("Unknown item effect type '%s'".formatted(itemEffectType));
+            default -> throw new EffectCreationException("Unknown item effect type '%s'".formatted(itemEffectType));
         }
 
         for (TriggerSpec triggerSpec : spec.triggers.values()) {
@@ -185,12 +185,12 @@ public class ItemEffectFactory {
      * @param valueName the name of the value, to create error messages
      * @param effectType the name of the effect type, to create error messages
      * @return the given value
-     * @throws ItemEffectCreationException if the value is null
+     * @throws EffectCreationException if the value is null
      * @param <T> the value type
      */
     private <T> T validateSpecVar(@Nullable T value, @NotNull String valueName, @NotNull Object effectType) {
         if (value == null) {
-            throw new ItemEffectCreationException("Cannot create %s because of invalid spec: Required '%s' value is missing".formatted(effectType, valueName));
+            throw new EffectCreationException("Cannot create %s because of invalid spec: Required '%s' value is missing".formatted(effectType, valueName));
         }
 
         return value;

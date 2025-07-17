@@ -22,7 +22,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.effect.Effect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -43,11 +43,11 @@ public class EquipmentFactory {
     @NotNull
     private final DeploymentHandlerFactory deploymentHandlerFactory;
     @NotNull
+    private final EffectFactory effectFactory;
+    @NotNull
     private final EquipmentControlsFactory controlsFactory;
     @NotNull
     private final GameContextProvider contextProvider;
-    @NotNull
-    private final ItemEffectFactory itemEffectFactory;
     @NotNull
     private final NamespacedKeyCreator namespacedKeyCreator;
     @NotNull
@@ -58,14 +58,14 @@ public class EquipmentFactory {
             @NotNull DeploymentHandlerFactory deploymentHandlerFactory,
             @NotNull GameContextProvider contextProvider,
             @NotNull EquipmentControlsFactory controlsFactory,
-            @NotNull ItemEffectFactory itemEffectFactory,
+            @NotNull EffectFactory effectFactory,
             @NotNull NamespacedKeyCreator namespacedKeyCreator,
             @NotNull ParticleEffectMapper particleEffectMapper
     ) {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
-        this.itemEffectFactory = itemEffectFactory;
+        this.effectFactory = effectFactory;
         this.namespacedKeyCreator = namespacedKeyCreator;
         this.particleEffectMapper = particleEffectMapper;
     }
@@ -174,7 +174,7 @@ public class EquipmentFactory {
         DeploymentProperties deploymentProperties = new DeploymentProperties(manualActivationSounds, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnCleanup, manualActivationDelay);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        Effect effect = itemEffectFactory.create(effectSpec, gameKey);
+        Effect effect = effectFactory.create(effectSpec, gameKey);
 
         DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
         deploymentHandler.setActivator(activator);

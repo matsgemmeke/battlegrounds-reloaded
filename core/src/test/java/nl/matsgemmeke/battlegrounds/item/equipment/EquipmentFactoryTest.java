@@ -13,7 +13,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.effect.Effect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -36,11 +36,11 @@ public class EquipmentFactoryTest {
 
     private AudioEmitter audioEmitter;
     private DeploymentHandlerFactory deploymentHandlerFactory;
+    private EffectFactory effectFactory;
     private EquipmentControlsFactory controlsFactory;
     private EquipmentRegistry equipmentRegistry;
     private GameContextProvider contextProvider;
     private GameKey gameKey;
-    private ItemEffectFactory effectFactory;
     private ItemFactory itemFactory;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
@@ -50,10 +50,10 @@ public class EquipmentFactoryTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         deploymentHandlerFactory = mock(DeploymentHandlerFactory.class);
+        effectFactory = mock(EffectFactory.class);
         controlsFactory = mock(EquipmentControlsFactory.class);
         equipmentRegistry = mock(EquipmentRegistry.class);
         gameKey = GameKey.ofOpenMode();
-        effectFactory = mock(ItemEffectFactory.class);
         itemFactory = mock(ItemFactory.class);
         keyCreator = mock(NamespacedKeyCreator.class);
         particleEffectMapper = new ParticleEffectMapper();
