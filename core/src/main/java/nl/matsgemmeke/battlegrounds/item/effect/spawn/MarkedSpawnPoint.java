@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +10,9 @@ public class MarkedSpawnPoint implements SpawnPoint {
 
     private float yaw;
     @NotNull
-    private ItemEffectSource source;
+    private EffectSource source;
 
-    public MarkedSpawnPoint(@NotNull ItemEffectSource source, float yaw) {
+    public MarkedSpawnPoint(@NotNull EffectSource source, float yaw) {
         this.source = source;
         this.yaw = yaw;
     }

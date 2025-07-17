@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-public enum ItemEffectType {
+public enum EffectType {
 
     COMBUSTION,
     EXPLOSION,

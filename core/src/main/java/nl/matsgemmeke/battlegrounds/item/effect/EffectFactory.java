@@ -74,7 +74,7 @@ public class EffectFactory {
 
     public Effect create(@NotNull ItemEffectSpec spec, @NotNull GameKey gameKey) {
         Effect effect;
-        ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.type);
+        EffectType itemEffectType = EffectType.valueOf(spec.type);
 
         switch (itemEffectType) {
             case COMBUSTION -> {

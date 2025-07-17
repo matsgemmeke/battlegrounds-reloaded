@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +13,11 @@ public class MarkedSpawnPointTest {
 
     private static final float YAW = 1.0f;
 
-    private ItemEffectSource source;
+    private EffectSource source;
 
     @BeforeEach
     public void setUp() {
-        source = mock(ItemEffectSource.class);
+        source = mock(EffectSource.class);
     }
 
     @Test

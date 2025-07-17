@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.Effect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -299,16 +299,16 @@ public class DeploymentHandlerTest {
         DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
 
-        ArgumentCaptor<ItemEffectContext> effectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        ArgumentCaptor<EffectContext> effectContextCaptor = ArgumentCaptor.forClass(EffectContext.class);
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
 
         verify(effect).prime(effectContextCaptor.capture());
         verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(cooldown));
 
-        ItemEffectContext effectContext = effectContextCaptor.getValue();
-        assertThat(effectContext.getEntity()).isEqualTo(deployerEntity);
-        assertThat(effectContext.getSource()).isEqualTo(deploymentObject);
-        assertThat(effectContext.getInitiationLocation()).isEqualTo(deployLocation);
+        EffectContext context = effectContextCaptor.getValue();
+        assertThat(context.getEntity()).isEqualTo(deployerEntity);
+        assertThat(context.getSource()).isEqualTo(deploymentObject);
+        assertThat(context.getInitiationLocation()).isEqualTo(deployLocation);
 
         runnableCaptor.getValue().run();
 

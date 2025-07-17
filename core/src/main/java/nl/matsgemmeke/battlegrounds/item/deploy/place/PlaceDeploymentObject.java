@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.deploy.place;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * A deployed object in the form as a placed {@link Block}.
  */
-public class PlaceDeploymentObject implements DeploymentObject, ItemEffectSource {
+public class PlaceDeploymentObject implements DeploymentObject, EffectSource {
 
     private static final double BLOCK_CENTER_OFFSET = 0.5;
 

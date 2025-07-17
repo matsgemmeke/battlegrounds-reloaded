@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ public class DamageEffect extends BaseEffect {
         this.targetFinder = targetFinder;
     }
 
-    public void perform(@NotNull ItemEffectContext context) {
+    public void perform(@NotNull EffectContext context) {
         Entity entity = context.getEntity();
         UUID entityId = entity.getUniqueId();
         Location initiationLocation = context.getInitiationLocation();

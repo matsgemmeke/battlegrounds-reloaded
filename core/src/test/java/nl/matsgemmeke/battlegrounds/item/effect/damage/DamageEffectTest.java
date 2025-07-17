@@ -7,8 +7,8 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -52,10 +52,10 @@ public class DamageEffectTest {
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
 
-        ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
+        EffectContext context = new EffectContext(entity, source, initiationLocation);
 
         GamePlayer target = mock(GamePlayer.class, Mockito.RETURNS_DEEP_STUBS);
         when(target.getEntity().getLocation()).thenReturn(targetLocation);

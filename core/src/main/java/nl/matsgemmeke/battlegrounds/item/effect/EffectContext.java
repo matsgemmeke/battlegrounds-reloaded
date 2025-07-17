@@ -4,15 +4,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemEffectContext {
+public class EffectContext {
 
     @NotNull
     private final Entity entity;
     private final Location initiationLocation;
     @NotNull
-    private ItemEffectSource source;
+    private EffectSource source;
 
-    public ItemEffectContext(@NotNull Entity entity, @NotNull ItemEffectSource source, @NotNull Location initiationLocation) {
+    public EffectContext(@NotNull Entity entity, @NotNull EffectSource source, @NotNull Location initiationLocation) {
         this.entity = entity;
         this.source = source;
         this.initiationLocation = initiationLocation;
@@ -44,7 +44,7 @@ public class ItemEffectContext {
      * @return the effect source
      */
     @NotNull
-    public ItemEffectSource getSource() {
+    public EffectSource getSource() {
         return source;
     }
 
@@ -53,7 +53,7 @@ public class ItemEffectContext {
      *
      * @param source the effect source
      */
-    public void setSource(@NotNull ItemEffectSource source) {
+    public void setSource(@NotNull EffectSource source) {
         this.source = source;
     }
 }

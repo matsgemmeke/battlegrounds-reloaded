@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -51,7 +51,7 @@ public class SmokeScreenEffect extends BaseEffect {
         this.random = new Random();
     }
 
-    public void perform(@NotNull ItemEffectContext context) {
+    public void perform(@NotNull EffectContext context) {
         audioEmitter.playSounds(properties.activationSounds(), context.getSource().getLocation());
 
         currentDuration = 0;
@@ -61,7 +61,7 @@ public class SmokeScreenEffect extends BaseEffect {
         long totalDuration = this.getTotalDuration(properties.minDuration(), properties.maxDuration());
 
         task = taskRunner.runTaskTimer(() -> {
-            ItemEffectSource source = context.getSource();
+            EffectSource source = context.getSource();
 
             if (!source.exists()) {
                 task.cancel();

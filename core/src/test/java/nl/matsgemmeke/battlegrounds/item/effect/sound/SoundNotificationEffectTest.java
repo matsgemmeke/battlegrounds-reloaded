@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import org.bukkit.Location;
@@ -44,8 +43,8 @@ public class SoundNotificationEffectTest {
     @Test
     public void activatePlaysNoSoundsIfEntityIsNoPlayer() {
         Zombie zombie = mock(Zombie.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(zombie, source, INITIATION_LOCATION);
+        EffectSource source = mock(EffectSource.class);
+        EffectContext context = new EffectContext(zombie, source, INITIATION_LOCATION);
 
         SoundNotificationEffect effect = new SoundNotificationEffect(sounds);
         effect.addTrigger(trigger);
@@ -61,13 +60,13 @@ public class SoundNotificationEffectTest {
 
     @Test
     public void activatePlaysSoundsOnlyForPlayerEntity() {
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        EffectSource source = mock(EffectSource.class);
         Location playerLocation = new Location(null, 0, 0, 0);
 
         Player player = mock(Player.class);
         when(player.getLocation()).thenReturn(playerLocation);
 
-        ItemEffectContext context = new ItemEffectContext(player, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(player, source, INITIATION_LOCATION);
 
         SoundNotificationEffect effect = new SoundNotificationEffect(sounds);
         effect.addTrigger(trigger);

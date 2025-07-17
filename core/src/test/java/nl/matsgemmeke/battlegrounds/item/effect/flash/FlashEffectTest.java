@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.effect.flash;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import org.bukkit.Location;
@@ -43,16 +43,16 @@ public class FlashEffectTest {
     private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
     private static final Location SOURCE_LOCATION = new Location(null, 1, 1, 1);
 
+    private EffectSource source;
     private Entity entity;
     private FlashProperties properties;
-    private ItemEffectSource source;
     private TargetFinder targetFinder;
     private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
+        source = mock(EffectSource.class);
         entity = mock(Entity.class);
-        source = mock(ItemEffectSource.class);
         targetFinder = mock(TargetFinder.class);
         trigger = mock(Trigger.class);
 
@@ -66,7 +66,7 @@ public class FlashEffectTest {
         UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
         Player player = mock(Player.class);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(player);
@@ -114,7 +114,7 @@ public class FlashEffectTest {
     public void resetDoesNotRemovePotionEffectFromTarget(PotionEffect potionEffect) {
         UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         Player player = mock(Player.class);
         when(player.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(potionEffect);
@@ -145,7 +145,7 @@ public class FlashEffectTest {
         UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
         Player player = mock(Player.class);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(player);

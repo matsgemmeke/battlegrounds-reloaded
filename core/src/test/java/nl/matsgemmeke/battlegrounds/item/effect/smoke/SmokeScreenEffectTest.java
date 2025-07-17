@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import org.bukkit.Location;
@@ -40,8 +40,8 @@ public class SmokeScreenEffectTest {
 
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
+    private EffectSource source;
     private Entity entity;
-    private ItemEffectSource source;
     private ParticleEffect particleEffect;
     private TaskRunner taskRunner;
     private Trigger trigger;
@@ -50,8 +50,8 @@ public class SmokeScreenEffectTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
+        source = mock(EffectSource.class);
         entity = mock(Entity.class);
-        source = mock(ItemEffectSource.class);
         particleEffect = new ParticleEffect(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA, PARTICLE_BLOCK_DATA, null);
         taskRunner = mock(TaskRunner.class);
         trigger = mock(Trigger.class);
@@ -60,7 +60,7 @@ public class SmokeScreenEffectTest {
     @Test
     public void activateCancelsTaskOnceSourceNoLongerExists() {
         SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         when(source.exists()).thenReturn(false);
 
@@ -88,7 +88,7 @@ public class SmokeScreenEffectTest {
     public void activateRemovesSourceAndCancelsTaskOnceEffectIsOver() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
@@ -123,7 +123,7 @@ public class SmokeScreenEffectTest {
         World world = mock(World.class);
         Location sourceOldLocation = new Location(world, 0, 0, 0);
         Location sourceNewLocation = new Location(world, 1, 1, 1);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceOldLocation, sourceOldLocation, sourceNewLocation);
@@ -153,7 +153,7 @@ public class SmokeScreenEffectTest {
     public void activateDisplaysSphereParticlesIfTheSourceIsNotMoving() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
@@ -186,7 +186,7 @@ public class SmokeScreenEffectTest {
     public void activateDoesNotDisplaySphereParticleIfTheParticleLocationCausesCollision() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
         SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
 
         when(source.exists()).thenReturn(true);
@@ -217,7 +217,7 @@ public class SmokeScreenEffectTest {
     public void activateDoesNotDisplaySphereParticleIfTheParticleLocationHasNoLineOfSightToSource() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
         SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
 
         when(source.exists()).thenReturn(true);

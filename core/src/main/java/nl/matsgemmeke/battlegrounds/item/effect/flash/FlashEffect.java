@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.effect.flash;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -32,9 +32,9 @@ public class FlashEffect extends BaseEffect {
         this.appliedPotionEffects = new HashMap<>();
     }
 
-    public void perform(@NotNull ItemEffectContext context) {
+    public void perform(@NotNull EffectContext context) {
         Entity entity = context.getEntity();
-        ItemEffectSource source = context.getSource();
+        EffectSource source = context.getSource();
 
         this.createExplosionEffect(entity, source);
         this.applyPotionEffectToTargets(entity.getUniqueId(), source.getLocation());
@@ -42,7 +42,7 @@ public class FlashEffect extends BaseEffect {
         source.remove();
     }
 
-    private void createExplosionEffect(@NotNull Entity damageSource, @NotNull ItemEffectSource source) {
+    private void createExplosionEffect(@NotNull Entity damageSource, @NotNull EffectSource source) {
         float power = properties.power();
         boolean setFire = properties.setFire();
         boolean breakBlocks = properties.breakBlocks();

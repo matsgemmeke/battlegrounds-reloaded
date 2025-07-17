@@ -8,8 +8,8 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -40,10 +40,10 @@ public class ExplosionEffect extends BaseEffect {
         this.rangeProfile = rangeProfile;
     }
 
-    public void perform(@NotNull ItemEffectContext context) {
+    public void perform(@NotNull EffectContext context) {
         Entity entity = context.getEntity();
         UUID entityId = entity.getUniqueId();
-        ItemEffectSource source = context.getSource();
+        EffectSource source = context.getSource();
         Location sourceLocation = source.getLocation();
         World world = source.getWorld();
 

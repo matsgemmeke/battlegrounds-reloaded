@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import org.bukkit.Location;
@@ -59,11 +59,11 @@ public class GunFireSimulationEffectTest {
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(SOURCE_LOCATION);
 
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.empty());
 
@@ -91,10 +91,10 @@ public class GunFireSimulationEffectTest {
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(false);
 
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 120;
@@ -130,11 +130,11 @@ public class GunFireSimulationEffectTest {
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        EffectSource source = mock(EffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(SOURCE_LOCATION);
 
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
 
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 1200;

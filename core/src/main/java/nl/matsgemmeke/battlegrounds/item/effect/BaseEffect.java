@@ -13,7 +13,7 @@ public abstract class BaseEffect implements Effect {
     private boolean activated;
     private boolean primed;
     @Nullable
-    protected ItemEffectContext currentContext;
+    protected EffectContext currentContext;
     @NotNull
     protected final List<Trigger> triggers;
 
@@ -45,7 +45,7 @@ public abstract class BaseEffect implements Effect {
         triggers.forEach(Trigger::stop);
     }
 
-    public void deploy(@NotNull ItemEffectSource source) {
+    public void deploy(@NotNull EffectSource source) {
         if (currentContext == null) {
             return;
         }
@@ -61,7 +61,7 @@ public abstract class BaseEffect implements Effect {
         return primed;
     }
 
-    public void prime(@NotNull ItemEffectContext context) {
+    public void prime(@NotNull EffectContext context) {
         if (primed) {
             return;
         }
@@ -80,5 +80,5 @@ public abstract class BaseEffect implements Effect {
         }
     }
 
-    public abstract void perform(@NotNull ItemEffectContext context);
+    public abstract void perform(@NotNull EffectContext context);
 }
