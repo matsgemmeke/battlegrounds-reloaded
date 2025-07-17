@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,7 @@ public class DeploymentHandlerTest {
     private static final boolean UNDO_EFFECT_ON_DESTRUCTION = true;
     private static final boolean REMOVE_DEPLOYMENT_ON_CLEANUP = true;
     private static final List<GameSound> ACTIVATION_SOUNDS = Collections.emptyList();
+    private static final Location DEPLOY_LOCATION = new Location(null, 1, 1, 1);
     private static final long MANUAL_ACTIVATION_DELAY = 10L;
     private static final ParticleEffect DESTRUCTION_PARTICLE_EFFECT = new ParticleEffect(Particle.ASH, 1, 0, 0, 0, 0, null, null);
 
@@ -47,7 +47,6 @@ public class DeploymentHandlerTest {
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        deployer = mock(Deployer.class);
         deployment = mock(Deployment.class);
         deploymentObject = mock(DeploymentObject.class);
         deployerEntity = mock(Entity.class);
@@ -55,6 +54,9 @@ public class DeploymentHandlerTest {
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         effect = mock(ItemEffect.class);
         taskRunner = mock(TaskRunner.class);
+
+        deployer = mock(Deployer.class);
+        when(deployer.getDeployLocation()).thenReturn(DEPLOY_LOCATION);
     }
 
     @Test
@@ -286,7 +288,9 @@ public class DeploymentHandlerTest {
     @Test
     public void handleDeploymentPrimesEffectIfEffectIsNotPrimed() {
         long cooldown = 10L;
+        Location deployLocation = new Location(null, 1, 1, 1);
 
+        when(deployer.getDeployLocation()).thenReturn(deployLocation);
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getCooldown()).thenReturn(cooldown);
         when(deploymentObject.isDeployed()).thenReturn(true);
@@ -302,9 +306,9 @@ public class DeploymentHandlerTest {
         verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(cooldown));
 
         ItemEffectContext effectContext = effectContextCaptor.getValue();
-        assertThat(effectContext.getDeployer()).isEqualTo(deployer);
         assertThat(effectContext.getEntity()).isEqualTo(deployerEntity);
         assertThat(effectContext.getSource()).isEqualTo(deploymentObject);
+        assertThat(effectContext.getInitiationLocation()).isEqualTo(deployLocation);
 
         runnableCaptor.getValue().run();
 

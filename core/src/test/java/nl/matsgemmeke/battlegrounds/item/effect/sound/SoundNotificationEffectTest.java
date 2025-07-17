@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
 
 public class SoundNotificationEffectTest {
 
+    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
     private static final Sound SOUND = Sound.AMBIENT_CAVE;
     private static final float VOLUME = 1.0f;
     private static final float PITCH = 2.0f;
@@ -42,10 +43,9 @@ public class SoundNotificationEffectTest {
 
     @Test
     public void activatePlaysNoSoundsIfEntityIsNoPlayer() {
-        Deployer deployer = mock(Deployer.class);
         Zombie zombie = mock(Zombie.class);
         ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(deployer, zombie, source);
+        ItemEffectContext context = new ItemEffectContext(zombie, source, INITIATION_LOCATION);
 
         SoundNotificationEffect effect = new SoundNotificationEffect(sounds);
         effect.addTrigger(trigger);
@@ -61,14 +61,13 @@ public class SoundNotificationEffectTest {
 
     @Test
     public void activatePlaysSoundsOnlyForPlayerEntity() {
-        Deployer deployer = mock(Deployer.class);
         ItemEffectSource source = mock(ItemEffectSource.class);
         Location playerLocation = new Location(null, 0, 0, 0);
 
         Player player = mock(Player.class);
         when(player.getLocation()).thenReturn(playerLocation);
 
-        ItemEffectContext context = new ItemEffectContext(deployer, player, source);
+        ItemEffectContext context = new ItemEffectContext(player, source, INITIATION_LOCATION);
 
         SoundNotificationEffect effect = new SoundNotificationEffect(sounds);
         effect.addTrigger(trigger);

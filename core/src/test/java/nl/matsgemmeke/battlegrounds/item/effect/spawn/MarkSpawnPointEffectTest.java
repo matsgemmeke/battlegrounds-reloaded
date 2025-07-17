@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
@@ -19,7 +18,8 @@ import static org.mockito.Mockito.*;
 
 public class MarkSpawnPointEffectTest {
 
-    private Deployer deployer;
+    private final static Location INITIATION_LOCATION = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+
     private Entity entity;
     private ItemEffectSource source;
     private SpawnPointProvider spawnPointProvider;
@@ -27,7 +27,6 @@ public class MarkSpawnPointEffectTest {
 
     @BeforeEach
     public void setUp() {
-        deployer = mock(Deployer.class);
         entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
         spawnPointProvider = mock(SpawnPointProvider.class);
@@ -37,8 +36,7 @@ public class MarkSpawnPointEffectTest {
     @Test
     public void primeCreatesNewCustomSpawnPointAndAssignsToDeployer() {
         UUID entityId = UUID.randomUUID();
-        Location initiationLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, initiationLocation, source);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         when(entity.getUniqueId()).thenReturn(entityId);
 
@@ -66,8 +64,7 @@ public class MarkSpawnPointEffectTest {
     @Test
     public void resetResetsSpawnPointIfEffectIsPerformed() {
         UUID entityId = UUID.randomUUID();
-        Location initationLocation = new Location(null, 1, 1, 1, 1.0f, 1.0f);
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, initationLocation, source);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         when(entity.getUniqueId()).thenReturn(entityId);
 

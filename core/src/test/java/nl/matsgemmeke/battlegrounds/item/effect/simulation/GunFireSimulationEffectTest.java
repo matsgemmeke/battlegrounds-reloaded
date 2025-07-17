@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
 import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
@@ -27,6 +26,8 @@ import static org.mockito.Mockito.*;
 
 public class GunFireSimulationEffectTest {
 
+    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location SOURCE_LOCATION = new Location(null, 1, 1, 1);
     private static final long BURST_INTERVAL = 1L;
     private static final long MAX_BURST_DURATION = 10L;
     private static final long MIN_BURST_DURATION = 5L;
@@ -53,18 +54,16 @@ public class GunFireSimulationEffectTest {
 
     @Test
     public void activateSimulatesGenericGunFireWhenGunInfoProviderHasNoInformationForEntity() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
         UUID entityId = UUID.randomUUID();
-        Location sourceLocation = new Location(null, 1, 1, 1);
 
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
 
-        ItemEffectContext context = new ItemEffectContext(gamePlayer, entity, source);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.empty());
 
@@ -82,23 +81,20 @@ public class GunFireSimulationEffectTest {
 
         runnableCaptor.getValue().run();
 
-        verify(audioEmitter).playSounds(GENERIC_SHOTS_SOUNDS, sourceLocation);
+        verify(audioEmitter).playSounds(GENERIC_SHOTS_SOUNDS, SOURCE_LOCATION);
     }
 
     @Test
     public void activateStopsSimulatesGunFireOnceEffectSourceNoLongerExists() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
         UUID entityId = UUID.randomUUID();
-        Location sourceLocation = new Location(null, 1, 1, 1);
 
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
-        when(source.getLocation()).thenReturn(sourceLocation);
 
-        ItemEffectContext context = new ItemEffectContext(gamePlayer, entity, source);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 120;
@@ -129,18 +125,16 @@ public class GunFireSimulationEffectTest {
 
     @Test
     public void activateSimulatesGunFireOnceAndRemovesEffectSourceWhenFinished() {
-        GamePlayer gamePlayer = mock(GamePlayer.class);
         UUID entityId = UUID.randomUUID();
-        Location sourceLocation = new Location(null, 1, 1, 1);
 
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
 
-        ItemEffectContext context = new ItemEffectContext(gamePlayer, entity, source);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 1200;
@@ -168,8 +162,8 @@ public class GunFireSimulationEffectTest {
         }
 
         // The implementation uses random variables, so check the max and min possible amount of executions
-        verify(audioEmitter, atLeast(10)).playSounds(shotSounds, sourceLocation);
-        verify(audioEmitter, atMost(20)).playSounds(shotSounds, sourceLocation);
+        verify(audioEmitter, atLeast(10)).playSounds(shotSounds, SOURCE_LOCATION);
+        verify(audioEmitter, atMost(20)).playSounds(shotSounds, SOURCE_LOCATION);
         verify(source, atLeast(1)).remove();
         verify(source, atMost(10)).remove();
         verify(task, atLeast(1)).cancel();

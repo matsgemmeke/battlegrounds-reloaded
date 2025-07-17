@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.flash;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
@@ -41,44 +40,41 @@ public class FlashEffectTest {
     private static final float EXPLOSION_POWER = 1.0f;
     private static final int POTION_EFFECT_AMPLIFIER = 0;
     private static final int POTION_EFFECT_DURATION = 100;
+    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location SOURCE_LOCATION = new Location(null, 1, 1, 1);
 
-    private Deployer deployer;
     private Entity entity;
     private FlashProperties properties;
-    private ItemEffectContext context;
     private ItemEffectSource source;
     private TargetFinder targetFinder;
     private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
+        entity = mock(Entity.class);
+        source = mock(ItemEffectSource.class);
         targetFinder = mock(TargetFinder.class);
         trigger = mock(Trigger.class);
 
         PotionEffectProperties potionEffect = new PotionEffectProperties(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
 
         properties = new FlashProperties(potionEffect, RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
-
-        deployer = mock(Deployer.class);
-        entity = mock(Entity.class);
-        source = mock(ItemEffectSource.class);
-        context = new ItemEffectContext(deployer, entity, source);
     }
 
     @Test
     public void primePerformsEffectAndAppliesBlindnessPotionEffectToAllTargetsInsideTheLongRangeDistance() {
         UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
-        Location sourceLocation = new Location(world, 1, 1, 1);
         Player player = mock(Player.class);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(player);
 
         when(entity.getUniqueId()).thenReturn(entityId);
-        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
         when(source.getWorld()).thenReturn(world);
-        when(targetFinder.findTargets(entityId, sourceLocation, RANGE)).thenReturn(List.of(target));
+        when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
 
         FlashEffect effect = new FlashEffect(properties, targetFinder);
         effect.addTrigger(trigger);
@@ -102,7 +98,7 @@ public class FlashEffectTest {
         assertEquals(POTION_EFFECT_ICON, potionEffect.hasIcon());
 
         verify(source).remove();
-        verify(world).createExplosion(sourceLocation, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, entity);
+        verify(world).createExplosion(SOURCE_LOCATION, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, entity);
     }
 
     @NotNull
@@ -118,7 +114,7 @@ public class FlashEffectTest {
     public void resetDoesNotRemovePotionEffectFromTarget(PotionEffect potionEffect) {
         UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
-        Location sourceLocation = new Location(world, 1, 1, 1);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         Player player = mock(Player.class);
         when(player.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(potionEffect);
@@ -127,9 +123,9 @@ public class FlashEffectTest {
         when(target.getEntity()).thenReturn(player);
 
         when(entity.getUniqueId()).thenReturn(entityId);
-        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
         when(source.getWorld()).thenReturn(world);
-        when(targetFinder.findTargets(entityId, sourceLocation, RANGE)).thenReturn(List.of(target));
+        when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
 
         FlashEffect effect = new FlashEffect(properties, targetFinder);
         effect.addTrigger(trigger);
@@ -148,17 +144,17 @@ public class FlashEffectTest {
     public void resetRemovesPotionEffectFromTargetIfItStillHasThePotionEffect() {
         UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
-        Location sourceLocation = new Location(world, 1, 1, 1);
         Player player = mock(Player.class);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         GameEntity target = mock(GameEntity.class);
         when(target.getEntity()).thenReturn(player);
 
         when(entity.getUniqueId()).thenReturn(entityId);
-        when(source.getLocation()).thenReturn(sourceLocation);
+        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
         when(source.getWorld()).thenReturn(world);
 
-        when(targetFinder.findTargets(entityId, sourceLocation, RANGE)).thenReturn(List.of(target));
+        when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
 
         FlashEffect effect = new FlashEffect(properties, targetFinder);
         effect.addTrigger(trigger);

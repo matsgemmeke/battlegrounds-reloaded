@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -8,27 +7,15 @@ import org.jetbrains.annotations.NotNull;
 public class ItemEffectContext {
 
     @NotNull
-    private final Deployer deployer;
-    @NotNull
     private final Entity entity;
     private final Location initiationLocation;
     @NotNull
     private ItemEffectSource source;
 
-    public ItemEffectContext(@NotNull Deployer deployer, @NotNull Entity entity, @NotNull ItemEffectSource source) {
-        this(deployer, entity, null, source);
-    }
-
-    public ItemEffectContext(@NotNull Deployer deployer, @NotNull Entity entity, Location initiationLocation, @NotNull ItemEffectSource source) {
-        this.deployer = deployer;
+    public ItemEffectContext(@NotNull Entity entity, @NotNull ItemEffectSource source, @NotNull Location initiationLocation) {
         this.entity = entity;
         this.source = source;
         this.initiationLocation = initiationLocation;
-    }
-
-    @NotNull
-    public Deployer getDeployer() {
-        return deployer;
     }
 
     /**

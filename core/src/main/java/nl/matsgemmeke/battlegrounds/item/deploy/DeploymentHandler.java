@@ -119,7 +119,7 @@ public class DeploymentHandler {
         if (!effect.isPrimed()) {
             Location initiationLocation = deployer.getDeployLocation();
 
-            effect.prime(new ItemEffectContext(deployer, deployerEntity, initiationLocation, deploymentObject));
+            effect.prime(new ItemEffectContext(deployerEntity, deploymentObject, initiationLocation));
         } else {
             effect.deploy(deploymentObject);
         }

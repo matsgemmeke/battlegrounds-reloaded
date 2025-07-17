@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
@@ -48,8 +47,6 @@ public class DamageEffectTest {
         Location sourceLocation = new Location(world, 2, 0, 0);
         Location targetLocation = new Location(world, 2, 0, 0);
         Location deploymentObjectLocation = new Location(world, 2, 0, 0);
-
-        Deployer deployer = mock(Deployer.class);
         UUID entityId = UUID.randomUUID();
 
         Entity entity = mock(Entity.class);
@@ -58,7 +55,7 @@ public class DamageEffectTest {
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
 
-        ItemEffectContext context = new ItemEffectContext(deployer, entity, initiationLocation, source);
+        ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
         GamePlayer target = mock(GamePlayer.class, Mockito.RETURNS_DEEP_STUBS);
         when(target.getEntity().getLocation()).thenReturn(targetLocation);
