@@ -47,7 +47,7 @@ public class ShootHandlerTest {
         when(performer.getShootingDirection()).thenReturn(shootingDirection);
 
         when(itemRepresentation.update()).thenReturn(itemStack);
-        when(spreadPattern.getShootingDirections(shootingDirection)).thenReturn(List.of(shootingDirection));
+        when(spreadPattern.getShotDirections(shootingDirection)).thenReturn(List.of(shootingDirection));
 
         ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation, recoil);
         shootHandler.registerObservers();

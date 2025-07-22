@@ -5,9 +5,11 @@ import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,9 +65,15 @@ public class ShootHandler {
         // TODO: Remove this once reloading uses the ItemRepresentation
         itemRepresentation.setPlaceholder(Placeholder.RESERVE_AMMO, String.valueOf(ammunitionStorage.getReserveAmmo()));
 
+        Entity entity = performer.getEntity();
         Location shootingDirection = performer.getShootingDirection();
-        List<Location> shootingDirections = spreadPattern.getShootingDirections(shootingDirection);
-        shootingDirections.forEach(projectileLauncher::launch);
+        List<Location> shotDirections = spreadPattern.getShotDirections(shootingDirection);
+
+        for (Location shotDirection : shotDirections) {
+            LaunchContext context = new LaunchContext(entity, shotDirection);
+
+            projectileLauncher.launch(context);
+        }
 
         if (recoil != null) {
             recoil.produceRecoil(performer, shootingDirection);

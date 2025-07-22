@@ -10,11 +10,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SingleProjectileSpreadPatternTest {
 
     @Test
-    public void shootDirectionsReturnsWhichOnlyContainsGivenShootDirection() {
+    public void getShotDirectionsReturnsWhichOnlyContainsGivenShootDirection() {
         Location shootDirection = new Location(null, 1, 1, 1, 90.0f, 0.0f);
 
         SingleProjectileSpreadPattern spreadPattern = new SingleProjectileSpreadPattern();
-        List<Location> shootDirections = spreadPattern.getShootingDirections(shootDirection);
+        List<Location> shootDirections = spreadPattern.getShotDirections(shootDirection);
 
         assertThat(shootDirections).containsExactly(shootDirection);
     }
