@@ -18,10 +18,8 @@ public class BuckshotSpreadPatternTest {
         assertThat(directions).hasSize(pelletAmount);
 
         for (Location direction : directions) {
-            assertThat(direction.getYaw()).isEqualTo(0.0f);
-            assertThat(direction.getYaw()).isEqualTo(20.0f);
-            assertThat(direction.getPitch()).isEqualTo(0.0f);
-            assertThat(direction.getPitch()).isEqualTo(20.0f);
+            assertThat(direction.getYaw()).isBetween(0.0f, 20.0f);
+            assertThat(direction.getPitch()).isBetween(0.0f, 20.0f);
         }
     }
 }

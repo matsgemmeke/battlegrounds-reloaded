@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * A deployed object in the form as a placed {@link Block}.
@@ -22,6 +23,7 @@ public class PlaceDeploymentObject implements DeploymentObject, EffectSource {
 
     private static final double BLOCK_CENTER_OFFSET = 0.5;
 
+    private final UUID uniqueId;
     @NotNull
     private Block block;
     @Nullable
@@ -36,6 +38,7 @@ public class PlaceDeploymentObject implements DeploymentObject, EffectSource {
     public PlaceDeploymentObject(@NotNull Block block, @NotNull Material material) {
         this.block = block;
         this.material = material;
+        this.uniqueId = UUID.randomUUID();
     }
 
     public long getCooldown() {
@@ -73,8 +76,12 @@ public class PlaceDeploymentObject implements DeploymentObject, EffectSource {
         this.resistances = resistances;
     }
 
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
     public Vector getVelocity() {
-        // Block do not move, so it always has a vector of zero
+        // Blocks do not move, so it always has a vector of zero
         return new Vector().zero();
     }
 

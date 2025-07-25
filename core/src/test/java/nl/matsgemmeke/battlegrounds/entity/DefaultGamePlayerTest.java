@@ -19,6 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,6 +65,17 @@ public class DefaultGamePlayerTest {
         Damage lastDamage = gamePlayer.getLastDamage();
 
         assertEquals(damage, lastDamage);
+    }
+
+    @Test
+    public void getUniqueIdReturnsPlayerUUID() {
+        UUID playerUniqueId = UUID.randomUUID();
+        when(player.getUniqueId()).thenReturn(playerUniqueId);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
+        UUID uniqueId = gamePlayer.getUniqueId();
+
+        assertThat(uniqueId).isEqualTo(playerUniqueId);
     }
 
     @Test

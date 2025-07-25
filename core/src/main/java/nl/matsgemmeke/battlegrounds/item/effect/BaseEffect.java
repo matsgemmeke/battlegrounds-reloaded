@@ -53,10 +53,6 @@ public abstract class BaseEffect implements Effect {
         currentContext.setSource(source);
     }
 
-    public boolean isAwaitingDeployment() {
-        return primed && currentContext != null && !currentContext.getSource().isDeployed();
-    }
-
     public boolean isPrimed() {
         return primed;
     }

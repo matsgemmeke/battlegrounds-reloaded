@@ -6,10 +6,12 @@ import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.ShotObserver;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class ShootHandlerTest {
@@ -40,10 +43,12 @@ public class ShootHandlerTest {
 
     @Test
     public void shootStartsFireModeThatActivatesShot() {
+        Entity entity = mock(Entity.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         Location shootingDirection = new Location(null, 1, 1, 1, 90.0f, 0.0f);
 
         ShotPerformer performer = mock(ShotPerformer.class);
+        when(performer.getEntity()).thenReturn(entity);
         when(performer.getShootingDirection()).thenReturn(shootingDirection);
 
         when(itemRepresentation.update()).thenReturn(itemStack);
@@ -58,9 +63,15 @@ public class ShootHandlerTest {
 
         shotObserverCaptor.getValue().onShotFired();
 
+        ArgumentCaptor<LaunchContext> launchContextCaptor = ArgumentCaptor.forClass(LaunchContext.class);
+        verify(projectileLauncher).launch(launchContextCaptor.capture());
+
+        LaunchContext launchContext = launchContextCaptor.getValue();
+        assertThat(launchContext.entity()).isEqualTo(entity);
+        assertThat(launchContext.direction()).isEqualTo(shootingDirection);
+
         verify(fireMode).startCycle();
         verify(itemRepresentation).setPlaceholder(Placeholder.MAGAZINE_AMMO, "9");
-        verify(projectileLauncher).launch(shootingDirection);
         verify(recoil).produceRecoil(performer, shootingDirection);
         verify(performer).setHeldItem(itemStack);
     }

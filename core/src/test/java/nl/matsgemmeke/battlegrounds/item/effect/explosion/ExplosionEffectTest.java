@@ -165,40 +165,6 @@ public class ExplosionEffectTest {
     }
 
     @Test
-    public void isAwaitingDeploymentReturnsFalseIfEffectIsNotPrimed() {
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
-        boolean awaitingDeployment = effect.isAwaitingDeployment();
-
-        assertThat(awaitingDeployment).isFalse();
-    }
-
-    @Test
-    public void isAwaitingDeploymentReturnsFalseIfContextSourceIsDeployed() {
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
-
-        when(source.isDeployed()).thenReturn(true);
-
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
-        effect.prime(context);
-        boolean awaitingDeployment = effect.isAwaitingDeployment();
-
-        assertThat(awaitingDeployment).isFalse();
-    }
-
-    @Test
-    public void isAwaitingDeploymentReturnsTrueWhenContextSourceIsNotDeployed() {
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
-
-        when(source.isDeployed()).thenReturn(false);
-
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
-        effect.prime(context);
-        boolean awaitingDeployment = effect.isAwaitingDeployment();
-
-        assertThat(awaitingDeployment).isTrue();
-    }
-
-    @Test
     public void isPrimedReturnsFalseIfEffectWasNotPrimed() {
         ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         boolean primed = effect.isPrimed();

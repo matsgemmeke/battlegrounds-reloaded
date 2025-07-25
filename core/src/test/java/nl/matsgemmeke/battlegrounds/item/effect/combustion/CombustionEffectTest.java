@@ -188,40 +188,6 @@ public class CombustionEffectTest {
     }
 
     @Test
-    public void isAwaitingDeploymentReturnsFalseIfEffectIsNotPrimed() {
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
-        boolean awaitingDeployment = effect.isAwaitingDeployment();
-
-        assertThat(awaitingDeployment).isFalse();
-    }
-
-    @Test
-    public void isAwaitingDeploymentReturnsFalseIfContextSourceIsDeployed() {
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
-
-        when(source.isDeployed()).thenReturn(true);
-
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
-        effect.prime(context);
-        boolean awaitingDeployment = effect.isAwaitingDeployment();
-
-        assertThat(awaitingDeployment).isFalse();
-    }
-
-    @Test
-    public void isAwaitingDeploymentReturnsTrueIfContextSourceIsNotDeployed() {
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
-
-        when(source.isDeployed()).thenReturn(false);
-
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
-        effect.prime(context);
-        boolean awaitingDeployment = effect.isAwaitingDeployment();
-
-        assertThat(awaitingDeployment).isTrue();
-    }
-
-    @Test
     public void isPrimedReturnsFalseIfEffectWasNotPrimed() {
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         boolean primed = effect.isPrimed();

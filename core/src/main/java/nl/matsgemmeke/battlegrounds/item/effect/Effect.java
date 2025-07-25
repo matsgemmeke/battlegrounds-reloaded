@@ -31,15 +31,6 @@ public interface Effect {
     void deploy(@NotNull EffectSource source);
 
     /**
-     * Checks whether the effect is awaiting deployment for its current process, meaning that it has primed an
-     * activation process for an {@link EffectSource} which was not deployed yet. This awaiting state blocks other
-     * activations until the pending deployment is finished.
-     *
-     * @return true if the effect is awaiting a deployment, false otherwise
-     */
-    boolean isAwaitingDeployment();
-
-    /**
      * Gets whether the effect's activation system has been initiated.
      *
      * @return whether the effect is primed
