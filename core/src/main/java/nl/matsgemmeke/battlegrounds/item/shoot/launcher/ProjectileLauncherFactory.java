@@ -9,7 +9,10 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.Effect;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletProperties;
@@ -24,16 +27,20 @@ public class ProjectileLauncherFactory {
     @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
+    private final EffectFactory effectFactory;
+    @NotNull
     private final ParticleEffectMapper particleEffectMapper;
 
     @Inject
     public ProjectileLauncherFactory(
             @NotNull BulletLauncherFactory bulletLauncherFactory,
             @NotNull GameContextProvider contextProvider,
+            @NotNull EffectFactory effectFactory,
             @NotNull ParticleEffectMapper particleEffectMapper
     ) {
         this.bulletLauncherFactory = bulletLauncherFactory;
         this.contextProvider = contextProvider;
+        this.effectFactory = effectFactory;
         this.particleEffectMapper = particleEffectMapper;
     }
 
@@ -43,6 +50,7 @@ public class ProjectileLauncherFactory {
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
         CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
+        TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
         switch (projectileLauncherType) {
             case BULLET -> {
@@ -55,8 +63,9 @@ public class ProjectileLauncherFactory {
                 }
 
                 BulletProperties properties = new BulletProperties(shotSounds, trajectoryParticleEffect);
+                Effect effect = effectFactory.create(spec.effect, gameKey);
 
-                return bulletLauncherFactory.create(properties, audioEmitter, collisionDetector);
+                return bulletLauncherFactory.create(properties, audioEmitter, collisionDetector, effect, targetFinder);
             }
             default -> throw new ProjectileLauncherCreationException("Invalid projectile launcher type '%s'".formatted(projectileLauncherType));
         }

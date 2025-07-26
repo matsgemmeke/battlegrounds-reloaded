@@ -30,6 +30,7 @@ shooting:
     suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
     effect:
       type: DAMAGE
+      damage-type: BULLET_DAMAGE
       range:
         short-range:
           damage: 50.0

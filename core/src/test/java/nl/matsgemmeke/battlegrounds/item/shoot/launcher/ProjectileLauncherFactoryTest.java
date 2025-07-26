@@ -6,6 +6,9 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.effect.Effect;
+import nl.matsgemmeke.battlegrounds.item.effect.EffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
@@ -25,12 +28,14 @@ public class ProjectileLauncherFactoryTest {
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     
     private BulletLauncherFactory bulletLauncherFactory;
+    private EffectFactory effectFactory;
     private GameContextProvider contextProvider;
     private ParticleEffectMapper particleEffectMapper;
     
     @BeforeEach
     public void setUp() {
         bulletLauncherFactory = mock(BulletLauncherFactory.class);
+        effectFactory = mock(EffectFactory.class);
         contextProvider = mock(GameContextProvider.class);
         particleEffectMapper = new ParticleEffectMapper();
     }
@@ -39,19 +44,23 @@ public class ProjectileLauncherFactoryTest {
     public void createReturnsInstanceOfBulletLauncher() {
         BulletLauncher bulletLauncher = mock(BulletLauncher.class);
         ProjectileSpec projectileSpec = this.createBulletProjectileSpec();
+        Effect effect = mock(Effect.class);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
+        TargetFinder targetFinder = mock(TargetFinder.class);
         
-        when(bulletLauncherFactory.create(any(BulletProperties.class), eq(audioEmitter), eq(collisionDetector))).thenReturn(bulletLauncher);
+        when(bulletLauncherFactory.create(any(BulletProperties.class), eq(audioEmitter), eq(collisionDetector), eq(effect), eq(targetFinder))).thenReturn(bulletLauncher);
         when(contextProvider.getComponent(GAME_KEY, AudioEmitter.class)).thenReturn(audioEmitter);
         when(contextProvider.getComponent(GAME_KEY, CollisionDetector.class)).thenReturn(collisionDetector);
-        
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(bulletLauncherFactory, contextProvider, particleEffectMapper);
+        when(contextProvider.getComponent(GAME_KEY, TargetFinder.class)).thenReturn(targetFinder);
+        when(effectFactory.create(projectileSpec.effect, GAME_KEY)).thenReturn(effect);
+
+        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(bulletLauncherFactory, contextProvider, effectFactory, particleEffectMapper);
         ProjectileLauncher projectileLauncher = projectileLauncherFactory.create(projectileSpec, GAME_KEY);
 
         ArgumentCaptor<BulletProperties> bulletPropertiesCaptor = ArgumentCaptor.forClass(BulletProperties.class);
-        verify(bulletLauncherFactory).create(bulletPropertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector));
+        verify(bulletLauncherFactory).create(bulletPropertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector), eq(effect), eq(targetFinder));
         
         BulletProperties bulletProperties = bulletPropertiesCaptor.getValue();
         assertThat(bulletProperties.shotSounds()).isEmpty();
