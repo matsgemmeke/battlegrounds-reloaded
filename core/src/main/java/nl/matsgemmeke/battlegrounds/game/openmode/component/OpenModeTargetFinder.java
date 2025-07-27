@@ -42,7 +42,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         List<DeploymentObject> deploymentObjects = new ArrayList<>();
 
         for (DeploymentObject deploymentObject : deploymentInfoProvider.getAllDeploymentObjects()) {
-            double distance = location.distance(deploymentObject.getLocation());
+            double distance = location.distanceSquared(deploymentObject.getLocation());
 
             if (distance <= range) {
                 deploymentObjects.add(deploymentObject);

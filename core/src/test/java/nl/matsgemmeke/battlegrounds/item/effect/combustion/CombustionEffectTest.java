@@ -80,29 +80,6 @@ public class CombustionEffectTest {
     }
 
     @Test
-    public void activateInstantlyDoesNotPerformEffectIfItWasAlreadyActivated() {
-        Location sourceLocation = new Location(null, 1, 1, 1);
-        UUID entityId = UUID.randomUUID();
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
-
-        when(entity.getUniqueId()).thenReturn(entityId);
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
-
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-        effect.activateInstantly();
-
-        verify(trigger, never()).stop();
-    }
-
-    @Test
     public void activateInstantlyPerformsEffect() {
         Location sourceLocation = new Location(null, 1, 1, 1);
         UUID entityId = UUID.randomUUID();
@@ -125,29 +102,6 @@ public class CombustionEffectTest {
     public void cancelActivationDoesNotDeactivateTriggersIfNotPrimed() {
         CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
         effect.addTrigger(trigger);
-        effect.cancelActivation();
-
-        verify(trigger, never()).stop();
-    }
-
-    @Test
-    public void cancelActivationDoesNotDeactivateTriggersIfAlreadyActivated() {
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
-
-        Location sourceLocation = new Location(null, 1, 1, 1);
-        when(source.getLocation()).thenReturn(sourceLocation);
-
-        UUID entityId = UUID.randomUUID();
-        when(entity.getUniqueId()).thenReturn(entityId);
-
-        CombustionEffect effect = new CombustionEffect(metadataValueEditor, taskRunner, properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
         effect.cancelActivation();
 
         verify(trigger, never()).stop();

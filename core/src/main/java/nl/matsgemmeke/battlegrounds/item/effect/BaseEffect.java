@@ -10,7 +10,6 @@ import java.util.List;
 
 public abstract class BaseEffect implements Effect {
 
-    private boolean activated;
     private boolean primed;
     @Nullable
     protected EffectContext currentContext;
@@ -18,17 +17,15 @@ public abstract class BaseEffect implements Effect {
     protected final List<Trigger> triggers;
 
     public BaseEffect() {
-        this.activated = false;
         this.primed = false;
         this.triggers = new ArrayList<>();
     }
 
     public void activateInstantly() {
-        if (activated || currentContext == null) {
+        if (currentContext == null) {
             return;
         }
 
-        activated = true;
         triggers.forEach(Trigger::stop);
         this.perform(currentContext);
     }
@@ -38,7 +35,7 @@ public abstract class BaseEffect implements Effect {
     }
 
     public void cancelActivation() {
-        if (!primed || activated) {
+        if (!primed) {
             return;
         }
 
@@ -68,10 +65,7 @@ public abstract class BaseEffect implements Effect {
         for (Trigger trigger : triggers) {
             TriggerContext triggerContext = new TriggerContext(currentContext.getEntity(), currentContext.getSource());
 
-            trigger.addObserver(() -> {
-                activated = true;
-                this.perform(currentContext);
-            });
+            trigger.addObserver(() -> this.perform(currentContext));
             trigger.start(triggerContext);
         }
     }

@@ -59,29 +59,6 @@ public class ExplosionEffectTest {
     }
 
     @Test
-    public void activateInstantlyDoesNotPerformEffectIfItWasAlreadyActivated() {
-        World world = mock(World.class);
-        Location sourceLocation = new Location(world, 1, 1, 1);
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
-
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
-        when(source.getWorld()).thenReturn(world);
-
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-        effect.activateInstantly();
-
-        verify(trigger, never()).stop();
-    }
-
-    @Test
     public void activateInstantlyPerformsEffectAndDeactivatesTriggersWhenContextSourceExists() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
@@ -105,28 +82,6 @@ public class ExplosionEffectTest {
     public void cancelActivationDoesNotDeactivateTriggersWhenNotPrimed() {
         ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.addTrigger(trigger);
-        effect.cancelActivation();
-
-        verify(trigger, never()).stop();
-    }
-
-    @Test
-    public void cancelActivationDoesNotDeactivateTriggersWhenAlreadyActivated() {
-        World world = mock(World.class);
-        Location sourceLocation = new Location(world, 1, 1, 1);
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
-
-        when(source.getLocation()).thenReturn(sourceLocation);
-        when(source.getWorld()).thenReturn(world);
-
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
         effect.cancelActivation();
 
         verify(trigger, never()).stop();
