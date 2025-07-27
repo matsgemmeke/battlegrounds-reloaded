@@ -43,7 +43,7 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.controls.shoot).isEqualTo("RIGHT_CLICK");
         assertThat(gunSpec.controls.scopeUse).isNull();
         assertThat(gunSpec.controls.scopeStop).isNull();
-        assertThat(gunSpec.controls.changeScopeMagnification).isNull();
+        assertThat(gunSpec.controls.scopeChangeMagnification).isNull();
 
         assertThat(gunSpec.item.material).isEqualTo("IRON_HOE");
         assertThat(gunSpec.item.displayName).isEqualTo("&f%name% %magazine_ammo%/%reserve_ammo%");
