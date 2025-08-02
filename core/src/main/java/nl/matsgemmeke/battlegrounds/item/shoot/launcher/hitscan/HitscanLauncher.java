@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet;
+package nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class BulletLauncher implements ProjectileLauncher {
+public class HitscanLauncher implements ProjectileLauncher {
 
     private static final double DISTANCE_JUMP = 0.5;
     private static final double DISTANCE_START = 0.5;
@@ -29,20 +29,20 @@ public class BulletLauncher implements ProjectileLauncher {
     @NotNull
     private final AudioEmitter audioEmitter;
     @NotNull
-    private final BulletProperties properties;
-    @NotNull
     private final CollisionDetector collisionDetector;
     @NotNull
     private final Effect effect;
+    @NotNull
+    private final HitscanProperties properties;
     @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
     private final TargetFinder targetFinder;
 
     @Inject
-    public BulletLauncher(
+    public HitscanLauncher(
             @NotNull ParticleEffectSpawner particleEffectSpawner,
-            @Assisted @NotNull BulletProperties properties,
+            @Assisted @NotNull HitscanProperties properties,
             @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull CollisionDetector collisionDetector,
             @Assisted @NotNull Effect effect,

@@ -10,12 +10,12 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.Effect;
 import nl.matsgemmeke.battlegrounds.item.effect.EffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncher;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballProperties;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanLauncherFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanProperties;
 import org.bukkit.Particle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,18 +31,18 @@ public class ProjectileLauncherFactoryTest {
     
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     
-    private BulletLauncherFactory bulletLauncherFactory;
     private EffectFactory effectFactory;
     private FireballLauncherFactory fireballLauncherFactory;
     private GameContextProvider contextProvider;
+    private HitscanLauncherFactory hitscanLauncherFactory;
     private ParticleEffectMapper particleEffectMapper;
     
     @BeforeEach
     public void setUp() {
-        bulletLauncherFactory = mock(BulletLauncherFactory.class);
         effectFactory = mock(EffectFactory.class);
         fireballLauncherFactory = mock(FireballLauncherFactory.class);
         contextProvider = mock(GameContextProvider.class);
+        hitscanLauncherFactory = mock(HitscanLauncherFactory.class);
         particleEffectMapper = new ParticleEffectMapper();
     }
 
@@ -62,7 +62,7 @@ public class ProjectileLauncherFactoryTest {
         when(effectFactory.create(projectileSpec.effect, GAME_KEY)).thenReturn(effect);
         when(fireballLauncherFactory.create(any(FireballProperties.class), eq(audioEmitter), eq(collisionDetector), eq(effect), eq(targetFinder))).thenReturn(fireballLauncher);
 
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(bulletLauncherFactory, fireballLauncherFactory, contextProvider, effectFactory, particleEffectMapper);
+        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, contextProvider, hitscanLauncherFactory, effectFactory, particleEffectMapper);
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec, GAME_KEY);
 
         ArgumentCaptor<FireballProperties> fireballPropertiesCaptor = ArgumentCaptor.forClass(FireballProperties.class);
@@ -88,7 +88,7 @@ public class ProjectileLauncherFactoryTest {
         ProjectileSpec projectileSpec = this.createProjectileSpec("FIREBALL");
         projectileSpec.velocity = null;
 
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(bulletLauncherFactory, fireballLauncherFactory, contextProvider, effectFactory, particleEffectMapper);
+        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, contextProvider, hitscanLauncherFactory, effectFactory, particleEffectMapper);
 
         assertThatThrownBy(() -> projectileLauncherFactory.create(projectileSpec, GAME_KEY))
                 .isInstanceOf(ProjectileLauncherCreationException.class)
@@ -96,8 +96,8 @@ public class ProjectileLauncherFactoryTest {
     }
     
     @Test
-    public void createReturnsInstanceOfBulletLauncher() {
-        BulletLauncher bulletLauncher = mock(BulletLauncher.class);
+    public void createReturnsInstanceOfHitscanLauncher() {
+        HitscanLauncher hitscanLauncher = mock(HitscanLauncher.class);
         ProjectileSpec projectileSpec = this.createProjectileSpec("BULLET");
         Effect effect = mock(Effect.class);
 
@@ -105,21 +105,21 @@ public class ProjectileLauncherFactoryTest {
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
         TargetFinder targetFinder = mock(TargetFinder.class);
         
-        when(bulletLauncherFactory.create(any(BulletProperties.class), eq(audioEmitter), eq(collisionDetector), eq(effect), eq(targetFinder))).thenReturn(bulletLauncher);
         when(contextProvider.getComponent(GAME_KEY, AudioEmitter.class)).thenReturn(audioEmitter);
         when(contextProvider.getComponent(GAME_KEY, CollisionDetector.class)).thenReturn(collisionDetector);
         when(contextProvider.getComponent(GAME_KEY, TargetFinder.class)).thenReturn(targetFinder);
+        when(hitscanLauncherFactory.create(any(HitscanProperties.class), eq(audioEmitter), eq(collisionDetector), eq(effect), eq(targetFinder))).thenReturn(hitscanLauncher);
         when(effectFactory.create(projectileSpec.effect, GAME_KEY)).thenReturn(effect);
 
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(bulletLauncherFactory, fireballLauncherFactory, contextProvider, effectFactory, particleEffectMapper);
+        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, contextProvider, hitscanLauncherFactory, effectFactory, particleEffectMapper);
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec, GAME_KEY);
 
-        ArgumentCaptor<BulletProperties> bulletPropertiesCaptor = ArgumentCaptor.forClass(BulletProperties.class);
-        verify(bulletLauncherFactory).create(bulletPropertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector), eq(effect), eq(targetFinder));
+        ArgumentCaptor<HitscanProperties> hitscanPropertiesCaptor = ArgumentCaptor.forClass(HitscanProperties.class);
+        verify(hitscanLauncherFactory).create(hitscanPropertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector), eq(effect), eq(targetFinder));
         
-        BulletProperties bulletProperties = bulletPropertiesCaptor.getValue();
-        assertThat(bulletProperties.shotSounds()).isEmpty();
-        assertThat(bulletProperties.trajectoryParticleEffect()).satisfies(particleEffect -> {
+        HitscanProperties hitscanProperties = hitscanPropertiesCaptor.getValue();
+        assertThat(hitscanProperties.shotSounds()).isEmpty();
+        assertThat(hitscanProperties.trajectoryParticleEffect()).satisfies(particleEffect -> {
             assertThat(particleEffect.particle()).isEqualTo(Particle.FLAME);
             assertThat(particleEffect.count()).isEqualTo(1);
             assertThat(particleEffect.offsetX()).isEqualTo(0.1);
@@ -128,7 +128,7 @@ public class ProjectileLauncherFactoryTest {
             assertThat(particleEffect.extra()).isEqualTo(0.0);
         });
 
-        assertThat(createdProjectileLauncher).isEqualTo(bulletLauncher);
+        assertThat(createdProjectileLauncher).isEqualTo(hitscanLauncher);
     }
 
     private ProjectileSpec createProjectileSpec(String type) {

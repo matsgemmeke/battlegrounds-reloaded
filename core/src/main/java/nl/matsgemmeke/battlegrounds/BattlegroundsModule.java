@@ -45,10 +45,10 @@ import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFac
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncher;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanLauncherFactory;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.sqlite.SqliteEquipmentStateRepositoryProvider;
@@ -142,11 +142,11 @@ public class BattlegroundsModule implements Module {
                 .build(TrailEffectFactory.class));
 
         binder.install(new FactoryModuleBuilder()
-                .implement(ProjectileLauncher.class, BulletLauncher.class)
-                .build(BulletLauncherFactory.class));
-        binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileLauncher.class, FireballLauncher.class)
                 .build(FireballLauncherFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileLauncher.class, HitscanLauncher.class)
+                .build(HitscanLauncherFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(ReloadSystem.class, MagazineReloadSystem.class)

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet;
+package nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -26,14 +26,14 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class BulletLauncherTest {
+public class HitscanLauncherTest {
 
     private static final List<GameSound> SHOT_SOUNDS = List.of();
     private static final ParticleEffect TRAJECTORY_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0.0, 0.0, 0.0, 0.0, null, null);
 
     private AudioEmitter audioEmitter;
-    private BulletProperties properties;
     private CollisionDetector collisionDetector;
+    private HitscanProperties properties;
     private Effect effect;
     private ParticleEffectSpawner particleEffectSpawner;
     private TargetFinder targetFinder;
@@ -41,7 +41,7 @@ public class BulletLauncherTest {
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        properties = new BulletProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT);
+        properties = new HitscanProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT);
         collisionDetector = mock(CollisionDetector.class);
         effect = mock(Effect.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
@@ -67,7 +67,7 @@ public class BulletLauncherTest {
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false);
         when(world.getBlockAt(hitLocation)).thenReturn(hitBlock);
 
-        BulletLauncher launcher = new BulletLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, effect, targetFinder);
+        HitscanLauncher launcher = new HitscanLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, effect, targetFinder);
         launcher.launch(launchContext);
 
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
@@ -91,7 +91,7 @@ public class BulletLauncherTest {
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false, true);
         when(world.getBlockAt(hitLocation)).thenReturn(hitBlock);
 
-        BulletLauncher launcher = new BulletLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, effect, targetFinder);
+        HitscanLauncher launcher = new HitscanLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, effect, targetFinder);
         launcher.launch(launchContext);
 
         ArgumentCaptor<EffectContext> effectContextCaptor = ArgumentCaptor.forClass(EffectContext.class);

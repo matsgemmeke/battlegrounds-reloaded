@@ -14,11 +14,10 @@ import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.Effect;
 import nl.matsgemmeke.battlegrounds.item.effect.EffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballProperties;
-import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternCreationException;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanLauncherFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,11 +26,11 @@ import java.util.List;
 public class ProjectileLauncherFactory {
 
     @NotNull
-    private final BulletLauncherFactory bulletLauncherFactory;
-    @NotNull
     private final FireballLauncherFactory fireballLauncherFactory;
     @NotNull
     private final GameContextProvider contextProvider;
+    @NotNull
+    private final HitscanLauncherFactory hitscanLauncherFactory;
     @NotNull
     private final EffectFactory effectFactory;
     @NotNull
@@ -39,15 +38,15 @@ public class ProjectileLauncherFactory {
 
     @Inject
     public ProjectileLauncherFactory(
-            @NotNull BulletLauncherFactory bulletLauncherFactory,
             @NotNull FireballLauncherFactory fireballLauncherFactory,
             @NotNull GameContextProvider contextProvider,
+            @NotNull HitscanLauncherFactory hitscanLauncherFactory,
             @NotNull EffectFactory effectFactory,
             @NotNull ParticleEffectMapper particleEffectMapper
     ) {
-        this.bulletLauncherFactory = bulletLauncherFactory;
         this.fireballLauncherFactory = fireballLauncherFactory;
         this.contextProvider = contextProvider;
+        this.hitscanLauncherFactory = hitscanLauncherFactory;
         this.effectFactory = effectFactory;
         this.particleEffectMapper = particleEffectMapper;
     }
@@ -71,7 +70,7 @@ public class ProjectileLauncherFactory {
 
                 return fireballLauncherFactory.create(properties, audioEmitter, collisionDetector, effect, targetFinder);
             }
-            case BULLET -> {
+            case HITSCAN -> {
                 List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);
                 ParticleEffect trajectoryParticleEffect = null;
                 ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect;
@@ -80,10 +79,10 @@ public class ProjectileLauncherFactory {
                     trajectoryParticleEffect = particleEffectMapper.map(trajectoryParticleEffectSpec);
                 }
 
-                BulletProperties properties = new BulletProperties(shotSounds, trajectoryParticleEffect);
+                HitscanProperties properties = new HitscanProperties(shotSounds, trajectoryParticleEffect);
                 Effect effect = effectFactory.create(spec.effect, gameKey);
 
-                return bulletLauncherFactory.create(properties, audioEmitter, collisionDetector, effect, targetFinder);
+                return hitscanLauncherFactory.create(properties, audioEmitter, collisionDetector, effect, targetFinder);
             }
             default -> throw new ProjectileLauncherCreationException("Invalid projectile launcher type '%s'".formatted(projectileLauncherType));
         }
