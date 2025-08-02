@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import org.jetbrains.annotations.NotNull;
 
-public interface Effect {
+public interface ItemEffect {
 
     /**
      * Activates the effect instantly, overriding any other procedures.
@@ -24,11 +24,11 @@ public interface Effect {
     void cancelActivation();
 
     /**
-     * Deploys an {@link EffectSource} for an ongoing effect.
+     * Deploys an {@link ItemEffectSource} for an ongoing effect.
      *
      * @param source the source to deploy
      */
-    void deploy(@NotNull EffectSource source);
+    void deploy(@NotNull ItemEffectSource source);
 
     /**
      * Gets whether the effect's activation system has been initiated.
@@ -38,11 +38,11 @@ public interface Effect {
     boolean isPrimed();
 
     /**
-     * Primes the effect with the provided for a specific {@link EffectContext}.
+     * Primes the effect with the provided for a specific context.
      *
-     * @param context the item effect context
+     * @param context the item effect context variables
      */
-    void prime(@NotNull EffectContext context);
+    void prime(@NotNull ItemEffectContext context);
 
     /**
      * Undoes the performance of the effect.

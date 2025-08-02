@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import org.bukkit.Location;
@@ -21,14 +21,14 @@ public class MarkSpawnPointEffectTest {
     private final static Location INITIATION_LOCATION = new Location(null, 1, 1, 1, 1.0f, 1.0f);
 
     private Entity entity;
-    private EffectSource source;
+    private ItemEffectSource source;
     private SpawnPointProvider spawnPointProvider;
     private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
         entity = mock(Entity.class);
-        source = mock(EffectSource.class);
+        source = mock(ItemEffectSource.class);
         spawnPointProvider = mock(SpawnPointProvider.class);
         trigger = mock(Trigger.class);
     }
@@ -36,7 +36,7 @@ public class MarkSpawnPointEffectTest {
     @Test
     public void primeCreatesNewCustomSpawnPointAndAssignsToDeployer() {
         UUID entityId = UUID.randomUUID();
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         when(entity.getUniqueId()).thenReturn(entityId);
 
@@ -64,7 +64,7 @@ public class MarkSpawnPointEffectTest {
     @Test
     public void resetResetsSpawnPointIfEffectIsPerformed() {
         UUID entityId = UUID.randomUUID();
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         when(entity.getUniqueId()).thenReturn(entityId);
 

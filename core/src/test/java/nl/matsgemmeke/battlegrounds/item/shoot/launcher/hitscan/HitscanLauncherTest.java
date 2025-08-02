@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.Effect;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -34,16 +34,16 @@ public class HitscanLauncherTest {
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
     private HitscanProperties properties;
-    private Effect effect;
+    private ItemEffect itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
     private TargetFinder targetFinder;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        properties = new HitscanProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT);
         collisionDetector = mock(CollisionDetector.class);
-        effect = mock(Effect.class);
+        properties = new HitscanProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT);
+        itemEffect = mock(ItemEffect.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         targetFinder = mock(TargetFinder.class);
     }
@@ -67,7 +67,7 @@ public class HitscanLauncherTest {
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false);
         when(world.getBlockAt(hitLocation)).thenReturn(hitBlock);
 
-        HitscanLauncher launcher = new HitscanLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, effect, targetFinder);
+        HitscanLauncher launcher = new HitscanLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, itemEffect, targetFinder);
         launcher.launch(launchContext);
 
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
@@ -91,18 +91,18 @@ public class HitscanLauncherTest {
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false, true);
         when(world.getBlockAt(hitLocation)).thenReturn(hitBlock);
 
-        HitscanLauncher launcher = new HitscanLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, effect, targetFinder);
+        HitscanLauncher launcher = new HitscanLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, itemEffect, targetFinder);
         launcher.launch(launchContext);
 
-        ArgumentCaptor<EffectContext> effectContextCaptor = ArgumentCaptor.forClass(EffectContext.class);
-        verify(effect).prime(effectContextCaptor.capture());
+        ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(itemEffect).prime(itemEffectContextCaptor.capture());
 
-        EffectContext effectContext = effectContextCaptor.getValue();
-        assertThat(effectContext.getEntity()).isEqualTo(entity);
-        assertThat(effectContext.getInitiationLocation()).isEqualTo(direction);
-        assertThat(effectContext.getSource().getLocation()).isEqualTo(hitLocation);
+        ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
+        assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
+        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+        assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
 
-        verify(effect).activateInstantly();
+        verify(itemEffect).activateInstantly();
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
     }
 }

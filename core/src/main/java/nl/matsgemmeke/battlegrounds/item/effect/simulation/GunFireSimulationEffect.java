@@ -7,9 +7,9 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-public class GunFireSimulationEffect extends BaseEffect {
+public class GunFireSimulationEffect extends BaseItemEffect {
 
     private static final int TICKS_PER_SECOND = 20;
     private static final long TIMER_DELAY = 0L;
@@ -53,7 +53,7 @@ public class GunFireSimulationEffect extends BaseEffect {
         this.random = new Random();
     }
 
-    public void perform(@NotNull EffectContext context) {
+    public void perform(@NotNull ItemEffectContext context) {
         UUID entityId = context.getEntity().getUniqueId();
         Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId);
 
@@ -68,11 +68,11 @@ public class GunFireSimulationEffect extends BaseEffect {
         this.simulateGunFire(context, gunFireSimulationInfo.get().shotSounds(), interval);
     }
 
-    private void simulateGenericGunFire(@NotNull EffectContext context) {
+    private void simulateGenericGunFire(@NotNull ItemEffectContext context) {
         this.simulateGunFire(context, properties.genericSounds(), properties.burstInterval());
     }
 
-    private void simulateGunFire(@NotNull EffectContext context, @NotNull List<GameSound> sounds, long interval) {
+    private void simulateGunFire(@NotNull ItemEffectContext context, @NotNull List<GameSound> sounds, long interval) {
         long totalDuration = random.nextLong(properties.minTotalDuration(), properties.maxTotalDuration());
 
         elapsedTicks = 0;
@@ -80,7 +80,7 @@ public class GunFireSimulationEffect extends BaseEffect {
         playingSounds = true;
 
         task = taskRunner.runTaskTimer(() -> {
-            EffectSource source = context.getSource();
+            ItemEffectSource source = context.getSource();
 
             // Stop simulation when source no longer exists
             if (!source.exists()) {

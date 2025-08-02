@@ -2,13 +2,13 @@ package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.item.effect.Effect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import org.jetbrains.annotations.NotNull;
 
 public interface SmokeScreenEffectFactory {
 
     @NotNull
-    Effect create(@NotNull SmokeScreenProperties properties,
-                  @NotNull AudioEmitter audioEmitter,
-                  @NotNull CollisionDetector collisionDetector);
+    ItemEffect create(@NotNull SmokeScreenProperties properties,
+                      @NotNull AudioEmitter audioEmitter,
+                      @NotNull CollisionDetector collisionDetector);
 }

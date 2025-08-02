@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.Effect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -34,8 +34,8 @@ public class FireballLauncherTest {
 
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
-    private Effect effect;
     private FireballProperties properties;
+    private ItemEffect itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
     private Scheduler scheduler;
     private TargetFinder targetFinder;
@@ -44,8 +44,8 @@ public class FireballLauncherTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
-        effect = mock(Effect.class);
         properties = new FireballProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
+        itemEffect = mock(ItemEffect.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         scheduler = mock(Scheduler.class);
         targetFinder = mock(TargetFinder.class);
@@ -73,7 +73,7 @@ public class FireballLauncherTest {
 
         LaunchContext context = new LaunchContext(entity, source, direction);
 
-        FireballLauncher launcher = new FireballLauncher(particleEffectSpawner, scheduler, properties, audioEmitter, collisionDetector, effect, targetFinder);
+        FireballLauncher launcher = new FireballLauncher(particleEffectSpawner, scheduler, properties, audioEmitter, collisionDetector, itemEffect, targetFinder);
         launcher.launch(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);

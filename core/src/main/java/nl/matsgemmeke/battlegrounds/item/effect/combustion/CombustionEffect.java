@@ -10,9 +10,9 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class CombustionEffect extends BaseEffect {
+public class CombustionEffect extends BaseItemEffect {
 
     private static final long RUNNABLE_DELAY = 0L;
     private static final String BURN_BLOCKS_METADATA_KEY = "battlegrounds-burn-blocks";
@@ -78,8 +78,8 @@ public class CombustionEffect extends BaseEffect {
         this.random = new Random();
     }
 
-    public void perform(@NotNull EffectContext context) {
-        EffectSource source = context.getSource();
+    public void perform(@NotNull ItemEffectContext context) {
+        ItemEffectSource source = context.getSource();
         Location location = source.getLocation();
         World world = source.getWorld();
 

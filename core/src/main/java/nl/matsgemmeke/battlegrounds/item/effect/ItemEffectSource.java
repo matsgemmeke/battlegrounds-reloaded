@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 
-public interface EffectSource extends TriggerTarget {
+public interface ItemEffectSource extends TriggerTarget {
 
     void remove();
 }

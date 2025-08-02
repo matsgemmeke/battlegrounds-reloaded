@@ -5,7 +5,7 @@ import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public class StaticSource implements EffectSource {
+public class StaticSource implements ItemEffectSource {
 
     private static final Vector ZERO = new Vector();
 

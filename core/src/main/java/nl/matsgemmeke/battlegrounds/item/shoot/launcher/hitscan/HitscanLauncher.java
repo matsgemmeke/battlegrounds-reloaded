@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.Effect;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
@@ -31,9 +31,9 @@ public class HitscanLauncher implements ProjectileLauncher {
     @NotNull
     private final CollisionDetector collisionDetector;
     @NotNull
-    private final Effect effect;
-    @NotNull
     private final HitscanProperties properties;
+    @NotNull
+    private final ItemEffect itemEffect;
     @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
@@ -45,14 +45,14 @@ public class HitscanLauncher implements ProjectileLauncher {
             @Assisted @NotNull HitscanProperties properties,
             @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull CollisionDetector collisionDetector,
-            @Assisted @NotNull Effect effect,
+            @Assisted @NotNull ItemEffect itemEffect,
             @Assisted @NotNull TargetFinder targetFinder
     ) {
         this.particleEffectSpawner = particleEffectSpawner;
         this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
-        this.effect = effect;
+        this.itemEffect = itemEffect;
         this.targetFinder = targetFinder;
     }
 
@@ -93,10 +93,10 @@ public class HitscanLauncher implements ProjectileLauncher {
         if (targetFinder.containsTargets(query)) {
             World world = projectileLocation.getBlock().getWorld();
             StaticSource source = new StaticSource(projectileLocation, world);
-            EffectContext context = new EffectContext(entity, source, startingLocation);
+            ItemEffectContext context = new ItemEffectContext(entity, source, startingLocation);
 
-            effect.prime(context);
-            effect.activateInstantly();
+            itemEffect.prime(context);
+            itemEffect.activateInstantly();
             return true;
         }
 

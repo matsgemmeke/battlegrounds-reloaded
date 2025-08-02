@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.effect.flash;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class FlashEffect extends BaseEffect {
+public class FlashEffect extends BaseItemEffect {
 
     @NotNull
     private FlashProperties properties;
@@ -32,9 +32,9 @@ public class FlashEffect extends BaseEffect {
         this.appliedPotionEffects = new HashMap<>();
     }
 
-    public void perform(@NotNull EffectContext context) {
+    public void perform(@NotNull ItemEffectContext context) {
         Entity entity = context.getEntity();
-        EffectSource source = context.getSource();
+        ItemEffectSource source = context.getSource();
 
         this.createExplosionEffect(entity, source);
         this.applyPotionEffectToTargets(entity.getUniqueId(), source.getLocation());
@@ -42,7 +42,7 @@ public class FlashEffect extends BaseEffect {
         source.remove();
     }
 
-    private void createExplosionEffect(@NotNull Entity damageSource, @NotNull EffectSource source) {
+    private void createExplosionEffect(@NotNull Entity damageSource, @NotNull ItemEffectSource source) {
         float power = properties.power();
         boolean setFire = properties.setFire();
         boolean breakBlocks = properties.breakBlocks();

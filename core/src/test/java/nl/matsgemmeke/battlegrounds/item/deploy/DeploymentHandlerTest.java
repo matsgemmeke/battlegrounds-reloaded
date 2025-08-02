@@ -7,8 +7,8 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.Effect;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -39,8 +39,8 @@ public class DeploymentHandlerTest {
     private Deployment deployment;
     private DeploymentObject deploymentObject;
     private DeploymentProperties deploymentProperties;
-    private Effect effect;
     private Entity deployerEntity;
+    private ItemEffect itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
     private TaskRunner taskRunner;
 
@@ -51,7 +51,7 @@ public class DeploymentHandlerTest {
         deploymentObject = mock(DeploymentObject.class);
         deployerEntity = mock(Entity.class);
         deploymentProperties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, MANUAL_ACTIVATION_DELAY);
-        effect = mock(Effect.class);
+        itemEffect = mock(ItemEffect.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         taskRunner = mock(TaskRunner.class);
 
@@ -65,7 +65,7 @@ public class DeploymentHandlerTest {
 
         when(deployerEntity.getLocation()).thenReturn(deployerLocation);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.activateDeployment(deployer, deployerEntity);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -75,7 +75,7 @@ public class DeploymentHandlerTest {
 
         verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, deployerLocation);
         verify(deployer).setHeldItem(null);
-        verify(effect).activateInstantly();
+        verify(itemEffect).activateInstantly();
     }
 
     @Test
@@ -85,7 +85,7 @@ public class DeploymentHandlerTest {
 
         DeploymentProperties deploymentProperties = new DeploymentProperties(List.of(), null, true, true, true, false, 0L);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.cleanupDeployment();
 
@@ -98,7 +98,7 @@ public class DeploymentHandlerTest {
     public void cleanupDeploymentRemovesDeploymentObjectWhenDeployedAndRemoveDeploymentOnCleanupIsTrue() {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.cleanupDeployment();
 
@@ -109,10 +109,10 @@ public class DeploymentHandlerTest {
 
     @Test
     public void destroyDeploymentDoesNotCancelEffectWhenNoDeploymentsHaveBeenPerformed() {
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.destroyDeployment();
 
-        verifyNoInteractions(effect);
+        verifyNoInteractions(itemEffect);
     }
 
     @Test
@@ -121,12 +121,12 @@ public class DeploymentHandlerTest {
 
         deploymentProperties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, false, false, false, false, MANUAL_ACTIVATION_DELAY);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
-        verify(effect, never()).activateInstantly();
+        verify(itemEffect).cancelActivation();
+        verify(itemEffect, never()).activateInstantly();
     }
 
     @Test
@@ -136,12 +136,12 @@ public class DeploymentHandlerTest {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
-        verify(effect, never()).activateInstantly();
+        verify(itemEffect).cancelActivation();
+        verify(itemEffect, never()).activateInstantly();
     }
 
     @Test
@@ -149,12 +149,12 @@ public class DeploymentHandlerTest {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getLastDamage()).thenReturn(null);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
-        verify(effect).activateInstantly();
+        verify(itemEffect).cancelActivation();
+        verify(itemEffect).activateInstantly();
     }
 
     @Test
@@ -164,12 +164,12 @@ public class DeploymentHandlerTest {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
-        verify(effect).activateInstantly();
+        verify(itemEffect).cancelActivation();
+        verify(itemEffect).activateInstantly();
     }
 
     @Test
@@ -178,24 +178,24 @@ public class DeploymentHandlerTest {
 
         deploymentProperties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, false, false, false, false, MANUAL_ACTIVATION_DELAY);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
         verify(deploymentObject, never()).remove();
+        verify(itemEffect).cancelActivation();
     }
 
     @Test
     public void destroyDeploymentRemovesDeploymentObjectWhenRemoveDeploymentOnDestructionPropertyIsTrue() {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
         verify(deploymentObject).remove();
+        verify(itemEffect).cancelActivation();
     }
 
     @Test
@@ -204,24 +204,24 @@ public class DeploymentHandlerTest {
 
         deploymentProperties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, false, false, false, false, MANUAL_ACTIVATION_DELAY);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
-        verify(effect, never()).undo();
+        verify(itemEffect).cancelActivation();
+        verify(itemEffect, never()).undo();
     }
 
     @Test
     public void destroyDeploymentUndoesEffectWhenResetEffectOnDestructionPropertyIsTrue() {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
-        verify(effect).undo();
+        verify(itemEffect).cancelActivation();
+        verify(itemEffect).undo();
     }
 
     @Test
@@ -230,11 +230,11 @@ public class DeploymentHandlerTest {
 
         deploymentProperties = new DeploymentProperties(ACTIVATION_SOUNDS, null, false, false, false, false, MANUAL_ACTIVATION_DELAY);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
+        verify(itemEffect).cancelActivation();
         verifyNoInteractions(particleEffectSpawner);
     }
 
@@ -245,11 +245,11 @@ public class DeploymentHandlerTest {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getLocation()).thenReturn(objectLocation);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(effect).cancelActivation();
+        verify(itemEffect).cancelActivation();
         verify(particleEffectSpawner).spawnParticleEffect(DESTRUCTION_PARTICLE_EFFECT, objectLocation);
     }
 
@@ -257,10 +257,10 @@ public class DeploymentHandlerTest {
     public void handleDeploymentDoesNotStartEffectWhenDeploymentResultIsNotSuccessful() {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.failure());
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
 
-        verifyNoInteractions(effect, taskRunner);
+        verifyNoInteractions(itemEffect, taskRunner);
     }
 
     @Test
@@ -270,9 +270,9 @@ public class DeploymentHandlerTest {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getCooldown()).thenReturn(cooldown);
         when(deploymentObject.isDeployed()).thenReturn(true);
-        when(effect.isPrimed()).thenReturn(true);
+        when(itemEffect.isPrimed()).thenReturn(true);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -282,7 +282,7 @@ public class DeploymentHandlerTest {
 
         verify(deployer).setCanDeploy(false);
         verify(deployer).setCanDeploy(true);
-        verify(effect).deploy(deploymentObject);
+        verify(itemEffect).deploy(deploymentObject);
     }
 
     @Test
@@ -294,18 +294,18 @@ public class DeploymentHandlerTest {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getCooldown()).thenReturn(cooldown);
         when(deploymentObject.isDeployed()).thenReturn(true);
-        when(effect.isPrimed()).thenReturn(false);
+        when(itemEffect.isPrimed()).thenReturn(false);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
 
-        ArgumentCaptor<EffectContext> effectContextCaptor = ArgumentCaptor.forClass(EffectContext.class);
+        ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
 
-        verify(effect).prime(effectContextCaptor.capture());
+        verify(itemEffect).prime(itemEffectContextCaptor.capture());
         verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(cooldown));
 
-        EffectContext context = effectContextCaptor.getValue();
+        ItemEffectContext context = itemEffectContextCaptor.getValue();
         assertThat(context.getEntity()).isEqualTo(deployerEntity);
         assertThat(context.getSource()).isEqualTo(deploymentObject);
         assertThat(context.getInitiationLocation()).isEqualTo(deployLocation);
@@ -322,19 +322,19 @@ public class DeploymentHandlerTest {
 
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.isDeployed()).thenReturn(true);
-        when(effect.isPrimed()).thenReturn(true);
+        when(itemEffect.isPrimed()).thenReturn(true);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.setActivator(activator);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
 
         verify(activator).prepare(deployer);
-        verify(effect).deploy(deploymentObject);
+        verify(itemEffect).deploy(deploymentObject);
     }
 
     @Test
     public void isAwaitingDeploymentReturnsFalseWhenNoDeploymentHasBeenPerformed() {
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
 
         assertThat(awaitingDeployment).isFalse();
@@ -345,7 +345,7 @@ public class DeploymentHandlerTest {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.isDeployed()).thenReturn(true);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
 
@@ -357,7 +357,7 @@ public class DeploymentHandlerTest {
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.isDeployed()).thenReturn(false);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
 
@@ -366,7 +366,7 @@ public class DeploymentHandlerTest {
 
     @Test
     public void isDeployedReturnsFalseWhenNoDeploymentIsPerformed() {
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         boolean deployed = deploymentHandler.isDeployed();
 
         assertThat(deployed).isFalse();
@@ -381,7 +381,7 @@ public class DeploymentHandlerTest {
         Deployment deployment = mock(Deployment.class);
         when(deployment.perform(deployer, deployerEntity)).thenReturn(result);
 
-        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = new DeploymentHandler(particleEffectSpawner, taskRunner, deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         boolean deployed = deploymentHandler.isDeployed();
 

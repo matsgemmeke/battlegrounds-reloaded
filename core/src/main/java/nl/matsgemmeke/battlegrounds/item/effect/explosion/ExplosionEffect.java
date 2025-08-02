@@ -7,9 +7,9 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ExplosionEffect extends BaseEffect {
+public class ExplosionEffect extends BaseItemEffect {
 
     @NotNull
     private DamageProcessor damageProcessor;
@@ -40,10 +40,10 @@ public class ExplosionEffect extends BaseEffect {
         this.rangeProfile = rangeProfile;
     }
 
-    public void perform(@NotNull EffectContext context) {
+    public void perform(@NotNull ItemEffectContext context) {
         Entity entity = context.getEntity();
         UUID entityId = entity.getUniqueId();
-        EffectSource source = context.getSource();
+        ItemEffectSource source = context.getSource();
         Location sourceLocation = source.getLocation();
         World world = source.getWorld();
 

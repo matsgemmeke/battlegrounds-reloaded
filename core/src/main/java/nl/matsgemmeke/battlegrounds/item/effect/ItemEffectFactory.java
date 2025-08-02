@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class EffectFactory {
+public class ItemEffectFactory {
 
     @NotNull
     private final CombustionEffectFactory combustionEffectFactory;
@@ -57,7 +57,7 @@ public class EffectFactory {
     private final TriggerFactory triggerFactory;
 
     @Inject
-    public EffectFactory(
+    public ItemEffectFactory(
             @NotNull GameContextProvider contextProvider,
             @NotNull CombustionEffectFactory combustionEffectFactory,
             @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory,
@@ -75,9 +75,9 @@ public class EffectFactory {
         this.triggerFactory = triggerFactory;
     }
 
-    public Effect create(@NotNull ItemEffectSpec spec, @NotNull GameKey gameKey) {
-        Effect effect;
-        EffectType itemEffectType = EffectType.valueOf(spec.type);
+    public ItemEffect create(@NotNull ItemEffectSpec spec, @NotNull GameKey gameKey) {
+        ItemEffect itemEffect;
+        ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.type);
 
         switch (itemEffectType) {
             case COMBUSTION -> {
@@ -99,7 +99,7 @@ public class EffectFactory {
                 CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                effect = combustionEffectFactory.create(properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+                itemEffect = combustionEffectFactory.create(properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
             }
             case DAMAGE -> {
                 String damageTypeValue = this.validateSpecVar(spec.damageType, "damageType", itemEffectType);
@@ -112,7 +112,7 @@ public class EffectFactory {
                 DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                effect = new DamageEffect(properties, damageProcessor, targetFinder);
+                itemEffect = new DamageEffect(properties, damageProcessor, targetFinder);
             }
             case EXPLOSION -> {
                 RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
@@ -125,7 +125,7 @@ public class EffectFactory {
                 RangeProfile rangeProfile = new RangeProfile(rangeProfileSpec.longRange.damage, rangeProfileSpec.longRange.distance, rangeProfileSpec.mediumRange.damage, rangeProfileSpec.mediumRange.distance, rangeProfileSpec.shortRange.damage, rangeProfileSpec.shortRange.distance);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+                itemEffect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
             }
             case FLASH -> {
                 double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
@@ -139,7 +139,7 @@ public class EffectFactory {
                 FlashProperties properties = new FlashProperties(potionEffect, maxSize, power, damageBlocks, spreadFire);
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                effect = new FlashEffect(properties, targetFinder);
+                itemEffect = new FlashEffect(properties, targetFinder);
             }
             case GUN_FIRE_SIMULATION -> {
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
@@ -151,12 +151,12 @@ public class EffectFactory {
                 GunInfoProvider gunInfoProvider = contextProvider.getComponent(gameKey, GunInfoProvider.class);
                 GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, activationPatternSpec.burstInterval, activationPatternSpec.maxBurstDuration, activationPatternSpec.minBurstDuration, activationPatternSpec.maxDelayDuration, activationPatternSpec.minDelayDuration, maxDuration, minDuration);
 
-                effect = gunFireSimulationEffectFactory.create(audioEmitter, gunInfoProvider, properties);
+                itemEffect = gunFireSimulationEffectFactory.create(audioEmitter, gunInfoProvider, properties);
             }
             case MARK_SPAWN_POINT -> {
                 SpawnPointProvider spawnPointProvider = contextProvider.getComponent(gameKey, SpawnPointProvider.class);
 
-                effect = new MarkSpawnPointEffect(spawnPointProvider);
+                itemEffect = new MarkSpawnPointEffect(spawnPointProvider);
             }
             case SMOKE_SCREEN -> {
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
@@ -175,23 +175,23 @@ public class EffectFactory {
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
                 CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
 
-                effect = smokeScreenEffectFactory.create(properties, audioEmitter, collisionDetector);
+                itemEffect = smokeScreenEffectFactory.create(properties, audioEmitter, collisionDetector);
             }
             case SOUND_NOTIFICATION -> {
                 Iterable<GameSound> sounds = DefaultGameSound.parseSounds(spec.activationSounds);
 
-                effect = new SoundNotificationEffect(sounds);
+                itemEffect = new SoundNotificationEffect(sounds);
             }
-            default -> throw new EffectCreationException("Unknown item effect type '%s'".formatted(itemEffectType));
+            default -> throw new ItemEffectCreationException("Unknown item effect type '%s'".formatted(itemEffectType));
         }
 
         for (TriggerSpec triggerSpec : spec.triggers.values()) {
             Trigger trigger = triggerFactory.create(triggerSpec, gameKey);
 
-            effect.addTrigger(trigger);
+            itemEffect.addTrigger(trigger);
         }
 
-        return effect;
+        return itemEffect;
     }
 
     /**
@@ -201,12 +201,12 @@ public class EffectFactory {
      * @param valueName the name of the value, to create error messages
      * @param effectType the name of the effect type, to create error messages
      * @return the given value
-     * @throws EffectCreationException if the value is null
+     * @throws ItemEffectCreationException if the value is null
      * @param <T> the value type
      */
     private <T> T validateSpecVar(@Nullable T value, @NotNull String valueName, @NotNull Object effectType) {
         if (value == null) {
-            throw new EffectCreationException("Cannot create %s because of invalid spec: Required '%s' value is missing".formatted(effectType, valueName));
+            throw new ItemEffectCreationException("Cannot create %s because of invalid spec: Required '%s' value is missing".formatted(effectType, valueName));
         }
 
         return value;

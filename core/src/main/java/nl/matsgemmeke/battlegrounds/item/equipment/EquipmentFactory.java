@@ -21,8 +21,8 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.DefaultActivator;
-import nl.matsgemmeke.battlegrounds.item.effect.Effect;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -43,11 +43,11 @@ public class EquipmentFactory {
     @NotNull
     private final DeploymentHandlerFactory deploymentHandlerFactory;
     @NotNull
-    private final EffectFactory effectFactory;
-    @NotNull
     private final EquipmentControlsFactory controlsFactory;
     @NotNull
     private final GameContextProvider contextProvider;
+    @NotNull
+    private final ItemEffectFactory itemEffectFactory;
     @NotNull
     private final NamespacedKeyCreator namespacedKeyCreator;
     @NotNull
@@ -58,14 +58,14 @@ public class EquipmentFactory {
             @NotNull DeploymentHandlerFactory deploymentHandlerFactory,
             @NotNull GameContextProvider contextProvider,
             @NotNull EquipmentControlsFactory controlsFactory,
-            @NotNull EffectFactory effectFactory,
+            @NotNull ItemEffectFactory itemEffectFactory,
             @NotNull NamespacedKeyCreator namespacedKeyCreator,
             @NotNull ParticleEffectMapper particleEffectMapper
     ) {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
-        this.effectFactory = effectFactory;
+        this.itemEffectFactory = itemEffectFactory;
         this.namespacedKeyCreator = namespacedKeyCreator;
         this.particleEffectMapper = particleEffectMapper;
     }
@@ -174,9 +174,9 @@ public class EquipmentFactory {
         DeploymentProperties deploymentProperties = new DeploymentProperties(manualActivationSounds, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnCleanup, manualActivationDelay);
 
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        Effect effect = effectFactory.create(effectSpec, gameKey);
+        ItemEffect itemEffect = itemEffectFactory.create(effectSpec, gameKey);
 
-        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, effect);
+        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, itemEffect);
         deploymentHandler.setActivator(activator);
 
         return deploymentHandler;

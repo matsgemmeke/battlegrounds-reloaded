@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.*;
-import nl.matsgemmeke.battlegrounds.item.effect.Effect;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
@@ -32,9 +32,9 @@ public class FireballLauncher implements ProjectileLauncher {
     @NotNull
     private final CollisionDetector collisionDetector;
     @NotNull
-    private final Effect effect;
-    @NotNull
     private final FireballProperties properties;
+    @NotNull
+    private final ItemEffect itemEffect;
     @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
@@ -49,7 +49,7 @@ public class FireballLauncher implements ProjectileLauncher {
             @Assisted @NotNull FireballProperties properties,
             @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull CollisionDetector collisionDetector,
-            @Assisted @NotNull Effect effect,
+            @Assisted @NotNull ItemEffect itemEffect,
             @Assisted @NotNull TargetFinder targetFinder
     ) {
         this.particleEffectSpawner = particleEffectSpawner;
@@ -57,7 +57,7 @@ public class FireballLauncher implements ProjectileLauncher {
         this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
-        this.effect = effect;
+        this.itemEffect = itemEffect;
         this.targetFinder = targetFinder;
     }
 
@@ -108,10 +108,10 @@ public class FireballLauncher implements ProjectileLauncher {
 
     private void activateEffect(Entity entity, Location sourceLocation, World sourceWorld, Location initiationLocation) {
         StaticSource source = new StaticSource(sourceLocation, sourceWorld);
-        EffectContext context = new EffectContext(entity, source, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
-        effect.prime(context);
-        effect.activateInstantly();
+        itemEffect.prime(context);
+        itemEffect.activateInstantly();
     }
 
     private TargetQuery createTargetQuery(UUID entityId, Location location) {

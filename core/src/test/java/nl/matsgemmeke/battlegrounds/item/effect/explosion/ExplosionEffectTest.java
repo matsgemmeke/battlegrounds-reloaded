@@ -7,8 +7,8 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.EffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
@@ -40,9 +40,9 @@ public class ExplosionEffectTest {
     private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
 
     private DamageProcessor damageProcessor;
-    private EffectSource source;
     private Entity entity;
     private ExplosionProperties properties;
+    private ItemEffectSource source;
     private RangeProfile rangeProfile;
     private TargetFinder targetFinder;
     private Trigger trigger;
@@ -50,9 +50,9 @@ public class ExplosionEffectTest {
     @BeforeEach
     public void setUp() {
         damageProcessor = mock(DamageProcessor.class);
-        source = mock(EffectSource.class);
         entity = mock(Entity.class);
         properties = new ExplosionProperties(POWER, SET_FIRE, BREAK_BLOCKS);
+        source = mock(ItemEffectSource.class);
         rangeProfile = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
         targetFinder = mock(TargetFinder.class);
         trigger = mock(Trigger.class);
@@ -62,7 +62,7 @@ public class ExplosionEffectTest {
     public void activateInstantlyPerformsEffectAndDeactivatesTriggersWhenContextSourceExists() {
         World world = mock(World.class);
         Location sourceLocation = new Location(world, 1, 1, 1);
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(sourceLocation);
@@ -89,7 +89,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void cancelActivationDeactivatesTriggersWhenPrimed() {
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.addTrigger(trigger);
@@ -101,8 +101,8 @@ public class ExplosionEffectTest {
 
     @Test
     public void deployChangesSourceOfContext() {
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
-        EffectSource newSource = mock(EffectSource.class);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectSource newSource = mock(ItemEffectSource.class);
 
         ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.prime(context);
@@ -129,7 +129,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void isPrimedReturnsTrueIfEffectWasPrimed() {
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.prime(context);
@@ -140,7 +140,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void primePrimesEffectActivationOnce() {
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
         effect.addTrigger(trigger);
@@ -162,7 +162,7 @@ public class ExplosionEffectTest {
         Location objectLocation = new Location(world, 2, 1, 1);
         Location sourceLocation = new Location(world, 1, 1, 1);
         Location targetLocation = new Location(world, 8, 1, 1);
-        EffectContext context = new EffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         when(entity.getUniqueId()).thenReturn(entityId);
         when(entity.getWorld()).thenReturn(world);

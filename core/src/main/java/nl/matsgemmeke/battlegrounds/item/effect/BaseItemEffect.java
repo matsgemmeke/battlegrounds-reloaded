@@ -8,15 +8,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseEffect implements Effect {
+public abstract class BaseItemEffect implements ItemEffect {
 
     private boolean primed;
     @Nullable
-    protected EffectContext currentContext;
+    protected ItemEffectContext currentContext;
     @NotNull
     protected final List<Trigger> triggers;
 
-    public BaseEffect() {
+    public BaseItemEffect() {
         this.primed = false;
         this.triggers = new ArrayList<>();
     }
@@ -42,7 +42,7 @@ public abstract class BaseEffect implements Effect {
         triggers.forEach(Trigger::stop);
     }
 
-    public void deploy(@NotNull EffectSource source) {
+    public void deploy(@NotNull ItemEffectSource source) {
         if (currentContext == null) {
             return;
         }
@@ -54,7 +54,7 @@ public abstract class BaseEffect implements Effect {
         return primed;
     }
 
-    public void prime(@NotNull EffectContext context) {
+    public void prime(@NotNull ItemEffectContext context) {
         if (primed) {
             return;
         }
@@ -70,5 +70,5 @@ public abstract class BaseEffect implements Effect {
         }
     }
 
-    public abstract void perform(@NotNull EffectContext context);
+    public abstract void perform(@NotNull ItemEffectContext context);
 }
