@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.Effect;
 import nl.matsgemmeke.battlegrounds.item.effect.EffectContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -50,6 +51,7 @@ public class BulletLauncherTest {
     @Test
     public void launchProducesProjectileStepUntilCollisionIsDetected() {
         Entity entity = mock(Entity.class);
+        ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Location hitLocation = new Location(world, 0.0, 0.0, 1.0, 0.0f, 0.0f);
@@ -59,7 +61,7 @@ public class BulletLauncherTest {
         when(hitBlock.getType()).thenReturn(hitBlockMaterial);
         when(hitBlock.getWorld()).thenReturn(world);
 
-        LaunchContext launchContext = new LaunchContext(entity, direction);
+        LaunchContext launchContext = new LaunchContext(entity, source, direction);
 
         when(collisionDetector.producesBlockCollisionAt(hitLocation)).thenReturn(true);
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false);
@@ -75,6 +77,7 @@ public class BulletLauncherTest {
     @Test
     public void launchProducesProjectileStepUntilTargetsAreFound() {
         Entity entity = mock(Entity.class);
+        ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Location hitLocation = new Location(world, 0.0, 0.0, 1.0, 0.0f, 0.0f);
@@ -82,7 +85,7 @@ public class BulletLauncherTest {
         Block hitBlock = mock(Block.class);
         when(hitBlock.getWorld()).thenReturn(world);
 
-        LaunchContext launchContext = new LaunchContext(entity, direction);
+        LaunchContext launchContext = new LaunchContext(entity, source, direction);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false, true);

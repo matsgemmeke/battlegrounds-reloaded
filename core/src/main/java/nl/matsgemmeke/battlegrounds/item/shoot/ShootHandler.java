@@ -70,7 +70,7 @@ public class ShootHandler {
         List<Location> shotDirections = spreadPattern.getShotDirections(shootingDirection);
 
         for (Location shotDirection : shotDirections) {
-            LaunchContext context = new LaunchContext(entity, shotDirection);
+            LaunchContext context = new LaunchContext(entity, performer, shotDirection);
 
             projectileLauncher.launch(context);
         }

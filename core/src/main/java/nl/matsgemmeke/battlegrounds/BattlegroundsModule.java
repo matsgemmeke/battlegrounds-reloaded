@@ -47,6 +47,8 @@ import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSyst
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.bullet.BulletLauncherFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.sqlite.SqliteEquipmentStateRepositoryProvider;
@@ -142,6 +144,9 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileLauncher.class, BulletLauncher.class)
                 .build(BulletLauncherFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileLauncher.class, FireballLauncher.class)
+                .build(FireballLauncherFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(ReloadSystem.class, MagazineReloadSystem.class)

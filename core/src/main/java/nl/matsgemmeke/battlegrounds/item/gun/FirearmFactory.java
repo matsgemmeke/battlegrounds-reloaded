@@ -32,6 +32,7 @@ import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.UUID;
 public class FirearmFactory {
 
     private static final String NAMESPACED_KEY_NAME = "battlegrounds-gun";
+    private static final double DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER = 1.0;
 
     @NotNull
     private final BattlegroundsConfiguration config;
@@ -99,10 +101,12 @@ public class FirearmFactory {
         DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
         TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
+        double headshotDamageMultiplier = this.getHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
+
         DefaultFirearm firearm = new DefaultFirearm(spec.id, audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setName(spec.name);
         firearm.setDescription(spec.description);
-        firearm.setHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
+        firearm.setHeadshotDamageMultiplier(headshotDamageMultiplier);
 
         ItemTemplate itemTemplate = this.createItemTemplate(spec.item);
         ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
@@ -146,6 +150,14 @@ public class FirearmFactory {
         firearm.update();
 
         return firearm;
+    }
+
+    private double getHeadshotDamageMultiplier(@Nullable Double specValue) {
+        if (specValue != null) {
+            return specValue;
+        }
+
+        return DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER;
     }
 
     @NotNull

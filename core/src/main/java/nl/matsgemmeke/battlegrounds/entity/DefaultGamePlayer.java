@@ -11,8 +11,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -201,6 +203,10 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {
         return false;
+    }
+
+    public <T extends Projectile> T launchProjectile(Class<? extends T> projectileClass, Vector velocity) {
+        return player.launchProjectile(projectileClass, velocity);
     }
 
     public void modifyCameraRotation(float yaw, float pitch) {
