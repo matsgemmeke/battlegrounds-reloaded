@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
@@ -18,19 +19,13 @@ import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 public class FireballLauncher implements ProjectileLauncher {
 
-    private static final double FINDING_RANGE_DEPLOYMENT_OBJECTS = 0.3;
-    private static final double FINDING_RANGE_ENTITIES = 0.1;
     private static final long SCHEDULE_DELAY = 0L;
     private static final long SCHEDULE_INTERVAL = 1L;
 
     @NotNull
     private final AudioEmitter audioEmitter;
-    @NotNull
-    private final CollisionDetector collisionDetector;
     @NotNull
     private final FireballProperties properties;
     @NotNull
@@ -38,9 +33,9 @@ public class FireballLauncher implements ProjectileLauncher {
     @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
-    private final Scheduler scheduler;
+    private final ProjectileHitActionRegistry projectileHitActionRegistry;
     @NotNull
-    private final TargetFinder targetFinder;
+    private final Scheduler scheduler;
 
     @Inject
     public FireballLauncher(
@@ -48,17 +43,15 @@ public class FireballLauncher implements ProjectileLauncher {
             @NotNull Scheduler scheduler,
             @Assisted @NotNull FireballProperties properties,
             @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull CollisionDetector collisionDetector,
             @Assisted @NotNull ItemEffect itemEffect,
-            @Assisted @NotNull TargetFinder targetFinder
+            @Assisted @NotNull ProjectileHitActionRegistry projectileHitActionRegistry
     ) {
         this.particleEffectSpawner = particleEffectSpawner;
         this.scheduler = scheduler;
         this.properties = properties;
         this.audioEmitter = audioEmitter;
-        this.collisionDetector = collisionDetector;
         this.itemEffect = itemEffect;
-        this.targetFinder = targetFinder;
+        this.projectileHitActionRegistry = projectileHitActionRegistry;
     }
 
     public void launch(LaunchContext context) {
@@ -75,8 +68,9 @@ public class FireballLauncher implements ProjectileLauncher {
 
         Schedule schedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, SCHEDULE_INTERVAL);
         schedule.addTask(() -> this.displayParticleEffect(fireball));
-        schedule.addTask(() -> this.processProjectileStep(entity, initiationLocation, fireball, schedule));
         schedule.start();
+
+        projectileHitActionRegistry.registerProjectileHitAction(fireball, () -> this.onHit(entity, initiationLocation, fireball, schedule));
     }
 
     private void displayParticleEffect(Fireball fireball) {
@@ -87,39 +81,19 @@ public class FireballLauncher implements ProjectileLauncher {
         });
     }
 
-    private void processProjectileStep(Entity entity, Location initiationLocation, Fireball fireball, Schedule schedule) {
+    private void onHit(Entity entity, Location initiationLocation, Fireball fireball, Schedule schedule) {
         Location fireballLocation = fireball.getLocation();
         World fireballWorld = fireballLocation.getWorld();
-        Location nextLocation = fireballLocation.clone().add(fireballLocation.getDirection());
 
-        if (collisionDetector.producesBlockCollisionAt(nextLocation)) {
-            this.activateEffect(entity, fireballLocation, fireballWorld, initiationLocation);
-            schedule.stop();
-            return;
-        }
-
-        TargetQuery query = this.createTargetQuery(entity.getUniqueId(), fireballLocation);
-
-        if (targetFinder.containsTargets(query)) {
-            this.activateEffect(entity, fireballLocation, fireballWorld, initiationLocation);
-            schedule.stop();
-        }
-    }
-
-    private void activateEffect(Entity entity, Location sourceLocation, World sourceWorld, Location initiationLocation) {
-        StaticSource source = new StaticSource(sourceLocation, sourceWorld);
+        StaticSource source = new StaticSource(fireballLocation, fireballWorld);
         ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
         itemEffect.prime(context);
+        itemEffect.deploy(source);
         itemEffect.activateInstantly();
-    }
 
-    private TargetQuery createTargetQuery(UUID entityId, Location location) {
-        return new TargetQuery()
-                .forEntity(entityId)
-                .forLocation(location)
-                .withRange(TargetType.ENTITY, FINDING_RANGE_ENTITIES)
-                .withRange(TargetType.DEPLOYMENT_OBJECT, FINDING_RANGE_DEPLOYMENT_OBJECTS)
-                .enemiesOnly(true);
+        schedule.stop();
+
+        projectileHitActionRegistry.removeProjectileHitAction(fireball);
     }
 }

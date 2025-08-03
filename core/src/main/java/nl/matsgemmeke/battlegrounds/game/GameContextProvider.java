@@ -122,6 +122,16 @@ public class GameContextProvider {
         return null;
     }
 
+    /**
+     * Gets the game keys of all registered games.
+     *
+     * @return all registered game keys
+     */
+    @NotNull
+    public Set<GameKey> getGameKeys() {
+        return games.keySet();
+    }
+
     @NotNull
     private Iterable<EntityRegistry<?, ?>> getEntityRegistries(@NotNull GameKey gameKey) {
         PlayerRegistry playerRegistry = this.getComponent(gameKey, PlayerRegistry.class);

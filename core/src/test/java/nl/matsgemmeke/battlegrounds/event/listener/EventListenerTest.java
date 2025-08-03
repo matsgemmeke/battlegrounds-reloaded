@@ -3,10 +3,7 @@ package nl.matsgemmeke.battlegrounds.event.listener;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -149,6 +146,16 @@ public class EventListenerTest {
 
         EventListener eventListener = new EventListener(eventDispatcher);
         eventListener.onPlayerRespawn(event);
+
+        verify(eventDispatcher).dispatchInternalEvent(event);
+    }
+
+    @Test
+    public void onProjectileHitDispatchesEventToEventDispatcher() {
+        ProjectileHitEvent event = mock(ProjectileHitEvent.class);
+
+        EventListener eventListener = new EventListener(eventDispatcher);
+        eventListener.onProjectileHit(event);
 
         verify(eventDispatcher).dispatchInternalEvent(event);
     }

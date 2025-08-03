@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
@@ -33,26 +33,24 @@ public class FireballLauncherTest {
     private static final ParticleEffect TRAJECTORY_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0.0, 0.0, 0.0, 0.0, null, null);
 
     private AudioEmitter audioEmitter;
-    private CollisionDetector collisionDetector;
     private FireballProperties properties;
     private ItemEffect itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
+    private ProjectileHitActionRegistry projectileHitActionRegistry;
     private Scheduler scheduler;
-    private TargetFinder targetFinder;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
-        collisionDetector = mock(CollisionDetector.class);
         properties = new FireballProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
         itemEffect = mock(ItemEffect.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
+        projectileHitActionRegistry = mock(ProjectileHitActionRegistry.class);
         scheduler = mock(Scheduler.class);
-        targetFinder = mock(TargetFinder.class);
     }
 
     @Test
-    public void launchStartsScheduleThatActivatesEffectWhenProducingCollisionWithBlock() {
+    public void launchStartsScheduleThatActivatesEffectWhenProjectileHitActionGetsCalled() {
         World world = mock(World.class);
         Location direction = new Location(world, 1.0, 1.0, 1.0, 0.0f, 0.0f);
         Location entityLocation = new Location(world, 1.0, 1.0, 1.0);
@@ -73,15 +71,22 @@ public class FireballLauncherTest {
 
         LaunchContext context = new LaunchContext(entity, source, direction);
 
-        FireballLauncher launcher = new FireballLauncher(particleEffectSpawner, scheduler, properties, audioEmitter, collisionDetector, itemEffect, targetFinder);
+        FireballLauncher launcher = new FireballLauncher(particleEffectSpawner, scheduler, properties, audioEmitter, itemEffect, projectileHitActionRegistry);
         launcher.launch(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
-        verify(schedule, times(2)).addTask(scheduleTaskCaptor.capture());
+        verify(schedule).addTask(scheduleTaskCaptor.capture());
 
-        scheduleTaskCaptor.getAllValues().forEach(ScheduleTask::run);
+        scheduleTaskCaptor.getValue().run();
+
+        ArgumentCaptor<ProjectileHitAction> projectileHitActionCaptor = ArgumentCaptor.forClass(ProjectileHitAction.class);
+        verify(projectileHitActionRegistry).registerProjectileHitAction(eq(fireball), projectileHitActionCaptor.capture());
+
+        projectileHitActionCaptor.getValue().onProjectileHit();
 
         verify(audioEmitter).playSounds(SHOT_SOUNDS, entityLocation);
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, fireballLocation);
+        verify(itemEffect).activateInstantly();
+        verify(schedule).stop();
     }
 }

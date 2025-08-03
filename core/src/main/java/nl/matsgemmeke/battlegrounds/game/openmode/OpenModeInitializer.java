@@ -17,6 +17,7 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvid
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.*;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
@@ -88,6 +89,7 @@ public class OpenModeInitializer {
         ActionHandler actionHandler = new DefaultActionHandler(openMode, playerRegistry);
         AudioEmitter audioEmitter = new DefaultAudioEmitter();
         CollisionDetector collisionDetector = collisionDetectorProvider.get();
+        ProjectileHitActionRegistry projectileHitActionRegistry = new ProjectileHitActionRegistry();
         SpawnPointProvider spawnPointProvider = new OpenModeSpawnPointProvider(openMode.getSpawnPointContainer());
         StatePersistenceHandler statePersistanceHandler = statePersistenceHandlerFactory.create(equipmentRegistry, gunRegistry, playerRegistry);
 
@@ -109,6 +111,7 @@ public class OpenModeInitializer {
         contextProvider.registerComponent(gameKey, GunRegistry.class, gunRegistry);
         contextProvider.registerComponent(gameKey, PlayerLifecycleHandler.class, playerLifecycleHandler);
         contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
+        contextProvider.registerComponent(gameKey, ProjectileHitActionRegistry.class, projectileHitActionRegistry);
         contextProvider.registerComponent(gameKey, SpawnPointProvider.class, spawnPointProvider);
         contextProvider.registerComponent(gameKey, StatePersistenceHandler.class, statePersistanceHandler);
         contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);

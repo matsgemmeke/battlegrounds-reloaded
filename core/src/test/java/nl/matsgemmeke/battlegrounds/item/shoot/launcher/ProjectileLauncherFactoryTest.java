@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
@@ -54,19 +55,21 @@ public class ProjectileLauncherFactoryTest {
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
+        ProjectileHitActionRegistry projectileHitActionRegistry = mock(ProjectileHitActionRegistry.class);
         TargetFinder targetFinder = mock(TargetFinder.class);
 
         when(contextProvider.getComponent(GAME_KEY, AudioEmitter.class)).thenReturn(audioEmitter);
         when(contextProvider.getComponent(GAME_KEY, CollisionDetector.class)).thenReturn(collisionDetector);
+        when(contextProvider.getComponent(GAME_KEY, ProjectileHitActionRegistry.class)).thenReturn(projectileHitActionRegistry);
         when(contextProvider.getComponent(GAME_KEY, TargetFinder.class)).thenReturn(targetFinder);
-        when(fireballLauncherFactory.create(any(FireballProperties.class), eq(audioEmitter), eq(collisionDetector), eq(itemEffect), eq(targetFinder))).thenReturn(fireballLauncher);
+        when(fireballLauncherFactory.create(any(FireballProperties.class), eq(audioEmitter), eq(itemEffect), eq(projectileHitActionRegistry))).thenReturn(fireballLauncher);
         when(itemEffectFactory.create(projectileSpec.effect, GAME_KEY)).thenReturn(itemEffect);
 
         ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, contextProvider, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec, GAME_KEY);
 
         ArgumentCaptor<FireballProperties> fireballPropertiesCaptor = ArgumentCaptor.forClass(FireballProperties.class);
-        verify(fireballLauncherFactory).create(fireballPropertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector), eq(itemEffect), eq(targetFinder));
+        verify(fireballLauncherFactory).create(fireballPropertiesCaptor.capture(), eq(audioEmitter), eq(itemEffect), eq(projectileHitActionRegistry));
 
         FireballProperties fireballProperties = fireballPropertiesCaptor.getValue();
         assertThat(fireballProperties.shotSounds()).isEmpty();
