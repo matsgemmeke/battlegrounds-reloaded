@@ -23,7 +23,7 @@ public class BuckshotSpreadPattern implements SpreadPattern {
     }
 
     @NotNull
-    public List<Location> getShootingDirections(@NotNull Location shootingDirection) {
+    public List<Location> getShotDirections(@NotNull Location shootingDirection) {
         List<Location> directions = new ArrayList<>();
 
         for (int i = 1; i <= pelletAmount; i++) {

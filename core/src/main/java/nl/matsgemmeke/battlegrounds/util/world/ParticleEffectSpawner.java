@@ -12,13 +12,20 @@ import org.jetbrains.annotations.NotNull;
 public class ParticleEffectSpawner {
 
     /**
-     * Spawns a particle in the given world at the given location based on the given particle effect.
+     * Spawns a particle in the given world at the given location based on the given particle effect. Is it required
+     * that the given location has a world reference.
      *
      * @param particleEffect the particle effect
-     * @param world the world to spawn the particle in
      * @param location the location to spawn the particle at
+     * @throws IllegalArgumentException when the given location's world is null
      */
-    public void spawnParticleEffect(@NotNull ParticleEffect particleEffect, @NotNull World world, @NotNull Location location) {
+    public void spawnParticleEffect(@NotNull ParticleEffect particleEffect, @NotNull Location location) {
+        World world = location.getWorld();
+
+        if (world == null) {
+            throw new IllegalArgumentException("Cannot display particle at location %s, its world is null".formatted(location));
+        }
+
         Particle particle = particleEffect.particle();
         int count = particleEffect.count();
         double offsetX = particleEffect.offsetX();

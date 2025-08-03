@@ -7,6 +7,7 @@ import org.bukkit.block.data.BlockData;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 public class ParticleEffectSpawnerTest {
@@ -17,6 +18,19 @@ public class ParticleEffectSpawnerTest {
     private static final double OFFSET_Y = 0.2;
     private static final double OFFSET_Z = 0.3;
     private static final double EXTRA = 0.0;
+
+    @Test
+    public void spawnParticleThrowsIllegalArgumentExceptionWhenGivenLocationHasNoWorld() {
+        Location location = new Location(null, 1, 1, 1);
+        Particle particle = Particle.BLOCK_CRACK;
+        ParticleEffect particleEffect = new ParticleEffect(particle, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA, null, null);
+
+        ParticleEffectSpawner particleEffectSpawner = new ParticleEffectSpawner();
+
+        assertThatThrownBy(() -> particleEffectSpawner.spawnParticleEffect(particleEffect, location))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Cannot display particle at location Location{world=null,x=1.0,y=1.0,z=1.0,pitch=0.0,yaw=0.0}, its world is null");
+    }
 
     @Test
     public void spawnParticleEffectSpawnsParticleEffectWithBlockData() {
@@ -32,7 +46,7 @@ public class ParticleEffectSpawnerTest {
         ParticleEffect particleEffect = new ParticleEffect(particle, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA, blockDataMaterial, null);
 
         ParticleEffectSpawner particleEffectSpawner = new ParticleEffectSpawner();
-        particleEffectSpawner.spawnParticleEffect(particleEffect, world, location);
+        particleEffectSpawner.spawnParticleEffect(particleEffect, location);
 
         bukkit.close();
 
@@ -47,7 +61,7 @@ public class ParticleEffectSpawnerTest {
         ParticleEffect particleEffect = new ParticleEffect(PARTICLE, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA, null, dustOptions);
 
         ParticleEffectSpawner particleEffectSpawner = new ParticleEffectSpawner();
-        particleEffectSpawner.spawnParticleEffect(particleEffect, world, location);
+        particleEffectSpawner.spawnParticleEffect(particleEffect, location);
 
         verify(world).spawnParticle(PARTICLE, location, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA, dustOptions);
     }
@@ -59,7 +73,7 @@ public class ParticleEffectSpawnerTest {
         ParticleEffect particleEffect = new ParticleEffect(PARTICLE, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA, null, null);
 
         ParticleEffectSpawner particleEffectSpawner = new ParticleEffectSpawner();
-        particleEffectSpawner.spawnParticleEffect(particleEffect, world, location);
+        particleEffectSpawner.spawnParticleEffect(particleEffect, location);
 
         verify(world).spawnParticle(PARTICLE, location, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA);
     }

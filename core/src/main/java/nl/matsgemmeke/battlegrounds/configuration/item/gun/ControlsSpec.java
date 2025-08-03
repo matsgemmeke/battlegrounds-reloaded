@@ -17,5 +17,5 @@ public class ControlsSpec {
     @EnumValue(type = ActionConfigurationValue.class)
     public String scopeStop;
     @EnumValue(type = ActionConfigurationValue.class)
-    public String changeScopeMagnification;
+    public String scopeChangeMagnification;
 }

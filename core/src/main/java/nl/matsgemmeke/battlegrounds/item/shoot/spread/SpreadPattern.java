@@ -17,5 +17,5 @@ public interface SpreadPattern {
      * @return an iterable containing locations as projectile directions
      */
     @NotNull
-    List<Location> getShootingDirections(@NotNull Location shootingDirection);
+    List<Location> getShotDirections(@NotNull Location shootingDirection);
 }

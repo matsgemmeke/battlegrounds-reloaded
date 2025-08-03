@@ -40,7 +40,7 @@ public class EquipmentFactoryTest {
     private EquipmentRegistry equipmentRegistry;
     private GameContextProvider contextProvider;
     private GameKey gameKey;
-    private ItemEffectFactory effectFactory;
+    private ItemEffectFactory itemEffectFactory;
     private ItemFactory itemFactory;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
@@ -53,7 +53,7 @@ public class EquipmentFactoryTest {
         controlsFactory = mock(EquipmentControlsFactory.class);
         equipmentRegistry = mock(EquipmentRegistry.class);
         gameKey = GameKey.ofOpenMode();
-        effectFactory = mock(ItemEffectFactory.class);
+        itemEffectFactory = mock(ItemEffectFactory.class);
         itemFactory = mock(ItemFactory.class);
         keyCreator = mock(NamespacedKeyCreator.class);
         particleEffectMapper = new ParticleEffectMapper();
@@ -88,12 +88,12 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
+        when(itemEffectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, keyCreator, particleEffectMapper);
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, itemEffectFactory, keyCreator, particleEffectMapper);
         Equipment equipment = factory.create(spec, gameKey, gamePlayer);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
@@ -111,12 +111,12 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(effectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
+        when(itemEffectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(itemEffect))).thenReturn(deploymentHandler);
 
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, effectFactory, keyCreator, particleEffectMapper);
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, itemEffectFactory, keyCreator, particleEffectMapper);
         Equipment equipment = factory.create(spec, gameKey);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);

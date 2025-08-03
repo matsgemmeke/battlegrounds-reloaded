@@ -8,6 +8,8 @@ import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class OpenModeEntity implements GameEntity {
 
     @Nullable
@@ -45,6 +47,10 @@ public class OpenModeEntity implements GameEntity {
     @NotNull
     public String getName() {
         return entity.getName();
+    }
+
+    public UUID getUniqueId() {
+        return entity.getUniqueId();
     }
 
     @NotNull

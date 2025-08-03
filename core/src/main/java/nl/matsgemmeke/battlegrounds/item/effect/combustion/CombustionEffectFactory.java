@@ -11,8 +11,8 @@ public interface CombustionEffectFactory {
 
     @NotNull
     ItemEffect create(@NotNull CombustionProperties properties,
-                      @NotNull RangeProfile rangeProfile,
-                      @NotNull AudioEmitter audioEmitter,
-                      @NotNull CollisionDetector collisionDetector,
-                      @NotNull TargetFinder targetFinder);
+                  @NotNull RangeProfile rangeProfile,
+                  @NotNull AudioEmitter audioEmitter,
+                  @NotNull CollisionDetector collisionDetector,
+                  @NotNull TargetFinder targetFinder);
 }

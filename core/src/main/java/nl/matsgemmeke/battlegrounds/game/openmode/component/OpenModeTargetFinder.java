@@ -4,6 +4,8 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
+import nl.matsgemmeke.battlegrounds.game.component.TargetType;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -31,12 +33,16 @@ public class OpenModeTargetFinder implements TargetFinder {
         this.playerRegistry = playerRegistry;
     }
 
+    public boolean containsTargets(TargetQuery query) {
+        return !this.findTargets(query).isEmpty();
+    }
+
     @NotNull
     public List<DeploymentObject> findDeploymentObjects(@NotNull UUID entityId, @NotNull Location location, double range) {
         List<DeploymentObject> deploymentObjects = new ArrayList<>();
 
         for (DeploymentObject deploymentObject : deploymentInfoProvider.getAllDeploymentObjects()) {
-            double distance = location.distance(deploymentObject.getLocation());
+            double distance = location.distanceSquared(deploymentObject.getLocation());
 
             if (distance <= range) {
                 deploymentObjects.add(deploymentObject);
@@ -69,6 +75,33 @@ public class OpenModeTargetFinder implements TargetFinder {
         }
 
         return targets;
+    }
+
+    public List<UUID> findTargets(TargetQuery query) {
+        List<UUID> result = new ArrayList<>();
+        Location location = query.getLocation().orElseThrow(() -> new IllegalArgumentException("No location provided"));
+
+        Optional<UUID> uniqueId = query.getUniqueId();
+        Optional<Double> entityFindingRange = query.getRange(TargetType.ENTITY);
+        Optional<Double> deploymentObjectFindingRange = query.getRange(TargetType.DEPLOYMENT_OBJECT);
+        boolean enemiesOnly = query.isEnemiesOnly().orElse(false);
+
+        entityFindingRange.ifPresent(range ->
+            playerRegistry.getAll().stream()
+                    .filter(gamePlayer -> !enemiesOnly || uniqueId.map(id -> !id.equals(gamePlayer.getUniqueId())).orElse(true))
+                    .filter(gamePlayer -> gamePlayer.getLocation().distanceSquared(location) <= range)
+                    .map(GamePlayer::getUniqueId)
+                    .forEach(result::add)
+        );
+        deploymentObjectFindingRange.ifPresent(range -> {
+            deploymentInfoProvider.getAllDeploymentObjects().stream()
+                    .filter(deploymentObject -> !enemiesOnly || uniqueId.map(id -> !id.equals(deploymentObject.getUniqueId())).orElse(true))
+                    .filter(deploymentObject -> deploymentObject.getLocation().distanceSquared(location) <= range)
+                    .map(DeploymentObject::getUniqueId)
+                    .forEach(result::add);
+        });
+
+        return result;
     }
 
     @NotNull

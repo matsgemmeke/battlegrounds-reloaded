@@ -51,7 +51,7 @@ public class FirearmControlsFactoryTest {
         spec.shoot = "RIGHT_CLICK";
         spec.scopeUse = "RIGHT_CLICK";
         spec.scopeStop = "LEFT_CLICK";
-        spec.changeScopeMagnification = "SWAP_FROM";
+        spec.scopeChangeMagnification = "SWAP_FROM";
 
         FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
         ItemControls<GunHolder> controls = controlsFactory.create(spec, firearm);

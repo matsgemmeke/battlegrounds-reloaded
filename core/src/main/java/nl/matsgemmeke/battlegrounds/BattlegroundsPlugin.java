@@ -18,6 +18,7 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -111,6 +112,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         eventDispatcher.registerEventHandler(PlayerQuitEvent.class, injector.getInstance(PlayerQuitEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerRespawnEvent.class, injector.getInstance(PlayerRespawnEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerSwapHandItemsEvent.class, injector.getInstance(PlayerSwapHandItemsEventHandler.class));
+        eventDispatcher.registerEventHandler(ProjectileHitEvent.class, injector.getInstance(ProjectileHitEventHandler.class));
     }
 
     private void setUpInternalsProvider() throws StartupFailedException {

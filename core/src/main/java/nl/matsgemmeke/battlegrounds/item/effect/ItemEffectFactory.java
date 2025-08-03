@@ -12,11 +12,14 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
@@ -97,6 +100,19 @@ public class ItemEffectFactory {
                 TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
                 itemEffect = combustionEffectFactory.create(properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+            }
+            case DAMAGE -> {
+                String damageTypeValue = this.validateSpecVar(spec.damageType, "damageType", itemEffectType);
+                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
+
+                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
+                DamageType damageType = DamageType.valueOf(damageTypeValue);
+
+                DamageProperties properties = new DamageProperties(rangeProfile, damageType);
+                DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
+                TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
+
+                itemEffect = new DamageEffect(properties, damageProcessor, targetFinder);
             }
             case EXPLOSION -> {
                 RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);

@@ -7,9 +7,12 @@ import nl.matsgemmeke.battlegrounds.item.Matchable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,6 +68,17 @@ public class DefaultGamePlayerTest {
         Damage lastDamage = gamePlayer.getLastDamage();
 
         assertEquals(damage, lastDamage);
+    }
+
+    @Test
+    public void getUniqueIdReturnsPlayerUUID() {
+        UUID playerUniqueId = UUID.randomUUID();
+        when(player.getUniqueId()).thenReturn(playerUniqueId);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
+        UUID uniqueId = gamePlayer.getUniqueId();
+
+        assertThat(uniqueId).isEqualTo(playerUniqueId);
     }
 
     @Test
@@ -292,6 +307,17 @@ public class DefaultGamePlayerTest {
         gamePlayer.applyViewMagnification(magnification);
 
         verify(internals).setWalkSpeed(player, magnification);
+    }
+
+    @Test
+    public void launchProjectileMakesPlayerLaunchProjectileWithGivenArguments() {
+        Class<? extends Projectile> projectileClass = Arrow.class;
+        Vector velocity = new Vector(1.0, 1.0, 1.0);
+
+        DefaultGamePlayer gamePlayer = new DefaultGamePlayer(internals, player);
+        gamePlayer.launchProjectile(projectileClass, velocity);
+
+        verify(player).launchProjectile(projectileClass, velocity);
     }
 
     @Test

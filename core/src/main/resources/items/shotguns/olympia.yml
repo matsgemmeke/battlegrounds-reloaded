@@ -28,6 +28,19 @@ shooting:
     headshot-damage-multiplier: 1.1
     shot-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
     suppressed-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+    effect:
+      type: DAMAGE
+      damage-type: BULLET_DAMAGE
+      range:
+        short-range:
+          damage: 50.0
+          distance: 10.0
+        medium-range:
+          damage: 20.0
+          distance: 25.0
+        long-range:
+          damage: 10.0
+          distance: 50.0
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1
@@ -38,16 +51,6 @@ shooting:
       dust-options:
         color: '#ffffff'
         size: 1
-  range:
-    long-range:
-      damage: 10.0
-      distance: 50.0
-    medium-range:
-      damage: 20.0
-      distance: 25.0
-    short-range:
-      damage: 50.0
-      distance: 10.0
   recoil:
     type: CAMERA_MOVEMENT
     horizontal: [-2.0, 0.5, 2.0]

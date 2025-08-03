@@ -8,8 +8,10 @@ import nl.matsgemmeke.battlegrounds.game.session.Session;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -153,6 +155,18 @@ public class GameContextProviderTest {
         GameKey result = contextProvider.getGameKey(uuid);
 
         assertNull(result);
+    }
+
+    @Test
+    public void getGameKeysReturnsSetOfAllRegisteredGameKeys() {
+        GameKey gameKey = GameKey.ofSession(1);
+        Session session = mock(Session.class);
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.registerGame(gameKey, session);
+        Set<GameKey> gameKeys = contextProvider.getGameKeys();
+
+        assertThat(gameKeys).containsExactly(gameKey);
     }
 
     @Test

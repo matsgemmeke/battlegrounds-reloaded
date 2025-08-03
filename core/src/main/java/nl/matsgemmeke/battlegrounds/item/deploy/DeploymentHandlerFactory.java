@@ -7,5 +7,5 @@ import org.jetbrains.annotations.NotNull;
 public interface DeploymentHandlerFactory {
 
     @NotNull
-    DeploymentHandler create(@NotNull DeploymentProperties deploymentProperties, @NotNull AudioEmitter audioEmitter, @NotNull ItemEffect effect);
+    DeploymentHandler create(@NotNull DeploymentProperties deploymentProperties, @NotNull AudioEmitter audioEmitter, @NotNull ItemEffect itemEffect);
 }

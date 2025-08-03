@@ -91,6 +91,11 @@ public class EventListener implements Listener {
         this.dispatchEvent(event);
     }
 
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        this.dispatchEvent(event);
+    }
+
     private void dispatchEvent(@NotNull Event event) {
         eventDispatcher.dispatchInternalEvent(event);
     }

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 public enum ItemEffectType {
 
     COMBUSTION,
+    DAMAGE,
     EXPLOSION,
     FLASH,
     GUN_FIRE_SIMULATION,

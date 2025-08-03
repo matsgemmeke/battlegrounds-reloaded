@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An entity object which holds information and can perform actions in Battlegrounds.
  */
-public interface GameEntity extends Damageable {
+public interface GameEntity extends Damageable, Identifiable {
 
     /**
      * Gets the bukkit entity object of the entity.

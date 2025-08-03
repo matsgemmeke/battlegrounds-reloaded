@@ -14,7 +14,9 @@ public class ItemEffectSpec {
     public String type;
     public Map<String, TriggerSpec> triggers = new HashMap<>();
     public String activationSounds;
-    @ConditionalRequired(conditionalFieldName = "type", matchValues = "EXPLOSION")
+    @ConditionalRequired(conditionalFieldName = "type", matchValues = "DAMAGE")
+    public String damageType;
+    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "DAMAGE", "EXPLOSION" })
     public RangeProfileSpec range;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "SMOKE_SCREEN")
     public Double minSize;
@@ -26,9 +28,9 @@ public class ItemEffectSpec {
     public Double growth;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = { "COMBUSTION", "SMOKE_SCREEN" })
     public Long growthInterval;
-    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "COMBUSTION", "GUN_FIRE_SIMULAITON", "SMOKE_SCREEN" })
+    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "COMBUSTION", "GUN_FIRE_SIMULATION", "SMOKE_SCREEN" })
     public Long minDuration;
-    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "COMBUSTION", "GUN_FIRE_SIMULAITON", "SMOKE_SCREEN" })
+    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "COMBUSTION", "GUN_FIRE_SIMULATION", "SMOKE_SCREEN" })
     public Long maxDuration;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = { "EXPLOSION", "FLASH" })
     public Float power;
@@ -44,6 +46,10 @@ public class ItemEffectSpec {
     public ActivationPatternSpec activationPattern;
 
     private enum ItemEffectType {
-        COMBUSTION, EXPLOSION, FLASH, GUN_FIRE_SIMULATION, MARK_SPAWN_POINT, SMOKE_SCREEN, SOUND_NOTIFICATION
+        COMBUSTION, DAMAGE, EXPLOSION, FLASH, GUN_FIRE_SIMULATION, MARK_SPAWN_POINT, SMOKE_SCREEN, SOUND_NOTIFICATION
+    }
+
+    private enum DamageType {
+        ATTACK_DAMAGE, BULLET_DAMAGE, ENVIRONMENTAL_DAMAGE, EXPLOSIVE_DAMAGE, EXPLOSIVE_ITEM_DAMAGE, FIRE_DAMAGE
     }
 }

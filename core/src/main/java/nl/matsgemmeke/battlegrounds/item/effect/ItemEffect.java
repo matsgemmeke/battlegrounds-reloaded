@@ -24,20 +24,11 @@ public interface ItemEffect {
     void cancelActivation();
 
     /**
-     * Deploys a {@link ItemEffectSource} for an ongoing effect.
+     * Deploys an {@link ItemEffectSource} for an ongoing effect.
      *
      * @param source the source to deploy
      */
     void deploy(@NotNull ItemEffectSource source);
-
-    /**
-     * Checks whether the effect is awaiting deployment for its current process, meaning that it has primed an
-     * activation process for an {@link ItemEffectSource} which was not deployed yet. This awaiting state blocks other
-     * activations until the pending deployment is finished.
-     *
-     * @return true if the effect is awaiting a deployment, false otherwise
-     */
-    boolean isAwaitingDeployment();
 
     /**
      * Gets whether the effect's activation system has been initiated.
@@ -47,9 +38,9 @@ public interface ItemEffect {
     boolean isPrimed();
 
     /**
-     * Primes the effect with the provided for a specific {@link ItemEffectContext}.
+     * Primes the effect with the provided for a specific context.
      *
-     * @param context the item effect context
+     * @param context the item effect context variables
      */
     void prime(@NotNull ItemEffectContext context);
 

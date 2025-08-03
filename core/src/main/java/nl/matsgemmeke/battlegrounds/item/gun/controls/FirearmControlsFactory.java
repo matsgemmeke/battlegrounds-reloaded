@@ -20,11 +20,11 @@ public class FirearmControlsFactory {
 
         String useScopeActionValue = spec.scopeUse;
         String stopScopeActionValue = spec.scopeStop;
-        String changeScopeMagnificationActionValue = spec.changeScopeMagnification;
+        String scopeChangeMagnification = spec.scopeChangeMagnification;
 
         if (useScopeActionValue != null && stopScopeActionValue != null) {
-            if (changeScopeMagnificationActionValue != null) {
-                Action changeScopeMagnificationAction = Action.valueOf(changeScopeMagnificationActionValue);
+            if (scopeChangeMagnification != null) {
+                Action changeScopeMagnificationAction = Action.valueOf(scopeChangeMagnification);
                 ChangeScopeMagnificationFunction changeScopeMagnificationFunction = new ChangeScopeMagnificationFunction(firearm);
 
                 controls.addControl(changeScopeMagnificationAction, changeScopeMagnificationFunction);

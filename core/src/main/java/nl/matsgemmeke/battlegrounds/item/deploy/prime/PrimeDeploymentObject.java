@@ -12,6 +12,8 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 /**
  * Represents an item that is primed but held by the deployer and not yet deployed.
  */
@@ -22,6 +24,7 @@ public class PrimeDeploymentObject implements DeploymentObject {
 
     @NotNull
     private final Deployer deployer;
+    private final UUID uniqueId;
     private double health;
     @NotNull
     private final Entity deployerEntity;
@@ -32,6 +35,7 @@ public class PrimeDeploymentObject implements DeploymentObject {
         this.deployer = deployer;
         this.deployerEntity = deployerEntity;
         this.itemStack = itemStack;
+        this.uniqueId = UUID.randomUUID();
     }
 
     public long getCooldown() {
@@ -54,6 +58,10 @@ public class PrimeDeploymentObject implements DeploymentObject {
     @NotNull
     public Location getLocation() {
         return deployerEntity.getLocation().add(0, HAND_HEIGHT_OFFSET, 0);
+    }
+
+    public UUID getUniqueId() {
+        return uniqueId;
     }
 
     public Vector getVelocity() {

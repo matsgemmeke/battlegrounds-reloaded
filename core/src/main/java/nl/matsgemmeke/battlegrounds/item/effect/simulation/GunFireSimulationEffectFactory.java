@@ -9,6 +9,6 @@ public interface GunFireSimulationEffectFactory {
 
     @NotNull
     ItemEffect create(@NotNull AudioEmitter audioEmitter,
-                      @NotNull GunInfoProvider gunInfoProvider,
-                      @NotNull GunFireSimulationProperties properties);
+                  @NotNull GunInfoProvider gunInfoProvider,
+                  @NotNull GunFireSimulationProperties properties);
 }
