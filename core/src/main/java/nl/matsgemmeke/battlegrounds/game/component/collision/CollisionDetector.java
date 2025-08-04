@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component;
+package nl.matsgemmeke.battlegrounds.game.component.collision;
 
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;

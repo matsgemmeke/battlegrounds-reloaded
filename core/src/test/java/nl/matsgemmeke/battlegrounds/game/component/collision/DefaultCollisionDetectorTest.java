@@ -1,6 +1,5 @@
-package nl.matsgemmeke.battlegrounds.game.component;
+package nl.matsgemmeke.battlegrounds.game.component.collision;
 
-import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;

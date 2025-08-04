@@ -1,7 +1,6 @@
-package nl.matsgemmeke.battlegrounds.game.component;
+package nl.matsgemmeke.battlegrounds.game.component.collision;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.game.BlockCollisionChecker;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
