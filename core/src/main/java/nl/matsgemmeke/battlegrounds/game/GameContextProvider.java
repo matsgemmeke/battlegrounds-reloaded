@@ -19,11 +19,24 @@ public class GameContextProvider {
     @NotNull
     private Map<GameKey, Game> games;
     @NotNull
+    private final Map<GameKey, GameContext> gameContexts;
+    @NotNull
     private Map<GameKey, Map<Class<?>, Object>> gameComponents;
 
     public GameContextProvider() {
         this.games = new HashMap<>();
+        this.gameContexts = new HashMap<>();
         this.gameComponents = new HashMap<>();
+    }
+
+    /**
+     * Adds a game context to the provider.
+     *
+     * @param gameKey the game key
+     * @param gameContext the game context instance
+     */
+    public void addGameContext(GameKey gameKey, GameContext gameContext) {
+        gameContexts.put(gameKey, gameContext);
     }
 
     /**
@@ -81,6 +94,23 @@ public class GameContextProvider {
         }
 
         return component;
+    }
+
+    /**
+     * Gets the game context by their game key. The return optional is empty when none of the registered game context
+     * has the given game key.
+     *
+     * @param gameKey the game key
+     * @return an optional which contains the corresponding game context or empty when none were found
+     */
+    public Optional<GameContext> getGameContext(GameKey gameKey) {
+        for (GameKey otherKey : gameContexts.keySet()) {
+            if (gameKey.equals(otherKey)) {
+                return Optional.of(gameContexts.get(otherKey));
+            }
+        }
+
+        return Optional.empty();
     }
 
     /**

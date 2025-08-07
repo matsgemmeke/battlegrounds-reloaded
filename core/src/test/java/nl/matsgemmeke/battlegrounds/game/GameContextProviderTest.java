@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.session.Session;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -83,6 +84,31 @@ public class GameContextProviderTest {
         TargetFinder result = contextProvider.getComponent(gameKey, TargetFinder.class);
 
         assertEquals(targetFinder, result);
+    }
+
+    @Test
+    public void getGameContextReturnsOptionalContainingGameContextCorrespondingWithGivenGameKey() {
+        GameKey gameKey = GameKey.ofOpenMode();
+        GameContext gameContext = new GameContext();
+
+        GameContextProvider gameContextProvider = new GameContextProvider();
+        gameContextProvider.addGameContext(gameKey, gameContext);
+        Optional<GameContext> result = gameContextProvider.getGameContext(gameKey);
+
+        assertThat(result).hasValue(gameContext);
+    }
+
+    @Test
+    public void getGameContextReturnsEmptyOptionalWhenNoMatchingGameContextsWereFound() {
+        GameKey gameKey = GameKey.ofOpenMode();
+        GameKey otherKey = GameKey.ofSession(1);
+        GameContext gameContext = new GameContext();
+
+        GameContextProvider gameContextProvider = new GameContextProvider();
+        gameContextProvider.addGameContext(gameKey, gameContext);
+        Optional<GameContext> result = gameContextProvider.getGameContext(otherKey);
+
+        assertThat(result).isEmpty();
     }
 
     @Test
