@@ -15,6 +15,8 @@ import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
+import nl.matsgemmeke.battlegrounds.game.GameScoped;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
@@ -81,6 +83,12 @@ public class BattlegroundsModule implements Module {
     }
 
     public void configure(Binder binder) {
+        // Scope bindings
+        GameScope gameScope = new GameScope();
+
+        binder.bind(GameScope.class).toInstance(gameScope);
+        binder.bindScope(GameScoped.class, gameScope);
+
         // Instance bindings
         binder.bind(InternalsProvider.class).toInstance(internals);
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
