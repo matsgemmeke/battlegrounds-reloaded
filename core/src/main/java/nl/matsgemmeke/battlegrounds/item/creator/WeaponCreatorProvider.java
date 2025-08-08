@@ -10,6 +10,8 @@ import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +28,13 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
     @NotNull
     private final EquipmentFactory equipmentFactory;
     @NotNull
+    private final FirearmFactory firearmFactory;
+    @NotNull
     private final File itemsFolder;
     @NotNull
-    private final FirearmFactory firearmFactory;
+    private final GameContextProvider gameContextProvider;
+    @NotNull
+    private final GameScope gameScope;
     @NotNull
     private final Logger logger;
     @NotNull
@@ -38,12 +44,16 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
     public WeaponCreatorProvider(
             @NotNull EquipmentFactory equipmentFactory,
             @NotNull FirearmFactory firearmFactory,
+            @NotNull GameContextProvider gameContextProvider,
+            @NotNull GameScope gameScope,
             @NotNull SpecDeserializer specDeserializer,
             @Named("ItemsFolder") @NotNull File itemsFolder,
             @Named("Battlegrounds") @NotNull Logger logger
     ) {
         this.equipmentFactory = equipmentFactory;
         this.firearmFactory = firearmFactory;
+        this.gameContextProvider = gameContextProvider;
+        this.gameScope = gameScope;
         this.specDeserializer = specDeserializer;
         this.itemsFolder = itemsFolder;
         this.logger = logger;
@@ -55,7 +65,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.copyResourcesFiles(itemsFolder);
         }
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, firearmFactory);
         File[] itemFolderFiles = itemsFolder.listFiles();
 
         if (itemFolderFiles == null || itemFolderFiles.length == 0) {

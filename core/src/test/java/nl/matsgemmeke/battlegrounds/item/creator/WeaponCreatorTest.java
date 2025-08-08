@@ -4,7 +4,10 @@ import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
@@ -15,11 +18,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WeaponCreatorTest {
 
@@ -28,19 +31,23 @@ public class WeaponCreatorTest {
     private static final String GUN_ID = "MP5";
 
     private EquipmentFactory equipmentFactory;
-    private FirearmFactory firearmFactory;
+    private FirearmFactory gunFactory;
+    private GameContextProvider gameContextProvider;
+    private GameScope gameScope;
 
     @BeforeEach
     public void setUp() {
         equipmentFactory = mock(EquipmentFactory.class);
-        firearmFactory = mock(FirearmFactory.class);
+        gunFactory = mock(FirearmFactory.class);
+        gameContextProvider = mock(GameContextProvider.class);
+        gameScope = mock(GameScope.class);
     }
 
     @Test
     public void createEquipmentThrowsWeaponNotFoundExceptionWhenNoEquipmentSpecsExistByGivenEquipmentId() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
 
         assertThatThrownBy(() -> weaponCreator.createEquipment("fail", gamePlayer, GAME_KEY))
                 .isInstanceOf(WeaponNotFoundException.class)
@@ -48,25 +55,46 @@ public class WeaponCreatorTest {
     }
 
     @Test
+    public void createEquipmentThrowsUnknownGameKeyExceptionWhenNoGameContextExistsByGivenGameKey() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec();
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
+
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
+        weaponCreator.addEquipmentSpec(EQUIPMENT_ID, equipmentSpec);
+
+        assertThatThrownBy(() -> weaponCreator.createEquipment(EQUIPMENT_ID, gamePlayer, GAME_KEY))
+                .isInstanceOf(UnknownGameKeyException.class)
+                .hasMessage("No game context found game key OPEN-MODE");
+    }
+
+    @Test
     public void createEquipmentReturnsEquipmentInstanceBasedOnGivenEquipmentId() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
+        GameContext gameContext = new GameContext();
+
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
 
         Equipment equipment = mock(Equipment.class);
         when(equipmentFactory.create(equipmentSpec, GAME_KEY, gamePlayer)).thenReturn(equipment);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         weaponCreator.addEquipmentSpec(EQUIPMENT_ID, equipmentSpec);
         Equipment createdEquipment = weaponCreator.createEquipment(EQUIPMENT_ID, gamePlayer, GAME_KEY);
 
         assertThat(createdEquipment).isEqualTo(equipment);
+
+        verify(gameScope).enter(gameContext);
+        verify(gameScope).exit();
     }
 
     @Test
     public void createGunThrowsWeaponNotFoundExceptionWhenNoGunSpecsExistByGivenGunId() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
 
         assertThatThrownBy(() -> weaponCreator.createGun("fail", gamePlayer, GAME_KEY))
                 .isInstanceOf(WeaponNotFoundException.class)
@@ -74,18 +102,39 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void createGunReturnsGunInstanceBasedOnGivenGunId() {
+    public void createGunThrowsUnknownGameKeyExceptionWhenNoGameContextExistsByGivenGameKey() {
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        Firearm firearm = mock(Firearm.class);
-        when(firearmFactory.create(gunSpec, GAME_KEY, gamePlayer)).thenReturn(firearm);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
+        weaponCreator.addGunSpec(GUN_ID, gunSpec);
+
+        assertThatThrownBy(() -> weaponCreator.createGun(GUN_ID, gamePlayer, GAME_KEY))
+                .isInstanceOf(UnknownGameKeyException.class)
+                .hasMessage("No game context found game key OPEN-MODE");
+    }
+
+    @Test
+    public void createGunReturnsGunInstanceBasedOnGivenGunId() {
+        GunSpec gunSpec = this.createGunSpec();
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        GameContext gameContext = new GameContext();
+
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+
+        Firearm firearm = mock(Firearm.class);
+        when(gunFactory.create(gunSpec, GAME_KEY, gamePlayer)).thenReturn(firearm);
+
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         weaponCreator.addGunSpec(GUN_ID, gunSpec);
         Gun gun = weaponCreator.createGun(GUN_ID, gamePlayer, GAME_KEY);
 
         assertThat(gun).isEqualTo(firearm);
+
+        verify(gameScope).enter(gameContext);
+        verify(gameScope).exit();
     }
 
     @Test
@@ -93,14 +142,19 @@ public class WeaponCreatorTest {
         Equipment equipment = mock(Equipment.class);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
+        GameContext gameContext = new GameContext();
 
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(equipmentFactory.create(equipmentSpec, GAME_KEY, gamePlayer)).thenReturn(equipment);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         weaponCreator.addEquipmentSpec(EQUIPMENT_ID, equipmentSpec);
         Weapon weapon = weaponCreator.createWeapon(gamePlayer, GAME_KEY, EQUIPMENT_ID);
 
         assertThat(weapon).isEqualTo(equipment);
+
+        verify(gameScope).enter(gameContext);
+        verify(gameScope).exit();
     }
 
     @Test
@@ -108,10 +162,12 @@ public class WeaponCreatorTest {
         Firearm firearm = mock(Firearm.class);
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
+        GameContext gameContext = new GameContext();
 
-        when(firearmFactory.create(gunSpec, GAME_KEY, gamePlayer)).thenReturn(firearm);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gunFactory.create(gunSpec, GAME_KEY, gamePlayer)).thenReturn(firearm);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         weaponCreator.addGunSpec(GUN_ID, gunSpec);
         Weapon weapon = weaponCreator.createWeapon(gamePlayer, GAME_KEY, GUN_ID);
 
@@ -122,7 +178,7 @@ public class WeaponCreatorTest {
     public void createWeaponThrowsWeaponNotFoundExceptionWhenGivenIdMatchesNoneOfTheSpecifications() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
 
         assertThatThrownBy(() -> weaponCreator.createWeapon(gamePlayer, GAME_KEY, "nothing"))
                 .isInstanceOf(WeaponNotFoundException.class)
@@ -133,7 +189,7 @@ public class WeaponCreatorTest {
     public void existsReturnsTrueWhenSpecificationOfGivenWeaponIdExists() {
         GunSpec gunSpec = this.createGunSpec();
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         weaponCreator.addGunSpec(GUN_ID, gunSpec);
         boolean exists = weaponCreator.exists(GUN_ID);
 
@@ -142,7 +198,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void existsReturnsFalseWhenSpecificationOfGivenWeaponIdDoesNotExist() {
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         boolean exists = weaponCreator.exists(GUN_ID);
 
         assertThat(exists).isFalse();
@@ -150,7 +206,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void equipmentExistsReturnsFalseWhenWhenEquipmentSpecByGivenIdDoesNotExist() {
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         boolean equipmentExists = weaponCreator.equipmentExists(EQUIPMENT_ID);
 
         assertThat(equipmentExists).isFalse();
@@ -160,7 +216,7 @@ public class WeaponCreatorTest {
     public void equipmentExistsReturnsTrueWhenEquipmentSpecByGivenIdExists() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         weaponCreator.addEquipmentSpec(EQUIPMENT_ID, equipmentSpec);
         boolean equipmentExists = weaponCreator.equipmentExists(EQUIPMENT_ID);
 
@@ -169,7 +225,7 @@ public class WeaponCreatorTest {
 
     @Test
     public void gunExistsReturnsFalseWhenWhenGunSpecByGivenIdDoesNotExist() {
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         boolean gunExists = weaponCreator.gunExists(GUN_ID);
 
         assertThat(gunExists).isFalse();
@@ -179,7 +235,7 @@ public class WeaponCreatorTest {
     public void gunExistsReturnsTrueWhenGunSpecByGivenIdExists() {
         GunSpec gunSpec = this.createGunSpec();
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(gameContextProvider, gameScope, equipmentFactory, gunFactory);
         weaponCreator.addGunSpec(GUN_ID, gunSpec);
         boolean gunExists = weaponCreator.gunExists(GUN_ID);
 

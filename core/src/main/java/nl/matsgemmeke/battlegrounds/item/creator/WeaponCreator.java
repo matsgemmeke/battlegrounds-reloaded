@@ -3,7 +3,10 @@ package nl.matsgemmeke.battlegrounds.item.creator;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
@@ -25,15 +28,26 @@ public class WeaponCreator {
     @NotNull
     private final EquipmentFactory equipmentFactory;
     @NotNull
-    private final FirearmFactory firearmFactory;
+    private final FirearmFactory gunFactory;
+    @NotNull
+    private final GameContextProvider gameContextProvider;
+    @NotNull
+    private final GameScope gameScope;
     @NotNull
     private final Map<String, EquipmentSpec> equipmentSpecs;
     @NotNull
     private final Map<String, GunSpec> gunSpecs;
 
-    public WeaponCreator(@NotNull EquipmentFactory equipmentFactory, @NotNull FirearmFactory firearmFactory) {
+    public WeaponCreator(
+            @NotNull GameContextProvider gameContextProvider,
+            @NotNull GameScope gameScope,
+            @NotNull EquipmentFactory equipmentFactory,
+            @NotNull FirearmFactory gunFactory
+    ) {
+        this.gameContextProvider = gameContextProvider;
+        this.gameScope = gameScope;
         this.equipmentFactory = equipmentFactory;
-        this.firearmFactory = firearmFactory;
+        this.gunFactory = gunFactory;
         this.equipmentSpecs = new HashMap<>();
         this.gunSpecs = new HashMap<>();
     }
@@ -63,8 +77,17 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for an equipment item by the id '%s'".formatted(equipmentId));
         }
 
+        GameContext gameContext = gameContextProvider.getGameContext(gameKey)
+                .orElseThrow(() -> new UnknownGameKeyException("No game context found game key %s".formatted(gameKey)));
+
+        gameScope.enter(gameContext);
+
         EquipmentSpec equipmentSpec = equipmentSpecs.get(equipmentId);
-        return equipmentFactory.create(equipmentSpec, gameKey, gamePlayer);
+        Equipment equipment = equipmentFactory.create(equipmentSpec, gameKey, gamePlayer);
+
+        gameScope.exit();
+
+        return equipment;
     }
 
     /**
@@ -83,8 +106,17 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the id '%s'".formatted(gunId));
         }
 
+        GameContext gameContext = gameContextProvider.getGameContext(gameKey)
+                .orElseThrow(() -> new UnknownGameKeyException("No game context found game key %s".formatted(gameKey)));
+
+        gameScope.enter(gameContext);
+
         GunSpec gunSpec = gunSpecs.get(gunId);
-        return firearmFactory.create(gunSpec, gameKey, gamePlayer);
+        Gun gun = gunFactory.create(gunSpec, gameKey, gamePlayer);
+
+        gameScope.exit();
+
+        return gun;
     }
 
     /**
@@ -100,15 +132,11 @@ public class WeaponCreator {
     @NotNull
     public Weapon createWeapon(@NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey, @NotNull String weaponId) {
         if (equipmentSpecs.containsKey(weaponId)) {
-            EquipmentSpec spec = equipmentSpecs.get(weaponId);
-
-            return equipmentFactory.create(spec, gameKey, gamePlayer);
+            return this.createEquipment(weaponId, gamePlayer, gameKey);
         }
 
         if (gunSpecs.containsKey(weaponId)) {
-            GunSpec spec = gunSpecs.get(weaponId);
-
-            return firearmFactory.create(spec, gameKey, gamePlayer);
+            return this.createGun(weaponId, gamePlayer, gameKey);
         }
 
         throw new WeaponNotFoundException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponId));
