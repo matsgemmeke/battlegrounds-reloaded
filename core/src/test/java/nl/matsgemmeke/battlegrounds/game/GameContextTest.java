@@ -11,6 +11,8 @@ import static org.mockito.Mockito.when;
 
 public class GameContextTest {
 
+    private static final GameContextType TYPE = GameContextType.OPEN_MODE;
+
     @Test
     public void getOrCreateReturnsResultFromGivenProviderWhenKeyIsNotStored() {
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
@@ -19,7 +21,7 @@ public class GameContextTest {
         Provider<PlayerRegistry> provider = mock();
         when(provider.get()).thenReturn(playerRegistry);
 
-        GameContext gameContext = new GameContext();
+        GameContext gameContext = new GameContext(TYPE);
         PlayerRegistry result = gameContext.getOrCreate(key, provider);
 
         assertThat(result).isEqualTo(playerRegistry);
@@ -37,7 +39,7 @@ public class GameContextTest {
         Provider<PlayerRegistry> secondProvider = mock();
         when(secondProvider.get()).thenReturn(secondPlayerRegistry);
 
-        GameContext gameContext = new GameContext();
+        GameContext gameContext = new GameContext(TYPE);
         gameContext.getOrCreate(key, firstProvider);
         PlayerRegistry result = gameContext.getOrCreate(key, secondProvider);
 

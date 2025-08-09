@@ -8,7 +8,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GameContext {
 
-    private final Map<Key<?>, Object> scopedObjects = new ConcurrentHashMap<>();
+    private final GameContextType type;
+    private final Map<Key<?>, Object> scopedObjects;
+
+    public GameContext(GameContextType type) {
+        this.type = type;
+        this.scopedObjects = new ConcurrentHashMap<>();
+    }
+
+    public GameContextType getType() {
+        return type;
+    }
 
     @SuppressWarnings("unchecked")
     public <T> T getOrCreate(Key<T> key, Provider<T> creator) {

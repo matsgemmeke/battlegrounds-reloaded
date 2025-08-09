@@ -4,10 +4,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.GameScope;
+import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
@@ -73,7 +70,7 @@ public class WeaponCreatorTest {
     public void createEquipmentReturnsEquipmentInstanceBasedOnGivenEquipmentId() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        GameContext gameContext = new GameContext();
+        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
 
@@ -120,7 +117,7 @@ public class WeaponCreatorTest {
     public void createGunReturnsGunInstanceBasedOnGivenGunId() {
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        GameContext gameContext = new GameContext();
+        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
 
@@ -142,7 +139,7 @@ public class WeaponCreatorTest {
         Equipment equipment = mock(Equipment.class);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        GameContext gameContext = new GameContext();
+        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(equipmentFactory.create(equipmentSpec, GAME_KEY, gamePlayer)).thenReturn(equipment);
@@ -162,7 +159,7 @@ public class WeaponCreatorTest {
         Firearm firearm = mock(Firearm.class);
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        GameContext gameContext = new GameContext();
+        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gunFactory.create(gunSpec, GAME_KEY, gamePlayer)).thenReturn(firearm);
