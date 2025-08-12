@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -11,10 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class MarkSpawnPointEffect extends BaseItemEffect {
 
     @NotNull
-    private final SpawnPointProvider spawnPointProvider;
+    private final SpawnPointRegistry spawnPointRegistry;
 
-    public MarkSpawnPointEffect(@NotNull SpawnPointProvider spawnPointProvider) {
-        this.spawnPointProvider = spawnPointProvider;
+    @Inject
+    public MarkSpawnPointEffect(@NotNull SpawnPointRegistry spawnPointRegistry) {
+        this.spawnPointRegistry = spawnPointRegistry;
     }
 
     public void perform(@NotNull ItemEffectContext context) {
@@ -22,7 +24,7 @@ public class MarkSpawnPointEffect extends BaseItemEffect {
         Location initiationLocation = context.getInitiationLocation();
         SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), initiationLocation.getYaw());
 
-        spawnPointProvider.setCustomSpawnPoint(entity.getUniqueId(), spawnPoint);
+        spawnPointRegistry.setCustomSpawnPoint(entity.getUniqueId(), spawnPoint);
     }
 
     public void reset() {
@@ -30,6 +32,6 @@ public class MarkSpawnPointEffect extends BaseItemEffect {
             return;
         }
 
-        spawnPointProvider.setCustomSpawnPoint(currentContext.getEntity().getUniqueId(), null);
+        spawnPointRegistry.setCustomSpawnPoint(currentContext.getEntity().getUniqueId(), null);
     }
 }

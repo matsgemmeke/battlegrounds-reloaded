@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
@@ -213,8 +213,8 @@ public class ItemEffectFactoryTest {
         spec.type = "MARK_SPAWN_POINT";
         spec.triggers = Map.of("timed", triggerSpec);
 
-        SpawnPointProvider spawnPointProvider = mock(SpawnPointProvider.class);
-        when(contextProvider.getComponent(gameKey, SpawnPointProvider.class)).thenReturn(spawnPointProvider);
+        SpawnPointRegistry spawnPointRegistry = mock(SpawnPointRegistry.class);
+        when(contextProvider.getComponent(gameKey, SpawnPointRegistry.class)).thenReturn(spawnPointRegistry);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
         ItemEffect itemEffect = factory.create(spec, gameKey);

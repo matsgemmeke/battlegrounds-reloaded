@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class GameScopeTest {
 
@@ -45,5 +44,18 @@ public class GameScopeTest {
         Provider<PlayerRegistry> scopeProvider = scope.scope(key, provider);
 
         assertThat(scopeProvider.get()).isEqualTo(playerRegistry);
+    }
+
+    @Test
+    public void runInScopeEntersScopeAndExitsAfterRunningAction() {
+        GameContext gameContext = new GameContext(TYPE);
+        Runnable action = mock(Runnable.class);
+
+        GameScope scope = new GameScope();
+        scope.runInScope(gameContext, action);
+
+        assertThat(scope.getCurrentGameContext()).isEmpty();
+
+        verify(action).run();
     }
 }

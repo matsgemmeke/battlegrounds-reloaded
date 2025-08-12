@@ -106,9 +106,9 @@ public class GameContextProviderTest {
 
         GameContextProvider gameContextProvider = new GameContextProvider();
         gameContextProvider.addGameContext(gameKey, gameContext);
-        Optional<GameContext> result = gameContextProvider.getGameContext(otherKey);
+        Optional<GameContext> gameContextOptional = gameContextProvider.getGameContext(otherKey);
 
-        assertThat(result).isEmpty();
+        assertThat(gameContextOptional).isEmpty();
     }
 
     @Test
@@ -193,6 +193,28 @@ public class GameContextProviderTest {
         Set<GameKey> gameKeys = contextProvider.getGameKeys();
 
         assertThat(gameKeys).containsExactly(gameKey);
+    }
+
+    @Test
+    public void getGameKeyByEntityIdReturnsEmptyOptionalWhenNoLinkOfGivenEntityIdExists() {
+        UUID entityId = UUID.randomUUID();
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        Optional<GameKey> gameKeyOptional = contextProvider.getGameKeyByEntityId(entityId);
+
+        assertThat(gameKeyOptional).isEmpty();
+    }
+
+    @Test
+    public void getGameKeyByEntityIdReturnsOptionalWithGameKeyLinkedToGivenEntityId() {
+        UUID entityId = UUID.randomUUID();
+        GameKey gameKey = GameKey.ofOpenMode();
+
+        GameContextProvider contextProvider = new GameContextProvider();
+        contextProvider.registerEntity(entityId, gameKey);
+        Optional<GameKey> gameKeyOptional = contextProvider.getGameKeyByEntityId(entityId);
+
+        assertThat(gameKeyOptional).hasValue(gameKey);
     }
 
     @Test

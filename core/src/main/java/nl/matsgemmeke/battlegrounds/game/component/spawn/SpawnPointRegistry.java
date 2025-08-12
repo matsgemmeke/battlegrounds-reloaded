@@ -1,17 +1,16 @@
 package nl.matsgemmeke.battlegrounds.game.component.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Represents a game component responsible for managing and assigning spawn points for entities.
  */
-public interface SpawnPointProvider {
+public interface SpawnPointRegistry {
 
     /**
      * Checks whether the specified entity has an assigned spawn point.
@@ -22,14 +21,13 @@ public interface SpawnPointProvider {
     boolean hasSpawnPoint(@NotNull UUID entityId);
 
     /**
-     * Respawns the given entity at its assigned spawn point. If a custom spawn point is set, the entity will be
-     * respawned there. Otherwise, the default spawn location will be used.
+     * Gets the custom spawn point set by an entity. The returned optional empty when the entity has no custom spawn
+     * point set up.
      *
-     * @param entity the entity to be respawned
-     * @return the location where the entity is respawned
+     * @param entityId the entity id
+     * @return an optional containing the spawn point object or an empty optional if none exists
      */
-    @NotNull
-    Location respawnEntity(@NotNull Entity entity);
+    Optional<SpawnPoint> getCustomSpawnPoint(UUID entityId);
 
     /**
      * Assigns a custom spawn point to the specified entity. If the {@code spawnPoint} parameter is {@code null}, the

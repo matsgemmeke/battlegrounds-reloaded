@@ -22,11 +22,14 @@ public class GameContextProvider {
     private final Map<GameKey, GameContext> gameContexts;
     @NotNull
     private Map<GameKey, Map<Class<?>, Object>> gameComponents;
+    @NotNull
+    private final Map<UUID, GameKey> entityGameKeyMap;
 
     public GameContextProvider() {
         this.games = new HashMap<>();
         this.gameContexts = new HashMap<>();
         this.gameComponents = new HashMap<>();
+        this.entityGameKeyMap = new HashMap<>();
     }
 
     /**
@@ -152,6 +155,14 @@ public class GameContextProvider {
         return null;
     }
 
+    public Optional<GameKey> getGameKeyByEntityId(UUID entityId) {
+        if (!entityGameKeyMap.containsKey(entityId)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(entityGameKeyMap.get(entityId));
+    }
+
     /**
      * Gets the game keys of all registered games.
      *
@@ -194,6 +205,10 @@ public class GameContextProvider {
     public void registerGame(@NotNull GameKey gameKey, @NotNull Game game) {
         games.put(gameKey, game);
         gameComponents.put(gameKey, new HashMap<>());
+    }
+
+    public void registerEntity(UUID entityId, GameKey gameKey) {
+        entityGameKeyMap.put(entityId, gameKey);
     }
 
     /**

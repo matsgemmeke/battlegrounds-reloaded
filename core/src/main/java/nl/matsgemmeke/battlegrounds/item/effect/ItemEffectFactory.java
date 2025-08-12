@@ -11,7 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -154,9 +154,9 @@ public class ItemEffectFactory {
                 itemEffect = gunFireSimulationEffectFactory.create(audioEmitter, gunInfoProvider, properties);
             }
             case MARK_SPAWN_POINT -> {
-                SpawnPointProvider spawnPointProvider = contextProvider.getComponent(gameKey, SpawnPointProvider.class);
+                SpawnPointRegistry spawnPointRegistry = contextProvider.getComponent(gameKey, SpawnPointRegistry.class);
 
-                itemEffect = new MarkSpawnPointEffect(spawnPointProvider);
+                itemEffect = new MarkSpawnPointEffect(spawnPointRegistry);
             }
             case SMOKE_SCREEN -> {
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);

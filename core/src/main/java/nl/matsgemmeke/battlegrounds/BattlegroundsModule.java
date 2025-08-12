@@ -23,6 +23,8 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistryProvider;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandlerFactory;
@@ -83,12 +85,6 @@ public class BattlegroundsModule implements Module {
     }
 
     public void configure(Binder binder) {
-        // Scope bindings
-        GameScope gameScope = new GameScope();
-
-        binder.bind(GameScope.class).toInstance(gameScope);
-        binder.bindScope(GameScoped.class, gameScope);
-
         // Instance bindings
         binder.bind(InternalsProvider.class).toInstance(internals);
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
@@ -112,6 +108,14 @@ public class BattlegroundsModule implements Module {
         binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(Singleton.class);
+
+        // Scope bindings
+        GameScope gameScope = new GameScope();
+
+        binder.bind(GameScope.class).toInstance(gameScope);
+        binder.bindScope(GameScoped.class, gameScope);
+
+        binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
 
         // Component bindings
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class);
