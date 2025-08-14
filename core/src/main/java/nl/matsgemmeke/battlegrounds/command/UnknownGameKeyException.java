@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.creator;
+package nl.matsgemmeke.battlegrounds.command;
 
 public class UnknownGameKeyException extends RuntimeException {
 

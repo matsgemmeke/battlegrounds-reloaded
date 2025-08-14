@@ -3,10 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.creator;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
@@ -30,22 +27,11 @@ public class WeaponCreator {
     @NotNull
     private final FirearmFactory gunFactory;
     @NotNull
-    private final GameContextProvider gameContextProvider;
-    @NotNull
-    private final GameScope gameScope;
-    @NotNull
     private final Map<String, EquipmentSpec> equipmentSpecs;
     @NotNull
     private final Map<String, GunSpec> gunSpecs;
 
-    public WeaponCreator(
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameScope gameScope,
-            @NotNull EquipmentFactory equipmentFactory,
-            @NotNull FirearmFactory gunFactory
-    ) {
-        this.gameContextProvider = gameContextProvider;
-        this.gameScope = gameScope;
+    public WeaponCreator(@NotNull EquipmentFactory equipmentFactory, @NotNull FirearmFactory gunFactory) {
         this.equipmentFactory = equipmentFactory;
         this.gunFactory = gunFactory;
         this.equipmentSpecs = new HashMap<>();
@@ -77,17 +63,9 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for an equipment item by the id '%s'".formatted(equipmentId));
         }
 
-        GameContext gameContext = gameContextProvider.getGameContext(gameKey)
-                .orElseThrow(() -> new UnknownGameKeyException("No game context found game key %s".formatted(gameKey)));
-
-        gameScope.enter(gameContext);
-
         EquipmentSpec equipmentSpec = equipmentSpecs.get(equipmentId);
-        Equipment equipment = equipmentFactory.create(equipmentSpec, gameKey, gamePlayer);
 
-        gameScope.exit();
-
-        return equipment;
+        return equipmentFactory.create(equipmentSpec, gameKey, gamePlayer);
     }
 
     /**
@@ -106,17 +84,9 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the id '%s'".formatted(gunId));
         }
 
-        GameContext gameContext = gameContextProvider.getGameContext(gameKey)
-                .orElseThrow(() -> new UnknownGameKeyException("No game context found game key %s".formatted(gameKey)));
+        GunSpec gunSpec = gunSpecs.get(gunId);;
 
-        gameScope.enter(gameContext);
-
-        GunSpec gunSpec = gunSpecs.get(gunId);
-        Gun gun = gunFactory.create(gunSpec, gameKey, gamePlayer);
-
-        gameScope.exit();
-
-        return gun;
+        return gunFactory.create(gunSpec, gameKey, gamePlayer);
     }
 
     /**
