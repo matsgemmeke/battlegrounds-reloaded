@@ -23,6 +23,8 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistryProvider;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
@@ -109,12 +111,13 @@ public class BattlegroundsModule implements Module {
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(Singleton.class);
 
-        // Scope bindings
+        // Game scope bindings
         GameScope gameScope = new GameScope();
 
         binder.bind(GameScope.class).toInstance(gameScope);
         binder.bindScope(GameScoped.class, gameScope);
 
+        binder.bind(RespawnHandler.class).toProvider(RespawnHandlerProvider.class).in(GameScoped.class);
         binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
 
         // Component bindings

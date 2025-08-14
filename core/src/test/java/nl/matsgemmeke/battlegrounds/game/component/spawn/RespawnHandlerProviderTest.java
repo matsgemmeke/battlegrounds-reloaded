@@ -5,7 +5,7 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.spawn.OpenModeSpawnPointRegistry;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.spawn.OpenModeRespawnHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,26 +16,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SpawnPointRegistryProviderTest {
+public class RespawnHandlerProviderTest {
 
     private GameScope gameScope;
-    private Provider<OpenModeSpawnPointRegistry> openModeSpawnPointRegistryProvider;
+    private Provider<OpenModeRespawnHandler> openModeRespawnHandlerProvider;
 
     @BeforeEach
     public void setUp() {
         gameScope = mock(GameScope.class);
-        openModeSpawnPointRegistryProvider = mock();
+        openModeRespawnHandlerProvider = mock();
     }
 
     @Test
     public void getThrowsOutOfScopeExceptionWhenGameScopeHasNoCurrentGameContext() {
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.empty());
 
-        SpawnPointRegistryProvider provider = new SpawnPointRegistryProvider(gameScope, openModeSpawnPointRegistryProvider);
+        RespawnHandlerProvider provider = new RespawnHandlerProvider(gameScope, openModeRespawnHandlerProvider);
 
         assertThatThrownBy(provider::get)
                 .isInstanceOf(OutOfScopeException.class)
-                .hasMessage("Cannot provide instance of SpawnPointRegistry when the game scope is empty");
+                .hasMessage("Cannot provide instance of RespawnHandler when the game scope is empty");
     }
 
     @Test
@@ -44,8 +44,8 @@ public class SpawnPointRegistryProviderTest {
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
-        SpawnPointRegistryProvider provider = new SpawnPointRegistryProvider(gameScope, openModeSpawnPointRegistryProvider);
-        SpawnPointRegistry result = provider.get();
+        RespawnHandlerProvider provider = new RespawnHandlerProvider(gameScope, openModeRespawnHandlerProvider);
+        RespawnHandler result = provider.get();
 
         assertThat(result).isNull();
     }
@@ -53,14 +53,14 @@ public class SpawnPointRegistryProviderTest {
     @Test
     public void getReturnsOpenModeSpawnPointRegistryWhenCurrentGameContextIsOfTypeOpenMode() {
         GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
-        OpenModeSpawnPointRegistry spawnPointRegistry = mock(OpenModeSpawnPointRegistry.class);
+        OpenModeRespawnHandler respawnHandler = mock(OpenModeRespawnHandler.class);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
-        when(openModeSpawnPointRegistryProvider.get()).thenReturn(spawnPointRegistry);
+        when(openModeRespawnHandlerProvider.get()).thenReturn(respawnHandler);
 
-        SpawnPointRegistryProvider provider = new SpawnPointRegistryProvider(gameScope, openModeSpawnPointRegistryProvider);
-        SpawnPointRegistry result = provider.get();
+        RespawnHandlerProvider provider = new RespawnHandlerProvider(gameScope, openModeRespawnHandlerProvider);
+        RespawnHandler result = provider.get();
 
-        assertThat(result).isEqualTo(spawnPointRegistry);
+        assertThat(result).isEqualTo(respawnHandler);
     }
 }

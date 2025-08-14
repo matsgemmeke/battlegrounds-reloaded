@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContextType;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
@@ -27,15 +29,17 @@ import org.mockito.MockedStatic;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class OpenModeInitializerTest {
 
     private BattlegroundsConfiguration configuration;
     private EventDispatcher eventDispatcher;
-    private GameContextProvider contextProvider;
+    private GameContextProvider gameContextProvider;
     private DefaultPlayerRegistryFactory playerRegistryFactory;
     private Provider<CollisionDetector> collisionDetectorProvider;
+    private Provider<PlayerRegistry> playerRegistryProvider;
     private OpenModePlayerLifecycleHandlerFactory playerLifecycleHandlerFactory;
     private OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory;
     private MockedStatic<Bukkit> bukkit;
@@ -44,9 +48,10 @@ public class OpenModeInitializerTest {
     public void setUp() {
         configuration = mock(BattlegroundsConfiguration.class);
         eventDispatcher = mock(EventDispatcher.class);
-        contextProvider = new GameContextProvider();
+        gameContextProvider = new GameContextProvider();
         playerRegistryFactory = mock(DefaultPlayerRegistryFactory.class);
         collisionDetectorProvider = mock();
+        playerRegistryProvider = mock();
         playerLifecycleHandlerFactory = mock(OpenModePlayerLifecycleHandlerFactory.class);
         statePersistenceHandlerFactory = mock(OpenModeStatePersistenceHandlerFactory.class);
         bukkit = mockStatic(Bukkit.class);
@@ -68,6 +73,7 @@ public class OpenModeInitializerTest {
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
 
         CollisionDetector collisionDetector = mock(CollisionDetector.class);
         when(collisionDetectorProvider.get()).thenReturn(collisionDetector);
@@ -77,8 +83,12 @@ public class OpenModeInitializerTest {
         when(statePersistenceHandlerFactory.create(any(EquipmentRegistry.class), any(GunRegistry.class), eq(playerRegistry))).thenReturn(statePersistenceHandler);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
-        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, contextProvider, playerRegistryFactory, playerLifecycleHandlerFactory, statePersistenceHandlerFactory, collisionDetectorProvider);
+        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, playerRegistryFactory, playerLifecycleHandlerFactory, statePersistenceHandlerFactory, collisionDetectorProvider, playerRegistryProvider);
         openModeInitializer.initialize();
+
+        assertThat(gameContextProvider.getGameContext(GameKey.ofOpenMode())).hasValueSatisfying(gameContext ->
+                assertThat(gameContext.getType()).isEqualTo(GameContextType.OPEN_MODE)
+        );
 
         ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);
         verify(eventDispatcher).registerEventHandler(eq(EntityDamageEvent.class), entityDamageEventHandlerCaptor.capture());

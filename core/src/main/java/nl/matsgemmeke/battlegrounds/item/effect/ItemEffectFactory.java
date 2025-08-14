@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -11,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -50,6 +50,8 @@ public class ItemEffectFactory {
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
     @NotNull
+    private final Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider;
+    @NotNull
     private final RangeProfileMapper rangeProfileMapper;
     @NotNull
     private final SmokeScreenEffectFactory smokeScreenEffectFactory;
@@ -62,6 +64,7 @@ public class ItemEffectFactory {
             @NotNull CombustionEffectFactory combustionEffectFactory,
             @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory,
             @NotNull ParticleEffectMapper particleEffectMapper,
+            @NotNull Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
             @NotNull RangeProfileMapper rangeProfileMapper,
             @NotNull SmokeScreenEffectFactory smokeScreenEffectFactory,
             @NotNull TriggerFactory triggerFactory
@@ -70,6 +73,7 @@ public class ItemEffectFactory {
         this.combustionEffectFactory = combustionEffectFactory;
         this.gunFireSimulationEffectFactory = gunFireSimulationEffectFactory;
         this.particleEffectMapper = particleEffectMapper;
+        this.markSpawnPointEffectProvider = markSpawnPointEffectProvider;
         this.rangeProfileMapper = rangeProfileMapper;
         this.smokeScreenEffectFactory = smokeScreenEffectFactory;
         this.triggerFactory = triggerFactory;
@@ -153,11 +157,7 @@ public class ItemEffectFactory {
 
                 itemEffect = gunFireSimulationEffectFactory.create(audioEmitter, gunInfoProvider, properties);
             }
-            case MARK_SPAWN_POINT -> {
-                SpawnPointRegistry spawnPointRegistry = contextProvider.getComponent(gameKey, SpawnPointRegistry.class);
-
-                itemEffect = new MarkSpawnPointEffect(spawnPointRegistry);
-            }
+            case MARK_SPAWN_POINT -> itemEffect = markSpawnPointEffectProvider.get();
             case SMOKE_SCREEN -> {
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
                 long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);

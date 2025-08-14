@@ -5,7 +5,9 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
@@ -39,7 +41,7 @@ public class OpenModeInitializer {
     @NotNull
     private final EventDispatcher eventDispatcher;
     @NotNull
-    private final GameContextProvider contextProvider;
+    private final GameContextProvider gameContextProvider;
     @NotNull
     private final DefaultPlayerRegistryFactory playerRegistryFactory;
     @NotNull
@@ -48,24 +50,28 @@ public class OpenModeInitializer {
     private final OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory;
     @NotNull
     private final Provider<CollisionDetector> collisionDetectorProvider;
+    @NotNull
+    private final Provider<PlayerRegistry> playerRegistryProvider;
 
     @Inject
     public OpenModeInitializer(
             @NotNull BattlegroundsConfiguration configuration,
             @NotNull EventDispatcher eventDispatcher,
-            @NotNull GameContextProvider contextProvider,
+            @NotNull GameContextProvider gameContextProvider,
             @NotNull DefaultPlayerRegistryFactory playerRegistryFactory,
             @NotNull OpenModePlayerLifecycleHandlerFactory playerLifecycleHandlerFactory,
             @NotNull OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory,
-            @NotNull Provider<CollisionDetector> collisionDetectorProvider
+            @NotNull Provider<CollisionDetector> collisionDetectorProvider,
+            @NotNull Provider<PlayerRegistry> playerRegistryProvider
     ) {
         this.configuration = configuration;
         this.eventDispatcher = eventDispatcher;
-        this.contextProvider = contextProvider;
+        this.gameContextProvider = gameContextProvider;
         this.playerRegistryFactory = playerRegistryFactory;
         this.playerLifecycleHandlerFactory = playerLifecycleHandlerFactory;
         this.statePersistenceHandlerFactory = statePersistenceHandlerFactory;
         this.collisionDetectorProvider = collisionDetectorProvider;
+        this.playerRegistryProvider = playerRegistryProvider;
     }
 
     public void initialize() {
@@ -74,6 +80,9 @@ public class OpenModeInitializer {
         openMode.addItemBehavior(new GunBehavior(openMode.getGunContainer()));
 
         GameKey gameKey = GameKey.ofOpenMode();
+        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
+
+        gameContextProvider.addGameContext(gameKey, gameContext);
 
         // Registry components
         EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(openMode.getEquipmentContainer());
@@ -97,36 +106,36 @@ public class OpenModeInitializer {
         DamageProcessor damageProcessor = new OpenModeDamageProcessor(gameKey, deploymentInfoProvider);
         TargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
 
-        contextProvider.assignOpenMode(openMode);
+        gameContextProvider.assignOpenMode(openMode);
 
-        contextProvider.registerComponent(gameKey, ActionHandler.class, actionHandler);
-        contextProvider.registerComponent(gameKey, AudioEmitter.class, audioEmitter);
-        contextProvider.registerComponent(gameKey, CollisionDetector.class, collisionDetector);
-        contextProvider.registerComponent(gameKey, DamageProcessor.class, damageProcessor);
-        contextProvider.registerComponent(gameKey, DeploymentInfoProvider.class, deploymentInfoProvider);
-        contextProvider.registerComponent(gameKey, EquipmentRegistry.class, equipmentRegistry);
-        contextProvider.registerComponent(gameKey, GunInfoProvider.class, gunInfoProvider);
-        contextProvider.registerComponent(gameKey, GunRegistry.class, gunRegistry);
-        contextProvider.registerComponent(gameKey, PlayerLifecycleHandler.class, playerLifecycleHandler);
-        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
-        contextProvider.registerComponent(gameKey, ProjectileHitActionRegistry.class, projectileHitActionRegistry);
-        contextProvider.registerComponent(gameKey, StatePersistenceHandler.class, statePersistanceHandler);
-        contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
+        gameContextProvider.registerComponent(gameKey, ActionHandler.class, actionHandler);
+        gameContextProvider.registerComponent(gameKey, AudioEmitter.class, audioEmitter);
+        gameContextProvider.registerComponent(gameKey, CollisionDetector.class, collisionDetector);
+        gameContextProvider.registerComponent(gameKey, DamageProcessor.class, damageProcessor);
+        gameContextProvider.registerComponent(gameKey, DeploymentInfoProvider.class, deploymentInfoProvider);
+        gameContextProvider.registerComponent(gameKey, EquipmentRegistry.class, equipmentRegistry);
+        gameContextProvider.registerComponent(gameKey, GunInfoProvider.class, gunInfoProvider);
+        gameContextProvider.registerComponent(gameKey, GunRegistry.class, gunRegistry);
+        gameContextProvider.registerComponent(gameKey, PlayerLifecycleHandler.class, playerLifecycleHandler);
+        gameContextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
+        gameContextProvider.registerComponent(gameKey, ProjectileHitActionRegistry.class, projectileHitActionRegistry);
+        gameContextProvider.registerComponent(gameKey, StatePersistenceHandler.class, statePersistanceHandler);
+        gameContextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
 
         this.registerEventHandlers(gameKey);
         this.registerPlayers(gameKey);
     }
 
     private void registerEventHandlers(@NotNull GameKey gameKey) {
-        DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
-        DeploymentInfoProvider deploymentInfoProvider = contextProvider.getComponent(gameKey, DeploymentInfoProvider.class);
+        DamageProcessor damageProcessor = gameContextProvider.getComponent(gameKey, DamageProcessor.class);
+        DeploymentInfoProvider deploymentInfoProvider = gameContextProvider.getComponent(gameKey, DeploymentInfoProvider.class);
 
         eventDispatcher.registerEventHandler(EntityDamageEvent.class, new EntityDamageEventHandler(damageProcessor, deploymentInfoProvider));
     }
 
     private void registerPlayers(@NotNull GameKey gameKey) {
-        PlayerRegistry playerRegistry = contextProvider.getComponent(gameKey, PlayerRegistry.class);
-        StatePersistenceHandler statePersistenceHandler = contextProvider.getComponent(gameKey, StatePersistenceHandler.class);
+        PlayerRegistry playerRegistry = playerRegistryProvider.get();
+        StatePersistenceHandler statePersistenceHandler = gameContextProvider.getComponent(gameKey, StatePersistenceHandler.class);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             GamePlayer gamePlayer = playerRegistry.registerEntity(player);

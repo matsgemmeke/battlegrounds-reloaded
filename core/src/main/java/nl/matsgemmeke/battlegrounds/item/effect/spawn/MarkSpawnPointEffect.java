@@ -6,8 +6,9 @@ import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class MarkSpawnPointEffect extends BaseItemEffect {
 
@@ -20,11 +21,12 @@ public class MarkSpawnPointEffect extends BaseItemEffect {
     }
 
     public void perform(@NotNull ItemEffectContext context) {
-        Entity entity = context.getEntity();
+        UUID entityId = context.getEntity().getUniqueId();
         Location initiationLocation = context.getInitiationLocation();
+
         SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), initiationLocation.getYaw());
 
-        spawnPointRegistry.setCustomSpawnPoint(entity.getUniqueId(), spawnPoint);
+        spawnPointRegistry.setCustomSpawnPoint(entityId, spawnPoint);
     }
 
     public void reset() {

@@ -26,7 +26,7 @@ public class SpawnPointRegistryProvider implements Provider<SpawnPointRegistry> 
 
     public SpawnPointRegistry get() {
         GameContext gameContext = gameScope.getCurrentGameContext()
-                .orElseThrow(() -> new OutOfScopeException("Cannot provide SpawnPointRegistry when the game scope is empty"));
+                .orElseThrow(() -> new OutOfScopeException("Cannot provide instance of SpawnPointRegistry when the game scope is empty"));
 
         return switch (gameContext.getType()) {
             case ARENA_MODE -> null;
