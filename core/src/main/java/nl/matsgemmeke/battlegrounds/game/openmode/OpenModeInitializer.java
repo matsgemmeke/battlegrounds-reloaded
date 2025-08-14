@@ -14,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
@@ -43,8 +42,6 @@ public class OpenModeInitializer {
     @NotNull
     private final GameContextProvider gameContextProvider;
     @NotNull
-    private final DefaultPlayerRegistryFactory playerRegistryFactory;
-    @NotNull
     private final OpenModePlayerLifecycleHandlerFactory playerLifecycleHandlerFactory;
     @NotNull
     private final OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory;
@@ -58,7 +55,6 @@ public class OpenModeInitializer {
             @NotNull BattlegroundsConfiguration configuration,
             @NotNull EventDispatcher eventDispatcher,
             @NotNull GameContextProvider gameContextProvider,
-            @NotNull DefaultPlayerRegistryFactory playerRegistryFactory,
             @NotNull OpenModePlayerLifecycleHandlerFactory playerLifecycleHandlerFactory,
             @NotNull OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory,
             @NotNull Provider<CollisionDetector> collisionDetectorProvider,
@@ -67,7 +63,6 @@ public class OpenModeInitializer {
         this.configuration = configuration;
         this.eventDispatcher = eventDispatcher;
         this.gameContextProvider = gameContextProvider;
-        this.playerRegistryFactory = playerRegistryFactory;
         this.playerLifecycleHandlerFactory = playerLifecycleHandlerFactory;
         this.statePersistenceHandlerFactory = statePersistenceHandlerFactory;
         this.collisionDetectorProvider = collisionDetectorProvider;
@@ -87,7 +82,7 @@ public class OpenModeInitializer {
         // Registry components
         EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(openMode.getEquipmentContainer());
         GunRegistry gunRegistry = new DefaultGunRegistry(openMode.getGunContainer());
-        PlayerRegistry playerRegistry = playerRegistryFactory.create(openMode.getPlayerContainer());
+        PlayerRegistry playerRegistry = playerRegistryProvider.get();
 
         // Info provider components
         DeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);

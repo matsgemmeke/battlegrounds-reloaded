@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.EntityContainer;
@@ -20,9 +19,9 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     private final EntityContainer<GamePlayer> playerContainer;
 
     @Inject
-    public DefaultPlayerRegistry(@NotNull DefaultGamePlayerFactory gamePlayerFactory, @Assisted @NotNull EntityContainer<GamePlayer> playerContainer) {
+    public DefaultPlayerRegistry(@NotNull DefaultGamePlayerFactory gamePlayerFactory) {
         this.gamePlayerFactory = gamePlayerFactory;
-        this.playerContainer = playerContainer;
+        this.playerContainer = new EntityContainer<>();
     }
 
     @Nullable

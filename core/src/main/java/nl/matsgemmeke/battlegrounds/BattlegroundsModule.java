@@ -19,9 +19,6 @@ import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.GameScoped;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandlerProvider;
@@ -145,9 +142,6 @@ public class BattlegroundsModule implements Module {
                 .implement(ItemEffect.class, SmokeScreenEffect.class)
                 .build(SmokeScreenEffectFactory.class));
 
-        binder.install(new FactoryModuleBuilder()
-                .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
-                .build(DefaultPlayerRegistryFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(StatePersistenceHandler.class, OpenModeStatePersistenceHandler.class)
                 .build(OpenModeStatePersistenceHandlerFactory.class));

@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
@@ -37,7 +36,6 @@ public class OpenModeInitializerTest {
     private BattlegroundsConfiguration configuration;
     private EventDispatcher eventDispatcher;
     private GameContextProvider gameContextProvider;
-    private DefaultPlayerRegistryFactory playerRegistryFactory;
     private Provider<CollisionDetector> collisionDetectorProvider;
     private Provider<PlayerRegistry> playerRegistryProvider;
     private OpenModePlayerLifecycleHandlerFactory playerLifecycleHandlerFactory;
@@ -49,7 +47,6 @@ public class OpenModeInitializerTest {
         configuration = mock(BattlegroundsConfiguration.class);
         eventDispatcher = mock(EventDispatcher.class);
         gameContextProvider = new GameContextProvider();
-        playerRegistryFactory = mock(DefaultPlayerRegistryFactory.class);
         collisionDetectorProvider = mock();
         playerRegistryProvider = mock();
         playerLifecycleHandlerFactory = mock(OpenModePlayerLifecycleHandlerFactory.class);
@@ -79,11 +76,10 @@ public class OpenModeInitializerTest {
         when(collisionDetectorProvider.get()).thenReturn(collisionDetector);
 
         when(playerLifecycleHandlerFactory.create(any(ItemLifecycleHandler.class), eq(playerRegistry), eq(statePersistenceHandler))).thenReturn(playerLifecycleHandler);
-        when(playerRegistryFactory.create(any())).thenReturn(playerRegistry);
         when(statePersistenceHandlerFactory.create(any(EquipmentRegistry.class), any(GunRegistry.class), eq(playerRegistry))).thenReturn(statePersistenceHandler);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
-        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, playerRegistryFactory, playerLifecycleHandlerFactory, statePersistenceHandlerFactory, collisionDetectorProvider, playerRegistryProvider);
+        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, playerLifecycleHandlerFactory, statePersistenceHandlerFactory, collisionDetectorProvider, playerRegistryProvider);
         openModeInitializer.initialize();
 
         assertThat(gameContextProvider.getGameContext(GameKey.ofOpenMode())).hasValueSatisfying(gameContext ->

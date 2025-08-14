@@ -16,10 +16,10 @@ import java.util.Map;
 
 public class GiveWeaponCommand extends CommandSource {
 
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+
     @NotNull
     private final GameContextProvider contextProvider;
-    @NotNull
-    private final GameKey openModeGameKey;
     @NotNull
     private final Translator translator;
     @NotNull
@@ -35,13 +35,12 @@ public class GiveWeaponCommand extends CommandSource {
         this.contextProvider = contextProvider;
         this.translator = translator;
         this.weaponCreator = weaponCreator;
-        this.openModeGameKey = GameKey.ofOpenMode();
     }
 
     public void execute(@NotNull Player player, @NotNull String weaponId) {
         PlayerRegistry playerRegistry = contextProvider.getComponent(openModeGameKey, PlayerRegistry.class);
         GamePlayer gamePlayer = playerRegistry.findByEntity(player);
-        Weapon weapon = weaponCreator.createWeapon(gamePlayer, openModeGameKey, weaponId);
+        Weapon weapon = weaponCreator.createWeapon(gamePlayer, GAME_KEY, weaponId);
 
         player.getInventory().addItem(weapon.getItemStack());
 
