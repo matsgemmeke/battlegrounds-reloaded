@@ -15,13 +15,11 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.*;
-import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandlerFactory;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
@@ -45,8 +43,6 @@ public class OpenModeInitializer {
     @NotNull
     private final GameScope gameScope;
     @NotNull
-    private final OpenModePlayerLifecycleHandlerFactory playerLifecycleHandlerFactory;
-    @NotNull
     private final OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory;
     @NotNull
     private final Provider<CollisionDetector> collisionDetectorProvider;
@@ -59,7 +55,6 @@ public class OpenModeInitializer {
             @NotNull EventDispatcher eventDispatcher,
             @NotNull GameContextProvider gameContextProvider,
             @NotNull GameScope gameScope,
-            @NotNull OpenModePlayerLifecycleHandlerFactory playerLifecycleHandlerFactory,
             @NotNull OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory,
             @NotNull Provider<CollisionDetector> collisionDetectorProvider,
             @NotNull Provider<PlayerRegistry> playerRegistryProvider
@@ -68,7 +63,6 @@ public class OpenModeInitializer {
         this.eventDispatcher = eventDispatcher;
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.playerLifecycleHandlerFactory = playerLifecycleHandlerFactory;
         this.statePersistenceHandlerFactory = statePersistenceHandlerFactory;
         this.collisionDetectorProvider = collisionDetectorProvider;
         this.playerRegistryProvider = playerRegistryProvider;
@@ -106,7 +100,6 @@ public class OpenModeInitializer {
         StatePersistenceHandler statePersistanceHandler = statePersistenceHandlerFactory.create(equipmentRegistry, gunRegistry, playerRegistry);
 
         ItemLifecycleHandler itemLifecycleHandler = new DefaultItemLifecycleHandler(equipmentRegistry);
-        PlayerLifecycleHandler playerLifecycleHandler = playerLifecycleHandlerFactory.create(itemLifecycleHandler, playerRegistry, statePersistanceHandler);
 
         DamageProcessor damageProcessor = new OpenModeDamageProcessor(GAME_KEY, deploymentInfoProvider);
         TargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
@@ -119,7 +112,6 @@ public class OpenModeInitializer {
         gameContextProvider.registerComponent(GAME_KEY, EquipmentRegistry.class, equipmentRegistry);
         gameContextProvider.registerComponent(GAME_KEY, GunInfoProvider.class, gunInfoProvider);
         gameContextProvider.registerComponent(GAME_KEY, GunRegistry.class, gunRegistry);
-        gameContextProvider.registerComponent(GAME_KEY, PlayerLifecycleHandler.class, playerLifecycleHandler);
         gameContextProvider.registerComponent(GAME_KEY, PlayerRegistry.class, playerRegistry);
         gameContextProvider.registerComponent(GAME_KEY, ProjectileHitActionRegistry.class, projectileHitActionRegistry);
         gameContextProvider.registerComponent(GAME_KEY, StatePersistenceHandler.class, statePersistanceHandler);

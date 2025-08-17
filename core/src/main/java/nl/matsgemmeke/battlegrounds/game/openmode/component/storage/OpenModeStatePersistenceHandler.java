@@ -46,11 +46,11 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     @Inject
     public OpenModeStatePersistenceHandler(
             @Named("Battlegrounds") @NotNull Logger logger,
+            @NotNull PlayerRegistry playerRegistry,
             @NotNull PlayerStateStorage playerStateStorage,
             @NotNull WeaponCreator weaponCreator,
             @Assisted @NotNull EquipmentRegistry equipmentRegistry,
-            @Assisted @NotNull GunRegistry gunRegistry,
-            @Assisted @NotNull PlayerRegistry playerRegistry
+            @Assisted @NotNull GunRegistry gunRegistry
     ) {
         this.logger = logger;
         this.playerStateStorage = playerStateStorage;

@@ -20,13 +20,13 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDet
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistryProvider;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandler;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandlerFactory;
+import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
@@ -114,17 +114,13 @@ public class BattlegroundsModule implements Module {
         binder.bind(GameScope.class).toInstance(gameScope);
         binder.bindScope(GameScoped.class, gameScope);
 
+        binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);
         binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
+        binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
         binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
         binder.bind(RespawnHandler.class).toProvider(RespawnHandlerProvider.class).in(GameScoped.class);
         binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
-
-        // Component bindings
-        binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class);
-
-        binder.install(new FactoryModuleBuilder()
-                .implement(PlayerLifecycleHandler.class, OpenModePlayerLifecycleHandler.class)
-                .build(OpenModePlayerLifecycleHandlerFactory.class));
+        binder.bind(StatePersistenceHandler.class).toProvider(StatePersistenceHandlerProvider.class).in(GameScoped.class);
 
         // Factory bindings
         binder.install(new FactoryModuleBuilder()

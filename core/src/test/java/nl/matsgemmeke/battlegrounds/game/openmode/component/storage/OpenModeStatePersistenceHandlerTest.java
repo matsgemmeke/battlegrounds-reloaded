@@ -83,7 +83,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(weaponCreator.gunExists(GUN_ID)).thenReturn(true);
         when(weaponCreator.equipmentExists(EQUIPMENT_ID)).thenReturn(true);
 
-        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry, playerRegistry);
+        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerRegistry, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry);
         statePersistenceHandler.loadPlayerState(gamePlayer);
 
         assertThat(ammunitionStorage.getMagazineAmmo()).isEqualTo(GUN_MAGAZINE_AMMO);
@@ -107,7 +107,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(playerState);
         when(weaponCreator.gunExists(GUN_ID)).thenReturn(false);
 
-        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry, playerRegistry);
+        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerRegistry, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry);
         statePersistenceHandler.loadPlayerState(gamePlayer);
 
         verify(logger).severe("Attempted to load gun 'TEST_GUN' from the open mode of player TestPlayer, but it does not exist anymore");
@@ -125,7 +125,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(playerState);
         when(weaponCreator.equipmentExists(EQUIPMENT_ID)).thenReturn(false);
 
-        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry, playerRegistry);
+        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerRegistry, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry);
         statePersistenceHandler.loadPlayerState(gamePlayer);
 
         verify(logger).severe("Attempted to load equipment 'TEST_EQUIPMENT' from the open mode of player TestPlayer, but it does not exist anymore");
@@ -151,7 +151,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(gun));
         when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
 
-        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry, playerRegistry);
+        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerRegistry, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry);
         statePersistenceHandler.savePlayerState(gamePlayer);
 
         ArgumentCaptor<PlayerState> playerStateCaptor = ArgumentCaptor.forClass(PlayerState.class);
@@ -184,7 +184,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(gun));
         when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
 
-        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry, playerRegistry);
+        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerRegistry, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry);
         statePersistenceHandler.savePlayerState(gamePlayer);
 
         ArgumentCaptor<PlayerState> playerStateCaptor = ArgumentCaptor.forClass(PlayerState.class);
@@ -221,7 +221,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(gun));
         when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
 
-        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry, playerRegistry);
+        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerRegistry, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry);
         statePersistenceHandler.saveState();
 
         ArgumentCaptor<PlayerState> playerStateCaptor = ArgumentCaptor.forClass(PlayerState.class);
@@ -249,7 +249,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
         doThrow(new PlayerStateStorageException("error")).when(playerStateStorage).savePlayerState(any(PlayerState.class));
 
-        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry, playerRegistry);
+        OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(logger, playerRegistry, playerStateStorage, weaponCreator, equipmentRegistry, gunRegistry);
         statePersistenceHandler.saveState();
 
         verify(logger).severe("Failed to save current state of 1 player(s). Caused by: error");

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
+import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -40,7 +41,7 @@ public class PlayerRespawnEventHandler implements EventHandler<PlayerRespawnEven
         }
 
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
-                .orElseThrow(() -> new IllegalStateException("Unable to process PlayerRespawnEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
+                .orElseThrow(() -> new EventHandlingException("Unable to process PlayerRespawnEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
         gameScope.runInScope(gameContext, () -> {
             RespawnHandler respawnHandler = respawnHandlerProvider.get();

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
 import org.bukkit.Location;
@@ -67,7 +68,7 @@ public class PlayerRespawnEventHandlerTest {
         PlayerRespawnEventHandler eventHandler = new PlayerRespawnEventHandler(gameContextProvider, gameScope, respawnHandlerProvider);
 
         assertThatThrownBy((() -> eventHandler.handle(event)))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(EventHandlingException.class)
                 .hasMessage("Unable to process PlayerRespawnEvent for game key OPEN-MODE, no corresponding game context was found");
     }
 
