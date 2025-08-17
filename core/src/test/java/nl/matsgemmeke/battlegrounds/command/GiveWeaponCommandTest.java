@@ -59,8 +59,8 @@ public class GiveWeaponCommandTest {
     @Test
     public void executeGivesAssignedWeaponToPlayer() {
         String message = "weapon given: %bg_weapon%";
+        GameContext gameContext = mock(GameContext.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         PlayerInventory inventory = mock(PlayerInventory.class);

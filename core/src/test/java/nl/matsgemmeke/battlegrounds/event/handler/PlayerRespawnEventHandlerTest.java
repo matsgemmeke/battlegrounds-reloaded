@@ -73,8 +73,8 @@ public class PlayerRespawnEventHandlerTest {
 
     @Test
     public void handleSetsRespawnLocationToResultFromRespawnHandlerIfPresent() {
-        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
         GameKey gameKey = GameKey.ofOpenMode();
+        GameContext gameContext = mock(GameContext.class);
         World world = mock(World.class);
         Location respawnLocation = new Location(world, 1, 1, 1);
         Location spawnPointLocation = new Location(world, 2, 2, 2);

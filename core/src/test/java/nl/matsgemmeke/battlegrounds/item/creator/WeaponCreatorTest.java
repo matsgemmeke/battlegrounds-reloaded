@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -108,7 +107,6 @@ public class WeaponCreatorTest {
         Firearm firearm = mock(Firearm.class);
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
 
         when(gunFactory.create(gunSpec, GAME_KEY, gamePlayer)).thenReturn(firearm);
 

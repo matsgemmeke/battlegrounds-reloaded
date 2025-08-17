@@ -4,6 +4,7 @@ import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.spawn.OpenModeSpawnPointRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ public class SpawnPointRegistryProviderTest {
 
     @Test
     public void getReturnsNullWhenCurrentGameContextIsOfTypeArenaMode() {
-        GameContext gameContext = new GameContext(GameContextType.ARENA_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofSession(1), GameContextType.ARENA_MODE);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -52,7 +53,7 @@ public class SpawnPointRegistryProviderTest {
 
     @Test
     public void getReturnsOpenModeSpawnPointRegistryWhenCurrentGameContextIsOfTypeOpenMode() {
-        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
         OpenModeSpawnPointRegistry spawnPointRegistry = mock(OpenModeSpawnPointRegistry.class);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));

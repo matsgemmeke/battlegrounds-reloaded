@@ -14,11 +14,11 @@ import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.GameScoped;
+import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandlerProvider;
@@ -114,6 +114,8 @@ public class BattlegroundsModule implements Module {
         binder.bind(GameScope.class).toInstance(gameScope);
         binder.bindScope(GameScoped.class, gameScope);
 
+        binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
+        binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
         binder.bind(RespawnHandler.class).toProvider(RespawnHandlerProvider.class).in(GameScoped.class);
         binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
 

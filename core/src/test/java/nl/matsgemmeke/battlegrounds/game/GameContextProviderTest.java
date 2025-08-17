@@ -89,7 +89,7 @@ public class GameContextProviderTest {
     @Test
     public void getGameContextReturnsOptionalContainingGameContextCorrespondingWithGivenGameKey() {
         GameKey gameKey = GameKey.ofOpenMode();
-        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
 
         GameContextProvider gameContextProvider = new GameContextProvider();
         gameContextProvider.addGameContext(gameKey, gameContext);
@@ -102,7 +102,7 @@ public class GameContextProviderTest {
     public void getGameContextReturnsEmptyOptionalWhenNoMatchingGameContextsWereFound() {
         GameKey gameKey = GameKey.ofOpenMode();
         GameKey otherKey = GameKey.ofSession(1);
-        GameContext gameContext = new GameContext(GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
 
         GameContextProvider gameContextProvider = new GameContextProvider();
         gameContextProvider.addGameContext(gameKey, gameContext);

@@ -4,9 +4,7 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameContextType;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
@@ -27,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -36,6 +35,7 @@ public class OpenModeInitializerTest {
     private BattlegroundsConfiguration configuration;
     private EventDispatcher eventDispatcher;
     private GameContextProvider gameContextProvider;
+    private GameScope gameScope;
     private Provider<CollisionDetector> collisionDetectorProvider;
     private Provider<PlayerRegistry> playerRegistryProvider;
     private OpenModePlayerLifecycleHandlerFactory playerLifecycleHandlerFactory;
@@ -47,6 +47,7 @@ public class OpenModeInitializerTest {
         configuration = mock(BattlegroundsConfiguration.class);
         eventDispatcher = mock(EventDispatcher.class);
         gameContextProvider = new GameContextProvider();
+        gameScope = mock(GameScope.class);
         collisionDetectorProvider = mock();
         playerRegistryProvider = mock();
         playerLifecycleHandlerFactory = mock(OpenModePlayerLifecycleHandlerFactory.class);
@@ -60,13 +61,14 @@ public class OpenModeInitializerTest {
     }
 
     @Test
-    public void getCreatesNewOpenModeInstanceAndAssignsItToTheContextProvider() {
-        Player player = mock(Player.class);
-        bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
-
+    public void getCreatesNewOpenModeInstanceAndAssignsItToGameContextProvider() {
+        UUID playerId = UUID.randomUUID();
         GamePlayer gamePlayer = mock(GamePlayer.class);
         PlayerLifecycleHandler playerLifecycleHandler = mock(PlayerLifecycleHandler.class);
         StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
+
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(playerId);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
@@ -79,11 +81,21 @@ public class OpenModeInitializerTest {
         when(statePersistenceHandlerFactory.create(any(EquipmentRegistry.class), any(GunRegistry.class), eq(playerRegistry))).thenReturn(statePersistenceHandler);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
 
-        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, playerLifecycleHandlerFactory, statePersistenceHandlerFactory, collisionDetectorProvider, playerRegistryProvider);
+        bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
+
+        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, playerLifecycleHandlerFactory, statePersistenceHandlerFactory, collisionDetectorProvider, playerRegistryProvider);
         openModeInitializer.initialize();
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(gameScope).runInScope(any(GameContext.class), runnableCaptor.capture());
+
+        runnableCaptor.getValue().run();;
 
         assertThat(gameContextProvider.getGameContext(GameKey.ofOpenMode())).hasValueSatisfying(gameContext ->
                 assertThat(gameContext.getType()).isEqualTo(GameContextType.OPEN_MODE)
+        );
+        assertThat(gameContextProvider.getGameKeyByEntityId(playerId)).hasValueSatisfying(gameKey ->
+                assertThat(gameKey).isEqualTo(GameKey.ofOpenMode())
         );
 
         ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);

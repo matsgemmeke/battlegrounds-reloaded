@@ -12,11 +12,12 @@ import static org.mockito.Mockito.*;
 
 public class GameScopeTest {
 
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final GameContextType TYPE = GameContextType.OPEN_MODE;
 
     @Test
     public void scopeThrowsOutOfScopeExceptionWhenNoGameContextIsEntered() {
-        GameContext gameContext = new GameContext(TYPE);
+        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
         Key<PlayerRegistry> key = mock();
         Provider<PlayerRegistry> provider = mock();
 
@@ -32,7 +33,7 @@ public class GameScopeTest {
 
     @Test
     public void scopeReturnsProviderThatReturnsInstanceFromGameContext() {
-        GameContext gameContext = new GameContext(TYPE);
+        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         Key<PlayerRegistry> key = mock();
 
@@ -48,7 +49,7 @@ public class GameScopeTest {
 
     @Test
     public void runInScopeEntersScopeAndExitsAfterRunningAction() {
-        GameContext gameContext = new GameContext(TYPE);
+        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
         Runnable action = mock(Runnable.class);
 
         GameScope scope = new GameScope();

@@ -2,6 +2,8 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +17,15 @@ import static org.mockito.Mockito.*;
 
 public class DefaultPlayerRegistryTest {
 
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+
     private DefaultGamePlayerFactory gamePlayerFactory;
+    private GameContextProvider gameContextProvider;
 
     @BeforeEach
     public void setUp() {
         gamePlayerFactory = mock(DefaultGamePlayerFactory.class);
+        gameContextProvider = mock(GameContextProvider.class);
     }
 
     @Test
@@ -31,7 +37,7 @@ public class DefaultPlayerRegistryTest {
 
         when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
         GamePlayer result = playerRegistry.findByEntity(player);
 
@@ -48,7 +54,7 @@ public class DefaultPlayerRegistryTest {
 
         when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
         GamePlayer result = playerRegistry.findByEntity(otherPlayer);
 
@@ -67,7 +73,7 @@ public class DefaultPlayerRegistryTest {
 
         when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
         GamePlayer result = playerRegistry.findByUUID(uuid);
 
@@ -83,7 +89,7 @@ public class DefaultPlayerRegistryTest {
 
         when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
         Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
 
@@ -99,7 +105,7 @@ public class DefaultPlayerRegistryTest {
 
         when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
         boolean registered = playerRegistry.isRegistered(player);
 
@@ -118,7 +124,7 @@ public class DefaultPlayerRegistryTest {
 
         when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
         boolean registered = playerRegistry.isRegistered(uuid);
 
@@ -137,7 +143,7 @@ public class DefaultPlayerRegistryTest {
 
         when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
         playerRegistry.deregister(playerUuid);
 
@@ -146,19 +152,21 @@ public class DefaultPlayerRegistryTest {
 
     @Test
     public void registerEntityCreatesNewInstanceOfGamePlayerAndRegisterToGameStorage() {
-        UUID uuid = UUID.randomUUID();
+        UUID playerId = UUID.randomUUID();
 
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getUniqueId()).thenReturn(playerId);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
         when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory);
+        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         GamePlayer createdGamePlayer = playerRegistry.registerEntity(player);
 
         assertThat(createdGamePlayer).isEqualTo(gamePlayer);
+
+        verify(gameContextProvider).registerEntity(playerId, GAME_KEY);
     }
 }

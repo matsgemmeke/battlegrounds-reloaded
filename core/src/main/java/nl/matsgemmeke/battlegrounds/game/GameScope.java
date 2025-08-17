@@ -23,7 +23,6 @@ public class GameScope implements Scope {
         currentGameContext.remove();
     }
 
-    @SuppressWarnings("unchecked")
     public <T> Provider<T> scope(Key<T> key, Provider<T> unscoped) {
         return () -> {
             GameContext context = currentGameContext.get();
@@ -32,7 +31,7 @@ public class GameScope implements Scope {
                 throw new OutOfScopeException("No GameContext in scope for key: " + key);
             }
 
-            return context.getOrCreate(key, unscoped);
+            return context.getScopedObject(key, unscoped);
         };
     }
 
