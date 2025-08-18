@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds;
 import com.google.inject.*;
 import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
@@ -17,6 +18,8 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessorProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
@@ -27,6 +30,7 @@ import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistryProvider;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
@@ -114,7 +118,11 @@ public class BattlegroundsModule implements Module {
         binder.bind(GameScope.class).toInstance(gameScope);
         binder.bindScope(GameScoped.class, gameScope);
 
+        MapBinder<GameContextType, DamageProcessor> damageProcessorMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, DamageProcessor.class);
+        damageProcessorMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeDamageProcessor.class);
+
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);
+        binder.bind(DamageProcessor.class).toProvider(DamageProcessorProvider.class).in(GameScoped.class);
         binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
         binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
         binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
