@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
@@ -12,6 +13,7 @@ public class DefaultGunRegistry implements GunRegistry {
     @NotNull
     private final ItemContainer<Gun, GunHolder> gunContainer;
 
+    @Inject
     public DefaultGunRegistry(@NotNull ItemContainer<Gun, GunHolder> gunContainer) {
         this.gunContainer = gunContainer;
     }

@@ -20,7 +20,6 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
 import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
 import org.bukkit.Bukkit;
@@ -43,11 +42,11 @@ public class OpenModeInitializer {
     @NotNull
     private final GameScope gameScope;
     @NotNull
-    private final OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory;
-    @NotNull
     private final Provider<CollisionDetector> collisionDetectorProvider;
     @NotNull
     private final Provider<PlayerRegistry> playerRegistryProvider;
+    @NotNull
+    private final Provider<StatePersistenceHandler> statePersistenceHandlerProvider;
 
     @Inject
     public OpenModeInitializer(
@@ -55,17 +54,17 @@ public class OpenModeInitializer {
             @NotNull EventDispatcher eventDispatcher,
             @NotNull GameContextProvider gameContextProvider,
             @NotNull GameScope gameScope,
-            @NotNull OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory,
             @NotNull Provider<CollisionDetector> collisionDetectorProvider,
-            @NotNull Provider<PlayerRegistry> playerRegistryProvider
+            @NotNull Provider<PlayerRegistry> playerRegistryProvider,
+            @NotNull Provider<StatePersistenceHandler> statePersistenceHandlerProvider
     ) {
         this.configuration = configuration;
         this.eventDispatcher = eventDispatcher;
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.statePersistenceHandlerFactory = statePersistenceHandlerFactory;
         this.collisionDetectorProvider = collisionDetectorProvider;
         this.playerRegistryProvider = playerRegistryProvider;
+        this.statePersistenceHandlerProvider = statePersistenceHandlerProvider;
     }
 
     public void initialize() {
@@ -79,7 +78,6 @@ public class OpenModeInitializer {
         gameContextProvider.assignOpenMode(openMode);
 
         gameScope.runInScope(gameContext, () -> this.registerComponents(openMode));
-
     }
 
     private void registerComponents(OpenMode openMode) {
@@ -97,7 +95,6 @@ public class OpenModeInitializer {
         AudioEmitter audioEmitter = new DefaultAudioEmitter();
         CollisionDetector collisionDetector = collisionDetectorProvider.get();
         ProjectileHitActionRegistry projectileHitActionRegistry = new ProjectileHitActionRegistry();
-        StatePersistenceHandler statePersistanceHandler = statePersistenceHandlerFactory.create(equipmentRegistry, gunRegistry, playerRegistry);
 
         ItemLifecycleHandler itemLifecycleHandler = new DefaultItemLifecycleHandler(equipmentRegistry);
 
@@ -114,7 +111,6 @@ public class OpenModeInitializer {
         gameContextProvider.registerComponent(GAME_KEY, GunRegistry.class, gunRegistry);
         gameContextProvider.registerComponent(GAME_KEY, PlayerRegistry.class, playerRegistry);
         gameContextProvider.registerComponent(GAME_KEY, ProjectileHitActionRegistry.class, projectileHitActionRegistry);
-        gameContextProvider.registerComponent(GAME_KEY, StatePersistenceHandler.class, statePersistanceHandler);
         gameContextProvider.registerComponent(GAME_KEY, TargetFinder.class, targetFinder);
 
         this.registerEventHandlers();
@@ -130,7 +126,7 @@ public class OpenModeInitializer {
 
     private void registerPlayers() {
         PlayerRegistry playerRegistry = playerRegistryProvider.get();
-        StatePersistenceHandler statePersistenceHandler = gameContextProvider.getComponent(GAME_KEY, StatePersistenceHandler.class);
+        StatePersistenceHandler statePersistenceHandler = statePersistenceHandlerProvider.get();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID playerId = player.getUniqueId();

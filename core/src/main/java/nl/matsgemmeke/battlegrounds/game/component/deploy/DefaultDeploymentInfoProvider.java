@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.deploy;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -15,6 +16,7 @@ public class DefaultDeploymentInfoProvider implements DeploymentInfoProvider {
     @NotNull
     private EquipmentRegistry equipmentRegistry;
 
+    @Inject
     public DefaultDeploymentInfoProvider(@NotNull EquipmentRegistry equipmentRegistry) {
         this.equipmentRegistry = equipmentRegistry;
     }

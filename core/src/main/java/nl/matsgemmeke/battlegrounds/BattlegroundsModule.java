@@ -20,8 +20,11 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessorProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.*;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
@@ -32,7 +35,6 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
@@ -121,9 +123,16 @@ public class BattlegroundsModule implements Module {
         MapBinder<GameContextType, DamageProcessor> damageProcessorMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, DamageProcessor.class);
         damageProcessorMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeDamageProcessor.class);
 
+        MapBinder<GameContextType, StatePersistenceHandler> statePersistenceHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, StatePersistenceHandler.class);
+        statePersistenceHandlerMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeStatePersistenceHandler.class);
+
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);
         binder.bind(DamageProcessor.class).toProvider(DamageProcessorProvider.class).in(GameScoped.class);
+        binder.bind(DeploymentInfoProvider.class).to(DefaultDeploymentInfoProvider.class).in(GameScoped.class);
+        binder.bind(EquipmentRegistry.class).to(DefaultEquipmentRegistry.class).in(GameScoped.class);
         binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
+        binder.bind(GunRegistry.class).to(DefaultGunRegistry.class).in(GameScoped.class);
+        binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class);
         binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
         binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
         binder.bind(RespawnHandler.class).toProvider(RespawnHandlerProvider.class).in(GameScoped.class);
@@ -147,10 +156,6 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffect.class, SmokeScreenEffect.class)
                 .build(SmokeScreenEffectFactory.class));
-
-        binder.install(new FactoryModuleBuilder()
-                .implement(StatePersistenceHandler.class, OpenModeStatePersistenceHandler.class)
-                .build(OpenModeStatePersistenceHandlerFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileEffect.class, TrailEffect.class)

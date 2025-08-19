@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.storage;
 
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -45,12 +44,12 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
 
     @Inject
     public OpenModeStatePersistenceHandler(
+            @NotNull EquipmentRegistry equipmentRegistry,
+            @NotNull GunRegistry gunRegistry,
             @Named("Battlegrounds") @NotNull Logger logger,
             @NotNull PlayerRegistry playerRegistry,
             @NotNull PlayerStateStorage playerStateStorage,
-            @NotNull WeaponCreator weaponCreator,
-            @Assisted @NotNull EquipmentRegistry equipmentRegistry,
-            @Assisted @NotNull GunRegistry gunRegistry
+            @NotNull WeaponCreator weaponCreator
     ) {
         this.logger = logger;
         this.playerStateStorage = playerStateStorage;

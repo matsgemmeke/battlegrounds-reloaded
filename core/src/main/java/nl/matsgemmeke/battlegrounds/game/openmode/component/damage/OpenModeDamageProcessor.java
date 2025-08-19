@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
@@ -23,6 +24,7 @@ public class OpenModeDamageProcessor implements DamageProcessor {
     @NotNull
     private final List<DamageCheck> damageChecks;
 
+    @Inject
     public OpenModeDamageProcessor(@NotNull GameKey gameKey, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
         this.gameKey = gameKey;
         this.deploymentInfoProvider = deploymentInfoProvider;
