@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.component.entity.EntityRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
 import org.bukkit.entity.Player;
@@ -241,28 +240,6 @@ public class GameContextProvider {
         }
 
         return false;
-    }
-
-    public void shutdown() {
-        OpenMode openMode = this.getOpenMode();
-
-        if (openMode != null) {
-            GameKey gameKey = GameKey.ofOpenMode();
-
-            StatePersistenceHandler statePersistenceHandler = this.getComponent(gameKey, StatePersistenceHandler.class);
-            statePersistenceHandler.saveState();
-        }
-    }
-
-    @Nullable
-    private OpenMode getOpenMode() {
-        GameKey gameKey = GameKey.ofOpenMode();
-
-        return (OpenMode) games.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(gameKey))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElse(null);
     }
 
     @NotNull

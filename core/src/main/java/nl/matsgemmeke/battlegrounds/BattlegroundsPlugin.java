@@ -13,6 +13,7 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenModeInitializer;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
@@ -28,7 +29,7 @@ import java.util.logging.Logger;
 
 public class BattlegroundsPlugin extends JavaPlugin {
 
-    private GameContextProvider contextProvider;
+    private GameContextShutdownManager gameContextShutdownManager;
     private Injector injector;
     private InternalsProvider internals;
     private Logger logger;
@@ -53,7 +54,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        contextProvider.shutdown();
+        gameContextShutdownManager.shutdown();
     }
 
     private void startPlugin() throws StartupFailedException {
@@ -64,7 +65,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         BattlegroundsModule module = new BattlegroundsModule(dataFolder, internals, logger, this, pluginManager);
 
         injector = Guice.createInjector(module);
-        contextProvider = injector.getInstance(GameContextProvider.class);
+        gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
 
         OpenModeInitializer openModeInitializer = injector.getInstance(OpenModeInitializer.class);
         openModeInitializer.initialize();
