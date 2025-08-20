@@ -22,3 +22,4 @@ commands:
 
 errors:
   not-in-open-mode: "&cUnable to perform action; you are not in open mode."
+  open-mode-not-exists: "&cUnable to perform action; open mode is not enabled."

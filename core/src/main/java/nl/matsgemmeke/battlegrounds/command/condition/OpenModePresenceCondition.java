@@ -6,38 +6,60 @@ import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer> {
 
+    private static final GameKey OPEN_MODE_GAME_KEY = GameKey.ofOpenMode();
+
     @NotNull
-    private final GameContextProvider contextProvider;
+    private final GameContextProvider gameContextProvider;
     @NotNull
-    private final GameKey openModeGameKey;
+    private final GameScope gameScope;
+    @NotNull
+    private final Provider<PlayerRegistry> playerRegistryProvider;
     @NotNull
     private final Translator translator;
 
     @Inject
-    public OpenModePresenceCondition(@NotNull GameContextProvider contextProvider, @NotNull Translator translator) {
-        this.contextProvider = contextProvider;
+    public OpenModePresenceCondition(
+            @NotNull GameContextProvider gameContextProvider,
+            @NotNull GameScope gameScope,
+            @NotNull Provider<PlayerRegistry> playerRegistryProvider,
+            @NotNull Translator translator
+    ) {
+        this.gameContextProvider = gameContextProvider;
+        this.gameScope = gameScope;
+        this.playerRegistryProvider = playerRegistryProvider;
         this.translator = translator;
-        this.openModeGameKey = GameKey.ofOpenMode();
     }
 
     public void validateCondition(ConditionContext<BukkitCommandIssuer> conditionContext) throws InvalidCommandArgument {
-        Player player = conditionContext.getIssuer().getPlayer();
-        PlayerRegistry playerRegistry = contextProvider.getComponent(openModeGameKey, PlayerRegistry.class);
+        UUID playerId = conditionContext.getIssuer().getPlayer().getUniqueId();
 
-        if (playerRegistry.isRegistered(player)) {
-            return;
-        }
+        GameContext gameContext = gameContextProvider.getGameContext(OPEN_MODE_GAME_KEY).orElseThrow(() -> {
+            String message = translator.translate(TranslationKey.OPEN_MODE_NOT_EXISTS.getPath()).getText();
+            return new ConditionFailedException(message);
+        });
 
-        throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath()).getText());
+        gameScope.runInScope(gameContext, () -> {
+            PlayerRegistry playerRegistry = playerRegistryProvider.get();
+
+            if (playerRegistry.isRegistered(playerId)) {
+                return;
+            }
+
+            throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath()).getText());
+        });
     }
 }

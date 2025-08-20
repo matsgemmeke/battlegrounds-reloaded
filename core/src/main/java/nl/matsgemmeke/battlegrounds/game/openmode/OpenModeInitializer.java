@@ -96,8 +96,6 @@ public class OpenModeInitializer {
         CollisionDetector collisionDetector = collisionDetectorProvider.get();
         ProjectileHitActionRegistry projectileHitActionRegistry = new ProjectileHitActionRegistry();
 
-        ItemLifecycleHandler itemLifecycleHandler = new DefaultItemLifecycleHandler(equipmentRegistry);
-
         DamageProcessor damageProcessor = new OpenModeDamageProcessor(GAME_KEY, deploymentInfoProvider);
         TargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
 
