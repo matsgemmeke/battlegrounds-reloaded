@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.creator;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 import dev.dejvokep.boostedyaml.YamlDocument;
-import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
@@ -24,26 +24,26 @@ import java.util.logging.Logger;
 public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
     @NotNull
-    private final EquipmentFactory equipmentFactory;
-    @NotNull
-    private final FirearmFactory firearmFactory;
-    @NotNull
     private final File itemsFolder;
     @NotNull
     private final Logger logger;
+    @NotNull
+    private final Provider<EquipmentFactory> equipmentFactoryProvider;
+    @NotNull
+    private final Provider<FirearmFactory> gunFactoryProvider;
     @NotNull
     private final SpecDeserializer specDeserializer;
 
     @Inject
     public WeaponCreatorProvider(
-            @NotNull EquipmentFactory equipmentFactory,
-            @NotNull FirearmFactory firearmFactory,
+            @NotNull Provider<EquipmentFactory> equipmentFactoryProvider,
+            @NotNull Provider<FirearmFactory> gunFactoryProvider,
             @NotNull SpecDeserializer specDeserializer,
             @Named("ItemsFolder") @NotNull File itemsFolder,
             @Named("Battlegrounds") @NotNull Logger logger
     ) {
-        this.equipmentFactory = equipmentFactory;
-        this.firearmFactory = firearmFactory;
+        this.equipmentFactoryProvider = equipmentFactoryProvider;
+        this.gunFactoryProvider = gunFactoryProvider;
         this.specDeserializer = specDeserializer;
         this.itemsFolder = itemsFolder;
         this.logger = logger;
@@ -55,7 +55,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.copyResourcesFiles(itemsFolder);
         }
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, firearmFactory);
+        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
         File[] itemFolderFiles = itemsFolder.listFiles();
 
         if (itemFolderFiles == null || itemFolderFiles.length == 0) {

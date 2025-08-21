@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -23,17 +24,17 @@ import java.util.stream.Stream;
 public class WeaponCreator {
 
     @NotNull
-    private final EquipmentFactory equipmentFactory;
-    @NotNull
-    private final FirearmFactory gunFactory;
-    @NotNull
     private final Map<String, EquipmentSpec> equipmentSpecs;
     @NotNull
     private final Map<String, GunSpec> gunSpecs;
+    @NotNull
+    private final Provider<EquipmentFactory> equipmentFactoryProvider;
+    @NotNull
+    private final Provider<FirearmFactory> gunFactoryProvider;
 
-    public WeaponCreator(@NotNull EquipmentFactory equipmentFactory, @NotNull FirearmFactory gunFactory) {
-        this.equipmentFactory = equipmentFactory;
-        this.gunFactory = gunFactory;
+    public WeaponCreator(@NotNull Provider<EquipmentFactory> equipmentFactoryProvider, @NotNull Provider<FirearmFactory> gunFactoryProvider) {
+        this.equipmentFactoryProvider = equipmentFactoryProvider;
+        this.gunFactoryProvider = gunFactoryProvider;
         this.equipmentSpecs = new HashMap<>();
         this.gunSpecs = new HashMap<>();
     }
@@ -63,6 +64,7 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for an equipment item by the id '%s'".formatted(equipmentId));
         }
 
+        EquipmentFactory equipmentFactory = equipmentFactoryProvider.get();
         EquipmentSpec equipmentSpec = equipmentSpecs.get(equipmentId);
 
         return equipmentFactory.create(equipmentSpec, gameKey, gamePlayer);
@@ -84,6 +86,7 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the id '%s'".formatted(gunId));
         }
 
+        FirearmFactory gunFactory = gunFactoryProvider.get();
         GunSpec gunSpec = gunSpecs.get(gunId);;
 
         return gunFactory.create(gunSpec, gameKey, gamePlayer);
