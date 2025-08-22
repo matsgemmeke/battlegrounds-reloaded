@@ -39,7 +39,7 @@ public class PlayerQuitEventHandler implements EventHandler<PlayerQuitEvent> {
         }
 
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
-                .orElseThrow(() -> new EventHandlingException("Unable to process PlayerKickEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
+                .orElseThrow(() -> new EventHandlingException("Unable to process PlayerQuitEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
         gameScope.runInScope(gameContext, () -> {
             PlayerLifecycleHandler playerLifecycleHandler = playerLifecycleHandlerProvider.get();

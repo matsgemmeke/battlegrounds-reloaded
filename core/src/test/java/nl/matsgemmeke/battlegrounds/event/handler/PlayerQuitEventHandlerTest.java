@@ -65,7 +65,7 @@ public class PlayerQuitEventHandlerTest {
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process PlayerKickEvent for game key OPEN-MODE, no corresponding game context was found");
+                .hasMessage("Unable to process PlayerQuitEvent for game key OPEN-MODE, no corresponding game context was found");
     }
 
     @Test
