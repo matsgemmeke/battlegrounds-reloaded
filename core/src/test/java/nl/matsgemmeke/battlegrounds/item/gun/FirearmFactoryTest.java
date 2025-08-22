@@ -43,6 +43,7 @@ public class FirearmFactoryTest {
 
     private AudioEmitter audioEmitter;
     private BattlegroundsConfiguration config;
+    private DefaultFirearmFactory defaultGunFactory;
     private GameContextProvider contextProvider;
     private GameKey gameKey;
     private GunRegistry gunRegistry;
@@ -70,10 +71,9 @@ public class FirearmFactoryTest {
 
         contextProvider = mock(GameContextProvider.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-        when(contextProvider.getComponent(gameKey, CollisionDetector.class)).thenReturn(collisionDetector);
-        when(contextProvider.getComponent(gameKey, DamageProcessor.class)).thenReturn(damageProcessor);
-        when(contextProvider.getComponent(gameKey, GunRegistry.class)).thenReturn(gunRegistry);
-        when(contextProvider.getComponent(gameKey, TargetFinder.class)).thenReturn(targetFinder);
+
+        defaultGunFactory = mock(DefaultFirearmFactory.class);
+        when(defaultGunFactory.create("MP5")).thenReturn(new DefaultFirearm("MP5", audioEmitter, collisionDetector, damageProcessor, targetFinder));
 
         Plugin plugin = mock(Plugin.class);
         when(plugin.getName()).thenReturn("Battlegrounds");
@@ -109,7 +109,7 @@ public class FirearmFactoryTest {
 
         when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, keyCreator, reloadSystemFactory, shootHandlerFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, defaultGunFactory, contextProvider, controlsFactory, gunRegistry, keyCreator, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(spec, gameKey);
 
         assertThat(firearm).isInstanceOf(DefaultFirearm.class);
@@ -141,7 +141,7 @@ public class FirearmFactoryTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, keyCreator, reloadSystemFactory, shootHandlerFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, defaultGunFactory, contextProvider, controlsFactory, gunRegistry, keyCreator, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(spec, gameKey);
 
         assertInstanceOf(DefaultFirearm.class, firearm);
@@ -161,7 +161,7 @@ public class FirearmFactoryTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, contextProvider, controlsFactory, keyCreator, reloadSystemFactory, shootHandlerFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, defaultGunFactory, contextProvider, controlsFactory, gunRegistry, keyCreator, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(spec, gameKey, gamePlayer);
 
         assertInstanceOf(DefaultFirearm.class, firearm);

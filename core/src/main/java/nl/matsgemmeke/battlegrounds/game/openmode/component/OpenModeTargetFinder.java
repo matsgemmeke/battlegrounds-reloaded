@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
@@ -25,6 +26,7 @@ public class OpenModeTargetFinder implements TargetFinder {
     @NotNull
     private final PlayerRegistry playerRegistry;
 
+    @Inject
     public OpenModeTargetFinder(
             @NotNull DeploymentInfoProvider deploymentInfoProvider,
             @NotNull PlayerRegistry playerRegistry

@@ -11,9 +11,6 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
@@ -46,9 +43,13 @@ public class FirearmFactory {
     @NotNull
     private final BattlegroundsConfiguration config;
     @NotNull
-    private final GameContextProvider contextProvider;
+    private final DefaultFirearmFactory defaultGunFactory;
     @NotNull
     private final FirearmControlsFactory controlsFactory;
+    @NotNull
+    private final GameContextProvider contextProvider;
+    @NotNull
+    private final GunRegistry gunRegistry;
     @NotNull
     private final NamespacedKeyCreator keyCreator;
     @NotNull
@@ -59,15 +60,19 @@ public class FirearmFactory {
     @Inject
     public FirearmFactory(
             @NotNull BattlegroundsConfiguration config,
+            @NotNull DefaultFirearmFactory defaultGunFactory,
             @NotNull GameContextProvider contextProvider,
             @NotNull FirearmControlsFactory controlsFactory,
+            @NotNull GunRegistry gunRegistry,
             @NotNull NamespacedKeyCreator keyCreator,
             @NotNull ReloadSystemFactory reloadSystemFactory,
             @NotNull ShootHandlerFactory shootHandlerFactory
     ) {
         this.config = config;
+        this.defaultGunFactory = defaultGunFactory;
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
+        this.gunRegistry = gunRegistry;
         this.keyCreator = keyCreator;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
@@ -77,7 +82,6 @@ public class FirearmFactory {
     public Firearm create(@NotNull GunSpec spec, @NotNull GameKey gameKey) {
         Firearm firearm = this.createInstance(spec, gameKey);
 
-        GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
         gunRegistry.registerItem(firearm);
 
         return firearm;
@@ -88,7 +92,6 @@ public class FirearmFactory {
         Firearm firearm = this.createInstance(spec, gameKey);
         firearm.setHolder(gamePlayer);
 
-        GunRegistry gunRegistry = contextProvider.getComponent(gameKey, GunRegistry.class);
         gunRegistry.registerItem(firearm, gamePlayer);
 
         return firearm;
@@ -97,13 +100,10 @@ public class FirearmFactory {
     @NotNull
     private Firearm createInstance(@NotNull GunSpec spec, @NotNull GameKey gameKey) {
         AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
-        DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
-        TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
         double headshotDamageMultiplier = this.getHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
 
-        DefaultFirearm firearm = new DefaultFirearm(spec.id, audioEmitter, collisionDetector, damageProcessor, targetFinder);
+        DefaultFirearm firearm = defaultGunFactory.create(spec.id);
         firearm.setName(spec.name);
         firearm.setDescription(spec.description);
         firearm.setHeadshotDamageMultiplier(headshotDamageMultiplier);

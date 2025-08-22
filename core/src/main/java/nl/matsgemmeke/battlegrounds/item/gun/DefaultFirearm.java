@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
@@ -43,7 +45,8 @@ public class DefaultFirearm extends BaseGun implements Firearm {
     @NotNull
     private TargetFinder targetFinder;
 
-    public DefaultFirearm(@NotNull String id, @NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector, @NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder) {
+    @Inject
+    public DefaultFirearm(@Assisted @NotNull String id, @NotNull AudioEmitter audioEmitter, @NotNull CollisionDetector collisionDetector, @NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder) {
         super(id);
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
