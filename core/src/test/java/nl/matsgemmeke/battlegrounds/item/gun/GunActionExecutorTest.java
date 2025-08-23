@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class GunBehaviorTest {
+public class GunActionExecutorTest {
 
     private GamePlayer gamePlayer;
     private Gun gun;
@@ -33,8 +33,8 @@ public class GunBehaviorTest {
 
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleChangeFromAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleChangeFromAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -43,8 +43,8 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderPutsAwayGunButItIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleChangeFromAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleChangeFromAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -55,8 +55,8 @@ public class GunBehaviorTest {
     public void shouldDoNothingWhenHolderPutsAwayGunButHolderDoesNotMatch() {
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleChangeToAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -69,8 +69,8 @@ public class GunBehaviorTest {
 
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleChangeToAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -79,8 +79,8 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderSwitchesToGunButItIsNotInTheStorage() {
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleChangeToAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -91,8 +91,8 @@ public class GunBehaviorTest {
     public void shouldDoNothingWhenHolderSwitchesToGunButHolderDoesNotMatch() {
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleChangeToAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -105,8 +105,8 @@ public class GunBehaviorTest {
 
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleDropItemAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleDropItemAction(gamePlayer, itemStack);
 
         Gun assignedResult = gunContainer.getAssignedItem(gamePlayer, itemStack);
         Gun unassignedResult = gunContainer.getUnassignedItem(itemStack);
@@ -120,8 +120,8 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderDropsTheGunButItIsNotInTheStorage() {
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleDropItemAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleDropItemAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -132,8 +132,8 @@ public class GunBehaviorTest {
     public void shouldDoNothingWhenHolderDropsTheGunButHolderDoesNotMatch() {
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleDropItemAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleDropItemAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -144,8 +144,8 @@ public class GunBehaviorTest {
     public void shouldCallFunctionOnGunWhenHolderPicksUpTheGun() {
         gunContainer.addUnassignedItem(gun);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handlePickupItemAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handlePickupItemAction(gamePlayer, itemStack);
 
         Gun assignedResult = gunContainer.getAssignedItem(gamePlayer, itemStack);
         Gun unassignedResult = gunContainer.getUnassignedItem(itemStack);
@@ -159,8 +159,8 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingUponItemPickupWhenGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handlePickupItemAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handlePickupItemAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -173,8 +173,8 @@ public class GunBehaviorTest {
 
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
 
@@ -183,8 +183,8 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderLeftClicksButGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -195,8 +195,8 @@ public class GunBehaviorTest {
     public void shouldDoNothingWhenHolderLeftClicksButHolderDoesNotMatch() {
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -209,8 +209,8 @@ public class GunBehaviorTest {
 
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
 
@@ -219,8 +219,8 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderRightClicksButGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -231,8 +231,8 @@ public class GunBehaviorTest {
     public void shouldDoNothingWhenHolderRightClicksButHolderDoesNotMatch() {
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -245,8 +245,8 @@ public class GunBehaviorTest {
 
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleSwapFromAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleSwapFromAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
 
@@ -255,8 +255,8 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderSwapsItemAwayButGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleSwapFromAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleSwapFromAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -267,8 +267,8 @@ public class GunBehaviorTest {
     public void shouldDoNothingWhenHolderSwapsItemAwayButHolderDoesNotMatch() {
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleSwapFromAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleSwapFromAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -281,8 +281,8 @@ public class GunBehaviorTest {
 
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleSwapToAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleSwapToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -291,8 +291,8 @@ public class GunBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenHolderSwapsToItemButGunIsNotRegistered() {
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleSwapToAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleSwapToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -303,8 +303,8 @@ public class GunBehaviorTest {
     public void shouldDoNothingWhenHolderSwapsToItemButHolderDoesNotMatch() {
         gunContainer.addAssignedItem(gun, gamePlayer);
 
-        GunBehavior behavior = new GunBehavior(gunContainer);
-        boolean performAction = behavior.handleSwapToAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
+        boolean performAction = actionExecutor.handleSwapToAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 

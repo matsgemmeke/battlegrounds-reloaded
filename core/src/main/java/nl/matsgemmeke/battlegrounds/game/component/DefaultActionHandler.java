@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.component;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
+import nl.matsgemmeke.battlegrounds.item.ItemActionExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,13 +30,13 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemBehavior behavior : game.getItemBehaviors()) {
+        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
             if (changeFrom != null) {
-                performAction = performAction & behavior.handleChangeFromAction(gamePlayer, changeFrom);
+                performAction = performAction & actionExecutor.handleChangeFromAction(gamePlayer, changeFrom);
             }
 
             if (changeTo != null) {
-                performAction = performAction & behavior.handleChangeToAction(gamePlayer, changeTo);
+                performAction = performAction & actionExecutor.handleChangeToAction(gamePlayer, changeTo);
             }
         }
 
@@ -52,8 +52,8 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemBehavior behavior : game.getItemBehaviors()) {
-            performAction = performAction & behavior.handleDropItemAction(gamePlayer, droppedItem);
+        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+            performAction = performAction & actionExecutor.handleDropItemAction(gamePlayer, droppedItem);
         }
 
         return performAction;
@@ -68,8 +68,8 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemBehavior behavior : game.getItemBehaviors()) {
-            performAction = performAction & behavior.handleLeftClickAction(gamePlayer, clickedItem);
+        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+            performAction = performAction & actionExecutor.handleLeftClickAction(gamePlayer, clickedItem);
         }
 
         return performAction;
@@ -84,8 +84,8 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemBehavior behavior : game.getItemBehaviors()) {
-            performAction = performAction & behavior.handlePickupItemAction(gamePlayer, pickupItem);
+        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+            performAction = performAction & actionExecutor.handlePickupItemAction(gamePlayer, pickupItem);
         }
 
         return performAction;
@@ -100,8 +100,8 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemBehavior behavior : game.getItemBehaviors()) {
-            performAction = performAction & behavior.handleRightClickAction(gamePlayer, clickedItem);
+        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+            performAction = performAction & actionExecutor.handleRightClickAction(gamePlayer, clickedItem);
         }
 
         return performAction;
@@ -116,13 +116,13 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemBehavior behavior : game.getItemBehaviors()) {
+        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
             if (swapFrom != null) {
-                performAction = performAction & behavior.handleSwapFromAction(gamePlayer, swapFrom);
+                performAction = performAction & actionExecutor.handleSwapFromAction(gamePlayer, swapFrom);
             }
 
             if (swapTo != null) {
-                performAction = performAction & behavior.handleSwapToAction(gamePlayer, swapTo);
+                performAction = performAction & actionExecutor.handleSwapToAction(gamePlayer, swapTo);
             }
         }
 

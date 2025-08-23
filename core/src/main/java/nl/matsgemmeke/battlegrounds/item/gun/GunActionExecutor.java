@@ -2,16 +2,16 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.ItemContainer;
-import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
+import nl.matsgemmeke.battlegrounds.item.ItemActionExecutor;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class GunBehavior implements ItemBehavior {
+public class GunActionExecutor implements ItemActionExecutor {
 
     @NotNull
     private final ItemContainer<Gun, GunHolder> gunContainer;
 
-    public GunBehavior(@NotNull ItemContainer<Gun, GunHolder> gunContainer) {
+    public GunActionExecutor(@NotNull ItemContainer<Gun, GunHolder> gunContainer) {
         this.gunContainer = gunContainer;
     }
 

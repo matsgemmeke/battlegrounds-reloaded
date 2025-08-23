@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class EquipmentBehaviorTest {
+public class EquipmentActionExecutorTest {
 
     private Equipment equipment;
     private GamePlayer gamePlayer;
@@ -34,8 +34,8 @@ public class EquipmentBehaviorTest {
 
         equipmentContainer.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
-        boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
+        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
 
@@ -44,8 +44,8 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenLeftClickedButEquipmentIsNotRegistered() {
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
-        boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
+        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -56,8 +56,8 @@ public class EquipmentBehaviorTest {
     public void shouldDoNothingWhenLeftClickedButHolderDoesNotMatch() {
         equipmentContainer.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
-        boolean performAction = behavior.handleLeftClickAction(gamePlayer, itemStack);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
+        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -70,8 +70,8 @@ public class EquipmentBehaviorTest {
 
         equipmentContainer.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
-        boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
+        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
 
         assertFalse(performAction);
 
@@ -80,8 +80,8 @@ public class EquipmentBehaviorTest {
 
     @Test
     public void shouldDoNothingWhenRightClickedButEquipmentIsNotRegistered() {
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
-        boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
+        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 
@@ -92,8 +92,8 @@ public class EquipmentBehaviorTest {
     public void shouldDoNothingWhenRightClickedButHolderDoesNotMatch() {
         equipmentContainer.addAssignedItem(equipment, gamePlayer);
 
-        EquipmentBehavior behavior = new EquipmentBehavior(equipmentContainer);
-        boolean performAction = behavior.handleRightClickAction(gamePlayer, itemStack);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
+        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
 
         assertTrue(performAction);
 

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Object that handles interactions performed on items and initiates behavior.
  */
-public interface ItemBehavior {
+public interface ItemActionExecutor {
 
     /**
      * Handles logic for when a player changes its held item from the given item to another item.

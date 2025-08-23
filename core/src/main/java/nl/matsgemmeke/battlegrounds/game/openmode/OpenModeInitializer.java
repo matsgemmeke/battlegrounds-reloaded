@@ -20,8 +20,8 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentBehavior;
-import nl.matsgemmeke.battlegrounds.item.gun.GunBehavior;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -69,8 +69,8 @@ public class OpenModeInitializer {
 
     public void initialize() {
         OpenMode openMode = new OpenMode();
-        openMode.addItemBehavior(new EquipmentBehavior(openMode.getEquipmentContainer()));
-        openMode.addItemBehavior(new GunBehavior(openMode.getGunContainer()));
+        openMode.addItemActionExecutor(new EquipmentActionExecutor(openMode.getEquipmentContainer()));
+        openMode.addItemActionExecutor(new GunActionExecutor(openMode.getGunContainer()));
 
         GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
 
