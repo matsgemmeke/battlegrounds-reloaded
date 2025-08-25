@@ -1,13 +1,15 @@
 package nl.matsgemmeke.battlegrounds.item;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Object that handles interactions performed on items and initiates behavior.
  */
-public interface ItemActionExecutor {
+public interface ActionExecutor {
 
     /**
      * Handles logic for when a player changes its held item from the given item to another item.
@@ -45,6 +47,8 @@ public interface ItemActionExecutor {
      */
     boolean handleLeftClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem);
 
+    boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem);
+
     /**
      * Handles logic for when a player picks up an item.
      *
@@ -62,6 +66,8 @@ public interface ItemActionExecutor {
      * @return whether the action should be performed
      */
     boolean handleRightClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem);
+
+    boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem);
 
     /**
      * Handles logic for when a player swaps an item away.

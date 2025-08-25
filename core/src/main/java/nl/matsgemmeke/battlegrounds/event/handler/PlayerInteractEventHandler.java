@@ -8,7 +8,8 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.component.ActionHandler;
+import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
+import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
@@ -25,13 +26,17 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
     @NotNull
     private final GameScope gameScope;
     @NotNull
-    private final Provider<ActionHandler> actionHandlerProvider;
+    private final Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
 
     @Inject
-    public PlayerInteractEventHandler(@NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope, @NotNull Provider<ActionHandler> actionHandlerProvider) {
+    public PlayerInteractEventHandler(
+            @NotNull GameContextProvider gameContextProvider,
+            @NotNull GameScope gameScope,
+            @NotNull Provider<ActionExecutorRegistry> actionExecutorRegistryProvider
+    ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.actionHandlerProvider = actionHandlerProvider;
+        this.actionExecutorRegistryProvider = actionExecutorRegistryProvider;
     }
 
     public void handle(@NotNull PlayerInteractEvent event) {
@@ -56,14 +61,20 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
     }
 
     private void performAction(PlayerInteractEvent event, Player player, ItemStack itemStack) {
-        ActionHandler actionHandler = actionHandlerProvider.get();
+        ActionExecutorRegistry actionExecutorRegistry = actionExecutorRegistryProvider.get();
+        ActionExecutor actionExecutor = actionExecutorRegistry.getActionExecutor(itemStack).orElse(null);
+
+        if (actionExecutor == null) {
+            return;
+        }
+
         Action action = event.getAction();
         boolean actionPerformed = true;
 
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            actionPerformed = actionHandler.handleItemLeftClick(player, itemStack);
+            actionPerformed = actionExecutor.handleLeftClickAction(player, itemStack);
         } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            actionPerformed = actionHandler.handleItemRightClick(player, itemStack);
+            actionPerformed = actionExecutor.handleRightClickAction(player, itemStack);
         }
 
         if (!actionPerformed) {

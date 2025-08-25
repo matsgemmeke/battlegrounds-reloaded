@@ -69,8 +69,8 @@ public class OpenModeInitializer {
 
     public void initialize() {
         OpenMode openMode = new OpenMode();
-        openMode.addItemActionExecutor(new EquipmentActionExecutor(openMode.getEquipmentContainer()));
-        openMode.addItemActionExecutor(new GunActionExecutor(openMode.getGunContainer()));
+        openMode.addActionExecutor(new EquipmentActionExecutor(openMode.getEquipmentContainer()));
+        openMode.addActionExecutor(new GunActionExecutor(openMode.getGunContainer()));
 
         GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
 

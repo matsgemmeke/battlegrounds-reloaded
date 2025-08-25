@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.component;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.item.ItemActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+        for (ActionExecutor actionExecutor : game.getActionExecutors()) {
             if (changeFrom != null) {
                 performAction = performAction & actionExecutor.handleChangeFromAction(gamePlayer, changeFrom);
             }
@@ -52,7 +52,7 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+        for (ActionExecutor actionExecutor : game.getActionExecutors()) {
             performAction = performAction & actionExecutor.handleDropItemAction(gamePlayer, droppedItem);
         }
 
@@ -68,7 +68,7 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+        for (ActionExecutor actionExecutor : game.getActionExecutors()) {
             performAction = performAction & actionExecutor.handleLeftClickAction(gamePlayer, clickedItem);
         }
 
@@ -84,7 +84,7 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+        for (ActionExecutor actionExecutor : game.getActionExecutors()) {
             performAction = performAction & actionExecutor.handlePickupItemAction(gamePlayer, pickupItem);
         }
 
@@ -100,7 +100,7 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+        for (ActionExecutor actionExecutor : game.getActionExecutors()) {
             performAction = performAction & actionExecutor.handleRightClickAction(gamePlayer, clickedItem);
         }
 
@@ -116,7 +116,7 @@ public class DefaultActionHandler implements ActionHandler {
 
         boolean performAction = true;
 
-        for (ItemActionExecutor actionExecutor : game.getItemActionExecutors()) {
+        for (ActionExecutor actionExecutor : game.getActionExecutors()) {
             if (swapFrom != null) {
                 performAction = performAction & actionExecutor.handleSwapFromAction(gamePlayer, swapFrom);
             }

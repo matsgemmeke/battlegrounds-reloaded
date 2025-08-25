@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.component;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.item.ItemActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -52,13 +52,13 @@ public class DefaultActionHandlerTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack fromItem = new ItemStack(Material.IRON_HOE);
 
-        ItemActionExecutor actionExecutor1 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor1 = mock(ActionExecutor.class);
         when(actionExecutor1.handleChangeFromAction(gamePlayer, fromItem)).thenReturn(true);
 
-        ItemActionExecutor actionExecutor2 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor2 = mock(ActionExecutor.class);
         when(actionExecutor2.handleChangeFromAction(gamePlayer, fromItem)).thenReturn(true);
 
-        when(game.getItemActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
+        when(game.getActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
         when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
@@ -75,13 +75,13 @@ public class DefaultActionHandlerTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack toItem = new ItemStack(Material.IRON_HOE);
 
-        ItemActionExecutor actionExecutor1 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor1 = mock(ActionExecutor.class);
         when(actionExecutor1.handleChangeToAction(gamePlayer, toItem)).thenReturn(true);
 
-        ItemActionExecutor actionExecutor2 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor2 = mock(ActionExecutor.class);
         when(actionExecutor2.handleChangeToAction(gamePlayer, toItem)).thenReturn(false);
 
-        when(game.getItemActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
+        when(game.getActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
         when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
@@ -108,13 +108,13 @@ public class DefaultActionHandlerTest {
     public void shouldPassOnItemDropToItemBehaviorInstancesAndReturnResult() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        ItemActionExecutor actionExecutor1 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor1 = mock(ActionExecutor.class);
         when(actionExecutor1.handleDropItemAction(gamePlayer, itemStack)).thenReturn(true);
 
-        ItemActionExecutor actionExecutor2 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor2 = mock(ActionExecutor.class);
         when(actionExecutor2.handleDropItemAction(gamePlayer, itemStack)).thenReturn(true);
 
-        when(game.getItemActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
+        when(game.getActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
         when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
@@ -142,13 +142,13 @@ public class DefaultActionHandlerTest {
     public void shouldPassOnLeftClickToItemBehaviorInstancesAndReturnResult() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        ItemActionExecutor actionExecutor1 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor1 = mock(ActionExecutor.class);
         when(actionExecutor1.handleLeftClickAction(gamePlayer, itemStack)).thenReturn(false);
 
-        ItemActionExecutor actionExecutor2 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor2 = mock(ActionExecutor.class);
         when(actionExecutor2.handleLeftClickAction(gamePlayer, itemStack)).thenReturn(true);
 
-        when(game.getItemActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
+        when(game.getActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
         when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
@@ -176,13 +176,13 @@ public class DefaultActionHandlerTest {
     public void shouldPassOnItemPickUpToItemBehaviorInstancesAndReturnResult() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        ItemActionExecutor actionExecutor1 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor1 = mock(ActionExecutor.class);
         when(actionExecutor1.handlePickupItemAction(gamePlayer, itemStack)).thenReturn(false);
 
-        ItemActionExecutor actionExecutor2 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor2 = mock(ActionExecutor.class);
         when(actionExecutor2.handlePickupItemAction(gamePlayer, itemStack)).thenReturn(false);
 
-        when(game.getItemActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
+        when(game.getActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
         when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
@@ -210,13 +210,13 @@ public class DefaultActionHandlerTest {
     public void shouldPassOnRightClickToItemBehaviorInstancesAndReturnResult() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        ItemActionExecutor actionExecutor1 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor1 = mock(ActionExecutor.class);
         when(actionExecutor1.handleLeftClickAction(gamePlayer, itemStack)).thenReturn(false);
 
-        ItemActionExecutor actionExecutor2 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor2 = mock(ActionExecutor.class);
         when(actionExecutor2.handleLeftClickAction(gamePlayer, itemStack)).thenReturn(true);
 
-        when(game.getItemActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
+        when(game.getActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
         when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
@@ -245,13 +245,13 @@ public class DefaultActionHandlerTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack fromItem = new ItemStack(Material.IRON_HOE);
 
-        ItemActionExecutor actionExecutor1 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor1 = mock(ActionExecutor.class);
         when(actionExecutor1.handleSwapFromAction(gamePlayer, fromItem)).thenReturn(true);
 
-        ItemActionExecutor actionExecutor2 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor2 = mock(ActionExecutor.class);
         when(actionExecutor2.handleSwapFromAction(gamePlayer, fromItem)).thenReturn(false);
 
-        when(game.getItemActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
+        when(game.getActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
         when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);
@@ -268,13 +268,13 @@ public class DefaultActionHandlerTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack toItem = new ItemStack(Material.IRON_HOE);
 
-        ItemActionExecutor actionExecutor1 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor1 = mock(ActionExecutor.class);
         when(actionExecutor1.handleSwapToAction(gamePlayer, toItem)).thenReturn(true);
 
-        ItemActionExecutor actionExecutor2 = mock(ItemActionExecutor.class);
+        ActionExecutor actionExecutor2 = mock(ActionExecutor.class);
         when(actionExecutor2.handleSwapToAction(gamePlayer, toItem)).thenReturn(false);
 
-        when(game.getItemActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
+        when(game.getActionExecutors()).thenReturn(List.of(actionExecutor1, actionExecutor2));
         when(playerRegistry.findByUUID(uuid)).thenReturn(gamePlayer);
 
         DefaultActionHandler actionHandler = new DefaultActionHandler(game, playerRegistry);

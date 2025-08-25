@@ -3,7 +3,8 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.game.component.ActionHandler;
+import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
+import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -31,13 +32,13 @@ public class PlayerInteractEventHandlerTest {
     private GameContextProvider gameContextProvider;
     private GameScope gameScope;
     private Player player;
-    private Provider<ActionHandler> actionHandlerProvider;
+    private Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
 
     @BeforeEach
     public void setUp() {
         gameContextProvider = mock(GameContextProvider.class);
         gameScope = mock(GameScope.class);
-        actionHandlerProvider = mock();
+        actionExecutorRegistryProvider = mock();
 
         player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
@@ -47,7 +48,7 @@ public class PlayerInteractEventHandlerTest {
     public void handleShouldDoNothingIfClickedItemIsNull() {
         PlayerInteractEvent event = new PlayerInteractEvent(player, null, null, null, null);
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionHandlerProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         assertThat(event.useItemInHand()).isEqualTo(Result.DEFAULT);
@@ -61,7 +62,7 @@ public class PlayerInteractEventHandlerTest {
 
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionHandlerProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         assertThat(event.useItemInHand()).isEqualTo(Result.DEFAULT);
@@ -76,7 +77,7 @@ public class PlayerInteractEventHandlerTest {
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionHandlerProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
@@ -84,17 +85,40 @@ public class PlayerInteractEventHandlerTest {
     }
 
     @Test
-    public void handleShouldCallLeftClickFunctionAndCancelEventBasedOnResult() {
+    public void handleDoesNothingWhenNoActionExecutorIsFoundForItemStack() {
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, ITEM_STACK, null, null);
 
-        ActionHandler actionHandler = mock(ActionHandler.class);
-        when(actionHandler.handleItemLeftClick(player, ITEM_STACK)).thenReturn(false);
+        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
+        when(actionExecutorRegistry.getActionExecutor(ITEM_STACK)).thenReturn(Optional.empty());
 
-        when(actionHandlerProvider.get()).thenReturn(actionHandler);
+        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionHandlerProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
+        eventHandler.handle(event);
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(gameScope).runInScope(eq(GAME_CONTEXT), runnableCaptor.capture());
+
+        runnableCaptor.getValue().run();
+
+        assertThat(event.useItemInHand()).isEqualTo(Result.DEFAULT);
+    }
+
+    @Test
+    public void handleShouldCallLeftClickFunctionAndCancelEventBasedOnResult() {
+        ActionExecutor actionExecutor = mock(ActionExecutor.class);
+        PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, ITEM_STACK, null, null);
+
+        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
+        when(actionExecutorRegistry.getActionExecutor(ITEM_STACK)).thenReturn(Optional.of(actionExecutor));
+
+        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -104,21 +128,22 @@ public class PlayerInteractEventHandlerTest {
 
         assertThat(event.useItemInHand()).isEqualTo(Result.DENY);
 
-        verify(actionHandler).handleItemLeftClick(player, ITEM_STACK);
+        verify(actionExecutor).handleLeftClickAction(player, ITEM_STACK);
     }
 
     @Test
     public void handleShouldCallRightClickFunctionAndCancelEventBasedOnResult() {
+        ActionExecutor actionExecutor = mock(ActionExecutor.class);
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, ITEM_STACK, null, null);
 
-        ActionHandler actionHandler = mock(ActionHandler.class);
-        when(actionHandler.handleItemRightClick(player, ITEM_STACK)).thenReturn(false);
+        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
+        when(actionExecutorRegistry.getActionExecutor(ITEM_STACK)).thenReturn(Optional.of(actionExecutor));
 
-        when(actionHandlerProvider.get()).thenReturn(actionHandler);
+        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionHandlerProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -128,6 +153,6 @@ public class PlayerInteractEventHandlerTest {
 
         assertThat(event.useItemInHand()).isEqualTo(Result.DENY);
 
-        verify(actionHandler).handleItemRightClick(player, ITEM_STACK);
+        verify(actionExecutor).handleRightClickAction(player, ITEM_STACK);
     }
 }

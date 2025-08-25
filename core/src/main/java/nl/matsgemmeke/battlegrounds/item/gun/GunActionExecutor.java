@@ -2,11 +2,12 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.ItemContainer;
-import nl.matsgemmeke.battlegrounds.item.ItemActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class GunActionExecutor implements ItemActionExecutor {
+public class GunActionExecutor implements ActionExecutor {
 
     @NotNull
     private final ItemContainer<Gun, GunHolder> gunContainer;
@@ -62,6 +63,10 @@ public class GunActionExecutor implements ItemActionExecutor {
         return false;
     }
 
+    public boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+        return true;
+    }
+
     public boolean handlePickupItemAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem) {
         Gun gun = gunContainer.getUnassignedItem(pickupItem);
 
@@ -85,6 +90,10 @@ public class GunActionExecutor implements ItemActionExecutor {
 
         gun.onRightClick();
         return false;
+    }
+
+    public boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+        return true;
     }
 
     public boolean handleSwapFromAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack swappedItem) {

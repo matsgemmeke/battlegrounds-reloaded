@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointContainer;
-import nl.matsgemmeke.battlegrounds.item.ItemActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -17,11 +17,11 @@ import java.util.Collection;
 public interface Game {
 
     /**
-     * Adds an item action executor handles to the game instance.
+     * Adds an action executor to the game instance.
      *
-     * @param itemActionExecutor the item action executor
+     * @param actionExecutor the action executor
      */
-    void addItemActionExecutor(@NotNull ItemActionExecutor itemActionExecutor);
+    void addActionExecutor(@NotNull ActionExecutor actionExecutor);
 
     /**
      * Gets the item container which keeps equipment items.
@@ -45,7 +45,7 @@ public interface Game {
      * @return the game's item behavior instances
      */
     @NotNull
-    Collection<ItemActionExecutor> getItemActionExecutors();
+    Collection<ActionExecutor> getActionExecutors();
 
     /**
      * Gets the entity container which keeps {@link GamePlayer} instances.
