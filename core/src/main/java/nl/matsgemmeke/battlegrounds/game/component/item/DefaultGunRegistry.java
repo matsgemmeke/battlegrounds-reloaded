@@ -1,49 +1,56 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
-import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class DefaultGunRegistry implements GunRegistry {
 
     @NotNull
-    private final ItemContainer<Gun, GunHolder> gunContainer;
-
-    @Inject
-    public DefaultGunRegistry(@NotNull ItemContainer<Gun, GunHolder> gunContainer) {
-        this.gunContainer = gunContainer;
-    }
-
+    private final ConcurrentMap<GunHolder, List<Gun>> assignedGuns;
     @NotNull
-    public List<Gun> findAll() {
-        return gunContainer.getAllItems();
+    private final List<Gun> unassignedGuns;
+
+    public DefaultGunRegistry() {
+        this.assignedGuns = new ConcurrentHashMap<>();
+        this.unassignedGuns = new ArrayList<>();
     }
 
-    @NotNull
-    public List<Gun> getAssignedItems(@NotNull GunHolder holder) {
-        return gunContainer.getAssignedItems(holder);
-    }
-
-    public void registerItem(@NotNull Gun gun) {
-        gunContainer.addUnassignedItem(gun);
-    }
-
-    public void registerItem(@NotNull Gun gun, @NotNull GunHolder holder) {
-        gunContainer.addAssignedItem(gun, holder);
-    }
-
-    public void unassignItem(@NotNull Gun gun) {
-        GunHolder holder = gun.getHolder();
-
-        if (holder == null) {
+    public void assign(Gun gun, GunHolder holder) {
+        if (!unassignedGuns.contains(gun)) {
             return;
         }
 
-        gunContainer.removeAssignedItem(gun, holder);
-        gunContainer.addUnassignedItem(gun);
+        unassignedGuns.remove(gun);
+        assignedGuns.computeIfAbsent(holder, h -> new ArrayList<>()).add(gun);
+    }
+
+    public void unassign(Gun gun) {
+        GunHolder holder = gun.getHolder();
+
+        if (holder == null || !assignedGuns.containsKey(holder)) {
+            return;
+        }
+
+        assignedGuns.get(holder).remove(gun);
+        unassignedGuns.add(gun);
+    }
+
+    public List<Gun> getAssignedGuns(GunHolder holder) {
+        return assignedGuns.getOrDefault(holder, Collections.emptyList());
+    }
+
+    public void register(Gun gun) {
+        unassignedGuns.add(gun);
+    }
+
+    public void register(Gun gun, GunHolder holder) {
+        assignedGuns.computeIfAbsent(holder, h -> new ArrayList<>()).add(gun);
     }
 }

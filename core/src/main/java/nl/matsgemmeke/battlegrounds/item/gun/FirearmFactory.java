@@ -82,7 +82,7 @@ public class FirearmFactory {
     public Firearm create(@NotNull GunSpec spec, @NotNull GameKey gameKey) {
         Firearm firearm = this.createInstance(spec, gameKey);
 
-        gunRegistry.registerItem(firearm);
+        gunRegistry.register(firearm);
 
         return firearm;
     }
@@ -92,7 +92,7 @@ public class FirearmFactory {
         Firearm firearm = this.createInstance(spec, gameKey);
         firearm.setHolder(gamePlayer);
 
-        gunRegistry.registerItem(firearm, gamePlayer);
+        gunRegistry.register(firearm, gamePlayer);
 
         return firearm;
     }

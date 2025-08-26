@@ -83,7 +83,7 @@ public class OpenModeInitializer {
     private void registerComponents(OpenMode openMode) {
         // Registry components
         EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(openMode.getEquipmentContainer());
-        GunRegistry gunRegistry = new DefaultGunRegistry(openMode.getGunContainer());
+        GunRegistry gunRegistry = new DefaultGunRegistry();
         PlayerRegistry playerRegistry = playerRegistryProvider.get();
 
         // Info provider components

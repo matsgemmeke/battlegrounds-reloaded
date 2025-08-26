@@ -121,7 +121,7 @@ public class FirearmFactoryTest {
         assertThat(firearm.getAmmunitionStorage().getMaxAmmo()).isEqualTo(240);
         assertThat(firearm.getAmmunitionStorage().getReserveAmmo()).isEqualTo(90);
 
-        verify(gunRegistry).registerItem(firearm);
+        verify(gunRegistry).register(firearm);
         verify(itemMeta).setDamage(8);
         verify(itemMeta).setDisplayName("§fMP5 30/90");
     }
@@ -147,7 +147,7 @@ public class FirearmFactoryTest {
         assertInstanceOf(DefaultFirearm.class, firearm);
         assertNotNull(firearm.getScopeAttachment());
 
-        verify(gunRegistry).registerItem(firearm);
+        verify(gunRegistry).register(firearm);
     }
 
     @Test
@@ -167,7 +167,7 @@ public class FirearmFactoryTest {
         assertInstanceOf(DefaultFirearm.class, firearm);
         assertEquals(gamePlayer, firearm.getHolder());
 
-        verify(gunRegistry).registerItem(firearm, gamePlayer);
+        verify(gunRegistry).register(firearm, gamePlayer);
     }
 
     private GunSpec createGunSpec() {

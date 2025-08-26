@@ -100,7 +100,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     }
 
     public void savePlayerState(@NotNull GamePlayer gamePlayer) {
-        List<GunState> gunStates = gunRegistry.getAssignedItems(gamePlayer).stream()
+        List<GunState> gunStates = gunRegistry.getAssignedGuns(gamePlayer).stream()
                 .map(gun -> this.convertToGunState(gamePlayer, gun))
                 .flatMap(Optional::stream)
                 .toList();

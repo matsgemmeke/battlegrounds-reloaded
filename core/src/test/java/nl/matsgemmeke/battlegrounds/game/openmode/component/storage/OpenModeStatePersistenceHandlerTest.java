@@ -148,7 +148,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(equipment.getItemStack()).thenReturn(null);
 
-        when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(gun));
+        when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
         when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(equipmentRegistry, gunRegistry, logger, playerRegistry, playerStateStorage, weaponCreator);
@@ -181,7 +181,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gamePlayer.getItemSlot(equipment)).thenReturn(Optional.empty());
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
-        when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(gun));
+        when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
         when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(equipmentRegistry, gunRegistry, logger, playerRegistry, playerStateStorage, weaponCreator);
@@ -218,7 +218,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gamePlayer.getItemSlot(equipment)).thenReturn(Optional.of(EQUIPMENT_ITEM_SLOT));
 
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
-        when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(gun));
+        when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
         when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(equipmentRegistry, gunRegistry, logger, playerRegistry, playerStateStorage, weaponCreator);
@@ -245,7 +245,7 @@ public class OpenModeStatePersistenceHandlerTest {
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
         when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
 
-        when(gunRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of());
+        when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of());
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
         doThrow(new PlayerStateStorageException("error")).when(playerStateStorage).savePlayerState(any(PlayerState.class));
 
