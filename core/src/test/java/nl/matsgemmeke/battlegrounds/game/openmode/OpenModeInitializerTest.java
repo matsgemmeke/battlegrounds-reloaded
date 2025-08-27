@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
+import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -31,6 +32,7 @@ public class OpenModeInitializerTest {
     private GameContextProvider gameContextProvider;
     private GameScope gameScope;
     private Provider<CollisionDetector> collisionDetectorProvider;
+    private Provider<GunActionExecutor> gunActionExecutorProvider;
     private Provider<PlayerRegistry> playerRegistryProvider;
     private Provider<StatePersistenceHandler> statePersistenceHandlerProvider;
     private MockedStatic<Bukkit> bukkit;
@@ -42,6 +44,7 @@ public class OpenModeInitializerTest {
         gameContextProvider = new GameContextProvider();
         gameScope = mock(GameScope.class);
         collisionDetectorProvider = mock();
+        gunActionExecutorProvider = mock();
         playerRegistryProvider = mock();
         statePersistenceHandlerProvider = mock();
         bukkit = mockStatic(Bukkit.class);
@@ -73,13 +76,13 @@ public class OpenModeInitializerTest {
 
         bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
 
-        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, collisionDetectorProvider, playerRegistryProvider, statePersistenceHandlerProvider);
+        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, collisionDetectorProvider, gunActionExecutorProvider, playerRegistryProvider, statePersistenceHandlerProvider);
         openModeInitializer.initialize();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
         verify(gameScope).runInScope(any(GameContext.class), runnableCaptor.capture());
 
-        runnableCaptor.getValue().run();;
+        runnableCaptor.getValue().run();
 
         assertThat(gameContextProvider.getGameContext(GameKey.ofOpenMode())).hasValueSatisfying(gameContext ->
                 assertThat(gameContext.getType()).isEqualTo(GameContextType.OPEN_MODE)

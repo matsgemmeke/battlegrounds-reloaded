@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.ItemContainer;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,14 +11,15 @@ import org.jetbrains.annotations.NotNull;
 public class GunActionExecutor implements ActionExecutor {
 
     @NotNull
-    private final ItemContainer<Gun, GunHolder> gunContainer;
+    private final GunRegistry gunRegistry;
 
-    public GunActionExecutor(@NotNull ItemContainer<Gun, GunHolder> gunContainer) {
-        this.gunContainer = gunContainer;
+    @Inject
+    public GunActionExecutor(@NotNull GunRegistry gunRegistry) {
+        this.gunRegistry = gunRegistry;
     }
 
     public boolean handleChangeFromAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack changedItem) {
-        Gun gun = gunContainer.getAssignedItem(gamePlayer, changedItem);
+        Gun gun = gunRegistry.getAssignedGun(gamePlayer, changedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
             return true;
@@ -28,7 +30,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleChangeToAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack changedItem) {
-        Gun gun = gunContainer.getAssignedItem(gamePlayer, changedItem);
+        Gun gun = gunRegistry.getAssignedGun(gamePlayer, changedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
             return true;
@@ -39,7 +41,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleDropItemAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem) {
-        Gun gun = gunContainer.getAssignedItem(gamePlayer, droppedItem);
+        Gun gun = gunRegistry.getAssignedGun(gamePlayer, droppedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
             return true;
@@ -47,13 +49,12 @@ public class GunActionExecutor implements ActionExecutor {
 
         gun.onDrop();
 
-        gunContainer.removeAssignedItem(gun, gamePlayer);
-        gunContainer.addUnassignedItem(gun);
+        gunRegistry.unassign(gun);
         return true;
     }
 
     public boolean handleLeftClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        Gun gun = gunContainer.getAssignedItem(gamePlayer, clickedItem);
+        Gun gun = gunRegistry.getAssignedGun(gamePlayer, clickedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
             return true;
@@ -68,7 +69,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handlePickupItemAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem) {
-        Gun gun = gunContainer.getUnassignedItem(pickupItem);
+        Gun gun = gunRegistry.getUnassignedGun(pickupItem).orElse(null);
 
         if (gun == null) {
             return true;
@@ -76,13 +77,12 @@ public class GunActionExecutor implements ActionExecutor {
 
         gun.onPickUp(gamePlayer);
 
-        gunContainer.removeUnassignedItem(gun);
-        gunContainer.addAssignedItem(gun, gamePlayer);
+        gunRegistry.assign(gun, gamePlayer);
         return true;
     }
 
     public boolean handleRightClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        Gun gun = gunContainer.getAssignedItem(gamePlayer, clickedItem);
+        Gun gun = gunRegistry.getAssignedGun(gamePlayer, clickedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
             return true;
@@ -97,7 +97,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleSwapFromAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack swappedItem) {
-        Gun gun = gunContainer.getAssignedItem(gamePlayer, swappedItem);
+        Gun gun = gunRegistry.getAssignedGun(gamePlayer, swappedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
             return true;
@@ -108,7 +108,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleSwapToAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack swappedItem) {
-        Gun gun = gunContainer.getAssignedItem(gamePlayer, swappedItem);
+        Gun gun = gunRegistry.getAssignedGun(gamePlayer, swappedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
             return true;

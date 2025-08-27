@@ -1,313 +1,352 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.ItemContainer;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class GunActionExecutorTest {
 
+    private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
+
     private GamePlayer gamePlayer;
-    private Gun gun;
-    private ItemContainer<Gun, GunHolder> gunContainer;
-    private ItemStack itemStack;
+    private GunRegistry gunRegistry;
 
     @BeforeEach
     public void setUp() {
-        this.gamePlayer = mock(GamePlayer.class);
-        this.gunContainer = new ItemContainer<>();
-        this.itemStack = new ItemStack(Material.IRON_HOE);
-
-        this.gun = mock(Gun.class);
-        when(gun.isMatching(itemStack)).thenReturn(true);
+        gamePlayer = mock(GamePlayer.class);
+        gunRegistry = mock(GunRegistry.class);
     }
 
     @Test
-    public void shouldCallFunctionOnGunWhenHolderPutsGunAway() {
-        when(gun.getHolder()).thenReturn(gamePlayer);
+    public void handleChangeFromActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        gunContainer.addAssignedItem(gun, gamePlayer);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleChangeFromAction(gamePlayer, ITEM_STACK);
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleChangeFromAction(gamePlayer, itemStack);
-
-        assertTrue(performAction);
-
-        verify(gun).onChangeFrom();
+        assertThat(performAction).isTrue();
     }
 
     @Test
-    public void shouldDoNothingWhenHolderPutsAwayGunButItIsNotRegistered() {
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleChangeFromAction(gamePlayer, itemStack);
+    public void handleChangeFromActionDoesNothingWhenGunHolderDoesNotMatch() {
+        GunHolder otherHolder = mock(GunHolder.class);
 
-        assertTrue(performAction);
+        Gun gun = mock(Gun.class);
+        when(gun.getHolder()).thenReturn(otherHolder);
+
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
+
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleChangeFromAction(gamePlayer, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
 
         verify(gun, never()).onChangeFrom();
     }
 
     @Test
-    public void shouldDoNothingWhenHolderPutsAwayGunButHolderDoesNotMatch() {
-        gunContainer.addAssignedItem(gun, gamePlayer);
+    public void handleChangeFromActionCallsGunFunctionWhenMatchingGunIsFound() {
+        Gun gun = mock(Gun.class);
+        when(gun.getHolder()).thenReturn(gamePlayer);
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, itemStack);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        assertTrue(performAction);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleChangeFromAction(gamePlayer, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(gun).onChangeFrom();
+    }
+
+    @Test
+    public void handleChangeToActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
+
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+    }
+
+    @Test
+    public void handleChangeToActionDoesNothingWhenGunHolderDoesNotMatch() {
+        GunHolder otherHolder = mock(GunHolder.class);
+
+        Gun gun = mock(Gun.class);
+        when(gun.getHolder()).thenReturn(otherHolder);
+
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
+
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
 
         verify(gun, never()).onChangeTo();
     }
 
     @Test
-    public void shouldCallFunctionOnGunWhenHolderSwitchesToGun() {
+    public void handleChangeToActionCallsGunFunctionWhenMatchingGunIsFound() {
+        Gun gun = mock(Gun.class);
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        gunContainer.addAssignedItem(gun, gamePlayer);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, ITEM_STACK);
 
-        assertTrue(performAction);
+        assertThat(performAction).isTrue();
 
         verify(gun).onChangeTo();
     }
 
     @Test
-    public void shouldDoNothingWhenHolderSwitchesToGunButItIsNotInTheStorage() {
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, itemStack);
+    public void handleDropItemActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        assertTrue(performAction);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleDropItemAction(gamePlayer, ITEM_STACK);
 
-        verify(gun, never()).onChangeTo();
+        assertThat(performAction).isTrue();
+
+        verify(gunRegistry, never()).unassign(any(Gun.class));
     }
 
     @Test
-    public void shouldDoNothingWhenHolderSwitchesToGunButHolderDoesNotMatch() {
-        gunContainer.addAssignedItem(gun, gamePlayer);
+    public void handleDropItemActionDoesNothingWhenGunHolderDoesNotMatch() {
+        GunHolder otherHolder = mock(GunHolder.class);
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleChangeToAction(gamePlayer, itemStack);
+        Gun gun = mock(Gun.class);
+        when(gun.getHolder()).thenReturn(otherHolder);
 
-        assertTrue(performAction);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        verify(gun, never()).onChangeTo();
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleDropItemAction(gamePlayer, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(gun, never()).onDrop();
+        verify(gunRegistry, never()).unassign(gun);
     }
 
     @Test
-    public void shouldCallFunctionOnGunWhenHolderDropsTheGun() {
+    public void handleDropItemActionCallsGunFunctionAndUnassignsGunWhenMatchingGunIsFound() {
+        Gun gun = mock(Gun.class);
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        gunContainer.addAssignedItem(gun, gamePlayer);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleDropItemAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleDropItemAction(gamePlayer, ITEM_STACK);
 
-        Gun assignedResult = gunContainer.getAssignedItem(gamePlayer, itemStack);
-        Gun unassignedResult = gunContainer.getUnassignedItem(itemStack);
-
-        assertTrue(performAction);
-        assertEquals(gun, unassignedResult);
-        assertNull(assignedResult);
+        assertThat(performAction).isTrue();
 
         verify(gun).onDrop();
+        verify(gunRegistry).unassign(gun);
     }
 
     @Test
-    public void shouldDoNothingWhenHolderDropsTheGunButItIsNotInTheStorage() {
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleDropItemAction(gamePlayer, itemStack);
+    public void handlePickupItemActionDoesNothingWhenNoGunMatchesWithGivenItemStack() {
+        when(gunRegistry.getUnassignedGun(ITEM_STACK)).thenReturn(Optional.empty());
 
-        assertTrue(performAction);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handlePickupItemAction(gamePlayer, ITEM_STACK);
 
-        verify(gun, never()).onDrop();
+        assertThat(performAction).isTrue();
+
+        verify(gunRegistry, never()).assign(any(Gun.class), any(GamePlayer.class));
     }
 
     @Test
-    public void shouldDoNothingWhenHolderDropsTheGunButHolderDoesNotMatch() {
-        gunContainer.addAssignedItem(gun, gamePlayer);
+    public void handlePickupItemActionCallsGunFunctionAndAssignsGunWhenMatchingGunIsFound() {
+        Gun gun = mock(Gun.class);
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleDropItemAction(gamePlayer, itemStack);
+        when(gunRegistry.getUnassignedGun(ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        assertTrue(performAction);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handlePickupItemAction(gamePlayer, ITEM_STACK);
 
-        verify(gun, never()).onDrop();
-    }
-
-    @Test
-    public void shouldCallFunctionOnGunWhenHolderPicksUpTheGun() {
-        gunContainer.addUnassignedItem(gun);
-
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handlePickupItemAction(gamePlayer, itemStack);
-
-        Gun assignedResult = gunContainer.getAssignedItem(gamePlayer, itemStack);
-        Gun unassignedResult = gunContainer.getUnassignedItem(itemStack);
-
-        assertTrue(performAction);
-        assertEquals(gun, assignedResult);
-        assertNull(unassignedResult);
+        assertThat(performAction).isTrue();
 
         verify(gun).onPickUp(gamePlayer);
+        verify(gunRegistry).assign(gun, gamePlayer);
     }
 
     @Test
-    public void shouldDoNothingUponItemPickupWhenGunIsNotRegistered() {
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handlePickupItemAction(gamePlayer, itemStack);
+    public void handleLeftClickActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        assertTrue(performAction);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, ITEM_STACK);
 
-        verify(gun, never()).onPickUp(gamePlayer);
+        assertThat(performAction).isTrue();
     }
 
     @Test
-    public void shouldCallFunctionOnGunWhenHolderLeftClicks() {
+    public void handleLeftClickActionDoesNothingWhenGunHolderDoesNotMatch() {
+        GunHolder otherHolder = mock(GunHolder.class);
+
+        Gun gun = mock(Gun.class);
+        when(gun.getHolder()).thenReturn(otherHolder);
+
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
+
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(gun, never()).onLeftClick();
+    }
+
+    @Test
+    public void handleLeftClickActionCallsGunFunctionWhenMatchingGunIsFound() {
+        Gun gun = mock(Gun.class);
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        gunContainer.addAssignedItem(gun, gamePlayer);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, ITEM_STACK);
 
-        assertFalse(performAction);
+        assertThat(performAction).isFalse();
 
         verify(gun).onLeftClick();
     }
 
     @Test
-    public void shouldDoNothingWhenHolderLeftClicksButGunIsNotRegistered() {
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
+    public void handleRightClickActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        assertTrue(performAction);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, ITEM_STACK);
 
-        verify(gun, never()).onLeftClick();
+        assertThat(performAction).isTrue();
     }
 
     @Test
-    public void shouldDoNothingWhenHolderLeftClicksButHolderDoesNotMatch() {
-        gunContainer.addAssignedItem(gun, gamePlayer);
+    public void handleRightClickActionDoesNothingWhenGunHolderDoesNotMatch() {
+        GunHolder otherHolder = mock(GunHolder.class);
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
+        Gun gun = mock(Gun.class);
+        when(gun.getHolder()).thenReturn(otherHolder);
 
-        assertTrue(performAction);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        verify(gun, never()).onLeftClick();
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(gun, never()).onRightClick();
     }
 
     @Test
-    public void shouldCallFunctionOnGunWhenHolderRightClicks() {
+    public void handleRightClickActionCallsGunFunctionWhenMatchingGunIsFound() {
+        Gun gun = mock(Gun.class);
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        gunContainer.addAssignedItem(gun, gamePlayer);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, ITEM_STACK);
 
-        assertFalse(performAction);
+        assertThat(performAction).isFalse();
 
         verify(gun).onRightClick();
     }
 
     @Test
-    public void shouldDoNothingWhenHolderRightClicksButGunIsNotRegistered() {
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
+    public void handleSwapFromActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        assertTrue(performAction);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleSwapFromAction(gamePlayer, ITEM_STACK);
 
-        verify(gun, never()).onRightClick();
+        assertThat(performAction).isTrue();
     }
 
     @Test
-    public void shouldDoNothingWhenHolderRightClicksButHolderDoesNotMatch() {
-        gunContainer.addAssignedItem(gun, gamePlayer);
+    public void handleSwapFromActionDoesNothingWhenGunHolderDoesNotMatch() {
+        GunHolder otherHolder = mock(GunHolder.class);
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
+        Gun gun = mock(Gun.class);
+        when(gun.getHolder()).thenReturn(otherHolder);
 
-        assertTrue(performAction);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        verify(gun, never()).onRightClick();
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleSwapFromAction(gamePlayer, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(gun, never()).onSwapFrom();
     }
 
     @Test
-    public void shouldCallFunctionOnGunWhenHolderSwapsItemAway() {
+    public void handleSwapFromActionCallsGunFunctionWhenMatchingGunIsFound() {
+        Gun gun = mock(Gun.class);
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        gunContainer.addAssignedItem(gun, gamePlayer);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleSwapFromAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleSwapFromAction(gamePlayer, ITEM_STACK);
 
-        assertFalse(performAction);
+        assertThat(performAction).isFalse();
 
         verify(gun).onSwapFrom();
     }
 
     @Test
-    public void shouldDoNothingWhenHolderSwapsItemAwayButGunIsNotRegistered() {
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleSwapFromAction(gamePlayer, itemStack);
+    public void handleSwapToActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        assertTrue(performAction);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleSwapToAction(gamePlayer, ITEM_STACK);
 
-        verify(gun, never()).onSwapFrom();
+        assertThat(performAction).isTrue();
     }
 
     @Test
-    public void shouldDoNothingWhenHolderSwapsItemAwayButHolderDoesNotMatch() {
-        gunContainer.addAssignedItem(gun, gamePlayer);
+    public void handleSwapToActionDoesNothingWhenGunHolderDoesNotMatch() {
+        GunHolder otherHolder = mock(GunHolder.class);
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleSwapFromAction(gamePlayer, itemStack);
+        Gun gun = mock(Gun.class);
+        when(gun.getHolder()).thenReturn(otherHolder);
 
-        assertTrue(performAction);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        verify(gun, never()).onSwapFrom();
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleSwapToAction(gamePlayer, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(gun, never()).onSwapTo();
     }
 
     @Test
-    public void shouldCallFunctionOnGunWhenHolderSwapsToItem() {
+    public void handleSwapToActionCallsGunFunctionWhenMatchingGunIsFound() {
+        Gun gun = mock(Gun.class);
         when(gun.getHolder()).thenReturn(gamePlayer);
 
-        gunContainer.addAssignedItem(gun, gamePlayer);
+        when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleSwapToAction(gamePlayer, itemStack);
+        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry);
+        boolean performAction = actionExecutor.handleSwapToAction(gamePlayer, ITEM_STACK);
 
-        assertTrue(performAction);
+        assertThat(performAction).isTrue();
 
         verify(gun).onSwapTo();
-    }
-
-    @Test
-    public void shouldDoNothingWhenHolderSwapsToItemButGunIsNotRegistered() {
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleSwapToAction(gamePlayer, itemStack);
-
-        assertTrue(performAction);
-
-        verify(gun, never()).onSwapTo();
-    }
-
-    @Test
-    public void shouldDoNothingWhenHolderSwapsToItemButHolderDoesNotMatch() {
-        gunContainer.addAssignedItem(gun, gamePlayer);
-
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunContainer);
-        boolean performAction = actionExecutor.handleSwapToAction(gamePlayer, itemStack);
-
-        assertTrue(performAction);
-
-        verify(gun, never()).onSwapTo();
     }
 }

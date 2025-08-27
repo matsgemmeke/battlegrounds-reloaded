@@ -87,7 +87,7 @@ public class WeaponCreator {
         }
 
         FirearmFactory gunFactory = gunFactoryProvider.get();
-        GunSpec gunSpec = gunSpecs.get(gunId);;
+        GunSpec gunSpec = gunSpecs.get(gunId);
 
         return gunFactory.create(gunSpec, gameKey, gamePlayer);
     }

@@ -2,11 +2,13 @@ package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -42,8 +44,28 @@ public class DefaultGunRegistry implements GunRegistry {
         unassignedGuns.add(gun);
     }
 
+    public Optional<Gun> getAssignedGun(GunHolder holder, ItemStack itemStack) {
+        for (Gun gun : assignedGuns.get(holder)) {
+            if (gun.isMatching(itemStack)) {
+                return Optional.of(gun);
+            }
+        }
+
+        return Optional.empty();
+    }
+
     public List<Gun> getAssignedGuns(GunHolder holder) {
         return assignedGuns.getOrDefault(holder, Collections.emptyList());
+    }
+
+    public Optional<Gun> getUnassignedGun(ItemStack itemStack) {
+        for (Gun gun : unassignedGuns) {
+            if (gun.isMatching(itemStack)) {
+                return Optional.of(gun);
+            }
+        }
+
+        return Optional.empty();
     }
 
     public void register(Gun gun) {

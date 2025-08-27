@@ -2,9 +2,12 @@ package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -79,6 +82,36 @@ public class DefaultGunRegistryTest {
     }
 
     @Test
+    public void getAssignedGunReturnsEmptyOptionalWhenNoAssignedGunsOfGivenHolderMatch() {
+        GunHolder holder = mock(GunHolder.class);
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        Gun gun = mock(Gun.class);
+        when(gun.isMatching(itemStack)).thenReturn(false);
+
+        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
+        gunRegistry.register(gun, holder);
+        Optional<Gun> gunOptional = gunRegistry.getAssignedGun(holder, itemStack);
+
+        assertThat(gunOptional).isEmpty();
+    }
+
+    @Test
+    public void getAssignedGunReturnsOptionalWithMatchingGunAssignedToGivenHolder() {
+        GunHolder holder = mock(GunHolder.class);
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        Gun gun = mock(Gun.class);
+        when(gun.isMatching(itemStack)).thenReturn(true);
+
+        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
+        gunRegistry.register(gun, holder);
+        Optional<Gun> gunOptional = gunRegistry.getAssignedGun(holder, itemStack);
+
+        assertThat(gunOptional).hasValue(gun);
+    }
+
+    @Test
     public void getAssignedGunsReturnsAssignedItemsForGivenHolder() {
         Gun gun = mock(Gun.class);
         GunHolder holder = mock(GunHolder.class);
@@ -88,5 +121,33 @@ public class DefaultGunRegistryTest {
         List<Gun> assignedItems = gunRegistry.getAssignedGuns(holder);
 
         assertThat(assignedItems).containsExactly(gun);
+    }
+
+    @Test
+    public void getUnassignedGunReturnsEmptyOptionalWhenNoUnassignedGunsMatch() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        Gun gun = mock(Gun.class);
+        when(gun.isMatching(itemStack)).thenReturn(false);
+
+        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
+        gunRegistry.register(gun);
+        Optional<Gun> gunOptional = gunRegistry.getUnassignedGun(itemStack);
+
+        assertThat(gunOptional).isEmpty();
+    }
+
+    @Test
+    public void getUnassignedGunReturnsOptionalWithMatchingUnassignedGun() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        Gun gun = mock(Gun.class);
+        when(gun.isMatching(itemStack)).thenReturn(true);
+
+        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
+        gunRegistry.register(gun);
+        Optional<Gun> gunOptional = gunRegistry.getUnassignedGun(itemStack);
+
+        assertThat(gunOptional).hasValue(gun);
     }
 }
