@@ -100,7 +100,7 @@ public class EquipmentFactoryTest {
         assertThat(equipment.getId()).isEqualTo("FRAG_GRENADE");
         assertThat(equipment.getName()).isEqualTo("Frag Grenade");
 
-        verify(equipmentRegistry).registerItem(equipment, gamePlayer);
+        verify(equipmentRegistry).register(equipment, gamePlayer);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class EquipmentFactoryTest {
         assertThat(equipment.getActivator()).isNotNull();
         assertThat(equipment.getActivator()).isInstanceOf(DefaultActivator.class);
 
-        verify(equipmentRegistry).registerItem(equipment);
+        verify(equipmentRegistry).register(equipment);
     }
 
     private EquipmentSpec createEquipmentSpec(String filePath) {

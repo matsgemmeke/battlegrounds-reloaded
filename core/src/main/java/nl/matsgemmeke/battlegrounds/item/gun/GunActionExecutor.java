@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.entity.Player;
@@ -12,13 +13,22 @@ public class GunActionExecutor implements ActionExecutor {
 
     @NotNull
     private final GunRegistry gunRegistry;
+    @NotNull
+    private final PlayerRegistry playerRegistry;
 
     @Inject
-    public GunActionExecutor(@NotNull GunRegistry gunRegistry) {
+    public GunActionExecutor(@NotNull GunRegistry gunRegistry, @NotNull PlayerRegistry playerRegistry) {
         this.gunRegistry = gunRegistry;
+        this.playerRegistry = playerRegistry;
     }
 
-    public boolean handleChangeFromAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack changedItem) {
+    public boolean handleChangeFromAction(@NotNull Player player, @NotNull ItemStack changedItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+
+        if (gamePlayer == null) {
+            return true;
+        }
+
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, changedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
@@ -29,7 +39,13 @@ public class GunActionExecutor implements ActionExecutor {
         return true;
     }
 
-    public boolean handleChangeToAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack changedItem) {
+    public boolean handleChangeToAction(@NotNull Player player, @NotNull ItemStack changedItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+
+        if (gamePlayer == null) {
+            return true;
+        }
+
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, changedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
@@ -40,7 +56,13 @@ public class GunActionExecutor implements ActionExecutor {
         return true;
     }
 
-    public boolean handleDropItemAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem) {
+    public boolean handleDropItemAction(@NotNull Player player, @NotNull ItemStack droppedItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+
+        if (gamePlayer == null) {
+            return true;
+        }
+
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, droppedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
@@ -53,7 +75,13 @@ public class GunActionExecutor implements ActionExecutor {
         return true;
     }
 
-    public boolean handleLeftClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
+    public boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+
+        if (gamePlayer == null) {
+            return true;
+        }
+
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, clickedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
@@ -64,11 +92,13 @@ public class GunActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
-        return true;
-    }
+    public boolean handlePickupItemAction(@NotNull Player player, @NotNull ItemStack pickupItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
 
-    public boolean handlePickupItemAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem) {
+        if (gamePlayer == null) {
+            return true;
+        }
+
         Gun gun = gunRegistry.getUnassignedGun(pickupItem).orElse(null);
 
         if (gun == null) {
@@ -81,7 +111,13 @@ public class GunActionExecutor implements ActionExecutor {
         return true;
     }
 
-    public boolean handleRightClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
+    public boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+
+        if (gamePlayer == null) {
+            return true;
+        }
+
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, clickedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
@@ -92,11 +128,13 @@ public class GunActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
-        return true;
-    }
+    public boolean handleSwapFromAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
 
-    public boolean handleSwapFromAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack swappedItem) {
+        if (gamePlayer == null) {
+            return true;
+        }
+
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, swappedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {
@@ -107,7 +145,13 @@ public class GunActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handleSwapToAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack swappedItem) {
+    public boolean handleSwapToAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+
+        if (gamePlayer == null) {
+            return true;
+        }
+
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, swappedItem).orElse(null);
 
         if (gun == null || gun.getHolder() != gamePlayer) {

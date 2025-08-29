@@ -1,7 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.ItemContainer;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,26 +12,36 @@ import org.jetbrains.annotations.NotNull;
 public class EquipmentActionExecutor implements ActionExecutor {
 
     @NotNull
-    private ItemContainer<Equipment, EquipmentHolder> equipmentContainer;
+    private final EquipmentRegistry equipmentRegistry;
+    @NotNull
+    private final PlayerRegistry playerRegistry;
 
-    public EquipmentActionExecutor(@NotNull ItemContainer<Equipment, EquipmentHolder> equipmentContainer) {
-        this.equipmentContainer = equipmentContainer;
+    @Inject
+    public EquipmentActionExecutor(@NotNull EquipmentRegistry equipmentRegistry, @NotNull PlayerRegistry playerRegistry) {
+        this.equipmentRegistry = equipmentRegistry;
+        this.playerRegistry = playerRegistry;
     }
 
-    public boolean handleChangeFromAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack changedItem) {
+    public boolean handleChangeFromAction(@NotNull Player player, @NotNull ItemStack changedItem) {
         return true;
     }
 
-    public boolean handleChangeToAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack changedItem) {
+    public boolean handleChangeToAction(@NotNull Player player, @NotNull ItemStack changedItem) {
         return true;
     }
 
-    public boolean handleDropItemAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack droppedItem) {
+    public boolean handleDropItemAction(@NotNull Player player, @NotNull ItemStack droppedItem) {
         return true;
     }
 
-    public boolean handleLeftClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        Equipment equipment = equipmentContainer.getAssignedItem(gamePlayer, clickedItem);
+    public boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+
+        if (gamePlayer == null) {
+            return true;
+        }
+
+        Equipment equipment = equipmentRegistry.getAssignedEquipment(gamePlayer, clickedItem).orElse(null);
 
         if (equipment == null || equipment.getHolder() != gamePlayer) {
             return true;
@@ -39,16 +51,18 @@ public class EquipmentActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+    public boolean handlePickupItemAction(@NotNull Player player, @NotNull ItemStack pickupItem) {
         return true;
     }
 
-    public boolean handlePickupItemAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack pickupItem) {
-        return true;
-    }
+    public boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
 
-    public boolean handleRightClickAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack clickedItem) {
-        Equipment equipment = equipmentContainer.getAssignedItem(gamePlayer, clickedItem);
+        if (gamePlayer == null) {
+            return true;
+        }
+
+        Equipment equipment = equipmentRegistry.getAssignedEquipment(gamePlayer, clickedItem).orElse(null);
 
         if (equipment == null || equipment.getHolder() != gamePlayer) {
             return true;
@@ -58,15 +72,11 @@ public class EquipmentActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+    public boolean handleSwapFromAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
         return true;
     }
 
-    public boolean handleSwapFromAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack swappedItem) {
-        return true;
-    }
-
-    public boolean handleSwapToAction(@NotNull GamePlayer gamePlayer, @NotNull ItemStack swappedItem) {
+    public boolean handleSwapToAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
         return true;
     }
 }

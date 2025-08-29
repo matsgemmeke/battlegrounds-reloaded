@@ -44,6 +44,8 @@ public class OpenModeInitializer {
     @NotNull
     private final Provider<CollisionDetector> collisionDetectorProvider;
     @NotNull
+    private final Provider<EquipmentActionExecutor> equipmentActionExecutorProvider;
+    @NotNull
     private final Provider<GunActionExecutor> gunActionExecutorProvider;
     @NotNull
     private final Provider<PlayerRegistry> playerRegistryProvider;
@@ -57,6 +59,7 @@ public class OpenModeInitializer {
             @NotNull GameContextProvider gameContextProvider,
             @NotNull GameScope gameScope,
             @NotNull Provider<CollisionDetector> collisionDetectorProvider,
+            @NotNull Provider<EquipmentActionExecutor> equipmentActionExecutorProvider,
             @NotNull Provider<GunActionExecutor> gunActionExecutorProvider,
             @NotNull Provider<PlayerRegistry> playerRegistryProvider,
             @NotNull Provider<StatePersistenceHandler> statePersistenceHandlerProvider
@@ -66,6 +69,7 @@ public class OpenModeInitializer {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.collisionDetectorProvider = collisionDetectorProvider;
+        this.equipmentActionExecutorProvider = equipmentActionExecutorProvider;
         this.gunActionExecutorProvider = gunActionExecutorProvider;
         this.playerRegistryProvider = playerRegistryProvider;
         this.statePersistenceHandlerProvider = statePersistenceHandlerProvider;
@@ -73,7 +77,7 @@ public class OpenModeInitializer {
 
     public void initialize() {
         OpenMode openMode = new OpenMode();
-        openMode.addActionExecutor(new EquipmentActionExecutor(openMode.getEquipmentContainer()));
+        openMode.addActionExecutor(equipmentActionExecutorProvider.get());
         openMode.addActionExecutor(gunActionExecutorProvider.get());
 
         GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
@@ -86,7 +90,7 @@ public class OpenModeInitializer {
 
     private void registerComponents(OpenMode openMode) {
         // Registry components
-        EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry(openMode.getEquipmentContainer());
+        EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
         GunRegistry gunRegistry = new DefaultGunRegistry();
         PlayerRegistry playerRegistry = playerRegistryProvider.get();
 

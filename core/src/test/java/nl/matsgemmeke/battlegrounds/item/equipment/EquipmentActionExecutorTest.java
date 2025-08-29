@@ -1,102 +1,143 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.ItemContainer;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class EquipmentActionExecutorTest {
 
-    private Equipment equipment;
+    private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
+
+    private EquipmentRegistry equipmentRegistry;
     private GamePlayer gamePlayer;
-    private ItemContainer<Equipment, EquipmentHolder> equipmentContainer;
-    private ItemStack itemStack;
+    private Player player;
+    private PlayerRegistry playerRegistry;
 
     @BeforeEach
     public void setUp() {
+        equipmentRegistry = mock(EquipmentRegistry.class);
         gamePlayer = mock(GamePlayer.class);
-        equipmentContainer = new ItemContainer<>();
-        itemStack = new ItemStack(Material.SHEARS);
-
-        equipment = mock(Equipment.class);
-        when(equipment.isMatching(itemStack)).thenReturn(true);
+        player = mock(Player.class);
+        playerRegistry = mock(PlayerRegistry.class);
     }
 
     @Test
-    public void shouldCallFunctionOnEquipmentWhenLeftClicked() {
+    public void handleLeftClickActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+        when(playerRegistry.findByEntity(player)).thenReturn(Optional.empty());
+
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
+        boolean performAction = actionExecutor.handleLeftClickAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+    }
+
+    @Test
+    public void handleLeftClickActionDoesNothingWhenNoEquipmentMatchesWithGivenHolderAndItemStack() {
+        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
+
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
+        boolean performAction = actionExecutor.handleLeftClickAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+    }
+
+    @Test
+    public void handleLeftClickActionDoesNothingWhenEquipmentHolderDoesNotMatch() {
+        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(otherHolder);
+
+        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
+        boolean performAction = actionExecutor.handleLeftClickAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(equipment, never()).onLeftClick();
+    }
+
+    @Test
+    public void handleLeftClickActionCallsEquipmentFunctionWhenMatchingEquipmentIsFound() {
+        Equipment equipment = mock(Equipment.class);
         when(equipment.getHolder()).thenReturn(gamePlayer);
 
-        equipmentContainer.addAssignedItem(equipment, gamePlayer);
+        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
 
-        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
-        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
+        boolean performAction = actionExecutor.handleLeftClickAction(player, ITEM_STACK);
 
-        assertFalse(performAction);
+        assertThat(performAction).isFalse();
 
         verify(equipment).onLeftClick();
     }
 
     @Test
-    public void shouldDoNothingWhenLeftClickedButEquipmentIsNotRegistered() {
-        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
-        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
+    public void handleRightClickActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+        when(playerRegistry.findByEntity(player)).thenReturn(Optional.empty());
 
-        assertTrue(performAction);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
+        boolean performAction = actionExecutor.handleRightClickAction(player, ITEM_STACK);
 
-        verify(equipment, never()).onLeftClick();
+        assertThat(performAction).isTrue();
     }
 
     @Test
-    public void shouldDoNothingWhenLeftClickedButHolderDoesNotMatch() {
-        equipmentContainer.addAssignedItem(equipment, gamePlayer);
+    public void handleRightClickActionDoesNothingWhenNoEquipmentMatchesWithGivenHolderAndItemStack() {
+        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
-        boolean performAction = actionExecutor.handleLeftClickAction(gamePlayer, itemStack);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
+        boolean performAction = actionExecutor.handleRightClickAction(player, ITEM_STACK);
 
-        assertTrue(performAction);
-
-        verify(equipment, never()).onLeftClick();
+        assertThat(performAction).isTrue();
     }
 
     @Test
-    public void shouldCallFunctionOnEquipmentWhenRightClicked() {
+    public void handleRightClickActionDoesNothingWhenEquipmentHolderDoesNotMatch() {
+        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(otherHolder);
+
+        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
+        boolean performAction = actionExecutor.handleRightClickAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(equipment, never()).onRightClick();
+    }
+
+    @Test
+    public void handleRightClickActionCallsEquipmentFunctionWhenMatchingEquipmentIsFound() {
+        Equipment equipment = mock(Equipment.class);
         when(equipment.getHolder()).thenReturn(gamePlayer);
 
-        equipmentContainer.addAssignedItem(equipment, gamePlayer);
+        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
 
-        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
-        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
+        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
+        boolean performAction = actionExecutor.handleRightClickAction(player, ITEM_STACK);
 
-        assertFalse(performAction);
+        assertThat(performAction).isFalse();
 
         verify(equipment).onRightClick();
-    }
-
-    @Test
-    public void shouldDoNothingWhenRightClickedButEquipmentIsNotRegistered() {
-        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
-        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
-
-        assertTrue(performAction);
-
-        verify(equipment, never()).onRightClick();
-    }
-
-    @Test
-    public void shouldDoNothingWhenRightClickedButHolderDoesNotMatch() {
-        equipmentContainer.addAssignedItem(equipment, gamePlayer);
-
-        EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentContainer);
-        boolean performAction = actionExecutor.handleRightClickAction(gamePlayer, itemStack);
-
-        assertTrue(performAction);
-
-        verify(equipment, never()).onRightClick();
     }
 }

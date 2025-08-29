@@ -32,11 +32,11 @@ public class DefaultActionHandler implements ActionHandler {
 
         for (ActionExecutor actionExecutor : game.getActionExecutors()) {
             if (changeFrom != null) {
-                performAction = performAction & actionExecutor.handleChangeFromAction(gamePlayer, changeFrom);
+                performAction = performAction & actionExecutor.handleChangeFromAction(player, changeFrom);
             }
 
             if (changeTo != null) {
-                performAction = performAction & actionExecutor.handleChangeToAction(gamePlayer, changeTo);
+                performAction = performAction & actionExecutor.handleChangeToAction(player, changeTo);
             }
         }
 
@@ -53,7 +53,7 @@ public class DefaultActionHandler implements ActionHandler {
         boolean performAction = true;
 
         for (ActionExecutor actionExecutor : game.getActionExecutors()) {
-            performAction = performAction & actionExecutor.handleDropItemAction(gamePlayer, droppedItem);
+            performAction = performAction & actionExecutor.handleDropItemAction(player, droppedItem);
         }
 
         return performAction;
@@ -69,7 +69,7 @@ public class DefaultActionHandler implements ActionHandler {
         boolean performAction = true;
 
         for (ActionExecutor actionExecutor : game.getActionExecutors()) {
-            performAction = performAction & actionExecutor.handleLeftClickAction(gamePlayer, clickedItem);
+            performAction = performAction & actionExecutor.handleLeftClickAction(player, clickedItem);
         }
 
         return performAction;
@@ -85,7 +85,7 @@ public class DefaultActionHandler implements ActionHandler {
         boolean performAction = true;
 
         for (ActionExecutor actionExecutor : game.getActionExecutors()) {
-            performAction = performAction & actionExecutor.handlePickupItemAction(gamePlayer, pickupItem);
+            performAction = performAction & actionExecutor.handlePickupItemAction(player, pickupItem);
         }
 
         return performAction;
@@ -101,7 +101,7 @@ public class DefaultActionHandler implements ActionHandler {
         boolean performAction = true;
 
         for (ActionExecutor actionExecutor : game.getActionExecutors()) {
-            performAction = performAction & actionExecutor.handleRightClickAction(gamePlayer, clickedItem);
+            performAction = performAction & actionExecutor.handleRightClickAction(player, clickedItem);
         }
 
         return performAction;
@@ -118,11 +118,11 @@ public class DefaultActionHandler implements ActionHandler {
 
         for (ActionExecutor actionExecutor : game.getActionExecutors()) {
             if (swapFrom != null) {
-                performAction = performAction & actionExecutor.handleSwapFromAction(gamePlayer, swapFrom);
+                performAction = performAction & actionExecutor.handleSwapFromAction(player, swapFrom);
             }
 
             if (swapTo != null) {
-                performAction = performAction & actionExecutor.handleSwapToAction(gamePlayer, swapTo);
+                performAction = performAction & actionExecutor.handleSwapToAction(player, swapTo);
             }
         }
 

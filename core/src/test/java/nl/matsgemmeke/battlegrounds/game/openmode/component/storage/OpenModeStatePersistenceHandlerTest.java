@@ -149,7 +149,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(equipment.getItemStack()).thenReturn(null);
 
         when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
-        when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer)).thenReturn(List.of(equipment));
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(equipmentRegistry, gunRegistry, logger, playerRegistry, playerStateStorage, weaponCreator);
         statePersistenceHandler.savePlayerState(gamePlayer);
@@ -182,7 +182,7 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
         when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
-        when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer)).thenReturn(List.of(equipment));
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(equipmentRegistry, gunRegistry, logger, playerRegistry, playerStateStorage, weaponCreator);
         statePersistenceHandler.savePlayerState(gamePlayer);
@@ -219,7 +219,7 @@ public class OpenModeStatePersistenceHandlerTest {
 
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
         when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
-        when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer)).thenReturn(List.of(equipment));
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(equipmentRegistry, gunRegistry, logger, playerRegistry, playerStateStorage, weaponCreator);
         statePersistenceHandler.saveState();

@@ -64,7 +64,7 @@ public interface GunRegistry {
      * Registers a gun to the registry with an assigned holder.
      *
      * @param gun the gun to be registered
-     * @param holder the holder associated with the item
+     * @param holder the holder associated with the gun
      */
     void register(Gun gun, GunHolder holder);
 }

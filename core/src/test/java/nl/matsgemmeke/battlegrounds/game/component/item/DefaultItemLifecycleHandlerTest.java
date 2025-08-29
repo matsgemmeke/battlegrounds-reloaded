@@ -23,7 +23,7 @@ public class DefaultItemLifecycleHandlerTest {
         Equipment equipment = mock(Equipment.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(equipmentRegistry.getAssignedItems(gamePlayer)).thenReturn(List.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer)).thenReturn(List.of(equipment));
 
         DefaultItemLifecycleHandler itemLifecycleHandler = new DefaultItemLifecycleHandler(equipmentRegistry);
         itemLifecycleHandler.cleanupItems(gamePlayer);

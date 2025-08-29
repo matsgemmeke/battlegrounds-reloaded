@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 public class DefaultPlayerRegistry implements PlayerRegistry {
@@ -32,14 +33,14 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         this.playerContainer = new EntityContainer<>();
     }
 
-    @Nullable
-    public GamePlayer findByEntity(@NotNull Player player) {
+    public Optional<GamePlayer> findByEntity(@NotNull Player player) {
         for (GamePlayer gamePlayer : playerContainer.getEntities()) {
             if (gamePlayer.getEntity() == player) {
-                return gamePlayer;
+                return Optional.of(gamePlayer);
             }
         }
-        return null;
+
+        return Optional.empty();
     }
 
     @Nullable

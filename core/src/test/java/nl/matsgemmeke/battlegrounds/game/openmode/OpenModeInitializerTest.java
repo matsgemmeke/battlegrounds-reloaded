@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -32,6 +33,7 @@ public class OpenModeInitializerTest {
     private GameContextProvider gameContextProvider;
     private GameScope gameScope;
     private Provider<CollisionDetector> collisionDetectorProvider;
+    private Provider<EquipmentActionExecutor> equipmentActionExecutorProvider;
     private Provider<GunActionExecutor> gunActionExecutorProvider;
     private Provider<PlayerRegistry> playerRegistryProvider;
     private Provider<StatePersistenceHandler> statePersistenceHandlerProvider;
@@ -44,6 +46,7 @@ public class OpenModeInitializerTest {
         gameContextProvider = new GameContextProvider();
         gameScope = mock(GameScope.class);
         collisionDetectorProvider = mock();
+        equipmentActionExecutorProvider = mock();
         gunActionExecutorProvider = mock();
         playerRegistryProvider = mock();
         statePersistenceHandlerProvider = mock();
@@ -76,7 +79,7 @@ public class OpenModeInitializerTest {
 
         bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
 
-        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, collisionDetectorProvider, gunActionExecutorProvider, playerRegistryProvider, statePersistenceHandlerProvider);
+        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, collisionDetectorProvider, equipmentActionExecutorProvider, gunActionExecutorProvider, playerRegistryProvider, statePersistenceHandlerProvider);
         openModeInitializer.initialize();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);

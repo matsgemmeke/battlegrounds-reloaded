@@ -9,10 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class DefaultPlayerRegistryTest {
@@ -29,7 +29,7 @@ public class DefaultPlayerRegistryTest {
     }
 
     @Test
-    public void findByEntityReturnsMatchingEntity() {
+    public void findByEntityReturnsOptionalWithMatchingEntity() {
         Player player = mock(Player.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
@@ -39,13 +39,13 @@ public class DefaultPlayerRegistryTest {
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
-        GamePlayer result = playerRegistry.findByEntity(player);
+        Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(player);
 
-        assertEquals(gamePlayer, result);
+        assertThat(gamePlayerOptional).hasValue(gamePlayer);
     }
 
     @Test
-    public void findByEntityReturnsNoEntityIfThereIsNoMatch() {
+    public void findByEntityReturnsEmptyOptionalWhereThereIsNoMatch() {
         Player player = mock(Player.class);
         Player otherPlayer = mock(Player.class);
 
@@ -56,9 +56,9 @@ public class DefaultPlayerRegistryTest {
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
-        GamePlayer result = playerRegistry.findByEntity(otherPlayer);
+        Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(otherPlayer);
 
-        assertNull(result);
+        assertThat(gamePlayerOptional).isEmpty();
     }
 
     @Test
@@ -77,7 +77,7 @@ public class DefaultPlayerRegistryTest {
         playerRegistry.registerEntity(player);
         GamePlayer result = playerRegistry.findByUUID(uuid);
 
-        assertEquals(gamePlayer, result);
+        assertThat(gamePlayer).isEqualTo(result);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class DefaultPlayerRegistryTest {
         playerRegistry.registerEntity(player);
         boolean registered = playerRegistry.isRegistered(player);
 
-        assertTrue(registered);
+        assertThat(registered).isTrue();
     }
 
     @Test
@@ -128,7 +128,7 @@ public class DefaultPlayerRegistryTest {
         playerRegistry.registerEntity(player);
         boolean registered = playerRegistry.isRegistered(uuid);
 
-        assertTrue(registered);
+        assertThat(registered).isTrue();
     }
 
     @Test

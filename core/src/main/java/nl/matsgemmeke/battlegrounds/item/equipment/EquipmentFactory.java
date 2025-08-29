@@ -75,7 +75,7 @@ public class EquipmentFactory {
         Equipment equipment = this.createInstance(spec, gameKey);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
-        equipmentRegistry.registerItem(equipment);
+        equipmentRegistry.register(equipment);
 
         return equipment;
     }
@@ -86,7 +86,7 @@ public class EquipmentFactory {
         equipment.setHolder(gamePlayer);
 
         EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
-        equipmentRegistry.registerItem(equipment, gamePlayer);
+        equipmentRegistry.register(equipment, gamePlayer);
 
         return equipment;
     }
