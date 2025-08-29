@@ -77,9 +77,6 @@ public class OpenModeInitializer {
 
     public void initialize() {
         OpenMode openMode = new OpenMode();
-        openMode.addActionExecutor(equipmentActionExecutorProvider.get());
-        openMode.addActionExecutor(gunActionExecutorProvider.get());
-
         GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
 
         gameContextProvider.addGameContext(GAME_KEY, gameContext);
@@ -89,6 +86,9 @@ public class OpenModeInitializer {
     }
 
     private void registerComponents(OpenMode openMode) {
+        openMode.addActionExecutor(equipmentActionExecutorProvider.get());
+        openMode.addActionExecutor(gunActionExecutorProvider.get());
+
         // Registry components
         EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
         GunRegistry gunRegistry = new DefaultGunRegistry();

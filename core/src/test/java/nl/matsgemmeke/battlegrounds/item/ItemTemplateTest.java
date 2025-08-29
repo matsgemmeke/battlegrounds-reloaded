@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,18 +21,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class ItemTemplateTest {
 
-    private static final long LEAST_SIG_BITS = -5938845633481916672L;
-    private static final long MOST_SIG_BITS = -1081404222592891663L;
-
     private ItemFactory itemFactory;
     private Material material;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKey key;
+    private Plugin plugin;
     private UUID uuid;
 
     @BeforeEach
@@ -40,10 +40,10 @@ public class ItemTemplateTest {
         material = Material.IRON_HOE;
         uuid = UUID.randomUUID();
 
-        Plugin plugin = mock(Plugin.class);
+        plugin = mock(Plugin.class);
         when(plugin.getName()).thenReturn("battlegrounds");
 
-        key = new NamespacedKey(plugin, "battlegrounds-test");
+        key = new NamespacedKey(plugin, "test-key");
 
         bukkit = mockStatic(Bukkit.class);
         bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
@@ -107,6 +107,27 @@ public class ItemTemplateTest {
 
         verify(dataContainer).set(eq(key), any(UUIDDataType.class), any(UUID.class));
         verify(itemMeta).setDisplayName("§fThis is a test item");
+    }
+
+    @Test
+    public void createItemStackWithDataEntries() {
+        PersistentDataContainer persistentDataContainer = mock(PersistentDataContainer.class);
+        NamespacedKey namespacedKey = new NamespacedKey(plugin, "my-text-value");
+        PersistentDataEntry<String, String> dataEntry = new PersistentDataEntry<>(namespacedKey, PersistentDataType.STRING, "a cool text");
+
+        ItemMeta itemMeta = mock(ItemMeta.class);
+        when(itemMeta.getPersistentDataContainer()).thenReturn(persistentDataContainer);
+
+        when(itemFactory.getItemMeta(material)).thenReturn(itemMeta);
+
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
+        itemTemplate.addPersistentDataEntry(dataEntry);
+        ItemStack itemStack = itemTemplate.createItemStack();
+
+        assertThat(itemStack.getItemMeta()).isEqualTo(itemMeta);
+        assertThat(itemStack.getType()).isEqualTo(material);
+
+        verify(persistentDataContainer).set(namespacedKey, PersistentDataType.STRING, "a cool text");
     }
 
     @Test

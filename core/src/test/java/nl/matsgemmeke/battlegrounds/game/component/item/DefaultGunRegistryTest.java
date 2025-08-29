@@ -82,6 +82,17 @@ public class DefaultGunRegistryTest {
     }
 
     @Test
+    public void getAssignedGunReturnsEmptyOptionalWhenGivenHolderHasNoGunsRegistered() {
+        GunHolder holder = mock(GunHolder.class);
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
+        Optional<Gun> gunOptional = gunRegistry.getAssignedGun(holder, itemStack);
+
+        assertThat(gunOptional).isEmpty();
+    }
+
+    @Test
     public void getAssignedGunReturnsEmptyOptionalWhenNoAssignedGunsOfGivenHolderMatch() {
         GunHolder holder = mock(GunHolder.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);

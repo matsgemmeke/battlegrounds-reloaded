@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
@@ -28,6 +29,7 @@ import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +39,9 @@ import java.util.UUID;
 
 public class FirearmFactory {
 
-    private static final String NAMESPACED_KEY_NAME = "battlegrounds-gun";
+    private static final String ACTION_EXECUTOR_ID_KEY = "action-executor-id";
+    private static final String ACTION_EXECUTOR_ID_VALUE = "gun";
+    private static final String TEMPLATE_ID_KEY = "template-id";
     private static final double DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER = 1.0;
 
     @NotNull
@@ -163,12 +167,16 @@ public class FirearmFactory {
     @NotNull
     private ItemTemplate createItemTemplate(@NotNull ItemSpec spec) {
         UUID uuid = UUID.randomUUID();
-        NamespacedKey key = keyCreator.create(NAMESPACED_KEY_NAME);
+        NamespacedKey key = keyCreator.create(TEMPLATE_ID_KEY);
         Material material = Material.valueOf(spec.material);
         String displayName = spec.displayName;
         int damage = spec.damage;
 
+        NamespacedKey actionExecutorIdKey = keyCreator.create(ACTION_EXECUTOR_ID_KEY);
+        PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
+
         ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
+        itemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
         itemTemplate.setDamage(damage);
         itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
         return itemTemplate;

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class ActionExecutorRegistry {
 
-    private static final String ACTION_EXECUTOR_ID_KEY = "battlegrounds-action-executor-id";
+    private static final String ACTION_EXECUTOR_ID_KEY = "action-executor-id";
 
     @NotNull
     private final Map<String, ActionExecutor> actionExecutors;

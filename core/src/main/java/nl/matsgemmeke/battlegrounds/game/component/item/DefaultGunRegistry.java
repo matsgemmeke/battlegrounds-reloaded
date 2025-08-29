@@ -45,6 +45,10 @@ public class DefaultGunRegistry implements GunRegistry {
     }
 
     public Optional<Gun> getAssignedGun(GunHolder holder, ItemStack itemStack) {
+        if (!assignedGuns.containsKey(holder)) {
+            return Optional.empty();
+        }
+
         for (Gun gun : assignedGuns.get(holder)) {
             if (gun.isMatching(itemStack)) {
                 return Optional.of(gun);
