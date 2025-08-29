@@ -63,6 +63,8 @@ public class OpenModeInitializerTest {
         UUID playerId = UUID.randomUUID();
         GamePlayer gamePlayer = mock(GamePlayer.class);
         StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
+        EquipmentActionExecutor equipmentActionExecutor = mock(EquipmentActionExecutor.class);
+        GunActionExecutor gunActionExecutor = mock(GunActionExecutor.class);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(playerId);
@@ -75,6 +77,8 @@ public class OpenModeInitializerTest {
         when(collisionDetectorProvider.get()).thenReturn(collisionDetector);
 
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
+        when(equipmentActionExecutorProvider.get()).thenReturn(equipmentActionExecutor);
+        when(gunActionExecutorProvider.get()).thenReturn(gunActionExecutor);
         when(statePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
 
         bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));

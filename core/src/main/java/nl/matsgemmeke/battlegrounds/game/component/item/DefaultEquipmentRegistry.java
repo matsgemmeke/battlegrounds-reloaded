@@ -35,11 +35,11 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
     }
 
     public List<Equipment> getAssignedEquipment(EquipmentHolder holder) {
-        if (assignedEquipment.containsKey(holder)) {
-            return Collections.unmodifiableList(assignedEquipment.get(holder));
+        if (!assignedEquipment.containsKey(holder)) {
+            return Collections.emptyList();
         }
 
-        return Collections.emptyList();
+        return Collections.unmodifiableList(assignedEquipment.get(holder));
     }
 
     public Optional<Equipment> getAssignedEquipment(EquipmentHolder holder, ItemStack itemStack) {
