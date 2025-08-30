@@ -14,6 +14,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
@@ -29,6 +30,7 @@ import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,12 +40,16 @@ import java.util.UUID;
 
 public class EquipmentFactory {
 
-    private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
+    private static final String ACTION_EXECUTOR_ID_KEY = "action-executor-id";
+    private static final String ACTION_EXECUTOR_ID_VALUE = "equipment";
+    private static final String TEMPLATE_ID_KEY = "template-id";
 
     @NotNull
     private final DeploymentHandlerFactory deploymentHandlerFactory;
     @NotNull
     private final EquipmentControlsFactory controlsFactory;
+    @NotNull
+    private final EquipmentRegistry equipmentRegistry;
     @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
@@ -58,6 +64,7 @@ public class EquipmentFactory {
             @NotNull DeploymentHandlerFactory deploymentHandlerFactory,
             @NotNull GameContextProvider contextProvider,
             @NotNull EquipmentControlsFactory controlsFactory,
+            @NotNull EquipmentRegistry equipmentRegistry,
             @NotNull ItemEffectFactory itemEffectFactory,
             @NotNull NamespacedKeyCreator namespacedKeyCreator,
             @NotNull ParticleEffectMapper particleEffectMapper
@@ -65,6 +72,7 @@ public class EquipmentFactory {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
+        this.equipmentRegistry = equipmentRegistry;
         this.itemEffectFactory = itemEffectFactory;
         this.namespacedKeyCreator = namespacedKeyCreator;
         this.particleEffectMapper = particleEffectMapper;
@@ -74,7 +82,6 @@ public class EquipmentFactory {
     public Equipment create(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey) {
         Equipment equipment = this.createInstance(spec, gameKey);
 
-        EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
         equipmentRegistry.register(equipment);
 
         return equipment;
@@ -85,7 +92,6 @@ public class EquipmentFactory {
         Equipment equipment = this.createInstance(spec, gameKey);
         equipment.setHolder(gamePlayer);
 
-        EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
         equipmentRegistry.register(equipment, gamePlayer);
 
         return equipment;
@@ -97,16 +103,7 @@ public class EquipmentFactory {
         equipment.setName(spec.name);
         equipment.setDescription(spec.description);
 
-        // ItemStack creation
-        UUID uuid = UUID.randomUUID();
-        NamespacedKey key = namespacedKeyCreator.create(NAMESPACED_KEY_NAME);
-        Material displayItemMaterial = Material.valueOf(spec.items.displayItem.material);
-        int displayItemDamage = spec.items.displayItem.damage;
-        String displayItemDisplayName = spec.items.displayItem.displayName;
-
-        ItemTemplate displayItemTemplate = new ItemTemplate(uuid, key, displayItemMaterial);
-        displayItemTemplate.setDamage(displayItemDamage);
-        displayItemTemplate.setDisplayNameTemplate(new TextTemplate(displayItemDisplayName));
+        ItemTemplate displayItemTemplate = this.createDisplayItemTemplate(spec.items.displayItem);
 
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
@@ -117,7 +114,7 @@ public class EquipmentFactory {
 
         if (activatorItemSpec != null) {
             UUID activatorUUID = UUID.randomUUID();
-            NamespacedKey activatorKey = namespacedKeyCreator.create(NAMESPACED_KEY_NAME);
+            NamespacedKey activatorKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
             Material activatorItemMaterial = Material.valueOf(activatorItemSpec.material);
 
             ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorItemMaterial);
@@ -130,7 +127,7 @@ public class EquipmentFactory {
 
         if (throwItemSpec != null) {
             UUID throwItemUUID = UUID.randomUUID();
-            NamespacedKey throwItemKey = namespacedKeyCreator.create(NAMESPACED_KEY_NAME);
+            NamespacedKey throwItemKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
             Material throwItemMaterial = Material.valueOf(throwItemSpec.material);
 
             ItemTemplate throwItemTemplate = new ItemTemplate(throwItemUUID, throwItemKey, throwItemMaterial);
@@ -147,6 +144,23 @@ public class EquipmentFactory {
         equipment.setDeploymentHandler(deploymentHandler);
 
         return equipment;
+    }
+
+    private ItemTemplate createDisplayItemTemplate(@NotNull ItemSpec spec) {
+        UUID uuid = UUID.randomUUID();
+        NamespacedKey key = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
+        Material material = Material.valueOf(spec.material);
+        String displayName = spec.displayName;
+        int damage = spec.damage;
+
+        NamespacedKey actionExecutorIdKey = namespacedKeyCreator.create(ACTION_EXECUTOR_ID_KEY);
+        PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
+
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
+        itemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
+        itemTemplate.setDamage(damage);
+        itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
+        return itemTemplate;
     }
 
     @NotNull

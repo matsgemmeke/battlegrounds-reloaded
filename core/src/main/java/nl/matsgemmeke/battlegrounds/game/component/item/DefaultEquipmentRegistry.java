@@ -43,6 +43,10 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
     }
 
     public Optional<Equipment> getAssignedEquipment(EquipmentHolder holder, ItemStack itemStack) {
+        if (!assignedEquipment.containsKey(holder)) {
+            return Optional.empty();
+        }
+
         for (Equipment equipment : assignedEquipment.get(holder)) {
             if (equipment.isMatching(itemStack)) {
                 return Optional.of(equipment);

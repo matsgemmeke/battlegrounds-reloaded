@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class ActionExecutorRegistryTest {
 
     private static final String ACTION_EXECUTOR_ID = "gun";
-    private static final String ACTION_EXECUTOR_ID_KEY = "battlegrounds-action-executor-id";
+    private static final String ACTION_EXECUTOR_ID_KEY = "action-executor-id";
 
     private NamespacedKeyCreator namespacedKeyCreator;
     private Plugin plugin;

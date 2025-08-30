@@ -60,7 +60,6 @@ public class EquipmentFactoryTest {
 
         contextProvider = mock(GameContextProvider.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-        when(contextProvider.getComponent(gameKey, EquipmentRegistry.class)).thenReturn(equipmentRegistry);
 
         Plugin plugin = mock(Plugin.class);
         Mockito.when(plugin.getName()).thenReturn("Battlegrounds");
@@ -93,7 +92,7 @@ public class EquipmentFactoryTest {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, itemEffectFactory, keyCreator, particleEffectMapper);
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, equipmentRegistry, itemEffectFactory, keyCreator, particleEffectMapper);
         Equipment equipment = factory.create(spec, gameKey, gamePlayer);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
@@ -116,7 +115,7 @@ public class EquipmentFactoryTest {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(itemEffect))).thenReturn(deploymentHandler);
 
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, itemEffectFactory, keyCreator, particleEffectMapper);
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, equipmentRegistry, itemEffectFactory, keyCreator, particleEffectMapper);
         Equipment equipment = factory.create(spec, gameKey);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);

@@ -48,6 +48,17 @@ public class DefaultEquipmentRegistryTest {
     }
 
     @Test
+    public void getAssignedEquipmentReturnsEmptyOptionalWhenGivenHolderHasNoEquipmentRegistered() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
+        Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(holder, itemStack);
+
+        assertThat(equipmentOptional).isEmpty();
+    }
+
+    @Test
     public void getAssignedEquipmentReturnsEmptyOptionalWhenNoRegisteredEquipmentMatchWithGivenItemStack() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
