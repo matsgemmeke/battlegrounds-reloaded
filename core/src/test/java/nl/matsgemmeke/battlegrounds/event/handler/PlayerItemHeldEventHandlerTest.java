@@ -163,6 +163,42 @@ public class PlayerItemHeldEventHandlerTest {
         assertThat(event.isCancelled()).isTrue();
     }
 
+    @Test
+    public void handleInvokesActionExecutorButDoesNotCancelEventWhenAlreadyCancelled() {
+        ItemStack changeFrom = this.createItemStack(Material.IRON_HOE);
+        ItemStack changeTo = this.createItemStack(Material.IRON_HOE);
+
+        PlayerInventory inventory = mock(PlayerInventory.class);
+        when(inventory.getItemInMainHand()).thenReturn(changeFrom);
+        when(inventory.getItem(CURRENT_SLOT)).thenReturn(changeTo);
+
+        ActionExecutor actionExecutor = mock(ActionExecutor.class);
+        when(actionExecutor.handleChangeFromAction(player, changeFrom)).thenReturn(true);
+        when(actionExecutor.handleChangeToAction(player, changeTo)).thenReturn(true);
+
+        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
+        when(actionExecutorRegistry.getActionExecutor(changeFrom)).thenReturn(Optional.of(actionExecutor));
+        when(actionExecutorRegistry.getActionExecutor(changeTo)).thenReturn(Optional.of(actionExecutor));
+
+        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(player.getInventory()).thenReturn(inventory);
+
+        doAnswer(invocation -> {
+            ((Runnable) invocation.getArgument(1)).run();
+            return null;
+        }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
+
+        PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
+        event.setCancelled(true);
+
+        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
+        eventHandler.handle(event);
+
+        assertThat(event.isCancelled()).isTrue();
+    }
+
     private ItemStack createItemStack(Material material) {
         ItemStack itemStack = mock(ItemStack.class);
         when(itemStack.getType()).thenReturn(material);

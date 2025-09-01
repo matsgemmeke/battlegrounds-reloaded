@@ -41,6 +41,8 @@ import static org.mockito.Mockito.*;
 
 public class FirearmFactoryTest {
 
+    private static final String TEMPLATE_ID_KEY = "template-id";
+
     private AudioEmitter audioEmitter;
     private BattlegroundsConfiguration config;
     private DefaultFirearmFactory defaultGunFactory;
@@ -78,10 +80,10 @@ public class FirearmFactoryTest {
         Plugin plugin = mock(Plugin.class);
         when(plugin.getName()).thenReturn("Battlegrounds");
 
-        NamespacedKey key = new NamespacedKey(plugin, "battlegrounds-gun");
+        NamespacedKey key = new NamespacedKey(plugin, TEMPLATE_ID_KEY);
 
         keyCreator = mock(NamespacedKeyCreator.class);
-        when(keyCreator.create("battlegrounds-gun")).thenReturn(key);
+        when(keyCreator.create(TEMPLATE_ID_KEY)).thenReturn(key);
 
         bukkit = mockStatic(Bukkit.class);
         bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
