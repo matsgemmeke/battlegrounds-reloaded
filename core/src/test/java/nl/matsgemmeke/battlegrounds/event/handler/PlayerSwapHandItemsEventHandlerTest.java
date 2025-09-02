@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
+import nl.matsgemmeke.battlegrounds.event.action.ActionInvoker;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,16 +27,16 @@ public class PlayerSwapHandItemsEventHandlerTest {
     private static final ItemStack OFF_HAND_ITEM = createItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
+    private ActionInvoker actionInvoker;
     private GameContextProvider gameContextProvider;
     private GameScope gameScope;
     private Player player;
-    private Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
 
     @BeforeEach
     public void setUp() {
+        actionInvoker = mock(ActionInvoker.class);
         gameContextProvider = mock(GameContextProvider.class);
         gameScope = mock(GameScope.class);
-        actionExecutorRegistryProvider = mock();
 
         player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
@@ -48,7 +48,7 @@ public class PlayerSwapHandItemsEventHandlerTest {
 
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, MAIN_HAND_ITEM, OFF_HAND_ITEM);
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionInvoker, gameContextProvider, gameScope);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
@@ -63,7 +63,7 @@ public class PlayerSwapHandItemsEventHandlerTest {
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionInvoker, gameContextProvider, gameScope);
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
@@ -71,62 +71,23 @@ public class PlayerSwapHandItemsEventHandlerTest {
     }
 
     @Test
-    public void handleDoesNothingWhenItemStacksAreAir() {
-        ItemStack swapFrom = new ItemStack(Material.AIR);
-        ItemStack swapTo = new ItemStack(Material.AIR);
-
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-
-        doAnswer(invocation -> {
-            ((Runnable) invocation.getArgument(1)).run();
-            return null;
-        }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
-
-        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, swapTo, swapFrom);
-
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
-        eventHandler.handle(event);
-
-        assertThat(event.isCancelled()).isFalse();
-    }
-
-    @Test
-    public void handleDoesNothingWhenNoCorrespondingActionExecutorsAreFound() {
-        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
-        when(actionExecutorRegistry.getActionExecutor(MAIN_HAND_ITEM)).thenReturn(Optional.empty());
-        when(actionExecutorRegistry.getActionExecutor(OFF_HAND_ITEM)).thenReturn(Optional.empty());
-
-        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-
-        doAnswer(invocation -> {
-            ((Runnable) invocation.getArgument(1)).run();
-            return null;
-        }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
-
-        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, MAIN_HAND_ITEM, OFF_HAND_ITEM);
-
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
-        eventHandler.handle(event);
-
-        assertThat(event.isCancelled()).isFalse();
-    }
-
-    @Test
-    public void handleCancelsEventBasedOnResultOfCorrespondingActionExecutors() {
+    @SuppressWarnings("unchecked")
+    public void handleCancelsEventBasedOnResultOfCorrespondingActionInvoker() {
         ActionExecutor actionExecutor = mock(ActionExecutor.class);
         when(actionExecutor.handleSwapFromAction(player, OFF_HAND_ITEM)).thenReturn(false);
-        when(actionExecutor.handleSwapToAction(player, MAIN_HAND_ITEM)).thenReturn(false);
+        when(actionExecutor.handleSwapToAction(player, OFF_HAND_ITEM)).thenReturn(false);
 
-        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
-        when(actionExecutorRegistry.getActionExecutor(OFF_HAND_ITEM)).thenReturn(Optional.of(actionExecutor));
-        when(actionExecutorRegistry.getActionExecutor(MAIN_HAND_ITEM)).thenReturn(Optional.of(actionExecutor));
-
-        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+
+        doAnswer(invocation -> {
+            ((Function<ActionExecutor, Boolean>) invocation.getArgument(1)).apply(actionExecutor);
+            return null;
+        }).when(actionInvoker).performAction(eq(MAIN_HAND_ITEM), any());
+        doAnswer(invocation -> {
+            ((Function<ActionExecutor, Boolean>) invocation.getArgument(1)).apply(actionExecutor);
+            return null;
+        }).when(actionInvoker).performAction(eq(OFF_HAND_ITEM), any());
 
         doAnswer(invocation -> {
             ((Runnable) invocation.getArgument(1)).run();
@@ -135,25 +96,33 @@ public class PlayerSwapHandItemsEventHandlerTest {
 
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, MAIN_HAND_ITEM, OFF_HAND_ITEM);
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionInvoker, gameContextProvider, gameScope);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isTrue();
+
+        verify(actionExecutor).handleSwapFromAction(player, OFF_HAND_ITEM);
+        verify(actionExecutor).handleSwapToAction(player, MAIN_HAND_ITEM);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void handleInvokesActionExecutorButDoesNotCancelEventWhenAlreadyCancelled() {
         ActionExecutor actionExecutor = mock(ActionExecutor.class);
         when(actionExecutor.handleSwapFromAction(player, OFF_HAND_ITEM)).thenReturn(true);
         when(actionExecutor.handleSwapToAction(player, MAIN_HAND_ITEM)).thenReturn(true);
 
-        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
-        when(actionExecutorRegistry.getActionExecutor(OFF_HAND_ITEM)).thenReturn(Optional.of(actionExecutor));
-        when(actionExecutorRegistry.getActionExecutor(MAIN_HAND_ITEM)).thenReturn(Optional.of(actionExecutor));
-
-        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+
+        doAnswer(invocation -> {
+            ((Function<ActionExecutor, Boolean>) invocation.getArgument(1)).apply(actionExecutor);
+            return null;
+        }).when(actionInvoker).performAction(eq(MAIN_HAND_ITEM), any());
+        doAnswer(invocation -> {
+            ((Function<ActionExecutor, Boolean>) invocation.getArgument(1)).apply(actionExecutor);
+            return null;
+        }).when(actionInvoker).performAction(eq(OFF_HAND_ITEM), any());
 
         doAnswer(invocation -> {
             ((Runnable) invocation.getArgument(1)).run();
@@ -161,12 +130,14 @@ public class PlayerSwapHandItemsEventHandlerTest {
         }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
         PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, MAIN_HAND_ITEM, OFF_HAND_ITEM);
-        event.setCancelled(true);
 
-        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
+        PlayerSwapHandItemsEventHandler eventHandler = new PlayerSwapHandItemsEventHandler(actionInvoker, gameContextProvider, gameScope);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isTrue();
+
+        verify(actionExecutor).handleSwapFromAction(player, OFF_HAND_ITEM);
+        verify(actionExecutor).handleSwapToAction(player, MAIN_HAND_ITEM);
     }
 
     private static ItemStack createItemStack(Material material) {
