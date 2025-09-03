@@ -1,7 +1,7 @@
-package nl.matsgemmeke.battlegrounds.event.action;
+package nl.matsgemmeke.battlegrounds.game.component.item;
 
-import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.ActionInvoker;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,18 +17,18 @@ import static org.mockito.Mockito.when;
 
 public class ActionInvokerTest {
 
-    private Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
+    private ActionExecutorRegistry actionExecutorRegistry;
 
     @BeforeEach
     public void setUp() {
-        actionExecutorRegistryProvider = mock();
+        actionExecutorRegistry = mock(ActionExecutorRegistry.class);
     }
 
     @Test
     public void performActionReturnsTrueWhenGivenItemStackIsAir() {
         ItemStack itemStack = new ItemStack(Material.AIR);
 
-        ActionInvoker actionInvoker = new ActionInvoker(actionExecutorRegistryProvider);
+        ActionInvoker actionInvoker = new ActionInvoker(actionExecutorRegistry);
         boolean result = actionInvoker.performAction(itemStack, actionExecutor -> false);
 
         assertThat(result).isTrue();
@@ -38,12 +38,9 @@ public class ActionInvokerTest {
     public void performActionReturnsTrueWhenNoActionExecutorIsFoundForGivenItemStack() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
-        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
         when(actionExecutorRegistry.getActionExecutor(itemStack)).thenReturn(Optional.empty());
 
-        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
-
-        ActionInvoker actionInvoker = new ActionInvoker(actionExecutorRegistryProvider);
+        ActionInvoker actionInvoker = new ActionInvoker(actionExecutorRegistry);
         boolean result = actionInvoker.performAction(itemStack, actionExecutor -> false);
 
         assertThat(result).isTrue();
@@ -57,12 +54,9 @@ public class ActionInvokerTest {
         ActionExecutor actionExecutor = mock(ActionExecutor.class);
         when(actionExecutor.handleLeftClickAction(player, itemStack)).thenReturn(false);
 
-        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
         when(actionExecutorRegistry.getActionExecutor(itemStack)).thenReturn(Optional.of(actionExecutor));
 
-        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
-
-        ActionInvoker actionInvoker = new ActionInvoker(actionExecutorRegistryProvider);
+        ActionInvoker actionInvoker = new ActionInvoker(actionExecutorRegistry);
         boolean result = actionInvoker.performAction(itemStack, a -> a.handleLeftClickAction(player, itemStack));
 
         assertThat(result).isFalse();

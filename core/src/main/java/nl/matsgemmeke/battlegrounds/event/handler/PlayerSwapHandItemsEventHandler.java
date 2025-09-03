@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
-import nl.matsgemmeke.battlegrounds.event.action.ActionInvoker;
+import nl.matsgemmeke.battlegrounds.game.component.item.ActionInvoker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -22,17 +23,17 @@ public class PlayerSwapHandItemsEventHandler implements EventHandler<PlayerSwapH
     private static final ItemStack EMPTY_ITEM_STACK = new ItemStack(Material.AIR);
 
     @NotNull
-    private final ActionInvoker actionInvoker;
-    @NotNull
     private final GameContextProvider gameContextProvider;
     @NotNull
     private final GameScope gameScope;
+    @NotNull
+    private final Provider<ActionInvoker> actionInvokerProvider;
 
     @Inject
-    public PlayerSwapHandItemsEventHandler(@NotNull ActionInvoker actionInvoker, @NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope) {
-        this.actionInvoker = actionInvoker;
+    public PlayerSwapHandItemsEventHandler(@NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope, @NotNull Provider<ActionInvoker> actionInvokerProvider) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
+        this.actionInvokerProvider = actionInvokerProvider;
     }
 
     public void handle(@NotNull PlayerSwapHandItemsEvent event) {
@@ -51,6 +52,7 @@ public class PlayerSwapHandItemsEventHandler implements EventHandler<PlayerSwapH
     }
 
     private void performActions(PlayerSwapHandItemsEvent event, Player player) {
+        ActionInvoker actionInvoker = actionInvokerProvider.get();
         ItemStack swapFrom = Optional.ofNullable(event.getOffHandItem()).orElse(EMPTY_ITEM_STACK);
         ItemStack swapTo = Optional.ofNullable(event.getMainHandItem()).orElse(EMPTY_ITEM_STACK);
 

@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
-import nl.matsgemmeke.battlegrounds.event.action.ActionInvoker;
+import nl.matsgemmeke.battlegrounds.game.component.item.ActionInvoker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -22,17 +23,17 @@ public class PlayerItemHeldEventHandler implements EventHandler<PlayerItemHeldEv
     private static final ItemStack EMPTY_ITEM_STACK = new ItemStack(Material.AIR);
 
     @NotNull
-    private final ActionInvoker actionInvoker;
-    @NotNull
     private final GameContextProvider gameContextProvider;
     @NotNull
     private final GameScope gameScope;
+    @NotNull
+    private final Provider<ActionInvoker> actionInvokerProvider;
 
     @Inject
-    public PlayerItemHeldEventHandler(@NotNull ActionInvoker actionInvoker, @NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope) {
-        this.actionInvoker = actionInvoker;
+    public PlayerItemHeldEventHandler(@NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope, @NotNull Provider<ActionInvoker> actionInvokerProvider) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
+        this.actionInvokerProvider = actionInvokerProvider;
     }
 
     public void handle(@NotNull PlayerItemHeldEvent event) {
@@ -51,6 +52,7 @@ public class PlayerItemHeldEventHandler implements EventHandler<PlayerItemHeldEv
     }
 
     private void performActions(PlayerItemHeldEvent event, Player player) {
+        ActionInvoker actionInvoker = actionInvokerProvider.get();
         ItemStack changeFrom = player.getInventory().getItemInMainHand();
         ItemStack changeTo = Optional.ofNullable(player.getInventory().getItem(event.getNewSlot())).orElse(EMPTY_ITEM_STACK);
 

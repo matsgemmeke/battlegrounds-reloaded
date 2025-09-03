@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
-import nl.matsgemmeke.battlegrounds.event.action.ActionInvoker;
+import nl.matsgemmeke.battlegrounds.game.component.item.ActionInvoker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -18,17 +19,17 @@ import java.util.UUID;
 public class PlayerDropItemEventHandler implements EventHandler<PlayerDropItemEvent> {
 
     @NotNull
-    private final ActionInvoker actionInvoker;
-    @NotNull
     private final GameContextProvider gameContextProvider;
     @NotNull
     private final GameScope gameScope;
+    @NotNull
+    private final Provider<ActionInvoker> actionInvokerProvider;
 
     @Inject
-    public PlayerDropItemEventHandler(@NotNull ActionInvoker actionInvoker, @NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope) {
-        this.actionInvoker = actionInvoker;
+    public PlayerDropItemEventHandler(@NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope, @NotNull Provider<ActionInvoker> actionInvokerProvider) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
+        this.actionInvokerProvider = actionInvokerProvider;
     }
 
     public void handle(@NotNull PlayerDropItemEvent event) {
@@ -47,6 +48,7 @@ public class PlayerDropItemEventHandler implements EventHandler<PlayerDropItemEv
     }
 
     private void performAction(PlayerDropItemEvent event, Player player) {
+        ActionInvoker actionInvoker = actionInvokerProvider.get();
         ItemStack itemStack = event.getItemDrop().getItemStack();
 
         boolean performAction = actionInvoker.performAction(itemStack, actionExecutor -> actionExecutor.handleDropItemAction(player, itemStack));

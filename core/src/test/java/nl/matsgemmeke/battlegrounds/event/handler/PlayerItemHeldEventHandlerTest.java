@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
-import nl.matsgemmeke.battlegrounds.event.action.ActionInvoker;
+import nl.matsgemmeke.battlegrounds.game.component.item.ActionInvoker;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.Material;
@@ -28,16 +29,16 @@ public class PlayerItemHeldEventHandlerTest {
     private static final int CURRENT_SLOT = 1;
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
-    private ActionInvoker actionInvoker;
     private GameContextProvider gameContextProvider;
     private GameScope gameScope;
     private Player player;
+    private Provider<ActionInvoker> actionInvokerProvider;
 
     @BeforeEach
     public void setUp() {
-        actionInvoker = mock(ActionInvoker.class);
         gameContextProvider = mock(GameContextProvider.class);
         gameScope = mock(GameScope.class);
+        actionInvokerProvider = mock();
 
         player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
@@ -49,7 +50,7 @@ public class PlayerItemHeldEventHandlerTest {
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
 
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(actionInvoker, gameContextProvider, gameScope);
+        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
@@ -64,7 +65,7 @@ public class PlayerItemHeldEventHandlerTest {
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(actionInvoker, gameContextProvider, gameScope);
+        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
@@ -73,6 +74,7 @@ public class PlayerItemHeldEventHandlerTest {
 
     @Test
     public void handleCancelsEventBasedOnResultOfActionInvoker() {
+        ActionInvoker actionInvoker = mock(ActionInvoker.class);
         ItemStack changeFrom = this.createItemStack(Material.IRON_HOE);
         ItemStack changeTo = this.createItemStack(Material.IRON_HOE);
 
@@ -86,6 +88,7 @@ public class PlayerItemHeldEventHandlerTest {
 
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(actionInvokerProvider.get()).thenReturn(actionInvoker);
         when(player.getInventory()).thenReturn(inventory);
 
         doAnswer(invocation -> {
@@ -101,7 +104,7 @@ public class PlayerItemHeldEventHandlerTest {
 
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
 
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(actionInvoker, gameContextProvider, gameScope);
+        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
@@ -112,6 +115,7 @@ public class PlayerItemHeldEventHandlerTest {
 
     @Test
     public void handleInvokesActionExecutorButDoesNotCancelEventWhenAlreadyCancelled() {
+        ActionInvoker actionInvoker = mock(ActionInvoker.class);
         ItemStack changeFrom = this.createItemStack(Material.IRON_HOE);
         ItemStack changeTo = this.createItemStack(Material.IRON_HOE);
 
@@ -125,6 +129,7 @@ public class PlayerItemHeldEventHandlerTest {
 
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(actionInvokerProvider.get()).thenReturn(actionInvoker);
         when(player.getInventory()).thenReturn(inventory);
 
         doAnswer(invocation -> {
@@ -141,7 +146,7 @@ public class PlayerItemHeldEventHandlerTest {
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
         event.setCancelled(true);
 
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(actionInvoker, gameContextProvider, gameScope);
+        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isTrue();

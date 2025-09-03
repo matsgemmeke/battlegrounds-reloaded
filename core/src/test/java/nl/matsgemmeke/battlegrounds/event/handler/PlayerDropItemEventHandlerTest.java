@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
-import nl.matsgemmeke.battlegrounds.event.action.ActionInvoker;
+import nl.matsgemmeke.battlegrounds.game.component.item.ActionInvoker;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.Material;
@@ -27,17 +28,17 @@ public class PlayerDropItemEventHandlerTest {
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
-    private ActionInvoker actionInvoker;
     private GameContextProvider gameContextProvider;
     private GameScope gameScope;
     private Item item;
+    private Provider<ActionInvoker> actionInvokerProvider;
 
     @BeforeEach
     public void setUp() {
-        actionInvoker = mock(ActionInvoker.class);
         gameContextProvider = mock(GameContextProvider.class);
         gameScope = mock(GameScope.class);
         item = mock(Item.class);
+        actionInvokerProvider = mock();
     }
 
     @Test
@@ -49,7 +50,7 @@ public class PlayerDropItemEventHandlerTest {
 
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, item);
 
-        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(actionInvoker, gameContextProvider, gameScope);
+        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
@@ -65,7 +66,7 @@ public class PlayerDropItemEventHandlerTest {
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(actionInvoker, gameContextProvider, gameScope);
+        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
@@ -74,6 +75,8 @@ public class PlayerDropItemEventHandlerTest {
 
     @Test
     public void handleInvokesActionExecutorAndCancelsEventAccordingToActionResult() {
+        ActionInvoker actionInvoker = mock(ActionInvoker.class);
+
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
@@ -84,6 +87,7 @@ public class PlayerDropItemEventHandlerTest {
 
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(actionInvokerProvider.get()).thenReturn(actionInvoker);
         when(item.getItemStack()).thenReturn(ITEM_STACK);
 
         doAnswer(invocation -> {
@@ -96,7 +100,7 @@ public class PlayerDropItemEventHandlerTest {
             return null;
         }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(actionInvoker, gameContextProvider, gameScope);
+        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isTrue();
@@ -106,6 +110,8 @@ public class PlayerDropItemEventHandlerTest {
 
     @Test
     public void handleInvokesActionExecutorAndDoesNotCancelEventAccordingToActionResult() {
+        ActionInvoker actionInvoker = mock(ActionInvoker.class);
+
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
@@ -116,6 +122,7 @@ public class PlayerDropItemEventHandlerTest {
 
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(actionInvokerProvider.get()).thenReturn(actionInvoker);
         when(item.getItemStack()).thenReturn(ITEM_STACK);
 
         doAnswer(invocation -> {
@@ -128,7 +135,7 @@ public class PlayerDropItemEventHandlerTest {
             return null;
         }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(actionInvoker, gameContextProvider, gameScope);
+        PlayerDropItemEventHandler eventHandler = new PlayerDropItemEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
