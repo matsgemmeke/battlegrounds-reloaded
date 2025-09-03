@@ -1,15 +1,13 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
+import nl.matsgemmeke.battlegrounds.event.action.ActionInvoker;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -20,21 +18,17 @@ import java.util.UUID;
 public class PlayerDropItemEventHandler implements EventHandler<PlayerDropItemEvent> {
 
     @NotNull
+    private final ActionInvoker actionInvoker;
+    @NotNull
     private final GameContextProvider gameContextProvider;
     @NotNull
     private final GameScope gameScope;
-    @NotNull
-    private final Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
 
     @Inject
-    public PlayerDropItemEventHandler(
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameScope gameScope,
-            @NotNull Provider<ActionExecutorRegistry> actionExecutorRegistryProvider
-    ) {
+    public PlayerDropItemEventHandler(@NotNull ActionInvoker actionInvoker, @NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope) {
+        this.actionInvoker = actionInvoker;
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.actionExecutorRegistryProvider = actionExecutorRegistryProvider;
     }
 
     public void handle(@NotNull PlayerDropItemEvent event) {
@@ -48,20 +42,14 @@ public class PlayerDropItemEventHandler implements EventHandler<PlayerDropItemEv
 
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
                 .orElseThrow(() -> new EventHandlingException("Unable to process PlayerDropItemEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
-        ItemStack itemStack = event.getItemDrop().getItemStack();
 
-        gameScope.runInScope(gameContext, () -> this.performAction(event, player, itemStack));
+        gameScope.runInScope(gameContext, () -> this.performAction(event, player));
     }
 
-    private void performAction(PlayerDropItemEvent event, Player player, ItemStack itemStack) {
-        ActionExecutorRegistry actionExecutorRegistry = actionExecutorRegistryProvider.get();
-        ActionExecutor actionExecutor = actionExecutorRegistry.getActionExecutor(itemStack).orElse(null);
+    private void performAction(PlayerDropItemEvent event, Player player) {
+        ItemStack itemStack = event.getItemDrop().getItemStack();
 
-        if (actionExecutor == null) {
-            return;
-        }
-
-        boolean performAction = actionExecutor.handleDropItemAction(player, itemStack);
+        boolean performAction = actionInvoker.performAction(itemStack, actionExecutor -> actionExecutor.handleDropItemAction(player, itemStack));
 
         event.setCancelled(event.isCancelled() || !performAction);
     }

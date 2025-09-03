@@ -29,11 +29,7 @@ public class PlayerItemHeldEventHandler implements EventHandler<PlayerItemHeldEv
     private final GameScope gameScope;
 
     @Inject
-    public PlayerItemHeldEventHandler(
-            @NotNull ActionInvoker actionInvoker,
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameScope gameScope
-    ) {
+    public PlayerItemHeldEventHandler(@NotNull ActionInvoker actionInvoker, @NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope) {
         this.actionInvoker = actionInvoker;
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;

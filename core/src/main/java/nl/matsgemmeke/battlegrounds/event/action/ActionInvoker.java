@@ -31,7 +31,6 @@ public class ActionInvoker {
             return true;
         }
 
-        var a = actionExecutorFunction.apply(actionExecutor);
-        return a;
+        return actionExecutorFunction.apply(actionExecutor);
     }
 }
