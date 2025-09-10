@@ -186,7 +186,7 @@ public class ItemEffectFactory {
         }
 
         for (TriggerSpec triggerSpec : spec.triggers.values()) {
-            Trigger trigger = triggerFactory.create(triggerSpec, gameKey);
+            Trigger trigger = triggerFactory.create(triggerSpec);
 
             itemEffect.addTrigger(trigger);
         }

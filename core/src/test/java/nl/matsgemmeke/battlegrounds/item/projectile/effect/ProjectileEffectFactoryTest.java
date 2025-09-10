@@ -60,7 +60,7 @@ public class ProjectileEffectFactoryTest {
         spec.maxActivations = 3;
 
         Trigger trigger = mock(Trigger.class);
-        when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(trigger);
+        when(triggerFactory.create(triggerSpec)).thenReturn(trigger);
 
         MockedConstruction<BounceEffect> bounceEffectConstructor = mockConstruction(BounceEffect.class, (mock, context) -> {
             BounceProperties properties = (BounceProperties) context.arguments().get(0);
@@ -92,7 +92,7 @@ public class ProjectileEffectFactoryTest {
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
         Trigger trigger = mock(Trigger.class);
-        when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(trigger);
+        when(triggerFactory.create(triggerSpec)).thenReturn(trigger);
 
         ProjectileEffectFactory factory = new ProjectileEffectFactory(contextProvider, particleEffectMapper, trailEffectFactory, triggerFactory);
         ProjectileEffect projectileEffect = factory.create(spec, gameKey);
@@ -110,7 +110,7 @@ public class ProjectileEffectFactoryTest {
         spec.sounds = "AMBIENT_CAVE-1-1-0";
 
         Trigger trigger = mock(Trigger.class);
-        when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(trigger);
+        when(triggerFactory.create(triggerSpec)).thenReturn(trigger);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);

@@ -65,7 +65,7 @@ public class ItemEffectFactoryTest {
         triggerSpec = this.createTriggerSpec();
 
         triggerFactory = mock(TriggerFactory.class);
-        when(triggerFactory.create(triggerSpec, gameKey)).thenReturn(mock(Trigger.class));
+        when(triggerFactory.create(triggerSpec)).thenReturn(mock(Trigger.class));
     }
 
     @Test

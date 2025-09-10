@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
@@ -69,9 +68,7 @@ public class ProjectileLauncherFactory {
                 FireballProperties properties = new FireballProperties(shotSounds, trajectoryParticleEffect, velocity);
                 ItemEffect itemEffect = itemEffectFactory.create(spec.effect, gameKey);
 
-                ProjectileHitActionRegistry projectileHitActionRegistry = contextProvider.getComponent(gameKey, ProjectileHitActionRegistry.class);
-
-                return fireballLauncherFactory.create(properties, audioEmitter, itemEffect, projectileHitActionRegistry);
+                return fireballLauncherFactory.create(properties, itemEffect);
             }
             case HITSCAN -> {
                 List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);

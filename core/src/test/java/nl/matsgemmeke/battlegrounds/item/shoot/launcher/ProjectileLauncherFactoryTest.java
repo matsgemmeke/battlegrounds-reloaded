@@ -62,14 +62,14 @@ public class ProjectileLauncherFactoryTest {
         when(contextProvider.getComponent(GAME_KEY, CollisionDetector.class)).thenReturn(collisionDetector);
         when(contextProvider.getComponent(GAME_KEY, ProjectileHitActionRegistry.class)).thenReturn(projectileHitActionRegistry);
         when(contextProvider.getComponent(GAME_KEY, TargetFinder.class)).thenReturn(targetFinder);
-        when(fireballLauncherFactory.create(any(FireballProperties.class), eq(audioEmitter), eq(itemEffect), eq(projectileHitActionRegistry))).thenReturn(fireballLauncher);
+        when(fireballLauncherFactory.create(any(FireballProperties.class), eq(itemEffect))).thenReturn(fireballLauncher);
         when(itemEffectFactory.create(projectileSpec.effect, GAME_KEY)).thenReturn(itemEffect);
 
         ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, contextProvider, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec, GAME_KEY);
 
         ArgumentCaptor<FireballProperties> fireballPropertiesCaptor = ArgumentCaptor.forClass(FireballProperties.class);
-        verify(fireballLauncherFactory).create(fireballPropertiesCaptor.capture(), eq(audioEmitter), eq(itemEffect), eq(projectileHitActionRegistry));
+        verify(fireballLauncherFactory).create(fireballPropertiesCaptor.capture(), eq(itemEffect));
 
         FireballProperties fireballProperties = fireballPropertiesCaptor.getValue();
         assertThat(fireballProperties.shotSounds()).isEmpty();

@@ -31,6 +31,7 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.*;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandlerProvider;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
@@ -150,6 +151,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class);
         binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
         binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
+        binder.bind(ProjectileHitActionRegistry.class).in(GameScoped.class);
         binder.bind(RespawnHandler.class).toProvider(RespawnHandlerProvider.class).in(GameScoped.class);
         binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
         binder.bind(StatePersistenceHandler.class).toProvider(StatePersistenceHandlerProvider.class).in(GameScoped.class);

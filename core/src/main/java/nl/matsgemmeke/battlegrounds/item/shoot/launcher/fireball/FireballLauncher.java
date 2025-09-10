@@ -39,19 +39,19 @@ public class FireballLauncher implements ProjectileLauncher {
 
     @Inject
     public FireballLauncher(
+            @NotNull AudioEmitter audioEmitter,
             @NotNull ParticleEffectSpawner particleEffectSpawner,
+            @NotNull ProjectileHitActionRegistry projectileHitActionRegistry,
             @NotNull Scheduler scheduler,
             @Assisted @NotNull FireballProperties properties,
-            @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull ItemEffect itemEffect,
-            @Assisted @NotNull ProjectileHitActionRegistry projectileHitActionRegistry
+            @Assisted @NotNull ItemEffect itemEffect
     ) {
+        this.itemEffect = itemEffect;
+        this.audioEmitter = audioEmitter;
         this.particleEffectSpawner = particleEffectSpawner;
+        this.projectileHitActionRegistry = projectileHitActionRegistry;
         this.scheduler = scheduler;
         this.properties = properties;
-        this.audioEmitter = audioEmitter;
-        this.itemEffect = itemEffect;
-        this.projectileHitActionRegistry = projectileHitActionRegistry;
     }
 
     public void launch(LaunchContext context) {
