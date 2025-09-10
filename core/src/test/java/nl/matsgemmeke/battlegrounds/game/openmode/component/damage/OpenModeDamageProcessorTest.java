@@ -12,6 +12,7 @@ import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -48,11 +49,11 @@ public class OpenModeDamageProcessorTest {
     }
 
     @Test
-    public void shouldAllowDamageFromNullContext() {
+    public void isDamageAllowedWithoutContextAlwaysReturnTrue() {
         OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
-        boolean allowed = damageProcessor.isDamageAllowed(null);
+        boolean allowed = damageProcessor.isDamageAllowedWithoutContext();
 
-        assertTrue(allowed);
+        assertThat(allowed).isTrue();
     }
 
     @Test

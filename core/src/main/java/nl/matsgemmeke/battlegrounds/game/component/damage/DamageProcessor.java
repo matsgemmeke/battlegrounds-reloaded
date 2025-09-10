@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface DamageProcessor {
 
@@ -18,13 +17,20 @@ public interface DamageProcessor {
     void addDamageCheck(@NotNull DamageCheck damageCheck);
 
     /**
-     * Determines whether damage is allowed between entities from different game instances. This method checks if the
+     * Determines whether damage is allowed between entities from different game contexts. This method checks if the
      * instance's corresponding game can inflict or receive damage from another specified game.
      *
      * @param gameKey the game key to check with the corresponding game
      * @return {@code true} if damage is allowed from or to the given game, {@code false} otherwise
      */
-    boolean isDamageAllowed(@Nullable GameKey gameKey);
+    boolean isDamageAllowed(GameKey gameKey);
+
+    /**
+     * Determines whether damage is allowed between entities that are not located inside a game context.
+     *
+     * @return {@code true} if damage is allowed from or to the given game, {@code false} otherwise
+     */
+    boolean isDamageAllowedWithoutContext();
 
     /**
      * Process the damage produced in an event where an entity directly damages another entity.

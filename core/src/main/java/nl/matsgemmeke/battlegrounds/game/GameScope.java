@@ -6,6 +6,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scope;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class GameScope implements Scope {
 
@@ -40,6 +41,16 @@ public class GameScope implements Scope {
 
         try {
             action.run();
+        } finally {
+            this.exit();
+        }
+    }
+
+    public <T> T supplyInScope(GameContext gameContext, Supplier<T> action) {
+        this.enter(gameContext);
+
+        try {
+            return action.get();
         } finally {
             this.exit();
         }

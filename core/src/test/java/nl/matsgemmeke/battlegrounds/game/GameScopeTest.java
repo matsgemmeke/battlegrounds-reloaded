@@ -6,6 +6,8 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Supplier;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -58,5 +60,43 @@ public class GameScopeTest {
         assertThat(scope.getCurrentGameContext()).isEmpty();
 
         verify(action).run();
+    }
+
+    @Test
+    public void runInScopeEntersScopeAndExitsAfterRunnableThrowsException() {
+        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
+        Runnable action = () -> {
+            throw new RuntimeException();
+        };
+
+        GameScope scope = new GameScope();
+
+        assertThatThrownBy(() -> scope.runInScope(gameContext, action)).isInstanceOf(RuntimeException.class);
+        assertThat(scope.getCurrentGameContext()).isEmpty();
+    }
+
+    @Test
+    public void supplyInScopeEntersScopeAndExitsAfterReturningValue() {
+        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
+        Supplier<String> supplier = () -> "test";
+
+        GameScope scope = new GameScope();
+        String result = scope.supplyInScope(gameContext, supplier);
+
+        assertThat(result).isEqualTo("test");
+        assertThat(scope.getCurrentGameContext()).isEmpty();
+    }
+
+    @Test
+    public void supplyInScopeEntersScopeAndExitsAfterSupplierThrowsException() {
+        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
+        Supplier<String> supplier = () -> {
+            throw new RuntimeException();
+        };
+
+        GameScope scope = new GameScope();
+
+        assertThatThrownBy(() -> scope.supplyInScope(gameContext, supplier)).isInstanceOf(RuntimeException.class);
+        assertThat(scope.getCurrentGameContext()).isEmpty();
     }
 }
