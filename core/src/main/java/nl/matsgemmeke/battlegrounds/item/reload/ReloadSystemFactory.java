@@ -43,7 +43,7 @@ public class ReloadSystemFactory {
 
         switch (reloadSystemType) {
             case MAGAZINE -> {
-                return magazineReloadSystemFactory.create(properties, ammunitionStorage, audioEmitter);
+                return magazineReloadSystemFactory.create(properties, ammunitionStorage);
             }
             case MANUAL_INSERTION -> {
                 return manualInsertionReloadSystemFactory.create(properties, ammunitionStorage, audioEmitter);

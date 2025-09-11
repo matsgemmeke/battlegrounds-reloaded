@@ -42,13 +42,13 @@ public class ReloadSystemFactoryTest {
         spec.duration = 50L;
 
         MagazineReloadSystem reloadSystem = mock(MagazineReloadSystem.class);
-        when(magazineReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage), eq(audioEmitter))).thenReturn(reloadSystem);
+        when(magazineReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage))).thenReturn(reloadSystem);
 
         ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
         ReloadSystem result = factory.create(spec, gun, audioEmitter);
 
         ArgumentCaptor<ReloadProperties> propertiesCaptor = ArgumentCaptor.forClass(ReloadProperties.class);
-        verify(magazineReloadSystemFactory).create(propertiesCaptor.capture(), eq(ammunitionStorage), eq(audioEmitter));
+        verify(magazineReloadSystemFactory).create(propertiesCaptor.capture(), eq(ammunitionStorage));
 
         ReloadProperties properties = propertiesCaptor.getValue();
         assertThat(properties.duration()).isEqualTo(50L);

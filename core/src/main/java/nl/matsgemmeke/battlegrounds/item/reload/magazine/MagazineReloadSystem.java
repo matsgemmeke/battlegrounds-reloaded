@@ -34,15 +34,15 @@ public class MagazineReloadSystem implements ReloadSystem {
 
     @Inject
     public MagazineReloadSystem(
+            @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull ReloadProperties properties,
-            @Assisted @NotNull AmmunitionStorage ammunitionStorage,
-            @Assisted @NotNull AudioEmitter audioEmitter
+            @Assisted @NotNull AmmunitionStorage ammunitionStorage
     ) {
-        this.ammunitionStorage = ammunitionStorage;
-        this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.taskRunner = taskRunner;
+        this.ammunitionStorage = ammunitionStorage;
+        this.properties = properties;
         this.currentTasks = new ArrayList<>();
     }
 
