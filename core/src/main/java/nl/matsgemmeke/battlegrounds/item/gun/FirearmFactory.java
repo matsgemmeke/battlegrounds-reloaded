@@ -128,7 +128,7 @@ public class FirearmFactory {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
         firearm.setAmmunitionStorage(ammunitionStorage);
 
-        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, firearm, audioEmitter);
+        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, firearm);
         firearm.setReloadSystem(reloadSystem);
 
         ItemControls<GunHolder> controls = controlsFactory.create(spec.controls, firearm);

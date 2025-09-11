@@ -107,7 +107,7 @@ public class FirearmFactoryTest {
         when(controlsFactory.create(eq(spec.controls), any(Firearm.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
 
         when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
 
@@ -141,7 +141,7 @@ public class FirearmFactoryTest {
         when(controlsFactory.create(eq(spec.controls), any(Firearm.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, defaultGunFactory, contextProvider, controlsFactory, gunRegistry, keyCreator, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(spec, gameKey);
@@ -161,7 +161,7 @@ public class FirearmFactoryTest {
         when(controlsFactory.create(eq(spec.controls), any(Firearm.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class), eq(audioEmitter))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
 
         FirearmFactory firearmFactory = new FirearmFactory(config, defaultGunFactory, contextProvider, controlsFactory, gunRegistry, keyCreator, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(spec, gameKey, gamePlayer);

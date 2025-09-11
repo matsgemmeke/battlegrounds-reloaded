@@ -34,10 +34,10 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
 
     @Inject
     public ManualInsertionReloadSystem(
+            @NotNull AudioEmitter audioEmitter,
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull ReloadProperties properties,
-            @Assisted @NotNull AmmunitionStorage ammunitionStorage,
-            @Assisted @NotNull AudioEmitter audioEmitter
+            @Assisted @NotNull AmmunitionStorage ammunitionStorage
     ) {
         this.taskRunner = taskRunner;
         this.properties = properties;
