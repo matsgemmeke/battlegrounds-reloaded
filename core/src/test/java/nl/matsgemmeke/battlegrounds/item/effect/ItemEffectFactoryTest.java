@@ -252,13 +252,13 @@ public class ItemEffectFactoryTest {
         when(contextProvider.getComponent(gameKey, CollisionDetector.class)).thenReturn(collisionDetector);
 
         ItemEffect smokeScreenEffect = mock(SmokeScreenEffect.class);
-        when(smokeScreenEffectFactory.create(any(SmokeScreenProperties.class), eq(audioEmitter), eq(collisionDetector))).thenReturn(smokeScreenEffect);
+        when(smokeScreenEffectFactory.create(any(SmokeScreenProperties.class))).thenReturn(smokeScreenEffect);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, explosionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, markSpawnPointEffectProvider, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
         ItemEffect itemEffect = factory.create(spec, gameKey);
 
         ArgumentCaptor<SmokeScreenProperties> propertiesCaptor = ArgumentCaptor.forClass(SmokeScreenProperties.class);
-        verify(smokeScreenEffectFactory).create(propertiesCaptor.capture(), eq(audioEmitter), eq(collisionDetector));
+        verify(smokeScreenEffectFactory).create(propertiesCaptor.capture());
 
         SmokeScreenProperties properties = propertiesCaptor.getValue();
         assertThat(properties.minDuration()).isEqualTo(spec.minDuration);

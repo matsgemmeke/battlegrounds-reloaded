@@ -174,10 +174,8 @@ public class ItemEffectFactory {
                 ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
 
                 SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
-                AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-                CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
 
-                itemEffect = smokeScreenEffectFactory.create(properties, audioEmitter, collisionDetector);
+                itemEffect = smokeScreenEffectFactory.create(properties);
             }
             case SOUND_NOTIFICATION -> {
                 Iterable<GameSound> sounds = DefaultGameSound.parseSounds(spec.activationSounds);

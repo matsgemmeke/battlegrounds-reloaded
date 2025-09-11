@@ -38,10 +38,10 @@ public class SmokeScreenEffect extends BaseItemEffect {
 
     @Inject
     public SmokeScreenEffect(
+            @NotNull AudioEmitter audioEmitter,
+            @NotNull CollisionDetector collisionDetector,
             @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull SmokeScreenProperties properties,
-            @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull CollisionDetector collisionDetector
+            @Assisted @NotNull SmokeScreenProperties properties
     ) {
         this.properties = properties;
         this.audioEmitter = audioEmitter;

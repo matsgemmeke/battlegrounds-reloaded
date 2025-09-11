@@ -67,7 +67,7 @@ public class SmokeScreenEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_INTERVAL))).thenReturn(task);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
+        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -99,7 +99,7 @@ public class SmokeScreenEffectTest {
 
         SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 1L, 1L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
+        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -131,7 +131,7 @@ public class SmokeScreenEffectTest {
 
         SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
+        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -164,7 +164,7 @@ public class SmokeScreenEffectTest {
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
+        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -195,7 +195,7 @@ public class SmokeScreenEffectTest {
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(true);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
+        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -227,7 +227,7 @@ public class SmokeScreenEffectTest {
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(false);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(taskRunner, properties, audioEmitter, collisionDetector);
+        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
