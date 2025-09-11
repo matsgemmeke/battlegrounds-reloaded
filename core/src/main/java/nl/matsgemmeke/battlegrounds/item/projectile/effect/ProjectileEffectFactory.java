@@ -13,7 +13,7 @@ import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
@@ -33,6 +33,8 @@ public class ProjectileEffectFactory {
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
     @NotNull
+    private final SoundEffectFactory soundEffectFactory;
+    @NotNull
     private final TrailEffectFactory trailEffectFactory;
     @NotNull
     private final TriggerFactory triggerFactory;
@@ -41,11 +43,13 @@ public class ProjectileEffectFactory {
     public ProjectileEffectFactory(
             @NotNull GameContextProvider contextProvider,
             @NotNull ParticleEffectMapper particleEffectMapper,
+            @NotNull SoundEffectFactory soundEffectFactory,
             @NotNull TrailEffectFactory trailEffectFactory,
             @NotNull TriggerFactory triggerFactory
     ) {
         this.contextProvider = contextProvider;
         this.particleEffectMapper = particleEffectMapper;
+        this.soundEffectFactory = soundEffectFactory;
         this.trailEffectFactory = trailEffectFactory;
         this.triggerFactory = triggerFactory;
     }
@@ -64,7 +68,7 @@ public class ProjectileEffectFactory {
                 BounceProperties properties = new BounceProperties(amountOfBounces, horizontalFriction, verticalFriction);
 
                 BounceEffect bounceEffect = new BounceEffect(properties);
-                this.addTriggers(bounceEffect, gameKey, triggerSpecs.values());
+                this.addTriggers(bounceEffect, triggerSpecs.values());
 
                 return bounceEffect;
             }
@@ -72,10 +76,8 @@ public class ProjectileEffectFactory {
                 List<GameSound> sounds = DefaultGameSound.parseSounds(spec.sounds);
                 Map<String, TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers, "triggers", type);
 
-                AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-
-                SoundEffect soundEffect = new SoundEffect(audioEmitter, sounds);
-                this.addTriggers(soundEffect, gameKey, triggerSpecs.values());
+                ProjectileEffect soundEffect = soundEffectFactory.create(sounds);
+                this.addTriggers(soundEffect, triggerSpecs.values());
 
                 return soundEffect;
 
@@ -87,7 +89,7 @@ public class ProjectileEffectFactory {
                 AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
                 StickEffect stickEffect = new StickEffect(audioEmitter, stickSounds);
-                this.addTriggers(stickEffect, gameKey, triggerSpecs.values());
+                this.addTriggers(stickEffect, triggerSpecs.values());
 
                 return stickEffect;
             }
@@ -100,7 +102,7 @@ public class ProjectileEffectFactory {
                 TrailProperties properties = new TrailProperties(particleEffect, maxActivations);
 
                 ProjectileEffect trailEffect = trailEffectFactory.create(properties);
-                this.addTriggers(trailEffect, gameKey, triggerSpecs.values());
+                this.addTriggers(trailEffect, triggerSpecs.values());
 
                 return trailEffect;
             }
@@ -126,7 +128,7 @@ public class ProjectileEffectFactory {
         return value;
     }
 
-    private void addTriggers(@NotNull ProjectileEffect projectileEffect, @NotNull GameKey gameKey, @NotNull Collection<TriggerSpec> triggerSpecs) {
+    private void addTriggers(@NotNull ProjectileEffect projectileEffect, @NotNull Collection<TriggerSpec> triggerSpecs) {
         for (TriggerSpec triggerSpec : triggerSpecs) {
             Trigger trigger = triggerFactory.create(triggerSpec);
             projectileEffect.addTrigger(trigger);

@@ -56,6 +56,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.gun.DefaultFirearmFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -187,6 +189,9 @@ public class BattlegroundsModule implements Module {
                 .implement(ItemEffect.class, SmokeScreenEffect.class)
                 .build(SmokeScreenEffectFactory.class));
 
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileEffect.class, SoundEffect.class)
+                .build(SoundEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileEffect.class, TrailEffect.class)
                 .build(TrailEffectFactory.class));
