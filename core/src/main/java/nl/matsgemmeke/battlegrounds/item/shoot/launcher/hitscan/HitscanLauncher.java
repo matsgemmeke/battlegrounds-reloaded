@@ -42,19 +42,19 @@ public class HitscanLauncher implements ProjectileLauncher {
 
     @Inject
     public HitscanLauncher(
+            @NotNull AudioEmitter audioEmitter,
+            @NotNull CollisionDetector collisionDetector,
             @NotNull ParticleEffectSpawner particleEffectSpawner,
+            @NotNull TargetFinder targetFinder,
             @Assisted @NotNull HitscanProperties properties,
-            @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull CollisionDetector collisionDetector,
-            @Assisted @NotNull ItemEffect itemEffect,
-            @Assisted @NotNull TargetFinder targetFinder
+            @Assisted @NotNull ItemEffect itemEffect
     ) {
-        this.particleEffectSpawner = particleEffectSpawner;
-        this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
-        this.itemEffect = itemEffect;
+        this.particleEffectSpawner = particleEffectSpawner;
         this.targetFinder = targetFinder;
+        this.properties = properties;
+        this.itemEffect = itemEffect;
     }
 
     public void launch(@NotNull LaunchContext context) {
