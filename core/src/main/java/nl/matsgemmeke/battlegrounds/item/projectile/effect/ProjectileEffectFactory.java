@@ -4,17 +4,15 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
@@ -29,11 +27,11 @@ import java.util.Map;
 public class ProjectileEffectFactory {
 
     @NotNull
-    private final GameContextProvider contextProvider;
-    @NotNull
     private final ParticleEffectMapper particleEffectMapper;
     @NotNull
     private final SoundEffectFactory soundEffectFactory;
+    @NotNull
+    private final StickEffectFactory stickEffectFactory;
     @NotNull
     private final TrailEffectFactory trailEffectFactory;
     @NotNull
@@ -41,15 +39,15 @@ public class ProjectileEffectFactory {
 
     @Inject
     public ProjectileEffectFactory(
-            @NotNull GameContextProvider contextProvider,
             @NotNull ParticleEffectMapper particleEffectMapper,
             @NotNull SoundEffectFactory soundEffectFactory,
+            @NotNull StickEffectFactory stickEffectFactory,
             @NotNull TrailEffectFactory trailEffectFactory,
             @NotNull TriggerFactory triggerFactory
     ) {
-        this.contextProvider = contextProvider;
         this.particleEffectMapper = particleEffectMapper;
         this.soundEffectFactory = soundEffectFactory;
+        this.stickEffectFactory = stickEffectFactory;
         this.trailEffectFactory = trailEffectFactory;
         this.triggerFactory = triggerFactory;
     }
@@ -86,9 +84,7 @@ public class ProjectileEffectFactory {
                 List<GameSound> stickSounds = DefaultGameSound.parseSounds(spec.sounds);
                 Map<String, TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers, "triggers", type);
 
-                AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-
-                StickEffect stickEffect = new StickEffect(audioEmitter, stickSounds);
+                ProjectileEffect stickEffect = stickEffectFactory.create(stickSounds);
                 this.addTriggers(stickEffect, triggerSpecs.values());
 
                 return stickEffect;
