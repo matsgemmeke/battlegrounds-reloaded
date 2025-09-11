@@ -7,11 +7,9 @@ import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
@@ -51,8 +49,6 @@ public class EquipmentFactory {
     @NotNull
     private final EquipmentRegistry equipmentRegistry;
     @NotNull
-    private final GameContextProvider contextProvider;
-    @NotNull
     private final ItemEffectFactory itemEffectFactory;
     @NotNull
     private final NamespacedKeyCreator namespacedKeyCreator;
@@ -62,7 +58,6 @@ public class EquipmentFactory {
     @Inject
     public EquipmentFactory(
             @NotNull DeploymentHandlerFactory deploymentHandlerFactory,
-            @NotNull GameContextProvider contextProvider,
             @NotNull EquipmentControlsFactory controlsFactory,
             @NotNull EquipmentRegistry equipmentRegistry,
             @NotNull ItemEffectFactory itemEffectFactory,
@@ -70,7 +65,6 @@ public class EquipmentFactory {
             @NotNull ParticleEffectMapper particleEffectMapper
     ) {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
-        this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
         this.equipmentRegistry = equipmentRegistry;
         this.itemEffectFactory = itemEffectFactory;
@@ -186,11 +180,9 @@ public class EquipmentFactory {
         }
 
         DeploymentProperties deploymentProperties = new DeploymentProperties(manualActivationSounds, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnCleanup, manualActivationDelay);
-
-        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
         ItemEffect itemEffect = itemEffectFactory.create(effectSpec, gameKey);
 
-        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, itemEffect);
+        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, itemEffect);
         deploymentHandler.setActivator(activator);
 
         return deploymentHandler;
