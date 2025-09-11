@@ -20,7 +20,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFacto
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashProperties;
@@ -44,6 +44,8 @@ public class ItemEffectFactory {
     @NotNull
     private final CombustionEffectFactory combustionEffectFactory;
     @NotNull
+    private final ExplosionEffectFactory explosionEffectFactory;
+    @NotNull
     private final GameContextProvider contextProvider;
     @NotNull
     private final GunFireSimulationEffectFactory gunFireSimulationEffectFactory;
@@ -62,6 +64,7 @@ public class ItemEffectFactory {
     public ItemEffectFactory(
             @NotNull GameContextProvider contextProvider,
             @NotNull CombustionEffectFactory combustionEffectFactory,
+            @NotNull ExplosionEffectFactory explosionEffectFactory,
             @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory,
             @NotNull ParticleEffectMapper particleEffectMapper,
             @NotNull Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
@@ -71,6 +74,7 @@ public class ItemEffectFactory {
     ) {
         this.contextProvider = contextProvider;
         this.combustionEffectFactory = combustionEffectFactory;
+        this.explosionEffectFactory = explosionEffectFactory;
         this.gunFireSimulationEffectFactory = gunFireSimulationEffectFactory;
         this.particleEffectMapper = particleEffectMapper;
         this.markSpawnPointEffectProvider = markSpawnPointEffectProvider;
@@ -125,11 +129,9 @@ public class ItemEffectFactory {
                 boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
 
                 ExplosionProperties properties = new ExplosionProperties(power, damageBlocks, spreadFire);
-                DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
                 RangeProfile rangeProfile = new RangeProfile(rangeProfileSpec.longRange.damage, rangeProfileSpec.longRange.distance, rangeProfileSpec.mediumRange.damage, rangeProfileSpec.mediumRange.distance, rangeProfileSpec.shortRange.damage, rangeProfileSpec.shortRange.distance);
-                TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                itemEffect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+                itemEffect = explosionEffectFactory.create(properties, rangeProfile);
             }
             case FLASH -> {
                 double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);

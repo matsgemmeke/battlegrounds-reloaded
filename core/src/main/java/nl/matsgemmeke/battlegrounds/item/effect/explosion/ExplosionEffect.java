@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
@@ -20,23 +22,24 @@ import java.util.UUID;
 public class ExplosionEffect extends BaseItemEffect {
 
     @NotNull
-    private DamageProcessor damageProcessor;
+    private final DamageProcessor damageProcessor;
     @NotNull
-    private ExplosionProperties properties;
+    private final ExplosionProperties properties;
     @NotNull
-    private RangeProfile rangeProfile;
+    private final RangeProfile rangeProfile;
     @NotNull
-    private TargetFinder targetFinder;
+    private final TargetFinder targetFinder;
 
+    @Inject
     public ExplosionEffect(
-            @NotNull ExplosionProperties properties,
             @NotNull DamageProcessor damageProcessor,
-            @NotNull RangeProfile rangeProfile,
-            @NotNull TargetFinder targetFinder
+            @NotNull TargetFinder targetFinder,
+            @Assisted @NotNull ExplosionProperties properties,
+            @Assisted @NotNull RangeProfile rangeProfile
     ) {
-        this.properties = properties;
         this.damageProcessor = damageProcessor;
         this.targetFinder = targetFinder;
+        this.properties = properties;
         this.rangeProfile = rangeProfile;
     }
 
