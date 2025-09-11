@@ -58,13 +58,13 @@ public class CombustionEffect extends BaseItemEffect {
 
     @Inject
     public CombustionEffect(
+            @NotNull AudioEmitter audioEmitter,
+            @NotNull CollisionDetector collisionDetector,
             @NotNull MetadataValueEditor metadataValueEditor,
+            @NotNull TargetFinder targetFinder,
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull CombustionProperties properties,
-            @Assisted @NotNull RangeProfile rangeProfile,
-            @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull CollisionDetector collisionDetector,
-            @Assisted @NotNull TargetFinder targetFinder
+            @Assisted @NotNull RangeProfile rangeProfile
     ) {
         this.properties = properties;
         this.rangeProfile = rangeProfile;

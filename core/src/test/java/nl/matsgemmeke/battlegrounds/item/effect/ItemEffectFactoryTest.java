@@ -88,16 +88,8 @@ public class ItemEffectFactoryTest {
         spec.damageBlocks = true;
         spec.spreadFire = false;
 
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        CollisionDetector collisionDetector = mock(CollisionDetector.class);
-        TargetFinder targetFinder = mock(TargetFinder.class);
-
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-        when(contextProvider.getComponent(gameKey, CollisionDetector.class)).thenReturn(collisionDetector);
-        when(contextProvider.getComponent(gameKey, TargetFinder.class)).thenReturn(targetFinder);
-
         ItemEffect combustionEffect = mock(CombustionEffect.class);
-        when(combustionEffectFactory.create(any(CombustionProperties.class), any(RangeProfile.class), eq(audioEmitter), eq(collisionDetector), eq(targetFinder))).thenReturn(combustionEffect);
+        when(combustionEffectFactory.create(any(CombustionProperties.class), any(RangeProfile.class))).thenReturn(combustionEffect);
 
         ItemEffectFactory factory = new ItemEffectFactory(contextProvider, combustionEffectFactory, explosionEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, markSpawnPointEffectProvider, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
         ItemEffect itemEffect = factory.create(spec, gameKey);
@@ -105,7 +97,7 @@ public class ItemEffectFactoryTest {
         ArgumentCaptor<CombustionProperties> propertiesCaptor = ArgumentCaptor.forClass(CombustionProperties.class);
         ArgumentCaptor<RangeProfile> rangeProfileCaptor = ArgumentCaptor.forClass(RangeProfile.class);
 
-        verify(combustionEffectFactory).create(propertiesCaptor.capture(), rangeProfileCaptor.capture(), eq(audioEmitter), eq(collisionDetector), eq(targetFinder));
+        verify(combustionEffectFactory).create(propertiesCaptor.capture(), rangeProfileCaptor.capture());
 
         CombustionProperties properties = propertiesCaptor.getValue();
         assertThat(properties.minSize()).isEqualTo(spec.minSize);

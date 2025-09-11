@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -103,11 +102,7 @@ public class ItemEffectFactory {
                 CombustionProperties properties = new CombustionProperties(activationSounds, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
                 RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
 
-                AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-                CollisionDetector collisionDetector = contextProvider.getComponent(gameKey, CollisionDetector.class);
-                TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
-
-                itemEffect = combustionEffectFactory.create(properties, rangeProfile, audioEmitter, collisionDetector, targetFinder);
+                itemEffect = combustionEffectFactory.create(properties, rangeProfile);
             }
             case DAMAGE -> {
                 String damageTypeValue = this.validateSpecVar(spec.damageType, "damageType", itemEffectType);
