@@ -76,7 +76,7 @@ public class FlashEffectTest {
         when(source.getWorld()).thenReturn(world);
         when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
 
-        FlashEffect effect = new FlashEffect(properties, targetFinder);
+        FlashEffect effect = new FlashEffect(targetFinder, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -127,7 +127,7 @@ public class FlashEffectTest {
         when(source.getWorld()).thenReturn(world);
         when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
 
-        FlashEffect effect = new FlashEffect(properties, targetFinder);
+        FlashEffect effect = new FlashEffect(targetFinder, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -156,7 +156,7 @@ public class FlashEffectTest {
 
         when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
 
-        FlashEffect effect = new FlashEffect(properties, targetFinder);
+        FlashEffect effect = new FlashEffect(targetFinder, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 

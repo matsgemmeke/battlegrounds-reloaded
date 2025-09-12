@@ -50,6 +50,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
@@ -184,11 +186,14 @@ public class BattlegroundsModule implements Module {
                 .build(DefaultGamePlayerFactory.class));
 
         binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffect.class, CombustionEffect.class)
+                .build(CombustionEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffect.class, ExplosionEffect.class)
                 .build(ExplosionEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
-                .implement(ItemEffect.class, CombustionEffect.class)
-                .build(CombustionEffectFactory.class));
+                .implement(ItemEffect.class, FlashEffect.class)
+                .build(FlashEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffect.class, GunFireSimulationEffect.class)
                 .build(GunFireSimulationEffectFactory.class));

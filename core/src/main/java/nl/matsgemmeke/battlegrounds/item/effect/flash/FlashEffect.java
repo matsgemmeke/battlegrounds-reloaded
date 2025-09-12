@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.flash;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
@@ -20,13 +22,14 @@ import java.util.UUID;
 public class FlashEffect extends BaseItemEffect {
 
     @NotNull
-    private FlashProperties properties;
+    private final FlashProperties properties;
     @NotNull
-    private Map<GameEntity, PotionEffect> appliedPotionEffects;
+    private final Map<GameEntity, PotionEffect> appliedPotionEffects;
     @NotNull
-    private TargetFinder targetFinder;
+    private final TargetFinder targetFinder;
 
-    public FlashEffect(@NotNull FlashProperties properties, @NotNull TargetFinder targetFinder) {
+    @Inject
+    public FlashEffect(@NotNull TargetFinder targetFinder, @Assisted @NotNull FlashProperties properties) {
         this.properties = properties;
         this.targetFinder = targetFinder;
         this.appliedPotionEffects = new HashMap<>();
