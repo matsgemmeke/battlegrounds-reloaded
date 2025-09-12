@@ -15,6 +15,7 @@ public class ItemEffectSpec {
     public Map<String, TriggerSpec> triggers = new HashMap<>();
     public String activationSounds;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "DAMAGE")
+    @EnumValue(type = DamageType.class)
     public String damageType;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = { "DAMAGE", "EXPLOSION" })
     public RangeProfileSpec range;

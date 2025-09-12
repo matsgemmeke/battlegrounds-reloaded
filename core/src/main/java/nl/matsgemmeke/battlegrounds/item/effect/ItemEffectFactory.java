@@ -8,8 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
@@ -17,11 +15,10 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
@@ -43,6 +40,8 @@ public class ItemEffectFactory {
 
     @NotNull
     private final CombustionEffectFactory combustionEffectFactory;
+    @NotNull
+    private final DamageEffectFactory damageEffectFactory;
     @NotNull
     private final ExplosionEffectFactory explosionEffectFactory;
     @NotNull
@@ -66,6 +65,7 @@ public class ItemEffectFactory {
     public ItemEffectFactory(
             @NotNull GameContextProvider contextProvider,
             @NotNull CombustionEffectFactory combustionEffectFactory,
+            @NotNull DamageEffectFactory damageEffectFactory,
             @NotNull ExplosionEffectFactory explosionEffectFactory,
             @NotNull FlashEffectFactory flashEffectFactory,
             @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory,
@@ -77,6 +77,7 @@ public class ItemEffectFactory {
     ) {
         this.contextProvider = contextProvider;
         this.combustionEffectFactory = combustionEffectFactory;
+        this.damageEffectFactory = damageEffectFactory;
         this.explosionEffectFactory = explosionEffectFactory;
         this.flashEffectFactory = flashEffectFactory;
         this.gunFireSimulationEffectFactory = gunFireSimulationEffectFactory;
@@ -117,10 +118,8 @@ public class ItemEffectFactory {
                 DamageType damageType = DamageType.valueOf(damageTypeValue);
 
                 DamageProperties properties = new DamageProperties(rangeProfile, damageType);
-                DamageProcessor damageProcessor = contextProvider.getComponent(gameKey, DamageProcessor.class);
-                TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
 
-                itemEffect = new DamageEffect(properties, damageProcessor, targetFinder);
+                itemEffect = damageEffectFactory.create(properties);
             }
             case EXPLOSION -> {
                 RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
