@@ -1,12 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.game.component.entity.EntityRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -115,45 +111,6 @@ public class GameContextProvider {
         return Optional.empty();
     }
 
-    /**
-     * Gets the {@link GameKey} of the game a player is currently in. Returns null if the player is not in any of the
-     * registered games.
-     *
-     * @param player the player
-     * @return the game key of the game the player is currently in, or null if the player is not any game
-     */
-    @Nullable
-    public GameKey getGameKey(@NotNull Player player) {
-        for (GameKey gameKey : games.keySet()) {
-
-            PlayerRegistry playerRegistry = this.getComponent(gameKey, PlayerRegistry.class);
-            if (playerRegistry.isRegistered(player)) {
-                return gameKey;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Gets the {@link GameKey} of the game a specific entity is currently in by matching their {@link UUID}. Returns
-     * {@code null} if none of the games contain an entity whose UUID match.
-     *
-     * @param uuid the entity uuid
-     * @return the game key of the game which contains an entity with the given uuid, or null if none of the
-     * games have a matching entity
-     */
-    @Nullable
-    public GameKey getGameKey(@NotNull UUID uuid) {
-        for (GameKey gameKey : games.keySet()) {
-            for (EntityRegistry<?, ?> entityRegistry : this.getEntityRegistries(gameKey)) {
-                if (entityRegistry.isRegistered(uuid)) {
-                    return gameKey;
-                }
-            }
-        }
-        return null;
-    }
-
     public Optional<GameKey> getGameKeyByEntityId(UUID entityId) {
         if (!entityGameKeyMap.containsKey(entityId)) {
             return Optional.empty();
@@ -170,13 +127,6 @@ public class GameContextProvider {
     @NotNull
     public Set<GameKey> getGameKeys() {
         return games.keySet();
-    }
-
-    @NotNull
-    private Iterable<EntityRegistry<?, ?>> getEntityRegistries(@NotNull GameKey gameKey) {
-        PlayerRegistry playerRegistry = this.getComponent(gameKey, PlayerRegistry.class);
-
-        return List.of(playerRegistry);
     }
 
     /**

@@ -2,12 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
@@ -50,8 +44,6 @@ public class ItemEffectFactoryTest {
     private DamageEffectFactory damageEffectFactory;
     private ExplosionEffectFactory explosionEffectFactory;
     private FlashEffectFactory flashEffectFactory;
-    private GameContextProvider contextProvider;
-    private GameKey gameKey;
     private GunFireSimulationEffectFactory gunFireSimulationEffectFactory;
     private ParticleEffectMapper particleEffectMapper;
     private Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider;
@@ -66,8 +58,6 @@ public class ItemEffectFactoryTest {
         damageEffectFactory = mock(DamageEffectFactory.class);
         explosionEffectFactory = mock(ExplosionEffectFactory.class);
         flashEffectFactory = mock(FlashEffectFactory.class);
-        contextProvider = mock(GameContextProvider.class);
-        gameKey = GameKey.ofOpenMode();
         gunFireSimulationEffectFactory = mock(GunFireSimulationEffectFactory.class);
         particleEffectMapper = new ParticleEffectMapper();
         markSpawnPointEffectProvider = mock();
@@ -201,12 +191,6 @@ public class ItemEffectFactoryTest {
         spec.maxDuration = 200L;
         spec.activationPattern = activationPatternSpec;
 
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        GunInfoProvider gunInfoProvider = mock(GunInfoProvider.class);
-
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-        when(contextProvider.getComponent(gameKey, GunInfoProvider.class)).thenReturn(gunInfoProvider);
-
         ItemEffect gunFireSimulationEffect = mock(GunFireSimulationEffect.class);
         when(gunFireSimulationEffectFactory.create(any(GunFireSimulationProperties.class))).thenReturn(gunFireSimulationEffect);
 
@@ -236,9 +220,6 @@ public class ItemEffectFactoryTest {
 
         MarkSpawnPointEffect markSpawnPointEffect = mock(MarkSpawnPointEffect.class);
 
-        SpawnPointRegistry spawnPointRegistry = mock(SpawnPointRegistry.class);
-        when(contextProvider.getComponent(gameKey, SpawnPointRegistry.class)).thenReturn(spawnPointRegistry);
-
         when(markSpawnPointEffectProvider.get()).thenReturn(markSpawnPointEffect);
 
         ItemEffectFactory factory = new ItemEffectFactory(combustionEffectFactory, damageEffectFactory, explosionEffectFactory, flashEffectFactory, gunFireSimulationEffectFactory, particleEffectMapper, markSpawnPointEffectProvider, rangeProfileMapper, smokeScreenEffectFactory, triggerFactory);
@@ -262,12 +243,6 @@ public class ItemEffectFactoryTest {
         spec.minDuration = 100L;
         spec.maxDuration = 200L;
         spec.particleEffect = particleEffectSpec;
-
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
-        CollisionDetector collisionDetector = mock(CollisionDetector.class);
-
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-        when(contextProvider.getComponent(gameKey, CollisionDetector.class)).thenReturn(collisionDetector);
 
         ItemEffect smokeScreenEffect = mock(SmokeScreenEffect.class);
         when(smokeScreenEffectFactory.create(any(SmokeScreenProperties.class))).thenReturn(smokeScreenEffect);

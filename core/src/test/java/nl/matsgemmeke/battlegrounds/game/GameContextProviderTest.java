@@ -1,10 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
-import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -108,78 +106,6 @@ public class GameContextProviderTest {
         Optional<GameContext> gameContextOptional = gameContextProvider.getGameContext(otherKey);
 
         assertThat(gameContextOptional).isEmpty();
-    }
-
-    @Test
-    public void getGameKeyReturnsCorrespondingGameKeyForGivenPlayer() {
-        Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofOpenMode();
-        Player player = mock(Player.class);
-
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.isRegistered(player)).thenReturn(true);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
-
-        GameKey result = contextProvider.getGameKey(player);
-
-        assertEquals(gameKey, result);
-    }
-
-    @Test
-    public void getGameKeyReturnsNullIfGivenPlayerIsNotInAnyGame() {
-        Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofOpenMode();
-        Player player = mock(Player.class);
-
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.isRegistered(player)).thenReturn(false);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
-
-        GameKey result = contextProvider.getGameKey(player);
-
-        assertNull(result);
-    }
-
-    @Test
-    public void getGameKeyReturnsCorrespondingGameKeyForGivenUUID() {
-        Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofOpenMode();
-        UUID uuid = UUID.randomUUID();
-
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.isRegistered(uuid)).thenReturn(true);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
-
-        GameKey result = contextProvider.getGameKey(uuid);
-
-        assertEquals(gameKey, result);
-    }
-
-    @Test
-    public void getGameKeyReturnsNullIfGivenUUIDIsNotRegisteredInAnyGame() {
-        Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofOpenMode();
-        UUID uuid = UUID.randomUUID();
-
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.isRegistered(uuid)).thenReturn(false);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
-
-        GameKey result = contextProvider.getGameKey(uuid);
-
-        assertNull(result);
     }
 
     @Test
