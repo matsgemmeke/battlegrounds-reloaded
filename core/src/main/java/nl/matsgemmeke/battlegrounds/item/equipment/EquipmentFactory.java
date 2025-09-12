@@ -134,7 +134,7 @@ public class EquipmentFactory {
         ItemControls<EquipmentHolder> controls = controlsFactory.create(spec, equipment, gameKey);
         equipment.setControls(controls);
 
-        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deploy, spec.effect, gameKey, activator);
+        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deploy, spec.effect, activator);
         equipment.setDeploymentHandler(deploymentHandler);
 
         return equipment;
@@ -158,7 +158,7 @@ public class EquipmentFactory {
     }
 
     @NotNull
-    private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull ItemEffectSpec effectSpec, @NotNull GameKey gameKey, @Nullable Activator activator) {
+    private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull ItemEffectSpec effectSpec, @Nullable Activator activator) {
         boolean activateEffectOnDestruction = deploymentSpec.onDestruction.activateEffect;
         boolean removeDeploymentOnDestruction = deploymentSpec.onDestruction.removeDeployment;
         boolean undoEffectOnDestruction = deploymentSpec.onDestruction.undoEffect;
@@ -180,7 +180,7 @@ public class EquipmentFactory {
         }
 
         DeploymentProperties deploymentProperties = new DeploymentProperties(manualActivationSounds, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnCleanup, manualActivationDelay);
-        ItemEffect itemEffect = itemEffectFactory.create(effectSpec, gameKey);
+        ItemEffect itemEffect = itemEffectFactory.create(effectSpec);
 
         DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, itemEffect);
         deploymentHandler.setActivator(activator);

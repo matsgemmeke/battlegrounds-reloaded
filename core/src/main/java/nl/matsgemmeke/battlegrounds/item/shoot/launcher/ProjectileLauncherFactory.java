@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -43,8 +42,7 @@ public class ProjectileLauncherFactory {
         this.particleEffectMapper = particleEffectMapper;
     }
 
-    @NotNull
-    public ProjectileLauncher create(@NotNull ProjectileSpec spec, @NotNull GameKey gameKey) {
+    public ProjectileLauncher create(ProjectileSpec spec) {
         ProjectileLauncherType projectileLauncherType = ProjectileLauncherType.valueOf(spec.type);
 
         switch (projectileLauncherType) {
@@ -54,7 +52,7 @@ public class ProjectileLauncherFactory {
                 double velocity = this.validateSpecVar(spec.velocity, "velocity", projectileLauncherType);
 
                 FireballProperties properties = new FireballProperties(shotSounds, trajectoryParticleEffect, velocity);
-                ItemEffect itemEffect = itemEffectFactory.create(spec.effect, gameKey);
+                ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
                 return fireballLauncherFactory.create(properties, itemEffect);
             }
@@ -68,7 +66,7 @@ public class ProjectileLauncherFactory {
                 }
 
                 HitscanProperties properties = new HitscanProperties(shotSounds, trajectoryParticleEffect);
-                ItemEffect itemEffect = itemEffectFactory.create(spec.effect, gameKey);
+                ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
                 return hitscanLauncherFactory.create(properties, itemEffect);
             }

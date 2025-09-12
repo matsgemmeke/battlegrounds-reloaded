@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
@@ -25,8 +24,6 @@ import static org.mockito.Mockito.*;
 
 public class ProjectileLauncherFactoryTest {
     
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-    
     private FireballLauncherFactory fireballLauncherFactory;
     private HitscanLauncherFactory hitscanLauncherFactory;
     private ItemEffectFactory itemEffectFactory;
@@ -47,10 +44,10 @@ public class ProjectileLauncherFactoryTest {
         ItemEffect itemEffect = mock(ItemEffect.class);
 
         when(fireballLauncherFactory.create(any(FireballProperties.class), eq(itemEffect))).thenReturn(fireballLauncher);
-        when(itemEffectFactory.create(projectileSpec.effect, GAME_KEY)).thenReturn(itemEffect);
+        when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
 
         ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
-        ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec, GAME_KEY);
+        ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
 
         ArgumentCaptor<FireballProperties> fireballPropertiesCaptor = ArgumentCaptor.forClass(FireballProperties.class);
         verify(fireballLauncherFactory).create(fireballPropertiesCaptor.capture(), eq(itemEffect));
@@ -77,7 +74,7 @@ public class ProjectileLauncherFactoryTest {
 
         ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
 
-        assertThatThrownBy(() -> projectileLauncherFactory.create(projectileSpec, GAME_KEY))
+        assertThatThrownBy(() -> projectileLauncherFactory.create(projectileSpec))
                 .isInstanceOf(ProjectileLauncherCreationException.class)
                 .hasMessage("Cannot create projectile launcher for type FIREBALL because of invalid spec: Required 'velocity' value is missing");
     }
@@ -89,10 +86,10 @@ public class ProjectileLauncherFactoryTest {
         ItemEffect itemEffect = mock(ItemEffect.class);
 
         when(hitscanLauncherFactory.create(any(HitscanProperties.class), eq(itemEffect))).thenReturn(hitscanLauncher);
-        when(itemEffectFactory.create(projectileSpec.effect, GAME_KEY)).thenReturn(itemEffect);
+        when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
 
         ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
-        ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec, GAME_KEY);
+        ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
 
         ArgumentCaptor<HitscanProperties> hitscanPropertiesCaptor = ArgumentCaptor.forClass(HitscanProperties.class);
         verify(hitscanLauncherFactory).create(hitscanPropertiesCaptor.capture(), eq(itemEffect));

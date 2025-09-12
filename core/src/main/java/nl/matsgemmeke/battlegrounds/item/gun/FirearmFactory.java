@@ -134,7 +134,7 @@ public class FirearmFactory {
         ItemControls<GunHolder> controls = controlsFactory.create(spec.controls, firearm);
         firearm.setControls(controls);
 
-        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, gameKey, ammunitionStorage, itemRepresentation);
+        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, ammunitionStorage, itemRepresentation);
         firearm.setShootHandler(shootHandler);
 
         ScopeSpec scopeSpec = spec.scope;

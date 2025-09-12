@@ -81,7 +81,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(itemEffectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
+        when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
@@ -104,7 +104,7 @@ public class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(itemEffectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
+        when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);

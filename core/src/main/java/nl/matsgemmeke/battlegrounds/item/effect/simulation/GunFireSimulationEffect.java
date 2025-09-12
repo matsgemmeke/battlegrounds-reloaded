@@ -41,9 +41,9 @@ public class GunFireSimulationEffect extends BaseItemEffect {
 
     @Inject
     public GunFireSimulationEffect(
+            @NotNull AudioEmitter audioEmitter,
+            @NotNull GunInfoProvider gunInfoProvider,
             @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull GunInfoProvider gunInfoProvider,
             @Assisted @NotNull GunFireSimulationProperties properties
     ) {
         this.taskRunner = taskRunner;

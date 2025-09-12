@@ -67,7 +67,7 @@ public class GunFireSimulationEffectTest {
 
         when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.empty());
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, audioEmitter, gunInfoProvider, properties);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -105,7 +105,7 @@ public class GunFireSimulationEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, audioEmitter, gunInfoProvider, properties);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -145,7 +145,7 @@ public class GunFireSimulationEffectTest {
         BukkitTask task = mock(BukkitTask.class);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
 
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(taskRunner, audioEmitter, gunInfoProvider, properties);
+        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
         effect.addTrigger(trigger);
         effect.prime(context);
 

@@ -3,12 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -47,8 +43,6 @@ public class ItemEffectFactory {
     @NotNull
     private final FlashEffectFactory flashEffectFactory;
     @NotNull
-    private final GameContextProvider contextProvider;
-    @NotNull
     private final GunFireSimulationEffectFactory gunFireSimulationEffectFactory;
     @NotNull
     private final ParticleEffectMapper particleEffectMapper;
@@ -63,7 +57,6 @@ public class ItemEffectFactory {
 
     @Inject
     public ItemEffectFactory(
-            @NotNull GameContextProvider contextProvider,
             @NotNull CombustionEffectFactory combustionEffectFactory,
             @NotNull DamageEffectFactory damageEffectFactory,
             @NotNull ExplosionEffectFactory explosionEffectFactory,
@@ -75,7 +68,6 @@ public class ItemEffectFactory {
             @NotNull SmokeScreenEffectFactory smokeScreenEffectFactory,
             @NotNull TriggerFactory triggerFactory
     ) {
-        this.contextProvider = contextProvider;
         this.combustionEffectFactory = combustionEffectFactory;
         this.damageEffectFactory = damageEffectFactory;
         this.explosionEffectFactory = explosionEffectFactory;
@@ -88,7 +80,7 @@ public class ItemEffectFactory {
         this.triggerFactory = triggerFactory;
     }
 
-    public ItemEffect create(@NotNull ItemEffectSpec spec, @NotNull GameKey gameKey) {
+    public ItemEffect create(ItemEffectSpec spec) {
         ItemEffect itemEffect;
         ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.type);
 
@@ -150,11 +142,9 @@ public class ItemEffectFactory {
                 long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
                 ActivationPatternSpec activationPatternSpec = this.validateSpecVar(spec.activationPattern, "activationPattern", itemEffectType);
 
-                AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-                GunInfoProvider gunInfoProvider = contextProvider.getComponent(gameKey, GunInfoProvider.class);
                 GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, activationPatternSpec.burstInterval, activationPatternSpec.maxBurstDuration, activationPatternSpec.minBurstDuration, activationPatternSpec.maxDelayDuration, activationPatternSpec.minDelayDuration, maxDuration, minDuration);
 
-                itemEffect = gunFireSimulationEffectFactory.create(audioEmitter, gunInfoProvider, properties);
+                itemEffect = gunFireSimulationEffectFactory.create(properties);
             }
             case MARK_SPAWN_POINT -> itemEffect = markSpawnPointEffectProvider.get();
             case SMOKE_SCREEN -> {
