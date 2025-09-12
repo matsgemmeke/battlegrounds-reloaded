@@ -37,6 +37,7 @@ public class OpenModeInitializerTest {
     private Provider<GunActionExecutor> gunActionExecutorProvider;
     private Provider<PlayerRegistry> playerRegistryProvider;
     private Provider<StatePersistenceHandler> statePersistenceHandlerProvider;
+    private Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider;
     private MockedStatic<Bukkit> bukkit;
 
     @BeforeEach
@@ -50,6 +51,7 @@ public class OpenModeInitializerTest {
         gunActionExecutorProvider = mock();
         playerRegistryProvider = mock();
         statePersistenceHandlerProvider = mock();
+        entityDamageEventHandlerProvider = mock();
         bukkit = mockStatic(Bukkit.class);
     }
 
@@ -65,6 +67,7 @@ public class OpenModeInitializerTest {
         StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
         EquipmentActionExecutor equipmentActionExecutor = mock(EquipmentActionExecutor.class);
         GunActionExecutor gunActionExecutor = mock(GunActionExecutor.class);
+        EntityDamageEventHandler entityDamageEventHandler = mock(EntityDamageEventHandler.class);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(playerId);
@@ -80,10 +83,11 @@ public class OpenModeInitializerTest {
         when(equipmentActionExecutorProvider.get()).thenReturn(equipmentActionExecutor);
         when(gunActionExecutorProvider.get()).thenReturn(gunActionExecutor);
         when(statePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
+        when(entityDamageEventHandlerProvider.get()).thenReturn(entityDamageEventHandler);
 
         bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
 
-        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, collisionDetectorProvider, equipmentActionExecutorProvider, gunActionExecutorProvider, playerRegistryProvider, statePersistenceHandlerProvider);
+        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, collisionDetectorProvider, equipmentActionExecutorProvider, gunActionExecutorProvider, playerRegistryProvider, statePersistenceHandlerProvider, entityDamageEventHandlerProvider);
         openModeInitializer.initialize();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
@@ -98,8 +102,7 @@ public class OpenModeInitializerTest {
                 assertThat(gameKey).isEqualTo(GameKey.ofOpenMode())
         );
 
-        ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);
-        verify(eventDispatcher).registerEventHandler(eq(EntityDamageEvent.class), entityDamageEventHandlerCaptor.capture());
+        verify(eventDispatcher).registerEventHandler(EntityDamageEvent.class, entityDamageEventHandler);
 
         verify(gamePlayer).setPassive(true);
         verify(statePersistenceHandler).loadPlayerState(gamePlayer);

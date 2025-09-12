@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.event;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
@@ -12,10 +13,11 @@ import org.jetbrains.annotations.NotNull;
 public class EntityDamageEventHandler implements EventHandler<EntityDamageEvent> {
 
     @NotNull
-    private DamageProcessor damageProcessor;
+    private final DamageProcessor damageProcessor;
     @NotNull
-    private DeploymentInfoProvider deploymentInfoProvider;
+    private final DeploymentInfoProvider deploymentInfoProvider;
 
+    @Inject
     public EntityDamageEventHandler(@NotNull DamageProcessor damageProcessor, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
         this.damageProcessor = damageProcessor;
         this.deploymentInfoProvider = deploymentInfoProvider;

@@ -51,6 +51,8 @@ public class OpenModeInitializer {
     private final Provider<PlayerRegistry> playerRegistryProvider;
     @NotNull
     private final Provider<StatePersistenceHandler> statePersistenceHandlerProvider;
+    @NotNull
+    private final Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider;
 
     @Inject
     public OpenModeInitializer(
@@ -62,7 +64,8 @@ public class OpenModeInitializer {
             @NotNull Provider<EquipmentActionExecutor> equipmentActionExecutorProvider,
             @NotNull Provider<GunActionExecutor> gunActionExecutorProvider,
             @NotNull Provider<PlayerRegistry> playerRegistryProvider,
-            @NotNull Provider<StatePersistenceHandler> statePersistenceHandlerProvider
+            @NotNull Provider<StatePersistenceHandler> statePersistenceHandlerProvider,
+            @NotNull Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider
     ) {
         this.configuration = configuration;
         this.eventDispatcher = eventDispatcher;
@@ -73,6 +76,7 @@ public class OpenModeInitializer {
         this.gunActionExecutorProvider = gunActionExecutorProvider;
         this.playerRegistryProvider = playerRegistryProvider;
         this.statePersistenceHandlerProvider = statePersistenceHandlerProvider;
+        this.entityDamageEventHandlerProvider = entityDamageEventHandlerProvider;
     }
 
     public void initialize() {
@@ -124,10 +128,7 @@ public class OpenModeInitializer {
     }
 
     private void registerEventHandlers() {
-        DamageProcessor damageProcessor = gameContextProvider.getComponent(GAME_KEY, DamageProcessor.class);
-        DeploymentInfoProvider deploymentInfoProvider = gameContextProvider.getComponent(GAME_KEY, DeploymentInfoProvider.class);
-
-        eventDispatcher.registerEventHandler(EntityDamageEvent.class, new EntityDamageEventHandler(damageProcessor, deploymentInfoProvider));
+        eventDispatcher.registerEventHandler(EntityDamageEvent.class, entityDamageEventHandlerProvider.get());
     }
 
     private void registerPlayers() {
