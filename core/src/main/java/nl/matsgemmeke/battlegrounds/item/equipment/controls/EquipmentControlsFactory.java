@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.PlacePropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.ThrowPropertiesSpec;
@@ -41,11 +42,18 @@ public class EquipmentControlsFactory {
     private final GameContextProvider contextProvider;
     @NotNull
     private final ProjectileEffectFactory projectileEffectFactory;
+    @NotNull
+    private final Provider<PrimeDeployment> primeDeploymentProvider;
 
     @Inject
-    public EquipmentControlsFactory(@NotNull GameContextProvider contextProvider, @NotNull ProjectileEffectFactory projectileEffectFactory) {
+    public EquipmentControlsFactory(
+            @NotNull GameContextProvider contextProvider,
+            @NotNull ProjectileEffectFactory projectileEffectFactory,
+            @NotNull Provider<PrimeDeployment> primeDeploymentProvider
+    ) {
         this.contextProvider = contextProvider;
         this.projectileEffectFactory = projectileEffectFactory;
+        this.primeDeploymentProvider = primeDeploymentProvider;
     }
 
     @NotNull
@@ -70,7 +78,10 @@ public class EquipmentControlsFactory {
                 Action cookAction = Action.valueOf(cookActionValue);
 
                 List<GameSound> cookSounds = DefaultGameSound.parseSounds(throwProperties.cookSounds);
-                PrimeDeployment deployment = new PrimeDeployment(audioEmitter, cookSounds);
+
+                PrimeDeployment deployment = primeDeploymentProvider.get();
+                deployment.configurePrimeSounds(cookSounds);
+
                 CookFunction cookFunction = new CookFunction(equipment, deployment);
 
                 controls.addControl(cookAction, cookFunction);
