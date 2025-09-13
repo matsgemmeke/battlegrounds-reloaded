@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.*;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,7 @@ public class EquipmentControlsFactoryTest {
     private GameKey gameKey;
     private ProjectileEffectFactory projectileEffectFactory;
     private Provider<PrimeDeployment> primeDeploymentProvider;
+    private Provider<ThrowDeployment> throwDeploymentProvider;
 
     @BeforeEach
     public void setUp() {
@@ -34,6 +36,7 @@ public class EquipmentControlsFactoryTest {
         gameKey = GameKey.ofOpenMode();
         projectileEffectFactory = mock(ProjectileEffectFactory.class);
         primeDeploymentProvider = mock();
+        throwDeploymentProvider = mock();
 
         equipment = mock(Equipment.class);
         when(equipment.getName()).thenReturn("test equipment");
@@ -42,6 +45,7 @@ public class EquipmentControlsFactoryTest {
     @Test
     public void createMakesItemControlsWithThrowFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
+        ThrowDeployment throwDeployment = mock(ThrowDeployment.class);
 
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
@@ -49,7 +53,9 @@ public class EquipmentControlsFactoryTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(equipment.getThrowItemTemplate()).thenReturn(itemTemplate);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider);
+        when(throwDeploymentProvider.get()).thenReturn(throwDeployment);
+
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider, throwDeploymentProvider);
         ItemControls<EquipmentHolder> controls = factory.create(equipmentSpec, equipment, gameKey);
 
         assertThat(controls).isNotNull();
@@ -61,7 +67,7 @@ public class EquipmentControlsFactoryTest {
 
         when(equipment.getThrowItemTemplate()).thenReturn(null);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider, throwDeploymentProvider);
 
         assertThatThrownBy(() -> factory.create(equipmentSpec, equipment, gameKey))
                 .isInstanceOf(EquipmentControlsCreationException.class)
@@ -76,7 +82,7 @@ public class EquipmentControlsFactoryTest {
         ItemTemplate throwItemTemplate = mock(ItemTemplate.class);
         when(equipment.getThrowItemTemplate()).thenReturn(throwItemTemplate);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider, throwDeploymentProvider);
 
         assertThatThrownBy(() -> factory.create(equipmentSpec, equipment, gameKey))
                 .isInstanceOf(EquipmentControlsCreationException.class)
@@ -87,13 +93,15 @@ public class EquipmentControlsFactoryTest {
     public void createMakesItemControlsWithCookFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         PrimeDeployment primeDeployment = mock(PrimeDeployment.class);
+        ThrowDeployment throwDeployment = mock(ThrowDeployment.class);
 
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(equipment.getThrowItemTemplate()).thenReturn(itemTemplate);
 
         when(primeDeploymentProvider.get()).thenReturn(primeDeployment);
+        when(throwDeploymentProvider.get()).thenReturn(throwDeployment);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider, throwDeploymentProvider);
         ItemControls<EquipmentHolder> controls = factory.create(equipmentSpec, equipment, gameKey);
 
         assertThat(controls).isNotNull();
@@ -108,7 +116,7 @@ public class EquipmentControlsFactoryTest {
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider, throwDeploymentProvider);
         ItemControls<EquipmentHolder> controls = factory.create(equipmentSpec, equipment, gameKey);
 
         assertThat(controls).isNotNull();
@@ -123,7 +131,7 @@ public class EquipmentControlsFactoryTest {
         AudioEmitter audioEmitter = mock(AudioEmitter.class);
         when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
 
-        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider);
+        EquipmentControlsFactory factory = new EquipmentControlsFactory(contextProvider, projectileEffectFactory, primeDeploymentProvider, throwDeploymentProvider);
         ItemControls<EquipmentHolder> controls = factory.create(equipmentSpec, equipment, gameKey);
 
         assertThat(controls).isNotNull();

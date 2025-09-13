@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.throwing;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import org.bukkit.Location;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A deployment system that produces a {@link DeploymentObject} using an {@link Item}.
@@ -20,19 +22,27 @@ public class ThrowDeployment implements Deployment {
 
     @NotNull
     private final AudioEmitter audioEmitter;
-    @NotNull
-    private final ThrowDeploymentProperties deploymentProperties;
+    @Nullable
+    private ThrowDeploymentProperties properties;
 
-    public ThrowDeployment(@NotNull ThrowDeploymentProperties deploymentProperties, @NotNull AudioEmitter audioEmitter) {
-        this.deploymentProperties = deploymentProperties;
+    @Inject
+    public ThrowDeployment(@NotNull AudioEmitter audioEmitter) {
         this.audioEmitter = audioEmitter;
+    }
+
+    public void configureProperties(ThrowDeploymentProperties properties) {
+        this.properties = properties;
     }
 
     @NotNull
     public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+        if (properties == null) {
+            throw new IllegalStateException("Cannot perform deployment without properties configured");
+        }
+
         Location deployLocation = deployer.getDeployLocation();
-        Vector velocity = deployer.getDeployLocation().getDirection().multiply(deploymentProperties.velocity());
-        ItemStack itemStack = deploymentProperties.itemTemplate().createItemStack();
+        Vector velocity = deployer.getDeployLocation().getDirection().multiply(properties.velocity());
+        ItemStack itemStack = properties.itemTemplate().createItemStack();
         World world = deployerEntity.getWorld();
 
         Item item = world.dropItem(deployLocation, itemStack);
@@ -40,13 +50,13 @@ public class ThrowDeployment implements Deployment {
         item.setVelocity(velocity);
 
         ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.setCooldown(deploymentProperties.cooldown());
-        object.setHealth(deploymentProperties.health());
-        object.setResistances(deploymentProperties.resistances());
+        object.setCooldown(properties.cooldown());
+        object.setHealth(properties.health());
+        object.setResistances(properties.resistances());
 
-        deploymentProperties.projectileEffects().forEach(effect -> effect.onLaunch(deployerEntity, object));
+        properties.projectileEffects().forEach(effect -> effect.onLaunch(deployerEntity, object));
 
-        audioEmitter.playSounds(deploymentProperties.throwSounds(), deployLocation);
+        audioEmitter.playSounds(properties.throwSounds(), deployLocation);
 
         deployer.setHeldItem(null);
 

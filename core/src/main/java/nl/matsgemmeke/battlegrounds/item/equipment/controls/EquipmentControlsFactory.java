@@ -44,16 +44,20 @@ public class EquipmentControlsFactory {
     private final ProjectileEffectFactory projectileEffectFactory;
     @NotNull
     private final Provider<PrimeDeployment> primeDeploymentProvider;
+    @NotNull
+    private final Provider<ThrowDeployment> throwDeploymentProvider;
 
     @Inject
     public EquipmentControlsFactory(
             @NotNull GameContextProvider contextProvider,
             @NotNull ProjectileEffectFactory projectileEffectFactory,
-            @NotNull Provider<PrimeDeployment> primeDeploymentProvider
+            @NotNull Provider<PrimeDeployment> primeDeploymentProvider,
+            @NotNull Provider<ThrowDeployment> throwDeploymentProvider
     ) {
         this.contextProvider = contextProvider;
         this.projectileEffectFactory = projectileEffectFactory;
         this.primeDeploymentProvider = primeDeploymentProvider;
+        this.throwDeploymentProvider = throwDeploymentProvider;
     }
 
     @NotNull
@@ -107,8 +111,11 @@ public class EquipmentControlsFactory {
                 projectileEffects.add(projectileEffectFactory.create(projectileEffectSpec, gameKey));
             }
 
-            ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
-            ThrowDeployment deployment = new ThrowDeployment(deploymentProperties, audioEmitter);
+            ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
+
+            ThrowDeployment deployment = throwDeploymentProvider.get();
+            deployment.configureProperties(properties);
+
             ThrowFunction throwFunction = new ThrowFunction(equipment, deployment);
 
             controls.addControl(throwAction, throwFunction);
