@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
@@ -30,7 +29,6 @@ import static org.mockito.Mockito.*;
 
 public class ProjectileEffectFactoryTest {
 
-    private GameKey gameKey;
     private ParticleEffectMapper particleEffectMapper;
     private SoundEffectFactory soundEffectFactory;
     private StickEffectFactory stickEffectFactory;
@@ -39,7 +37,6 @@ public class ProjectileEffectFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        gameKey = GameKey.ofOpenMode();
         particleEffectMapper = new ParticleEffectMapper();
         soundEffectFactory = mock(SoundEffectFactory.class);
         stickEffectFactory = mock(StickEffectFactory.class);
@@ -73,7 +70,7 @@ public class ProjectileEffectFactoryTest {
         });
 
         ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
-        ProjectileEffect projectileEffect = factory.create(spec, gameKey);
+        ProjectileEffect projectileEffect = factory.create(spec);
 
         assertThat(bounceEffectConstructor.constructed()).hasSize(1);
         assertThat(projectileEffect).isInstanceOf(BounceEffect.class);
@@ -97,7 +94,7 @@ public class ProjectileEffectFactoryTest {
         when(soundEffectFactory.create(anyList())).thenReturn(soundEffect);
 
         ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
-        ProjectileEffect projectileEffect = factory.create(spec, gameKey);
+        ProjectileEffect projectileEffect = factory.create(spec);
 
         assertThat(projectileEffect).isEqualTo(soundEffect);
     }
@@ -118,7 +115,7 @@ public class ProjectileEffectFactoryTest {
         when(stickEffectFactory.create(anyList())).thenReturn(stickEffect);
 
         ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
-        ProjectileEffect projectileEffect = factory.create(spec, gameKey);
+        ProjectileEffect projectileEffect = factory.create(spec);
 
         assertThat(projectileEffect).isEqualTo(stickEffect);
     }
@@ -138,7 +135,7 @@ public class ProjectileEffectFactoryTest {
         when(trailEffectFactory.create(any(TrailProperties.class))).thenReturn(trailEffect);
 
         ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
-        ProjectileEffect projectileEffect = factory.create(spec, gameKey);
+        ProjectileEffect projectileEffect = factory.create(spec);
 
         ArgumentCaptor<TrailProperties> trailPropertiesCaptor = ArgumentCaptor.forClass(TrailProperties.class);
         verify(trailEffectFactory).create(trailPropertiesCaptor.capture());
@@ -157,7 +154,7 @@ public class ProjectileEffectFactoryTest {
 
         ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerFactory);
 
-        assertThatThrownBy(() -> factory.create(spec, gameKey))
+        assertThatThrownBy(() -> factory.create(spec))
                 .isInstanceOf(ProjectileEffectCreationException.class)
                 .hasMessage("Cannot create BOUNCE because of invalid spec: Required 'maxActivations' value is missing");
     }

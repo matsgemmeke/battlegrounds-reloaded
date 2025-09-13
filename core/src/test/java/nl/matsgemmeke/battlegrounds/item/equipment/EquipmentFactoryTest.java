@@ -78,7 +78,7 @@ public class EquipmentFactoryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
-        when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+        when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
@@ -101,7 +101,7 @@ public class EquipmentFactoryTest {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
-        when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+        when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);

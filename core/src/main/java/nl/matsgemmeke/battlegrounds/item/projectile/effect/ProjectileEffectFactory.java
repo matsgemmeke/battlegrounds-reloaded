@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -52,8 +51,7 @@ public class ProjectileEffectFactory {
         this.triggerFactory = triggerFactory;
     }
 
-    @NotNull
-    public ProjectileEffect create(@NotNull ProjectileEffectSpec spec, @NotNull GameKey gameKey) {
+    public ProjectileEffect create(ProjectileEffectSpec spec) {
         ProjectileEffectType type = ProjectileEffectType.valueOf(spec.type);
 
         switch (type) {

@@ -1,7 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.place;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -9,6 +11,7 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -18,16 +21,24 @@ public class PlaceDeployment implements Deployment {
 
     @NotNull
     private final AudioEmitter audioEmitter;
-    @NotNull
-    private final PlaceDeploymentProperties deploymentProperties;
+    @Nullable
+    private PlaceDeploymentProperties properties;
 
-    public PlaceDeployment(@NotNull PlaceDeploymentProperties deploymentProperties, @NotNull AudioEmitter audioEmitter) {
-        this.deploymentProperties = deploymentProperties;
+    @Inject
+    public PlaceDeployment(@NotNull AudioEmitter audioEmitter) {
         this.audioEmitter = audioEmitter;
+    }
+
+    public void configureProperties(PlaceDeploymentProperties properties) {
+        this.properties = properties;
     }
 
     @NotNull
     public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+        if (properties == null) {
+            throw new IllegalStateException("Cannot perform deployment without properties configured");
+        }
+
         List<Block> targetBlocks = deployer.getLastTwoTargetBlocks(TARGET_BLOCK_SCAN_DISTANCE);
 
         if (targetBlocks.size() != 2 || !targetBlocks.get(1).getType().isOccluding()) {
@@ -42,22 +53,22 @@ public class PlaceDeployment implements Deployment {
             return DeploymentResult.failure();
         }
 
-        this.placeBlock(adjacentBlock, targetBlockFace);
+        this.placeBlock(adjacentBlock, targetBlockFace, properties.material());
 
-        PlaceDeploymentObject object = new PlaceDeploymentObject(adjacentBlock, deploymentProperties.material());
-        object.setCooldown(deploymentProperties.cooldown());
-        object.setHealth(deploymentProperties.health());
-        object.setResistances(deploymentProperties.resistances());
+        PlaceDeploymentObject object = new PlaceDeploymentObject(adjacentBlock, properties.material());
+        object.setCooldown(properties.cooldown());
+        object.setHealth(properties.health());
+        object.setResistances(properties.resistances());
 
-        audioEmitter.playSounds(deploymentProperties.placeSounds(), adjacentBlock.getLocation());
+        audioEmitter.playSounds(properties.placeSounds(), adjacentBlock.getLocation());
 
         deployer.setHeldItem(null);
 
         return DeploymentResult.success(object);
     }
 
-    private void placeBlock(@NotNull Block block, @NotNull BlockFace blockFace) {
-        block.setType(deploymentProperties.material());
+    private void placeBlock(Block block, BlockFace blockFace, Material material) {
+        block.setType(material);
 
         FaceAttachable.AttachedFace attachedFace = this.getCorrespondingAttachedFace(blockFace);
         BlockState placedBlockState = block.getState();

@@ -131,7 +131,7 @@ public class EquipmentFactory {
             equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec, equipment, gameKey);
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec, equipment);
         equipment.setControls(controls);
 
         DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deploy, spec.effect, activator);
