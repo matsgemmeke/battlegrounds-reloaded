@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
@@ -32,7 +31,6 @@ public class OpenModeInitializerTest {
     private EventDispatcher eventDispatcher;
     private GameContextProvider gameContextProvider;
     private GameScope gameScope;
-    private Provider<CollisionDetector> collisionDetectorProvider;
     private Provider<EquipmentActionExecutor> equipmentActionExecutorProvider;
     private Provider<GunActionExecutor> gunActionExecutorProvider;
     private Provider<PlayerRegistry> playerRegistryProvider;
@@ -46,7 +44,6 @@ public class OpenModeInitializerTest {
         eventDispatcher = mock(EventDispatcher.class);
         gameContextProvider = new GameContextProvider();
         gameScope = mock(GameScope.class);
-        collisionDetectorProvider = mock();
         equipmentActionExecutorProvider = mock();
         gunActionExecutorProvider = mock();
         playerRegistryProvider = mock();
@@ -76,9 +73,6 @@ public class OpenModeInitializerTest {
         when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
 
-        CollisionDetector collisionDetector = mock(CollisionDetector.class);
-        when(collisionDetectorProvider.get()).thenReturn(collisionDetector);
-
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
         when(equipmentActionExecutorProvider.get()).thenReturn(equipmentActionExecutor);
         when(gunActionExecutorProvider.get()).thenReturn(gunActionExecutor);
@@ -87,7 +81,7 @@ public class OpenModeInitializerTest {
 
         bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
 
-        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, collisionDetectorProvider, equipmentActionExecutorProvider, gunActionExecutorProvider, playerRegistryProvider, statePersistenceHandlerProvider, entityDamageEventHandlerProvider);
+        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, equipmentActionExecutorProvider, gunActionExecutorProvider, playerRegistryProvider, statePersistenceHandlerProvider, entityDamageEventHandlerProvider);
         openModeInitializer.initialize();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);

@@ -16,14 +16,11 @@ public class GameContextProvider {
     @NotNull
     private final Map<GameKey, GameContext> gameContexts;
     @NotNull
-    private Map<GameKey, Map<Class<?>, Object>> gameComponents;
-    @NotNull
     private final Map<UUID, GameKey> entityGameKeyMap;
 
     public GameContextProvider() {
         this.games = new HashMap<>();
         this.gameContexts = new HashMap<>();
-        this.gameComponents = new HashMap<>();
         this.entityGameKeyMap = new HashMap<>();
     }
 
@@ -66,32 +63,7 @@ public class GameContextProvider {
         }
 
         games.put(gameKey, openMode);
-        gameComponents.put(gameKey, new HashMap<>());
         return true;
-    }
-
-    /**
-     * Gets a component interface instance based on the given game key and component type.
-     *
-     * @param gameKey the game key
-     * @param componentClass the component type
-     * @return the instance of the given component type that is registered under the given game key
-     * @param <T> the component type
-     */
-    @NotNull
-    @SuppressWarnings("unchecked")
-    public <T> T getComponent(@NotNull GameKey gameKey, @NotNull Class<T> componentClass) {
-        GameKey gameKeyMatch = this.matchGameKey(gameKey)
-                .orElseThrow(() -> new GameKeyNotFoundException("Cannot get component for %s because given game key %s was not found".formatted(componentClass, gameKey)));
-
-        Map<Class<?>, Object> components = gameComponents.get(gameKeyMatch);
-        T component = (T) components.get(componentClass);
-
-        if (component == null) {
-            throw new GameComponentNotFoundException("Given game key %s has no registered components for %s".formatted(gameKeyMatch, componentClass));
-        }
-
-        return component;
     }
 
     /**
@@ -130,22 +102,6 @@ public class GameContextProvider {
     }
 
     /**
-     * Registers a game component interface to the provider.
-     *
-     * @param gameKey the game key
-     * @param componentClass the class of the component interface
-     * @param componentInstance the instance of the component interface
-     * @param <T> the component type
-     */
-    public <T> void registerComponent(@NotNull GameKey gameKey, @NotNull Class<T> componentClass, @NotNull T componentInstance) {
-        GameKey gameKeyMatch = this.matchGameKey(gameKey)
-                .orElseThrow(() -> new GameKeyNotFoundException("Cannot register component because given game key " + gameKey + " was not found"));
-
-        Map<Class<?>, Object> components = gameComponents.get(gameKeyMatch);
-        components.put(componentClass, componentInstance);
-    }
-
-    /**
      * Registers a {@link Game} instance to the provider.
      *
      * @param gameKey the game key
@@ -153,7 +109,6 @@ public class GameContextProvider {
      */
     public void registerGame(@NotNull GameKey gameKey, @NotNull Game game) {
         games.put(gameKey, game);
-        gameComponents.put(gameKey, new HashMap<>());
     }
 
     public void registerEntity(UUID entityId, GameKey gameKey) {
@@ -190,10 +145,5 @@ public class GameContextProvider {
         }
 
         return false;
-    }
-
-    @NotNull
-    private Optional<GameKey> matchGameKey(@NotNull GameKey gameKey) {
-        return games.keySet().stream().filter(k -> k.equals(gameKey)).findFirst();
     }
 }

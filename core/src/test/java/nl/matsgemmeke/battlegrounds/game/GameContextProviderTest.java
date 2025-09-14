@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
 import org.junit.jupiter.api.Test;
@@ -46,41 +45,6 @@ public class GameContextProviderTest {
         boolean assigned = contextProvider.assignOpenMode(otherOpenMode);
 
         assertFalse(assigned);
-    }
-
-    @Test
-    public void getComponentThrowsGameKeyNotFoundExceptionIfGivenGameKeyIsNotRegistered() {
-        GameKey gameKey = GameKey.ofSession(1);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-
-        assertThrows(GameKeyNotFoundException.class, () -> contextProvider.getComponent(gameKey, TargetFinder.class));
-    }
-
-    @Test
-    public void getComponentThrowsGameComponentNotFoundExceptionIfComponentIsNotRegistered() {
-        GameKey gameKey = GameKey.ofSession(1);
-        Game game = mock(Game.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-
-        assertThrows(GameComponentNotFoundException.class, () -> contextProvider.getComponent(gameKey, TargetFinder.class));
-    }
-
-    @Test
-    public void getComponentReturnsComponentInstanceCorrespondingWithGivenComponentClass() {
-        GameKey gameKey = GameKey.ofSession(1);
-        Game game = mock(Game.class);
-        TargetFinder targetFinder = mock(TargetFinder.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
-
-        TargetFinder result = contextProvider.getComponent(gameKey, TargetFinder.class);
-
-        assertEquals(targetFinder, result);
     }
 
     @Test
@@ -140,31 +104,6 @@ public class GameContextProviderTest {
         Optional<GameKey> gameKeyOptional = contextProvider.getGameKeyByEntityId(entityId);
 
         assertThat(gameKeyOptional).hasValue(gameKey);
-    }
-
-    @Test
-    public void registerComponentThrowsGameKeyNotFoundExceptionWhenRegisteringComponentWithGameKeyThatIsNotRegistered() {
-        GameKey gameKey = GameKey.ofSession(1);
-        TargetFinder targetFinder = mock(TargetFinder.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-
-        assertThrows(GameKeyNotFoundException.class, () -> contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder));
-    }
-
-    @Test
-    public void registerComponentAddsGivenComponentToProvider() {
-        Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofSession(1);
-        TargetFinder targetFinder = mock(TargetFinder.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
-
-        TargetFinder result = contextProvider.getComponent(gameKey, TargetFinder.class);
-
-        assertEquals(targetFinder, result);
     }
 
     @Test

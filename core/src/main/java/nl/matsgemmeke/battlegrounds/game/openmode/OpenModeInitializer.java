@@ -6,20 +6,9 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.game.component.*;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.item.*;
-import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import org.bukkit.Bukkit;
@@ -42,8 +31,6 @@ public class OpenModeInitializer {
     @NotNull
     private final GameScope gameScope;
     @NotNull
-    private final Provider<CollisionDetector> collisionDetectorProvider;
-    @NotNull
     private final Provider<EquipmentActionExecutor> equipmentActionExecutorProvider;
     @NotNull
     private final Provider<GunActionExecutor> gunActionExecutorProvider;
@@ -60,7 +47,6 @@ public class OpenModeInitializer {
             @NotNull EventDispatcher eventDispatcher,
             @NotNull GameContextProvider gameContextProvider,
             @NotNull GameScope gameScope,
-            @NotNull Provider<CollisionDetector> collisionDetectorProvider,
             @NotNull Provider<EquipmentActionExecutor> equipmentActionExecutorProvider,
             @NotNull Provider<GunActionExecutor> gunActionExecutorProvider,
             @NotNull Provider<PlayerRegistry> playerRegistryProvider,
@@ -71,7 +57,6 @@ public class OpenModeInitializer {
         this.eventDispatcher = eventDispatcher;
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.collisionDetectorProvider = collisionDetectorProvider;
         this.equipmentActionExecutorProvider = equipmentActionExecutorProvider;
         this.gunActionExecutorProvider = gunActionExecutorProvider;
         this.playerRegistryProvider = playerRegistryProvider;
@@ -92,36 +77,6 @@ public class OpenModeInitializer {
     private void registerComponents(OpenMode openMode) {
         openMode.addActionExecutor(equipmentActionExecutorProvider.get());
         openMode.addActionExecutor(gunActionExecutorProvider.get());
-
-        // Registry components
-        EquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
-        GunRegistry gunRegistry = new DefaultGunRegistry();
-        PlayerRegistry playerRegistry = playerRegistryProvider.get();
-
-        // Info provider components
-        DeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
-        GunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunRegistry, playerRegistry);
-
-        // All other components
-        ActionHandler actionHandler = new DefaultActionHandler(openMode, playerRegistry);
-        AudioEmitter audioEmitter = new DefaultAudioEmitter();
-        CollisionDetector collisionDetector = collisionDetectorProvider.get();
-        ProjectileHitActionRegistry projectileHitActionRegistry = new ProjectileHitActionRegistry();
-
-        DamageProcessor damageProcessor = new OpenModeDamageProcessor(GAME_KEY, deploymentInfoProvider);
-        TargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
-
-        gameContextProvider.registerComponent(GAME_KEY, ActionHandler.class, actionHandler);
-        gameContextProvider.registerComponent(GAME_KEY, AudioEmitter.class, audioEmitter);
-        gameContextProvider.registerComponent(GAME_KEY, CollisionDetector.class, collisionDetector);
-        gameContextProvider.registerComponent(GAME_KEY, DamageProcessor.class, damageProcessor);
-        gameContextProvider.registerComponent(GAME_KEY, DeploymentInfoProvider.class, deploymentInfoProvider);
-        gameContextProvider.registerComponent(GAME_KEY, EquipmentRegistry.class, equipmentRegistry);
-        gameContextProvider.registerComponent(GAME_KEY, GunInfoProvider.class, gunInfoProvider);
-        gameContextProvider.registerComponent(GAME_KEY, GunRegistry.class, gunRegistry);
-        gameContextProvider.registerComponent(GAME_KEY, PlayerRegistry.class, playerRegistry);
-        gameContextProvider.registerComponent(GAME_KEY, ProjectileHitActionRegistry.class, projectileHitActionRegistry);
-        gameContextProvider.registerComponent(GAME_KEY, TargetFinder.class, targetFinder);
 
         this.registerEventHandlers();
         this.registerPlayers();
