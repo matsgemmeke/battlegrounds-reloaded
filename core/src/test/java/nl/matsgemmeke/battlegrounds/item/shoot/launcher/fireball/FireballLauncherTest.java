@@ -71,7 +71,7 @@ public class FireballLauncherTest {
 
         LaunchContext context = new LaunchContext(entity, source, direction);
 
-        FireballLauncher launcher = new FireballLauncher(particleEffectSpawner, scheduler, properties, audioEmitter, itemEffect, projectileHitActionRegistry);
+        FireballLauncher launcher = new FireballLauncher(audioEmitter, particleEffectSpawner, projectileHitActionRegistry, scheduler, properties, itemEffect);
         launcher.launch(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);

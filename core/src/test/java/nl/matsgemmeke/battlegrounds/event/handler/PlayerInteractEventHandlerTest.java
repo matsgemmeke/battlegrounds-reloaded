@@ -1,8 +1,10 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.component.ActionHandler;
+import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
+import nl.matsgemmeke.battlegrounds.game.*;
+import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
+import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -11,81 +13,146 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 public class PlayerInteractEventHandlerTest {
 
-    private GameContextProvider contextProvider;
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
+    private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
+    private static final UUID PLAYER_ID = UUID.randomUUID();
+
+    private GameContextProvider gameContextProvider;
+    private GameScope gameScope;
     private Player player;
+    private Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
 
     @BeforeEach
     public void setUp() {
-        contextProvider = mock(GameContextProvider.class);
+        gameContextProvider = mock(GameContextProvider.class);
+        gameScope = mock(GameScope.class);
+        actionExecutorRegistryProvider = mock();
+
         player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
     }
 
     @Test
     public void handleShouldDoNothingIfClickedItemIsNull() {
         PlayerInteractEvent event = new PlayerInteractEvent(player, null, null, null, null);
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
-        assertEquals(Result.DEFAULT, event.useItemInHand());
+        assertThat(event.useItemInHand()).isEqualTo(Result.DEFAULT);
+
+        verifyNoInteractions(gameScope);
     }
 
     @Test
     public void handleShouldDoNothingIfPlayerIsNotInAnyGame() {
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-        PlayerInteractEvent event = new PlayerInteractEvent(player, null, itemStack, null, null);
+        PlayerInteractEvent event = new PlayerInteractEvent(player, null, ITEM_STACK, null, null);
 
-        when(contextProvider.getGameKey(player)).thenReturn(null);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
-        assertEquals(Result.DEFAULT, event.useItemInHand());
+        assertThat(event.useItemInHand()).isEqualTo(Result.DEFAULT);
+
+        verifyNoInteractions(gameScope);
+    }
+
+    @Test
+    public void handleThrowsEventHandlingExceptionWhenGameKeyOfPlayerHasNoCorrespondingGameContext() {
+        PlayerInteractEvent event = new PlayerInteractEvent(player, null, ITEM_STACK, null, null);
+
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
+
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
+
+        assertThatThrownBy(() -> eventHandler.handle(event))
+                .isInstanceOf(EventHandlingException.class)
+                .hasMessage("Unable to process PlayerInteractEvent for game key OPEN-MODE, no corresponding game context was found");
+    }
+
+    @Test
+    public void handleDoesNothingWhenNoActionExecutorIsFoundForItemStack() {
+        PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, ITEM_STACK, null, null);
+
+        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
+        when(actionExecutorRegistry.getActionExecutor(ITEM_STACK)).thenReturn(Optional.empty());
+
+        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
+        eventHandler.handle(event);
+
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(gameScope).runInScope(eq(GAME_CONTEXT), runnableCaptor.capture());
+
+        runnableCaptor.getValue().run();
+
+        assertThat(event.useItemInHand()).isEqualTo(Result.DEFAULT);
     }
 
     @Test
     public void handleShouldCallLeftClickFunctionAndCancelEventBasedOnResult() {
-        GameKey gameKey = GameKey.ofOpenMode();
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-        PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, itemStack, null, null);
+        ActionExecutor actionExecutor = mock(ActionExecutor.class);
+        PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, ITEM_STACK, null, null);
 
-        ActionHandler actionHandler = mock(ActionHandler.class);
-        when(actionHandler.handleItemLeftClick(player, itemStack)).thenReturn(false);
+        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
+        when(actionExecutorRegistry.getActionExecutor(ITEM_STACK)).thenReturn(Optional.of(actionExecutor));
 
-        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
-        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
+        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
-        assertEquals(Result.DENY, event.useItemInHand());
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(gameScope).runInScope(eq(GAME_CONTEXT), runnableCaptor.capture());
 
-        verify(actionHandler).handleItemLeftClick(player, itemStack);
+        runnableCaptor.getValue().run();
+
+        assertThat(event.useItemInHand()).isEqualTo(Result.DENY);
+
+        verify(actionExecutor).handleLeftClickAction(player, ITEM_STACK);
     }
 
     @Test
     public void handleShouldCallRightClickFunctionAndCancelEventBasedOnResult() {
-        GameKey gameKey = GameKey.ofOpenMode();
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-        PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, itemStack, null, null);
+        ActionExecutor actionExecutor = mock(ActionExecutor.class);
+        PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, ITEM_STACK, null, null);
 
-        ActionHandler actionHandler = mock(ActionHandler.class);
-        when(actionHandler.handleItemRightClick(player, itemStack)).thenReturn(true);
+        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
+        when(actionExecutorRegistry.getActionExecutor(ITEM_STACK)).thenReturn(Optional.of(actionExecutor));
 
-        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
-        when(contextProvider.getComponent(gameKey, ActionHandler.class)).thenReturn(actionHandler);
+        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
 
-        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(contextProvider);
+        PlayerInteractEventHandler eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
-        assertEquals(Result.DEFAULT, event.useItemInHand());
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(gameScope).runInScope(eq(GAME_CONTEXT), runnableCaptor.capture());
 
-        verify(actionHandler).handleItemRightClick(player, itemStack);
+        runnableCaptor.getValue().run();
+
+        assertThat(event.useItemInHand()).isEqualTo(Result.DENY);
+
+        verify(actionExecutor).handleRightClickAction(player, ITEM_STACK);
     }
 }

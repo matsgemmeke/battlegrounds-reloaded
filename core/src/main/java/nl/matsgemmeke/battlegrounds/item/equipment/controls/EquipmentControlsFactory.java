@@ -1,15 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.PlacePropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.ThrowPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -38,21 +36,29 @@ import java.util.stream.Collectors;
 public class EquipmentControlsFactory {
 
     @NotNull
-    private final GameContextProvider contextProvider;
-    @NotNull
     private final ProjectileEffectFactory projectileEffectFactory;
+    @NotNull
+    private final Provider<PlaceDeployment> placeDeploymentProvider;
+    @NotNull
+    private final Provider<PrimeDeployment> primeDeploymentProvider;
+    @NotNull
+    private final Provider<ThrowDeployment> throwDeploymentProvider;
 
     @Inject
-    public EquipmentControlsFactory(@NotNull GameContextProvider contextProvider, @NotNull ProjectileEffectFactory projectileEffectFactory) {
-        this.contextProvider = contextProvider;
+    public EquipmentControlsFactory(
+            @NotNull ProjectileEffectFactory projectileEffectFactory,
+            @NotNull Provider<PlaceDeployment> placeDeploymentProvider,
+            @NotNull Provider<PrimeDeployment> primeDeploymentProvider,
+            @NotNull Provider<ThrowDeployment> throwDeploymentProvider
+    ) {
         this.projectileEffectFactory = projectileEffectFactory;
+        this.placeDeploymentProvider = placeDeploymentProvider;
+        this.primeDeploymentProvider = primeDeploymentProvider;
+        this.throwDeploymentProvider = throwDeploymentProvider;
     }
 
-    @NotNull
-    public ItemControls<EquipmentHolder> create(@NotNull EquipmentSpec spec, @NotNull Equipment equipment, @NotNull GameKey gameKey) {
+    public ItemControls<EquipmentHolder> create(EquipmentSpec spec, Equipment equipment) {
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
-
-        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
 
         String throwActionValue = spec.controls.throwing;
         String cookActionValue = spec.controls.cook;
@@ -70,7 +76,10 @@ public class EquipmentControlsFactory {
                 Action cookAction = Action.valueOf(cookActionValue);
 
                 List<GameSound> cookSounds = DefaultGameSound.parseSounds(throwProperties.cookSounds);
-                PrimeDeployment deployment = new PrimeDeployment(audioEmitter, cookSounds);
+
+                PrimeDeployment deployment = primeDeploymentProvider.get();
+                deployment.configurePrimeSounds(cookSounds);
+
                 CookFunction cookFunction = new CookFunction(equipment, deployment);
 
                 controls.addControl(cookAction, cookFunction);
@@ -93,11 +102,14 @@ public class EquipmentControlsFactory {
             List<ProjectileEffect> projectileEffects = new ArrayList<>();
 
             for (ProjectileEffectSpec projectileEffectSpec : spec.projectileEffects.values()) {
-                projectileEffects.add(projectileEffectFactory.create(projectileEffectSpec, gameKey));
+                projectileEffects.add(projectileEffectFactory.create(projectileEffectSpec));
             }
 
-            ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
-            ThrowDeployment deployment = new ThrowDeployment(deploymentProperties, audioEmitter);
+            ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
+
+            ThrowDeployment deployment = throwDeploymentProvider.get();
+            deployment.configureProperties(properties);
+
             ThrowFunction throwFunction = new ThrowFunction(equipment, deployment);
 
             controls.addControl(throwAction, throwFunction);
@@ -117,8 +129,11 @@ public class EquipmentControlsFactory {
             double health = spec.deploy.health;
             long cooldown = placeProperties.cooldown;
 
-            PlaceDeploymentProperties deploymentProperties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);
-            PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
+            PlaceDeploymentProperties properties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);
+
+            PlaceDeployment deployment = placeDeploymentProvider.get();
+            deployment.configureProperties(properties);
+
             PlaceFunction placeFunction = new PlaceFunction(equipment, deployment);
 
             controls.addControl(placeAction, placeFunction);

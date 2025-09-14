@@ -35,16 +35,16 @@ public class DeploymentHandler {
 
     @Inject
     public DeploymentHandler(
+            @NotNull AudioEmitter audioEmitter,
             @NotNull ParticleEffectSpawner particleEffectSpawner,
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull DeploymentProperties deploymentProperties,
-            @Assisted @NotNull AudioEmitter audioEmitter,
             @Assisted @NotNull ItemEffect itemEffect
     ) {
+        this.audioEmitter = audioEmitter;
         this.particleEffectSpawner = particleEffectSpawner;
         this.taskRunner = taskRunner;
         this.deploymentProperties = deploymentProperties;
-        this.audioEmitter = audioEmitter;
         this.itemEffect = itemEffect;
         this.deployed = false;
     }

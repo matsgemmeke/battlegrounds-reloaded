@@ -1,11 +1,10 @@
 package nl.matsgemmeke.battlegrounds.game.component.info.gun;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,12 +19,12 @@ import static org.mockito.Mockito.when;
 
 public class DefaultGunInfoProviderTest {
 
-    private ItemContainer<Gun, GunHolder> gunContainer;
+    private GunRegistry gunRegistry;
     private PlayerRegistry playerRegistry;
 
     @BeforeEach
     public void setUp() {
-        gunContainer = new ItemContainer<>();
+        gunRegistry = mock(GunRegistry.class);
         playerRegistry = mock(PlayerRegistry.class);
     }
 
@@ -35,7 +34,7 @@ public class DefaultGunInfoProviderTest {
 
         when(playerRegistry.findByUUID(entityId)).thenReturn(null);
 
-        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunContainer, playerRegistry);
+        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunRegistry, playerRegistry);
         Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId);
 
         assertThat(gunFireSimulationInfo).isEmpty();
@@ -48,7 +47,7 @@ public class DefaultGunInfoProviderTest {
 
         when(playerRegistry.findByUUID(entityId)).thenReturn(gamePlayer);
 
-        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunContainer, playerRegistry);
+        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunRegistry, playerRegistry);
         Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId);
 
         assertThat(gunFireSimulationInfo).isEmpty();
@@ -65,11 +64,10 @@ public class DefaultGunInfoProviderTest {
         when(gun.getRateOfFire()).thenReturn(rateOfFire);
         when(gun.getShotSounds()).thenReturn(shotSounds);
 
-        gunContainer.addAssignedItem(gun, gamePlayer);
-
+        when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
         when(playerRegistry.findByUUID(entityId)).thenReturn(gamePlayer);
 
-        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunContainer, playerRegistry);
+        DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunRegistry, playerRegistry);
         Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId);
 
         assertThat(gunFireSimulationInfo).hasValueSatisfying(value -> {

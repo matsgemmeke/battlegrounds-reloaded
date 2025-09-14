@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
@@ -9,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ public class OpenModeDamageProcessor implements DamageProcessor {
     @NotNull
     private final List<DamageCheck> damageChecks;
 
+    @Inject
     public OpenModeDamageProcessor(@NotNull GameKey gameKey, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
         this.gameKey = gameKey;
         this.deploymentInfoProvider = deploymentInfoProvider;
@@ -33,10 +34,14 @@ public class OpenModeDamageProcessor implements DamageProcessor {
         damageChecks.add(damageCheck);
     }
 
-    public boolean isDamageAllowed(@Nullable GameKey gameKey) {
-        // Damage in open mode is allowed if both entities are in open mode, or if one of the entities has no game key,
-        // meaning it's a normal open world entity
-        return gameKey == null || gameKey == this.gameKey;
+    public boolean isDamageAllowed(GameKey gameKey) {
+        // Damage in open mode is allowed if both entities are in open mode
+        return gameKey == this.gameKey;
+    }
+
+    public boolean isDamageAllowedWithoutContext() {
+        // Entities in open mode are always allowed to damage entities outside game contexts
+        return true;
     }
 
     @NotNull

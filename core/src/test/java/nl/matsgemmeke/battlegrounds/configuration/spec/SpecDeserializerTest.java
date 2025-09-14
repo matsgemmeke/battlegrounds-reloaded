@@ -58,7 +58,7 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.shooting.fireMode.rateOfFire).isEqualTo(600);
         assertThat(gunSpec.shooting.fireMode.cycleCooldown).isNull();
 
-        assertThat(gunSpec.shooting.projectile.type).isEqualTo("BULLET");
+        assertThat(gunSpec.shooting.projectile.type).isEqualTo("HITSCAN");
         assertThat(gunSpec.shooting.projectile.headshotDamageMultiplier).isEqualTo(1.4);
 
         assertThat(gunSpec.shooting.projectile.effect.range.shortRange.damage).isEqualTo(35.0);

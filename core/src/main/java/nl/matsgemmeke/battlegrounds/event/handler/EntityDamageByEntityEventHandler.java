@@ -1,9 +1,13 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
+import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -14,43 +18,55 @@ import org.jetbrains.annotations.NotNull;
 public class EntityDamageByEntityEventHandler implements EventHandler<EntityDamageByEntityEvent> {
 
     @NotNull
-    private final GameContextProvider contextProvider;
+    private final GameContextProvider gameContextProvider;
+    @NotNull
+    private final GameScope gameScope;
+    @NotNull
+    private final Provider<DamageProcessor> damageProcessorProvider;
 
     @Inject
-    public EntityDamageByEntityEventHandler(@NotNull GameContextProvider contextProvider) {
-        this.contextProvider = contextProvider;
+    public EntityDamageByEntityEventHandler(@NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope, @NotNull Provider<DamageProcessor> damageProcessorProvider) {
+        this.gameContextProvider = gameContextProvider;
+        this.gameScope = gameScope;
+        this.damageProcessorProvider = damageProcessorProvider;
     }
 
     public void handle(@NotNull EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         Entity damager = event.getDamager();
-        GameKey entityGameKey = contextProvider.getGameKey(entity.getUniqueId());
-        GameKey damagerGameKey = contextProvider.getGameKey(damager.getUniqueId());
+        GameKey entityGameKey = gameContextProvider.getGameKeyByEntityId(entity.getUniqueId()).orElse(null);
+        GameKey damagerGameKey = gameContextProvider.getGameKeyByEntityId(damager.getUniqueId()).orElse(null);
 
         if (entityGameKey == null && damagerGameKey == null) {
             // Do not handle events outside of game instances
             return;
         }
 
-        DamageProcessor damageProcessor;
-        GameKey otherKey = null;
-
-        if (damagerGameKey != null) {
-            damageProcessor = contextProvider.getComponent(damagerGameKey, DamageProcessor.class);
-            otherKey = entityGameKey;
-        } else {
-            damageProcessor = contextProvider.getComponent(entityGameKey, DamageProcessor.class);
-        }
-
-        if (!damageProcessor.isDamageAllowed(otherKey)) {
-            event.setCancelled(true);
-            return;
-        }
-
-        DamageType type = DamageType.map(event.getCause());
+        DamageType type = DamageType.map(event.getCause()).orElse(null);
 
         if (type == null) {
             // Do not handle events whose damage cause does not map to damage causes the plugin handles
+            return;
+        }
+
+        GameKey subjectGameKey;
+        GameKey targetGameKey;
+
+        if (damagerGameKey != null) {
+            subjectGameKey = damagerGameKey;
+            targetGameKey = entityGameKey;
+        } else {
+            subjectGameKey = entityGameKey;
+            targetGameKey = null;
+        }
+
+        GameContext gameContext = gameContextProvider.getGameContext(subjectGameKey)
+                .orElseThrow(() -> new EventHandlingException("Unable to process EntityDamageByEntityEvent for game key %s, no corresponding game context was found".formatted(subjectGameKey)));
+        DamageProcessor damageProcessor = gameScope.supplyInScope(gameContext, damageProcessorProvider::get);
+
+        if (targetGameKey != null && !damageProcessor.isDamageAllowed(targetGameKey)
+                || targetGameKey == null && !damageProcessor.isDamageAllowedWithoutContext()) {
+            event.setCancelled(true);
             return;
         }
 

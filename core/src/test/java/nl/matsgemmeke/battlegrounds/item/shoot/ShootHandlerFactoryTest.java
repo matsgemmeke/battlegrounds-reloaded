@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.*;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
@@ -20,8 +19,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class ShootHandlerFactoryTest {
-
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
 
     private AmmunitionStorage ammunitionStorage;
     private FireModeFactory fireModeFactory;
@@ -47,11 +44,11 @@ public class ShootHandlerFactoryTest {
         ShootingSpec shootingSpec = this.createShootingSpec();
 
         when(fireModeFactory.create(shootingSpec.fireMode)).thenReturn(fireMode);
-        when(projectileLauncherFactory.create(shootingSpec.projectile, GAME_KEY)).thenReturn(projectileLauncher);
+        when(projectileLauncherFactory.create(shootingSpec.projectile)).thenReturn(projectileLauncher);
         when(spreadPatternFactory.create(shootingSpec.spreadPattern)).thenReturn(spreadPattern);
 
         ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(fireModeFactory, projectileLauncherFactory, recoilFactory, spreadPatternFactory);
-        shootHandlerFactory.create(shootingSpec, GAME_KEY, ammunitionStorage, itemRepresentation);
+        shootHandlerFactory.create(shootingSpec, ammunitionStorage, itemRepresentation);
 
         verify(fireMode).addShotObserver(any(ShotObserver.class));
     }
@@ -73,12 +70,12 @@ public class ShootHandlerFactoryTest {
         shootingSpec.recoil = recoilSpec;
 
         when(fireModeFactory.create(shootingSpec.fireMode)).thenReturn(fireMode);
-        when(projectileLauncherFactory.create(shootingSpec.projectile, GAME_KEY)).thenReturn(projectileLauncher);
+        when(projectileLauncherFactory.create(shootingSpec.projectile)).thenReturn(projectileLauncher);
         when(recoilFactory.create(recoilSpec)).thenReturn(recoil);
         when(spreadPatternFactory.create(shootingSpec.spreadPattern)).thenReturn(spreadPattern);
 
         ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(fireModeFactory, projectileLauncherFactory, recoilFactory, spreadPatternFactory);
-        shootHandlerFactory.create(shootingSpec, GAME_KEY, ammunitionStorage, itemRepresentation);
+        shootHandlerFactory.create(shootingSpec, ammunitionStorage, itemRepresentation);
 
         verify(fireMode).addShotObserver(any(ShotObserver.class));
     }

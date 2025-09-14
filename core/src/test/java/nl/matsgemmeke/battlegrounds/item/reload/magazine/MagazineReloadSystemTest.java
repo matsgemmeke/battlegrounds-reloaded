@@ -39,7 +39,7 @@ public class MagazineReloadSystemTest {
 
     @Test
     public void isPerformingReturnsFalseIfReloadWasNotActivated() {
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         boolean performing = reloadSystem.isPerforming();
 
         assertFalse(performing);
@@ -49,7 +49,7 @@ public class MagazineReloadSystemTest {
     public void isPerformingReturnsTrueIfReloadWasActivated() {
         ReloadPerformer performer = mock(ReloadPerformer.class);
 
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         reloadSystem.performReload(performer, () -> {});
         boolean performing = reloadSystem.isPerforming();
 
@@ -72,7 +72,7 @@ public class MagazineReloadSystemTest {
 
         ammunitionStorage.setMagazineAmmo(0);
 
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         boolean performed = reloadSystem.performReload(performer, callback);
 
         ArgumentCaptor<Runnable> soundRunnable = ArgumentCaptor.forClass(Runnable.class);
@@ -102,7 +102,7 @@ public class MagazineReloadSystemTest {
         ammunitionStorage.setMagazineAmmo(0);
         ammunitionStorage.setReserveAmmo(10);
 
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         boolean performed = reloadSystem.performReload(performer, callback);
 
         ArgumentCaptor<Runnable> reloadRunnable = ArgumentCaptor.forClass(Runnable.class);
@@ -122,7 +122,7 @@ public class MagazineReloadSystemTest {
 
     @Test
     public void cancelReloadDoesNotCancelIfItHasNoPerformer() {
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         boolean cancelled = reloadSystem.cancelReload();
 
         assertFalse(cancelled);
@@ -135,7 +135,7 @@ public class MagazineReloadSystemTest {
 
         when(taskRunner.runTaskLater(any(Runnable.class), anyLong())).thenReturn(task);
 
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         reloadSystem.performReload(performer, () -> {});
 
         boolean cancelled = reloadSystem.cancelReload();

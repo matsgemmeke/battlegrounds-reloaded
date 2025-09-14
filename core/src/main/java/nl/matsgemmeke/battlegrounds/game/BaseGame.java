@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointContainer;
-import nl.matsgemmeke.battlegrounds.item.ItemBehavior;
+import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
@@ -21,14 +21,14 @@ public abstract class BaseGame implements Game {
     @NotNull
     protected ItemContainer<Gun, GunHolder> gunContainer;
     @NotNull
-    protected Set<ItemBehavior> itemBehaviors;
+    protected Set<ActionExecutor> actionExecutors;
     @NotNull
     protected SpawnPointContainer spawnPointContainer;
 
     public BaseGame() {
         this.equipmentContainer = new ItemContainer<>();
         this.gunContainer = new ItemContainer<>();
-        this.itemBehaviors = new HashSet<>();
+        this.actionExecutors = new HashSet<>();
         this.playerContainer = new EntityContainer<>();
         this.spawnPointContainer = new SpawnPointContainer();
     }
@@ -44,8 +44,8 @@ public abstract class BaseGame implements Game {
     }
 
     @NotNull
-    public Set<ItemBehavior> getItemBehaviors() {
-        return itemBehaviors;
+    public Set<ActionExecutor> getActionExecutors() {
+        return actionExecutors;
     }
 
     @NotNull
@@ -58,7 +58,7 @@ public abstract class BaseGame implements Game {
         return spawnPointContainer;
     }
 
-    public void addItemBehavior(@NotNull ItemBehavior itemBehavior) {
-        itemBehaviors.add(itemBehavior);
+    public void addActionExecutor(@NotNull ActionExecutor actionExecutor) {
+        actionExecutors.add(actionExecutor);
     }
 }

@@ -1,56 +1,95 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
+import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 public class PlayerQuitEventHandlerTest {
 
-    private GameContextProvider contextProvider;
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final UUID PLAYER_ID = UUID.randomUUID();
+
+    private GameContextProvider gameContextProvider;
+    private GameScope gameScope;
+    private Provider<PlayerLifecycleHandler> playerLifecycleHandlerProvider;
 
     @BeforeEach
     public void setUp() {
-        contextProvider = mock(GameContextProvider.class);
+        gameContextProvider = mock(GameContextProvider.class);
+        gameScope = mock(GameScope.class);
+        playerLifecycleHandlerProvider = mock();
     }
 
     @Test
-    public void handleDoesNotPerformDeregisterWhenPlayerIsNotInAnyGame() {
+    public void handleDoesNothingWhenPlayerIsNotInAnyGameContext() {
         Player player = mock(Player.class);
-        PlayerQuitEvent event = new PlayerQuitEvent(player, null);
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
-        when(contextProvider.getGameKey(player)).thenReturn(null);
+        PlayerQuitEvent event = new PlayerQuitEvent(player, "test");
 
-        PlayerQuitEventHandler eventHandler = new PlayerQuitEventHandler(contextProvider);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
+
+        PlayerQuitEventHandler eventHandler = new PlayerQuitEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);
         eventHandler.handle(event);
 
-        verify(contextProvider, never()).getComponent(any(GameKey.class), any());
+        verifyNoInteractions(gameScope);
+        verifyNoInteractions(playerLifecycleHandlerProvider);
+    }
+
+    @Test
+    public void handleThrowsEventHandlingExceptionWhenNoGameContextExistsForGameKeyOfPlayer() {
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
+
+        PlayerQuitEvent event = new PlayerQuitEvent(player, "test");
+
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
+
+        PlayerQuitEventHandler eventHandler = new PlayerQuitEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);
+
+        assertThatThrownBy(() -> eventHandler.handle(event))
+                .isInstanceOf(EventHandlingException.class)
+                .hasMessage("Unable to process PlayerQuitEvent for game key OPEN-MODE, no corresponding game context was found");
     }
 
     @Test
     public void handlePerformsDeregisterWhenPlayerIsInGame() {
-        GameKey gameKey = GameKey.ofOpenMode();
+        GameContext gameContext = mock(GameContext.class);
         PlayerLifecycleHandler playerLifecycleHandler = mock(PlayerLifecycleHandler.class);
-        UUID playerUuid = UUID.randomUUID();
 
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(playerUuid);
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
-        PlayerQuitEvent event = new PlayerQuitEvent(player, null);
+        PlayerQuitEvent event = new PlayerQuitEvent(player, "test");
 
-        when(contextProvider.getGameKey(player)).thenReturn(gameKey);
-        when(contextProvider.getComponent(gameKey, PlayerLifecycleHandler.class)).thenReturn(playerLifecycleHandler);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(playerLifecycleHandlerProvider.get()).thenReturn(playerLifecycleHandler);
 
-        PlayerQuitEventHandler eventHandler = new PlayerQuitEventHandler(contextProvider);
+        PlayerQuitEventHandler eventHandler = new PlayerQuitEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);
         eventHandler.handle(event);
 
-        verify(playerLifecycleHandler).handlePlayerLeave(playerUuid);
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(gameScope).runInScope(eq(gameContext), runnableCaptor.capture());
+
+        runnableCaptor.getValue().run();
+
+        verify(playerLifecycleHandler).handlePlayerLeave(PLAYER_ID);
     }
 }

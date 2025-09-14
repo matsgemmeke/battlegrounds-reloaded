@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointProvider;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
@@ -22,14 +22,14 @@ public class MarkSpawnPointEffectTest {
 
     private Entity entity;
     private ItemEffectSource source;
-    private SpawnPointProvider spawnPointProvider;
+    private SpawnPointRegistry spawnPointRegistry;
     private Trigger trigger;
 
     @BeforeEach
     public void setUp() {
         entity = mock(Entity.class);
         source = mock(ItemEffectSource.class);
-        spawnPointProvider = mock(SpawnPointProvider.class);
+        spawnPointRegistry = mock(SpawnPointRegistry.class);
         trigger = mock(Trigger.class);
     }
 
@@ -40,7 +40,7 @@ public class MarkSpawnPointEffectTest {
 
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);
+        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointRegistry);
         effect.addTrigger(trigger);
         effect.prime(context);
 
@@ -50,15 +50,15 @@ public class MarkSpawnPointEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         ArgumentCaptor<MarkedSpawnPoint> spawnPointCaptor = ArgumentCaptor.forClass(MarkedSpawnPoint.class);
-        verify(spawnPointProvider).setCustomSpawnPoint(eq(entityId), spawnPointCaptor.capture());
+        verify(spawnPointRegistry).setCustomSpawnPoint(eq(entityId), spawnPointCaptor.capture());
     }
 
     @Test
     public void resetDoesNotResetSpawnPointIfEffectIsNotPerformed() {
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);
+        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointRegistry);
         effect.reset();
 
-        verify(spawnPointProvider, never()).setCustomSpawnPoint(any(UUID.class), any(SpawnPoint.class));
+        verify(spawnPointRegistry, never()).setCustomSpawnPoint(any(UUID.class), any(SpawnPoint.class));
     }
 
     @Test
@@ -68,10 +68,10 @@ public class MarkSpawnPointEffectTest {
 
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointProvider);
+        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointRegistry);
         effect.prime(context);
         effect.reset();
 
-        verify(spawnPointProvider).setCustomSpawnPoint(entityId, null);
+        verify(spawnPointRegistry).setCustomSpawnPoint(entityId, null);
     }
 }

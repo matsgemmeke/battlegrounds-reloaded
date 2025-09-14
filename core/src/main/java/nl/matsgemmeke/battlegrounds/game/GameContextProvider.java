@@ -1,13 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.game.component.entity.EntityRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -19,11 +14,24 @@ public class GameContextProvider {
     @NotNull
     private Map<GameKey, Game> games;
     @NotNull
-    private Map<GameKey, Map<Class<?>, Object>> gameComponents;
+    private final Map<GameKey, GameContext> gameContexts;
+    @NotNull
+    private final Map<UUID, GameKey> entityGameKeyMap;
 
     public GameContextProvider() {
         this.games = new HashMap<>();
-        this.gameComponents = new HashMap<>();
+        this.gameContexts = new HashMap<>();
+        this.entityGameKeyMap = new HashMap<>();
+    }
+
+    /**
+     * Adds a game context to the provider.
+     *
+     * @param gameKey the game key
+     * @param gameContext the game context instance
+     */
+    public void addGameContext(GameKey gameKey, GameContext gameContext) {
+        gameContexts.put(gameKey, gameContext);
     }
 
     /**
@@ -55,71 +63,32 @@ public class GameContextProvider {
         }
 
         games.put(gameKey, openMode);
-        gameComponents.put(gameKey, new HashMap<>());
         return true;
     }
 
     /**
-     * Gets a component interface instance based on the given game key and component type.
+     * Gets the game context by their game key. The return optional is empty when none of the registered game context
+     * has the given game key.
      *
      * @param gameKey the game key
-     * @param componentClass the component type
-     * @return the instance of the given component type that is registered under the given game key
-     * @param <T> the component type
+     * @return an optional which contains the corresponding game context or empty when none were found
      */
-    @NotNull
-    @SuppressWarnings("unchecked")
-    public <T> T getComponent(@NotNull GameKey gameKey, @NotNull Class<T> componentClass) {
-        GameKey gameKeyMatch = this.matchGameKey(gameKey)
-                .orElseThrow(() -> new GameKeyNotFoundException("Cannot get component for %s because given game key %s was not found".formatted(componentClass, gameKey)));
-
-        Map<Class<?>, Object> components = gameComponents.get(gameKeyMatch);
-        T component = (T) components.get(componentClass);
-
-        if (component == null) {
-            throw new GameComponentNotFoundException("Given game key %s has no registered components for %s".formatted(gameKeyMatch, componentClass));
-        }
-
-        return component;
-    }
-
-    /**
-     * Gets the {@link GameKey} of the game a player is currently in. Returns null if the player is not in any of the
-     * registered games.
-     *
-     * @param player the player
-     * @return the game key of the game the player is currently in, or null if the player is not any game
-     */
-    @Nullable
-    public GameKey getGameKey(@NotNull Player player) {
-        for (GameKey gameKey : games.keySet()) {
-
-            PlayerRegistry playerRegistry = this.getComponent(gameKey, PlayerRegistry.class);
-            if (playerRegistry.isRegistered(player)) {
-                return gameKey;
+    public Optional<GameContext> getGameContext(GameKey gameKey) {
+        for (GameKey otherKey : gameContexts.keySet()) {
+            if (gameKey.equals(otherKey)) {
+                return Optional.of(gameContexts.get(otherKey));
             }
         }
-        return null;
+
+        return Optional.empty();
     }
 
-    /**
-     * Gets the {@link GameKey} of the game a specific entity is currently in by matching their {@link UUID}. Returns
-     * {@code null} if none of the games contain an entity whose UUID match.
-     *
-     * @param uuid the entity uuid
-     * @return the game key of the game which contains an entity with the given uuid, or null if none of the
-     * games have a matching entity
-     */
-    @Nullable
-    public GameKey getGameKey(@NotNull UUID uuid) {
-        for (GameKey gameKey : games.keySet()) {
-            for (EntityRegistry<?, ?> entityRegistry : this.getEntityRegistries(gameKey)) {
-                if (entityRegistry.isRegistered(uuid)) {
-                    return gameKey;
-                }
-            }
+    public Optional<GameKey> getGameKeyByEntityId(UUID entityId) {
+        if (!entityGameKeyMap.containsKey(entityId)) {
+            return Optional.empty();
         }
-        return null;
+
+        return Optional.of(entityGameKeyMap.get(entityId));
     }
 
     /**
@@ -132,29 +101,6 @@ public class GameContextProvider {
         return games.keySet();
     }
 
-    @NotNull
-    private Iterable<EntityRegistry<?, ?>> getEntityRegistries(@NotNull GameKey gameKey) {
-        PlayerRegistry playerRegistry = this.getComponent(gameKey, PlayerRegistry.class);
-
-        return List.of(playerRegistry);
-    }
-
-    /**
-     * Registers a game component interface to the provider.
-     *
-     * @param gameKey the game key
-     * @param componentClass the class of the component interface
-     * @param componentInstance the instance of the component interface
-     * @param <T> the component type
-     */
-    public <T> void registerComponent(@NotNull GameKey gameKey, @NotNull Class<T> componentClass, @NotNull T componentInstance) {
-        GameKey gameKeyMatch = this.matchGameKey(gameKey)
-                .orElseThrow(() -> new GameKeyNotFoundException("Cannot register component because given game key " + gameKey + " was not found"));
-
-        Map<Class<?>, Object> components = gameComponents.get(gameKeyMatch);
-        components.put(componentClass, componentInstance);
-    }
-
     /**
      * Registers a {@link Game} instance to the provider.
      *
@@ -163,7 +109,10 @@ public class GameContextProvider {
      */
     public void registerGame(@NotNull GameKey gameKey, @NotNull Game game) {
         games.put(gameKey, game);
-        gameComponents.put(gameKey, new HashMap<>());
+    }
+
+    public void registerEntity(UUID entityId, GameKey gameKey) {
+        entityGameKeyMap.put(entityId, gameKey);
     }
 
     /**
@@ -196,32 +145,5 @@ public class GameContextProvider {
         }
 
         return false;
-    }
-
-    public void shutdown() {
-        OpenMode openMode = this.getOpenMode();
-
-        if (openMode != null) {
-            GameKey gameKey = GameKey.ofOpenMode();
-
-            StatePersistenceHandler statePersistenceHandler = this.getComponent(gameKey, StatePersistenceHandler.class);
-            statePersistenceHandler.saveState();
-        }
-    }
-
-    @Nullable
-    private OpenMode getOpenMode() {
-        GameKey gameKey = GameKey.ofOpenMode();
-
-        return (OpenMode) games.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(gameKey))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElse(null);
-    }
-
-    @NotNull
-    private Optional<GameKey> matchGameKey(@NotNull GameKey gameKey) {
-        return games.keySet().stream().filter(k -> k.equals(gameKey)).findFirst();
     }
 }

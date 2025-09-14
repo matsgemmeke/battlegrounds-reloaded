@@ -1,8 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
@@ -31,14 +30,12 @@ public class TriggerFactoryTest {
     private static final long DELAY = 10L;
     private static final long INTERVAL = 2L;
 
-    private GameContextProvider contextProvider;
-    private GameKey gameKey;
+    private Provider<TargetFinder> targetFinderProvider;
     private Scheduler scheduler;
 
     @BeforeEach
     public void setUp() {
-        contextProvider = mock(GameContextProvider.class);
-        gameKey = GameKey.ofOpenMode();
+        targetFinderProvider = mock();
         scheduler = mock(Scheduler.class);
     }
 
@@ -67,9 +64,9 @@ public class TriggerFactoryTest {
 
         String expectedErrorMessage = "Cannot create trigger %s because of invalid spec: Required '%s' value is missing".formatted(type, requiredValue);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
+        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
 
-        assertThatThrownBy(() -> factory.create(spec, gameKey))
+        assertThatThrownBy(() -> factory.create(spec))
                 .isInstanceOf(TriggerCreationException.class)
                 .hasMessage(expectedErrorMessage);
     }
@@ -86,10 +83,10 @@ public class TriggerFactoryTest {
         when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
 
         TargetFinder targetFinder = mock(TargetFinder.class);
-        when(contextProvider.getComponent(gameKey, TargetFinder.class)).thenReturn(targetFinder);
+        when(targetFinderProvider.get()).thenReturn(targetFinder);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
-        Trigger trigger = factory.create(spec, gameKey);
+        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
+        Trigger trigger = factory.create(spec);
 
         assertThat(trigger).isInstanceOf(EnemyProximityTrigger.class);
     }
@@ -105,8 +102,8 @@ public class TriggerFactoryTest {
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
-        Trigger trigger = factory.create(spec, gameKey);
+        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
+        Trigger trigger = factory.create(spec);
 
         assertThat(trigger).isInstanceOf(FloorHitTrigger.class);
     }
@@ -121,8 +118,8 @@ public class TriggerFactoryTest {
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
-        Trigger trigger = factory.create(spec, gameKey);
+        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
+        Trigger trigger = factory.create(spec);
 
         assertThat(trigger).isInstanceOf(ImpactTrigger.class);
     }
@@ -136,8 +133,8 @@ public class TriggerFactoryTest {
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
-        Trigger trigger = factory.create(spec, gameKey);
+        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
+        Trigger trigger = factory.create(spec);
 
         assertThat(trigger).isInstanceOf(ScheduledTrigger.class);
     }
@@ -151,8 +148,8 @@ public class TriggerFactoryTest {
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createSequenceSchedule(spec.offsetDelays)).thenReturn(schedule);
 
-        TriggerFactory factory = new TriggerFactory(contextProvider, scheduler);
-        Trigger trigger = factory.create(spec, gameKey);
+        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
+        Trigger trigger = factory.create(spec);
 
         assertThat(trigger).isInstanceOf(ScheduledTrigger.class);
     }

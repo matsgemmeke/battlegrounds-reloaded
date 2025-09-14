@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.player;
 
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
@@ -27,9 +26,9 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
     @Inject
     public OpenModePlayerLifecycleHandler(
             @NotNull BattlegroundsConfiguration configuration,
-            @Assisted @NotNull ItemLifecycleHandler itemLifecycleHandler,
-            @Assisted @NotNull PlayerRegistry playerRegistry,
-            @Assisted @NotNull StatePersistenceHandler statePersistenceHandler
+            @NotNull ItemLifecycleHandler itemLifecycleHandler,
+            @NotNull PlayerRegistry playerRegistry,
+            @NotNull StatePersistenceHandler statePersistenceHandler
     ) {
         this.configuration = configuration;
         this.itemLifecycleHandler = itemLifecycleHandler;

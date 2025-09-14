@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.deploy;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -15,6 +16,7 @@ public class DefaultDeploymentInfoProvider implements DeploymentInfoProvider {
     @NotNull
     private EquipmentRegistry equipmentRegistry;
 
+    @Inject
     public DefaultDeploymentInfoProvider(@NotNull EquipmentRegistry equipmentRegistry) {
         this.equipmentRegistry = equipmentRegistry;
     }
@@ -23,7 +25,7 @@ public class DefaultDeploymentInfoProvider implements DeploymentInfoProvider {
     public List<DeploymentObject> getAllDeploymentObjects() {
         List<DeploymentObject> deploymentObjects = new ArrayList<>();
 
-        for (Equipment equipment : equipmentRegistry.findAll()) {
+        for (Equipment equipment : equipmentRegistry.getAllEquipment()) {
             DeploymentObject deploymentObject = equipment.getDeploymentObject();
 
             if (deploymentObject != null) {
@@ -36,7 +38,7 @@ public class DefaultDeploymentInfoProvider implements DeploymentInfoProvider {
 
     @Nullable
     public DeployableItem getDeployableItem(@NotNull DeploymentObject deploymentObject) {
-        for (Equipment equipment : equipmentRegistry.findAll()) {
+        for (Equipment equipment : equipmentRegistry.getAllEquipment()) {
             if (equipment.getDeploymentObject() == deploymentObject) {
                 return equipment;
             }

@@ -66,7 +66,7 @@ public class DamageEffectTest {
         when(targetFinder.findEnemyTargets(entityId, sourceLocation, 0.1)).thenReturn(List.of(target));
         when(targetFinder.findDeploymentObjects(entityId, sourceLocation, 0.3)).thenReturn(List.of(deploymentObject));
 
-        DamageEffect effect = new DamageEffect(properties, damageProcessor, targetFinder);
+        DamageEffect effect = new DamageEffect(damageProcessor, targetFinder, properties);
         effect.perform(context);
 
         ArgumentCaptor<Damage> targetDamageCaptor = ArgumentCaptor.forClass(Damage.class);

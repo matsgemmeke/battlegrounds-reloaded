@@ -39,7 +39,7 @@ public class ManualInsertionReloadSystemTest {
 
     @Test
     public void isPerformingReturnsFalseIfReloadWasNotActivated() {
-        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         boolean performing = reloadSystem.isPerforming();
 
         assertFalse(performing);
@@ -49,7 +49,7 @@ public class ManualInsertionReloadSystemTest {
     public void isPerformingReturnsTrueIfReloadWasActivated() {
         ReloadPerformer performer = mock(ReloadPerformer.class);
 
-        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         reloadSystem.performReload(performer, () -> {});
         boolean performing = reloadSystem.isPerforming();
 
@@ -78,7 +78,7 @@ public class ManualInsertionReloadSystemTest {
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(DURATION), eq(DURATION))).thenReturn(reloadTask);
         when(taskRunner.runTaskTimer(any(Runnable.class), eq(soundDelay), eq(DURATION))).thenReturn(soundTask);
 
-        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         boolean activated = reloadSystem.performReload(performer, callback);
 
         ArgumentCaptor<Runnable> soundRunnable = ArgumentCaptor.forClass(Runnable.class);
@@ -104,7 +104,7 @@ public class ManualInsertionReloadSystemTest {
 
     @Test
     public void cancelReloadDoesNotCancelIfItHasNoPerformer() {
-        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         boolean cancelled = reloadSystem.cancelReload();
 
         assertFalse(cancelled);
@@ -117,7 +117,7 @@ public class ManualInsertionReloadSystemTest {
 
         when(taskRunner.runTaskTimer(any(Runnable.class), anyLong(), anyLong())).thenReturn(task);
 
-        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(taskRunner, properties, ammunitionStorage, audioEmitter);
+        ManualInsertionReloadSystem reloadSystem = new ManualInsertionReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         reloadSystem.performReload(performer, () -> {});
         boolean cancelled = reloadSystem.cancelReload();
 

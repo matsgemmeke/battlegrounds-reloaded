@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.*;
+import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -41,19 +42,19 @@ public class HitscanLauncher implements ProjectileLauncher {
 
     @Inject
     public HitscanLauncher(
+            @NotNull AudioEmitter audioEmitter,
+            @NotNull CollisionDetector collisionDetector,
             @NotNull ParticleEffectSpawner particleEffectSpawner,
+            @NotNull TargetFinder targetFinder,
             @Assisted @NotNull HitscanProperties properties,
-            @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull CollisionDetector collisionDetector,
-            @Assisted @NotNull ItemEffect itemEffect,
-            @Assisted @NotNull TargetFinder targetFinder
+            @Assisted @NotNull ItemEffect itemEffect
     ) {
-        this.particleEffectSpawner = particleEffectSpawner;
-        this.properties = properties;
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
-        this.itemEffect = itemEffect;
+        this.particleEffectSpawner = particleEffectSpawner;
         this.targetFinder = targetFinder;
+        this.properties = properties;
+        this.itemEffect = itemEffect;
     }
 
     public void launch(@NotNull LaunchContext context) {
@@ -91,8 +92,10 @@ public class HitscanLauncher implements ProjectileLauncher {
         TargetQuery query = this.createTargetQuery(entity.getUniqueId(), projectileLocation);
 
         if (targetFinder.containsTargets(query)) {
+            Location sourceLocation = projectileLocation.clone();
             World world = projectileLocation.getBlock().getWorld();
-            StaticSource source = new StaticSource(projectileLocation, world);
+            StaticSource source = new StaticSource(sourceLocation, world);
+
             ItemEffectContext context = new ItemEffectContext(entity, source, startingLocation);
 
             itemEffect.prime(context);

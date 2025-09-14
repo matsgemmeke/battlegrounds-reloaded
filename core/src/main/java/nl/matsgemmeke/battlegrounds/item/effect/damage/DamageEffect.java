@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
@@ -26,10 +28,11 @@ public class DamageEffect extends BaseItemEffect {
     @NotNull
     private final TargetFinder targetFinder;
 
-    public DamageEffect(@NotNull DamageProperties properties, @NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder) {
-        this.properties = properties;
+    @Inject
+    public DamageEffect(@NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder, @Assisted @NotNull DamageProperties properties) {
         this.damageProcessor = damageProcessor;
         this.targetFinder = targetFinder;
+        this.properties = properties;
     }
 
     public void perform(@NotNull ItemEffectContext context) {

@@ -7,13 +7,12 @@ import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
@@ -29,6 +28,7 @@ import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,14 +38,16 @@ import java.util.UUID;
 
 public class EquipmentFactory {
 
-    private static final String NAMESPACED_KEY_NAME = "battlegrounds-equipment";
+    private static final String ACTION_EXECUTOR_ID_KEY = "action-executor-id";
+    private static final String ACTION_EXECUTOR_ID_VALUE = "equipment";
+    private static final String TEMPLATE_ID_KEY = "template-id";
 
     @NotNull
     private final DeploymentHandlerFactory deploymentHandlerFactory;
     @NotNull
     private final EquipmentControlsFactory controlsFactory;
     @NotNull
-    private final GameContextProvider contextProvider;
+    private final EquipmentRegistry equipmentRegistry;
     @NotNull
     private final ItemEffectFactory itemEffectFactory;
     @NotNull
@@ -56,15 +58,15 @@ public class EquipmentFactory {
     @Inject
     public EquipmentFactory(
             @NotNull DeploymentHandlerFactory deploymentHandlerFactory,
-            @NotNull GameContextProvider contextProvider,
             @NotNull EquipmentControlsFactory controlsFactory,
+            @NotNull EquipmentRegistry equipmentRegistry,
             @NotNull ItemEffectFactory itemEffectFactory,
             @NotNull NamespacedKeyCreator namespacedKeyCreator,
             @NotNull ParticleEffectMapper particleEffectMapper
     ) {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
-        this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
+        this.equipmentRegistry = equipmentRegistry;
         this.itemEffectFactory = itemEffectFactory;
         this.namespacedKeyCreator = namespacedKeyCreator;
         this.particleEffectMapper = particleEffectMapper;
@@ -74,8 +76,7 @@ public class EquipmentFactory {
     public Equipment create(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey) {
         Equipment equipment = this.createInstance(spec, gameKey);
 
-        EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
-        equipmentRegistry.registerItem(equipment);
+        equipmentRegistry.register(equipment);
 
         return equipment;
     }
@@ -85,8 +86,7 @@ public class EquipmentFactory {
         Equipment equipment = this.createInstance(spec, gameKey);
         equipment.setHolder(gamePlayer);
 
-        EquipmentRegistry equipmentRegistry = contextProvider.getComponent(gameKey, EquipmentRegistry.class);
-        equipmentRegistry.registerItem(equipment, gamePlayer);
+        equipmentRegistry.register(equipment, gamePlayer);
 
         return equipment;
     }
@@ -97,16 +97,7 @@ public class EquipmentFactory {
         equipment.setName(spec.name);
         equipment.setDescription(spec.description);
 
-        // ItemStack creation
-        UUID uuid = UUID.randomUUID();
-        NamespacedKey key = namespacedKeyCreator.create(NAMESPACED_KEY_NAME);
-        Material displayItemMaterial = Material.valueOf(spec.items.displayItem.material);
-        int displayItemDamage = spec.items.displayItem.damage;
-        String displayItemDisplayName = spec.items.displayItem.displayName;
-
-        ItemTemplate displayItemTemplate = new ItemTemplate(uuid, key, displayItemMaterial);
-        displayItemTemplate.setDamage(displayItemDamage);
-        displayItemTemplate.setDisplayNameTemplate(new TextTemplate(displayItemDisplayName));
+        ItemTemplate displayItemTemplate = this.createDisplayItemTemplate(spec.items.displayItem);
 
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
@@ -117,7 +108,7 @@ public class EquipmentFactory {
 
         if (activatorItemSpec != null) {
             UUID activatorUUID = UUID.randomUUID();
-            NamespacedKey activatorKey = namespacedKeyCreator.create(NAMESPACED_KEY_NAME);
+            NamespacedKey activatorKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
             Material activatorItemMaterial = Material.valueOf(activatorItemSpec.material);
 
             ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorItemMaterial);
@@ -130,7 +121,7 @@ public class EquipmentFactory {
 
         if (throwItemSpec != null) {
             UUID throwItemUUID = UUID.randomUUID();
-            NamespacedKey throwItemKey = namespacedKeyCreator.create(NAMESPACED_KEY_NAME);
+            NamespacedKey throwItemKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
             Material throwItemMaterial = Material.valueOf(throwItemSpec.material);
 
             ItemTemplate throwItemTemplate = new ItemTemplate(throwItemUUID, throwItemKey, throwItemMaterial);
@@ -140,17 +131,34 @@ public class EquipmentFactory {
             equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec, equipment, gameKey);
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec, equipment);
         equipment.setControls(controls);
 
-        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deploy, spec.effect, gameKey, activator);
+        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deploy, spec.effect, activator);
         equipment.setDeploymentHandler(deploymentHandler);
 
         return equipment;
     }
 
+    private ItemTemplate createDisplayItemTemplate(@NotNull ItemSpec spec) {
+        UUID uuid = UUID.randomUUID();
+        NamespacedKey key = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
+        Material material = Material.valueOf(spec.material);
+        String displayName = spec.displayName;
+        int damage = spec.damage;
+
+        NamespacedKey actionExecutorIdKey = namespacedKeyCreator.create(ACTION_EXECUTOR_ID_KEY);
+        PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
+
+        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
+        itemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
+        itemTemplate.setDamage(damage);
+        itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
+        return itemTemplate;
+    }
+
     @NotNull
-    private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull ItemEffectSpec effectSpec, @NotNull GameKey gameKey, @Nullable Activator activator) {
+    private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull ItemEffectSpec effectSpec, @Nullable Activator activator) {
         boolean activateEffectOnDestruction = deploymentSpec.onDestruction.activateEffect;
         boolean removeDeploymentOnDestruction = deploymentSpec.onDestruction.removeDeployment;
         boolean undoEffectOnDestruction = deploymentSpec.onDestruction.undoEffect;
@@ -172,11 +180,9 @@ public class EquipmentFactory {
         }
 
         DeploymentProperties deploymentProperties = new DeploymentProperties(manualActivationSounds, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnCleanup, manualActivationDelay);
+        ItemEffect itemEffect = itemEffectFactory.create(effectSpec);
 
-        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-        ItemEffect itemEffect = itemEffectFactory.create(effectSpec, gameKey);
-
-        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, audioEmitter, itemEffect);
+        DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, itemEffect);
         deploymentHandler.setActivator(activator);
 
         return deploymentHandler;

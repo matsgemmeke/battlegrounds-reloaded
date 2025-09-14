@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.stick;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
@@ -18,7 +20,8 @@ public class StickEffect extends BaseProjectileEffect {
     @NotNull
     private final List<GameSound> stickSounds;
 
-    public StickEffect(@NotNull AudioEmitter audioEmitter, @NotNull List<GameSound> stickSounds) {
+    @Inject
+    public StickEffect(@NotNull AudioEmitter audioEmitter, @Assisted @NotNull List<GameSound> stickSounds) {
         this.audioEmitter = audioEmitter;
         this.stickSounds = stickSounds;
     }

@@ -30,7 +30,7 @@ public class DefaultDeploymentInfoProviderTest {
         Equipment equipment = mock(Equipment.class);
         when(equipment.getDeploymentObject()).thenReturn(deploymentObject);
 
-        when(equipmentRegistry.findAll()).thenReturn(List.of(equipment));
+        when(equipmentRegistry.getAllEquipment()).thenReturn(List.of(equipment));
 
         DefaultDeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
         List<DeploymentObject> deploymentObjects = deploymentInfoProvider.getAllDeploymentObjects();
@@ -46,7 +46,7 @@ public class DefaultDeploymentInfoProviderTest {
         Equipment equipment = mock(Equipment.class);
         when(equipment.getDeploymentObject()).thenReturn(deploymentObject);
 
-        when(equipmentRegistry.findAll()).thenReturn(List.of(equipment));
+        when(equipmentRegistry.getAllEquipment()).thenReturn(List.of(equipment));
 
         DefaultDeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
         DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(deploymentObject);
@@ -62,7 +62,7 @@ public class DefaultDeploymentInfoProviderTest {
         Equipment equipment = mock(Equipment.class);
         when(equipment.getDeploymentObject()).thenReturn(deploymentObject);
 
-        when(equipmentRegistry.findAll()).thenReturn(List.of(equipment));
+        when(equipmentRegistry.getAllEquipment()).thenReturn(List.of(equipment));
 
         DefaultDeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
         DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(otherDeploymentObject);

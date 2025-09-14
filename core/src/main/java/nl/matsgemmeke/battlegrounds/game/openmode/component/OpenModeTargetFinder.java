@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
@@ -25,6 +26,7 @@ public class OpenModeTargetFinder implements TargetFinder {
     @NotNull
     private final PlayerRegistry playerRegistry;
 
+    @Inject
     public OpenModeTargetFinder(
             @NotNull DeploymentInfoProvider deploymentInfoProvider,
             @NotNull PlayerRegistry playerRegistry
@@ -80,19 +82,26 @@ public class OpenModeTargetFinder implements TargetFinder {
     public List<UUID> findTargets(TargetQuery query) {
         List<UUID> result = new ArrayList<>();
         Location location = query.getLocation().orElseThrow(() -> new IllegalArgumentException("No location provided"));
+        World world = Optional.ofNullable(location.getWorld()).orElseThrow(() -> new IllegalArgumentException("Provided location has no world"));
 
         Optional<UUID> uniqueId = query.getUniqueId();
         Optional<Double> entityFindingRange = query.getRange(TargetType.ENTITY);
         Optional<Double> deploymentObjectFindingRange = query.getRange(TargetType.DEPLOYMENT_OBJECT);
         boolean enemiesOnly = query.isEnemiesOnly().orElse(false);
 
-        entityFindingRange.ifPresent(range ->
+        entityFindingRange.ifPresent(range -> {
             playerRegistry.getAll().stream()
                     .filter(gamePlayer -> !enemiesOnly || uniqueId.map(id -> !id.equals(gamePlayer.getUniqueId())).orElse(true))
                     .filter(gamePlayer -> gamePlayer.getLocation().distanceSquared(location) <= range)
                     .map(GamePlayer::getUniqueId)
-                    .forEach(result::add)
-        );
+                    .forEach(result::add);
+
+            world.getNearbyEntities(location, range, range, range).stream()
+                    .filter(entity -> entity.getType() != EntityType.PLAYER)
+                    .filter(entity -> entity.getLocation().distanceSquared(location) <= range)
+                    .map(Entity::getUniqueId)
+                    .forEach(result::add);
+        });
         deploymentObjectFindingRange.ifPresent(range -> {
             deploymentInfoProvider.getAllDeploymentObjects().stream()
                     .filter(deploymentObject -> !enemiesOnly || uniqueId.map(id -> !id.equals(deploymentObject.getUniqueId())).orElse(true))

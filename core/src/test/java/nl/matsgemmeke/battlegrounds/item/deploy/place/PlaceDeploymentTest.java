@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
@@ -36,21 +37,31 @@ public class PlaceDeploymentTest {
     private AudioEmitter audioEmitter;
     private Deployer deployer;
     private Entity deployerEntity;
-    private PlaceDeploymentProperties deploymentProperties;
+    private PlaceDeploymentProperties properties;
 
     @BeforeEach
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         deployer = mock(Deployer.class);
         deployerEntity = mock(Entity.class);
-        deploymentProperties = new PlaceDeploymentProperties(PLACE_SOUNDS, RESISTANCES, MATERIAL, HEALTH, COOLDOWN);
+        properties = new PlaceDeploymentProperties(PLACE_SOUNDS, RESISTANCES, MATERIAL, HEALTH, COOLDOWN);
+    }
+
+    @Test
+    public void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
+        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
+
+        assertThatThrownBy(() -> deployment.perform(deployer, deployerEntity))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Cannot perform deployment without properties configured");
     }
 
     @Test
     public void performReturnsFailureResultIfDeployerDoesNotReturnTwoTargetBlocks() {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
-        PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
+        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
+        deployment.configureProperties(properties);
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
         assertThat(result.success()).isFalse();
@@ -65,7 +76,8 @@ public class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
-        PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
+        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
+        deployment.configureProperties(properties);
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
         assertThat(result.success()).isFalse();
@@ -83,7 +95,8 @@ public class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
+        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
+        deployment.configureProperties(properties);
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
         assertThat(result.success()).isFalse();
@@ -109,7 +122,8 @@ public class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
+        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
+        deployment.configureProperties(properties);
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
         assertThat(result.success()).isTrue();
@@ -141,7 +155,8 @@ public class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
+        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
+        deployment.configureProperties(properties);
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
         assertThat(result.success()).isTrue();
@@ -174,7 +189,8 @@ public class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceDeployment deployment = new PlaceDeployment(deploymentProperties, audioEmitter);
+        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
+        deployment.configureProperties(properties);
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
 
         assertThat(result.success()).isTrue();

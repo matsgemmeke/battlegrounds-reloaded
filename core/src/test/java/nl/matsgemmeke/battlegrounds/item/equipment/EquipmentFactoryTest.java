@@ -3,9 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
@@ -34,11 +32,11 @@ import static org.mockito.Mockito.*;
 
 public class EquipmentFactoryTest {
 
-    private AudioEmitter audioEmitter;
+    private static final String TEMPLATE_ID_KEY = "template-id";
+
     private DeploymentHandlerFactory deploymentHandlerFactory;
     private EquipmentControlsFactory controlsFactory;
     private EquipmentRegistry equipmentRegistry;
-    private GameContextProvider contextProvider;
     private GameKey gameKey;
     private ItemEffectFactory itemEffectFactory;
     private ItemFactory itemFactory;
@@ -48,7 +46,6 @@ public class EquipmentFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        audioEmitter = mock(AudioEmitter.class);
         deploymentHandlerFactory = mock(DeploymentHandlerFactory.class);
         controlsFactory = mock(EquipmentControlsFactory.class);
         equipmentRegistry = mock(EquipmentRegistry.class);
@@ -58,17 +55,13 @@ public class EquipmentFactoryTest {
         keyCreator = mock(NamespacedKeyCreator.class);
         particleEffectMapper = new ParticleEffectMapper();
 
-        contextProvider = mock(GameContextProvider.class);
-        when(contextProvider.getComponent(gameKey, AudioEmitter.class)).thenReturn(audioEmitter);
-        when(contextProvider.getComponent(gameKey, EquipmentRegistry.class)).thenReturn(equipmentRegistry);
-
         Plugin plugin = mock(Plugin.class);
         Mockito.when(plugin.getName()).thenReturn("Battlegrounds");
 
-        NamespacedKey key = new NamespacedKey(plugin, "battlegrounds-equipment");
+        NamespacedKey key = new NamespacedKey(plugin, TEMPLATE_ID_KEY);
 
         keyCreator = mock(NamespacedKeyCreator.class);
-        when(keyCreator.create("battlegrounds-equipment")).thenReturn(key);
+        when(keyCreator.create(TEMPLATE_ID_KEY)).thenReturn(key);
 
         bukkit = mockStatic(Bukkit.class);
         bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
@@ -85,22 +78,22 @@ public class EquipmentFactoryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
-        when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+        when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(itemEffectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
+        when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), any(AudioEmitter.class), eq(itemEffect))).thenReturn(deploymentHandler);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, itemEffectFactory, keyCreator, particleEffectMapper);
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, controlsFactory, equipmentRegistry, itemEffectFactory, keyCreator, particleEffectMapper);
         Equipment equipment = factory.create(spec, gameKey, gamePlayer);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getId()).isEqualTo("FRAG_GRENADE");
         assertThat(equipment.getName()).isEqualTo("Frag Grenade");
 
-        verify(equipmentRegistry).registerItem(equipment, gamePlayer);
+        verify(equipmentRegistry).register(equipment, gamePlayer);
     }
 
     @Test
@@ -108,22 +101,22 @@ public class EquipmentFactoryTest {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
-        when(controlsFactory.create(eq(spec), any(Equipment.class), eq(gameKey))).thenReturn(controls);
+        when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
 
         ItemEffect itemEffect = mock(ItemEffect.class);
-        when(itemEffectFactory.create(spec.effect, gameKey)).thenReturn(itemEffect);
+        when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(audioEmitter), eq(itemEffect))).thenReturn(deploymentHandler);
+        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, contextProvider, controlsFactory, itemEffectFactory, keyCreator, particleEffectMapper);
+        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, controlsFactory, equipmentRegistry, itemEffectFactory, keyCreator, particleEffectMapper);
         Equipment equipment = factory.create(spec, gameKey);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getActivator()).isNotNull();
         assertThat(equipment.getActivator()).isInstanceOf(DefaultActivator.class);
 
-        verify(equipmentRegistry).registerItem(equipment);
+        verify(equipmentRegistry).register(equipment);
     }
 
     private EquipmentSpec createEquipmentSpec(String filePath) {

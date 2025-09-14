@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
@@ -19,18 +18,17 @@ import java.util.List;
 public class TriggerFactory {
 
     @NotNull
-    private final GameContextProvider contextProvider;
+    private final Provider<TargetFinder> targetFinderProvider;
     @NotNull
     private final Scheduler scheduler;
 
     @Inject
-    public TriggerFactory(@NotNull GameContextProvider contextProvider, @NotNull Scheduler scheduler) {
-        this.contextProvider = contextProvider;
+    public TriggerFactory(@NotNull Provider<TargetFinder> targetFinderProvider, @NotNull Scheduler scheduler) {
+        this.targetFinderProvider = targetFinderProvider;
         this.scheduler = scheduler;
     }
 
-    @NotNull
-    public Trigger create(@NotNull TriggerSpec spec, @NotNull GameKey gameKey) {
+    public Trigger create(TriggerSpec spec) {
         TriggerType triggerType = TriggerType.valueOf(spec.type);
 
         switch (triggerType) {
@@ -40,7 +38,7 @@ public class TriggerFactory {
                 double range = this.validateSpecVar(spec.range, "range", triggerType);
 
                 Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
-                TargetFinder targetFinder = contextProvider.getComponent(gameKey, TargetFinder.class);
+                TargetFinder targetFinder = targetFinderProvider.get();
 
                 return new EnemyProximityTrigger(schedule, targetFinder, range);
             }

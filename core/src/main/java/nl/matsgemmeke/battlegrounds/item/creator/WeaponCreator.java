@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -23,17 +24,17 @@ import java.util.stream.Stream;
 public class WeaponCreator {
 
     @NotNull
-    private final EquipmentFactory equipmentFactory;
-    @NotNull
-    private final FirearmFactory firearmFactory;
-    @NotNull
     private final Map<String, EquipmentSpec> equipmentSpecs;
     @NotNull
     private final Map<String, GunSpec> gunSpecs;
+    @NotNull
+    private final Provider<EquipmentFactory> equipmentFactoryProvider;
+    @NotNull
+    private final Provider<FirearmFactory> gunFactoryProvider;
 
-    public WeaponCreator(@NotNull EquipmentFactory equipmentFactory, @NotNull FirearmFactory firearmFactory) {
-        this.equipmentFactory = equipmentFactory;
-        this.firearmFactory = firearmFactory;
+    public WeaponCreator(@NotNull Provider<EquipmentFactory> equipmentFactoryProvider, @NotNull Provider<FirearmFactory> gunFactoryProvider) {
+        this.equipmentFactoryProvider = equipmentFactoryProvider;
+        this.gunFactoryProvider = gunFactoryProvider;
         this.equipmentSpecs = new HashMap<>();
         this.gunSpecs = new HashMap<>();
     }
@@ -63,7 +64,9 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for an equipment item by the id '%s'".formatted(equipmentId));
         }
 
+        EquipmentFactory equipmentFactory = equipmentFactoryProvider.get();
         EquipmentSpec equipmentSpec = equipmentSpecs.get(equipmentId);
+
         return equipmentFactory.create(equipmentSpec, gameKey, gamePlayer);
     }
 
@@ -83,8 +86,10 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the id '%s'".formatted(gunId));
         }
 
+        FirearmFactory gunFactory = gunFactoryProvider.get();
         GunSpec gunSpec = gunSpecs.get(gunId);
-        return firearmFactory.create(gunSpec, gameKey, gamePlayer);
+
+        return gunFactory.create(gunSpec, gameKey, gamePlayer);
     }
 
     /**
@@ -100,15 +105,11 @@ public class WeaponCreator {
     @NotNull
     public Weapon createWeapon(@NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey, @NotNull String weaponId) {
         if (equipmentSpecs.containsKey(weaponId)) {
-            EquipmentSpec spec = equipmentSpecs.get(weaponId);
-
-            return equipmentFactory.create(spec, gameKey, gamePlayer);
+            return this.createEquipment(weaponId, gamePlayer, gameKey);
         }
 
         if (gunSpecs.containsKey(weaponId)) {
-            GunSpec spec = gunSpecs.get(weaponId);
-
-            return firearmFactory.create(spec, gameKey, gamePlayer);
+            return this.createGun(weaponId, gamePlayer, gameKey);
         }
 
         throw new WeaponNotFoundException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponId));

@@ -4,18 +4,12 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
+import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.item.ItemLifecycleHandler;
-import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandlerFactory;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -26,29 +20,35 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
 import java.util.List;
+import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class OpenModeInitializerTest {
 
     private BattlegroundsConfiguration configuration;
     private EventDispatcher eventDispatcher;
-    private GameContextProvider contextProvider;
-    private DefaultPlayerRegistryFactory playerRegistryFactory;
-    private Provider<CollisionDetector> collisionDetectorProvider;
-    private OpenModePlayerLifecycleHandlerFactory playerLifecycleHandlerFactory;
-    private OpenModeStatePersistenceHandlerFactory statePersistenceHandlerFactory;
+    private GameContextProvider gameContextProvider;
+    private GameScope gameScope;
+    private Provider<EquipmentActionExecutor> equipmentActionExecutorProvider;
+    private Provider<GunActionExecutor> gunActionExecutorProvider;
+    private Provider<PlayerRegistry> playerRegistryProvider;
+    private Provider<StatePersistenceHandler> statePersistenceHandlerProvider;
+    private Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider;
     private MockedStatic<Bukkit> bukkit;
 
     @BeforeEach
     public void setUp() {
         configuration = mock(BattlegroundsConfiguration.class);
         eventDispatcher = mock(EventDispatcher.class);
-        contextProvider = new GameContextProvider();
-        playerRegistryFactory = mock(DefaultPlayerRegistryFactory.class);
-        collisionDetectorProvider = mock();
-        playerLifecycleHandlerFactory = mock(OpenModePlayerLifecycleHandlerFactory.class);
-        statePersistenceHandlerFactory = mock(OpenModeStatePersistenceHandlerFactory.class);
+        gameContextProvider = new GameContextProvider();
+        gameScope = mock(GameScope.class);
+        equipmentActionExecutorProvider = mock();
+        gunActionExecutorProvider = mock();
+        playerRegistryProvider = mock();
+        statePersistenceHandlerProvider = mock();
+        entityDamageEventHandlerProvider = mock();
         bukkit = mockStatic(Bukkit.class);
     }
 
@@ -58,30 +58,45 @@ public class OpenModeInitializerTest {
     }
 
     @Test
-    public void getCreatesNewOpenModeInstanceAndAssignsItToTheContextProvider() {
-        Player player = mock(Player.class);
-        bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
-
+    public void getCreatesNewOpenModeInstanceAndAssignsItToGameContextProvider() {
+        UUID playerId = UUID.randomUUID();
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        PlayerLifecycleHandler playerLifecycleHandler = mock(PlayerLifecycleHandler.class);
         StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
+        EquipmentActionExecutor equipmentActionExecutor = mock(EquipmentActionExecutor.class);
+        GunActionExecutor gunActionExecutor = mock(GunActionExecutor.class);
+        EntityDamageEventHandler entityDamageEventHandler = mock(EntityDamageEventHandler.class);
+
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(playerId);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
 
-        CollisionDetector collisionDetector = mock(CollisionDetector.class);
-        when(collisionDetectorProvider.get()).thenReturn(collisionDetector);
-
-        when(playerLifecycleHandlerFactory.create(any(ItemLifecycleHandler.class), eq(playerRegistry), eq(statePersistenceHandler))).thenReturn(playerLifecycleHandler);
-        when(playerRegistryFactory.create(any())).thenReturn(playerRegistry);
-        when(statePersistenceHandlerFactory.create(any(EquipmentRegistry.class), any(GunRegistry.class), eq(playerRegistry))).thenReturn(statePersistenceHandler);
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
+        when(equipmentActionExecutorProvider.get()).thenReturn(equipmentActionExecutor);
+        when(gunActionExecutorProvider.get()).thenReturn(gunActionExecutor);
+        when(statePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
+        when(entityDamageEventHandlerProvider.get()).thenReturn(entityDamageEventHandler);
 
-        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, contextProvider, playerRegistryFactory, playerLifecycleHandlerFactory, statePersistenceHandlerFactory, collisionDetectorProvider);
+        bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
+
+        OpenModeInitializer openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, equipmentActionExecutorProvider, gunActionExecutorProvider, playerRegistryProvider, statePersistenceHandlerProvider, entityDamageEventHandlerProvider);
         openModeInitializer.initialize();
 
-        ArgumentCaptor<EntityDamageEventHandler> entityDamageEventHandlerCaptor = ArgumentCaptor.forClass(EntityDamageEventHandler.class);
-        verify(eventDispatcher).registerEventHandler(eq(EntityDamageEvent.class), entityDamageEventHandlerCaptor.capture());
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(gameScope).runInScope(any(GameContext.class), runnableCaptor.capture());
+
+        runnableCaptor.getValue().run();
+
+        assertThat(gameContextProvider.getGameContext(GameKey.ofOpenMode())).hasValueSatisfying(gameContext ->
+                assertThat(gameContext.getType()).isEqualTo(GameContextType.OPEN_MODE)
+        );
+        assertThat(gameContextProvider.getGameKeyByEntityId(playerId)).hasValueSatisfying(gameKey ->
+                assertThat(gameKey).isEqualTo(GameKey.ofOpenMode())
+        );
+
+        verify(eventDispatcher).registerEventHandler(EntityDamageEvent.class, entityDamageEventHandler);
 
         verify(gamePlayer).setPassive(true);
         verify(statePersistenceHandler).loadPlayerState(gamePlayer);

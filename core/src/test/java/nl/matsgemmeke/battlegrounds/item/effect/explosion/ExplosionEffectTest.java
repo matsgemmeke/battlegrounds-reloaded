@@ -68,7 +68,7 @@ public class ExplosionEffectTest {
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(damageProcessor, targetFinder, properties, rangeProfile);
         effect.addTrigger(trigger);
         effect.prime(context);
         effect.activateInstantly();
@@ -80,7 +80,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void cancelActivationDoesNotDeactivateTriggersWhenNotPrimed() {
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(damageProcessor, targetFinder, properties, rangeProfile);
         effect.addTrigger(trigger);
         effect.cancelActivation();
 
@@ -91,7 +91,7 @@ public class ExplosionEffectTest {
     public void cancelActivationDeactivatesTriggersWhenPrimed() {
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(damageProcessor, targetFinder, properties, rangeProfile);
         effect.addTrigger(trigger);
         effect.prime(context);
         effect.cancelActivation();
@@ -104,7 +104,7 @@ public class ExplosionEffectTest {
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
         ItemEffectSource newSource = mock(ItemEffectSource.class);
 
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(damageProcessor, targetFinder, properties, rangeProfile);
         effect.prime(context);
         effect.deploy(newSource);
 
@@ -113,7 +113,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void deployDoesNothingIfEffectIsNotPrimedYet() {
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(damageProcessor, targetFinder, properties, rangeProfile);
 
         // This method currently has no side effects to verify, refactor later?
         assertThatCode(() -> effect.deploy(source)).doesNotThrowAnyException();
@@ -121,7 +121,7 @@ public class ExplosionEffectTest {
 
     @Test
     public void isPrimedReturnsFalseIfEffectWasNotPrimed() {
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(damageProcessor, targetFinder, properties, rangeProfile);
         boolean primed = effect.isPrimed();
 
         assertThat(primed).isFalse();
@@ -131,7 +131,7 @@ public class ExplosionEffectTest {
     public void isPrimedReturnsTrueIfEffectWasPrimed() {
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(damageProcessor, targetFinder, properties, rangeProfile);
         effect.prime(context);
         boolean primed = effect.isPrimed();
 
@@ -142,7 +142,7 @@ public class ExplosionEffectTest {
     public void primePrimesEffectActivationOnce() {
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(damageProcessor, targetFinder, properties, rangeProfile);
         effect.addTrigger(trigger);
         effect.prime(context);
         effect.prime(context);
@@ -184,7 +184,7 @@ public class ExplosionEffectTest {
 
         ExplosionProperties properties = new ExplosionProperties(POWER, SET_FIRE, BREAK_BLOCKS);
 
-        ExplosionEffect effect = new ExplosionEffect(properties, damageProcessor, rangeProfile, targetFinder);
+        ExplosionEffect effect = new ExplosionEffect(damageProcessor, targetFinder, properties, rangeProfile);
         effect.addTrigger(trigger);
         effect.prime(context);
 

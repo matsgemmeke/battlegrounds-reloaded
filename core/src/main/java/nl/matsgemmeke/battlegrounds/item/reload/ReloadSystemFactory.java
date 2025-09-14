@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ReloadingSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
 import org.jetbrains.annotations.NotNull;
@@ -29,11 +28,9 @@ public class ReloadSystemFactory {
      *
      * @param spec the reload specification
      * @param item the associated item
-     * @param audioEmitter the sound emitter for producing reload sounds effects
      * @return a new {@link ReloadSystem} instance
      */
-    @NotNull
-    public ReloadSystem create(@NotNull ReloadingSpec spec, @NotNull Reloadable item, @NotNull AudioEmitter audioEmitter) {
+    public ReloadSystem create(ReloadingSpec spec, Reloadable item) {
         ReloadSystemType reloadSystemType = ReloadSystemType.valueOf(spec.type);
         List<GameSound> reloadSounds = DefaultGameSound.parseSounds(spec.reloadSounds);
         long duration = spec.duration;
@@ -43,10 +40,10 @@ public class ReloadSystemFactory {
 
         switch (reloadSystemType) {
             case MAGAZINE -> {
-                return magazineReloadSystemFactory.create(properties, ammunitionStorage, audioEmitter);
+                return magazineReloadSystemFactory.create(properties, ammunitionStorage);
             }
             case MANUAL_INSERTION -> {
-                return manualInsertionReloadSystemFactory.create(properties, ammunitionStorage, audioEmitter);
+                return manualInsertionReloadSystemFactory.create(properties, ammunitionStorage);
             }
         }
 

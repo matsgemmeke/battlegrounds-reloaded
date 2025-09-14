@@ -21,6 +21,6 @@ public class ProjectileSpec {
     public String suppressedShotSounds;
 
     private enum ProjectileType {
-        BULLET, FIREBALL
+        FIREBALL, HITSCAN
     }
 }

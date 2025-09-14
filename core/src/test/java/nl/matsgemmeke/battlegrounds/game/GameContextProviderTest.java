@@ -1,13 +1,10 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
-import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -51,110 +48,28 @@ public class GameContextProviderTest {
     }
 
     @Test
-    public void getComponentThrowsGameKeyNotFoundExceptionIfGivenGameKeyIsNotRegistered() {
-        GameKey gameKey = GameKey.ofSession(1);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-
-        assertThrows(GameKeyNotFoundException.class, () -> contextProvider.getComponent(gameKey, TargetFinder.class));
-    }
-
-    @Test
-    public void getComponentThrowsGameComponentNotFoundExceptionIfComponentIsNotRegistered() {
-        GameKey gameKey = GameKey.ofSession(1);
-        Game game = mock(Game.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-
-        assertThrows(GameComponentNotFoundException.class, () -> contextProvider.getComponent(gameKey, TargetFinder.class));
-    }
-
-    @Test
-    public void getComponentReturnsComponentInstanceCorrespondingWithGivenComponentClass() {
-        GameKey gameKey = GameKey.ofSession(1);
-        Game game = mock(Game.class);
-        TargetFinder targetFinder = mock(TargetFinder.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
-
-        TargetFinder result = contextProvider.getComponent(gameKey, TargetFinder.class);
-
-        assertEquals(targetFinder, result);
-    }
-
-    @Test
-    public void getGameKeyReturnsCorrespondingGameKeyForGivenPlayer() {
-        Game game = mock(Game.class);
+    public void getGameContextReturnsOptionalContainingGameContextCorrespondingWithGivenGameKey() {
         GameKey gameKey = GameKey.ofOpenMode();
-        Player player = mock(Player.class);
+        GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
 
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.isRegistered(player)).thenReturn(true);
+        GameContextProvider gameContextProvider = new GameContextProvider();
+        gameContextProvider.addGameContext(gameKey, gameContext);
+        Optional<GameContext> result = gameContextProvider.getGameContext(gameKey);
 
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
-
-        GameKey result = contextProvider.getGameKey(player);
-
-        assertEquals(gameKey, result);
+        assertThat(result).hasValue(gameContext);
     }
 
     @Test
-    public void getGameKeyReturnsNullIfGivenPlayerIsNotInAnyGame() {
-        Game game = mock(Game.class);
+    public void getGameContextReturnsEmptyOptionalWhenNoMatchingGameContextsWereFound() {
         GameKey gameKey = GameKey.ofOpenMode();
-        Player player = mock(Player.class);
+        GameKey otherKey = GameKey.ofSession(1);
+        GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
 
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.isRegistered(player)).thenReturn(false);
+        GameContextProvider gameContextProvider = new GameContextProvider();
+        gameContextProvider.addGameContext(gameKey, gameContext);
+        Optional<GameContext> gameContextOptional = gameContextProvider.getGameContext(otherKey);
 
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
-
-        GameKey result = contextProvider.getGameKey(player);
-
-        assertNull(result);
-    }
-
-    @Test
-    public void getGameKeyReturnsCorrespondingGameKeyForGivenUUID() {
-        Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofOpenMode();
-        UUID uuid = UUID.randomUUID();
-
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.isRegistered(uuid)).thenReturn(true);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
-
-        GameKey result = contextProvider.getGameKey(uuid);
-
-        assertEquals(gameKey, result);
-    }
-
-    @Test
-    public void getGameKeyReturnsNullIfGivenUUIDIsNotRegisteredInAnyGame() {
-        Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofOpenMode();
-        UUID uuid = UUID.randomUUID();
-
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.isRegistered(uuid)).thenReturn(false);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, PlayerRegistry.class, playerRegistry);
-
-        GameKey result = contextProvider.getGameKey(uuid);
-
-        assertNull(result);
+        assertThat(gameContextOptional).isEmpty();
     }
 
     @Test
@@ -170,28 +85,25 @@ public class GameContextProviderTest {
     }
 
     @Test
-    public void registerComponentThrowsGameKeyNotFoundExceptionWhenRegisteringComponentWithGameKeyThatIsNotRegistered() {
-        GameKey gameKey = GameKey.ofSession(1);
-        TargetFinder targetFinder = mock(TargetFinder.class);
+    public void getGameKeyByEntityIdReturnsEmptyOptionalWhenNoLinkOfGivenEntityIdExists() {
+        UUID entityId = UUID.randomUUID();
 
         GameContextProvider contextProvider = new GameContextProvider();
+        Optional<GameKey> gameKeyOptional = contextProvider.getGameKeyByEntityId(entityId);
 
-        assertThrows(GameKeyNotFoundException.class, () -> contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder));
+        assertThat(gameKeyOptional).isEmpty();
     }
 
     @Test
-    public void registerComponentAddsGivenComponentToProvider() {
-        Game game = mock(Game.class);
-        GameKey gameKey = GameKey.ofSession(1);
-        TargetFinder targetFinder = mock(TargetFinder.class);
+    public void getGameKeyByEntityIdReturnsOptionalWithGameKeyLinkedToGivenEntityId() {
+        UUID entityId = UUID.randomUUID();
+        GameKey gameKey = GameKey.ofOpenMode();
 
         GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-        contextProvider.registerComponent(gameKey, TargetFinder.class, targetFinder);
+        contextProvider.registerEntity(entityId, gameKey);
+        Optional<GameKey> gameKeyOptional = contextProvider.getGameKeyByEntityId(entityId);
 
-        TargetFinder result = contextProvider.getComponent(gameKey, TargetFinder.class);
-
-        assertEquals(targetFinder, result);
+        assertThat(gameKeyOptional).hasValue(gameKey);
     }
 
     @Test
@@ -240,19 +152,5 @@ public class GameContextProviderTest {
         boolean sessionExists = contextProvider.sessionExists(id);
 
         assertTrue(sessionExists);
-    }
-
-    @Test
-    public void shutdownSavesOpenModeState() {
-        GameKey gameKey = GameKey.ofOpenMode();
-        OpenMode openMode = new OpenMode();
-        StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.assignOpenMode(openMode);
-        contextProvider.registerComponent(gameKey, StatePersistenceHandler.class, statePersistenceHandler);
-        contextProvider.shutdown();
-
-        verify(statePersistenceHandler).saveState();
     }
 }

@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.game.spawn;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,8 +19,6 @@ public interface SpawnPoint {
 
     /**
      * Called when a {@link GameEntity} is spawned on this spawn point.
-     *
-     * @param entity the entity that was spawned on the spawn point
      */
-    void onSpawn(@NotNull Entity entity);
+    void onSpawn();
 }

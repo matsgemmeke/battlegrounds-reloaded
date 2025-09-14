@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
@@ -38,10 +38,10 @@ public class SmokeScreenEffect extends BaseItemEffect {
 
     @Inject
     public SmokeScreenEffect(
+            @NotNull AudioEmitter audioEmitter,
+            @NotNull CollisionDetector collisionDetector,
             @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull SmokeScreenProperties properties,
-            @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull CollisionDetector collisionDetector
+            @Assisted @NotNull SmokeScreenProperties properties
     ) {
         this.properties = properties;
         this.audioEmitter = audioEmitter;

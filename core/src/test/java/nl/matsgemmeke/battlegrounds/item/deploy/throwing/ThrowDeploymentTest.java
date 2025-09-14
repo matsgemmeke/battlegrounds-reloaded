@@ -14,6 +14,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 public class ThrowDeploymentTest {
@@ -28,6 +30,25 @@ public class ThrowDeploymentTest {
     private static final double HEALTH = 20.0;
     private static final double VELOCITY = 1.5;
     private static final long COOLDOWN = 10L;
+
+    private AudioEmitter audioEmitter;
+
+    @BeforeEach
+    public void setUp() {
+        audioEmitter = mock(AudioEmitter.class);
+    }
+
+    @Test
+    public void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
+        Deployer deployer = mock(Deployer.class);
+        Entity deployerEntity = mock(Entity.class);
+
+        ThrowDeployment deployment = new ThrowDeployment(audioEmitter);
+
+        assertThatThrownBy(() -> deployment.perform(deployer, deployerEntity))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Cannot perform deployment without properties configured");
+    }
 
     @Test
     public void performReturnsNewInstanceOfThrowDeploymentObject() {
@@ -40,8 +61,7 @@ public class ThrowDeploymentTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack()).thenReturn(itemStack);
 
-        ThrowDeploymentProperties deploymentProperties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, HEALTH, VELOCITY, COOLDOWN);
-        AudioEmitter audioEmitter = mock(AudioEmitter.class);
+        ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, HEALTH, VELOCITY, COOLDOWN);
 
         World world = mock(World.class);
         Location deployLocation = new Location(world, 0, 0, 0, 100.0f, 0);
@@ -55,7 +75,8 @@ public class ThrowDeploymentTest {
         Item item = mock(Item.class);
         when(world.dropItem(deployLocation, itemStack)).thenReturn(item);
 
-        ThrowDeployment deployment = new ThrowDeployment(deploymentProperties, audioEmitter);
+        ThrowDeployment deployment = new ThrowDeployment(audioEmitter);
+        deployment.configureProperties(properties);
         DeploymentResult result = deployment.perform(deployer, entity);
 
         assertThat(result.object()).isInstanceOf(ThrowDeploymentObject.class);

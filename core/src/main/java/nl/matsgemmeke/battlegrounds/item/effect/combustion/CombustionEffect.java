@@ -5,8 +5,8 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -58,13 +58,13 @@ public class CombustionEffect extends BaseItemEffect {
 
     @Inject
     public CombustionEffect(
+            @NotNull AudioEmitter audioEmitter,
+            @NotNull CollisionDetector collisionDetector,
             @NotNull MetadataValueEditor metadataValueEditor,
+            @NotNull TargetFinder targetFinder,
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull CombustionProperties properties,
-            @Assisted @NotNull RangeProfile rangeProfile,
-            @Assisted @NotNull AudioEmitter audioEmitter,
-            @Assisted @NotNull CollisionDetector collisionDetector,
-            @Assisted @NotNull TargetFinder targetFinder
+            @Assisted @NotNull RangeProfile rangeProfile
     ) {
         this.properties = properties;
         this.rangeProfile = rangeProfile;

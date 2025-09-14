@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
@@ -15,7 +17,8 @@ public class SoundEffect extends BaseProjectileEffect {
     @NotNull
     private final List<GameSound> sounds;
 
-    public SoundEffect(@NotNull AudioEmitter audioEmitter, @NotNull List<GameSound> sounds) {
+    @Inject
+    public SoundEffect(@NotNull AudioEmitter audioEmitter, @Assisted @NotNull List<GameSound> sounds) {
         this.audioEmitter = audioEmitter;
         this.sounds = sounds;
     }

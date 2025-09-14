@@ -2,7 +2,8 @@ package nl.matsgemmeke.battlegrounds.game.damage;
 
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public enum DamageType {
 
@@ -31,17 +32,16 @@ public enum DamageType {
      */
     FIRE_DAMAGE;
 
-    @Nullable
-    public static DamageType map(@NotNull EntityDamageEvent.DamageCause cause) {
+    public static Optional<DamageType> map(@NotNull EntityDamageEvent.DamageCause cause) {
         switch (cause) {
             case ENTITY_ATTACK -> {
-                return ATTACK_DAMAGE;
+                return Optional.of(ATTACK_DAMAGE);
             }
             case ENTITY_EXPLOSION -> {
-                return EXPLOSIVE_DAMAGE;
+                return Optional.of(EXPLOSIVE_DAMAGE);
             }
             default -> {
-                return null;
+                return Optional.empty();
             }
         }
     }

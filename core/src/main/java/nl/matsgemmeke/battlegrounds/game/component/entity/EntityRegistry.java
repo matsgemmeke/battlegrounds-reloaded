@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface EntityRegistry<T extends GameEntity, S extends Entity> {
 
-    @Nullable
-    T findByEntity(@NotNull S entity);
+    Optional<T> findByEntity(@NotNull S entity);
 
     @Nullable
     T findByUUID(@NotNull UUID uuid);

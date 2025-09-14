@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.storage;
 
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -45,12 +44,12 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
 
     @Inject
     public OpenModeStatePersistenceHandler(
+            @NotNull EquipmentRegistry equipmentRegistry,
+            @NotNull GunRegistry gunRegistry,
             @Named("Battlegrounds") @NotNull Logger logger,
+            @NotNull PlayerRegistry playerRegistry,
             @NotNull PlayerStateStorage playerStateStorage,
-            @NotNull WeaponCreator weaponCreator,
-            @Assisted @NotNull EquipmentRegistry equipmentRegistry,
-            @Assisted @NotNull GunRegistry gunRegistry,
-            @Assisted @NotNull PlayerRegistry playerRegistry
+            @NotNull WeaponCreator weaponCreator
     ) {
         this.logger = logger;
         this.playerStateStorage = playerStateStorage;
@@ -101,11 +100,11 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     }
 
     public void savePlayerState(@NotNull GamePlayer gamePlayer) {
-        List<GunState> gunStates = gunRegistry.getAssignedItems(gamePlayer).stream()
+        List<GunState> gunStates = gunRegistry.getAssignedGuns(gamePlayer).stream()
                 .map(gun -> this.convertToGunState(gamePlayer, gun))
                 .flatMap(Optional::stream)
                 .toList();
-        List<EquipmentState> equipmentStates = equipmentRegistry.getAssignedItems(gamePlayer).stream()
+        List<EquipmentState> equipmentStates = equipmentRegistry.getAssignedEquipment(gamePlayer).stream()
                 .map(equipment -> this.convertToEquipmentState(gamePlayer, equipment))
                 .flatMap(Optional::stream)
                 .toList();

@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
+import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -67,7 +67,7 @@ public class HitscanLauncherTest {
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false);
         when(world.getBlockAt(hitLocation)).thenReturn(hitBlock);
 
-        HitscanLauncher launcher = new HitscanLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, itemEffect, targetFinder);
+        HitscanLauncher launcher = new HitscanLauncher(audioEmitter, collisionDetector, particleEffectSpawner, targetFinder, properties, itemEffect);
         launcher.launch(launchContext);
 
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
@@ -91,7 +91,7 @@ public class HitscanLauncherTest {
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false, true);
         when(world.getBlockAt(hitLocation)).thenReturn(hitBlock);
 
-        HitscanLauncher launcher = new HitscanLauncher(particleEffectSpawner, properties, audioEmitter, collisionDetector, itemEffect, targetFinder);
+        HitscanLauncher launcher = new HitscanLauncher(audioEmitter, collisionDetector, particleEffectSpawner, targetFinder, properties, itemEffect);
         launcher.launch(launchContext);
 
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);

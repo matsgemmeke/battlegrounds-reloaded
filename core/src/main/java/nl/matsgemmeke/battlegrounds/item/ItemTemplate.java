@@ -8,32 +8,43 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Class that defines a template for creating {@link ItemStack} instances for items.
  */
 public class ItemTemplate {
 
+    @NotNull
+    private final List<PersistentDataEntry<?, ?>> dataEntries;
+    @NotNull
+    private final Material material;
+    @NotNull
+    private final NamespacedKey key;
+    @NotNull
+    private final UUID templateId;
     private int damage;
-    @NotNull
-    private Material material;
-    @NotNull
-    private NamespacedKey key;
     @Nullable
     private TextTemplate displayNameTemplate;
-    @NotNull
-    private UUID templateId;
 
     public ItemTemplate(@NotNull UUID templateId, @NotNull NamespacedKey key, @NotNull Material material) {
         this.templateId = templateId;
         this.key = key;
         this.material = material;
+        this.dataEntries = new ArrayList<>();
+    }
+
+    /**
+     * Adds a persistent data entry to the template.
+     *
+     * @param dataEntry the data entry
+     */
+    public void addPersistentDataEntry(PersistentDataEntry<?, ?> dataEntry) {
+        dataEntries.add(dataEntry);
     }
 
     /**
@@ -109,9 +120,18 @@ public class ItemTemplate {
         }
 
         itemMeta.getPersistentDataContainer().set(key, new UUIDDataType(), templateId);
+
+        for (PersistentDataEntry<?, ?> dataEntry : dataEntries) {
+            this.applyDataEntry(itemMeta.getPersistentDataContainer(), dataEntry);
+        }
+
         itemStack.setItemMeta(itemMeta);
 
         return itemStack;
+    }
+
+    private <T, Z> void applyDataEntry(PersistentDataContainer container, PersistentDataEntry<T, Z> entry) {
+        container.set(entry.key(), entry.type(), entry.value());
     }
 
     /**

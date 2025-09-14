@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds;
 import com.google.inject.*;
 import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
@@ -14,29 +15,59 @@ import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.component.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.DefaultCollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.*;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.DefaultAudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.TargetFinderProvider;
+import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessorProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistryFactory;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.item.*;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandlerProvider;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandlerProvider;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistryProvider;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandler;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandlerFactory;
+import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandlerFactory;
+import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.gun.DefaultFirearmFactory;
+import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
+import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -105,16 +136,55 @@ public class BattlegroundsModule implements Module {
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(Singleton.class);
 
-        // Component bindings
-        binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class);
+        // Game scope bindings
+        GameScope gameScope = new GameScope();
 
-        binder.install(new FactoryModuleBuilder()
-                .implement(PlayerLifecycleHandler.class, OpenModePlayerLifecycleHandler.class)
-                .build(OpenModePlayerLifecycleHandlerFactory.class));
+        binder.bind(GameScope.class).toInstance(gameScope);
+        binder.bindScope(GameScoped.class, gameScope);
+
+        MapBinder<GameContextType, DamageProcessor> damageProcessorMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, DamageProcessor.class);
+        damageProcessorMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeDamageProcessor.class);
+
+        MapBinder<GameContextType, StatePersistenceHandler> statePersistenceHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, StatePersistenceHandler.class);
+        statePersistenceHandlerMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeStatePersistenceHandler.class);
+
+        MapBinder<GameContextType, TargetFinder> targetFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, TargetFinder.class);
+        targetFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeTargetFinder.class);
+
+        binder.bind(ActionExecutorRegistry.class).toProvider(ActionExecutorRegistryProvider.class).in(GameScoped.class);
+        binder.bind(ActionInvoker.class).in(GameScoped.class);
+        binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
+        binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);
+        binder.bind(DamageProcessor.class).toProvider(DamageProcessorProvider.class).in(GameScoped.class);
+        binder.bind(DeploymentInfoProvider.class).to(DefaultDeploymentInfoProvider.class).in(GameScoped.class);
+        binder.bind(EquipmentRegistry.class).to(DefaultEquipmentRegistry.class).in(GameScoped.class);
+        binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
+        binder.bind(GunInfoProvider.class).to(DefaultGunInfoProvider.class).in(GameScoped.class);
+        binder.bind(GunRegistry.class).to(DefaultGunRegistry.class).in(GameScoped.class);
+        binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class);
+        binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
+        binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
+        binder.bind(ProjectileHitActionRegistry.class).in(GameScoped.class);
+        binder.bind(RespawnHandler.class).toProvider(RespawnHandlerProvider.class).in(GameScoped.class);
+        binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
+        binder.bind(StatePersistenceHandler.class).toProvider(StatePersistenceHandlerProvider.class).in(GameScoped.class);
+        binder.bind(TargetFinder.class).toProvider(TargetFinderProvider.class).in(GameScoped.class);
+
+        binder.bind(ActionExecutor.class)
+                .annotatedWith(Names.named("Equipment"))
+                .to(EquipmentActionExecutor.class)
+                .in(GameScoped.class);
+        binder.bind(ActionExecutor.class)
+                .annotatedWith(Names.named("Gun"))
+                .to(GunActionExecutor.class)
+                .in(GameScoped.class);
 
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
                 .build(DeploymentHandlerFactory.class));
+
+        binder.install(new FactoryModuleBuilder()
+                .build(DefaultFirearmFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)
@@ -124,6 +194,15 @@ public class BattlegroundsModule implements Module {
                 .implement(ItemEffect.class, CombustionEffect.class)
                 .build(CombustionEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffect.class, DamageEffect.class)
+                .build(DamageEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffect.class, ExplosionEffect.class)
+                .build(ExplosionEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffect.class, FlashEffect.class)
+                .build(FlashEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffect.class, GunFireSimulationEffect.class)
                 .build(GunFireSimulationEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
@@ -131,12 +210,11 @@ public class BattlegroundsModule implements Module {
                 .build(SmokeScreenEffectFactory.class));
 
         binder.install(new FactoryModuleBuilder()
-                .implement(PlayerRegistry.class, DefaultPlayerRegistry.class)
-                .build(DefaultPlayerRegistryFactory.class));
+                .implement(ProjectileEffect.class, SoundEffect.class)
+                .build(SoundEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
-                .implement(StatePersistenceHandler.class, OpenModeStatePersistenceHandler.class)
-                .build(OpenModeStatePersistenceHandlerFactory.class));
-
+                .implement(ProjectileEffect.class, StickEffect.class)
+                .build(StickEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileEffect.class, TrailEffect.class)
                 .build(TrailEffectFactory.class));

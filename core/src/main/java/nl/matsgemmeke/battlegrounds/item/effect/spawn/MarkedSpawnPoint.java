@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkedSpawnPoint implements SpawnPoint {
@@ -24,7 +23,7 @@ public class MarkedSpawnPoint implements SpawnPoint {
         return location;
     }
 
-    public void onSpawn(@NotNull Entity entity) {
+    public void onSpawn() {
         if (source.exists()) {
             source.remove();
         }

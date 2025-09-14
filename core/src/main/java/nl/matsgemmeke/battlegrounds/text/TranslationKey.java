@@ -12,6 +12,7 @@ public enum TranslationKey {
     HELP_MENU_TITLE("commands.help-menu-title"),
     MAIN_LOBBY_SET("admin.main-lobby-set"),
     NOT_IN_OPEN_MODE("errors.not-in-open-mode"),
+    OPEN_MODE_NOT_EXISTS("errors.open-mode.not-exists"),
     RELOAD_FAILED("admin.reload-failed"),
     RELOAD_SUCCESS("admin.reload-success"),
     SESSION_ALREADY_EXISTS("admin.session-already-exists"),

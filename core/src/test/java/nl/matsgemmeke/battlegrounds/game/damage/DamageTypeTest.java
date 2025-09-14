@@ -1,31 +1,32 @@
 package nl.matsgemmeke.battlegrounds.game.damage;
 
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DamageTypeTest {
 
     @Test
-    public void shouldMapEntityAttackToEntityAttack() {
-        DamageType cause = DamageType.map(EntityDamageEvent.DamageCause.ENTITY_ATTACK);
+    public void mapReturnsOptionalWithEntityAttackDamageTypeWhenGivenEntityAttackDamageCause() {
+        Optional<DamageType> damageTypeOptional = DamageType.map(DamageCause.ENTITY_ATTACK);
 
-        assertEquals(DamageType.ATTACK_DAMAGE, cause);
+        assertThat(damageTypeOptional).hasValue(DamageType.ATTACK_DAMAGE);
     }
 
     @Test
-    public void shouldMapEntityExplosionToNormalExplosion() {
-        DamageType cause = DamageType.map(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION);
+    public void mapReturnsOptionalWithNormalExplosionDamageTypeWhenGivenEntityExplosionDamageCause() {
+        Optional<DamageType> damageTypeOptional = DamageType.map(DamageCause.ENTITY_EXPLOSION);
 
-        assertEquals(DamageType.EXPLOSIVE_DAMAGE, cause);
+        assertThat(damageTypeOptional).hasValue(DamageType.EXPLOSIVE_DAMAGE);
     }
 
     @Test
-    public void shouldReturnNullForDamageCausesThatCannotBeMapped() {
-        DamageType cause = DamageType.map(EntityDamageEvent.DamageCause.VOID);
+    public void mapReturnsEmptyOptionalWhenGivenUnmappedDamageCause() {
+        Optional<DamageType> damageTypeOptional = DamageType.map(DamageCause.VOID);
 
-        assertNull(cause);
+        assertThat(damageTypeOptional).isEmpty();
     }
 }
