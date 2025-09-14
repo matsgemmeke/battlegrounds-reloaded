@@ -23,6 +23,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -148,13 +150,21 @@ public class OpenModeTargetFinderTest {
         World world = mock(World.class);
         Location findingLocation = new Location(world, 1.0, 1.0, 1.0);
         Location playerLocation = new Location(world, 2.0, 1.0, 1.0);
+        Location entityLocation = new Location(world, 2.0, 1.0, 1.0);
         UUID playerUniqueId = UUID.randomUUID();
+        UUID entityUniqueId = UUID.randomUUID();
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getLocation()).thenReturn(playerLocation);
         when(gamePlayer.getUniqueId()).thenReturn(playerUniqueId);
 
+        Entity entity = mock(Entity.class);
+        when(entity.getLocation()).thenReturn(entityLocation);
+        when(entity.getType()).thenReturn(EntityType.ZOMBIE);
+        when(entity.getUniqueId()).thenReturn(entityUniqueId);
+
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
+        when(world.getNearbyEntities(eq(findingLocation), anyDouble(), anyDouble(), anyDouble())).thenReturn(List.of(entity));
 
         TargetQuery targetQuery = new TargetQuery()
                 .forLocation(findingLocation)
@@ -163,7 +173,7 @@ public class OpenModeTargetFinderTest {
         OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
         List<UUID> targets = targetFinder.findTargets(targetQuery);
 
-        assertThat(targets).containsExactly(playerUniqueId);
+        assertThat(targets).containsExactly(playerUniqueId, entityUniqueId);
     }
 
     @Test

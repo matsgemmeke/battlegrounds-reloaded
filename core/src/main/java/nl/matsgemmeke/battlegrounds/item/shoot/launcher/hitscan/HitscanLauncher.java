@@ -92,8 +92,10 @@ public class HitscanLauncher implements ProjectileLauncher {
         TargetQuery query = this.createTargetQuery(entity.getUniqueId(), projectileLocation);
 
         if (targetFinder.containsTargets(query)) {
+            Location sourceLocation = projectileLocation.clone();
             World world = projectileLocation.getBlock().getWorld();
-            StaticSource source = new StaticSource(projectileLocation, world);
+            StaticSource source = new StaticSource(sourceLocation, world);
+
             ItemEffectContext context = new ItemEffectContext(entity, source, startingLocation);
 
             itemEffect.prime(context);
