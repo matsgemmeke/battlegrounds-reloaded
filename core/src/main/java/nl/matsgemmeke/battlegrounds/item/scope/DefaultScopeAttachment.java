@@ -1,40 +1,72 @@
 package nl.matsgemmeke.battlegrounds.item.scope;
 
-import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.List;
 
 public class DefaultScopeAttachment implements ScopeAttachment {
 
     @NotNull
     private final AudioEmitter audioEmitter;
     private float currentMagnification;
+    private int magnificationIndex;
     @NotNull
-    private Iterator<Float> settingsCycle;
+    private List<Float> magnifications;
     @NotNull
-    private final ScopeProperties properties;
+    private List<GameSound> useSounds;
+    @NotNull
+    private List<GameSound> stopSounds;
+    @NotNull
+    private List<GameSound> changeMagnificationSounds;
     @Nullable
     private ScopeUser currentUser;
     @Nullable
     private ScopeZoomEffect currentEffect;
 
-    public DefaultScopeAttachment(@NotNull ScopeProperties properties, @NotNull AudioEmitter audioEmitter) {
-        this.properties = properties;
+    @Inject
+    public DefaultScopeAttachment(@NotNull AudioEmitter audioEmitter) {
         this.audioEmitter = audioEmitter;
-        this.settingsCycle = properties.magnifications().iterator();
-        this.currentMagnification = settingsCycle.next();
+        this.useSounds = Collections.emptyList();
+        this.stopSounds = Collections.emptyList();
+        this.changeMagnificationSounds = Collections.emptyList();
+        this.magnifications = Collections.emptyList();
+        this.magnificationIndex = 0;
+    }
+
+    public void configureChangeMagnificationSounds(List<GameSound> changeMagnificationSounds) {
+        this.changeMagnificationSounds = changeMagnificationSounds;
+    }
+
+    public void configureMagnifications(List<Float> magnifications) {
+        this.magnifications = magnifications;
+
+        currentMagnification = magnifications.get(0);
+    }
+
+    public void configureStopSounds(List<GameSound> stopSounds) {
+        this.stopSounds = stopSounds;
+    }
+
+    public void configureUseSounds(List<GameSound> useSounds) {
+        this.useSounds = useSounds;
     }
 
     public boolean applyEffect(@NotNull ScopeUser scopeUser) {
+        if (magnifications.isEmpty()) {
+            return false;
+        }
+
         // Do not apply the effect if one is already being used
         if (currentEffect != null) {
             return false;
         }
 
-        audioEmitter.playSounds(properties.useSounds(), scopeUser.getLocation());
+        audioEmitter.playSounds(useSounds, scopeUser.getLocation());
 
         currentEffect = new ScopeZoomEffect(scopeUser, currentMagnification);
         currentEffect.apply();
@@ -49,19 +81,15 @@ public class DefaultScopeAttachment implements ScopeAttachment {
     }
 
     public boolean nextMagnification() {
-        if (properties.magnifications().size() <= 1) {
+        if (magnifications.size() <= 1) {
             return false;
         }
 
-        // Obtain a new iterator if all values have been used
-        if (!settingsCycle.hasNext()) {
-            settingsCycle = properties.magnifications().iterator();
-        }
-
-        currentMagnification = settingsCycle.next();
+        magnificationIndex = (magnificationIndex + 1) % magnifications.size();
+        currentMagnification = magnifications.get(magnificationIndex);
 
         if (currentEffect != null && currentUser != null) {
-            audioEmitter.playSounds(properties.changeMagnificationSounds(), currentUser.getLocation());
+            audioEmitter.playSounds(changeMagnificationSounds, currentUser.getLocation());
             currentEffect.setMagnification(currentMagnification);
             currentEffect.update();
         }
@@ -74,7 +102,7 @@ public class DefaultScopeAttachment implements ScopeAttachment {
             return false;
         }
 
-        audioEmitter.playSounds(properties.stopSounds(), currentUser.getLocation());
+        audioEmitter.playSounds(stopSounds, currentUser.getLocation());
 
         currentEffect.remove();
         currentUser.removeEffect(currentEffect);

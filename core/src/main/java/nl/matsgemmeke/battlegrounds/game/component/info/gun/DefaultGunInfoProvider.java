@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.game.component.info.gun;
 
+import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.ItemContainer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,12 +15,13 @@ import java.util.UUID;
 public class DefaultGunInfoProvider implements GunInfoProvider {
 
     @NotNull
-    private final ItemContainer<Gun, GunHolder> gunContainer;
+    private final GunRegistry gunRegistry;
     @NotNull
     private final PlayerRegistry playerRegistry;
 
-    public DefaultGunInfoProvider(@NotNull ItemContainer<Gun, GunHolder> gunContainer, @NotNull PlayerRegistry playerRegistry) {
-        this.gunContainer = gunContainer;
+    @Inject
+    public DefaultGunInfoProvider(@NotNull GunRegistry gunRegistry, @NotNull PlayerRegistry playerRegistry) {
+        this.gunRegistry = gunRegistry;
         this.playerRegistry = playerRegistry;
     }
 
@@ -31,7 +32,7 @@ public class DefaultGunInfoProvider implements GunInfoProvider {
             return Optional.empty();
         }
 
-        Gun gun = gunContainer.getAssignedItems(gamePlayer).stream().findFirst().orElse(null);
+        Gun gun = gunRegistry.getAssignedGuns(gamePlayer).stream().findFirst().orElse(null);
 
         if (gun == null) {
             return Optional.empty();

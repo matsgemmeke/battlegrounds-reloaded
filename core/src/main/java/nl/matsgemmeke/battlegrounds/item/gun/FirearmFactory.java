@@ -1,12 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
@@ -22,7 +22,6 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
-import nl.matsgemmeke.battlegrounds.item.scope.ScopeProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -51,11 +50,11 @@ public class FirearmFactory {
     @NotNull
     private final FirearmControlsFactory controlsFactory;
     @NotNull
-    private final GameContextProvider contextProvider;
-    @NotNull
     private final GunRegistry gunRegistry;
     @NotNull
     private final NamespacedKeyCreator keyCreator;
+    @NotNull
+    private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     @NotNull
     private final ReloadSystemFactory reloadSystemFactory;
     @NotNull
@@ -65,19 +64,19 @@ public class FirearmFactory {
     public FirearmFactory(
             @NotNull BattlegroundsConfiguration config,
             @NotNull DefaultFirearmFactory defaultGunFactory,
-            @NotNull GameContextProvider contextProvider,
             @NotNull FirearmControlsFactory controlsFactory,
             @NotNull GunRegistry gunRegistry,
             @NotNull NamespacedKeyCreator keyCreator,
+            @NotNull Provider<DefaultScopeAttachment> scopeAttachmentProvider,
             @NotNull ReloadSystemFactory reloadSystemFactory,
             @NotNull ShootHandlerFactory shootHandlerFactory
     ) {
         this.config = config;
         this.defaultGunFactory = defaultGunFactory;
-        this.contextProvider = contextProvider;
         this.controlsFactory = controlsFactory;
         this.gunRegistry = gunRegistry;
         this.keyCreator = keyCreator;
+        this.scopeAttachmentProvider = scopeAttachmentProvider;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
     }
@@ -103,8 +102,6 @@ public class FirearmFactory {
 
     @NotNull
     private Firearm createInstance(@NotNull GunSpec spec, @NotNull GameKey gameKey) {
-        AudioEmitter audioEmitter = contextProvider.getComponent(gameKey, AudioEmitter.class);
-
         double headshotDamageMultiplier = this.getHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
 
         DefaultFirearm firearm = defaultGunFactory.create(spec.id);
@@ -145,8 +142,11 @@ public class FirearmFactory {
             List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSpec.stopSounds);
             List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSpec.changeMagnificationSounds);
 
-            ScopeProperties properties = new ScopeProperties(magnifications, useSounds, stopSounds, changeMagnificationSounds);
-            DefaultScopeAttachment scopeAttachment = new DefaultScopeAttachment(properties, audioEmitter);
+            DefaultScopeAttachment scopeAttachment = scopeAttachmentProvider.get();
+            scopeAttachment.configureMagnifications(magnifications);
+            scopeAttachment.configureUseSounds(useSounds);
+            scopeAttachment.configureStopSounds(stopSounds);
+            scopeAttachment.configureChangeMagnificationSounds(changeMagnificationSounds);
 
             firearm.setScopeAttachment(scopeAttachment);
         }

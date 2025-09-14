@@ -28,6 +28,8 @@ import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoP
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.*;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandlerProvider;
@@ -48,6 +50,8 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
@@ -155,6 +159,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(DeploymentInfoProvider.class).to(DefaultDeploymentInfoProvider.class).in(GameScoped.class);
         binder.bind(EquipmentRegistry.class).to(DefaultEquipmentRegistry.class).in(GameScoped.class);
         binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
+        binder.bind(GunInfoProvider.class).to(DefaultGunInfoProvider.class).in(GameScoped.class);
         binder.bind(GunRegistry.class).to(DefaultGunRegistry.class).in(GameScoped.class);
         binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class);
         binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
@@ -188,6 +193,9 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffect.class, CombustionEffect.class)
                 .build(CombustionEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffect.class, DamageEffect.class)
+                .build(DamageEffectFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffect.class, ExplosionEffect.class)
                 .build(ExplosionEffectFactory.class));

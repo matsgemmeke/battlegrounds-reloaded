@@ -100,7 +100,7 @@ public class OpenModeInitializer {
 
         // Info provider components
         DeploymentInfoProvider deploymentInfoProvider = new DefaultDeploymentInfoProvider(equipmentRegistry);
-        GunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(openMode.getGunContainer(), playerRegistry);
+        GunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunRegistry, playerRegistry);
 
         // All other components
         ActionHandler actionHandler = new DefaultActionHandler(openMode, playerRegistry);
