@@ -60,7 +60,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         List<GameEntity> targets = new ArrayList<>();
 
         for (Entity entity : entities) {
-            GamePlayer gamePlayer = playerRegistry.findByUUID(entity.getUniqueId());
+            GamePlayer gamePlayer = playerRegistry.findByUniqueId(entity.getUniqueId()).orElse(null);
 
             if (gamePlayer != null && gamePlayer.getEntity().getUniqueId().equals(entityId)) {
                 continue;
@@ -119,7 +119,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         List<GameEntity> targets = new ArrayList<>();
 
         for (Entity entity : entities) {
-            GamePlayer gamePlayer = playerRegistry.findByUUID(entity.getUniqueId());
+            GamePlayer gamePlayer = playerRegistry.findByUniqueId(entity.getUniqueId()).orElse(null);
 
             if (gamePlayer != null && !gamePlayer.isPassive()) {
                 targets.add(gamePlayer);

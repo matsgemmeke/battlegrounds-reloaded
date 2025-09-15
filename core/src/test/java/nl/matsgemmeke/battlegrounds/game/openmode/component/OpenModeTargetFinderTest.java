@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -90,15 +91,15 @@ public class OpenModeTargetFinderTest {
 
     @Test
     public void findEnemyTargetsReturnsNearbyTargetsButWithoutEntitiesContainingTheGivenEntityId() {
-        UUID entityId = UUID.randomUUID();
-        UUID targetId = UUID.randomUUID();
+        UUID entityUniqueId = UUID.randomUUID();
+        UUID targetUniqueId = UUID.randomUUID();
         double range = 0.1;
 
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(entityId);
+        when(player.getUniqueId()).thenReturn(entityUniqueId);
 
         Player targetPlayer = mock(Player.class);
-        when(targetPlayer.getUniqueId()).thenReturn(targetId);
+        when(targetPlayer.getUniqueId()).thenReturn(targetUniqueId);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
@@ -111,11 +112,11 @@ public class OpenModeTargetFinderTest {
 
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(player, targetPlayer));
 
-        when(playerRegistry.findByUUID(entityId)).thenReturn(gamePlayer);
-        when(playerRegistry.findByUUID(targetId)).thenReturn(target);
+        when(playerRegistry.findByUniqueId(entityUniqueId)).thenReturn(Optional.of(gamePlayer));
+        when(playerRegistry.findByUniqueId(targetUniqueId)).thenReturn(Optional.of(target));
 
         OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
-        Collection<GameEntity> targets = targetFinder.findEnemyTargets(entityId, location, range);
+        Collection<GameEntity> targets = targetFinder.findEnemyTargets(entityUniqueId, location, range);
 
         assertEquals(1, targets.size());
         assertTrue(targets.contains(target));
@@ -262,24 +263,24 @@ public class OpenModeTargetFinderTest {
 
     @Test
     public void findTargetsReturnsListOfNearbyPlayers() {
-        UUID entityId = UUID.randomUUID();
-        UUID targetId = UUID.randomUUID();
+        UUID entityUniqueId = UUID.randomUUID();
+        UUID targetUniqueId = UUID.randomUUID();
         World world = mock(World.class);
 
         Location location = new Location(world, 1, 1, 1);
         double range = 0.1;
 
         Entity targetEntity = mock(Entity.class);
-        when(targetEntity.getUniqueId()).thenReturn(targetId);
+        when(targetEntity.getUniqueId()).thenReturn(targetUniqueId);
 
         GamePlayer target = mock(GamePlayer.class);
         when(target.isPassive()).thenReturn(false);
 
-        when(playerRegistry.findByUUID(targetId)).thenReturn(target);
+        when(playerRegistry.findByUniqueId(targetUniqueId)).thenReturn(Optional.of(target));
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(targetEntity));
 
         OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
-        List<GameEntity> targets = targetFinder.findTargets(entityId, location, range);
+        List<GameEntity> targets = targetFinder.findTargets(entityUniqueId, location, range);
 
         assertEquals(1, targets.size());
         assertEquals(target, targets.get(0));
@@ -287,24 +288,24 @@ public class OpenModeTargetFinderTest {
 
     @Test
     public void findTargetsReturnsEmptyListIfFoundPlayersArePassive() {
-        UUID entityId = UUID.randomUUID();
-        UUID targetId = UUID.randomUUID();
+        UUID entityUniqueId = UUID.randomUUID();
+        UUID targetUniqueId = UUID.randomUUID();
         World world = mock(World.class);
 
         Location location = new Location(world, 1, 1, 1);
         double range = 0.1;
 
         Entity targetEntity = mock(Entity.class);
-        when(targetEntity.getUniqueId()).thenReturn(targetId);
+        when(targetEntity.getUniqueId()).thenReturn(targetUniqueId);
 
         GamePlayer target = mock(GamePlayer.class);
         when(target.isPassive()).thenReturn(true);
 
-        when(playerRegistry.findByUUID(targetId)).thenReturn(target);
+        when(playerRegistry.findByUniqueId(entityUniqueId)).thenReturn(Optional.of(target));
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(targetEntity));
 
         OpenModeTargetFinder targetFinder = new OpenModeTargetFinder(deploymentInfoProvider, playerRegistry);
-        List<GameEntity> targets = targetFinder.findTargets(entityId, location, range);
+        List<GameEntity> targets = targetFinder.findTargets(entityUniqueId, location, range);
 
         assertTrue(targets.isEmpty());
     }

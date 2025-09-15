@@ -19,6 +19,8 @@ import static org.mockito.Mockito.when;
 
 public class DefaultGunInfoProviderTest {
 
+    private static final UUID UNIQUE_ID = UUID.randomUUID();
+
     private GunRegistry gunRegistry;
     private PlayerRegistry playerRegistry;
 
@@ -30,25 +32,22 @@ public class DefaultGunInfoProviderTest {
 
     @Test
     public void getGunFireSimulationInfoReturnsEmptyOptionalWhenPlayerRegistryDoesNotKnowGivenEntityId() {
-        UUID entityId = UUID.randomUUID();
-
-        when(playerRegistry.findByUUID(entityId)).thenReturn(null);
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
 
         DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunRegistry, playerRegistry);
-        Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId);
+        Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(UNIQUE_ID);
 
         assertThat(gunFireSimulationInfo).isEmpty();
     }
 
     @Test
     public void getGunFireSimulationInfoReturnsEmptyOptionalWhenFoundGunHolderDoesNotHaveGuns() {
-        UUID entityId = UUID.randomUUID();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(playerRegistry.findByUUID(entityId)).thenReturn(gamePlayer);
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
 
         DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunRegistry, playerRegistry);
-        Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId);
+        Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(UNIQUE_ID);
 
         assertThat(gunFireSimulationInfo).isEmpty();
     }
@@ -65,7 +64,7 @@ public class DefaultGunInfoProviderTest {
         when(gun.getShotSounds()).thenReturn(shotSounds);
 
         when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
-        when(playerRegistry.findByUUID(entityId)).thenReturn(gamePlayer);
+        when(playerRegistry.findByUniqueId(entityId)).thenReturn(Optional.of(gamePlayer));
 
         DefaultGunInfoProvider gunInfoProvider = new DefaultGunInfoProvider(gunRegistry, playerRegistry);
         Optional<GunFireSimulationInfo> gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId);

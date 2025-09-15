@@ -1,13 +1,12 @@
 package nl.matsgemmeke.battlegrounds.game.component.player;
 
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public interface PlayerLifecycleHandler {
 
-    void handlePlayerJoin(@NotNull Player player);
+    void handlePlayerJoin(Player player);
 
-    void handlePlayerLeave(@NotNull UUID playerUuid);
+    void handlePlayerLeave(UUID uniqueId);
 }
