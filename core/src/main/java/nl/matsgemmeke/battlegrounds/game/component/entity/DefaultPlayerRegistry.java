@@ -43,9 +43,8 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         return Optional.empty();
     }
 
-    @Nullable
-    public GamePlayer findByUUID(@NotNull UUID uuid) {
-        return playerContainer.getEntity(uuid);
+    public Optional<GamePlayer> findByUniqueId(UUID uuid) {
+        return Optional.ofNullable(playerContainer.getEntity(uuid));
     }
 
     @NotNull

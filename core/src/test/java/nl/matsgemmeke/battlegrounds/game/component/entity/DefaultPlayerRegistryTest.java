@@ -18,6 +18,7 @@ import static org.mockito.Mockito.*;
 public class DefaultPlayerRegistryTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final UUID PLAYER_UNIQUE_ID = UUID.randomUUID();
 
     private DefaultGamePlayerFactory gamePlayerFactory;
     private GameContextProvider gameContextProvider;
@@ -62,11 +63,9 @@ public class DefaultPlayerRegistryTest {
     }
 
     @Test
-    public void findByUUIDReturnsMatchingEntity() {
-        UUID uuid = UUID.randomUUID();
-
+    public void findByUniqueIdReturnsMatchingEntity() {
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
@@ -75,9 +74,9 @@ public class DefaultPlayerRegistryTest {
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
-        GamePlayer result = playerRegistry.findByUUID(uuid);
+        Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID);
 
-        assertThat(gamePlayer).isEqualTo(result);
+        assertThat(gamePlayerOptional).hasValue(gamePlayer);
     }
 
     @Test
@@ -147,7 +146,7 @@ public class DefaultPlayerRegistryTest {
         playerRegistry.registerEntity(player);
         playerRegistry.deregister(playerUuid);
 
-        assertThat(playerRegistry.findByUUID(playerUuid)).isNull();
+        assertThat(playerRegistry.findByUniqueId(playerUuid)).isEmpty();
     }
 
     @Test

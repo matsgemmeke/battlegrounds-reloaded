@@ -36,7 +36,7 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
         this.statePersistenceHandler = statePersistenceHandler;
     }
 
-    public void handlePlayerJoin(@NotNull Player player) {
+    public void handlePlayerJoin(Player player) {
         if (playerRegistry.isRegistered(player)) {
             return;
         }
@@ -49,8 +49,8 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
         statePersistenceHandler.loadPlayerState(gamePlayer);
     }
 
-    public void handlePlayerLeave(@NotNull UUID playerUuid) {
-        GamePlayer gamePlayer = playerRegistry.findByUUID(playerUuid);
+    public void handlePlayerLeave(UUID uniqueId) {
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(uniqueId).orElse(null);
 
         if (gamePlayer == null) {
             return;
@@ -58,6 +58,6 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
 
         statePersistenceHandler.savePlayerState(gamePlayer);
         itemLifecycleHandler.cleanupItems(gamePlayer);
-        playerRegistry.deregister(playerUuid);
+        playerRegistry.deregister(uniqueId);
     }
 }

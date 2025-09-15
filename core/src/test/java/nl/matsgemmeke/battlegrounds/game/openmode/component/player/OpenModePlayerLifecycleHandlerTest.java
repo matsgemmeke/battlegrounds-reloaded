@@ -9,11 +9,14 @@ import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
 public class OpenModePlayerLifecycleHandlerTest {
+
+    private static final UUID PLAYER_UNIQUE_ID = UUID.randomUUID();
 
     private BattlegroundsConfiguration configuration;
     private ItemLifecycleHandler itemLifecycleHandler;
@@ -58,12 +61,10 @@ public class OpenModePlayerLifecycleHandlerTest {
 
     @Test
     public void handlePlayerLeaveDoesNotDeregisterPlayerWhenNotRegistered() {
-        UUID playerUuid = UUID.randomUUID();
-
-        when(playerRegistry.findByUUID(playerUuid)).thenReturn(null);
+        when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
         OpenModePlayerLifecycleHandler playerLifecycleHandler = new OpenModePlayerLifecycleHandler(configuration, itemLifecycleHandler, playerRegistry, statePersistenceHandler);
-        playerLifecycleHandler.handlePlayerLeave(playerUuid);
+        playerLifecycleHandler.handlePlayerLeave(PLAYER_UNIQUE_ID);
 
         verify(playerRegistry, never()).deregister(any(UUID.class));
         verifyNoInteractions(itemLifecycleHandler);
@@ -72,16 +73,15 @@ public class OpenModePlayerLifecycleHandlerTest {
 
     @Test
     public void handlePlayerLeaveDeregistersPlayerAndSavesState() {
-        UUID playerUuid = UUID.randomUUID();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        when(playerRegistry.findByUUID(playerUuid)).thenReturn(gamePlayer);
+        when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
 
         OpenModePlayerLifecycleHandler playerLifecycleHandler = new OpenModePlayerLifecycleHandler(configuration, itemLifecycleHandler, playerRegistry, statePersistenceHandler);
-        playerLifecycleHandler.handlePlayerLeave(playerUuid);
+        playerLifecycleHandler.handlePlayerLeave(PLAYER_UNIQUE_ID);
 
         verify(statePersistenceHandler).savePlayerState(gamePlayer);
         verify(itemLifecycleHandler).cleanupItems(gamePlayer);
-        verify(playerRegistry).deregister(playerUuid);
+        verify(playerRegistry).deregister(PLAYER_UNIQUE_ID);
     }
 }

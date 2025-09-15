@@ -25,8 +25,8 @@ public class DefaultGunInfoProvider implements GunInfoProvider {
         this.playerRegistry = playerRegistry;
     }
 
-    public Optional<GunFireSimulationInfo> getGunFireSimulationInfo(UUID entityId) {
-        GamePlayer gamePlayer = playerRegistry.findByUUID(entityId);
+    public Optional<GunFireSimulationInfo> getGunFireSimulationInfo(UUID uniqueId) {
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(uniqueId).orElse(null);
 
         if (gamePlayer == null) {
             return Optional.empty();
