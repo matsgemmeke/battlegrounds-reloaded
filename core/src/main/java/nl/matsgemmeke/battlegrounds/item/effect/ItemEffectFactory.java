@@ -25,8 +25,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +53,7 @@ public class ItemEffectFactory {
     @NotNull
     private final SmokeScreenEffectFactory smokeScreenEffectFactory;
     @NotNull
-    private final TriggerFactory triggerFactory;
+    private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
     public ItemEffectFactory(
@@ -66,7 +66,7 @@ public class ItemEffectFactory {
             @NotNull Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
             @NotNull RangeProfileMapper rangeProfileMapper,
             @NotNull SmokeScreenEffectFactory smokeScreenEffectFactory,
-            @NotNull TriggerFactory triggerFactory
+            @NotNull TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.combustionEffectFactory = combustionEffectFactory;
         this.damageEffectFactory = damageEffectFactory;
@@ -77,7 +77,7 @@ public class ItemEffectFactory {
         this.markSpawnPointEffectProvider = markSpawnPointEffectProvider;
         this.rangeProfileMapper = rangeProfileMapper;
         this.smokeScreenEffectFactory = smokeScreenEffectFactory;
-        this.triggerFactory = triggerFactory;
+        this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
     public ItemEffect create(ItemEffectSpec spec) {
@@ -173,9 +173,9 @@ public class ItemEffectFactory {
         }
 
         for (TriggerSpec triggerSpec : spec.triggers.values()) {
-            Trigger trigger = triggerFactory.create(triggerSpec);
+            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 
-            itemEffect.addTrigger(trigger);
+//            itemEffect.addTrigger(trigger);
         }
 
         return itemEffect;

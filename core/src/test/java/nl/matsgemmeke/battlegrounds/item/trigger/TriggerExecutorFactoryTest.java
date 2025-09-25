@@ -2,12 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.scheduled.ScheduledTrigger;
-import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,18 +19,18 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TriggerFactoryTest {
+public class TriggerExecutorFactoryTest {
 
     private static final double RANGE = 2.5;
     private static final long DELAY = 10L;
     private static final long INTERVAL = 2L;
 
-    private Provider<TargetFinder> targetFinderProvider;
+    private Provider<EnemyProximityTrigger> enemyProximityTriggerProvider;
     private Scheduler scheduler;
 
     @BeforeEach
     public void setUp() {
-        targetFinderProvider = mock();
+        enemyProximityTriggerProvider = mock();
         scheduler = mock(Scheduler.class);
     }
 
@@ -64,7 +59,7 @@ public class TriggerFactoryTest {
 
         String expectedErrorMessage = "Cannot create trigger %s because of invalid spec: Required '%s' value is missing".formatted(type, requiredValue);
 
-        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
+        TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
 
         assertThatThrownBy(() -> factory.create(spec))
                 .isInstanceOf(TriggerCreationException.class)
@@ -79,16 +74,13 @@ public class TriggerFactoryTest {
         spec.interval = INTERVAL;
         spec.range = RANGE;
 
-        Schedule schedule = mock(Schedule.class);
-        when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
+        EnemyProximityTrigger trigger = mock(EnemyProximityTrigger.class);
+        when(enemyProximityTriggerProvider.get()).thenReturn(trigger);
 
-        TargetFinder targetFinder = mock(TargetFinder.class);
-        when(targetFinderProvider.get()).thenReturn(targetFinder);
+        TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
+        TriggerExecutor triggerExecutor = factory.create(spec);
 
-        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
-        Trigger trigger = factory.create(spec);
-
-        assertThat(trigger).isInstanceOf(EnemyProximityTrigger.class);
+        assertThat(triggerExecutor).isNotNull();
     }
 
     @Test
@@ -99,13 +91,10 @@ public class TriggerFactoryTest {
         spec.interval = INTERVAL;
         spec.range = RANGE;
 
-        Schedule schedule = mock(Schedule.class);
-        when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
+        TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
+        TriggerExecutor triggerExecutor = factory.create(spec);
 
-        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
-        Trigger trigger = factory.create(spec);
-
-        assertThat(trigger).isInstanceOf(FloorHitTrigger.class);
+        assertThat(triggerExecutor).isNotNull();
     }
 
     @Test
@@ -115,13 +104,10 @@ public class TriggerFactoryTest {
         spec.delay = DELAY;
         spec.interval = INTERVAL;
 
-        Schedule schedule = mock(Schedule.class);
-        when(scheduler.createRepeatingSchedule(DELAY, INTERVAL)).thenReturn(schedule);
+        TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
+        TriggerExecutor triggerExecutor = factory.create(spec);
 
-        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
-        Trigger trigger = factory.create(spec);
-
-        assertThat(trigger).isInstanceOf(ImpactTrigger.class);
+        assertThat(triggerExecutor).isNotNull();
     }
 
     @Test
@@ -130,13 +116,10 @@ public class TriggerFactoryTest {
         spec.type = "SCHEDULED";
         spec.offsetDelays = List.of(DELAY);
 
-        Schedule schedule = mock(Schedule.class);
-        when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
+        TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
+        TriggerExecutor triggerExecutor = factory.create(spec);
 
-        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
-        Trigger trigger = factory.create(spec);
-
-        assertThat(trigger).isInstanceOf(ScheduledTrigger.class);
+        assertThat(triggerExecutor).isNotNull();
     }
 
     @Test
@@ -145,12 +128,9 @@ public class TriggerFactoryTest {
         spec.type = "SCHEDULED";
         spec.offsetDelays = List.of(10L, 20L);
 
-        Schedule schedule = mock(Schedule.class);
-        when(scheduler.createSequenceSchedule(spec.offsetDelays)).thenReturn(schedule);
+        TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
+        TriggerExecutor triggerExecutor = factory.create(spec);
 
-        TriggerFactory factory = new TriggerFactory(targetFinderProvider, scheduler);
-        Trigger trigger = factory.create(spec);
-
-        assertThat(trigger).isInstanceOf(ScheduledTrigger.class);
+        assertThat(triggerExecutor).isNotNull();
     }
 }

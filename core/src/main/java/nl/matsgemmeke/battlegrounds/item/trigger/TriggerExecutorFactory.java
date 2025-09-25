@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.trigger;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
@@ -14,21 +13,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
-public class TriggerFactory {
+public class TriggerExecutorFactory {
 
     @NotNull
-    private final Provider<TargetFinder> targetFinderProvider;
+    private final Provider<EnemyProximityTrigger> enemyProximityTriggerProvider;
     @NotNull
     private final Scheduler scheduler;
 
     @Inject
-    public TriggerFactory(@NotNull Provider<TargetFinder> targetFinderProvider, @NotNull Scheduler scheduler) {
-        this.targetFinderProvider = targetFinderProvider;
+    public TriggerExecutorFactory(@NotNull Provider<EnemyProximityTrigger> enemyProximityTriggerProvider, @NotNull Scheduler scheduler) {
+        this.enemyProximityTriggerProvider = enemyProximityTriggerProvider;
         this.scheduler = scheduler;
     }
 
-    public Trigger create(TriggerSpec spec) {
+    public TriggerExecutor create(TriggerSpec spec) {
         TriggerType triggerType = TriggerType.valueOf(spec.type);
 
         switch (triggerType) {
@@ -37,38 +37,45 @@ public class TriggerFactory {
                 long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
                 double range = this.validateSpecVar(spec.range, "range", triggerType);
 
-                Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
-                TargetFinder targetFinder = targetFinderProvider.get();
+                EnemyProximityTrigger trigger = enemyProximityTriggerProvider.get();
+                trigger.setCheckingRange(range);
 
-                return new EnemyProximityTrigger(schedule, targetFinder, range);
+                Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
+
+                return new TriggerExecutor(trigger, scheduleSupplier);
             }
             case FLOOR_HIT -> {
                 long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
                 long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
-                Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
 
-                return new FloorHitTrigger(schedule);
+                FloorHitTrigger trigger = new FloorHitTrigger();
+                Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
+
+                return new TriggerExecutor(trigger, scheduleSupplier);
             }
             case IMPACT -> {
                 Long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
                 Long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
-                Schedule schedule = scheduler.createRepeatingSchedule(delay, interval);
 
-                return new ImpactTrigger(schedule);
+                ImpactTrigger trigger = new ImpactTrigger();
+                Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
+
+                return new TriggerExecutor(trigger, scheduleSupplier);
             }
             case SCHEDULED -> {
                 List<Long> offsetDelays = this.validateSpecVar(spec.offsetDelays, "offsetDelays", triggerType);
-                Schedule schedule;
 
+                ScheduledTrigger trigger = new ScheduledTrigger();
+                Supplier<Schedule> scheduleSupplier;
                 boolean continuous = offsetDelays.size() > 1;
 
                 if (continuous) {
-                    schedule = scheduler.createSequenceSchedule(offsetDelays);
+                    scheduleSupplier = () -> scheduler.createSequenceSchedule(offsetDelays);
                 } else {
-                    schedule = scheduler.createSingleRunSchedule(offsetDelays.get(0));
+                    scheduleSupplier = () -> scheduler.createSingleRunSchedule(offsetDelays.get(0));
                 }
 
-                return new ScheduledTrigger(schedule, continuous);
+                return new TriggerExecutor(trigger, scheduleSupplier);
             }
         }
 
