@@ -3,8 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect.stick;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
@@ -22,7 +21,8 @@ public class StickEffectTest {
     private Entity deployerEntity;
     private List<GameSound> stickSounds;
     private Projectile projectile;
-    private Trigger trigger;
+    private TriggerExecutor triggerExecutor;
+    private TriggerRun triggerRun;
 
     @BeforeEach
     public void setUp() {
@@ -30,20 +30,43 @@ public class StickEffectTest {
         deployerEntity = mock(Entity.class);
         stickSounds = List.of(mock(GameSound.class));
         projectile = mock(Projectile.class);
-        trigger = mock(Trigger.class);
+        triggerRun = mock(TriggerRun.class);
+
+        triggerExecutor = mock(TriggerExecutor.class);
+        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
+    }
+
+    @Test
+    public void onLaunchStartsTriggerRunThatCancelWhenProjectileNoLongerExists() {
+        when(projectile.exists()).thenReturn(false);
+
+        StickEffect effect = new StickEffect(audioEmitter, stickSounds);
+        effect.addTriggerExecutor(triggerExecutor);
+        effect.onLaunch(deployerEntity, projectile);
+
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(triggerRun).addObserver(triggerObserverCaptor.capture());
+
+        triggerObserverCaptor.getValue().onActivate();
+
+        verify(triggerRun).cancel();
+        verify(projectile, never()).setGravity(anyBoolean());
+        verify(projectile, never()).setVelocity(any(Vector.class));
     }
 
     @Test
     public void onLaunchStartsTriggerWithObserverThatSetsProjectileVelocityToZero() {
         Location projectileLocation = new Location(null, 1, 1, 1);
+
+        when(projectile.exists()).thenReturn(true);
         when(projectile.getLocation()).thenReturn(projectileLocation);
 
         StickEffect effect = new StickEffect(audioEmitter, stickSounds);
-        effect.addTrigger(trigger);
+        effect.addTriggerExecutor(triggerExecutor);
         effect.onLaunch(deployerEntity, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
+        verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
         triggerObserverCaptor.getValue().onActivate();
 

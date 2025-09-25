@@ -51,11 +51,6 @@ public class TriggerRun {
     }
 
     private void performTriggerCheck() {
-        if (!context.target().exists()) {
-            this.cancel();
-            return;
-        }
-
         if (!trigger.activates(context)) {
             return;
         }

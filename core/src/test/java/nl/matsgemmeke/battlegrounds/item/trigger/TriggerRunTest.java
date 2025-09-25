@@ -54,27 +54,6 @@ public class TriggerRunTest {
     }
 
     @Test
-    public void startStartsScheduleWithTaskThatCancelsScheduleWhenTriggerTargetDoesNotExist() {
-        TriggerObserver observer = mock(TriggerObserver.class);
-
-        when(target.exists()).thenReturn(false);
-
-        TriggerRun triggerRun = new TriggerRun(schedule, trigger, context);
-        triggerRun.addObserver(observer);
-        triggerRun.start();
-
-        ArgumentCaptor<ScheduleTask> taskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
-        verify(schedule).addTask(taskCaptor.capture());
-
-        taskCaptor.getValue().run();
-
-        verify(schedule).start();
-        verify(schedule).start();
-        verify(schedule).clearTasks();
-        verifyNoInteractions(observer);
-    }
-
-    @Test
     public void startStartsScheduleWithTaskThatDoesNotNotifyObserversWhenTriggerDoesNotActivate() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
