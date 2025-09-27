@@ -5,8 +5,8 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
@@ -34,7 +34,7 @@ public class HitscanLauncher implements ProjectileLauncher {
     @NotNull
     private final HitscanProperties properties;
     @NotNull
-    private final ItemEffect itemEffect;
+    private final ItemEffectNew itemEffect;
     @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
@@ -47,7 +47,7 @@ public class HitscanLauncher implements ProjectileLauncher {
             @NotNull ParticleEffectSpawner particleEffectSpawner,
             @NotNull TargetFinder targetFinder,
             @Assisted @NotNull HitscanProperties properties,
-            @Assisted @NotNull ItemEffect itemEffect
+            @Assisted @NotNull ItemEffectNew itemEffect
     ) {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
@@ -98,8 +98,7 @@ public class HitscanLauncher implements ProjectileLauncher {
 
             ItemEffectContext context = new ItemEffectContext(entity, source, startingLocation);
 
-            itemEffect.prime(context);
-            itemEffect.activateInstantly();
+            itemEffect.perform(context);
             return true;
         }
 

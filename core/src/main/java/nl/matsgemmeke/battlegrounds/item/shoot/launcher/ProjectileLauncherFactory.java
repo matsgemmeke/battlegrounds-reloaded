@@ -8,6 +8,9 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectPerformanceFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballProperties;
@@ -21,6 +24,8 @@ import java.util.List;
 public class ProjectileLauncherFactory {
 
     @NotNull
+    private final DamageEffectPerformanceFactory damageEffectPerformanceFactory;
+    @NotNull
     private final FireballLauncherFactory fireballLauncherFactory;
     @NotNull
     private final HitscanLauncherFactory hitscanLauncherFactory;
@@ -31,11 +36,13 @@ public class ProjectileLauncherFactory {
 
     @Inject
     public ProjectileLauncherFactory(
+            @NotNull DamageEffectPerformanceFactory damageEffectPerformanceFactory,
             @NotNull FireballLauncherFactory fireballLauncherFactory,
             @NotNull HitscanLauncherFactory hitscanLauncherFactory,
             @NotNull ItemEffectFactory itemEffectFactory,
             @NotNull ParticleEffectMapper particleEffectMapper
     ) {
+        this.damageEffectPerformanceFactory = damageEffectPerformanceFactory;
         this.fireballLauncherFactory = fireballLauncherFactory;
         this.hitscanLauncherFactory = hitscanLauncherFactory;
         this.itemEffectFactory = itemEffectFactory;
@@ -66,7 +73,7 @@ public class ProjectileLauncherFactory {
                 }
 
                 HitscanProperties properties = new HitscanProperties(shotSounds, trajectoryParticleEffect);
-                ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
+                ItemEffectNew itemEffect = new DamageEffectNew(damageEffectPerformanceFactory);
 
                 return hitscanLauncherFactory.create(properties, itemEffect);
             }

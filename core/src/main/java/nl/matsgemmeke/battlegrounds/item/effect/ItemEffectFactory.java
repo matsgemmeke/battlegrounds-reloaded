@@ -175,7 +175,7 @@ public class ItemEffectFactory {
         for (TriggerSpec triggerSpec : spec.triggers.values()) {
             TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 
-//            itemEffect.addTrigger(trigger);
+//            itemEffect.addTriggerExecutor(triggerExecutor);
         }
 
         return itemEffect;

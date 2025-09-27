@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -34,7 +35,7 @@ public class HitscanLauncherTest {
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
     private HitscanProperties properties;
-    private ItemEffect itemEffect;
+    private ItemEffectNew itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
     private TargetFinder targetFinder;
 
@@ -43,7 +44,7 @@ public class HitscanLauncherTest {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
         properties = new HitscanProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT);
-        itemEffect = mock(ItemEffect.class);
+        itemEffect = mock(ItemEffectNew.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         targetFinder = mock(TargetFinder.class);
     }
@@ -95,14 +96,13 @@ public class HitscanLauncherTest {
         launcher.launch(launchContext);
 
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
-        verify(itemEffect).prime(itemEffectContextCaptor.capture());
+        verify(itemEffect).perform(itemEffectContextCaptor.capture());
 
         ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
         assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
         assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
         assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
 
-        verify(itemEffect).activateInstantly();
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
     }
 }
