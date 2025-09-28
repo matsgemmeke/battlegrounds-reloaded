@@ -6,7 +6,7 @@ public interface ItemEffectNew {
 
     void addTriggerExecutor(TriggerExecutor triggerExecutor);
 
-    ItemEffectPerformance perform(ItemEffectContext context);
+    ItemEffectPerformance start(ItemEffectContext context);
 
     void undoPerformances();
 }

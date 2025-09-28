@@ -45,7 +45,12 @@ public class DamageEffectPerformance implements ItemEffectPerformance {
         triggerRuns.add(triggerRun);
     }
 
-    public void start(ItemEffectContext context) {
+    public boolean isPerforming() {
+        // A damage effect is instant, therefore this effect will never perform for a longer period of time
+        return false;
+    }
+
+    public void perform(ItemEffectContext context) {
         Entity entity = context.getEntity();
         UUID entityId = entity.getUniqueId();
         Location initiationLocation = context.getInitiationLocation();

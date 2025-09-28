@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
@@ -77,6 +76,7 @@ public class HitscanLauncherTest {
 
     @Test
     public void launchProducesProjectileStepUntilTargetsAreFound() {
+
         Entity entity = mock(Entity.class);
         ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
         World world = mock(World.class);
@@ -96,7 +96,7 @@ public class HitscanLauncherTest {
         launcher.launch(launchContext);
 
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
-        verify(itemEffect).perform(itemEffectContextCaptor.capture());
+        verify(itemEffect).start(itemEffectContextCaptor.capture());
 
         ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
         assertThat(itemEffectContext.getEntity()).isEqualTo(entity);

@@ -6,7 +6,9 @@ public interface ItemEffectPerformance {
 
     void addTriggerRun(TriggerRun triggerRun);
 
-    void start(ItemEffectContext context);
+    boolean isPerforming();
+
+    void perform(ItemEffectContext context);
 
     void cancel();
 }
