@@ -51,6 +51,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformance;
+import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformanceFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectPerformance;
@@ -199,6 +201,9 @@ public class BattlegroundsModule implements Module {
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffect.class, DamageEffect.class)
                 .build(DamageEffectFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .implement(ItemEffectPerformance.class, CombustionEffectPerformance.class)
+                .build(CombustionEffectPerformanceFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(ItemEffectPerformance.class, DamageEffectPerformance.class)
                 .build(DamageEffectPerformanceFactory.class));

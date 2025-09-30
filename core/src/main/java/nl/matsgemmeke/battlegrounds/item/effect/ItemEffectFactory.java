@@ -95,10 +95,11 @@ public class ItemEffectFactory {
                 boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
                 boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
 
-                CombustionProperties properties = new CombustionProperties(activationSounds, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
+                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
                 RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
+
+                CombustionProperties properties = new CombustionProperties(activationSounds, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
 
                 itemEffect = combustionEffectFactory.create(properties, rangeProfile);
             }

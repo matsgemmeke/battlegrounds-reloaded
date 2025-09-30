@@ -8,31 +8,18 @@ import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.*;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import org.jetbrains.annotations.NotNull;
 
 public class DamageEffectNew extends BaseItemEffectNew {
 
-    @NotNull
     private final DamageEffectPerformanceFactory damageEffectPerformanceFactory;
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameKey gameKey;
-    @NotNull
     private final GameScope gameScope;
     private DamageType damageType;
     private RangeProfile rangeProfile;
 
     @Inject
-    public DamageEffectNew(
-            @NotNull DamageEffectPerformanceFactory damageEffectPerformanceFactory,
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameKey gameKey,
-            @NotNull GameScope gameScope
-    ) {
+    public DamageEffectNew(DamageEffectPerformanceFactory damageEffectPerformanceFactory, GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope) {
         this.damageEffectPerformanceFactory = damageEffectPerformanceFactory;
         this.gameContextProvider = gameContextProvider;
         this.gameKey = gameKey;
@@ -60,15 +47,7 @@ public class DamageEffectNew extends BaseItemEffectNew {
         DamageProperties properties = new DamageProperties(rangeProfile, damageType);
         ItemEffectPerformance performance = gameScope.supplyInScope(gameContext, () -> damageEffectPerformanceFactory.create(properties));
 
-        for (TriggerExecutor triggerExecutor : triggerExecutors) {
-            TriggerContext triggerContext = new TriggerContext(context.getEntity(), context.getSource());
-            TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-
-            performance.addTriggerRun(triggerRun);
-        }
-
-        performance.perform(context);
-        performances.add(performance);
+        this.startPerformance(performance, context);
         return performance;
     }
 

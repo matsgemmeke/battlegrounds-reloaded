@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -87,7 +88,7 @@ class DamageEffectNewTest {
     }
 
     @Test
-    void startCreatesAndStartsNewDamageEffectPerformance() {
+    void startCreatesAndStartsTriggerRunsWithObserversThatStartsPerformance() {
         DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         ItemEffectContext context = this.createContext();
@@ -103,9 +104,9 @@ class DamageEffectNewTest {
             return performanceSupplier.get();
         });
 
+        damageEffect.addTriggerExecutor(triggerExecutor);
         damageEffect.setDamageType(DAMAGE_TYPE);
         damageEffect.setRangeProfile(RANGE_PROFILE);
-        damageEffect.addTriggerExecutor(triggerExecutor);
         damageEffect.start(context);
 
         ArgumentCaptor<DamageProperties> damagePropertiesCaptor = ArgumentCaptor.forClass(DamageProperties.class);
@@ -113,6 +114,10 @@ class DamageEffectNewTest {
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
+
+        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
+        verify(triggerRun).addObserver(triggerObserverCaptor.capture());
+        triggerObserverCaptor.getValue().onActivate();
 
         DamageProperties damageProperties = damagePropertiesCaptor.getValue();
         assertThat(damageProperties.damageType()).isEqualTo(DAMAGE_TYPE);
@@ -122,7 +127,36 @@ class DamageEffectNewTest {
         assertThat(triggerContext.entity()).isEqualTo(context.getEntity());
         assertThat(triggerContext.target()).isEqualTo(context.getSource());
 
+        verify(triggerRun).start();
         verify(performance).addTriggerRun(triggerRun);
+        verify(performance).perform(context);
+    }
+
+    @Test
+    void startCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+        DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
+        ItemEffectContext context = this.createContext();
+
+        when(damageEffectPerformanceFactory.create(any(DamageProperties.class))).thenReturn(performance);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+
+        damageEffect.setDamageType(DAMAGE_TYPE);
+        damageEffect.setRangeProfile(RANGE_PROFILE);
+        damageEffect.start(context);
+
+        ArgumentCaptor<DamageProperties> damagePropertiesCaptor = ArgumentCaptor.forClass(DamageProperties.class);
+        verify(damageEffectPerformanceFactory).create(damagePropertiesCaptor.capture());
+
+        DamageProperties damageProperties = damagePropertiesCaptor.getValue();
+        assertThat(damageProperties.damageType()).isEqualTo(DAMAGE_TYPE);
+        assertThat(damageProperties.rangeProfile()).isEqualTo(RANGE_PROFILE);
+
+        verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).perform(context);
     }
 
