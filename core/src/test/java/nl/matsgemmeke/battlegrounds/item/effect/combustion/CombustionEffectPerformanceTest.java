@@ -110,7 +110,6 @@ class CombustionEffectPerformanceTest {
         UUID entityId = UUID.randomUUID();
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
         Schedule cancelSchedule = mock(Schedule.class);
-        TriggerRun triggerRun = mock(TriggerRun.class);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         when(repeatingSchedule.isRunning()).thenReturn(true);
@@ -156,7 +155,6 @@ class CombustionEffectPerformanceTest {
         when(source.getWorld()).thenReturn(world);
         when(targetFinder.findTargets(entityId, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(target));
 
-        performance.addTriggerRun(triggerRun);
         performance.perform(context);
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
