@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
@@ -38,14 +37,14 @@ class SoundNotificationEffectNewTest {
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenNotificationSoundsAreNotSet() {
-        assertThatThrownBy(() -> soundNotificationEffect.start(CONTEXT))
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenNotificationSoundsAreNotSet() {
+        assertThatThrownBy(() -> soundNotificationEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform sound notification effect: notification sounds not set");
     }
 
     @Test
-    void startCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
         TriggerRun triggerRun = mock(TriggerRun.class);
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
@@ -53,7 +52,7 @@ class SoundNotificationEffectNewTest {
 
         soundNotificationEffect.addTriggerExecutor(triggerExecutor);
         soundNotificationEffect.setNotificationSounds(NOTIFICATION_SOUNDS);
-        ItemEffectPerformance performance = soundNotificationEffect.start(CONTEXT);
+        soundNotificationEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -66,17 +65,7 @@ class SoundNotificationEffectNewTest {
         assertThat(triggerContext.entity()).isEqualTo(CONTEXT.getEntity());
         assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
 
-        assertThat(performance).isInstanceOf(SoundNotificationEffectPerformance.class);
-
         verify(triggerRun).start();
-    }
-
-    @Test
-    void startCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
-        soundNotificationEffect.setNotificationSounds(NOTIFICATION_SOUNDS);
-        ItemEffectPerformance performance = soundNotificationEffect.start(CONTEXT);
-
-        assertThat(performance).isInstanceOf(SoundNotificationEffectPerformance.class);
     }
 
     private static ItemEffectContext createContext() {

@@ -53,25 +53,25 @@ class FlashEffectNewTest {
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> flashEffect.start(CONTEXT))
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> flashEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform flash effect: properties not set");
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         flashEffect.setProperties(PROPERTIES);
 
-        assertThatThrownBy(() -> flashEffect.start(CONTEXT))
+        assertThatThrownBy(() -> flashEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform flash effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
-    void startCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
         FlashEffectPerformance performance = mock(FlashEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
@@ -88,7 +88,7 @@ class FlashEffectNewTest {
 
         flashEffect.addTriggerExecutor(triggerExecutor);
         flashEffect.setProperties(PROPERTIES);
-        flashEffect.start(CONTEXT);
+        flashEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -107,7 +107,7 @@ class FlashEffectNewTest {
     }
 
     @Test
-    void startCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
         FlashEffectPerformance performance = mock(FlashEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
@@ -119,7 +119,7 @@ class FlashEffectNewTest {
         });
 
         flashEffect.setProperties(PROPERTIES);
-        flashEffect.start(CONTEXT);
+        flashEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).perform(CONTEXT);

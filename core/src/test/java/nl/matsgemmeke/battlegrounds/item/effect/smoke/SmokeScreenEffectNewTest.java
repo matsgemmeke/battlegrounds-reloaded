@@ -53,25 +53,25 @@ class SmokeScreenEffectNewTest {
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> smokeScreenEffect.start(CONTEXT))
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> smokeScreenEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform smoke screen effect: properties not set");
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         smokeScreenEffect.setProperties(PROPERTIES);
 
-        assertThatThrownBy(() -> smokeScreenEffect.start(CONTEXT))
+        assertThatThrownBy(() -> smokeScreenEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform smoke screen effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
-    void startCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
         SmokeScreenEffectPerformance performance = mock(SmokeScreenEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
@@ -88,7 +88,7 @@ class SmokeScreenEffectNewTest {
 
         smokeScreenEffect.addTriggerExecutor(triggerExecutor);
         smokeScreenEffect.setProperties(PROPERTIES);
-        smokeScreenEffect.start(CONTEXT);
+        smokeScreenEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -107,7 +107,7 @@ class SmokeScreenEffectNewTest {
     }
 
     @Test
-    void startCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
         SmokeScreenEffectPerformance performance = mock(SmokeScreenEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
@@ -119,7 +119,7 @@ class SmokeScreenEffectNewTest {
         when(smokeScreenEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
         smokeScreenEffect.setProperties(PROPERTIES);
-        smokeScreenEffect.start(CONTEXT);
+        smokeScreenEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).perform(CONTEXT);

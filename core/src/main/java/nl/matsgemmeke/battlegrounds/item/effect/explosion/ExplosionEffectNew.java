@@ -29,7 +29,7 @@ public class ExplosionEffectNew extends BaseItemEffectNew {
     }
 
     @Override
-    public ItemEffectPerformance start(@NotNull ItemEffectContext context) {
+    public void startPerformance(@NotNull ItemEffectContext context) {
         if (properties == null) {
             throw new ItemEffectPerformanceException("Unable to perform explosion effect: properties not set");
         }
@@ -43,6 +43,5 @@ public class ExplosionEffectNew extends BaseItemEffectNew {
         ItemEffectPerformance performance = gameScope.supplyInScope(gameContext, () -> explosionEffectPerformanceFactory.create(properties));
 
         this.startPerformance(performance, context);
-        return performance;
     }
 }

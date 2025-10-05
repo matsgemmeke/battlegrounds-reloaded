@@ -31,7 +31,7 @@ public class SmokeScreenEffectNew extends BaseItemEffectNew {
     }
 
     @Override
-    public ItemEffectPerformance start(ItemEffectContext context) {
+    public void startPerformance(ItemEffectContext context) {
         if (properties == null) {
             throw new ItemEffectPerformanceException("Unable to perform smoke screen effect: properties not set");
         }
@@ -45,6 +45,5 @@ public class SmokeScreenEffectNew extends BaseItemEffectNew {
         ItemEffectPerformance performance = gameScope.supplyInScope(gameContext, () -> smokeScreenEffectPerformanceFactory.create(properties));
 
         this.startPerformance(performance, context);
-        return performance;
     }
 }

@@ -53,16 +53,16 @@ class MarkSpawnPointEffectNewTest {
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> markSpawnPointEffect.start(CONTEXT))
+        assertThatThrownBy(() -> markSpawnPointEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform mark spawn point effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
-    void startCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
         MarkSpawnPointEffectPerformance performance = mock(MarkSpawnPointEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
@@ -78,7 +78,7 @@ class MarkSpawnPointEffectNewTest {
         when(markSpawnPointEffectPerformanceProvider.get()).thenReturn(performance);
 
         markSpawnPointEffect.addTriggerExecutor(triggerExecutor);
-        markSpawnPointEffect.start(CONTEXT);
+        markSpawnPointEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -97,7 +97,7 @@ class MarkSpawnPointEffectNewTest {
     }
 
     @Test
-    void startCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
         MarkSpawnPointEffectPerformance performance = mock(MarkSpawnPointEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
@@ -108,7 +108,7 @@ class MarkSpawnPointEffectNewTest {
         });
         when(markSpawnPointEffectPerformanceProvider.get()).thenReturn(performance);
 
-        markSpawnPointEffect.start(CONTEXT);
+        markSpawnPointEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).perform(CONTEXT);

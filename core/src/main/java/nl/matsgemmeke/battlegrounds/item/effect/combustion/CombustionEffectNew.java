@@ -36,7 +36,7 @@ public class CombustionEffectNew extends BaseItemEffectNew {
     }
 
     @Override
-    public ItemEffectPerformance start(ItemEffectContext context) {
+    public void startPerformance(ItemEffectContext context) {
         if (properties == null) {
             throw new ItemEffectPerformanceException("Unable to perform combustion effect: properties not set");
         }
@@ -50,6 +50,5 @@ public class CombustionEffectNew extends BaseItemEffectNew {
         ItemEffectPerformance performance = gameScope.supplyInScope(gameContext, () -> combustionEffectPerformanceFactory.create(properties));
 
         this.startPerformance(performance, context);
-        return performance;
     }
 }

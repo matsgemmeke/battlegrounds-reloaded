@@ -27,7 +27,8 @@ public class DamageEffectNew extends BaseItemEffectNew {
         this.properties = properties;
     }
 
-    public ItemEffectPerformance start(ItemEffectContext context) {
+    @Override
+    public void startPerformance(ItemEffectContext context) {
         if (properties == null) {
             throw new ItemEffectPerformanceException("Unable to perform damage effect: properties not set");
         }
@@ -41,6 +42,5 @@ public class DamageEffectNew extends BaseItemEffectNew {
         ItemEffectPerformance performance = gameScope.supplyInScope(gameContext, () -> damageEffectPerformanceFactory.create(properties));
 
         this.startPerformance(performance, context);
-        return performance;
     }
 }

@@ -51,29 +51,29 @@ class DamageEffectNewTest {
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
         ItemEffectContext context = this.createContext();
 
-        assertThatThrownBy(() -> damageEffect.start(context))
+        assertThatThrownBy(() -> damageEffect.startPerformance(context))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform damage effect: properties not set");
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         ItemEffectContext context = this.createContext();
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         damageEffect.setProperties(PROPERTIES);
 
-        assertThatThrownBy(() -> damageEffect.start(context))
+        assertThatThrownBy(() -> damageEffect.startPerformance(context))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform damage effect: No game context for game key OPEN-MODE can be found");
     }
 
     @Test
-    void startCreatesAndStartsTriggerRunsWithObserversThatStartsPerformance() {
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartsPerformance() {
         DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         ItemEffectContext context = this.createContext();
@@ -91,7 +91,7 @@ class DamageEffectNewTest {
 
         damageEffect.addTriggerExecutor(triggerExecutor);
         damageEffect.setProperties(PROPERTIES);
-        damageEffect.start(context);
+        damageEffect.startPerformance(context);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -110,7 +110,7 @@ class DamageEffectNewTest {
     }
 
     @Test
-    void startCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
         DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         ItemEffectContext context = this.createContext();
@@ -123,7 +123,7 @@ class DamageEffectNewTest {
         });
 
         damageEffect.setProperties(PROPERTIES);
-        damageEffect.start(context);
+        damageEffect.startPerformance(context);
 
         ArgumentCaptor<DamageProperties> damagePropertiesCaptor = ArgumentCaptor.forClass(DamageProperties.class);
         verify(damageEffectPerformanceFactory).create(damagePropertiesCaptor.capture());
@@ -151,8 +151,8 @@ class DamageEffectNewTest {
         });
 
         damageEffect.setProperties(PROPERTIES);
-        damageEffect.start(context);
-        damageEffect.start(context);
+        damageEffect.startPerformance(context);
+        damageEffect.startPerformance(context);
         damageEffect.undoPerformances();
 
         verify(performancePerforming).cancel();

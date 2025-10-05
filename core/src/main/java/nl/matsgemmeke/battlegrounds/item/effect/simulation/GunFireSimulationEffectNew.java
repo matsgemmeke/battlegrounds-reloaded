@@ -31,7 +31,7 @@ public class GunFireSimulationEffectNew extends BaseItemEffectNew {
     }
 
     @Override
-    public ItemEffectPerformance start(ItemEffectContext context) {
+    public void startPerformance(ItemEffectContext context) {
         if (properties == null) {
             throw new ItemEffectPerformanceException("Unable to perform gun fire simulation effect: properties not set");
         }
@@ -45,6 +45,5 @@ public class GunFireSimulationEffectNew extends BaseItemEffectNew {
         ItemEffectPerformance performance = gameScope.supplyInScope(gameContext, () -> gunFireSimulationEffectPerformanceFactory.create(properties));
 
         this.startPerformance(performance, context);
-        return performance;
     }
 }

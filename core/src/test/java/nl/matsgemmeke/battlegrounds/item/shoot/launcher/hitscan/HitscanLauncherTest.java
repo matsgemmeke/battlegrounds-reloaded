@@ -96,7 +96,7 @@ public class HitscanLauncherTest {
         launcher.launch(launchContext);
 
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
-        verify(itemEffect).start(itemEffectContextCaptor.capture());
+        verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
         assertThat(itemEffectContext.getEntity()).isEqualTo(entity);

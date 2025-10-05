@@ -53,25 +53,25 @@ class ExplosionEffectNewTest {
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> explosionEffect.start(CONTEXT))
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> explosionEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform explosion effect: properties not set");
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         explosionEffect.setProperties(PROPERTIES);
 
-        assertThatThrownBy(() -> explosionEffect.start(CONTEXT))
+        assertThatThrownBy(() -> explosionEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform explosion effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
-    void startCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
         ExplosionEffectPerformance performance = mock(ExplosionEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
@@ -88,7 +88,7 @@ class ExplosionEffectNewTest {
 
         explosionEffect.addTriggerExecutor(triggerExecutor);
         explosionEffect.setProperties(PROPERTIES);
-        explosionEffect.start(CONTEXT);
+        explosionEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -107,7 +107,7 @@ class ExplosionEffectNewTest {
     }
 
     @Test
-    void startCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
         ExplosionEffectPerformance performance = mock(ExplosionEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
@@ -119,7 +119,7 @@ class ExplosionEffectNewTest {
         });
 
         explosionEffect.setProperties(PROPERTIES);
-        explosionEffect.start(CONTEXT);
+        explosionEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).perform(CONTEXT);

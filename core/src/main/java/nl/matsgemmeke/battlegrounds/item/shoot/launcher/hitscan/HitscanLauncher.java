@@ -98,7 +98,7 @@ public class HitscanLauncher implements ProjectileLauncher {
 
             ItemEffectContext context = new ItemEffectContext(entity, source, startingLocation);
 
-            itemEffect.start(context);
+            itemEffect.startPerformance(context);
             return true;
         }
 

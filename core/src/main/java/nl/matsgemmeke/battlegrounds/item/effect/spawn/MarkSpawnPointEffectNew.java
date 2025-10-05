@@ -27,7 +27,7 @@ public class MarkSpawnPointEffectNew extends BaseItemEffectNew {
     }
 
     @Override
-    public ItemEffectPerformance start(ItemEffectContext context) {
+    public void startPerformance(ItemEffectContext context) {
         GameContext gameContext = gameContextProvider.getGameContext(gameKey).orElse(null);
 
         if (gameContext == null) {
@@ -37,6 +37,5 @@ public class MarkSpawnPointEffectNew extends BaseItemEffectNew {
         ItemEffectPerformance performance = gameScope.supplyInScope(gameContext, markSpawnPointEffectPerformanceProvider::get);
 
         this.startPerformance(performance, context);
-        return performance;
     }
 }

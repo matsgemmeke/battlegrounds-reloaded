@@ -53,25 +53,25 @@ class GunFireSimulationEffectNewTest {
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> gunFireSimulationEffect.start(CONTEXT))
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> gunFireSimulationEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform gun fire simulation effect: properties not set");
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         gunFireSimulationEffect.setProperties(PROPERTIES);
 
-        assertThatThrownBy(() -> gunFireSimulationEffect.start(CONTEXT))
+        assertThatThrownBy(() -> gunFireSimulationEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform gun fire simulation effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
-    void startCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
         GunFireSimulationEffectPerformance performance = mock(GunFireSimulationEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
@@ -88,7 +88,7 @@ class GunFireSimulationEffectNewTest {
 
         gunFireSimulationEffect.addTriggerExecutor(triggerExecutor);
         gunFireSimulationEffect.setProperties(PROPERTIES);
-        gunFireSimulationEffect.start(CONTEXT);
+        gunFireSimulationEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -107,7 +107,7 @@ class GunFireSimulationEffectNewTest {
     }
 
     @Test
-    void startCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
         GunFireSimulationEffectPerformance performance = mock(GunFireSimulationEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
@@ -119,7 +119,7 @@ class GunFireSimulationEffectNewTest {
         when(gunFireSimulationEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
         gunFireSimulationEffect.setProperties(PROPERTIES);
-        gunFireSimulationEffect.start(CONTEXT);
+        gunFireSimulationEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).perform(CONTEXT);

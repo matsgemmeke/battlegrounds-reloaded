@@ -53,25 +53,25 @@ class CombustionEffectNewTest {
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> combustionEffect.start(CONTEXT))
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> combustionEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform combustion effect: properties not set");
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         combustionEffect.setProperties(PROPERTIES);
 
-        assertThatThrownBy(() -> combustionEffect.start(CONTEXT))
+        assertThatThrownBy(() -> combustionEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform combustion effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
-    void startCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
         CombustionEffectPerformance performance = mock(CombustionEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
@@ -88,7 +88,7 @@ class CombustionEffectNewTest {
 
         combustionEffect.addTriggerExecutor(triggerExecutor);
         combustionEffect.setProperties(PROPERTIES);
-        combustionEffect.start(CONTEXT);
+        combustionEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -107,7 +107,7 @@ class CombustionEffectNewTest {
     }
 
     @Test
-    void startCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
         CombustionEffectPerformance performance = mock(CombustionEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
@@ -119,7 +119,7 @@ class CombustionEffectNewTest {
         });
 
         combustionEffect.setProperties(PROPERTIES);
-        combustionEffect.start(CONTEXT);
+        combustionEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).perform(CONTEXT);
