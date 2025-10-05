@@ -4,21 +4,29 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public abstract class BaseItemEffectNew implements ItemEffectNew {
 
-    protected final Set<ItemEffectPerformance> performances;
+    protected final List<ItemEffectPerformance> performances;
     protected final Set<TriggerExecutor> triggerExecutors;
 
     public BaseItemEffectNew() {
-        this.performances = new HashSet<>();
+        this.performances = new ArrayList<>();
         this.triggerExecutors = new HashSet<>();
     }
 
     public void addTriggerExecutor(TriggerExecutor triggerExecutor) {
         triggerExecutors.add(triggerExecutor);
+    }
+
+    @Override
+    public Optional<ItemEffectPerformance> getLatestPerformance() {
+        if (performances.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(performances.get(performances.size() - 1));
     }
 
     protected void startPerformance(ItemEffectPerformance performance, ItemEffectContext context) {
