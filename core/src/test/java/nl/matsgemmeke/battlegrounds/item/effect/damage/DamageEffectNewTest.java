@@ -4,8 +4,6 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
@@ -35,9 +33,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DamageEffectNewTest {
 
-    private static final DamageType DAMAGE_TYPE = DamageType.BULLET_DAMAGE;
+    private static final DamageProperties PROPERTIES = new DamageProperties(null, null);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-    private static final RangeProfile RANGE_PROFILE = new RangeProfile(30.0, 10.0, 20.0, 20.0, 10.0, 30.0);
 
     @Mock
     private DamageEffectPerformanceFactory damageEffectPerformanceFactory;
@@ -54,23 +51,12 @@ class DamageEffectNewTest {
     }
 
     @Test
-    void startThrowsItemEffectPerformanceExceptionWhenDamageTypeIsNotSet() {
+    void startThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
         ItemEffectContext context = this.createContext();
 
         assertThatThrownBy(() -> damageEffect.start(context))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform damage effect: Required variable 'damageType' is not provided");
-    }
-
-    @Test
-    void startThrowsItemEffectPerformanceExceptionWhenRangeProfileIsNotSet() {
-        ItemEffectContext context = this.createContext();
-
-        damageEffect.setDamageType(DAMAGE_TYPE);
-
-        assertThatThrownBy(() -> damageEffect.start(context))
-                .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform damage effect: Required variable 'rangeProfile' is not provided");
+                .hasMessage("Unable to perform damage effect: properties not set");
     }
 
     @Test
@@ -79,8 +65,7 @@ class DamageEffectNewTest {
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        damageEffect.setDamageType(DAMAGE_TYPE);
-        damageEffect.setRangeProfile(RANGE_PROFILE);
+        damageEffect.setProperties(PROPERTIES);
 
         assertThatThrownBy(() -> damageEffect.start(context))
                 .isInstanceOf(ItemEffectPerformanceException.class)
@@ -105,12 +90,8 @@ class DamageEffectNewTest {
         });
 
         damageEffect.addTriggerExecutor(triggerExecutor);
-        damageEffect.setDamageType(DAMAGE_TYPE);
-        damageEffect.setRangeProfile(RANGE_PROFILE);
+        damageEffect.setProperties(PROPERTIES);
         damageEffect.start(context);
-
-        ArgumentCaptor<DamageProperties> damagePropertiesCaptor = ArgumentCaptor.forClass(DamageProperties.class);
-        verify(damageEffectPerformanceFactory).create(damagePropertiesCaptor.capture());
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -118,10 +99,6 @@ class DamageEffectNewTest {
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
         triggerObserverCaptor.getValue().onActivate();
-
-        DamageProperties damageProperties = damagePropertiesCaptor.getValue();
-        assertThat(damageProperties.damageType()).isEqualTo(DAMAGE_TYPE);
-        assertThat(damageProperties.rangeProfile()).isEqualTo(RANGE_PROFILE);
 
         TriggerContext triggerContext = triggerContextCaptor.getValue();
         assertThat(triggerContext.entity()).isEqualTo(context.getEntity());
@@ -145,16 +122,11 @@ class DamageEffectNewTest {
             return performanceSupplier.get();
         });
 
-        damageEffect.setDamageType(DAMAGE_TYPE);
-        damageEffect.setRangeProfile(RANGE_PROFILE);
+        damageEffect.setProperties(PROPERTIES);
         damageEffect.start(context);
 
         ArgumentCaptor<DamageProperties> damagePropertiesCaptor = ArgumentCaptor.forClass(DamageProperties.class);
         verify(damageEffectPerformanceFactory).create(damagePropertiesCaptor.capture());
-
-        DamageProperties damageProperties = damagePropertiesCaptor.getValue();
-        assertThat(damageProperties.damageType()).isEqualTo(DAMAGE_TYPE);
-        assertThat(damageProperties.rangeProfile()).isEqualTo(RANGE_PROFILE);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).perform(context);
@@ -178,8 +150,7 @@ class DamageEffectNewTest {
             return performanceSupplier.get();
         });
 
-        damageEffect.setDamageType(DAMAGE_TYPE);
-        damageEffect.setRangeProfile(RANGE_PROFILE);
+        damageEffect.setProperties(PROPERTIES);
         damageEffect.start(context);
         damageEffect.start(context);
         damageEffect.undoPerformances();

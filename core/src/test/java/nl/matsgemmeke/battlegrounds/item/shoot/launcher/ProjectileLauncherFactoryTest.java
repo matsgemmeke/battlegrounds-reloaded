@@ -1,13 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
-import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
-import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectNew;
-import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectPerformanceFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
@@ -32,7 +28,6 @@ public class ProjectileLauncherFactoryTest {
     private HitscanLauncherFactory hitscanLauncherFactory;
     private ItemEffectFactory itemEffectFactory;
     private ParticleEffectMapper particleEffectMapper;
-    private Provider<DamageEffectNew> damageEffectProvider;
 
     @BeforeEach
     public void setUp() {
@@ -40,7 +35,6 @@ public class ProjectileLauncherFactoryTest {
         hitscanLauncherFactory = mock(HitscanLauncherFactory.class);
         itemEffectFactory = mock(ItemEffectFactory.class);
         particleEffectMapper = new ParticleEffectMapper();
-        damageEffectProvider = mock();
     }
 
     @Test
@@ -52,7 +46,7 @@ public class ProjectileLauncherFactoryTest {
         when(fireballLauncherFactory.create(any(FireballProperties.class), eq(itemEffect))).thenReturn(fireballLauncher);
         when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
 
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper, damageEffectProvider);
+        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
 
         ArgumentCaptor<FireballProperties> fireballPropertiesCaptor = ArgumentCaptor.forClass(FireballProperties.class);
@@ -78,7 +72,7 @@ public class ProjectileLauncherFactoryTest {
         ProjectileSpec projectileSpec = this.createProjectileSpec("FIREBALL");
         projectileSpec.velocity = null;
 
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper, damageEffectProvider);
+        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
 
         assertThatThrownBy(() -> projectileLauncherFactory.create(projectileSpec))
                 .isInstanceOf(ProjectileLauncherCreationException.class)
@@ -89,13 +83,12 @@ public class ProjectileLauncherFactoryTest {
     public void createReturnsInstanceOfHitscanLauncher() {
         HitscanLauncher hitscanLauncher = mock(HitscanLauncher.class);
         ProjectileSpec projectileSpec = this.createProjectileSpec("HITSCAN");
-        ItemEffectNew itemEffect = mock(ItemEffectNew.class);
+        ItemEffect itemEffect = mock(ItemEffect.class);
 
         when(hitscanLauncherFactory.create(any(HitscanProperties.class), eq(itemEffect))).thenReturn(hitscanLauncher);
-        // TODO: correct stub
-//        when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
+        when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
 
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper, damageEffectProvider);
+        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
 
         ArgumentCaptor<HitscanProperties> hitscanPropertiesCaptor = ArgumentCaptor.forClass(HitscanProperties.class);
