@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -20,12 +20,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class FlashEffectPerformance implements ItemEffectPerformance {
+public class FlashEffectPerformance extends BaseItemEffectPerformance {
 
     private final FlashProperties properties;
     private final Map<GameEntity, PotionEffect> appliedPotionEffects;
     private final Scheduler scheduler;
-    private final Set<TriggerRun> triggerRuns;
     private final TargetFinder targetFinder;
     private Schedule cancelSchedule;
 
@@ -35,12 +34,6 @@ public class FlashEffectPerformance implements ItemEffectPerformance {
         this.targetFinder = targetFinder;
         this.properties = properties;
         this.appliedPotionEffects = new HashMap<>();
-        this.triggerRuns = new HashSet<>();
-    }
-
-    @Override
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
     }
 
     @Override

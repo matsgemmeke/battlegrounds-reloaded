@@ -9,8 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -23,7 +23,7 @@ import org.bukkit.block.Block;
 
 import java.util.*;
 
-public class CombustionEffectPerformance implements ItemEffectPerformance {
+public class CombustionEffectPerformance extends BaseItemEffectPerformance {
 
     private static final long SCHEDULE_DELAY = 0L;
     private static final String BURN_BLOCKS_METADATA_KEY = "burn-blocks";
@@ -36,7 +36,6 @@ public class CombustionEffectPerformance implements ItemEffectPerformance {
     private final Random random;
     private final Scheduler scheduler;
     private final Set<Block> affectedBlocks;
-    private final Set<TriggerRun> triggerRuns;
     private final TargetFinder targetFinder;
     private double currentRadius;
     private Schedule schedule;
@@ -58,17 +57,14 @@ public class CombustionEffectPerformance implements ItemEffectPerformance {
         this.properties = properties;
         this.random = new Random();
         this.affectedBlocks = new HashSet<>();
-        this.triggerRuns = new HashSet<>();
     }
 
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
-    }
-
+    @Override
     public boolean isPerforming() {
         return schedule != null && schedule.isRunning();
     }
 
+    @Override
     public void perform(ItemEffectContext context) {
         ItemEffectSource source = context.getSource();
         Location location = source.getLocation();
@@ -157,6 +153,7 @@ public class CombustionEffectPerformance implements ItemEffectPerformance {
         }
     }
 
+    @Override
     public void cancel() {
         if (!this.isPerforming()) {
             return;

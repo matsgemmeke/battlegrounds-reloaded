@@ -15,6 +15,7 @@ import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -44,6 +45,8 @@ class GunFireSimulationEffectPerformanceTest {
     @Mock
     private AudioEmitter audioEmitter;
     @Mock
+    private Entity entity;
+    @Mock
     private GunInfoProvider gunInfoProvider;
     @Mock
     private Scheduler scheduler;
@@ -56,6 +59,34 @@ class GunFireSimulationEffectPerformanceTest {
     }
 
     @Test
+    void changeSourceCreatesNewContextInstanceWithGivenSource() {
+        UUID entityId = UUID.randomUUID();
+        Schedule schedule = mock(Schedule.class);
+        ItemEffectSource oldSource = mock(ItemEffectSource.class);
+        ItemEffectContext context = new ItemEffectContext(entity, oldSource, INITIATION_LOCATION);
+        Location newSourceLocation = new Location(null, 1, 1, 1);
+
+        ItemEffectSource newSource = mock(ItemEffectSource.class);
+        when(newSource.exists()).thenReturn(true);
+        when(newSource.getLocation()).thenReturn(newSourceLocation);
+
+        when(entity.getUniqueId()).thenReturn(entityId);
+        when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.empty());
+        when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(schedule);
+
+        performance.start(context);
+        performance.changeSource(newSource);
+
+        ArgumentCaptor<ScheduleTask> taskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
+        verify(schedule).addTask(taskCaptor.capture());
+
+        ScheduleTask task = taskCaptor.getValue();
+        task.run();
+
+        verify(audioEmitter).playSounds(GENERIC_SHOTS_SOUNDS, newSourceLocation);
+    }
+
+    @Test
     void isPerformingReturnsFalseWhenNotPerforming() {
         boolean performing = performance.isPerforming();
 
@@ -64,7 +95,6 @@ class GunFireSimulationEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsTrueWhenPerforming() {
-        Entity entity = mock(Entity.class);
         ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
@@ -84,15 +114,13 @@ class GunFireSimulationEffectPerformanceTest {
         UUID entityId = UUID.randomUUID();
         Schedule repeatingSchedule = mock(Schedule.class);
 
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityId);
-
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(SOURCE_LOCATION);
 
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
+        when(entity.getUniqueId()).thenReturn(entityId);
         when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.empty());
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
 
@@ -102,7 +130,7 @@ class GunFireSimulationEffectPerformanceTest {
             return null;
         }).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        performance.perform(context);
+        performance.start(context);
 
         verify(audioEmitter).playSounds(GENERIC_SHOTS_SOUNDS, SOURCE_LOCATION);
     }
@@ -115,14 +143,12 @@ class GunFireSimulationEffectPerformanceTest {
         int rateOfFire = 120;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityId);
-
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(false);
 
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
+        when(entity.getUniqueId()).thenReturn(entityId);
         when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.of(gunFireSimulationInfo));
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
 
@@ -132,7 +158,7 @@ class GunFireSimulationEffectPerformanceTest {
             return null;
         }).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        performance.perform(context);
+        performance.start(context);
 
         verifyNoInteractions(audioEmitter);
         verify(repeatingSchedule).stop();
@@ -142,9 +168,6 @@ class GunFireSimulationEffectPerformanceTest {
     void performSimulatesGunFireOnceAndRemovesEffectSourceWhenFinished() {
         UUID entityId = UUID.randomUUID();
         Schedule repeatingSchedule = mock(Schedule.class);
-
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityId);
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
@@ -156,6 +179,7 @@ class GunFireSimulationEffectPerformanceTest {
         int rateOfFire = 1200;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 
+        when(entity.getUniqueId()).thenReturn(entityId);
         when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.of(gunFireSimulationInfo));
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
 
@@ -167,7 +191,7 @@ class GunFireSimulationEffectPerformanceTest {
             return null;
         }).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        performance.perform(context);
+        performance.start(context);
 
         // The implementation uses random variables, so check the max and min possible amount of executions
         verify(audioEmitter, atLeast(10)).playSounds(shotSounds, SOURCE_LOCATION);
@@ -190,7 +214,6 @@ class GunFireSimulationEffectPerformanceTest {
 
     @Test
     void cancelCancelsAllTriggerRuns() {
-        Entity entity = mock(Entity.class);
         ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
         TriggerRun triggerRun = mock(TriggerRun.class);

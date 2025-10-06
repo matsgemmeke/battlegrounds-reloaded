@@ -103,7 +103,7 @@ class GunFireSimulationEffectNewTest {
 
         verify(triggerRun).start();
         verify(performance).addTriggerRun(triggerRun);
-        verify(performance).perform(CONTEXT);
+        verify(performance).start(CONTEXT);
     }
 
     @Test
@@ -122,7 +122,7 @@ class GunFireSimulationEffectNewTest {
         gunFireSimulationEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
-        verify(performance).perform(CONTEXT);
+        verify(performance).start(CONTEXT);
     }
 
     private static ItemEffectContext createContext() {

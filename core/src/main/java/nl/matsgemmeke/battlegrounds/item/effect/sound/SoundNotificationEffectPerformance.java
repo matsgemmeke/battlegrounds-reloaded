@@ -1,28 +1,20 @@
 package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
 import java.util.Set;
 
-public class SoundNotificationEffectPerformance implements ItemEffectPerformance {
+public class SoundNotificationEffectPerformance extends BaseItemEffectPerformance {
 
     private final Set<GameSound> notificationSounds;
-    private final Set<TriggerRun> triggerRuns;
 
     public SoundNotificationEffectPerformance(Set<GameSound> notificationSounds) {
         this.notificationSounds = notificationSounds;
-        this.triggerRuns = new HashSet<>();
-    }
-
-    @Override
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
     }
 
     @Override

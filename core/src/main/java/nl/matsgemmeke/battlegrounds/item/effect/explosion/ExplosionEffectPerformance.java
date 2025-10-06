@@ -8,23 +8,20 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
-public class ExplosionEffectPerformance implements ItemEffectPerformance {
+public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
 
     private final DamageProcessor damageProcessor;
     private final ExplosionProperties properties;
-    private final Set<TriggerRun> triggerRuns;
     private final TargetFinder targetFinder;
 
     @Inject
@@ -32,12 +29,6 @@ public class ExplosionEffectPerformance implements ItemEffectPerformance {
         this.damageProcessor = damageProcessor;
         this.targetFinder = targetFinder;
         this.properties = properties;
-        this.triggerRuns = new HashSet<>();
-    }
-
-    @Override
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
     }
 
     @Override

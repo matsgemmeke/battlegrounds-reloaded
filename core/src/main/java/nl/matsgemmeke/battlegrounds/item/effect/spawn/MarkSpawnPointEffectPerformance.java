@@ -3,30 +3,21 @@ package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
-public class MarkSpawnPointEffectPerformance implements ItemEffectPerformance {
+public class MarkSpawnPointEffectPerformance extends BaseItemEffectPerformance {
 
-    private final Set<TriggerRun> triggerRuns;
     private final SpawnPointRegistry spawnPointRegistry;
     private UUID entityId;
 
     @Inject
     public MarkSpawnPointEffectPerformance(SpawnPointRegistry spawnPointRegistry) {
         this.spawnPointRegistry = spawnPointRegistry;
-        this.triggerRuns = new HashSet<>();
-    }
-
-    @Override
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
     }
 
     @Override

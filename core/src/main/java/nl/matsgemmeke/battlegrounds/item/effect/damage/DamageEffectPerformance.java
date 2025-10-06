@@ -8,48 +8,37 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
-public class DamageEffectPerformance implements ItemEffectPerformance {
+public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
     private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.3;
     private static final double ENTITY_FINDING_RANGE = 0.1;
 
-    @NotNull
     private final DamageProcessor damageProcessor;
-    @NotNull
     private final DamageProperties properties;
-    @NotNull
-    private final Set<TriggerRun> triggerRuns;
-    @NotNull
     private final TargetFinder targetFinder;
 
     @Inject
-    public DamageEffectPerformance(@NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder, @Assisted @NotNull DamageProperties properties) {
+    public DamageEffectPerformance(DamageProcessor damageProcessor, TargetFinder targetFinder, @Assisted DamageProperties properties) {
         this.damageProcessor = damageProcessor;
         this.targetFinder = targetFinder;
         this.properties = properties;
-        this.triggerRuns = new HashSet<>();
     }
 
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
-    }
-
+    @Override
     public boolean isPerforming() {
         // A damage effect is instant, therefore this effect will never perform for a longer period of time
         return false;
     }
 
+    @Override
     public void perform(ItemEffectContext context) {
         Entity entity = context.getEntity();
         UUID entityId = entity.getUniqueId();
@@ -79,6 +68,7 @@ public class DamageEffectPerformance implements ItemEffectPerformance {
         return new Damage(damageAmount, damageType);
     }
 
+    @Override
     public void cancel() {
         triggerRuns.forEach(TriggerRun::cancel);
     }

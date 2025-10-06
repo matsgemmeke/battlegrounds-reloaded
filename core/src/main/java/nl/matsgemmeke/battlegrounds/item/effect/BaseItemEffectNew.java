@@ -35,13 +35,13 @@ public abstract class BaseItemEffectNew implements ItemEffectNew {
                 TriggerContext triggerContext = new TriggerContext(context.getEntity(), context.getSource());
 
                 TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-                triggerRun.addObserver(() -> performance.perform(context));
+                triggerRun.addObserver(() -> performance.start(context));
                 triggerRun.start();
 
                 performance.addTriggerRun(triggerRun);
             }
         } else {
-            performance.perform(context);
+            performance.start(context);
         }
 
         performances.add(performance);

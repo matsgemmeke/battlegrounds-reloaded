@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -16,11 +16,9 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
-public class SmokeScreenEffectPerformance implements ItemEffectPerformance {
+public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
 
     private static final long SCHEDULER_DELAY = 0L;
 
@@ -28,7 +26,6 @@ public class SmokeScreenEffectPerformance implements ItemEffectPerformance {
     private final CollisionDetector collisionDetector;
     private final Random random;
     private final Scheduler scheduler;
-    private final Set<TriggerRun> triggerRuns;
     private final SmokeScreenProperties properties;
     private double currentRadius;
     private Location currentLocation;
@@ -41,12 +38,6 @@ public class SmokeScreenEffectPerformance implements ItemEffectPerformance {
         this.scheduler = scheduler;
         this.properties = properties;
         this.random = new Random();
-        this.triggerRuns = new HashSet<>();
-    }
-
-    @Override
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
     }
 
     @Override

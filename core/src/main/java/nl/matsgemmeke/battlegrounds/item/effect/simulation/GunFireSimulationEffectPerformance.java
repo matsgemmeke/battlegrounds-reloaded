@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -15,7 +15,7 @@ import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 
 import java.util.*;
 
-public class GunFireSimulationEffectPerformance implements ItemEffectPerformance {
+public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformance {
 
     private static final int TICKS_PER_SECOND = 20;
     private static final long SCHEDULE_DELAY = 0L;
@@ -26,7 +26,6 @@ public class GunFireSimulationEffectPerformance implements ItemEffectPerformance
     private final GunInfoProvider gunInfoProvider;
     private final Random random;
     private final Scheduler scheduler;
-    private final Set<TriggerRun> triggerRuns;
     private boolean playingSounds;
     private long elapsedTicks;
     private long remainingTicks;
@@ -40,12 +39,6 @@ public class GunFireSimulationEffectPerformance implements ItemEffectPerformance
         this.scheduler = scheduler;
         this.properties = properties;
         this.random = new Random();
-        this.triggerRuns = new HashSet<>();
-    }
-
-    @Override
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
     }
 
     @Override
@@ -59,28 +52,28 @@ public class GunFireSimulationEffectPerformance implements ItemEffectPerformance
         GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId).orElse(null);
 
         if (gunFireSimulationInfo == null) {
-            this.simulateGenericGunFire(context);
+            this.simulateGenericGunFire();
             return;
         }
 
         double roundsPerSecond = (double) gunFireSimulationInfo.rateOfFire() / 60;
         int interval = (int) (TICKS_PER_SECOND / roundsPerSecond);
 
-        this.simulateGunFire(context, gunFireSimulationInfo.shotSounds(), interval);
+        this.simulateGunFire(gunFireSimulationInfo.shotSounds(), interval);
     }
 
-    private void simulateGenericGunFire(ItemEffectContext context) {
-        this.simulateGunFire(context, properties.genericSounds(), properties.burstInterval());
+    private void simulateGenericGunFire() {
+        this.simulateGunFire(properties.genericSounds(), properties.burstInterval());
     }
 
-    private void simulateGunFire(ItemEffectContext context, List<GameSound> sounds, long interval) {
+    private void simulateGunFire(List<GameSound> sounds, long interval) {
         totalDuration = random.nextLong(properties.minTotalDuration(), properties.maxTotalDuration());
         elapsedTicks = 0;
         remainingTicks = this.getRandomBurstDurationInTicks();
         playingSounds = true;
 
         repeatingSchedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, SCHEDULE_INTERVAL);
-        repeatingSchedule.addTask(() -> this.handleScheduleTick(context, sounds, interval));
+        repeatingSchedule.addTask(() -> this.handleScheduleTick(currentContext, sounds, interval));
         repeatingSchedule.start();
     }
 
