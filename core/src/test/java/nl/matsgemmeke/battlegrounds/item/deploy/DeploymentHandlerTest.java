@@ -6,9 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.*;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -19,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -40,7 +39,7 @@ public class DeploymentHandlerTest {
     private DeploymentObject deploymentObject;
     private DeploymentProperties deploymentProperties;
     private Entity deployerEntity;
-    private ItemEffect itemEffect;
+    private ItemEffectNew itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
     private TaskRunner taskRunner;
 
@@ -51,7 +50,7 @@ public class DeploymentHandlerTest {
         deploymentObject = mock(DeploymentObject.class);
         deployerEntity = mock(Entity.class);
         deploymentProperties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, MANUAL_ACTIVATION_DELAY);
-        itemEffect = mock(ItemEffect.class);
+        itemEffect = mock(ItemEffectNew.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         taskRunner = mock(TaskRunner.class);
 
@@ -75,7 +74,7 @@ public class DeploymentHandlerTest {
 
         verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, deployerLocation);
         verify(deployer).setHeldItem(null);
-        verify(itemEffect).activateInstantly();
+        verify(itemEffect).activatePerformances();
     }
 
     @Test
@@ -125,8 +124,8 @@ public class DeploymentHandlerTest {
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelActivation();
-        verify(itemEffect, never()).activateInstantly();
+        verify(itemEffect).cancelPerformances();
+        verify(itemEffect, never()).activatePerformances();
     }
 
     @Test
@@ -140,8 +139,8 @@ public class DeploymentHandlerTest {
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelActivation();
-        verify(itemEffect, never()).activateInstantly();
+        verify(itemEffect).cancelPerformances();
+        verify(itemEffect, never()).activatePerformances();
     }
 
     @Test
@@ -153,8 +152,8 @@ public class DeploymentHandlerTest {
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelActivation();
-        verify(itemEffect).activateInstantly();
+        verify(itemEffect).cancelPerformances();
+        verify(itemEffect).activatePerformances();
     }
 
     @Test
@@ -168,8 +167,8 @@ public class DeploymentHandlerTest {
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelActivation();
-        verify(itemEffect).activateInstantly();
+        verify(itemEffect).cancelPerformances();
+        verify(itemEffect).activatePerformances();
     }
 
     @Test
@@ -183,7 +182,7 @@ public class DeploymentHandlerTest {
         deploymentHandler.destroyDeployment();
 
         verify(deploymentObject, never()).remove();
-        verify(itemEffect).cancelActivation();
+        verify(itemEffect).cancelPerformances();
     }
 
     @Test
@@ -195,7 +194,7 @@ public class DeploymentHandlerTest {
         deploymentHandler.destroyDeployment();
 
         verify(deploymentObject).remove();
-        verify(itemEffect).cancelActivation();
+        verify(itemEffect).cancelPerformances();
     }
 
     @Test
@@ -208,8 +207,8 @@ public class DeploymentHandlerTest {
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelActivation();
-        verify(itemEffect, never()).undo();
+        verify(itemEffect).cancelPerformances();
+        verify(itemEffect, never()).rollbackPerformances();
     }
 
     @Test
@@ -220,8 +219,8 @@ public class DeploymentHandlerTest {
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelActivation();
-        verify(itemEffect).undo();
+        verify(itemEffect).cancelPerformances();
+        verify(itemEffect).rollbackPerformances();
     }
 
     @Test
@@ -234,7 +233,7 @@ public class DeploymentHandlerTest {
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelActivation();
+        verify(itemEffect).cancelPerformances();
         verifyNoInteractions(particleEffectSpawner);
     }
 
@@ -249,7 +248,7 @@ public class DeploymentHandlerTest {
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelActivation();
+        verify(itemEffect).cancelPerformances();
         verify(particleEffectSpawner).spawnParticleEffect(DESTRUCTION_PARTICLE_EFFECT, objectLocation);
     }
 
@@ -264,13 +263,16 @@ public class DeploymentHandlerTest {
     }
 
     @Test
-    public void handleDeploymentDeploysObjectIfEffectIsAlreadyPrimed() {
+    public void handleDeploymentChangesLatestPerformanceSourceWhenLatestPerformanceIsNotReleased() {
         long cooldown = 10L;
+
+        ItemEffectPerformance performance = mock(ItemEffectPerformance.class);
+        when(performance.isReleased()).thenReturn(false);
 
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getCooldown()).thenReturn(cooldown);
         when(deploymentObject.isDeployed()).thenReturn(true);
-        when(itemEffect.isPrimed()).thenReturn(true);
+        when(itemEffect.getLatestPerformance()).thenReturn(Optional.of(performance));
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, taskRunner, deploymentProperties, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
@@ -282,19 +284,22 @@ public class DeploymentHandlerTest {
 
         verify(deployer).setCanDeploy(false);
         verify(deployer).setCanDeploy(true);
-        verify(itemEffect).deploy(deploymentObject);
+        verify(performance).changeSource(deploymentObject);
     }
 
     @Test
-    public void handleDeploymentPrimesEffectIfEffectIsNotPrimed() {
+    public void handleDeploymentStartsNewPerformanceWhenLatestPerformanceIsReleased() {
         long cooldown = 10L;
         Location deployLocation = new Location(null, 1, 1, 1);
+
+        ItemEffectPerformance performance = mock(ItemEffectPerformance.class);
+        when(performance.isReleased()).thenReturn(true);
 
         when(deployer.getDeployLocation()).thenReturn(deployLocation);
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getCooldown()).thenReturn(cooldown);
         when(deploymentObject.isDeployed()).thenReturn(true);
-        when(itemEffect.isPrimed()).thenReturn(false);
+        when(itemEffect.getLatestPerformance()).thenReturn(Optional.of(performance));
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, taskRunner, deploymentProperties, itemEffect);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
@@ -302,7 +307,7 @@ public class DeploymentHandlerTest {
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
 
-        verify(itemEffect).prime(itemEffectContextCaptor.capture());
+        verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
         verify(taskRunner).runTaskLater(runnableCaptor.capture(), eq(cooldown));
 
         ItemEffectContext context = itemEffectContextCaptor.getValue();
@@ -322,14 +327,13 @@ public class DeploymentHandlerTest {
 
         when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.isDeployed()).thenReturn(true);
-        when(itemEffect.isPrimed()).thenReturn(true);
+        when(itemEffect.getLatestPerformance()).thenReturn(Optional.empty());
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, taskRunner, deploymentProperties, itemEffect);
         deploymentHandler.setActivator(activator);
         deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
 
         verify(activator).prepare(deployer);
-        verify(itemEffect).deploy(deploymentObject);
     }
 
     @Test

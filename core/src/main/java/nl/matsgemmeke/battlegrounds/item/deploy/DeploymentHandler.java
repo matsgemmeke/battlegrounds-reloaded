@@ -6,9 +6,7 @@ import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.*;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -22,7 +20,7 @@ public class DeploymentHandler {
     @NotNull
     private final DeploymentProperties deploymentProperties;
     @NotNull
-    private final ItemEffect itemEffect;
+    private final ItemEffectNew itemEffect;
     @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
@@ -39,7 +37,7 @@ public class DeploymentHandler {
             @NotNull ParticleEffectSpawner particleEffectSpawner,
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull DeploymentProperties deploymentProperties,
-            @Assisted @NotNull ItemEffect itemEffect
+            @Assisted @NotNull ItemEffectNew itemEffect
     ) {
         this.audioEmitter = audioEmitter;
         this.particleEffectSpawner = particleEffectSpawner;
@@ -68,7 +66,7 @@ public class DeploymentHandler {
 
         deployer.setHeldItem(null);
 
-        taskRunner.runTaskLater(itemEffect::activateInstantly, deploymentProperties.manualActivationDelay());
+        taskRunner.runTaskLater(itemEffect::activatePerformances, deploymentProperties.manualActivationDelay());
     }
 
     public void cleanupDeployment() {
@@ -86,11 +84,11 @@ public class DeploymentHandler {
         }
 
         deployed = false;
-        itemEffect.cancelActivation();
+        itemEffect.cancelPerformances();
 
         if (deploymentProperties.activateEffectOnDestruction()
                 && (deploymentObject.getLastDamage() == null || deploymentObject.getLastDamage().type() != DamageType.ENVIRONMENTAL_DAMAGE)) {
-            itemEffect.activateInstantly();
+            itemEffect.activatePerformances();
         }
 
         if (deploymentProperties.removeDeploymentOnDestruction()) {
@@ -98,7 +96,7 @@ public class DeploymentHandler {
         }
 
         if (deploymentProperties.undoEffectOnDestruction()) {
-            itemEffect.undo();
+            itemEffect.rollbackPerformances();
         }
 
         ParticleEffect particleEffect = deploymentProperties.destructionParticleEffect();
@@ -116,12 +114,15 @@ public class DeploymentHandler {
             return;
         }
 
-        if (!itemEffect.isPrimed()) {
-            Location initiationLocation = deployer.getDeployLocation();
+        ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
 
-            itemEffect.prime(new ItemEffectContext(deployerEntity, deploymentObject, initiationLocation));
+        if (latestPerformance != null && !latestPerformance.isReleased()) {
+            latestPerformance.changeSource(deploymentObject);
         } else {
-            itemEffect.deploy(deploymentObject);
+            Location initiationLocation = deployer.getDeployLocation();
+            ItemEffectContext context = new ItemEffectContext(deployerEntity, deploymentObject, initiationLocation);
+
+            itemEffect.startPerformance(context);
         }
 
         if (activator != null) {
