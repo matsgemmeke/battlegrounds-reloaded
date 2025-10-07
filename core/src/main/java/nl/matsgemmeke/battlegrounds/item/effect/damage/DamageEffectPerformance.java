@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -66,10 +65,5 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         DamageType damageType = properties.damageType();
 
         return new Damage(damageAmount, damageType);
-    }
-
-    @Override
-    public void cancel() {
-        triggerRuns.forEach(TriggerRun::cancel);
     }
 }

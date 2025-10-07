@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -200,33 +199,5 @@ class GunFireSimulationEffectPerformanceTest {
         verify(source, atMost(10)).remove();
         verify(repeatingSchedule, atLeast(1)).stop();
         verify(repeatingSchedule, atMost(10)).stop();
-    }
-
-    @Test
-    void cancelDoesNothingWhenNotPerforming() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
-
-        performance.addTriggerRun(triggerRun);
-        performance.cancel();
-
-        verify(triggerRun, never()).cancel();
-    }
-
-    @Test
-    void cancelCancelsAllTriggerRuns() {
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
-        TriggerRun triggerRun = mock(TriggerRun.class);
-
-        Schedule repeatingSchedule = mock(Schedule.class);
-        when(repeatingSchedule.isRunning()).thenReturn(true);
-
-        when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
-
-        performance.addTriggerRun(triggerRun);
-        performance.perform(context);
-        performance.cancel();
-
-        verify(triggerRun).cancel();
     }
 }

@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -74,10 +73,5 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
 
         return new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE);
-    }
-
-    @Override
-    public void cancel() {
-        triggerRuns.forEach(TriggerRun::cancel);
     }
 }

@@ -4,7 +4,6 @@ import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
@@ -55,27 +54,21 @@ class MarkSpawnPointEffectPerformanceTest {
     }
 
     @Test
-    void cancelDoesNotResetSpawnPointWhenNotHavingPerformed() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
+    void rollbackDoesNotResetSpawnPointWhenNotHavingPerformed() {
+        performance.rollback();
 
-        performance.addTriggerRun(triggerRun);
-        performance.cancel();
-
-        verify(triggerRun).cancel();
         verifyNoInteractions(spawnPointRegistry);
     }
 
     @Test
-    void cancelResetsSpawnPointWhenHavingPerformed() {
+    void rollbackResetsSpawnPointWhenHavingPerformed() {
         UUID entityId = UUID.randomUUID();
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
-        TriggerRun triggerRun = mock(TriggerRun.class);
 
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        performance.addTriggerRun(triggerRun);
         performance.perform(context);
-        performance.cancel();
+        performance.rollback();
 
         verify(spawnPointRegistry).setCustomSpawnPoint(entityId, null);
     }

@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -85,18 +84,17 @@ public class FlashEffectPerformance extends BaseItemEffectPerformance {
         long delay = properties.potionEffect().duration();
 
         cancelSchedule = scheduler.createSingleRunSchedule(delay);
-        cancelSchedule.addTask(this::cancel);
+        cancelSchedule.addTask(this::rollback);
         cancelSchedule.start();
     }
 
     @Override
-    public void cancel() {
+    public void rollback() {
         if (!this.isPerforming()) {
             return;
         }
 
         appliedPotionEffects.keySet().forEach(this::removePotionEffect);
-        triggerRuns.forEach(TriggerRun::cancel);
         cancelSchedule.stop();
     }
 

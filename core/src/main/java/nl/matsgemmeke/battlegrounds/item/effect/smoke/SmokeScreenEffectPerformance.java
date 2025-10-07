@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -59,7 +58,7 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         repeatingSchedule.start();
 
         Schedule cancelSchedule = scheduler.createSingleRunSchedule(totalDuration);
-        cancelSchedule.addTask(() -> this.expirePerformance(context));
+        cancelSchedule.addTask(() -> this.expire(context));
         cancelSchedule.start();
     }
 
@@ -67,7 +66,7 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         ItemEffectSource source = context.getSource();
 
         if (!source.exists()) {
-            this.cancel();
+            repeatingSchedule.stop();
             return;
         }
 
@@ -148,18 +147,17 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         }
     }
 
-    private void expirePerformance(ItemEffectContext context) {
+    private void expire(ItemEffectContext context) {
         context.getSource().remove();
-        this.cancel();
+        this.rollback();
     }
 
     @Override
-    public void cancel() {
+    public void rollback() {
         if (!this.isPerforming()) {
             return;
         }
 
         repeatingSchedule.stop();
-        triggerRuns.forEach(TriggerRun::cancel);
     }
 }

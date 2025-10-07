@@ -100,7 +100,6 @@ class SmokeScreenEffectPerformanceTest {
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
         Schedule repeatingSchedule = mock(Schedule.class);
-        when(repeatingSchedule.isRunning()).thenReturn(true);
         doAnswer(invocation -> {
             ScheduleTask task = invocation.getArgument(0);
             task.run();
@@ -267,18 +266,7 @@ class SmokeScreenEffectPerformanceTest {
     }
 
     @Test
-    void cancelDoesNothingWhenNotPerforming() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
-
-        performance.addTriggerRun(triggerRun);
-        performance.cancel();
-
-        verify(triggerRun, never()).cancel();
-    }
-
-    @Test
-    void cancelCancelsAllTriggerRuns() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
+    void rollbackCancelsRepeatingSchedule() {
         ItemEffectSource source = mock(ItemEffectSource.class);
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
         Schedule cancelSchedule = mock(Schedule.class);
@@ -289,11 +277,9 @@ class SmokeScreenEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.addTriggerRun(triggerRun);
         performance.perform(context);
-        performance.cancel();
+        performance.rollback();
 
         verify(repeatingSchedule).stop();
-        verify(triggerRun).cancel();
     }
 }

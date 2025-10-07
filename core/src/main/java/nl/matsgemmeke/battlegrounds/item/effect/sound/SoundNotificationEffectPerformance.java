@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.sound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -35,10 +34,5 @@ public class SoundNotificationEffectPerformance extends BaseItemEffectPerformanc
         for (GameSound sound : notificationSounds) {
             player.playSound(player.getLocation(), sound.getSound(), sound.getVolume(), sound.getPitch());
         }
-    }
-
-    @Override
-    public void cancel() {
-        triggerRuns.forEach(TriggerRun::cancel);
     }
 }

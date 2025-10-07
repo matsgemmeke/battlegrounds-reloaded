@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 
@@ -116,14 +115,5 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
 
     private long getRandomDelayDurationInTicks() {
         return random.nextLong(properties.minDelayDuration(), properties.maxDelayDuration());
-    }
-
-    @Override
-    public void cancel() {
-        if (!this.isPerforming()) {
-            return;
-        }
-
-        triggerRuns.forEach(TriggerRun::cancel);
     }
 }

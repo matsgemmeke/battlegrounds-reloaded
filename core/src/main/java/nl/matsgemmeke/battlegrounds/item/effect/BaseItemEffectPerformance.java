@@ -30,10 +30,29 @@ public abstract class BaseItemEffectPerformance implements ItemEffectPerformance
     }
 
     @Override
+    public boolean isReleased() {
+        return currentContext != null && currentContext.getSource().isReleased();
+    }
+
+    @Override
     public void start(ItemEffectContext context) {
         currentContext = context;
         this.perform(context);
     }
 
     public abstract void perform(ItemEffectContext context);
+
+    @Override
+    public void cancel() {
+        triggerRuns.forEach(TriggerRun::cancel);
+        triggerRuns.clear();
+    }
+
+    /**
+     * By default, this method is a no-op, meaning the effect performance has no side effects. Override this method to
+     * implement specific rollback logic for the effect performance implementation.
+     */
+    @Override
+    public void rollback() {
+    }
 }

@@ -154,7 +154,7 @@ class DamageEffectNewTest {
     }
 
     @Test
-    void undoPerformancesCancelsOngoingPerformances() {
+    void rollbackCancelsOngoingPerformances() {
         GameContext gameContext = mock(GameContext.class);
 
         DamageEffectPerformance performancePerforming = mock(DamageEffectPerformance.class);
@@ -173,10 +173,10 @@ class DamageEffectNewTest {
         damageEffect.setProperties(PROPERTIES);
         damageEffect.startPerformance(CONTEXT);
         damageEffect.startPerformance(CONTEXT);
-        damageEffect.undoPerformances();
+        damageEffect.rollbackPerformances();
 
-        verify(performancePerforming).cancel();
-        verify(performanceNotPerforming, never()).cancel();
+        verify(performancePerforming).rollback();
+        verify(performanceNotPerforming, never()).rollback();
     }
 
     private static ItemEffectContext createContext() {

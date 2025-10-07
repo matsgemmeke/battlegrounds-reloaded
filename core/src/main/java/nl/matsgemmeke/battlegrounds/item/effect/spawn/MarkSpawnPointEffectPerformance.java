@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 
 import java.util.UUID;
@@ -36,11 +35,9 @@ public class MarkSpawnPointEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void cancel() {
+    public void rollback() {
         if (entityId != null) {
             spawnPointRegistry.setCustomSpawnPoint(entityId, null);
         }
-
-        triggerRuns.forEach(TriggerRun::cancel);
     }
 }

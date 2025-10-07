@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
@@ -83,7 +82,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
         long duration = this.getRandomDuration(properties.minDuration(), properties.maxDuration());
 
         Schedule cancelSchedule = scheduler.createSingleRunSchedule(duration);
-        cancelSchedule.addTask(this::cancel);
+        cancelSchedule.addTask(this::rollback);
         cancelSchedule.start();
 
         source.remove();
@@ -154,7 +153,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void cancel() {
+    public void rollback() {
         if (!this.isPerforming()) {
             return;
         }
@@ -168,7 +167,6 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
             metadataValueEditor.removeMetadata(block, SPREAD_FIRE_METADATA_KEY);
         }
 
-        triggerRuns.forEach(TriggerRun::cancel);
         schedule.stop();
     }
 }

@@ -211,22 +211,11 @@ class CombustionEffectPerformanceTest {
     }
 
     @Test
-    void cancelDoesNothingWhenNotPerforming() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
-
-        performance.addTriggerRun(triggerRun);
-        performance.cancel();
-
-        verify(triggerRun, never()).cancel();
-    }
-
-    @Test
-    void cancelResetsAffectedBlocksAndTriggerRuns() {
+    void rollbackResetsAffectedBlocksAndTriggerRuns() {
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
         Location blockLocation = new Location(null, 0, 0, 0);
         Location sourceLocation = new Location(null, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
-        TriggerRun triggerRun = mock(TriggerRun.class);
 
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(blockLocation);
@@ -249,13 +238,11 @@ class CombustionEffectPerformanceTest {
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
-        performance.addTriggerRun(triggerRun);
         performance.perform(context);
-        performance.cancel();
+        performance.rollback();
 
         verify(block).setType(Material.AIR);
         verify(metadataValueEditor).removeMetadata(block, "burn-blocks");
         verify(metadataValueEditor).removeMetadata(block, "spread-fire");
-        verify(triggerRun).cancel();
     }
 }

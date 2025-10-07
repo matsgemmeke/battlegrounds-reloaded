@@ -10,7 +10,11 @@ public interface ItemEffectPerformance {
 
     boolean isPerforming();
 
+    boolean isReleased();
+
     void start(ItemEffectContext context);
 
     void cancel();
+
+    void rollback();
 }

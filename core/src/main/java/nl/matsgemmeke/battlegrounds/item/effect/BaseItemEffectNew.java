@@ -10,12 +10,14 @@ public abstract class BaseItemEffectNew implements ItemEffectNew {
 
     protected final List<ItemEffectPerformance> performances;
     protected final Set<TriggerExecutor> triggerExecutors;
+    protected ItemEffectContext context;
 
     public BaseItemEffectNew() {
         this.performances = new ArrayList<>();
         this.triggerExecutors = new HashSet<>();
     }
 
+    @Override
     public void addTriggerExecutor(TriggerExecutor triggerExecutor) {
         triggerExecutors.add(triggerExecutor);
     }
@@ -47,10 +49,34 @@ public abstract class BaseItemEffectNew implements ItemEffectNew {
         performances.add(performance);
     }
 
-    public void undoPerformances() {
+    @Override
+    public void activatePerformances() {
+        for (ItemEffectPerformance performance : performances) {
+            if (!performance.isPerforming()) {
+                performance.cancel();
+                performance.start(context);
+            }
+        }
+
+        performances.clear();
+    }
+
+    @Override
+    public void cancelPerformances() {
+        for (ItemEffectPerformance performance : performances) {
+            if (!performance.isPerforming()) {
+                performance.cancel();
+            }
+        }
+
+        performances.clear();
+    }
+
+    @Override
+    public void rollbackPerformances() {
         for (ItemEffectPerformance performance : performances) {
             if (performance.isPerforming()) {
-                performance.cancel();
+                performance.rollback();
             }
         }
 

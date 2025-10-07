@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -101,16 +100,6 @@ class FlashEffectPerformanceTest {
         verify(cancelSchedule).start();
     }
 
-    @Test
-    void cancelDoesNothingWhenNotPerforming() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
-
-        performance.addTriggerRun(triggerRun);
-        performance.cancel();
-
-        verify(triggerRun, never()).cancel();
-    }
-
     static Stream<Arguments> potionEffectScenarios() {
         return Stream.of(
                 arguments(new Object[] { null }),
@@ -120,7 +109,7 @@ class FlashEffectPerformanceTest {
 
     @ParameterizedTest
     @MethodSource("potionEffectScenarios")
-    void cancelDoesNotRemovePotionEffectFromEntities(PotionEffect potionEffect) {
+    void rollbackDoesNotRemovePotionEffectFromEntities(PotionEffect potionEffect) {
         UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
@@ -141,13 +130,13 @@ class FlashEffectPerformanceTest {
         when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(gameEntity));
 
         performance.perform(context);
-        performance.cancel();
+        performance.rollback();
 
         verify(player, never()).removePotionEffect(any(PotionEffectType.class));
     }
 
     @Test
-    void cancelRemovesAppliedPotionEffectsFromEntities() {
+    void rollbackRemovesAppliedPotionEffectsFromEntities() {
         UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
         Player player = mock(Player.class);
@@ -172,7 +161,7 @@ class FlashEffectPerformanceTest {
 
         when(player.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(potionEffectCaptor.getValue());
 
-        performance.cancel();
+        performance.rollback();
 
         verify(player).removePotionEffect(PotionEffectType.BLINDNESS);
         verify(cancelSchedule).stop();
