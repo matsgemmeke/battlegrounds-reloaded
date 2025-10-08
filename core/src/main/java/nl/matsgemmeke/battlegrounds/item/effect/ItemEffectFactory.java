@@ -22,7 +22,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationProp
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectNew;
-import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffectNew;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
