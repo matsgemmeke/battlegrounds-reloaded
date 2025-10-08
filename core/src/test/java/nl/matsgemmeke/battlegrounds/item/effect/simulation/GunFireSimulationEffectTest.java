@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect.explosion;
+package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
@@ -29,66 +29,66 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-class ExplosionEffectNewTest {
+class GunFireSimulationEffectTest {
 
-    private static final ExplosionProperties PROPERTIES = new ExplosionProperties(null, 2.0f, false, false);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(null, 10L, 200L, 100L, 20L, 10L, 2000L, 1000L);
     private static final ItemEffectContext CONTEXT = createContext();
 
-    @Mock
-    private ExplosionEffectPerformanceFactory explosionEffectPerformanceFactory;
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
     private GameScope gameScope;
+    @Mock
+    private GunFireSimulationEffectPerformanceFactory gunFireSimulationEffectPerformanceFactory;
 
-    private ExplosionEffectNew explosionEffect;
-    
+    private GunFireSimulationEffect gunFireSimulationEffect;
+
     @BeforeEach
     void setUp() {
-        explosionEffect = new ExplosionEffectNew(explosionEffectPerformanceFactory, gameContextProvider, GAME_KEY, gameScope);
+        gunFireSimulationEffect = new GunFireSimulationEffect(gameContextProvider, GAME_KEY, gameScope, gunFireSimulationEffectPerformanceFactory);
     }
 
     @Test
     void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> explosionEffect.startPerformance(CONTEXT))
+        assertThatThrownBy(() -> gunFireSimulationEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform explosion effect: properties not set");
+                .hasMessage("Unable to perform gun fire simulation effect: properties not set");
     }
 
     @Test
     void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        explosionEffect.setProperties(PROPERTIES);
+        gunFireSimulationEffect.setProperties(PROPERTIES);
 
-        assertThatThrownBy(() -> explosionEffect.startPerformance(CONTEXT))
+        assertThatThrownBy(() -> gunFireSimulationEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform explosion effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform gun fire simulation effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
     void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
-        ExplosionEffectPerformance performance = mock(ExplosionEffectPerformance.class);
+        GunFireSimulationEffectPerformance performance = mock(GunFireSimulationEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        when(explosionEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
+        when(gunFireSimulationEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        explosionEffect.addTriggerExecutor(triggerExecutor);
-        explosionEffect.setProperties(PROPERTIES);
-        explosionEffect.startPerformance(CONTEXT);
+        gunFireSimulationEffect.addTriggerExecutor(triggerExecutor);
+        gunFireSimulationEffect.setProperties(PROPERTIES);
+        gunFireSimulationEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -108,18 +108,18 @@ class ExplosionEffectNewTest {
 
     @Test
     void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
-        ExplosionEffectPerformance performance = mock(ExplosionEffectPerformance.class);
+        GunFireSimulationEffectPerformance performance = mock(GunFireSimulationEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
-        when(explosionEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
+        when(gunFireSimulationEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        explosionEffect.setProperties(PROPERTIES);
-        explosionEffect.startPerformance(CONTEXT);
+        gunFireSimulationEffect.setProperties(PROPERTIES);
+        gunFireSimulationEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).start(CONTEXT);

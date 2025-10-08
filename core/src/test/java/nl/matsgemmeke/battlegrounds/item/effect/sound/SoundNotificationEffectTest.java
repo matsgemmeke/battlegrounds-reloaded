@@ -25,16 +25,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SoundNotificationEffectNewTest {
+class SoundNotificationEffectTest {
 
     private static final ItemEffectContext CONTEXT = createContext();
     private static final List<GameSound> NOTIFICATION_SOUNDS = Collections.emptyList();
 
-    private SoundNotificationEffectNew soundNotificationEffect;
+    private SoundNotificationEffect soundNotificationEffect;
 
     @BeforeEach
     void setUp() {
-        soundNotificationEffect = new SoundNotificationEffectNew();
+        soundNotificationEffect = new SoundNotificationEffect();
     }
 
     @Test

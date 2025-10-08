@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.effect.*;
 
-public class DamageEffectNew extends BaseItemEffectNew {
+public class DamageEffect extends BaseItemEffect {
 
     private final DamageEffectPerformanceFactory damageEffectPerformanceFactory;
     private final GameContextProvider gameContextProvider;
@@ -16,7 +16,7 @@ public class DamageEffectNew extends BaseItemEffectNew {
     private DamageProperties properties;
 
     @Inject
-    public DamageEffectNew(DamageEffectPerformanceFactory damageEffectPerformanceFactory, GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope) {
+    public DamageEffect(DamageEffectPerformanceFactory damageEffectPerformanceFactory, GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope) {
         this.damageEffectPerformanceFactory = damageEffectPerformanceFactory;
         this.gameContextProvider = gameContextProvider;
         this.gameKey = gameKey;

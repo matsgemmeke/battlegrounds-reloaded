@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
@@ -29,7 +29,7 @@ public class FireballLauncher implements ProjectileLauncher {
     @NotNull
     private final FireballProperties properties;
     @NotNull
-    private final ItemEffectNew itemEffect;
+    private final ItemEffect itemEffect;
     @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
@@ -44,7 +44,7 @@ public class FireballLauncher implements ProjectileLauncher {
             @NotNull ProjectileHitActionRegistry projectileHitActionRegistry,
             @NotNull Scheduler scheduler,
             @Assisted @NotNull FireballProperties properties,
-            @Assisted @NotNull ItemEffectNew itemEffect
+            @Assisted @NotNull ItemEffect itemEffect
     ) {
         this.itemEffect = itemEffect;
         this.audioEmitter = audioEmitter;

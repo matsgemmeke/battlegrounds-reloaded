@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -36,7 +36,7 @@ public class FireballLauncherTest {
 
     private AudioEmitter audioEmitter;
     private FireballProperties properties;
-    private ItemEffectNew itemEffect;
+    private ItemEffect itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
     private ProjectileHitActionRegistry projectileHitActionRegistry;
     private Scheduler scheduler;
@@ -45,7 +45,7 @@ public class FireballLauncherTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         properties = new FireballProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
-        itemEffect = mock(ItemEffectNew.class);
+        itemEffect = mock(ItemEffect.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         projectileHitActionRegistry = mock(ProjectileHitActionRegistry.class);
         scheduler = mock(Scheduler.class);

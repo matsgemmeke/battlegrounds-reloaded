@@ -5,8 +5,8 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
@@ -27,27 +27,21 @@ public class HitscanLauncher implements ProjectileLauncher {
     private static final double FINDING_RANGE_DEPLOYMENT_OBJECTS = 0.3;
     private static final double FINDING_RANGE_ENTITIES = 0.1;
 
-    @NotNull
     private final AudioEmitter audioEmitter;
-    @NotNull
     private final CollisionDetector collisionDetector;
-    @NotNull
     private final HitscanProperties properties;
-    @NotNull
-    private final ItemEffectNew itemEffect;
-    @NotNull
+    private final ItemEffect itemEffect;
     private final ParticleEffectSpawner particleEffectSpawner;
-    @NotNull
     private final TargetFinder targetFinder;
 
     @Inject
     public HitscanLauncher(
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull CollisionDetector collisionDetector,
-            @NotNull ParticleEffectSpawner particleEffectSpawner,
-            @NotNull TargetFinder targetFinder,
-            @Assisted @NotNull HitscanProperties properties,
-            @Assisted @NotNull ItemEffectNew itemEffect
+            AudioEmitter audioEmitter,
+            CollisionDetector collisionDetector,
+            ParticleEffectSpawner particleEffectSpawner,
+            TargetFinder targetFinder,
+            @Assisted HitscanProperties properties,
+            @Assisted ItemEffect itemEffect
     ) {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;

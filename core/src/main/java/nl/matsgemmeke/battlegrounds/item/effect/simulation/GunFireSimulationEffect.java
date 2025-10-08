@@ -5,12 +5,12 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 
-public class GunFireSimulationEffectNew extends BaseItemEffectNew {
+public class GunFireSimulationEffect extends BaseItemEffect {
 
     private final GameContextProvider gameContextProvider;
     private final GameKey gameKey;
@@ -19,7 +19,7 @@ public class GunFireSimulationEffectNew extends BaseItemEffectNew {
     private GunFireSimulationProperties properties;
 
     @Inject
-    public GunFireSimulationEffectNew(GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope, GunFireSimulationEffectPerformanceFactory gunFireSimulationEffectPerformanceFactory) {
+    public GunFireSimulationEffect(GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope, GunFireSimulationEffectPerformanceFactory gunFireSimulationEffectPerformanceFactory) {
         this.gameContextProvider = gameContextProvider;
         this.gameKey = gameKey;
         this.gameScope = gameScope;

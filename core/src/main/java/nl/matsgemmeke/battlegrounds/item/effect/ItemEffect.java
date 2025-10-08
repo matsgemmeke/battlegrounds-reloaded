@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 
 import java.util.Optional;
 
-public interface ItemEffectNew {
+public interface ItemEffect {
 
     void addTriggerExecutor(TriggerExecutor triggerExecutor);
 

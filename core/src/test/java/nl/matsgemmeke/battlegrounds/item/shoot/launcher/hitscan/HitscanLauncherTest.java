@@ -6,8 +6,8 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -34,7 +34,7 @@ public class HitscanLauncherTest {
     private AudioEmitter audioEmitter;
     private CollisionDetector collisionDetector;
     private HitscanProperties properties;
-    private ItemEffectNew itemEffect;
+    private ItemEffect itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
     private TargetFinder targetFinder;
 
@@ -43,7 +43,7 @@ public class HitscanLauncherTest {
         audioEmitter = mock(AudioEmitter.class);
         collisionDetector = mock(CollisionDetector.class);
         properties = new HitscanProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT);
-        itemEffect = mock(ItemEffectNew.class);
+        itemEffect = mock(ItemEffect.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         targetFinder = mock(TargetFinder.class);
     }

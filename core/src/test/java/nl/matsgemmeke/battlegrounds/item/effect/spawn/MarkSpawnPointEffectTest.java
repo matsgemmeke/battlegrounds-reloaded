@@ -1,5 +1,6 @@
-package nl.matsgemmeke.battlegrounds.item.effect.flash;
+package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
+import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -32,63 +33,52 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class FlashEffectNewTest {
+class MarkSpawnPointEffectTest {
 
-    private static final FlashProperties PROPERTIES = new FlashProperties(null, 5.0, 1.0f, false, false);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final ItemEffectContext CONTEXT = createContext();
 
     @Mock
-    private FlashEffectPerformanceFactory flashEffectPerformanceFactory;
-    @Mock
     private GameContextProvider gameContextProvider;
     @Mock
     private GameScope gameScope;
+    @Mock
+    private Provider<MarkSpawnPointEffectPerformance> markSpawnPointEffectPerformanceProvider;
 
-    private FlashEffectNew flashEffect;
+    private MarkSpawnPointEffect markSpawnPointEffect;
 
     @BeforeEach
     void setUp() {
-        flashEffect = new FlashEffectNew(flashEffectPerformanceFactory, gameContextProvider, GAME_KEY, gameScope);
-    }
-
-    @Test
-    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> flashEffect.startPerformance(CONTEXT))
-                .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform flash effect: properties not set");
+        markSpawnPointEffect = new MarkSpawnPointEffect(gameContextProvider, GAME_KEY, gameScope, markSpawnPointEffectPerformanceProvider);
     }
 
     @Test
     void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        flashEffect.setProperties(PROPERTIES);
-
-        assertThatThrownBy(() -> flashEffect.startPerformance(CONTEXT))
+        assertThatThrownBy(() -> markSpawnPointEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform flash effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform mark spawn point effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
     void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
-        FlashEffectPerformance performance = mock(FlashEffectPerformance.class);
+        MarkSpawnPointEffectPerformance performance = mock(MarkSpawnPointEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        when(flashEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
+        when(markSpawnPointEffectPerformanceProvider.get()).thenReturn(performance);
 
-        flashEffect.addTriggerExecutor(triggerExecutor);
-        flashEffect.setProperties(PROPERTIES);
-        flashEffect.startPerformance(CONTEXT);
+        markSpawnPointEffect.addTriggerExecutor(triggerExecutor);
+        markSpawnPointEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -108,18 +98,17 @@ class FlashEffectNewTest {
 
     @Test
     void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
-        FlashEffectPerformance performance = mock(FlashEffectPerformance.class);
+        MarkSpawnPointEffectPerformance performance = mock(MarkSpawnPointEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
-        when(flashEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
+        when(markSpawnPointEffectPerformanceProvider.get()).thenReturn(performance);
 
-        flashEffect.setProperties(PROPERTIES);
-        flashEffect.startPerformance(CONTEXT);
+        markSpawnPointEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).start(CONTEXT);

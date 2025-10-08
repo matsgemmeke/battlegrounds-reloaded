@@ -24,14 +24,14 @@ class TriggerExecutorTest {
     private TriggerExecutor triggerExecutor;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         Supplier<Schedule> scheduleSupplier = () -> schedule;
 
         triggerExecutor = new TriggerExecutor(trigger, scheduleSupplier);
     }
 
     @Test
-    public void createTriggerRunReturnsTriggerRunWithStartedScheduleThatDoesNotifyObservers() {
+    void createTriggerRunReturnsTriggerRunWithStartedScheduleThatDoesNotifyObservers() {
         Entity entity = mock(Entity.class);
         TriggerTarget target = mock(TriggerTarget.class);
         TriggerContext context = new TriggerContext(entity, target);

@@ -5,12 +5,12 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 
-public class CombustionEffectNew extends BaseItemEffectNew {
+public class CombustionEffect extends BaseItemEffect {
 
     private final CombustionEffectPerformanceFactory combustionEffectPerformanceFactory;
     private final GameContextProvider gameContextProvider;
@@ -19,12 +19,7 @@ public class CombustionEffectNew extends BaseItemEffectNew {
     private CombustionProperties properties;
 
     @Inject
-    public CombustionEffectNew(
-            CombustionEffectPerformanceFactory combustionEffectPerformanceFactory,
-            GameContextProvider gameContextProvider,
-            GameKey gameKey,
-            GameScope gameScope
-    ) {
+    public CombustionEffect(CombustionEffectPerformanceFactory combustionEffectPerformanceFactory, GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope) {
         this.combustionEffectPerformanceFactory = combustionEffectPerformanceFactory;
         this.gameContextProvider = gameContextProvider;
         this.gameKey = gameKey;

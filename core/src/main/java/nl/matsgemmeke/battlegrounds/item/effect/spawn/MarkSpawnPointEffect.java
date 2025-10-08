@@ -6,12 +6,12 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 
-public class MarkSpawnPointEffectNew extends BaseItemEffectNew {
+public class MarkSpawnPointEffect extends BaseItemEffect {
 
     private final GameContextProvider gameContextProvider;
     private final GameKey gameKey;
@@ -19,7 +19,7 @@ public class MarkSpawnPointEffectNew extends BaseItemEffectNew {
     private final Provider<MarkSpawnPointEffectPerformance> markSpawnPointEffectPerformanceProvider;
 
     @Inject
-    public MarkSpawnPointEffectNew(GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope, Provider<MarkSpawnPointEffectPerformance> markSpawnPointEffectPerformanceProvider) {
+    public MarkSpawnPointEffect(GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope, Provider<MarkSpawnPointEffectPerformance> markSpawnPointEffectPerformanceProvider) {
         this.gameContextProvider = gameContextProvider;
         this.gameKey = gameKey;
         this.gameScope = gameScope;

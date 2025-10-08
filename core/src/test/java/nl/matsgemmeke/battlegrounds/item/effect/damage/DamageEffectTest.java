@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect.combustion;
+package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
@@ -29,66 +29,91 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class CombustionEffectNewTest {
+class DamageEffectTest {
 
-    private static final CombustionProperties PROPERTIES = new CombustionProperties(null, null, 1, 2, 0.1, 5L, 10, 20, false, false);
+    private static final DamageProperties PROPERTIES = new DamageProperties(null, null);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final ItemEffectContext CONTEXT = createContext();
 
     @Mock
-    private CombustionEffectPerformanceFactory combustionEffectPerformanceFactory;
+    private DamageEffectPerformanceFactory damageEffectPerformanceFactory;
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
     private GameScope gameScope;
 
-    private CombustionEffectNew combustionEffect;
+    private DamageEffect damageEffect;
 
     @BeforeEach
     void setUp() {
-        combustionEffect = new CombustionEffectNew(combustionEffectPerformanceFactory, gameContextProvider, GAME_KEY, gameScope);
+        damageEffect = new DamageEffect(damageEffectPerformanceFactory, gameContextProvider, GAME_KEY, gameScope);
     }
 
     @Test
-    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> combustionEffect.startPerformance(CONTEXT))
-                .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform combustion effect: properties not set");
+    void getLatestPerformanceReturnsEmptyOptionalWhenNoPerformancesHaveStarted() {
+        Optional<ItemEffectPerformance> performanceOptional = damageEffect.getLatestPerformance();
+
+        assertThat(performanceOptional).isEmpty();
     }
 
     @Test
-    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-
-        combustionEffect.setProperties(PROPERTIES);
-
-        assertThatThrownBy(() -> combustionEffect.startPerformance(CONTEXT))
-                .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform combustion effect: no game context for game key OPEN-MODE can be found");
-    }
-
-    @Test
-    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
-        CombustionEffectPerformance performance = mock(CombustionEffectPerformance.class);
+    void getLatestPerformanceReturnsOptionalWithLatestStartedItemEffectPerformance() {
+        DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
-        TriggerRun triggerRun = mock(TriggerRun.class);
 
-        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
-        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
-
-        when(combustionEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
+        when(damageEffectPerformanceFactory.create(any(DamageProperties.class))).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
 
-        combustionEffect.addTriggerExecutor(triggerExecutor);
-        combustionEffect.setProperties(PROPERTIES);
-        combustionEffect.startPerformance(CONTEXT);
+        damageEffect.setProperties(PROPERTIES);
+        damageEffect.startPerformance(CONTEXT);
+        Optional<ItemEffectPerformance> performanceOptional = damageEffect.getLatestPerformance();
+
+        assertThat(performanceOptional).hasValue(performance);
+    }
+
+    @Test
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> damageEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform damage effect: properties not set");
+    }
+
+    @Test
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
+
+        damageEffect.setProperties(PROPERTIES);
+
+        assertThatThrownBy(() -> damageEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform damage effect: No game context for game key OPEN-MODE can be found");
+    }
+
+    @Test
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartsPerformance() {
+        DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
+        TriggerRun triggerRun = mock(TriggerRun.class);
+
+        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
+        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
+
+        when(damageEffectPerformanceFactory.create(any(DamageProperties.class))).thenReturn(performance);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+
+        damageEffect.addTriggerExecutor(triggerExecutor);
+        damageEffect.setProperties(PROPERTIES);
+        damageEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -108,21 +133,50 @@ class CombustionEffectNewTest {
 
     @Test
     void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
-        CombustionEffectPerformance performance = mock(CombustionEffectPerformance.class);
+        DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
-        when(combustionEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
+        when(damageEffectPerformanceFactory.create(any(DamageProperties.class))).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
 
-        combustionEffect.setProperties(PROPERTIES);
-        combustionEffect.startPerformance(CONTEXT);
+        damageEffect.setProperties(PROPERTIES);
+        damageEffect.startPerformance(CONTEXT);
+
+        ArgumentCaptor<DamageProperties> damagePropertiesCaptor = ArgumentCaptor.forClass(DamageProperties.class);
+        verify(damageEffectPerformanceFactory).create(damagePropertiesCaptor.capture());
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).start(CONTEXT);
+    }
+
+    @Test
+    void rollbackCancelsOngoingPerformances() {
+        GameContext gameContext = mock(GameContext.class);
+
+        DamageEffectPerformance performancePerforming = mock(DamageEffectPerformance.class);
+        when(performancePerforming.isPerforming()).thenReturn(true);
+
+        DamageEffectPerformance performanceNotPerforming = mock(DamageEffectPerformance.class);
+        when(performanceNotPerforming.isPerforming()).thenReturn(false);
+
+        when(damageEffectPerformanceFactory.create(any(DamageProperties.class))).thenReturn(performancePerforming, performanceNotPerforming);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+
+        damageEffect.setProperties(PROPERTIES);
+        damageEffect.startPerformance(CONTEXT);
+        damageEffect.startPerformance(CONTEXT);
+        damageEffect.rollbackPerformances();
+
+        verify(performancePerforming).rollback();
+        verify(performanceNotPerforming, never()).rollback();
     }
 
     private static ItemEffectContext createContext() {

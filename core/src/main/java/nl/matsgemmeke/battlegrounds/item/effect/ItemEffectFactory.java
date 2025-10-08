@@ -9,20 +9,20 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectNew;
-import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
@@ -35,26 +35,26 @@ import java.util.List;
 public class ItemEffectFactory {
 
     private final ParticleEffectMapper particleEffectMapper;
-    private final Provider<CombustionEffectNew> combustionEffectProvider;
-    private final Provider<DamageEffectNew> damageEffectProvider;
-    private final Provider<ExplosionEffectNew> explosionEffectProvider;
-    private final Provider<FlashEffectNew> flashEffectProvider;
-    private final Provider<GunFireSimulationEffectNew> gunFireSimulationEffectProvider;
-    private final Provider<MarkSpawnPointEffectNew> markSpawnPointEffectProvider;
-    private final Provider<SmokeScreenEffectNew> smokeScreenEffectProvider;
+    private final Provider<CombustionEffect> combustionEffectProvider;
+    private final Provider<DamageEffect> damageEffectProvider;
+    private final Provider<ExplosionEffect> explosionEffectProvider;
+    private final Provider<FlashEffect> flashEffectProvider;
+    private final Provider<GunFireSimulationEffect> gunFireSimulationEffectProvider;
+    private final Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider;
+    private final Provider<SmokeScreenEffect> smokeScreenEffectProvider;
     private final RangeProfileMapper rangeProfileMapper;
     private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
     public ItemEffectFactory(
             ParticleEffectMapper particleEffectMapper,
-            Provider<CombustionEffectNew> combustionEffectProvider,
-            Provider<DamageEffectNew> damageEffectProvider,
-            Provider<ExplosionEffectNew> explosionEffectProvider,
-            Provider<FlashEffectNew> flashEffectProvider,
-            Provider<GunFireSimulationEffectNew> gunFireSimulationEffectProvider,
-            Provider<MarkSpawnPointEffectNew> markSpawnPointEffectProvider,
-            Provider<SmokeScreenEffectNew> smokeScreenEffectProvider,
+            Provider<CombustionEffect> combustionEffectProvider,
+            Provider<DamageEffect> damageEffectProvider,
+            Provider<ExplosionEffect> explosionEffectProvider,
+            Provider<FlashEffect> flashEffectProvider,
+            Provider<GunFireSimulationEffect> gunFireSimulationEffectProvider,
+            Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
+            Provider<SmokeScreenEffect> smokeScreenEffectProvider,
             RangeProfileMapper rangeProfileMapper,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
@@ -70,10 +70,10 @@ public class ItemEffectFactory {
         this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
-    public ItemEffectNew create(ItemEffectSpec spec) {
+    public ItemEffect create(ItemEffectSpec spec) {
         ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.type);
 
-        ItemEffectNew itemEffect = switch (itemEffectType) {
+        ItemEffect itemEffect = switch (itemEffectType) {
             case COMBUSTION -> {
                 double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
                 double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
@@ -90,7 +90,7 @@ public class ItemEffectFactory {
 
                 CombustionProperties properties = new CombustionProperties(activationSounds, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
 
-                CombustionEffectNew combustionEffect = combustionEffectProvider.get();
+                CombustionEffect combustionEffect = combustionEffectProvider.get();
                 combustionEffect.setProperties(properties);
                 yield combustionEffect;
             }
@@ -103,7 +103,7 @@ public class ItemEffectFactory {
 
                 DamageProperties properties = new DamageProperties(rangeProfile, damageType);
 
-                DamageEffectNew damageEffect = damageEffectProvider.get();
+                DamageEffect damageEffect = damageEffectProvider.get();
                 damageEffect.setProperties(properties);
                 yield damageEffect;
             }
@@ -116,7 +116,7 @@ public class ItemEffectFactory {
                 RangeProfile rangeProfile = new RangeProfile(rangeProfileSpec.longRange.damage, rangeProfileSpec.longRange.distance, rangeProfileSpec.mediumRange.damage, rangeProfileSpec.mediumRange.distance, rangeProfileSpec.shortRange.damage, rangeProfileSpec.shortRange.distance);
                 ExplosionProperties properties = new ExplosionProperties(rangeProfile, power, damageBlocks, spreadFire);
 
-                ExplosionEffectNew explosionEffect = explosionEffectProvider.get();
+                ExplosionEffect explosionEffect = explosionEffectProvider.get();
                 explosionEffect.setProperties(properties);
                 yield explosionEffect;
             }
@@ -130,7 +130,7 @@ public class ItemEffectFactory {
                 PotionEffectProperties potionEffect = new PotionEffectProperties(potionEffectSpec.duration, potionEffectSpec.amplifier, potionEffectSpec.ambient, potionEffectSpec.particles, potionEffectSpec.icon);
                 FlashProperties properties = new FlashProperties(potionEffect, maxSize, power, damageBlocks, spreadFire);
 
-                FlashEffectNew flashEffect = flashEffectProvider.get();
+                FlashEffect flashEffect = flashEffectProvider.get();
                 flashEffect.setProperties(properties);
                 yield flashEffect;
             }
@@ -142,7 +142,7 @@ public class ItemEffectFactory {
 
                 GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, activationPatternSpec.burstInterval, activationPatternSpec.maxBurstDuration, activationPatternSpec.minBurstDuration, activationPatternSpec.maxDelayDuration, activationPatternSpec.minDelayDuration, maxDuration, minDuration);
 
-                GunFireSimulationEffectNew gunFireSimulationEffect = gunFireSimulationEffectProvider.get();
+                GunFireSimulationEffect gunFireSimulationEffect = gunFireSimulationEffectProvider.get();
                 gunFireSimulationEffect.setProperties(properties);
                 yield gunFireSimulationEffect;
             }
@@ -162,14 +162,14 @@ public class ItemEffectFactory {
 
                 SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
 
-                SmokeScreenEffectNew smokeScreenEffect = smokeScreenEffectProvider.get();
+                SmokeScreenEffect smokeScreenEffect = smokeScreenEffectProvider.get();
                 smokeScreenEffect.setProperties(properties);
                 yield smokeScreenEffect;
             }
             case SOUND_NOTIFICATION -> {
                 List<GameSound> notificationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
 
-                SoundNotificationEffectNew soundNotificationEffect = new SoundNotificationEffectNew();
+                SoundNotificationEffect soundNotificationEffect = new SoundNotificationEffect();
                 soundNotificationEffect.setNotificationSounds(notificationSounds);
                 yield soundNotificationEffect;
             }

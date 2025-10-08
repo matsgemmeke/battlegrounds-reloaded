@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect.smoke;
+package nl.matsgemmeke.battlegrounds.item.effect.flash;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
@@ -29,66 +29,66 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class SmokeScreenEffectNewTest {
+class FlashEffectTest {
 
+    private static final FlashProperties PROPERTIES = new FlashProperties(null, 5.0, 1.0f, false, false);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final ItemEffectContext CONTEXT = createContext();
-    private static final SmokeScreenProperties PROPERTIES = new SmokeScreenProperties(null, null, 100L, 200L, 2.0, 1.0, 5.0, 0.1, 5L);
 
+    @Mock
+    private FlashEffectPerformanceFactory flashEffectPerformanceFactory;
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
     private GameScope gameScope;
-    @Mock
-    private SmokeScreenEffectPerformanceFactory smokeScreenEffectPerformanceFactory;
 
-    private SmokeScreenEffectNew smokeScreenEffect;
+    private FlashEffect flashEffect;
 
     @BeforeEach
     void setUp() {
-        smokeScreenEffect = new SmokeScreenEffectNew(gameContextProvider, GAME_KEY, gameScope, smokeScreenEffectPerformanceFactory);
+        flashEffect = new FlashEffect(flashEffectPerformanceFactory, gameContextProvider, GAME_KEY, gameScope);
     }
 
     @Test
     void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> smokeScreenEffect.startPerformance(CONTEXT))
+        assertThatThrownBy(() -> flashEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform smoke screen effect: properties not set");
+                .hasMessage("Unable to perform flash effect: properties not set");
     }
 
     @Test
     void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        smokeScreenEffect.setProperties(PROPERTIES);
+        flashEffect.setProperties(PROPERTIES);
 
-        assertThatThrownBy(() -> smokeScreenEffect.startPerformance(CONTEXT))
+        assertThatThrownBy(() -> flashEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform smoke screen effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform flash effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
     void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
-        SmokeScreenEffectPerformance performance = mock(SmokeScreenEffectPerformance.class);
+        FlashEffectPerformance performance = mock(FlashEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
+        when(flashEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
-        when(smokeScreenEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        smokeScreenEffect.addTriggerExecutor(triggerExecutor);
-        smokeScreenEffect.setProperties(PROPERTIES);
-        smokeScreenEffect.startPerformance(CONTEXT);
+        flashEffect.addTriggerExecutor(triggerExecutor);
+        flashEffect.setProperties(PROPERTIES);
+        flashEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -108,18 +108,18 @@ class SmokeScreenEffectNewTest {
 
     @Test
     void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
-        SmokeScreenEffectPerformance performance = mock(SmokeScreenEffectPerformance.class);
+        FlashEffectPerformance performance = mock(FlashEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
+        when(flashEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
-        when(smokeScreenEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        smokeScreenEffect.setProperties(PROPERTIES);
-        smokeScreenEffect.startPerformance(CONTEXT);
+        flashEffect.setProperties(PROPERTIES);
+        flashEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).start(CONTEXT);

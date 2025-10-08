@@ -39,7 +39,7 @@ public class DeploymentHandlerTest {
     private DeploymentObject deploymentObject;
     private DeploymentProperties deploymentProperties;
     private Entity deployerEntity;
-    private ItemEffectNew itemEffect;
+    private ItemEffect itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
     private TaskRunner taskRunner;
 
@@ -50,7 +50,7 @@ public class DeploymentHandlerTest {
         deploymentObject = mock(DeploymentObject.class);
         deployerEntity = mock(Entity.class);
         deploymentProperties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, MANUAL_ACTIVATION_DELAY);
-        itemEffect = mock(ItemEffectNew.class);
+        itemEffect = mock(ItemEffect.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         taskRunner = mock(TaskRunner.class);
 

@@ -1,6 +1,5 @@
-package nl.matsgemmeke.battlegrounds.item.effect.spawn;
+package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 
-import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -30,40 +29,50 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-class MarkSpawnPointEffectNewTest {
+class SmokeScreenEffectTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final ItemEffectContext CONTEXT = createContext();
+    private static final SmokeScreenProperties PROPERTIES = new SmokeScreenProperties(null, null, 100L, 200L, 2.0, 1.0, 5.0, 0.1, 5L);
 
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
     private GameScope gameScope;
     @Mock
-    private Provider<MarkSpawnPointEffectPerformance> markSpawnPointEffectPerformanceProvider;
+    private SmokeScreenEffectPerformanceFactory smokeScreenEffectPerformanceFactory;
 
-    private MarkSpawnPointEffectNew markSpawnPointEffect;
+    private SmokeScreenEffect smokeScreenEffect;
 
     @BeforeEach
     void setUp() {
-        markSpawnPointEffect = new MarkSpawnPointEffectNew(gameContextProvider, GAME_KEY, gameScope, markSpawnPointEffectPerformanceProvider);
+        smokeScreenEffect = new SmokeScreenEffect(gameContextProvider, GAME_KEY, gameScope, smokeScreenEffectPerformanceFactory);
+    }
+
+    @Test
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> smokeScreenEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform smoke screen effect: properties not set");
     }
 
     @Test
     void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> markSpawnPointEffect.startPerformance(CONTEXT))
+        smokeScreenEffect.setProperties(PROPERTIES);
+
+        assertThatThrownBy(() -> smokeScreenEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform mark spawn point effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform smoke screen effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
     void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
-        MarkSpawnPointEffectPerformance performance = mock(MarkSpawnPointEffectPerformance.class);
+        SmokeScreenEffectPerformance performance = mock(SmokeScreenEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
 
@@ -75,10 +84,11 @@ class MarkSpawnPointEffectNewTest {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
-        when(markSpawnPointEffectPerformanceProvider.get()).thenReturn(performance);
+        when(smokeScreenEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        markSpawnPointEffect.addTriggerExecutor(triggerExecutor);
-        markSpawnPointEffect.startPerformance(CONTEXT);
+        smokeScreenEffect.addTriggerExecutor(triggerExecutor);
+        smokeScreenEffect.setProperties(PROPERTIES);
+        smokeScreenEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -98,7 +108,7 @@ class MarkSpawnPointEffectNewTest {
 
     @Test
     void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
-        MarkSpawnPointEffectPerformance performance = mock(MarkSpawnPointEffectPerformance.class);
+        SmokeScreenEffectPerformance performance = mock(SmokeScreenEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
@@ -106,9 +116,10 @@ class MarkSpawnPointEffectNewTest {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
-        when(markSpawnPointEffectPerformanceProvider.get()).thenReturn(performance);
+        when(smokeScreenEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        markSpawnPointEffect.startPerformance(CONTEXT);
+        smokeScreenEffect.setProperties(PROPERTIES);
+        smokeScreenEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).start(CONTEXT);

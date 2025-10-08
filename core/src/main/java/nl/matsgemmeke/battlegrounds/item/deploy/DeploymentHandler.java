@@ -20,7 +20,7 @@ public class DeploymentHandler {
     @NotNull
     private final DeploymentProperties deploymentProperties;
     @NotNull
-    private final ItemEffectNew itemEffect;
+    private final ItemEffect itemEffect;
     @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
     @NotNull
@@ -37,7 +37,7 @@ public class DeploymentHandler {
             @NotNull ParticleEffectSpawner particleEffectSpawner,
             @NotNull TaskRunner taskRunner,
             @Assisted @NotNull DeploymentProperties deploymentProperties,
-            @Assisted @NotNull ItemEffectNew itemEffect
+            @Assisted @NotNull ItemEffect itemEffect
     ) {
         this.audioEmitter = audioEmitter;
         this.particleEffectSpawner = particleEffectSpawner;

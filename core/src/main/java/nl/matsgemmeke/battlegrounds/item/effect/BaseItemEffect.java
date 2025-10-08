@@ -6,13 +6,13 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 
 import java.util.*;
 
-public abstract class BaseItemEffectNew implements ItemEffectNew {
+public abstract class BaseItemEffect implements ItemEffect {
 
     protected final List<ItemEffectPerformance> performances;
     protected final Set<TriggerExecutor> triggerExecutors;
     protected ItemEffectContext context;
 
-    public BaseItemEffectNew() {
+    public BaseItemEffect() {
         this.performances = new ArrayList<>();
         this.triggerExecutors = new HashSet<>();
     }

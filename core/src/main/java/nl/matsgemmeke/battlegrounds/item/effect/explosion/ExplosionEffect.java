@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.effect.*;
 import org.jetbrains.annotations.NotNull;
 
-public class ExplosionEffectNew extends BaseItemEffectNew {
+public class ExplosionEffect extends BaseItemEffect {
 
     private final ExplosionEffectPerformanceFactory explosionEffectPerformanceFactory;
     private final GameContextProvider gameContextProvider;
@@ -17,7 +17,7 @@ public class ExplosionEffectNew extends BaseItemEffectNew {
     private ExplosionProperties properties;
 
     @Inject
-    public ExplosionEffectNew(ExplosionEffectPerformanceFactory explosionEffectPerformanceFactory, GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope) {
+    public ExplosionEffect(ExplosionEffectPerformanceFactory explosionEffectPerformanceFactory, GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope) {
         this.explosionEffectPerformanceFactory = explosionEffectPerformanceFactory;
         this.gameContextProvider = gameContextProvider;
         this.gameKey = gameKey;

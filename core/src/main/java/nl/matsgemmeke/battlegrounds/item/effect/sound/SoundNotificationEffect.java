@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectNew;
+import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 
 import java.util.List;
 
-public class SoundNotificationEffectNew extends BaseItemEffectNew {
+public class SoundNotificationEffect extends BaseItemEffect {
 
     private List<GameSound> notificationSounds;
 

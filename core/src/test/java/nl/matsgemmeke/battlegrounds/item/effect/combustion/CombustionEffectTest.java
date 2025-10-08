@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect.simulation;
+package nl.matsgemmeke.battlegrounds.item.effect.combustion;
 
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
@@ -29,66 +29,66 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class GunFireSimulationEffectNewTest {
+class CombustionEffectTest {
 
+    private static final CombustionProperties PROPERTIES = new CombustionProperties(null, null, 1, 2, 0.1, 5L, 10, 20, false, false);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-    private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(null, 10L, 200L, 100L, 20L, 10L, 2000L, 1000L);
     private static final ItemEffectContext CONTEXT = createContext();
 
+    @Mock
+    private CombustionEffectPerformanceFactory combustionEffectPerformanceFactory;
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
     private GameScope gameScope;
-    @Mock
-    private GunFireSimulationEffectPerformanceFactory gunFireSimulationEffectPerformanceFactory;
 
-    private GunFireSimulationEffectNew gunFireSimulationEffect;
+    private CombustionEffect combustionEffect;
 
     @BeforeEach
     void setUp() {
-        gunFireSimulationEffect = new GunFireSimulationEffectNew(gameContextProvider, GAME_KEY, gameScope, gunFireSimulationEffectPerformanceFactory);
+        combustionEffect = new CombustionEffect(combustionEffectPerformanceFactory, gameContextProvider, GAME_KEY, gameScope);
     }
 
     @Test
     void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
-        assertThatThrownBy(() -> gunFireSimulationEffect.startPerformance(CONTEXT))
+        assertThatThrownBy(() -> combustionEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform gun fire simulation effect: properties not set");
+                .hasMessage("Unable to perform combustion effect: properties not set");
     }
 
     @Test
     void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        gunFireSimulationEffect.setProperties(PROPERTIES);
+        combustionEffect.setProperties(PROPERTIES);
 
-        assertThatThrownBy(() -> gunFireSimulationEffect.startPerformance(CONTEXT))
+        assertThatThrownBy(() -> combustionEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform gun fire simulation effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform combustion effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
     void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
-        GunFireSimulationEffectPerformance performance = mock(GunFireSimulationEffectPerformance.class);
+        CombustionEffectPerformance performance = mock(CombustionEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
+        when(combustionEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
-        when(gunFireSimulationEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        gunFireSimulationEffect.addTriggerExecutor(triggerExecutor);
-        gunFireSimulationEffect.setProperties(PROPERTIES);
-        gunFireSimulationEffect.startPerformance(CONTEXT);
+        combustionEffect.addTriggerExecutor(triggerExecutor);
+        combustionEffect.setProperties(PROPERTIES);
+        combustionEffect.startPerformance(CONTEXT);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
         verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
@@ -108,18 +108,18 @@ class GunFireSimulationEffectNewTest {
 
     @Test
     void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
-        GunFireSimulationEffectPerformance performance = mock(GunFireSimulationEffectPerformance.class);
+        CombustionEffectPerformance performance = mock(CombustionEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
+        when(combustionEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
             Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
             return performanceSupplier.get();
         });
-        when(gunFireSimulationEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        gunFireSimulationEffect.setProperties(PROPERTIES);
-        gunFireSimulationEffect.startPerformance(CONTEXT);
+        combustionEffect.setProperties(PROPERTIES);
+        combustionEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).start(CONTEXT);
