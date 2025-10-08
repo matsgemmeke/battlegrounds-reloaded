@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
-public interface TriggerNew {
+public interface Trigger {
 
     boolean activates(TriggerContext context);
 }

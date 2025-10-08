@@ -1,24 +1,19 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class TriggerRun {
 
-    @NotNull
     private final Schedule schedule;
-    @NotNull
     private final Set<TriggerObserver> observers;
-    @NotNull
-    private final TriggerNew trigger;
-    @NotNull
+    private final Trigger trigger;
     private final TriggerContext context;
     private boolean started;
 
-    public TriggerRun(@NotNull Schedule schedule, @NotNull TriggerNew trigger, @NotNull TriggerContext context) {
+    public TriggerRun(Schedule schedule, Trigger trigger, TriggerContext context) {
         this.schedule = schedule;
         this.trigger = trigger;
         this.context = context;

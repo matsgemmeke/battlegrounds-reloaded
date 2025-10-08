@@ -3,40 +3,39 @@ package nl.matsgemmeke.battlegrounds.item.trigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import org.bukkit.entity.Entity;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
-public class TriggerRunTest {
+@ExtendWith(MockitoExtension.class)
+class TriggerRunTest {
 
-    private Entity entity;
+    @Mock
     private Schedule schedule;
-    private TriggerContext context;
-    private TriggerNew trigger;
+    @Mock
+    private Trigger trigger;
+    @Mock
     private TriggerTarget target;
-
-    @BeforeEach
-    public void setUp() {
-        entity = mock(Entity.class);
-        schedule = mock(Schedule.class);
-        trigger = mock(TriggerNew.class);
-        target = mock(TriggerTarget.class);
-        context = new TriggerContext(entity, target);
-    }
+    @Spy
+    private TriggerContext context = new TriggerContext(mock(Entity.class), target);
+    @InjectMocks
+    private TriggerRun triggerRun;
 
     @Test
-    public void cancelDoesNotStopScheduleWhenNotStarted() {
-        TriggerRun triggerRun = new TriggerRun(schedule, trigger, context);
+    void cancelDoesNotStopScheduleWhenNotStarted() {
         triggerRun.cancel();
 
         verify(schedule, never()).stop();
     }
 
     @Test
-    public void cancelStopsScheduleWhenStarted() {
-        TriggerRun triggerRun = new TriggerRun(schedule, trigger, context);
+    void cancelStopsScheduleWhenStarted() {
         triggerRun.start();
         triggerRun.cancel();
 
@@ -44,8 +43,7 @@ public class TriggerRunTest {
     }
 
     @Test
-    public void startDoesNotStartScheduleWhenAlreadyStarted() {
-        TriggerRun triggerRun = new TriggerRun(schedule, trigger, context);
+    void startDoesNotStartScheduleWhenAlreadyStarted() {
         triggerRun.start();
         triggerRun.start();
 
@@ -54,13 +52,11 @@ public class TriggerRunTest {
     }
 
     @Test
-    public void startStartsScheduleWithTaskThatDoesNotNotifyObserversWhenTriggerDoesNotActivate() {
+    void startStartsScheduleWithTaskThatDoesNotNotifyObserversWhenTriggerDoesNotActivate() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
-        when(target.exists()).thenReturn(true);
         when(trigger.activates(context)).thenReturn(false);
 
-        TriggerRun triggerRun = new TriggerRun(schedule, trigger, context);
         triggerRun.addObserver(observer);
         triggerRun.start();
 
@@ -74,13 +70,11 @@ public class TriggerRunTest {
     }
 
     @Test
-    public void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivates() {
+    void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivates() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
-        when(target.exists()).thenReturn(true);
         when(trigger.activates(context)).thenReturn(true);
 
-        TriggerRun triggerRun = new TriggerRun(schedule, trigger, context);
         triggerRun.addObserver(observer);
         triggerRun.start();
 

@@ -3,21 +3,19 @@ package nl.matsgemmeke.battlegrounds.item.trigger.enemy;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerNew;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class EnemyProximityTrigger implements TriggerNew {
+public class EnemyProximityTrigger implements Trigger {
 
-    @NotNull
     private final TargetFinder targetFinder;
     private double checkingRange;
 
     @Inject
-    public EnemyProximityTrigger(@NotNull TargetFinder targetFinder) {
+    public EnemyProximityTrigger(TargetFinder targetFinder) {
         this.targetFinder = targetFinder;
     }
 
@@ -25,6 +23,7 @@ public class EnemyProximityTrigger implements TriggerNew {
         this.checkingRange = checkingRange;
     }
 
+    @Override
     public boolean activates(TriggerContext context) {
         TriggerTarget target = context.target();
 

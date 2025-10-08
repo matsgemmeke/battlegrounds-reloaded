@@ -1,17 +1,18 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.impact;
 
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerNew;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-public class ImpactTrigger implements TriggerNew {
+public class ImpactTrigger implements Trigger {
 
     private static final double RAY_TRACE_MAX_DISTANCE = 1.0;
 
+    @Override
     public boolean activates(TriggerContext context) {
         TriggerTarget target = context.target();
 
