@@ -16,7 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.*;
 class SoundNotificationEffectNewTest {
 
     private static final ItemEffectContext CONTEXT = createContext();
-    private static final Set<GameSound> NOTIFICATION_SOUNDS = Set.of();
+    private static final List<GameSound> NOTIFICATION_SOUNDS = Collections.emptyList();
 
     private SoundNotificationEffectNew soundNotificationEffect;
 

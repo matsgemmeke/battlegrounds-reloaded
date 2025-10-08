@@ -86,23 +86,29 @@ public class HitscanLauncher implements ProjectileLauncher {
         if (collisionDetector.producesBlockCollisionAt(projectileLocation)) {
             Block block = projectileLocation.getBlock();
             block.getWorld().playEffect(projectileLocation, org.bukkit.Effect.STEP_SOUND, block.getType());
+
+            this.startPerformance(entity, projectileLocation, startingLocation);
             return true;
         }
 
         TargetQuery query = this.createTargetQuery(entity.getUniqueId(), projectileLocation);
 
         if (targetFinder.containsTargets(query)) {
-            Location sourceLocation = projectileLocation.clone();
-            World world = projectileLocation.getBlock().getWorld();
-            StaticSource source = new StaticSource(sourceLocation, world);
-
-            ItemEffectContext context = new ItemEffectContext(entity, source, startingLocation);
-
-            itemEffect.startPerformance(context);
+            this.startPerformance(entity, projectileLocation, startingLocation);
             return true;
         }
 
         return false;
+    }
+
+    private void startPerformance(Entity entity, Location projectileLocation, Location startingLocation) {
+        Location sourceLocation = projectileLocation.clone();
+        World world = projectileLocation.getBlock().getWorld();
+        StaticSource source = new StaticSource(sourceLocation, world);
+
+        ItemEffectContext context = new ItemEffectContext(entity, source, startingLocation);
+
+        itemEffect.startPerformance(context);
     }
 
     private TargetQuery createTargetQuery(UUID entityId, Location location) {

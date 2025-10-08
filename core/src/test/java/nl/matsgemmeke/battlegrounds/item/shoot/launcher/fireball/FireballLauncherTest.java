@@ -5,7 +5,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -24,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class FireballLauncherTest {
@@ -34,7 +36,7 @@ public class FireballLauncherTest {
 
     private AudioEmitter audioEmitter;
     private FireballProperties properties;
-    private ItemEffect itemEffect;
+    private ItemEffectNew itemEffect;
     private ParticleEffectSpawner particleEffectSpawner;
     private ProjectileHitActionRegistry projectileHitActionRegistry;
     private Scheduler scheduler;
@@ -43,7 +45,7 @@ public class FireballLauncherTest {
     public void setUp() {
         audioEmitter = mock(AudioEmitter.class);
         properties = new FireballProperties(SHOT_SOUNDS, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
-        itemEffect = mock(ItemEffect.class);
+        itemEffect = mock(ItemEffectNew.class);
         particleEffectSpawner = mock(ParticleEffectSpawner.class);
         projectileHitActionRegistry = mock(ProjectileHitActionRegistry.class);
         scheduler = mock(Scheduler.class);
@@ -53,7 +55,7 @@ public class FireballLauncherTest {
     public void launchStartsScheduleThatActivatesEffectWhenProjectileHitActionGetsCalled() {
         World world = mock(World.class);
         Location direction = new Location(world, 1.0, 1.0, 1.0, 0.0f, 0.0f);
-        Location entityLocation = new Location(world, 1.0, 1.0, 1.0);
+        Location entityLocation = new Location(world, 10.0, 1.0, 1.0);
         Location fireballLocation = new Location(world, 1.0, 1.0, 1.0);
 
         Entity entity = mock(Entity.class);
@@ -71,6 +73,12 @@ public class FireballLauncherTest {
 
         LaunchContext context = new LaunchContext(entity, source, direction);
 
+        doAnswer(invocation -> {
+            ProjectileHitAction projectileHitAction = invocation.getArgument(1);
+            projectileHitAction.onProjectileHit();
+            return null;
+        }).when(projectileHitActionRegistry).registerProjectileHitAction(eq(fireball), any(ProjectileHitAction.class));
+
         FireballLauncher launcher = new FireballLauncher(audioEmitter, particleEffectSpawner, projectileHitActionRegistry, scheduler, properties, itemEffect);
         launcher.launch(context);
 
@@ -78,15 +86,18 @@ public class FireballLauncherTest {
         verify(schedule).addTask(scheduleTaskCaptor.capture());
 
         scheduleTaskCaptor.getValue().run();
+        
+        ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
-        ArgumentCaptor<ProjectileHitAction> projectileHitActionCaptor = ArgumentCaptor.forClass(ProjectileHitAction.class);
-        verify(projectileHitActionRegistry).registerProjectileHitAction(eq(fireball), projectileHitActionCaptor.capture());
-
-        projectileHitActionCaptor.getValue().onProjectileHit();
+        ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
+        assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
+        assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(fireballLocation);
+        assertThat(itemEffectContext.getSource().getWorld()).isEqualTo(world);
+        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(entityLocation);
 
         verify(audioEmitter).playSounds(SHOT_SOUNDS, entityLocation);
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, fireballLocation);
-        verify(itemEffect).activateInstantly();
         verify(schedule).stop();
     }
 }

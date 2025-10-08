@@ -6,13 +6,13 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.Set;
+import java.util.List;
 
 public class SoundNotificationEffectPerformance extends BaseItemEffectPerformance {
 
-    private final Set<GameSound> notificationSounds;
+    private final List<GameSound> notificationSounds;
 
-    public SoundNotificationEffectPerformance(Set<GameSound> notificationSounds) {
+    public SoundNotificationEffectPerformance(List<GameSound> notificationSounds) {
         this.notificationSounds = notificationSounds;
     }
 

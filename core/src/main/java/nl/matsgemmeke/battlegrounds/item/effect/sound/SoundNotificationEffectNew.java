@@ -5,13 +5,13 @@ import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 
-import java.util.Set;
+import java.util.List;
 
 public class SoundNotificationEffectNew extends BaseItemEffectNew {
 
-    private Set<GameSound> notificationSounds;
+    private List<GameSound> notificationSounds;
 
-    public void setNotificationSounds(Set<GameSound> notificationSounds) {
+    public void setNotificationSounds(List<GameSound> notificationSounds) {
         this.notificationSounds = notificationSounds;
     }
 

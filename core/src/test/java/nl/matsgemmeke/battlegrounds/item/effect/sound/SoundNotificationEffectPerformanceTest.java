@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -33,7 +33,7 @@ class SoundNotificationEffectPerformanceTest {
     @BeforeEach
     void setUp() {
         sound = mock(GameSound.class);
-        performance = new SoundNotificationEffectPerformance(Set.of(sound));
+        performance = new SoundNotificationEffectPerformance(List.of(sound));
     }
 
     @Test

@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
@@ -41,7 +41,7 @@ public class ProjectileLauncherFactoryTest {
     public void createReturnsInstanceOfFireballLauncher() {
         FireballLauncher fireballLauncher = mock(FireballLauncher.class);
         ProjectileSpec projectileSpec = this.createProjectileSpec("FIREBALL");
-        ItemEffect itemEffect = mock(ItemEffect.class);
+        ItemEffectNew itemEffect = mock(ItemEffectNew.class);
 
         when(fireballLauncherFactory.create(any(FireballProperties.class), eq(itemEffect))).thenReturn(fireballLauncher);
         when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
@@ -83,7 +83,7 @@ public class ProjectileLauncherFactoryTest {
     public void createReturnsInstanceOfHitscanLauncher() {
         HitscanLauncher hitscanLauncher = mock(HitscanLauncher.class);
         ProjectileSpec projectileSpec = this.createProjectileSpec("HITSCAN");
-        ItemEffect itemEffect = mock(ItemEffect.class);
+        ItemEffectNew itemEffect = mock(ItemEffectNew.class);
 
         when(hitscanLauncherFactory.create(any(HitscanProperties.class), eq(itemEffect))).thenReturn(hitscanLauncher);
         when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);

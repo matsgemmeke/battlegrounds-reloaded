@@ -10,8 +10,8 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.DefaultActivator;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectNew;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -80,7 +80,7 @@ public class EquipmentFactoryTest {
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
 
-        ItemEffect itemEffect = mock(ItemEffect.class);
+        ItemEffectNew itemEffect = mock(ItemEffectNew.class);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
@@ -103,7 +103,7 @@ public class EquipmentFactoryTest {
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
 
-        ItemEffect itemEffect = mock(ItemEffect.class);
+        ItemEffectNew itemEffect = mock(ItemEffectNew.class);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
 
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
