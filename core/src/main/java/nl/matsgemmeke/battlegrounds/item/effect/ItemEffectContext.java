@@ -6,13 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class ItemEffectContext {
 
-    @NotNull
     private final Entity entity;
     private final Location initiationLocation;
-    @NotNull
     private ItemEffectSource source;
 
-    public ItemEffectContext(@NotNull Entity entity, @NotNull ItemEffectSource source, @NotNull Location initiationLocation) {
+    public ItemEffectContext(Entity entity, ItemEffectSource source, Location initiationLocation) {
         this.entity = entity;
         this.source = source;
         this.initiationLocation = initiationLocation;
