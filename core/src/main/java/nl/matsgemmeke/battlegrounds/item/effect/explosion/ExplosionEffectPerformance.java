@@ -38,9 +38,9 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        Entity entity = context.getEntity();
+        Entity entity = context.entity();
         UUID entityId = entity.getUniqueId();
-        ItemEffectSource source = context.getSource();
+        ItemEffectSource source = context.source();
         Location sourceLocation = source.getLocation();
         World world = source.getWorld();
 

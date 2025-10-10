@@ -26,10 +26,10 @@ public class MarkSpawnPointEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        entityId = context.getEntity().getUniqueId();
-        Location initiationLocation = context.getInitiationLocation();
+        entityId = context.entity().getUniqueId();
+        Location initiationLocation = context.initiationLocation();
 
-        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), initiationLocation.getYaw());
+        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.source(), initiationLocation.getYaw());
 
         spawnPointRegistry.setCustomSpawnPoint(entityId, spawnPoint);
     }

@@ -47,7 +47,7 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
 
     @Override
     public void perform(ItemEffectContext context) {
-        UUID entityId = context.getEntity().getUniqueId();
+        UUID entityId = context.entity().getUniqueId();
         GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId).orElse(null);
 
         if (gunFireSimulationInfo == null) {
@@ -77,7 +77,7 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
     }
 
     private void handleScheduleTick(ItemEffectContext context, List<GameSound> sounds, long interval) {
-        ItemEffectSource source = context.getSource();
+        ItemEffectSource source = context.source();
 
         // Stop simulation when source no longer exists
         if (!source.exists()) {

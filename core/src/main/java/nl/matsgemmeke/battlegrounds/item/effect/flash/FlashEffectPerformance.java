@@ -42,8 +42,8 @@ public class FlashEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(@NotNull ItemEffectContext context) {
-        Entity entity = context.getEntity();
-        ItemEffectSource source = context.getSource();
+        Entity entity = context.entity();
+        ItemEffectSource source = context.source();
 
         this.createExplosionEffect(entity, source);
         this.applyPotionEffectToTargets(entity.getUniqueId(), source.getLocation());

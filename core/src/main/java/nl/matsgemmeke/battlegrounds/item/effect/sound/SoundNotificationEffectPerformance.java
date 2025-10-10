@@ -24,7 +24,7 @@ public class SoundNotificationEffectPerformance extends BaseItemEffectPerformanc
 
     @Override
     public void perform(ItemEffectContext context) {
-        Entity entity = context.getEntity();
+        Entity entity = context.entity();
 
         // Playing sounds is only possible for players
         if (!(entity instanceof Player player)) {

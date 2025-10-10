@@ -34,7 +34,7 @@ public abstract class BaseItemEffect implements ItemEffect {
     protected void startPerformance(ItemEffectPerformance performance, ItemEffectContext context) {
         if (!triggerExecutors.isEmpty()) {
             for (TriggerExecutor triggerExecutor : triggerExecutors) {
-                TriggerContext triggerContext = new TriggerContext(context.getEntity(), context.getSource());
+                TriggerContext triggerContext = new TriggerContext(context.entity(), context.source());
 
                 TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
                 triggerRun.addObserver(() -> performance.start(context));

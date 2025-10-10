@@ -46,10 +46,10 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(@NotNull ItemEffectContext context) {
-        audioEmitter.playSounds(properties.activationSounds(), context.getSource().getLocation());
-
-        currentLocation = context.getSource().getLocation();
+        currentLocation = context.source().getLocation();
         currentRadius = properties.minSize();
+
+        audioEmitter.playSounds(properties.activationSounds(), currentLocation);
 
         long totalDuration = this.getTotalDuration(properties.minDuration(), properties.maxDuration());
 
@@ -63,7 +63,7 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
     }
 
     private void handleGrowth(ItemEffectContext context) {
-        ItemEffectSource source = context.getSource();
+        ItemEffectSource source = context.source();
 
         if (!source.exists()) {
             repeatingSchedule.stop();
@@ -148,7 +148,7 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
     }
 
     private void expire(ItemEffectContext context) {
-        context.getSource().remove();
+        context.source().remove();
         this.rollback();
     }
 

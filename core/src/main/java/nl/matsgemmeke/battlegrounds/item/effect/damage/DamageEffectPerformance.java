@@ -39,10 +39,10 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        Entity entity = context.getEntity();
+        Entity entity = context.entity();
         UUID entityId = entity.getUniqueId();
-        Location initiationLocation = context.getInitiationLocation();
-        Location sourceLocation = context.getSource().getLocation();
+        Location initiationLocation = context.initiationLocation();
+        Location sourceLocation = context.source().getLocation();
 
         for (GameEntity target : targetFinder.findEnemyTargets(entityId, sourceLocation, ENTITY_FINDING_RANGE)) {
             Location targetLocation = target.getEntity().getLocation();

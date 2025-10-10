@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -123,7 +122,7 @@ class SmokeScreenEffectPerformanceTest {
 
         ItemEffectSource source = mock(ItemEffectSource.class);
         when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceOldLocation, sourceOldLocation, sourceNewLocation);
+        when(source.getLocation()).thenReturn(sourceOldLocation, sourceNewLocation);
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
