@@ -103,7 +103,8 @@ class SmokeScreenEffectTest {
 
         verify(triggerRun).start();
         verify(performance).addTriggerRun(triggerRun);
-        verify(performance).start(CONTEXT);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
     @Test
@@ -122,7 +123,8 @@ class SmokeScreenEffectTest {
         smokeScreenEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
-        verify(performance).start(CONTEXT);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
     private static ItemEffectContext createContext() {

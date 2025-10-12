@@ -93,7 +93,8 @@ class MarkSpawnPointEffectTest {
 
         verify(triggerRun).start();
         verify(performance).addTriggerRun(triggerRun);
-        verify(performance).start(CONTEXT);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
     @Test
@@ -111,7 +112,8 @@ class MarkSpawnPointEffectTest {
         markSpawnPointEffect.startPerformance(CONTEXT);
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
-        verify(performance).start(CONTEXT);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
     private static ItemEffectContext createContext() {

@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +8,7 @@ import java.util.Set;
 public abstract class BaseItemEffectPerformance implements ItemEffectPerformance {
 
     protected final Set<TriggerRun> triggerRuns;
-    protected ItemEffectContext currentContext;
+    protected ItemEffectContext context;
 
     public BaseItemEffectPerformance() {
         this.triggerRuns = new HashSet<>();
@@ -23,20 +21,21 @@ public abstract class BaseItemEffectPerformance implements ItemEffectPerformance
 
     @Override
     public void changeSource(ItemEffectSource source) {
-        Entity entity = currentContext.getEntity();
-        Location initiationLocation = currentContext.getInitiationLocation();
-
-        currentContext = new ItemEffectContext(entity, source, initiationLocation);
+        context.setSource(source);
     }
 
     @Override
     public boolean isReleased() {
-        return currentContext != null && currentContext.getSource().isReleased();
+        return context != null && context.getSource().isReleased();
     }
 
     @Override
-    public void start(ItemEffectContext context) {
-        currentContext = context;
+    public void setContext(ItemEffectContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public void start() {
         this.perform(context);
     }
 

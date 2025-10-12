@@ -125,7 +125,8 @@ public class ProjectileEffectFactory {
     private void addTriggers(@NotNull ProjectileEffect projectileEffect, @NotNull Collection<TriggerSpec> triggerSpecs) {
         for (TriggerSpec triggerSpec : triggerSpecs) {
             TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
-//            projectileEffect.addTrigger(trigger);
+
+            projectileEffect.addTriggerExecutor(triggerExecutor);
         }
     }
 }

@@ -73,7 +73,8 @@ class GunFireSimulationEffectPerformanceTest {
         when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.empty());
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(schedule);
 
-        performance.start(context);
+        performance.setContext(context);
+        performance.start();
         performance.changeSource(newSource);
 
         ArgumentCaptor<ScheduleTask> taskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
@@ -129,7 +130,8 @@ class GunFireSimulationEffectPerformanceTest {
             return null;
         }).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        performance.start(context);
+        performance.setContext(context);
+        performance.start();
 
         verify(audioEmitter).playSounds(GENERIC_SHOTS_SOUNDS, SOURCE_LOCATION);
     }
@@ -157,7 +159,8 @@ class GunFireSimulationEffectPerformanceTest {
             return null;
         }).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        performance.start(context);
+        performance.setContext(context);
+        performance.start();
 
         verifyNoInteractions(audioEmitter);
         verify(repeatingSchedule).stop();
@@ -190,7 +193,8 @@ class GunFireSimulationEffectPerformanceTest {
             return null;
         }).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        performance.start(context);
+        performance.setContext(context);
+        performance.start();
 
         // The implementation uses random variables, so check the max and min possible amount of executions
         verify(audioEmitter, atLeast(10)).playSounds(shotSounds, SOURCE_LOCATION);

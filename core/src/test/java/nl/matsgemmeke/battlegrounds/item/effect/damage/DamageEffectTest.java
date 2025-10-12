@@ -128,7 +128,8 @@ class DamageEffectTest {
 
         verify(triggerRun).start();
         verify(performance).addTriggerRun(triggerRun);
-        verify(performance).start(CONTEXT);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
     @Test
@@ -150,7 +151,8 @@ class DamageEffectTest {
         verify(damageEffectPerformanceFactory).create(damagePropertiesCaptor.capture());
 
         verify(performance, never()).addTriggerRun(any(TriggerRun.class));
-        verify(performance).start(CONTEXT);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
     @Test

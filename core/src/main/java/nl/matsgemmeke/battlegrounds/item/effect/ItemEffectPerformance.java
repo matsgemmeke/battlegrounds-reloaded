@@ -12,7 +12,9 @@ public interface ItemEffectPerformance {
 
     boolean isReleased();
 
-    void start(ItemEffectContext context);
+    void setContext(ItemEffectContext context);
+
+    void start();
 
     void cancel();
 

@@ -52,5 +52,5 @@ public abstract class BaseProjectileEffect implements ProjectileEffect {
         this.performEffect(projectile);
     }
 
-    public abstract void performEffect(@NotNull Projectile projectile);
+    public abstract void performEffect(Projectile projectile);
 }

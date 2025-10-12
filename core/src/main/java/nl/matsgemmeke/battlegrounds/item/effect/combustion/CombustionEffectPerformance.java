@@ -154,10 +154,6 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void rollback() {
-        if (!this.isPerforming()) {
-            return;
-        }
-
         for (Block block : affectedBlocks) {
             if (block.getType() == Material.FIRE) {
                 block.setType(Material.AIR);

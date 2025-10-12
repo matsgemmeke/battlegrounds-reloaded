@@ -32,21 +32,23 @@ public abstract class BaseItemEffect implements ItemEffect {
     }
 
     protected void startPerformance(ItemEffectPerformance performance, ItemEffectContext context) {
+        performances.add(performance);
+
+        performance.setContext(context);
+
         if (!triggerExecutors.isEmpty()) {
             for (TriggerExecutor triggerExecutor : triggerExecutors) {
                 TriggerContext triggerContext = new TriggerContext(context.getEntity(), context.getSource());
 
                 TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-                triggerRun.addObserver(() -> performance.start(context));
+                triggerRun.addObserver(performance::start);
                 triggerRun.start();
 
                 performance.addTriggerRun(triggerRun);
             }
         } else {
-            performance.start(context);
+            performance.start();
         }
-
-        performances.add(performance);
     }
 
     @Override
@@ -54,7 +56,7 @@ public abstract class BaseItemEffect implements ItemEffect {
         for (ItemEffectPerformance performance : performances) {
             if (!performance.isPerforming()) {
                 performance.cancel();
-                performance.start(context);
+                performance.start();
             }
         }
 

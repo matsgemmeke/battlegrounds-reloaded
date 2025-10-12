@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
