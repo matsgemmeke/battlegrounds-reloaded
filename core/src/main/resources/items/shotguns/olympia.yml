@@ -1,28 +1,28 @@
 id: OLYMPIA
 name: Olympia
-ammo:
-  default-magazine-amount: 9
-  magazine-size: 2
-  max-magazine-amount: 19
-controls:
-  reload: LEFT_CLICK
-  shoot: RIGHT_CLICK
-description: Double-barrel over/under shotgun. Effective at medium to close range.
 gun-type: SHOTGUN
-item:
-  damage: 23
-  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
-  material: IRON_HOE
+description: Double-barrel over/under shotgun. Effective at medium to close range.
 level-unlocked: 1
 price: 1100
+controls:
+  shoot: RIGHT_CLICK
+  reload: LEFT_CLICK
+ammo:
+  magazine-size: 2
+  default-magazine-amount: 9
+  max-magazine-amount: 19
+item:
+  material: IRON_HOE
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
+  damage: 23
 reloading:
+  type: MANUAL_INSERTION
   duration: 25
   reload-sounds: BLOCK_WOODEN_DOOR_OPEN-1-2-12, BLOCK_PISTON_EXTEND-1-2-12, BLOCK_WOODEN_DOOR_OPEN-1-2-16, BLOCK_PISTON_CONTRACT-1-2-16
-  type: MANUAL_INSERTION
 shooting:
   fire-mode:
-    cycle-cooldown: 6
     type: SEMI_AUTOMATIC
+    cycle-cooldown: 6
   projectile:
     type: HITSCAN
     headshot-damage-multiplier: 1.1

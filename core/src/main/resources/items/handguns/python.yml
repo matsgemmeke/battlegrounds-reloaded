@@ -1,28 +1,28 @@
 id: PYTHON
 name: Python
-ammo:
-  default-magazine-amount: 3
-  magazine-size: 6
-  max-magazine-amount: 8
-controls:
-  reload: LEFT_CLICK
-  shoot: RIGHT_CLICK
-description: Double-action revolver pistol. Uses a 6 round cylinder feed system.
 gun-type: HANDGUN
-item:
-  damage: 5
-  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
-  material: IRON_HOE
+description: Double-action revolver pistol. Uses a 6 round cylinder feed system.
 level-unlocked: 18
 price: 600
+controls:
+  shoot: RIGHT_CLICK
+  reload: LEFT_CLICK
+ammo:
+  max-magazine-amount: 8
+  default-magazine-amount: 3
+  magazine-size: 6
+item:
+  material: IRON_HOE
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
+  damage: 5
 reloading:
+  type: MANUAL_INSERTION
   duration: 16
   reload-sounds: BLOCK_STONE_BUTTON_CLICK_OFF-1-2-12
-  type: MANUAL_INSERTION
 shooting:
   fire-mode:
-    cycle-cooldown: 4
     type: SEMI_AUTOMATIC
+    cycle-cooldown: 4
   projectile:
     type: HITSCAN
     headshot-damage-multiplier: 1.5

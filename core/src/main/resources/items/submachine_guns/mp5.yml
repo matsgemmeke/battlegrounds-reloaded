@@ -1,28 +1,28 @@
 id: MP5
 name: MP5
-ammo:
-  default-magazine-amount: 3
-  magazine-size: 30
-  max-magazine-amount: 8
-controls:
-  reload: LEFT_CLICK
-  shoot: RIGHT_CLICK
-description: Fully automatic with good accuracy. Effective at close to medium range.
 gun-type: SUBMACHINE_GUN
-item:
-  damage: 8
-  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
-  material: IRON_HOE
+description: Fully automatic with good accuracy. Effective at close to medium range.
 level-unlocked: 1
 price: 1200
+controls:
+  shoot: RIGHT_CLICK
+  reload: LEFT_CLICK
+ammo:
+  magazine-size: 30
+  default-magazine-amount: 3
+  max-magazine-amount: 8
+item:
+  material: IRON_HOE
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
+  damage: 8
 reloading:
+  type: MAGAZINE
   duration: 48
   reload-sounds: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
-  type: MAGAZINE
 shooting:
   fire-mode:
-    rate-of-fire: 600
     type: FULLY_AUTOMATIC
+    rate-of-fire: 600
   projectile:
     type: HITSCAN
     headshot-damage-multiplier: 1.4

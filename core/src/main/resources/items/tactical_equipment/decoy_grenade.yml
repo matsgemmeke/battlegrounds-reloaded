@@ -1,8 +1,10 @@
 id: DECOY_GRENADE
 name: Decoy Grenade
+equipment-type: TACTICAL
+description: Distraction device that simulates enemy gunfire.
 controls:
-  cook: RIGHT_CLICK
   throwing: LEFT_CLICK
+  cook: RIGHT_CLICK
 deploy:
   health: 50.0
   on-destruction:
@@ -20,40 +22,38 @@ deploy:
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
-description: Distraction device that simulates enemy gunfire.
 effect:
+  type: GUN_FIRE_SIMULATION
+  activation-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+  min-duration: 200
+  max-duration: 300
   activation-pattern:
     burst-interval: 2
-    max-burst-duration: 100
     min-burst-duration: 20
-    max-delay-duration: 60
+    max-burst-duration: 100
     min-delay-duration: 20
-  activation-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
-  max-duration: 300
-  min-duration: 200
+    max-delay-duration: 60
   triggers:
     scheduled:
       type: SCHEDULED
       offset-delays: [60]
-  type: GUN_FIRE_SIMULATION
-equipment-type: TACTICAL
 items:
   display-item:
-    damage: 10
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 10
   throw-item:
-    damage: 10
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 10
 projectile-effects:
   bounce:
     type: BOUNCE
+    max-activations: 1
+    horizontal-friction: 3.0
+    vertical-friction: 2.0
     triggers:
       impact:
         type: IMPACT
         delay: 0
         interval: 1
-    max-activations: 1
-    horizontal-friction: 3.0
-    vertical-friction: 2.0

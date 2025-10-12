@@ -1,5 +1,7 @@
 id: TACTICAL_INSERTION
 name: Tactical Insertion
+equipment-type: TACTICAL
+description: Marks a location as your next spawn point.
 controls:
   throwing: LEFT_CLICK
 deploy:
@@ -9,33 +11,31 @@ deploy:
     remove-deployment: true
     undo-effect: false
     particle-effect:
-      block-data: REDSTONE_TORCH
+      particle: BLOCK_CRACK
       count: 5
-      extra: 0.0
       offset-x: 0.25
       offset-y: 0.25
       offset-z: 0.25
-      particle: BLOCK_CRACK
+      extra: 0.0
+      block-data: REDSTONE_TORCH
   on-cleanup:
     remove-deployment: false
   throwing:
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 0.0
-description: Marks a location as your next spawn point.
 effect:
+  type: MARK_SPAWN_POINT
   triggers:
     scheduled:
       type: SCHEDULED
       offset-delays: [1]
-  type: MARK_SPAWN_POINT
-equipment-type: TACTICAL
 items:
   display-item:
-    damage: 11
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 11
   throw-item:
-    damage: 11
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 11
