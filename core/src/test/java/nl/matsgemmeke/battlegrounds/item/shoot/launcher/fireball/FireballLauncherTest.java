@@ -91,10 +91,10 @@ public class FireballLauncherTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
-        assertThat(itemEffectContext.entity()).isEqualTo(entity);
-        assertThat(itemEffectContext.source().getLocation()).isEqualTo(fireballLocation);
-        assertThat(itemEffectContext.source().getWorld()).isEqualTo(world);
-        assertThat(itemEffectContext.initiationLocation()).isEqualTo(entityLocation);
+        assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
+        assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(fireballLocation);
+        assertThat(itemEffectContext.getSource().getWorld()).isEqualTo(world);
+        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(entityLocation);
 
         verify(audioEmitter).playSounds(SHOT_SOUNDS, entityLocation);
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, fireballLocation);

@@ -74,9 +74,9 @@ public class HitscanLauncherTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
-        assertThat(itemEffectContext.entity()).isEqualTo(entity);
-        assertThat(itemEffectContext.initiationLocation()).isEqualTo(direction);
-        assertThat(itemEffectContext.source().getLocation()).isEqualTo(hitLocation);
+        assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
+        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+        assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
 
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
         verify(world).playEffect(hitLocation, org.bukkit.Effect.STEP_SOUND, hitBlockMaterial);
@@ -107,9 +107,9 @@ public class HitscanLauncherTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
-        assertThat(itemEffectContext.entity()).isEqualTo(entity);
-        assertThat(itemEffectContext.initiationLocation()).isEqualTo(direction);
-        assertThat(itemEffectContext.source().getLocation()).isEqualTo(hitLocation);
+        assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
+        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+        assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
 
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
     }

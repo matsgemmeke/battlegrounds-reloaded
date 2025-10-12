@@ -88,8 +88,8 @@ class MarkSpawnPointEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         TriggerContext triggerContext = triggerContextCaptor.getValue();
-        assertThat(triggerContext.entity()).isEqualTo(CONTEXT.entity());
-        assertThat(triggerContext.target()).isEqualTo(CONTEXT.source());
+        assertThat(triggerContext.entity()).isEqualTo(CONTEXT.getEntity());
+        assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
 
         verify(triggerRun).start();
         verify(performance).addTriggerRun(triggerRun);

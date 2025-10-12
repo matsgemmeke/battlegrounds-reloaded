@@ -65,7 +65,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        ItemEffectSource source = context.source();
+        ItemEffectSource source = context.getSource();
         Location location = source.getLocation();
         World world = source.getWorld();
 
@@ -73,7 +73,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
 
         currentRadius = properties.minSize();
 
-        this.inflictDamage(context.entity().getUniqueId(), location);
+        this.inflictDamage(context.getEntity().getUniqueId(), location);
 
         schedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, properties.growthInterval());
         schedule.addTask(() -> this.increaseFireCircleRadius(location, world));

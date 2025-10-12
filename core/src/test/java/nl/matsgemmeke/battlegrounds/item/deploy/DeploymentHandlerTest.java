@@ -320,9 +320,9 @@ class DeploymentHandlerTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         ItemEffectContext context = itemEffectContextCaptor.getValue();
-        assertThat(context.entity()).isEqualTo(deployerEntity);
-        assertThat(context.source()).isEqualTo(deploymentObject);
-        assertThat(context.initiationLocation()).isEqualTo(deployLocation);
+        assertThat(context.getEntity()).isEqualTo(deployerEntity);
+        assertThat(context.getSource()).isEqualTo(deploymentObject);
+        assertThat(context.getInitiationLocation()).isEqualTo(deployLocation);
 
         verify(deployer).setCanDeploy(false);
         verify(deployer).setCanDeploy(true);

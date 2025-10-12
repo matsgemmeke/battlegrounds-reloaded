@@ -23,15 +23,15 @@ public abstract class BaseItemEffectPerformance implements ItemEffectPerformance
 
     @Override
     public void changeSource(ItemEffectSource source) {
-        Entity entity = currentContext.entity();
-        Location initiationLocation = currentContext.initiationLocation();
+        Entity entity = currentContext.getEntity();
+        Location initiationLocation = currentContext.getInitiationLocation();
 
         currentContext = new ItemEffectContext(entity, source, initiationLocation);
     }
 
     @Override
     public boolean isReleased() {
-        return currentContext != null && currentContext.source().isReleased();
+        return currentContext != null && currentContext.getSource().isReleased();
     }
 
     @Override
