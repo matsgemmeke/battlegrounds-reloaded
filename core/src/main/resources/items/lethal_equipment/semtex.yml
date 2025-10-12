@@ -35,7 +35,7 @@ effect:
       distance: 2.5
   spread-fire: false
   triggers:
-    timed:
+    scheduled:
       type: SCHEDULED
       offset-delays: [60]
   type: EXPLOSION

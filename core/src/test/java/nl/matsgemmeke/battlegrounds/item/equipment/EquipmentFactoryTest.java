@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
@@ -37,7 +36,6 @@ public class EquipmentFactoryTest {
     private DeploymentHandlerFactory deploymentHandlerFactory;
     private EquipmentControlsFactory controlsFactory;
     private EquipmentRegistry equipmentRegistry;
-    private GameKey gameKey;
     private ItemEffectFactory itemEffectFactory;
     private ItemFactory itemFactory;
     private MockedStatic<Bukkit> bukkit;
@@ -49,7 +47,6 @@ public class EquipmentFactoryTest {
         deploymentHandlerFactory = mock(DeploymentHandlerFactory.class);
         controlsFactory = mock(EquipmentControlsFactory.class);
         equipmentRegistry = mock(EquipmentRegistry.class);
-        gameKey = GameKey.ofOpenMode();
         itemEffectFactory = mock(ItemEffectFactory.class);
         itemFactory = mock(ItemFactory.class);
         keyCreator = mock(NamespacedKeyCreator.class);
@@ -87,7 +84,7 @@ public class EquipmentFactoryTest {
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, controlsFactory, equipmentRegistry, itemEffectFactory, keyCreator, particleEffectMapper);
-        Equipment equipment = factory.create(spec, gameKey, gamePlayer);
+        Equipment equipment = factory.create(spec, gamePlayer);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getId()).isEqualTo("FRAG_GRENADE");
@@ -110,7 +107,7 @@ public class EquipmentFactoryTest {
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
         EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, controlsFactory, equipmentRegistry, itemEffectFactory, keyCreator, particleEffectMapper);
-        Equipment equipment = factory.create(spec, gameKey);
+        Equipment equipment = factory.create(spec);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getActivator()).isNotNull();

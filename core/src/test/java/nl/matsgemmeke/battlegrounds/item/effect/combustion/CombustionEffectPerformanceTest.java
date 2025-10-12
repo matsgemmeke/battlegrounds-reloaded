@@ -109,9 +109,7 @@ class CombustionEffectPerformanceTest {
         UUID entityId = UUID.randomUUID();
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
         Schedule cancelSchedule = mock(Schedule.class);
-
         Schedule repeatingSchedule = mock(Schedule.class);
-        when(repeatingSchedule.isRunning()).thenReturn(true);
 
         World world = mock(World.class);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(mock(Block.class));
@@ -224,7 +222,6 @@ class CombustionEffectPerformanceTest {
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(block);
 
         Schedule repeatingSchedule = mock(Schedule.class);
-        when(repeatingSchedule.isRunning()).thenReturn(true);
         doAnswer(invocation -> {
             ScheduleTask task = invocation.getArgument(0);
             task.run();

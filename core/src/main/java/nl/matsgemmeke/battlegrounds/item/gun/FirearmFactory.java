@@ -7,10 +7,8 @@ import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
@@ -43,33 +41,25 @@ public class FirearmFactory {
     private static final String TEMPLATE_ID_KEY = "template-id";
     private static final double DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER = 1.0;
 
-    @NotNull
     private final BattlegroundsConfiguration config;
-    @NotNull
     private final DefaultFirearmFactory defaultGunFactory;
-    @NotNull
     private final FirearmControlsFactory controlsFactory;
-    @NotNull
     private final GunRegistry gunRegistry;
-    @NotNull
     private final NamespacedKeyCreator keyCreator;
-    @NotNull
     private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
-    @NotNull
     private final ReloadSystemFactory reloadSystemFactory;
-    @NotNull
     private final ShootHandlerFactory shootHandlerFactory;
 
     @Inject
     public FirearmFactory(
-            @NotNull BattlegroundsConfiguration config,
-            @NotNull DefaultFirearmFactory defaultGunFactory,
-            @NotNull FirearmControlsFactory controlsFactory,
-            @NotNull GunRegistry gunRegistry,
-            @NotNull NamespacedKeyCreator keyCreator,
-            @NotNull Provider<DefaultScopeAttachment> scopeAttachmentProvider,
-            @NotNull ReloadSystemFactory reloadSystemFactory,
-            @NotNull ShootHandlerFactory shootHandlerFactory
+            BattlegroundsConfiguration config,
+            DefaultFirearmFactory defaultGunFactory,
+            FirearmControlsFactory controlsFactory,
+            GunRegistry gunRegistry,
+            NamespacedKeyCreator keyCreator,
+            Provider<DefaultScopeAttachment> scopeAttachmentProvider,
+            ReloadSystemFactory reloadSystemFactory,
+            ShootHandlerFactory shootHandlerFactory
     ) {
         this.config = config;
         this.defaultGunFactory = defaultGunFactory;
@@ -81,18 +71,16 @@ public class FirearmFactory {
         this.shootHandlerFactory = shootHandlerFactory;
     }
 
-    @NotNull
-    public Firearm create(@NotNull GunSpec spec, @NotNull GameKey gameKey) {
-        Firearm firearm = this.createInstance(spec, gameKey);
+    public Firearm create(GunSpec spec) {
+        Firearm firearm = this.createInstance(spec);
 
         gunRegistry.register(firearm);
 
         return firearm;
     }
 
-    @NotNull
-    public Firearm create(@NotNull GunSpec spec, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
-        Firearm firearm = this.createInstance(spec, gameKey);
+    public Firearm create(GunSpec spec, GamePlayer gamePlayer) {
+        Firearm firearm = this.createInstance(spec);
         firearm.setHolder(gamePlayer);
 
         gunRegistry.register(firearm, gamePlayer);
@@ -100,8 +88,7 @@ public class FirearmFactory {
         return firearm;
     }
 
-    @NotNull
-    private Firearm createInstance(@NotNull GunSpec spec, @NotNull GameKey gameKey) {
+    private Firearm createInstance(GunSpec spec) {
         double headshotDamageMultiplier = this.getHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
 
         DefaultFirearm firearm = defaultGunFactory.create(spec.id);

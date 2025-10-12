@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
@@ -29,7 +28,6 @@ import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -42,27 +40,21 @@ public class EquipmentFactory {
     private static final String ACTION_EXECUTOR_ID_VALUE = "equipment";
     private static final String TEMPLATE_ID_KEY = "template-id";
 
-    @NotNull
     private final DeploymentHandlerFactory deploymentHandlerFactory;
-    @NotNull
     private final EquipmentControlsFactory controlsFactory;
-    @NotNull
     private final EquipmentRegistry equipmentRegistry;
-    @NotNull
     private final ItemEffectFactory itemEffectFactory;
-    @NotNull
     private final NamespacedKeyCreator namespacedKeyCreator;
-    @NotNull
     private final ParticleEffectMapper particleEffectMapper;
 
     @Inject
     public EquipmentFactory(
-            @NotNull DeploymentHandlerFactory deploymentHandlerFactory,
-            @NotNull EquipmentControlsFactory controlsFactory,
-            @NotNull EquipmentRegistry equipmentRegistry,
-            @NotNull ItemEffectFactory itemEffectFactory,
-            @NotNull NamespacedKeyCreator namespacedKeyCreator,
-            @NotNull ParticleEffectMapper particleEffectMapper
+            DeploymentHandlerFactory deploymentHandlerFactory,
+            EquipmentControlsFactory controlsFactory,
+            EquipmentRegistry equipmentRegistry,
+            ItemEffectFactory itemEffectFactory,
+            NamespacedKeyCreator namespacedKeyCreator,
+            ParticleEffectMapper particleEffectMapper
     ) {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.controlsFactory = controlsFactory;
@@ -72,18 +64,16 @@ public class EquipmentFactory {
         this.particleEffectMapper = particleEffectMapper;
     }
 
-    @NotNull
-    public Equipment create(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey) {
-        Equipment equipment = this.createInstance(spec, gameKey);
+    public Equipment create(EquipmentSpec spec) {
+        Equipment equipment = this.createInstance(spec);
 
         equipmentRegistry.register(equipment);
 
         return equipment;
     }
 
-    @NotNull
-    public Equipment create(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey, @NotNull GamePlayer gamePlayer) {
-        Equipment equipment = this.createInstance(spec, gameKey);
+    public Equipment create(EquipmentSpec spec, GamePlayer gamePlayer) {
+        Equipment equipment = this.createInstance(spec);
         equipment.setHolder(gamePlayer);
 
         equipmentRegistry.register(equipment, gamePlayer);
@@ -91,8 +81,7 @@ public class EquipmentFactory {
         return equipment;
     }
 
-    @NotNull
-    private Equipment createInstance(@NotNull EquipmentSpec spec, @NotNull GameKey gameKey) {
+    private Equipment createInstance(EquipmentSpec spec) {
         DefaultEquipment equipment = new DefaultEquipment(spec.id);
         equipment.setName(spec.name);
         equipment.setDescription(spec.description);
@@ -111,7 +100,11 @@ public class EquipmentFactory {
             NamespacedKey activatorKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
             Material activatorItemMaterial = Material.valueOf(activatorItemSpec.material);
 
+            NamespacedKey actionExecutorIdKey = namespacedKeyCreator.create(ACTION_EXECUTOR_ID_KEY);
+            PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
+
             ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorItemMaterial);
+            activatorItemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
             activatorItemTemplate.setDamage(activatorItemSpec.damage);
             activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorItemSpec.displayName));
 
@@ -140,7 +133,7 @@ public class EquipmentFactory {
         return equipment;
     }
 
-    private ItemTemplate createDisplayItemTemplate(@NotNull ItemSpec spec) {
+    private ItemTemplate createDisplayItemTemplate(ItemSpec spec) {
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
         Material material = Material.valueOf(spec.material);
@@ -157,8 +150,7 @@ public class EquipmentFactory {
         return itemTemplate;
     }
 
-    @NotNull
-    private DeploymentHandler setUpDeploymentHandler(@NotNull DeploymentSpec deploymentSpec, @NotNull ItemEffectSpec effectSpec, @Nullable Activator activator) {
+    private DeploymentHandler setUpDeploymentHandler(DeploymentSpec deploymentSpec, ItemEffectSpec effectSpec, @Nullable Activator activator) {
         boolean activateEffectOnDestruction = deploymentSpec.onDestruction.activateEffect;
         boolean removeDeploymentOnDestruction = deploymentSpec.onDestruction.removeDeployment;
         boolean undoEffectOnDestruction = deploymentSpec.onDestruction.undoEffect;

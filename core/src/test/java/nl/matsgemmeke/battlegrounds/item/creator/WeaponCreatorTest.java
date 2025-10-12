@@ -54,7 +54,7 @@ public class WeaponCreatorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         EquipmentFactory equipmentFactory = mock(EquipmentFactory.class);
-        when(equipmentFactory.create(equipmentSpec, GAME_KEY, gamePlayer)).thenReturn(equipment);
+        when(equipmentFactory.create(equipmentSpec, gamePlayer)).thenReturn(equipment);
 
         when(equipmentFactoryProvider.get()).thenReturn(equipmentFactory);
 
@@ -83,7 +83,7 @@ public class WeaponCreatorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         FirearmFactory gunFactory = mock(FirearmFactory.class);
-        when(gunFactory.create(gunSpec, GAME_KEY, gamePlayer)).thenReturn(firearm);
+        when(gunFactory.create(gunSpec, gamePlayer)).thenReturn(firearm);
 
         when(gunFactoryProvider.get()).thenReturn(gunFactory);
 
@@ -101,7 +101,7 @@ public class WeaponCreatorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         EquipmentFactory equipmentFactory = mock(EquipmentFactory.class);
-        when(equipmentFactory.create(equipmentSpec, GAME_KEY, gamePlayer)).thenReturn(equipment);
+        when(equipmentFactory.create(equipmentSpec, gamePlayer)).thenReturn(equipment);
 
         when(equipmentFactoryProvider.get()).thenReturn(equipmentFactory);
 
@@ -119,7 +119,7 @@ public class WeaponCreatorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         FirearmFactory gunFactory = mock(FirearmFactory.class);
-        when(gunFactory.create(gunSpec, GAME_KEY, gamePlayer)).thenReturn(firearm);
+        when(gunFactory.create(gunSpec, gamePlayer)).thenReturn(firearm);
 
         when(gunFactoryProvider.get()).thenReturn(gunFactory);
 

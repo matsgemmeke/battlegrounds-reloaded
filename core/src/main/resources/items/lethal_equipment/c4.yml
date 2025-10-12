@@ -43,6 +43,10 @@ effect:
       distance: 2.5
   spread-fire: false
   type: EXPLOSION
+  triggers:
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [ 100000 ]
 equipment-type: LETHAL
 items:
   display-item:
