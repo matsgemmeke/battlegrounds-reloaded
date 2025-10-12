@@ -1,74 +1,87 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public abstract class BaseItemEffect implements ItemEffect {
 
-    private boolean primed;
-    @Nullable
-    protected ItemEffectContext currentContext;
-    @NotNull
-    protected final List<Trigger> triggers;
+    protected final List<ItemEffectPerformance> performances;
+    protected final Set<TriggerExecutor> triggerExecutors;
+    protected ItemEffectContext context;
 
     public BaseItemEffect() {
-        this.primed = false;
-        this.triggers = new ArrayList<>();
+        this.performances = new ArrayList<>();
+        this.triggerExecutors = new HashSet<>();
     }
 
-    public void activateInstantly() {
-        if (currentContext == null) {
-            return;
+    @Override
+    public void addTriggerExecutor(TriggerExecutor triggerExecutor) {
+        triggerExecutors.add(triggerExecutor);
+    }
+
+    @Override
+    public Optional<ItemEffectPerformance> getLatestPerformance() {
+        if (performances.isEmpty()) {
+            return Optional.empty();
         }
 
-        triggers.forEach(Trigger::stop);
-        this.perform(currentContext);
+        return Optional.of(performances.get(performances.size() - 1));
     }
 
-    public void addTrigger(@NotNull Trigger trigger) {
-        triggers.add(trigger);
-    }
+    protected void startPerformance(ItemEffectPerformance performance, ItemEffectContext context) {
+        performances.add(performance);
 
-    public void cancelActivation() {
-        if (!primed) {
-            return;
-        }
+        performance.setContext(context);
 
-        triggers.forEach(Trigger::stop);
-    }
+        if (!triggerExecutors.isEmpty()) {
+            for (TriggerExecutor triggerExecutor : triggerExecutors) {
+                TriggerContext triggerContext = new TriggerContext(context.getEntity(), context.getSource());
 
-    public void deploy(@NotNull ItemEffectSource source) {
-        if (currentContext == null) {
-            return;
-        }
+                TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
+                triggerRun.addObserver(performance::start);
+                triggerRun.start();
 
-        currentContext.setSource(source);
-    }
-
-    public boolean isPrimed() {
-        return primed;
-    }
-
-    public void prime(@NotNull ItemEffectContext context) {
-        if (primed) {
-            return;
-        }
-
-        currentContext = context;
-        primed = true;
-
-        for (Trigger trigger : triggers) {
-            TriggerContext triggerContext = new TriggerContext(currentContext.getEntity(), currentContext.getSource());
-
-            trigger.addObserver(() -> this.perform(currentContext));
-            trigger.start(triggerContext);
+                performance.addTriggerRun(triggerRun);
+            }
+        } else {
+            performance.start();
         }
     }
 
-    public abstract void perform(@NotNull ItemEffectContext context);
+    @Override
+    public void activatePerformances() {
+        for (ItemEffectPerformance performance : performances) {
+            if (!performance.isPerforming()) {
+                performance.cancel();
+                performance.start();
+            }
+        }
+
+        performances.clear();
+    }
+
+    @Override
+    public void cancelPerformances() {
+        for (ItemEffectPerformance performance : performances) {
+            if (!performance.isPerforming()) {
+                performance.cancel();
+            }
+        }
+
+        performances.clear();
+    }
+
+    @Override
+    public void rollbackPerformances() {
+        for (ItemEffectPerformance performance : performances) {
+            if (performance.isPerforming()) {
+                performance.rollback();
+            }
+        }
+
+        performances.clear();
+    }
 }

@@ -42,7 +42,7 @@ public class BounceEffect extends BaseProjectileEffect {
         bounces++;
 
         if (bounces >= properties.amountOfBounces()) {
-            this.deactivateTriggers();
+            this.cancelTriggerRuns();
         }
 
         // Create a reflection vector and add friction for the x and z movement

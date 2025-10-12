@@ -3,29 +3,26 @@ package nl.matsgemmeke.battlegrounds.item.effect.sound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
+
+import java.util.List;
 
 public class SoundNotificationEffect extends BaseItemEffect {
 
-    @NotNull
-    private Iterable<GameSound> sounds;
+    private List<GameSound> notificationSounds;
 
-    public SoundNotificationEffect(@NotNull Iterable<GameSound> sounds) {
-        this.sounds = sounds;
+    public void setNotificationSounds(List<GameSound> notificationSounds) {
+        this.notificationSounds = notificationSounds;
     }
 
-    public void perform(@NotNull ItemEffectContext context) {
-        Entity entity = context.getEntity();
-
-        // Playing sounds is only possible for players
-        if (!(entity instanceof Player player)) {
-            return;
+    @Override
+    public void startPerformance(ItemEffectContext context) {
+        if (notificationSounds == null) {
+            throw new ItemEffectPerformanceException("Unable to perform sound notification effect: notification sounds not set");
         }
 
-        for (GameSound sound : sounds) {
-            player.playSound(player.getLocation(), sound.getSound(), sound.getVolume(), sound.getPitch());
-        }
+        SoundNotificationEffectPerformance performance = new SoundNotificationEffectPerformance(notificationSounds);
+
+        this.startPerformance(performance, context);
     }
 }

@@ -138,6 +138,11 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         return true;
     }
 
+    @Override
+    public boolean isReleased() {
+        return true;
+    }
+
     public boolean isImmuneTo(@NotNull DamageType damageType) {
         return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) <= 0;
     }

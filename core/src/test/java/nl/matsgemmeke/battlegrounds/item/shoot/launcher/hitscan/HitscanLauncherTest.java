@@ -70,12 +70,21 @@ public class HitscanLauncherTest {
         HitscanLauncher launcher = new HitscanLauncher(audioEmitter, collisionDetector, particleEffectSpawner, targetFinder, properties, itemEffect);
         launcher.launch(launchContext);
 
+        ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
+
+        ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
+        assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
+        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+        assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
+
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
         verify(world).playEffect(hitLocation, org.bukkit.Effect.STEP_SOUND, hitBlockMaterial);
     }
 
     @Test
     public void launchProducesProjectileStepUntilTargetsAreFound() {
+
         Entity entity = mock(Entity.class);
         ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
         World world = mock(World.class);
@@ -95,14 +104,13 @@ public class HitscanLauncherTest {
         launcher.launch(launchContext);
 
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
-        verify(itemEffect).prime(itemEffectContextCaptor.capture());
+        verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
         assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
         assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
         assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
 
-        verify(itemEffect).activateInstantly();
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
     }
 }

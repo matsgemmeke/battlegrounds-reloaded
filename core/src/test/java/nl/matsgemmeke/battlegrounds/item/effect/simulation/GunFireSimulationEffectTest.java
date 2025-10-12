@@ -1,172 +1,137 @@
 package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
-import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.function.Supplier;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
-public class GunFireSimulationEffectTest {
+@ExtendWith(MockitoExtension.class)
+class GunFireSimulationEffectTest {
 
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location SOURCE_LOCATION = new Location(null, 1, 1, 1);
-    private static final long BURST_INTERVAL = 1L;
-    private static final long MAX_BURST_DURATION = 10L;
-    private static final long MIN_BURST_DURATION = 5L;
-    private static final long MAX_DELAY_DURATION = 10L;
-    private static final long MIN_DELAY_DURATION = 5L;
-    private static final long MAX_TOTAL_DURATION = 30L;
-    private static final long MIN_TOTAL_DURATION = 20L;
-    private static final List<GameSound> GENERIC_SHOTS_SOUNDS = Collections.emptyList();
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(null, 10L, 200L, 100L, 20L, 10L, 2000L, 1000L);
+    private static final ItemEffectContext CONTEXT = createContext();
 
-    private AudioEmitter audioEmitter;
-    private GunFireSimulationProperties properties;
-    private GunInfoProvider gunInfoProvider;
-    private TaskRunner taskRunner;
-    private Trigger trigger;
+    @Mock
+    private GameContextProvider gameContextProvider;
+    @Mock
+    private GameScope gameScope;
+    @Mock
+    private GunFireSimulationEffectPerformanceFactory gunFireSimulationEffectPerformanceFactory;
+
+    private GunFireSimulationEffect gunFireSimulationEffect;
 
     @BeforeEach
-    public void setUp() {
-        audioEmitter = mock(AudioEmitter.class);
-        properties = new GunFireSimulationProperties(GENERIC_SHOTS_SOUNDS, BURST_INTERVAL, MAX_BURST_DURATION, MIN_BURST_DURATION, MAX_DELAY_DURATION, MIN_DELAY_DURATION, MAX_TOTAL_DURATION, MIN_TOTAL_DURATION);
-        gunInfoProvider = mock(GunInfoProvider.class);
-        taskRunner = mock(TaskRunner.class);
-        trigger = mock(Trigger.class);
+    void setUp() {
+        gunFireSimulationEffect = new GunFireSimulationEffect(gameContextProvider, GAME_KEY, gameScope, gunFireSimulationEffectPerformanceFactory);
     }
 
     @Test
-    public void activateSimulatesGenericGunFireWhenGunInfoProviderHasNoInformationForEntity() {
-        UUID entityId = UUID.randomUUID();
-
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityId);
-
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
-
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
-
-        when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.empty());
-
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
-
-        runnableCaptor.getValue().run();
-
-        verify(audioEmitter).playSounds(GENERIC_SHOTS_SOUNDS, SOURCE_LOCATION);
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> gunFireSimulationEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform gun fire simulation effect: properties not set");
     }
 
     @Test
-    public void activateStopsSimulatesGunFireOnceEffectSourceNoLongerExists() {
-        UUID entityId = UUID.randomUUID();
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityId);
+        gunFireSimulationEffect.setProperties(PROPERTIES);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.exists()).thenReturn(false);
-
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
-
-        List<GameSound> shotSounds = Collections.emptyList();
-        int rateOfFire = 120;
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
-
-        when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.of(gunFireSimulationInfo));
-
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
-
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
-
-        runnableCaptor.getValue().run();
-
-        verifyNoInteractions(audioEmitter);
-        verify(task).cancel();
+        assertThatThrownBy(() -> gunFireSimulationEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform gun fire simulation effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
-    public void activateSimulatesGunFireOnceAndRemovesEffectSourceWhenFinished() {
-        UUID entityId = UUID.randomUUID();
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+        GunFireSimulationEffectPerformance performance = mock(GunFireSimulationEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
+        TriggerRun triggerRun = mock(TriggerRun.class);
 
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityId);
+        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
+        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+        when(gunFireSimulationEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        gunFireSimulationEffect.addTriggerExecutor(triggerExecutor);
+        gunFireSimulationEffect.setProperties(PROPERTIES);
+        gunFireSimulationEffect.startPerformance(CONTEXT);
 
-        List<GameSound> shotSounds = Collections.emptyList();
-        int rateOfFire = 1200;
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
-
-        when(gunInfoProvider.getGunFireSimulationInfo(entityId)).thenReturn(Optional.of(gunFireSimulationInfo));
-
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(1L))).thenReturn(task);
-
-        GunFireSimulationEffect effect = new GunFireSimulationEffect(audioEmitter, gunInfoProvider, taskRunner, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
+        ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
+        verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
+        verify(triggerRun).addObserver(triggerObserverCaptor.capture());
         triggerObserverCaptor.getValue().onActivate();
 
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(1L));
+        TriggerContext triggerContext = triggerContextCaptor.getValue();
+        assertThat(triggerContext.entity()).isEqualTo(CONTEXT.getEntity());
+        assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
 
-        for (int i = 0; i < MAX_TOTAL_DURATION; i++) {
-            runnableCaptor.getValue().run();
-        }
+        verify(triggerRun).start();
+        verify(performance).addTriggerRun(triggerRun);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
+    }
 
-        // The implementation uses random variables, so check the max and min possible amount of executions
-        verify(audioEmitter, atLeast(10)).playSounds(shotSounds, SOURCE_LOCATION);
-        verify(audioEmitter, atMost(20)).playSounds(shotSounds, SOURCE_LOCATION);
-        verify(source, atLeast(1)).remove();
-        verify(source, atMost(10)).remove();
-        verify(task, atLeast(1)).cancel();
-        verify(task, atMost(10)).cancel();
+    @Test
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+        GunFireSimulationEffectPerformance performance = mock(GunFireSimulationEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
+
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+        when(gunFireSimulationEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
+
+        gunFireSimulationEffect.setProperties(PROPERTIES);
+        gunFireSimulationEffect.startPerformance(CONTEXT);
+
+        verify(performance, never()).addTriggerRun(any(TriggerRun.class));
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
+    }
+
+    private static ItemEffectContext createContext() {
+        Entity entity = mock(Entity.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
+        Location initiationLocation = new Location(null, 1, 1, 1);
+
+        return new ItemEffectContext(entity, source, initiationLocation);
     }
 }

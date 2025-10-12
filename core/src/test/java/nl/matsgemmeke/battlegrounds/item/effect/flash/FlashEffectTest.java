@@ -1,177 +1,137 @@
 package nl.matsgemmeke.battlegrounds.item.effect.flash;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Stream;
+import java.util.Optional;
+import java.util.function.Supplier;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
-public class FlashEffectTest {
+@ExtendWith(MockitoExtension.class)
+class FlashEffectTest {
 
-    private static final boolean EXPLOSION_BREAK_BLOCKS = false;
-    private static final boolean EXPLOSION_SET_FIRE = false;
-    private static final boolean POTION_EFFECT_AMBIENT = true;
-    private static final boolean POTION_EFFECT_ICON = false;
-    private static final boolean POTION_EFFECT_PARTICLES = true;
-    private static final double RANGE = 5.0;
-    private static final float EXPLOSION_POWER = 1.0f;
-    private static final int POTION_EFFECT_AMPLIFIER = 0;
-    private static final int POTION_EFFECT_DURATION = 100;
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location SOURCE_LOCATION = new Location(null, 1, 1, 1);
+    private static final FlashProperties PROPERTIES = new FlashProperties(null, 5.0, 1.0f, false, false);
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final ItemEffectContext CONTEXT = createContext();
 
-    private Entity entity;
-    private FlashProperties properties;
-    private ItemEffectSource source;
-    private TargetFinder targetFinder;
-    private Trigger trigger;
+    @Mock
+    private FlashEffectPerformanceFactory flashEffectPerformanceFactory;
+    @Mock
+    private GameContextProvider gameContextProvider;
+    @Mock
+    private GameScope gameScope;
+
+    private FlashEffect flashEffect;
 
     @BeforeEach
-    public void setUp() {
-        entity = mock(Entity.class);
-        source = mock(ItemEffectSource.class);
-        targetFinder = mock(TargetFinder.class);
-        trigger = mock(Trigger.class);
-
-        PotionEffectProperties potionEffect = new PotionEffectProperties(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
-
-        properties = new FlashProperties(potionEffect, RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
+    void setUp() {
+        flashEffect = new FlashEffect(flashEffectPerformanceFactory, gameContextProvider, GAME_KEY, gameScope);
     }
 
     @Test
-    public void primePerformsEffectAndAppliesBlindnessPotionEffectToAllTargetsInsideTheLongRangeDistance() {
-        UUID entityId = UUID.randomUUID();
-        World world = mock(World.class);
-        Player player = mock(Player.class);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> flashEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform flash effect: properties not set");
+    }
 
-        GameEntity target = mock(GameEntity.class);
-        when(target.getEntity()).thenReturn(player);
+    @Test
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        when(entity.getUniqueId()).thenReturn(entityId);
-        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
-        when(source.getWorld()).thenReturn(world);
-        when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
+        flashEffect.setProperties(PROPERTIES);
 
-        FlashEffect effect = new FlashEffect(targetFinder, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
+        assertThatThrownBy(() -> flashEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform flash effect: no game context for game key OPEN-MODE can be found");
+    }
+
+    @Test
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+        FlashEffectPerformance performance = mock(FlashEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
+        TriggerRun triggerRun = mock(TriggerRun.class);
+
+        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
+        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
+
+        when(flashEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+
+        flashEffect.addTriggerExecutor(triggerExecutor);
+        flashEffect.setProperties(PROPERTIES);
+        flashEffect.startPerformance(CONTEXT);
+
+        ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
+        verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
+        verify(triggerRun).addObserver(triggerObserverCaptor.capture());
         triggerObserverCaptor.getValue().onActivate();
 
-        ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
-        verify(player).addPotionEffect(potionEffectCaptor.capture());
+        TriggerContext triggerContext = triggerContextCaptor.getValue();
+        assertThat(triggerContext.entity()).isEqualTo(CONTEXT.getEntity());
+        assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
 
-        PotionEffect potionEffect = potionEffectCaptor.getValue();
-
-        assertEquals(PotionEffectType.BLINDNESS, potionEffect.getType());
-        assertEquals(POTION_EFFECT_DURATION, potionEffect.getDuration());
-        assertEquals(POTION_EFFECT_AMPLIFIER, potionEffect.getAmplifier());
-        assertEquals(POTION_EFFECT_AMBIENT, potionEffect.isAmbient());
-        assertEquals(POTION_EFFECT_PARTICLES, potionEffect.hasParticles());
-        assertEquals(POTION_EFFECT_ICON, potionEffect.hasIcon());
-
-        verify(source).remove();
-        verify(world).createExplosion(SOURCE_LOCATION, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, entity);
-    }
-
-    @NotNull
-    private static Stream<Arguments> potionEffectScenarios() {
-        return Stream.of(
-                arguments(new Object[] { null }),
-                arguments(new PotionEffect(PotionEffectType.BLINDNESS, 1, 1))
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("potionEffectScenarios")
-    public void resetDoesNotRemovePotionEffectFromTarget(PotionEffect potionEffect) {
-        UUID entityId = UUID.randomUUID();
-        World world = mock(World.class);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
-
-        Player player = mock(Player.class);
-        when(player.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(potionEffect);
-
-        GameEntity target = mock(GameEntity.class);
-        when(target.getEntity()).thenReturn(player);
-
-        when(entity.getUniqueId()).thenReturn(entityId);
-        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
-        when(source.getWorld()).thenReturn(world);
-        when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
-
-        FlashEffect effect = new FlashEffect(targetFinder, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverArgumentCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverArgumentCaptor.capture());
-
-        triggerObserverArgumentCaptor.getValue().onActivate();
-        effect.reset();
-
-        verify(player, never()).removePotionEffect(any(PotionEffectType.class));
+        verify(triggerRun).start();
+        verify(performance).addTriggerRun(triggerRun);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
     @Test
-    public void resetRemovesPotionEffectFromTargetIfItStillHasThePotionEffect() {
-        UUID entityId = UUID.randomUUID();
-        World world = mock(World.class);
-        Player player = mock(Player.class);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+        FlashEffectPerformance performance = mock(FlashEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
 
-        GameEntity target = mock(GameEntity.class);
-        when(target.getEntity()).thenReturn(player);
+        when(flashEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
 
-        when(entity.getUniqueId()).thenReturn(entityId);
-        when(source.getLocation()).thenReturn(SOURCE_LOCATION);
-        when(source.getWorld()).thenReturn(world);
+        flashEffect.setProperties(PROPERTIES);
+        flashEffect.startPerformance(CONTEXT);
 
-        when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
+        verify(performance, never()).addTriggerRun(any(TriggerRun.class));
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
+    }
 
-        FlashEffect effect = new FlashEffect(targetFinder, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
+    private static ItemEffectContext createContext() {
+        Entity entity = mock(Entity.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
+        Location initiationLocation = new Location(null, 1, 1, 1);
 
-        ArgumentCaptor<TriggerObserver> triggerObserverArgumentCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverArgumentCaptor.capture());
-
-        triggerObserverArgumentCaptor.getValue().onActivate();
-
-        ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
-        verify(player).addPotionEffect(potionEffectCaptor.capture());
-
-        when(player.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(potionEffectCaptor.getValue());
-
-        effect.reset();
-
-        verify(player).removePotionEffect(PotionEffectType.BLINDNESS);
+        return new ItemEffectContext(entity, source, initiationLocation);
     }
 }

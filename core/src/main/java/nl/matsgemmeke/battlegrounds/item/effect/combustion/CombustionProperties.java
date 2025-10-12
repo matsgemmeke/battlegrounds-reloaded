@@ -1,12 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.effect.combustion;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 
 import java.util.List;
 
 public record CombustionProperties(
-        @NotNull List<GameSound> combustionSounds,
+        List<GameSound> combustionSounds,
+        RangeProfile rangeProfile,
         double minSize,
         double maxSize,
         double growth,

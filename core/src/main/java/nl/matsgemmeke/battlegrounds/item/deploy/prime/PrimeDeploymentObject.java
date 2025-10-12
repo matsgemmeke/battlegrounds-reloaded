@@ -81,6 +81,11 @@ public class PrimeDeploymentObject implements DeploymentObject {
         return false;
     }
 
+    @Override
+    public boolean isReleased() {
+        return false;
+    }
+
     public double damage(@NotNull Damage damage) {
         // An item held by the deployer technically cannot be damaged, so always return 0 here
         return 0;

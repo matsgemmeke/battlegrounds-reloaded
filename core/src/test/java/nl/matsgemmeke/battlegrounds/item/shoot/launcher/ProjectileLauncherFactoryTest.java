@@ -23,12 +23,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class ProjectileLauncherFactoryTest {
-    
+
     private FireballLauncherFactory fireballLauncherFactory;
     private HitscanLauncherFactory hitscanLauncherFactory;
     private ItemEffectFactory itemEffectFactory;
     private ParticleEffectMapper particleEffectMapper;
-    
+
     @BeforeEach
     public void setUp() {
         fireballLauncherFactory = mock(FireballLauncherFactory.class);

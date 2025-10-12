@@ -2,73 +2,63 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.Activator;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.*;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DeploymentHandler {
 
-    @NotNull
     private final AudioEmitter audioEmitter;
-    @NotNull
     private final DeploymentProperties deploymentProperties;
-    @NotNull
     private final ItemEffect itemEffect;
-    @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
-    @NotNull
-    private final TaskRunner taskRunner;
-    @Nullable
+    private final Scheduler scheduler;
     private Activator activator;
     private boolean deployed;
-    @Nullable
     private DeploymentObject deploymentObject;
 
     @Inject
     public DeploymentHandler(
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull ParticleEffectSpawner particleEffectSpawner,
-            @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull DeploymentProperties deploymentProperties,
-            @Assisted @NotNull ItemEffect itemEffect
+            AudioEmitter audioEmitter,
+            ParticleEffectSpawner particleEffectSpawner,
+            Scheduler scheduler,
+            @Assisted DeploymentProperties deploymentProperties,
+            @Assisted ItemEffect itemEffect
     ) {
         this.audioEmitter = audioEmitter;
         this.particleEffectSpawner = particleEffectSpawner;
-        this.taskRunner = taskRunner;
+        this.scheduler = scheduler;
         this.deploymentProperties = deploymentProperties;
         this.itemEffect = itemEffect;
         this.deployed = false;
     }
 
-    @Nullable
     public Activator getActivator() {
         return activator;
     }
 
-    public void setActivator(@Nullable Activator activator) {
+    public void setActivator(Activator activator) {
         this.activator = activator;
     }
 
-    @Nullable
     public DeploymentObject getDeploymentObject() {
         return deploymentObject;
     }
 
-    public void activateDeployment(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+    public void activateDeployment(Deployer deployer, Entity deployerEntity) {
         audioEmitter.playSounds(deploymentProperties.manualActivationSounds(), deployerEntity.getLocation());
 
         deployer.setHeldItem(null);
 
-        taskRunner.runTaskLater(itemEffect::activateInstantly, deploymentProperties.manualActivationDelay());
+        Schedule delaySchedule = scheduler.createSingleRunSchedule(deploymentProperties.manualActivationDelay());
+        delaySchedule.addTask(itemEffect::activatePerformances);
+        delaySchedule.start();
     }
 
     public void cleanupDeployment() {
@@ -86,11 +76,11 @@ public class DeploymentHandler {
         }
 
         deployed = false;
-        itemEffect.cancelActivation();
+        itemEffect.cancelPerformances();
 
         if (deploymentProperties.activateEffectOnDestruction()
                 && (deploymentObject.getLastDamage() == null || deploymentObject.getLastDamage().type() != DamageType.ENVIRONMENTAL_DAMAGE)) {
-            itemEffect.activateInstantly();
+            itemEffect.activatePerformances();
         }
 
         if (deploymentProperties.removeDeploymentOnDestruction()) {
@@ -98,7 +88,7 @@ public class DeploymentHandler {
         }
 
         if (deploymentProperties.undoEffectOnDestruction()) {
-            itemEffect.undo();
+            itemEffect.rollbackPerformances();
         }
 
         ParticleEffect particleEffect = deploymentProperties.destructionParticleEffect();
@@ -108,7 +98,7 @@ public class DeploymentHandler {
         }
     }
 
-    public void handleDeployment(@NotNull Deployment deployment, @NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+    public void handleDeployment(Deployment deployment, Deployer deployer, Entity deployerEntity) {
         DeploymentResult result = deployment.perform(deployer, deployerEntity);
         deploymentObject = result.object();
 
@@ -116,12 +106,15 @@ public class DeploymentHandler {
             return;
         }
 
-        if (!itemEffect.isPrimed()) {
-            Location initiationLocation = deployer.getDeployLocation();
+        ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
 
-            itemEffect.prime(new ItemEffectContext(deployerEntity, deploymentObject, initiationLocation));
+        if (latestPerformance != null && !latestPerformance.isReleased()) {
+            latestPerformance.changeSource(deploymentObject);
         } else {
-            itemEffect.deploy(deploymentObject);
+            Location initiationLocation = deployer.getDeployLocation();
+            ItemEffectContext context = new ItemEffectContext(deployerEntity, deploymentObject, initiationLocation);
+
+            itemEffect.startPerformance(context);
         }
 
         if (activator != null) {
@@ -132,7 +125,9 @@ public class DeploymentHandler {
             deployed = true;
             deployer.setCanDeploy(false);
 
-            taskRunner.runTaskLater(() -> deployer.setCanDeploy(true), deploymentObject.getCooldown());
+            Schedule delaySchedule = scheduler.createSingleRunSchedule(deploymentObject.getCooldown());
+            delaySchedule.addTask(() -> deployer.setCanDeploy(true));
+            delaySchedule.start();
         }
     }
 

@@ -1,67 +1,46 @@
 package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
+import nl.matsgemmeke.battlegrounds.item.effect.*;
 
 public class DamageEffect extends BaseItemEffect {
 
-    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.3;
-    private static final double ENTITY_FINDING_RANGE = 0.1;
-
-    @NotNull
-    private final DamageProcessor damageProcessor;
-    @NotNull
-    private final DamageProperties properties;
-    @NotNull
-    private final TargetFinder targetFinder;
+    private final DamageEffectPerformanceFactory damageEffectPerformanceFactory;
+    private final GameContextProvider gameContextProvider;
+    private final GameKey gameKey;
+    private final GameScope gameScope;
+    private DamageProperties properties;
 
     @Inject
-    public DamageEffect(@NotNull DamageProcessor damageProcessor, @NotNull TargetFinder targetFinder, @Assisted @NotNull DamageProperties properties) {
-        this.damageProcessor = damageProcessor;
-        this.targetFinder = targetFinder;
+    public DamageEffect(DamageEffectPerformanceFactory damageEffectPerformanceFactory, GameContextProvider gameContextProvider, GameKey gameKey, GameScope gameScope) {
+        this.damageEffectPerformanceFactory = damageEffectPerformanceFactory;
+        this.gameContextProvider = gameContextProvider;
+        this.gameKey = gameKey;
+        this.gameScope = gameScope;
+    }
+
+    public void setProperties(DamageProperties properties) {
         this.properties = properties;
     }
 
-    public void perform(@NotNull ItemEffectContext context) {
-        Entity entity = context.getEntity();
-        UUID entityId = entity.getUniqueId();
-        Location initiationLocation = context.getInitiationLocation();
-        Location sourceLocation = context.getSource().getLocation();
-
-        for (GameEntity target : targetFinder.findEnemyTargets(entityId, sourceLocation, ENTITY_FINDING_RANGE)) {
-            Location targetLocation = target.getEntity().getLocation();
-
-            Damage damage = this.createDamage(initiationLocation, targetLocation);
-            target.damage(damage);
+    @Override
+    public void startPerformance(ItemEffectContext context) {
+        if (properties == null) {
+            throw new ItemEffectPerformanceException("Unable to perform damage effect: properties not set");
         }
 
-        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(entityId, sourceLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {
-            Location objectLocation = deploymentObject.getLocation();
+        GameContext gameContext = gameContextProvider.getGameContext(gameKey).orElse(null);
 
-            Damage damage = this.createDamage(initiationLocation, objectLocation);
-            damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
+        if (gameContext == null) {
+            throw new ItemEffectPerformanceException("Unable to perform damage effect: No game context for game key %s can be found".formatted(gameKey));
         }
-    }
 
-    @NotNull
-    private Damage createDamage(@NotNull Location originLocation, @NotNull Location targetLocation) {
-        double distance = originLocation.distance(targetLocation);
-        double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
-        DamageType damageType = properties.damageType();
+        ItemEffectPerformance performance = gameScope.supplyInScope(gameContext, () -> damageEffectPerformanceFactory.create(properties));
 
-        return new Damage(damageAmount, damageType);
+        this.startPerformance(performance, context);
     }
 }

@@ -1,51 +1,38 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
+
+import java.util.Optional;
 
 public interface ItemEffect {
 
-    /**
-     * Activates the effect instantly, overriding any other procedures.
-     */
-    void activateInstantly();
+    void addTriggerExecutor(TriggerExecutor triggerExecutor);
+
+    Optional<ItemEffectPerformance> getLatestPerformance();
+
+    void startPerformance(ItemEffectContext context);
 
     /**
-     * Adds a trigger to the item effect.
-     *
-     * @param trigger the trigger instance
+     * Activates all current {@link ItemEffectPerformance} instances managed by this effect.
+     * <p>
+     * Any performances that are waiting for trigger conditions will be forced to start immediately. Performances that
+     * are already active will continue as usual.
      */
-    void addTrigger(@NotNull Trigger trigger);
+    void activatePerformances();
 
     /**
-     * Cancels the current activation process of the effect. This method does not do anything if the effect was already
-     * activated.
+     * Cancels all pending or scheduled {@link ItemEffectPerformance} activations.
+     * <p>
+     * After this call, no new performances will start until reinitialized or reactivated. Active performances will not
+     * be interrupted, but those awaiting triggers will be discarded.
      */
-    void cancelActivation();
+    void cancelPerformances();
 
     /**
-     * Deploys an {@link ItemEffectSource} for an ongoing effect.
-     *
-     * @param source the source to deploy
+     * Reverts all side effects produced by the current {@link ItemEffectPerformance} instances.
+     * <p>
+     * This effectively undoes any persistent or temporary changes that were applied by the effect, restoring the
+     * system to the state prior to activation.
      */
-    void deploy(@NotNull ItemEffectSource source);
-
-    /**
-     * Gets whether the effect's activation system has been initiated.
-     *
-     * @return whether the effect is primed
-     */
-    boolean isPrimed();
-
-    /**
-     * Primes the effect with the provided for a specific context.
-     *
-     * @param context the item effect context variables
-     */
-    void prime(@NotNull ItemEffectContext context);
-
-    /**
-     * Undoes the performance of the effect.
-     */
-    default void undo() { }
+    void rollbackPerformances();
 }

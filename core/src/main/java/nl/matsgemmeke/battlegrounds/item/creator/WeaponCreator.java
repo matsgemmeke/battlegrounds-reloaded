@@ -67,7 +67,7 @@ public class WeaponCreator {
         EquipmentFactory equipmentFactory = equipmentFactoryProvider.get();
         EquipmentSpec equipmentSpec = equipmentSpecs.get(equipmentId);
 
-        return equipmentFactory.create(equipmentSpec, gameKey, gamePlayer);
+        return equipmentFactory.create(equipmentSpec, gamePlayer);
     }
 
     /**
@@ -89,7 +89,7 @@ public class WeaponCreator {
         FirearmFactory gunFactory = gunFactoryProvider.get();
         GunSpec gunSpec = gunSpecs.get(gunId);
 
-        return gunFactory.create(gunSpec, gameKey, gamePlayer);
+        return gunFactory.create(gunSpec, gamePlayer);
     }
 
     /**

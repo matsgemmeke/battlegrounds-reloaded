@@ -1,77 +1,126 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
-import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
+import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.UUID;
+import java.util.Optional;
+import java.util.function.Supplier;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
-public class MarkSpawnPointEffectTest {
+@ExtendWith(MockitoExtension.class)
+class MarkSpawnPointEffectTest {
 
-    private final static Location INITIATION_LOCATION = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final ItemEffectContext CONTEXT = createContext();
 
-    private Entity entity;
-    private ItemEffectSource source;
-    private SpawnPointRegistry spawnPointRegistry;
-    private Trigger trigger;
+    @Mock
+    private GameContextProvider gameContextProvider;
+    @Mock
+    private GameScope gameScope;
+    @Mock
+    private Provider<MarkSpawnPointEffectPerformance> markSpawnPointEffectPerformanceProvider;
+
+    private MarkSpawnPointEffect markSpawnPointEffect;
 
     @BeforeEach
-    public void setUp() {
-        entity = mock(Entity.class);
-        source = mock(ItemEffectSource.class);
-        spawnPointRegistry = mock(SpawnPointRegistry.class);
-        trigger = mock(Trigger.class);
+    void setUp() {
+        markSpawnPointEffect = new MarkSpawnPointEffect(gameContextProvider, GAME_KEY, gameScope, markSpawnPointEffectPerformanceProvider);
     }
 
     @Test
-    public void primeCreatesNewCustomSpawnPointAndAssignsToDeployer() {
-        UUID entityId = UUID.randomUUID();
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        when(entity.getUniqueId()).thenReturn(entityId);
+        assertThatThrownBy(() -> markSpawnPointEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform mark spawn point effect: no game context for game key OPEN-MODE can be found");
+    }
 
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointRegistry);
-        effect.addTrigger(trigger);
-        effect.prime(context);
+    @Test
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+        MarkSpawnPointEffectPerformance performance = mock(MarkSpawnPointEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
+        TriggerRun triggerRun = mock(TriggerRun.class);
+
+        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
+        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
+
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+        when(markSpawnPointEffectPerformanceProvider.get()).thenReturn(performance);
+
+        markSpawnPointEffect.addTriggerExecutor(triggerExecutor);
+        markSpawnPointEffect.startPerformance(CONTEXT);
+
+        ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
+        verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
+        verify(triggerRun).addObserver(triggerObserverCaptor.capture());
         triggerObserverCaptor.getValue().onActivate();
 
-        ArgumentCaptor<MarkedSpawnPoint> spawnPointCaptor = ArgumentCaptor.forClass(MarkedSpawnPoint.class);
-        verify(spawnPointRegistry).setCustomSpawnPoint(eq(entityId), spawnPointCaptor.capture());
+        TriggerContext triggerContext = triggerContextCaptor.getValue();
+        assertThat(triggerContext.entity()).isEqualTo(CONTEXT.getEntity());
+        assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
+
+        verify(triggerRun).start();
+        verify(performance).addTriggerRun(triggerRun);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
     @Test
-    public void resetDoesNotResetSpawnPointIfEffectIsNotPerformed() {
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointRegistry);
-        effect.reset();
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+        MarkSpawnPointEffectPerformance performance = mock(MarkSpawnPointEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
 
-        verify(spawnPointRegistry, never()).setCustomSpawnPoint(any(UUID.class), any(SpawnPoint.class));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+        when(markSpawnPointEffectPerformanceProvider.get()).thenReturn(performance);
+
+        markSpawnPointEffect.startPerformance(CONTEXT);
+
+        verify(performance, never()).addTriggerRun(any(TriggerRun.class));
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
-    @Test
-    public void resetResetsSpawnPointIfEffectIsPerformed() {
-        UUID entityId = UUID.randomUUID();
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+    private static ItemEffectContext createContext() {
+        Entity entity = mock(Entity.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
+        Location initiationLocation = new Location(null, 1, 1, 1);
 
-        when(entity.getUniqueId()).thenReturn(entityId);
-
-        MarkSpawnPointEffect effect = new MarkSpawnPointEffect(spawnPointRegistry);
-        effect.prime(context);
-        effect.reset();
-
-        verify(spawnPointRegistry).setCustomSpawnPoint(entityId, null);
+        return new ItemEffectContext(entity, source, initiationLocation);
     }
 }

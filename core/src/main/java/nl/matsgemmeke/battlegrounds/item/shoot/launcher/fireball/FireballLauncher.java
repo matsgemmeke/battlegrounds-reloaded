@@ -88,9 +88,7 @@ public class FireballLauncher implements ProjectileLauncher {
         StaticSource source = new StaticSource(fireballLocation, fireballWorld);
         ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
-        itemEffect.prime(context);
-        itemEffect.deploy(source);
-        itemEffect.activateInstantly();
+        itemEffect.startPerformance(context);
 
         schedule.stop();
 

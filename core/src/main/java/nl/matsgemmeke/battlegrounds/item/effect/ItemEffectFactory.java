@@ -9,24 +9,24 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,57 +34,46 @@ import java.util.List;
 
 public class ItemEffectFactory {
 
-    @NotNull
-    private final CombustionEffectFactory combustionEffectFactory;
-    @NotNull
-    private final DamageEffectFactory damageEffectFactory;
-    @NotNull
-    private final ExplosionEffectFactory explosionEffectFactory;
-    @NotNull
-    private final FlashEffectFactory flashEffectFactory;
-    @NotNull
-    private final GunFireSimulationEffectFactory gunFireSimulationEffectFactory;
-    @NotNull
     private final ParticleEffectMapper particleEffectMapper;
-    @NotNull
+    private final Provider<CombustionEffect> combustionEffectProvider;
+    private final Provider<DamageEffect> damageEffectProvider;
+    private final Provider<ExplosionEffect> explosionEffectProvider;
+    private final Provider<FlashEffect> flashEffectProvider;
+    private final Provider<GunFireSimulationEffect> gunFireSimulationEffectProvider;
     private final Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider;
-    @NotNull
+    private final Provider<SmokeScreenEffect> smokeScreenEffectProvider;
     private final RangeProfileMapper rangeProfileMapper;
-    @NotNull
-    private final SmokeScreenEffectFactory smokeScreenEffectFactory;
-    @NotNull
-    private final TriggerFactory triggerFactory;
+    private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
     public ItemEffectFactory(
-            @NotNull CombustionEffectFactory combustionEffectFactory,
-            @NotNull DamageEffectFactory damageEffectFactory,
-            @NotNull ExplosionEffectFactory explosionEffectFactory,
-            @NotNull FlashEffectFactory flashEffectFactory,
-            @NotNull GunFireSimulationEffectFactory gunFireSimulationEffectFactory,
-            @NotNull ParticleEffectMapper particleEffectMapper,
-            @NotNull Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
-            @NotNull RangeProfileMapper rangeProfileMapper,
-            @NotNull SmokeScreenEffectFactory smokeScreenEffectFactory,
-            @NotNull TriggerFactory triggerFactory
+            ParticleEffectMapper particleEffectMapper,
+            Provider<CombustionEffect> combustionEffectProvider,
+            Provider<DamageEffect> damageEffectProvider,
+            Provider<ExplosionEffect> explosionEffectProvider,
+            Provider<FlashEffect> flashEffectProvider,
+            Provider<GunFireSimulationEffect> gunFireSimulationEffectProvider,
+            Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
+            Provider<SmokeScreenEffect> smokeScreenEffectProvider,
+            RangeProfileMapper rangeProfileMapper,
+            TriggerExecutorFactory triggerExecutorFactory
     ) {
-        this.combustionEffectFactory = combustionEffectFactory;
-        this.damageEffectFactory = damageEffectFactory;
-        this.explosionEffectFactory = explosionEffectFactory;
-        this.flashEffectFactory = flashEffectFactory;
-        this.gunFireSimulationEffectFactory = gunFireSimulationEffectFactory;
         this.particleEffectMapper = particleEffectMapper;
+        this.combustionEffectProvider = combustionEffectProvider;
+        this.damageEffectProvider = damageEffectProvider;
+        this.explosionEffectProvider = explosionEffectProvider;
+        this.flashEffectProvider = flashEffectProvider;
+        this.gunFireSimulationEffectProvider = gunFireSimulationEffectProvider;
         this.markSpawnPointEffectProvider = markSpawnPointEffectProvider;
+        this.smokeScreenEffectProvider = smokeScreenEffectProvider;
         this.rangeProfileMapper = rangeProfileMapper;
-        this.smokeScreenEffectFactory = smokeScreenEffectFactory;
-        this.triggerFactory = triggerFactory;
+        this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
     public ItemEffect create(ItemEffectSpec spec) {
-        ItemEffect itemEffect;
         ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.type);
 
-        switch (itemEffectType) {
+        ItemEffect itemEffect = switch (itemEffectType) {
             case COMBUSTION -> {
                 double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
                 double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
@@ -95,12 +84,15 @@ public class ItemEffectFactory {
                 boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
                 boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
 
-                CombustionProperties properties = new CombustionProperties(activationSounds, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
+                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
                 RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
 
-                itemEffect = combustionEffectFactory.create(properties, rangeProfile);
+                CombustionProperties properties = new CombustionProperties(activationSounds, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
+
+                CombustionEffect combustionEffect = combustionEffectProvider.get();
+                combustionEffect.setProperties(properties);
+                yield combustionEffect;
             }
             case DAMAGE -> {
                 String damageTypeValue = this.validateSpecVar(spec.damageType, "damageType", itemEffectType);
@@ -111,7 +103,9 @@ public class ItemEffectFactory {
 
                 DamageProperties properties = new DamageProperties(rangeProfile, damageType);
 
-                itemEffect = damageEffectFactory.create(properties);
+                DamageEffect damageEffect = damageEffectProvider.get();
+                damageEffect.setProperties(properties);
+                yield damageEffect;
             }
             case EXPLOSION -> {
                 RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
@@ -119,10 +113,12 @@ public class ItemEffectFactory {
                 boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
                 boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
 
-                ExplosionProperties properties = new ExplosionProperties(power, damageBlocks, spreadFire);
                 RangeProfile rangeProfile = new RangeProfile(rangeProfileSpec.longRange.damage, rangeProfileSpec.longRange.distance, rangeProfileSpec.mediumRange.damage, rangeProfileSpec.mediumRange.distance, rangeProfileSpec.shortRange.damage, rangeProfileSpec.shortRange.distance);
+                ExplosionProperties properties = new ExplosionProperties(rangeProfile, power, damageBlocks, spreadFire);
 
-                itemEffect = explosionEffectFactory.create(properties, rangeProfile);
+                ExplosionEffect explosionEffect = explosionEffectProvider.get();
+                explosionEffect.setProperties(properties);
+                yield explosionEffect;
             }
             case FLASH -> {
                 double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
@@ -134,7 +130,9 @@ public class ItemEffectFactory {
                 PotionEffectProperties potionEffect = new PotionEffectProperties(potionEffectSpec.duration, potionEffectSpec.amplifier, potionEffectSpec.ambient, potionEffectSpec.particles, potionEffectSpec.icon);
                 FlashProperties properties = new FlashProperties(potionEffect, maxSize, power, damageBlocks, spreadFire);
 
-                itemEffect = flashEffectFactory.create(properties);
+                FlashEffect flashEffect = flashEffectProvider.get();
+                flashEffect.setProperties(properties);
+                yield flashEffect;
             }
             case GUN_FIRE_SIMULATION -> {
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
@@ -144,9 +142,11 @@ public class ItemEffectFactory {
 
                 GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, activationPatternSpec.burstInterval, activationPatternSpec.maxBurstDuration, activationPatternSpec.minBurstDuration, activationPatternSpec.maxDelayDuration, activationPatternSpec.minDelayDuration, maxDuration, minDuration);
 
-                itemEffect = gunFireSimulationEffectFactory.create(properties);
+                GunFireSimulationEffect gunFireSimulationEffect = gunFireSimulationEffectProvider.get();
+                gunFireSimulationEffect.setProperties(properties);
+                yield gunFireSimulationEffect;
             }
-            case MARK_SPAWN_POINT -> itemEffect = markSpawnPointEffectProvider.get();
+            case MARK_SPAWN_POINT -> markSpawnPointEffectProvider.get();
             case SMOKE_SCREEN -> {
                 List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
                 long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
@@ -162,20 +162,23 @@ public class ItemEffectFactory {
 
                 SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
 
-                itemEffect = smokeScreenEffectFactory.create(properties);
+                SmokeScreenEffect smokeScreenEffect = smokeScreenEffectProvider.get();
+                smokeScreenEffect.setProperties(properties);
+                yield smokeScreenEffect;
             }
             case SOUND_NOTIFICATION -> {
-                Iterable<GameSound> sounds = DefaultGameSound.parseSounds(spec.activationSounds);
+                List<GameSound> notificationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
 
-                itemEffect = new SoundNotificationEffect(sounds);
+                SoundNotificationEffect soundNotificationEffect = new SoundNotificationEffect();
+                soundNotificationEffect.setNotificationSounds(notificationSounds);
+                yield soundNotificationEffect;
             }
-            default -> throw new ItemEffectCreationException("Unknown item effect type '%s'".formatted(itemEffectType));
-        }
+        };
 
         for (TriggerSpec triggerSpec : spec.triggers.values()) {
-            Trigger trigger = triggerFactory.create(triggerSpec);
+            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 
-            itemEffect.addTrigger(trigger);
+            itemEffect.addTriggerExecutor(triggerExecutor);
         }
 
         return itemEffect;

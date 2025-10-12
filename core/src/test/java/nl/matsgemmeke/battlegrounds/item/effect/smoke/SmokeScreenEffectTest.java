@@ -1,247 +1,137 @@
 package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
-public class SmokeScreenEffectTest {
+@ExtendWith(MockitoExtension.class)
+class SmokeScreenEffectTest {
 
-    private static final double PARTICLE_EXTRA = 0.01;
-    private static final double PARTICLE_OFFSET_X = 0.5;
-    private static final double PARTICLE_OFFSET_Y = 0.5;
-    private static final double PARTICLE_OFFSET_Z = 0.5;
-    private static final int PARTICLE_COUNT = 1;
-    private static final Material PARTICLE_BLOCK_DATA = null;
-    private static final Particle PARTICLE_TYPE = Particle.CAMPFIRE_SIGNAL_SMOKE;
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final ItemEffectContext CONTEXT = createContext();
+    private static final SmokeScreenProperties PROPERTIES = new SmokeScreenProperties(null, null, 100L, 200L, 2.0, 1.0, 5.0, 0.1, 5L);
 
-    private static final List<GameSound> ACTIVATION_SOUNDS = Collections.emptyList();
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
-    private static final long GROWTH_INTERVAL = 1L;
+    @Mock
+    private GameContextProvider gameContextProvider;
+    @Mock
+    private GameScope gameScope;
+    @Mock
+    private SmokeScreenEffectPerformanceFactory smokeScreenEffectPerformanceFactory;
 
-    private AudioEmitter audioEmitter;
-    private CollisionDetector collisionDetector;
-    private Entity entity;
-    private ItemEffectSource source;
-    private ParticleEffect particleEffect;
-    private TaskRunner taskRunner;
-    private Trigger trigger;
+    private SmokeScreenEffect smokeScreenEffect;
 
     @BeforeEach
-    public void setUp() {
-        audioEmitter = mock(AudioEmitter.class);
-        collisionDetector = mock(CollisionDetector.class);
-        entity = mock(Entity.class);
-        source = mock(ItemEffectSource.class);
-        particleEffect = new ParticleEffect(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA, PARTICLE_BLOCK_DATA, null);
-        taskRunner = mock(TaskRunner.class);
-        trigger = mock(Trigger.class);
+    void setUp() {
+        smokeScreenEffect = new SmokeScreenEffect(gameContextProvider, GAME_KEY, gameScope, smokeScreenEffectPerformanceFactory);
     }
 
     @Test
-    public void activateCancelsTaskOnceSourceNoLongerExists() {
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
-
-        when(source.exists()).thenReturn(false);
-
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_INTERVAL))).thenReturn(task);
-
-        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
-
-        runnableCaptor.getValue().run();
-
-        verify(task).cancel();
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+        assertThatThrownBy(() -> smokeScreenEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform smoke screen effect: properties not set");
     }
 
     @Test
-    public void activateRemovesSourceAndCancelsTaskOnceEffectIsOver() {
-        World world = mock(World.class);
-        Location sourceLocation = new Location(world, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
-        when(source.getWorld()).thenReturn(world);
+        smokeScreenEffect.setProperties(PROPERTIES);
 
-        BukkitTask task = mock(BukkitTask.class);
-        when(taskRunner.runTaskTimer(any(Runnable.class), eq(0L), eq(GROWTH_INTERVAL))).thenReturn(task);
-
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 1L, 1L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
-
-        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
-
-        runnableCaptor.getValue().run();
-
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceLocation);
-        verify(source).remove();
-        verify(task).cancel();
+        assertThatThrownBy(() -> smokeScreenEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform smoke screen effect: no game context for game key OPEN-MODE can be found");
     }
 
     @Test
-    public void activateDisplaysTraceParticleIfTheSourceHasMoved() {
-        World world = mock(World.class);
-        Location sourceOldLocation = new Location(world, 0, 0, 0);
-        Location sourceNewLocation = new Location(world, 1, 1, 1);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+        SmokeScreenEffectPerformance performance = mock(SmokeScreenEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
+        TriggerRun triggerRun = mock(TriggerRun.class);
 
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceOldLocation, sourceOldLocation, sourceNewLocation);
-        when(source.getWorld()).thenReturn(world);
+        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
+        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 1.0, 0.0, 0.0, 0.0, GROWTH_INTERVAL);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+        when(smokeScreenEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
+        smokeScreenEffect.addTriggerExecutor(triggerExecutor);
+        smokeScreenEffect.setProperties(PROPERTIES);
+        smokeScreenEffect.startPerformance(CONTEXT);
+
+        ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
+        verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
+        verify(triggerRun).addObserver(triggerObserverCaptor.capture());
         triggerObserverCaptor.getValue().onActivate();
 
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
+        TriggerContext triggerContext = triggerContextCaptor.getValue();
+        assertThat(triggerContext.entity()).isEqualTo(CONTEXT.getEntity());
+        assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
 
-        runnableCaptor.getValue().run();
-
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceOldLocation);
-        verify(world).spawnParticle(PARTICLE_TYPE, sourceNewLocation, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
+        verify(triggerRun).start();
+        verify(performance).addTriggerRun(triggerRun);
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
     @Test
-    public void activateDisplaysSphereParticlesIfTheSourceIsNotMoving() {
-        World world = mock(World.class);
-        Location sourceLocation = new Location(world, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+        SmokeScreenEffectPerformance performance = mock(SmokeScreenEffectPerformance.class);
+        GameContext gameContext = mock(GameContext.class);
 
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
-        when(source.getWorld()).thenReturn(world);
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
+            return performanceSupplier.get();
+        });
+        when(smokeScreenEffectPerformanceFactory.create(PROPERTIES)).thenReturn(performance);
 
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 5.0, 5.0, 0.5,0.0, GROWTH_INTERVAL);
+        smokeScreenEffect.setProperties(PROPERTIES);
+        smokeScreenEffect.startPerformance(CONTEXT);
 
-        when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
-        when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
-
-        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
-
-        runnableCaptor.getValue().run();
-
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceLocation);
-        verify(world, times(2)).spawnParticle(eq(PARTICLE_TYPE), any(Location.class), eq(0), anyDouble(), anyDouble(), anyDouble(), eq(PARTICLE_EXTRA), eq(PARTICLE_BLOCK_DATA), eq(true));
+        verify(performance, never()).addTriggerRun(any(TriggerRun.class));
+        verify(performance).setContext(CONTEXT);
+        verify(performance).start();
     }
 
-    @Test
-    public void activateDoesNotDisplaySphereParticleIfTheParticleLocationCausesCollision() {
-        World world = mock(World.class);
-        Location sourceLocation = new Location(world, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
+    private static ItemEffectContext createContext() {
+        Entity entity = mock(Entity.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
+        Location initiationLocation = new Location(null, 1, 1, 1);
 
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
-        when(source.getWorld()).thenReturn(world);
-
-        when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(true);
-
-        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
-
-        runnableCaptor.getValue().run();
-
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceLocation);
-        verifyNoInteractions(world);
-    }
-
-    @Test
-    public void activateDoesNotDisplaySphereParticleIfTheParticleLocationHasNoLineOfSightToSource() {
-        World world = mock(World.class);
-        Location sourceLocation = new Location(world, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
-        SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, ACTIVATION_SOUNDS, 100L, 200L, 5.0, 5.0, 0.5, 0.0, GROWTH_INTERVAL);
-
-        when(source.exists()).thenReturn(true);
-        when(source.getLocation()).thenReturn(sourceLocation);
-        when(source.getWorld()).thenReturn(world);
-
-        when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
-        when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(false);
-
-        SmokeScreenEffect effect = new SmokeScreenEffect(audioEmitter, collisionDetector, taskRunner, properties);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskTimer(runnableCaptor.capture(), eq(0L), eq(GROWTH_INTERVAL));
-
-        runnableCaptor.getValue().run();
-
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, sourceLocation);
-        verifyNoInteractions(world);
+        return new ItemEffectContext(entity, source, initiationLocation);
     }
 }

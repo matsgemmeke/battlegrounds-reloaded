@@ -27,27 +27,21 @@ public class HitscanLauncher implements ProjectileLauncher {
     private static final double FINDING_RANGE_DEPLOYMENT_OBJECTS = 0.3;
     private static final double FINDING_RANGE_ENTITIES = 0.1;
 
-    @NotNull
     private final AudioEmitter audioEmitter;
-    @NotNull
     private final CollisionDetector collisionDetector;
-    @NotNull
     private final HitscanProperties properties;
-    @NotNull
     private final ItemEffect itemEffect;
-    @NotNull
     private final ParticleEffectSpawner particleEffectSpawner;
-    @NotNull
     private final TargetFinder targetFinder;
 
     @Inject
     public HitscanLauncher(
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull CollisionDetector collisionDetector,
-            @NotNull ParticleEffectSpawner particleEffectSpawner,
-            @NotNull TargetFinder targetFinder,
-            @Assisted @NotNull HitscanProperties properties,
-            @Assisted @NotNull ItemEffect itemEffect
+            AudioEmitter audioEmitter,
+            CollisionDetector collisionDetector,
+            ParticleEffectSpawner particleEffectSpawner,
+            TargetFinder targetFinder,
+            @Assisted HitscanProperties properties,
+            @Assisted ItemEffect itemEffect
     ) {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
@@ -86,24 +80,29 @@ public class HitscanLauncher implements ProjectileLauncher {
         if (collisionDetector.producesBlockCollisionAt(projectileLocation)) {
             Block block = projectileLocation.getBlock();
             block.getWorld().playEffect(projectileLocation, org.bukkit.Effect.STEP_SOUND, block.getType());
+
+            this.startPerformance(entity, projectileLocation, startingLocation);
             return true;
         }
 
         TargetQuery query = this.createTargetQuery(entity.getUniqueId(), projectileLocation);
 
         if (targetFinder.containsTargets(query)) {
-            Location sourceLocation = projectileLocation.clone();
-            World world = projectileLocation.getBlock().getWorld();
-            StaticSource source = new StaticSource(sourceLocation, world);
-
-            ItemEffectContext context = new ItemEffectContext(entity, source, startingLocation);
-
-            itemEffect.prime(context);
-            itemEffect.activateInstantly();
+            this.startPerformance(entity, projectileLocation, startingLocation);
             return true;
         }
 
         return false;
+    }
+
+    private void startPerformance(Entity entity, Location projectileLocation, Location startingLocation) {
+        Location sourceLocation = projectileLocation.clone();
+        World world = projectileLocation.getBlock().getWorld();
+        StaticSource source = new StaticSource(sourceLocation, world);
+
+        ItemEffectContext context = new ItemEffectContext(entity, source, startingLocation);
+
+        itemEffect.startPerformance(context);
     }
 
     private TargetQuery createTargetQuery(UUID entityId, Location location) {

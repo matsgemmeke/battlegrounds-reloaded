@@ -14,8 +14,8 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFact
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public class ProjectileEffectFactory {
     @NotNull
     private final TrailEffectFactory trailEffectFactory;
     @NotNull
-    private final TriggerFactory triggerFactory;
+    private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
     public ProjectileEffectFactory(
@@ -42,13 +42,13 @@ public class ProjectileEffectFactory {
             @NotNull SoundEffectFactory soundEffectFactory,
             @NotNull StickEffectFactory stickEffectFactory,
             @NotNull TrailEffectFactory trailEffectFactory,
-            @NotNull TriggerFactory triggerFactory
+            @NotNull TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.particleEffectMapper = particleEffectMapper;
         this.soundEffectFactory = soundEffectFactory;
         this.stickEffectFactory = stickEffectFactory;
         this.trailEffectFactory = trailEffectFactory;
-        this.triggerFactory = triggerFactory;
+        this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
     public ProjectileEffect create(ProjectileEffectSpec spec) {
@@ -124,8 +124,9 @@ public class ProjectileEffectFactory {
 
     private void addTriggers(@NotNull ProjectileEffect projectileEffect, @NotNull Collection<TriggerSpec> triggerSpecs) {
         for (TriggerSpec triggerSpec : triggerSpecs) {
-            Trigger trigger = triggerFactory.create(triggerSpec);
-            projectileEffect.addTrigger(trigger);
+            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
+
+            projectileEffect.addTriggerExecutor(triggerExecutor);
         }
     }
 }

@@ -98,7 +98,6 @@ public class OpenModeTargetFinder implements TargetFinder {
 
             world.getNearbyEntities(location, range, range, range).stream()
                     .filter(entity -> entity.getType() != EntityType.PLAYER)
-                    .filter(entity -> entity.getLocation().distanceSquared(location) <= range)
                     .map(Entity::getUniqueId)
                     .forEach(result::add);
         });

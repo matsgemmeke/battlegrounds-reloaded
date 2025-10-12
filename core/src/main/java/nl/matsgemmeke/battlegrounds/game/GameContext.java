@@ -34,6 +34,8 @@ public class GameContext {
 
     @SuppressWarnings("unchecked")
     public <T> T getScopedObject(Key<T> key, Provider<T> creator) {
-        return (T) scopedObjects.computeIfAbsent(key, k -> creator.get());
+        T instance = creator.get();
+
+        return (T) scopedObjects.computeIfAbsent(key, k -> instance);
     }
 }

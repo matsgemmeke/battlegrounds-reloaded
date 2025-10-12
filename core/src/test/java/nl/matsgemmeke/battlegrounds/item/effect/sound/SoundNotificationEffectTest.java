@@ -2,81 +2,78 @@ package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class SoundNotificationEffectTest {
+@ExtendWith(MockitoExtension.class)
+class SoundNotificationEffectTest {
 
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
-    private static final Sound SOUND = Sound.AMBIENT_CAVE;
-    private static final float VOLUME = 1.0f;
-    private static final float PITCH = 2.0f;
+    private static final ItemEffectContext CONTEXT = createContext();
+    private static final List<GameSound> NOTIFICATION_SOUNDS = Collections.emptyList();
 
-    private GameSound sound;
-    private List<GameSound> sounds;
-    private Trigger trigger;
+    private SoundNotificationEffect soundNotificationEffect;
 
     @BeforeEach
-    public void setUp() {
-        trigger = mock(Trigger.class);
-
-        sound = mock(GameSound.class);
-        when(sound.getSound()).thenReturn(SOUND);
-        when(sound.getVolume()).thenReturn(VOLUME);
-        when(sound.getPitch()).thenReturn(PITCH);
-
-        sounds = List.of(sound);
+    void setUp() {
+        soundNotificationEffect = new SoundNotificationEffect();
     }
 
     @Test
-    public void activatePlaysNoSoundsIfEntityIsNoPlayer() {
-        Zombie zombie = mock(Zombie.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(zombie, source, INITIATION_LOCATION);
-
-        SoundNotificationEffect effect = new SoundNotificationEffect(sounds);
-        effect.addTrigger(trigger);
-        effect.prime(context);
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
-        triggerObserverCaptor.getValue().onActivate();
-
-        verifyNoInteractions(sound);
+    void startPerformanceThrowsItemEffectPerformanceExceptionWhenNotificationSoundsAreNotSet() {
+        assertThatThrownBy(() -> soundNotificationEffect.startPerformance(CONTEXT))
+                .isInstanceOf(ItemEffectPerformanceException.class)
+                .hasMessage("Unable to perform sound notification effect: notification sounds not set");
     }
 
     @Test
-    public void activatePlaysSoundsOnlyForPlayerEntity() {
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        Location playerLocation = new Location(null, 0, 0, 0);
+    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartPerformance() {
+        TriggerRun triggerRun = mock(TriggerRun.class);
 
-        Player player = mock(Player.class);
-        when(player.getLocation()).thenReturn(playerLocation);
+        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
+        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        ItemEffectContext context = new ItemEffectContext(player, source, INITIATION_LOCATION);
+        soundNotificationEffect.addTriggerExecutor(triggerExecutor);
+        soundNotificationEffect.setNotificationSounds(NOTIFICATION_SOUNDS);
+        soundNotificationEffect.startPerformance(CONTEXT);
 
-        SoundNotificationEffect effect = new SoundNotificationEffect(sounds);
-        effect.addTrigger(trigger);
-        effect.prime(context);
+        ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
+        verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(trigger).addObserver(triggerObserverCaptor.capture());
-
+        verify(triggerRun).addObserver(triggerObserverCaptor.capture());
         triggerObserverCaptor.getValue().onActivate();
 
-        verify(player).playSound(playerLocation, SOUND, VOLUME, PITCH);
+        TriggerContext triggerContext = triggerContextCaptor.getValue();
+        assertThat(triggerContext.entity()).isEqualTo(CONTEXT.getEntity());
+        assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
+
+        verify(triggerRun).start();
+    }
+
+    private static ItemEffectContext createContext() {
+        Entity entity = mock(Entity.class);
+        ItemEffectSource source = mock(ItemEffectSource.class);
+        Location initiationLocation = new Location(null, 1, 1, 1);
+
+        return new ItemEffectContext(entity, source, initiationLocation);
     }
 }

@@ -2,17 +2,14 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 
 public class ItemEffectContext {
 
-    @NotNull
     private final Entity entity;
     private final Location initiationLocation;
-    @NotNull
     private ItemEffectSource source;
 
-    public ItemEffectContext(@NotNull Entity entity, @NotNull ItemEffectSource source, @NotNull Location initiationLocation) {
+    public ItemEffectContext(Entity entity, ItemEffectSource source, Location initiationLocation) {
         this.entity = entity;
         this.source = source;
         this.initiationLocation = initiationLocation;
@@ -23,7 +20,6 @@ public class ItemEffectContext {
      *
      * @return the initiator entity
      */
-    @NotNull
     public Entity getEntity() {
         return entity;
     }
@@ -33,7 +29,6 @@ public class ItemEffectContext {
      *
      * @return the effect's initiation location
      */
-    @NotNull
     public Location getInitiationLocation() {
         return initiationLocation;
     }
@@ -43,7 +38,6 @@ public class ItemEffectContext {
      *
      * @return the effect source
      */
-    @NotNull
     public ItemEffectSource getSource() {
         return source;
     }
@@ -53,7 +47,7 @@ public class ItemEffectContext {
      *
      * @param source the effect source
      */
-    public void setSource(@NotNull ItemEffectSource source) {
+    public void setSource(ItemEffectSource source) {
         this.source = source;
     }
 }
