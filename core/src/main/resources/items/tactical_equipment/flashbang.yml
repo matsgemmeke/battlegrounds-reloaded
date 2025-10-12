@@ -1,8 +1,10 @@
 id: FLASHBANG
 name: Flashbang
+equipment-type: TACTICAL
+description: Device that blinds the target when detonated.
 controls:
-  cook: RIGHT_CLICK
   throwing: LEFT_CLICK
+  cook: RIGHT_CLICK
 deploy:
   health: 50.0
   on-destruction:
@@ -20,42 +22,40 @@ deploy:
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
-description: Device that blinds the target when detonated.
 effect:
-  damage-blocks: false
+  type: FLASH
   max-size: 5.0
-  potion-effect:
-    ambient: true
-    amplifier: 0
-    duration: 100
-    icon: false
-    particles: true
-    type: BLINDNESS
   power: 1.0
   spread-fire: false
+  damage-blocks: false
+  potion-effect:
+    type: BLINDNESS
+    duration: 100
+    amplifier: 0
+    ambient: true
+    particles: true
+    icon: false
   triggers:
     scheduled:
       type: SCHEDULED
       offset-delays: [60]
-  type: FLASH
-equipment-type: TACTICAL
 items:
   display-item:
-    damage: 6
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 6
   throw-item:
-    damage: 6
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 6
 projectile-effects:
   bounce:
     type: BOUNCE
+    max-activations: 1
+    horizontal-friction: 3.0
+    vertical-friction: 2.0
     triggers:
       impact:
         type: IMPACT
         delay: 0
         interval: 1
-    max-activations: 1
-    horizontal-friction: 3.0
-    vertical-friction: 2.0

@@ -1,5 +1,7 @@
 id: MOTION_SENSOR
 name: Motion Sensor
+equipment-type: TACTICAL
+description: Tactical ground-based sensor that detects enemy movement within its radius.
 controls:
   throwing: LEFT_CLICK
 deploy:
@@ -9,22 +11,21 @@ deploy:
     remove-deployment: true
     undo-effect: false
     particle-effect:
-      block-data: REPEATER
+      particle: BLOCK_CRACK
       count: 10
       extra: 0
       offset-x: 0.25
       offset-y: 0.25
       offset-z: 0.25
-      particle: BLOCK_CRACK
-      remove: true
+      block-data: REPEATER
   on-cleanup:
     remove-deployment: false
   throwing:
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 0.5
-description: Tactical ground-based sensor that detects enemy movement within its radius.
 effect:
+  type: SOUND_NOTIFICATION
   activation-sounds: BLOCK_NOTE_BLOCK_BIT-1-2-0
   triggers:
     enemy-proximity:
@@ -32,14 +33,12 @@ effect:
       delay: 10
       interval: 10
       range: 2.5
-  type: SOUND_NOTIFICATION
-equipment-type: TACTICAL
 items:
   display-item:
-    damage: 8
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 8
   throw-item:
-    damage: 8
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 8

@@ -1,8 +1,10 @@
 id: FRAG_GRENADE
 name: Frag Grenade
+equipment-type: LETHAL
+description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 controls:
-  cook: RIGHT_CLICK
   throwing: LEFT_CLICK
+  cook: RIGHT_CLICK
 deploy:
   health: 50.0
   on-destruction:
@@ -19,10 +21,11 @@ deploy:
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
-description: Fragmentation grenade. Detonates shortly after ignition, causing splash damage to the enemy.
 effect:
-  damage-blocks: false
+  type: EXPLOSION
   power: 2.0
+  spread-fire: false
+  damage-blocks: false
   range:
     long-range:
       damage: 25.0
@@ -33,30 +36,27 @@ effect:
     short-range:
       damage: 150.0
       distance: 2.5
-  spread-fire: false
   triggers:
     scheduled:
       type: SCHEDULED
       offset-delays: [80]
-  type: EXPLOSION
-equipment-type: LETHAL
 items:
   display-item:
-    damage: 1
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 1
   throw-item:
-    damage: 1
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 1
 projectile-effects:
   bounce:
     type: BOUNCE
+    max-activations: 1
+    horizontal-friction: 3.0
+    vertical-friction: 2.0
     triggers:
       impact:
         type: IMPACT
         delay: 0
         interval: 1
-    max-activations: 1
-    horizontal-friction: 3.0
-    vertical-friction: 2.0

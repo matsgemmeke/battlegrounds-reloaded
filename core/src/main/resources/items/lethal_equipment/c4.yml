@@ -1,9 +1,11 @@
 id: C4
 name: C4
+equipment-type: LETHAL
+description: A plastic explosive device that is detonated remotely with the clacker.
 controls:
-  activate: RIGHT_CLICK
-  place: RIGHT_CLICK
   throwing: LEFT_CLICK
+  place: RIGHT_CLICK
+  activate: RIGHT_CLICK
 deploy:
   health: 50.0
   manual-activation:
@@ -27,10 +29,11 @@ deploy:
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.0
-description: A plastic explosive device that is detonated remotely with the clacker.
 effect:
-  damage-blocks: false
+  type: EXPLOSION
   power: 3.0
+  spread-fire: false
+  damage-blocks: false
   range:
     long-range:
       damage: 50.0
@@ -41,23 +44,20 @@ effect:
     short-range:
       damage: 300.0
       distance: 2.5
-  spread-fire: false
-  type: EXPLOSION
   triggers:
     scheduled:
       type: SCHEDULED
       offset-delays: [ 100000 ]
-equipment-type: LETHAL
 items:
   display-item:
-    damage: 2
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 2
   activator-item:
-    damage: 3
+    material: SHEARS
     display-name: '&fDetonator'
-    material: SHEARS
+    damage: 3
   throw-item:
-    damage: 2
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 2

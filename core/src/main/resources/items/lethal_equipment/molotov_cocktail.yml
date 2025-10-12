@@ -1,5 +1,7 @@
 id: MOLOTOV_COCKTAIL
 name: Molotov Cocktail
+equipment-type: LETHAL
+description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
 controls:
   throwing: LEFT_CLICK
 deploy:
@@ -21,16 +23,17 @@ deploy:
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
-description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
 effect:
+  type: COMBUSTION
   activation-sounds: BLOCK_GLASS_BREAK-1-1-0
-  damage-blocks: false
+  min-size: 0.5
+  max-size: 3.0
   growth: 0.5
   growth-interval: 5
   min-duration: 500
   max-duration: 600
-  min-size: 0.5
-  max-size: 3.0
+  spread-fire: false
+  damage-blocks: false
   range:
     long-range:
       damage: 10.0
@@ -41,23 +44,20 @@ effect:
     short-range:
       damage: 30.0
       distance: 0.5
-  spread-fire: false
   triggers:
     floor-hit:
       type: FLOOR_HIT
       delay: 0
       interval: 2
-  type: COMBUSTION
-equipment-type: LETHAL
 items:
   display-item:
-    damage: 4
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 4
   throw-item:
-    damage: 4
-    display-name: '&f%name%'
     material: SHEARS
+    display-name: '&f%name%'
+    damage: 4
 projectile-effects:
   trail:
     type: TRAIL
