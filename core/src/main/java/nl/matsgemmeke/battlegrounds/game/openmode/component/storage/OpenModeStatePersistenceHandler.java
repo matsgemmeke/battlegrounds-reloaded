@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.storage;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
@@ -18,7 +17,6 @@ import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentState;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,29 +25,21 @@ import java.util.logging.Logger;
 
 public class OpenModeStatePersistenceHandler implements StatePersistenceHandler {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-
-    @NotNull
     private final EquipmentRegistry equipmentRegistry;
-    @NotNull
     private final GunRegistry gunRegistry;
-    @NotNull
     private final Logger logger;
-    @NotNull
     private final PlayerRegistry playerRegistry;
-    @NotNull
     private final PlayerStateStorage playerStateStorage;
-    @NotNull
     private final WeaponCreator weaponCreator;
 
     @Inject
     public OpenModeStatePersistenceHandler(
-            @NotNull EquipmentRegistry equipmentRegistry,
-            @NotNull GunRegistry gunRegistry,
-            @Named("Battlegrounds") @NotNull Logger logger,
-            @NotNull PlayerRegistry playerRegistry,
-            @NotNull PlayerStateStorage playerStateStorage,
-            @NotNull WeaponCreator weaponCreator
+            EquipmentRegistry equipmentRegistry,
+            GunRegistry gunRegistry,
+            @Named("Battlegrounds") Logger logger,
+            PlayerRegistry playerRegistry,
+            PlayerStateStorage playerStateStorage,
+            WeaponCreator weaponCreator
     ) {
         this.logger = logger;
         this.playerStateStorage = playerStateStorage;
@@ -59,7 +49,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         this.playerRegistry = playerRegistry;
     }
 
-    public void loadPlayerState(@NotNull GamePlayer gamePlayer) {
+    public void loadPlayerState(GamePlayer gamePlayer) {
         UUID playerUuid = gamePlayer.getEntity().getUniqueId();
         PlayerState playerState = playerStateStorage.getPlayerState(playerUuid);
 
@@ -67,15 +57,15 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         playerState.equipmentStates().forEach(equipmentState -> this.loadEquipmentState(gamePlayer, equipmentState));
     }
 
-    private void loadGunState(@NotNull GamePlayer gamePlayer, @NotNull GunState gunState) {
-        String gunId = gunState.gunId();
+    private void loadGunState(GamePlayer gamePlayer, GunState gunState) {
+        String gunName = gunState.gunName();
 
-        if (!weaponCreator.gunExists(gunId)) {
-            logger.severe("Attempted to load gun '%s' from the open mode of player %s, but it does not exist anymore".formatted(gunId, gamePlayer.getName()));
+        if (!weaponCreator.gunExists(gunName)) {
+            logger.severe("Attempted to load gun '%s' from the open mode of player %s, but it does not exist anymore".formatted(gunName, gamePlayer.getName()));
             return;
         }
 
-        Gun gun = weaponCreator.createGun(gunId, gamePlayer, GAME_KEY);
+        Gun gun = weaponCreator.createGun(gunName, gamePlayer);
         gun.getAmmunitionStorage().setMagazineAmmo(gunState.magazineAmmo());
         gun.getAmmunitionStorage().setReserveAmmo(gunState.reserveAmmo());
         gun.update();
@@ -84,22 +74,22 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         player.getInventory().setItem(gunState.itemSlot(), gun.getItemStack());
     }
 
-    private void loadEquipmentState(@NotNull GamePlayer gamePlayer, @NotNull EquipmentState equipmentState) {
-        String equipmentId = equipmentState.equipmentId();
+    private void loadEquipmentState(GamePlayer gamePlayer, EquipmentState equipmentState) {
+        String equipmentName = equipmentState.equipmentName();
 
-        if (!weaponCreator.equipmentExists(equipmentId)) {
-            logger.severe("Attempted to load equipment '%s' from the open mode of player %s, but it does not exist anymore".formatted(equipmentId, gamePlayer.getName()));
+        if (!weaponCreator.equipmentExists(equipmentName)) {
+            logger.severe("Attempted to load equipment '%s' from the open mode of player %s, but it does not exist anymore".formatted(equipmentName, gamePlayer.getName()));
             return;
         }
 
-        Equipment equipment = weaponCreator.createEquipment(equipmentId, gamePlayer, GAME_KEY);
+        Equipment equipment = weaponCreator.createEquipment(equipmentName, gamePlayer);
         equipment.update();
 
         Player player = gamePlayer.getEntity();
         player.getInventory().setItem(equipmentState.itemSlot(), equipment.getItemStack());
     }
 
-    public void savePlayerState(@NotNull GamePlayer gamePlayer) {
+    public void savePlayerState(GamePlayer gamePlayer) {
         List<GunState> gunStates = gunRegistry.getAssignedGuns(gamePlayer).stream()
                 .map(gun -> this.convertToGunState(gamePlayer, gun))
                 .flatMap(Optional::stream)
@@ -136,10 +126,9 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         }
     }
 
-    @NotNull
-    private Optional<GunState> convertToGunState(@NotNull GamePlayer gamePlayer, @NotNull Gun gun) {
+    private Optional<GunState> convertToGunState(GamePlayer gamePlayer, Gun gun) {
         UUID playerUuid = gamePlayer.getEntity().getUniqueId();
-        String id = gun.getId();
+        String gunName = gun.getName();
         int magazineAmmo = gun.getAmmunitionStorage().getMagazineAmmo();
         int reserveAmmo = gun.getAmmunitionStorage().getReserveAmmo();
         ItemStack itemStack = gun.getItemStack();
@@ -149,13 +138,12 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         }
 
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(gun);
-        return itemSlot.map(itemSlotValue -> new GunState(playerUuid, id, magazineAmmo, reserveAmmo, itemSlotValue));
+        return itemSlot.map(itemSlotValue -> new GunState(playerUuid, gunName, magazineAmmo, reserveAmmo, itemSlotValue));
     }
 
-    @NotNull
-    private Optional<EquipmentState> convertToEquipmentState(@NotNull GamePlayer gamePlayer, @NotNull Equipment equipment) {
+    private Optional<EquipmentState> convertToEquipmentState(GamePlayer gamePlayer, Equipment equipment) {
         UUID playerUuid = gamePlayer.getEntity().getUniqueId();
-        String id = equipment.getId();
+        String equipmentName = equipment.getName();
         ItemStack itemStack = equipment.getItemStack();
 
         if (itemStack == null) {
@@ -163,6 +151,6 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         }
 
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(equipment);
-        return itemSlot.map(integer -> new EquipmentState(playerUuid, id, integer));
+        return itemSlot.map(integer -> new EquipmentState(playerUuid, equipmentName, integer));
     }
 }

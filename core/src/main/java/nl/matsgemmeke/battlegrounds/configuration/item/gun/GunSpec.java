@@ -6,8 +6,6 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class GunSpec {
 
     @Required
-    public String id;
-    @Required
     public String name;
     public String description;
     @Required

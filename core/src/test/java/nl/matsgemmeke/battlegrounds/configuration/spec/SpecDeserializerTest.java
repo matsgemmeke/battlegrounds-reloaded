@@ -28,7 +28,6 @@ public class SpecDeserializerTest {
         SpecDeserializer specDeserializer = new SpecDeserializer();
         GunSpec gunSpec = specDeserializer.deserializeSpec(file, GunSpec.class);
 
-        assertThat(gunSpec.id).isEqualTo("MP5");
         assertThat(gunSpec.name).isEqualTo("MP5");
         assertThat(gunSpec.description).isEqualTo("Fully automatic with good accuracy. Effective at close to medium range.");
         assertThat(gunSpec.gunType).isEqualTo("SUBMACHINE_GUN");

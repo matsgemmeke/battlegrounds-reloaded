@@ -10,8 +10,6 @@ import java.util.Map;
 public class EquipmentSpec {
 
     @Required
-    public String id;
-    @Required
     public String name;
     public String description;
     @Required

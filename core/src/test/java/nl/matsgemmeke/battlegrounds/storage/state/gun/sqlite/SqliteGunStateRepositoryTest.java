@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class SqliteGunStateRepositoryTest {
 
     private static final UUID PLAYER_UUID = UUID.randomUUID();
-    private static final String GUN_ID = "TEST_GUN";
+    private static final String GUN_NAME = "Test Gun";
     private static final int GUN_MAGAZINE_AMMO = 10;
     private static final int GUN_RESERVE_AMMO = 20;
     private static final int GUN_ITEM_SLOT = 5;
@@ -77,7 +77,7 @@ public class SqliteGunStateRepositoryTest {
 
         assertThat(gunStates).hasSize(1);
         assertThat(gunStates.get(0).playerUuid()).isEqualTo(PLAYER_UUID);
-        assertThat(gunStates.get(0).gunId()).isEqualTo(GUN_ID);
+        assertThat(gunStates.get(0).gunName()).isEqualTo(GUN_NAME);
         assertThat(gunStates.get(0).magazineAmmo()).isEqualTo(GUN_MAGAZINE_AMMO);
         assertThat(gunStates.get(0).reserveAmmo()).isEqualTo(GUN_RESERVE_AMMO);
         assertThat(gunStates.get(0).itemSlot()).isEqualTo(GUN_ITEM_SLOT);
@@ -97,7 +97,7 @@ public class SqliteGunStateRepositoryTest {
 
     @Test
     public void saveSavesDataFromGivenGunStatesToDao() throws SQLException {
-        GunState gunState = new GunState(PLAYER_UUID, GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
+        GunState gunState = new GunState(PLAYER_UUID, GUN_NAME, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         List<GunState> gunStates = List.of(gunState);
 
         SqliteGunStateRepository repository = new SqliteGunStateRepository(gunDao);
@@ -107,7 +107,7 @@ public class SqliteGunStateRepositoryTest {
 
         assertThat(savedGuns).hasSize(1);
         assertThat(savedGuns.get(0).getPlayerUuid()).isEqualTo(PLAYER_UUID.toString());
-        assertThat(savedGuns.get(0).getGunId()).isEqualTo(GUN_ID);
+        assertThat(savedGuns.get(0).getGunName()).isEqualTo(GUN_NAME);
         assertThat(savedGuns.get(0).getMagazineAmmo()).isEqualTo(GUN_MAGAZINE_AMMO);
         assertThat(savedGuns.get(0).getReserveAmmo()).isEqualTo(GUN_RESERVE_AMMO);
         assertThat(savedGuns.get(0).getItemSlot()).isEqualTo(GUN_ITEM_SLOT);
@@ -129,7 +129,7 @@ public class SqliteGunStateRepositoryTest {
         Gun gun = new Gun();
         gun.setId(id);
         gun.setPlayerUuid(PLAYER_UUID.toString());
-        gun.setGunId(GUN_ID);
+        gun.setGunName(GUN_NAME);
         gun.setMagazineAmmo(GUN_MAGAZINE_AMMO);
         gun.setReserveAmmo(GUN_RESERVE_AMMO);
         gun.setItemSlot(GUN_ITEM_SLOT);

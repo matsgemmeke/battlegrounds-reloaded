@@ -4,6 +4,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 /**
  * An item object that appears in game instances.
  */
@@ -14,7 +16,7 @@ public interface Item extends Matchable {
      *
      * @return the item id
      */
-    String getId();
+    UUID getId();
 
     /**
      * Gets the description of the item.

@@ -99,7 +99,7 @@ public class GiveWeaponCommandTest {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
-        when(weaponCreator.createWeapon(gamePlayer, GameKey.ofOpenMode(), WEAPON_ID)).thenReturn(weapon);
+        when(weaponCreator.createWeapon(gamePlayer, WEAPON_ID)).thenReturn(weapon);
 
         GiveWeaponCommand command = new GiveWeaponCommand(gameContextProvider, gameScope, playerRegistryProvider, translator, weaponCreator);
         command.execute(player, WEAPON_ID);

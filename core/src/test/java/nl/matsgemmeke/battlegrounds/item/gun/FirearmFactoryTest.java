@@ -44,12 +44,12 @@ public class FirearmFactoryTest {
 
     private AudioEmitter audioEmitter;
     private BattlegroundsConfiguration config;
-    private DefaultFirearmFactory defaultGunFactory;
     private GunRegistry gunRegistry;
     private FirearmControlsFactory controlsFactory;
     private ItemFactory itemFactory;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKeyCreator keyCreator;
+    private Provider<DefaultFirearm> defaultFirearmProvider;
     private Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     private ReloadSystemFactory reloadSystemFactory;
     private ShootHandlerFactory shootHandlerFactory;
@@ -69,8 +69,8 @@ public class FirearmFactoryTest {
         DamageProcessor damageProcessor = mock(DamageProcessor.class);
         TargetFinder targetFinder = mock(TargetFinder.class);
 
-        defaultGunFactory = mock(DefaultFirearmFactory.class);
-        when(defaultGunFactory.create("MP5")).thenReturn(new DefaultFirearm("MP5", audioEmitter, collisionDetector, damageProcessor, targetFinder));
+        defaultFirearmProvider = mock();
+        when(defaultFirearmProvider.get()).thenReturn(new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder));
 
         Plugin plugin = mock(Plugin.class);
         when(plugin.getName()).thenReturn("Battlegrounds");
@@ -106,7 +106,7 @@ public class FirearmFactoryTest {
 
         when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, defaultGunFactory, controlsFactory, gunRegistry, keyCreator, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, controlsFactory, gunRegistry, keyCreator, defaultFirearmProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(spec);
 
         assertThat(firearm).isInstanceOf(DefaultFirearm.class);
@@ -142,7 +142,7 @@ public class FirearmFactoryTest {
 
         when(scopeAttachmentProvider.get()).thenReturn(scopeAttachment);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, defaultGunFactory, controlsFactory, gunRegistry, keyCreator, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, controlsFactory, gunRegistry, keyCreator, defaultFirearmProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(spec);
 
         assertThat(firearm).isInstanceOf(DefaultFirearm.class);
@@ -162,7 +162,7 @@ public class FirearmFactoryTest {
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
 
-        FirearmFactory firearmFactory = new FirearmFactory(config, defaultGunFactory, controlsFactory, gunRegistry, keyCreator, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
+        FirearmFactory firearmFactory = new FirearmFactory(config, controlsFactory, gunRegistry, keyCreator, defaultFirearmProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Firearm firearm = firearmFactory.create(spec, gamePlayer);
 
         assertThat(firearm).isInstanceOf(DefaultFirearm.class);

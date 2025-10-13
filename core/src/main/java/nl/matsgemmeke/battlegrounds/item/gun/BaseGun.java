@@ -37,8 +37,7 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
     protected ScopeAttachment scopeAttachment;
     private ShootHandler shootHandler;
 
-    public BaseGun(@NotNull String id) {
-        super(id);
+    public BaseGun() {
         this.controls = new ItemControls<>();
     }
 

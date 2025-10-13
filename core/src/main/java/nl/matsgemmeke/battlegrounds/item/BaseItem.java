@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item;
 
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public abstract class BaseItem implements Item {
 
-    @NotNull
-    private final String id;
+    private final UUID id;
     @Nullable
     protected ItemStack itemStack;
     @Nullable
@@ -15,8 +15,8 @@ public abstract class BaseItem implements Item {
     @Nullable
     protected String name;
 
-    public BaseItem(@NotNull String id) {
-        this.id = id;
+    public BaseItem() {
+        this.id = UUID.randomUUID();
     }
 
     @Nullable
@@ -28,8 +28,7 @@ public abstract class BaseItem implements Item {
         this.description = description;
     }
 
-    @NotNull
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 

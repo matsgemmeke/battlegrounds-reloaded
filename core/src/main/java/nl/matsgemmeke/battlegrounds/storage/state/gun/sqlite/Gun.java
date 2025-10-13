@@ -10,8 +10,8 @@ public class Gun {
     private int id;
     @DatabaseField(columnName = "player_uuid", canBeNull = false)
     private String playerUuid;
-    @DatabaseField(columnName = "gun_id", canBeNull = false)
-    private String gunId;
+    @DatabaseField(columnName = "gun_name", canBeNull = false)
+    private String gunName;
     @DatabaseField(columnName = "magazine_ammo", canBeNull = false, defaultValue = "0")
     private int magazineAmmo;
     @DatabaseField(columnName = "reserve_ammo", canBeNull = false, defaultValue = "0")
@@ -38,12 +38,12 @@ public class Gun {
         this.playerUuid = playerUuid;
     }
 
-    public String getGunId() {
-        return gunId;
+    public String getGunName() {
+        return gunName;
     }
 
-    public void setGunId(String gunId) {
-        this.gunId = gunId;
+    public void setGunName(String gunName) {
+        this.gunName = gunName;
     }
 
     public int getMagazineAmmo() {

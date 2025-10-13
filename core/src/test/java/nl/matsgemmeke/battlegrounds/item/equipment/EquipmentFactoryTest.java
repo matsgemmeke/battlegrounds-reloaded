@@ -87,7 +87,6 @@ public class EquipmentFactoryTest {
         Equipment equipment = factory.create(spec, gamePlayer);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
-        assertThat(equipment.getId()).isEqualTo("FRAG_GRENADE");
         assertThat(equipment.getName()).isEqualTo("Frag Grenade");
 
         verify(equipmentRegistry).register(equipment, gamePlayer);

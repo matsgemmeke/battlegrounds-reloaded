@@ -42,10 +42,10 @@ public class FirearmFactory {
     private static final double DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER = 1.0;
 
     private final BattlegroundsConfiguration config;
-    private final DefaultFirearmFactory defaultGunFactory;
     private final FirearmControlsFactory controlsFactory;
     private final GunRegistry gunRegistry;
     private final NamespacedKeyCreator keyCreator;
+    private final Provider<DefaultFirearm> defaultFirearmProvider;
     private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     private final ReloadSystemFactory reloadSystemFactory;
     private final ShootHandlerFactory shootHandlerFactory;
@@ -53,19 +53,19 @@ public class FirearmFactory {
     @Inject
     public FirearmFactory(
             BattlegroundsConfiguration config,
-            DefaultFirearmFactory defaultGunFactory,
             FirearmControlsFactory controlsFactory,
             GunRegistry gunRegistry,
             NamespacedKeyCreator keyCreator,
+            Provider<DefaultFirearm> defaultFirearmProvider,
             Provider<DefaultScopeAttachment> scopeAttachmentProvider,
             ReloadSystemFactory reloadSystemFactory,
             ShootHandlerFactory shootHandlerFactory
     ) {
         this.config = config;
-        this.defaultGunFactory = defaultGunFactory;
         this.controlsFactory = controlsFactory;
         this.gunRegistry = gunRegistry;
         this.keyCreator = keyCreator;
+        this.defaultFirearmProvider = defaultFirearmProvider;
         this.scopeAttachmentProvider = scopeAttachmentProvider;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
@@ -91,7 +91,7 @@ public class FirearmFactory {
     private Firearm createInstance(GunSpec spec) {
         double headshotDamageMultiplier = this.getHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
 
-        DefaultFirearm firearm = defaultGunFactory.create(spec.id);
+        DefaultFirearm firearm = defaultFirearmProvider.get();
         firearm.setName(spec.name);
         firearm.setDescription(spec.description);
         firearm.setHeadshotDamageMultiplier(headshotDamageMultiplier);

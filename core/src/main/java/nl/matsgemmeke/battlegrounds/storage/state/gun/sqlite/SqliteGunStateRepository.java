@@ -5,7 +5,6 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunStateRepository;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -14,14 +13,13 @@ import java.util.UUID;
 
 public class SqliteGunStateRepository implements GunStateRepository {
 
-    @NotNull
     private final Dao<Gun, Integer> gunDao;
 
-    public SqliteGunStateRepository(@NotNull Dao<Gun, Integer> gunDao) {
+    public SqliteGunStateRepository(Dao<Gun, Integer> gunDao) {
         this.gunDao = gunDao;
     }
 
-    public void deleteByPlayerUuid(@NotNull UUID playerUuid) {
+    public void deleteByPlayerUuid(UUID playerUuid) {
         try {
             PreparedQuery<Gun> statement = gunDao.queryBuilder()
                     .where().eq("player_uuid", playerUuid.toString())
@@ -34,8 +32,7 @@ public class SqliteGunStateRepository implements GunStateRepository {
         }
     }
 
-    @NotNull
-    public List<GunState> findByPlayerUuid(@NotNull UUID playerUuid) {
+    public List<GunState> findByPlayerUuid(UUID playerUuid) {
         try {
             PreparedQuery<Gun> statement = gunDao.queryBuilder()
                     .where().eq("player_uuid", playerUuid.toString())
@@ -47,7 +44,7 @@ public class SqliteGunStateRepository implements GunStateRepository {
         }
     }
 
-    public void save(@NotNull Collection<GunState> gunStates) {
+    public void save(Collection<GunState> gunStates) {
         List<Gun> guns = gunStates.stream().map(this::convertGunStateToGun).toList();
 
         try {
@@ -57,18 +54,16 @@ public class SqliteGunStateRepository implements GunStateRepository {
         }
     }
 
-    @NotNull
-    private GunState convertGunToGunState(@NotNull Gun gun) {
+    private GunState convertGunToGunState(Gun gun) {
         UUID playerUuid = UUID.fromString(gun.getPlayerUuid());
 
-        return new GunState(playerUuid, gun.getGunId(), gun.getMagazineAmmo(), gun.getReserveAmmo(), gun.getItemSlot());
+        return new GunState(playerUuid, gun.getGunName(), gun.getMagazineAmmo(), gun.getReserveAmmo(), gun.getItemSlot());
     }
 
-    @NotNull
-    private Gun convertGunStateToGun(@NotNull GunState gunState) {
+    private Gun convertGunStateToGun(GunState gunState) {
         Gun gun = new Gun();
         gun.setPlayerUuid(gunState.playerUuid().toString());
-        gun.setGunId(gunState.gunId());
+        gun.setGunName(gunState.gunName());
         gun.setMagazineAmmo(gunState.magazineAmmo());
         gun.setReserveAmmo(gunState.reserveAmmo());
         gun.setItemSlot(gunState.itemSlot());

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class SqliteEquipmentStateRepositoryTest {
 
     private static final UUID PLAYER_UUID = UUID.randomUUID();
-    private static final String EQUIPMENT_ID = "TEST_EQUIPMENT";
+    private static final String EQUIPMENT_NAME = "Test Equipment";
     private static final int EQUIPMENT_ITEM_SLOT = 5;
 
     private Dao<Equipment, Integer> equipmentDao;
@@ -75,7 +75,7 @@ public class SqliteEquipmentStateRepositoryTest {
 
         assertThat(equipmentStates).hasSize(1);
         assertThat(equipmentStates.get(0).playerUuid()).isEqualTo(PLAYER_UUID);
-        assertThat(equipmentStates.get(0).equipmentId()).isEqualTo(EQUIPMENT_ID);
+        assertThat(equipmentStates.get(0).equipmentName()).isEqualTo(EQUIPMENT_NAME);
         assertThat(equipmentStates.get(0).itemSlot()).isEqualTo(EQUIPMENT_ITEM_SLOT);
     }
 
@@ -93,7 +93,7 @@ public class SqliteEquipmentStateRepositoryTest {
 
     @Test
     public void saveSavesDataFromGivenEquipmentStatesToDao() throws SQLException {
-        EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_ID, EQUIPMENT_ITEM_SLOT);
+        EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_NAME, EQUIPMENT_ITEM_SLOT);
         List<EquipmentState> equipmentStates = List.of(equipmentState);
 
         SqliteEquipmentStateRepository repository = new SqliteEquipmentStateRepository(equipmentDao);
@@ -103,7 +103,7 @@ public class SqliteEquipmentStateRepositoryTest {
 
         assertThat(savedEquipment).hasSize(1);
         assertThat(savedEquipment.get(0).getPlayerUuid()).isEqualTo(PLAYER_UUID.toString());
-        assertThat(savedEquipment.get(0).getEquipmentId()).isEqualTo(EQUIPMENT_ID);
+        assertThat(savedEquipment.get(0).getEquipmentName()).isEqualTo(EQUIPMENT_NAME);
         assertThat(savedEquipment.get(0).getItemSlot()).isEqualTo(EQUIPMENT_ITEM_SLOT);
     }
 
@@ -123,7 +123,7 @@ public class SqliteEquipmentStateRepositoryTest {
         Equipment equipment = new Equipment();
         equipment.setId(id);
         equipment.setPlayerUuid(PLAYER_UUID.toString());
-        equipment.setEquipmentId(EQUIPMENT_ID);
+        equipment.setEquipmentName(EQUIPMENT_NAME);
         equipment.setItemSlot(EQUIPMENT_ITEM_SLOT);
         return equipment;
     }
