@@ -95,16 +95,16 @@ public class WeaponCreatorProviderTest {
 
     @Test
     public void getLogsErrorMessageWhenItemFileDoesNotContainIdValue() {
-        File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_without_id");
+        File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_without_name");
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, specDeserializer, itemsFolder, logger);
         WeaponCreator weaponCreator = provider.get();
 
-        assertThat(weaponCreator.exists("OLYMPIA")).isFalse();
+        assertThat(weaponCreator.exists("Olympia")).isFalse();
         assertThat(weaponCreator.exists("MP5")).isFalse();
 
-        verify(logger).severe("An error occurred while loading file 'olympia.yml': Identifier 'id' is missing");
-        verify(logger).severe("An error occurred while loading file 'mp5.yml': Identifier 'id' is missing");
+        verify(logger).severe("An error occurred while loading file 'olympia.yml': Identifier 'name' is missing");
+        verify(logger).severe("An error occurred while loading file 'mp5.yml': Identifier 'name' is missing");
     }
 
     @Test
@@ -114,11 +114,11 @@ public class WeaponCreatorProviderTest {
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, specDeserializer, itemsFolder, logger);
         WeaponCreator weaponCreator = provider.get();
 
-        assertThat(weaponCreator.exists("OLYMPIA")).isFalse();
+        assertThat(weaponCreator.exists("Olympia")).isFalse();
         assertThat(weaponCreator.exists("MP5")).isFalse();
 
-        verify(logger).severe("An error occurred while loading item 'OLYMPIA': Field 'name' is required but no value is provided");
-        verify(logger).severe("An error occurred while loading item 'MP5': Field 'name' is required but no value is provided");
+        verify(logger).severe("An error occurred while loading item 'Olympia': Field 'levelUnlocked' is required but no value is provided");
+        verify(logger).severe("An error occurred while loading item 'MP5': Field 'levelUnlocked' is required but no value is provided");
     }
 
     @Test
@@ -154,7 +154,7 @@ public class WeaponCreatorProviderTest {
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, specDeserializer, itemsFolder, logger);
         WeaponCreator weaponCreator = provider.get();
 
-        assertThat(weaponCreator.exists("OLYMPIA")).isTrue();
+        assertThat(weaponCreator.exists("Olympia")).isTrue();
         assertThat(weaponCreator.exists("MP5")).isTrue();
     }
 
