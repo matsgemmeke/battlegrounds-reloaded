@@ -1,4 +1,3 @@
-id: MOTION_SENSOR
 name: Motion Sensor
 equipment-type: TACTICAL
 description: Tactical ground-based sensor that detects enemy movement within its radius.
