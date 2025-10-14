@@ -6,13 +6,12 @@ import com.google.inject.Injector;
 import com.j256.ormlite.logger.Level;
 import nl.matsgemmeke.battlegrounds.command.*;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.ExistentWeaponIdCondition;
+import nl.matsgemmeke.battlegrounds.command.condition.ExistentWeaponNameCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.OpenModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenModeInitializer;
 import org.bukkit.event.block.BlockBurnEvent;
@@ -92,7 +91,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         var commandConditions = commandManager.getCommandConditions();
         commandConditions.addCondition("open-mode-presence", injector.getInstance(OpenModePresenceCondition.class));
         commandConditions.addCondition(Integer.class, "existent-session-id", injector.getInstance(ExistentSessionIdCondition.class));
-        commandConditions.addCondition(String.class, "existent-weapon-id", injector.getInstance(ExistentWeaponIdCondition.class));
+        commandConditions.addCondition(String.class, "existent-weapon-name", injector.getInstance(ExistentWeaponNameCondition.class));
         commandConditions.addCondition(Integer.class, "nonexistent-session-id", injector.getInstance(NonexistentSessionIdCondition.class));
     }
 

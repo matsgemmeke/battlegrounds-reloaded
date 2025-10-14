@@ -6,23 +6,21 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class ExistentWeaponIdCondition implements ParameterCondition<String, BukkitCommandExecutionContext, BukkitCommandIssuer> {
+public class ExistentWeaponNameCondition implements ParameterCondition<String, BukkitCommandExecutionContext, BukkitCommandIssuer> {
 
-    @NotNull
     private final Translator translator;
-    @NotNull
     private final WeaponCreator weaponCreator;
 
     @Inject
-    public ExistentWeaponIdCondition(@NotNull WeaponCreator weaponCreator, @NotNull Translator translator) {
+    public ExistentWeaponNameCondition(WeaponCreator weaponCreator, Translator translator) {
         this.weaponCreator = weaponCreator;
         this.translator = translator;
     }
 
+    @Override
     public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, String value) throws InvalidCommandArgument {
         if (weaponCreator.exists(value)) {
             return;
