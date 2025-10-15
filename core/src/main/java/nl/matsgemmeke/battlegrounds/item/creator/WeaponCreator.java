@@ -10,10 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -34,11 +31,11 @@ public class WeaponCreator {
     }
 
     public void addEquipmentSpec(String id, EquipmentSpec equipmentSpec) {
-        equipmentSpecs.put(id, equipmentSpec);
+        equipmentSpecs.put(id.toUpperCase(), equipmentSpec);
     }
 
     public void addGunSpec(String id, GunSpec spec) {
-        gunSpecs.put(id, spec);
+        gunSpecs.put(id.toUpperCase(), spec);
     }
 
     /**
@@ -52,12 +49,14 @@ public class WeaponCreator {
      * @return                         an equipment instance that is created based of the given equipment name
      */
     public Equipment createEquipment(String equipmentName, GamePlayer gamePlayer) {
-        if (!equipmentSpecs.containsKey(equipmentName)) {
+        String upperCaseName = equipmentName.toUpperCase();
+
+        if (!this.equipmentExists(upperCaseName)) {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for an equipment item by the name '%s'".formatted(equipmentName));
         }
 
         EquipmentFactory equipmentFactory = equipmentFactoryProvider.get();
-        EquipmentSpec equipmentSpec = equipmentSpecs.get(equipmentName);
+        EquipmentSpec equipmentSpec = equipmentSpecs.get(upperCaseName);
 
         return equipmentFactory.create(equipmentSpec, gamePlayer);
     }
@@ -71,12 +70,14 @@ public class WeaponCreator {
      * @return                         a gun instance that is created based of the given gun name
      */
     public Gun createGun(String gunName, GamePlayer gamePlayer) {
-        if (!gunSpecs.containsKey(gunName)) {
+        String upperCaseName = gunName.toUpperCase();
+
+        if (!gunSpecs.containsKey(upperCaseName)) {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the name '%s'".formatted(gunName));
         }
 
         FirearmFactory gunFactory = gunFactoryProvider.get();
-        GunSpec gunSpec = gunSpecs.get(gunName);
+        GunSpec gunSpec = gunSpecs.get(upperCaseName);
 
         return gunFactory.create(gunSpec, gamePlayer);
     }
@@ -91,11 +92,11 @@ public class WeaponCreator {
      * @return a weapon instance that is created based of the specification of the given weapon name
      */
     public Weapon createWeapon(GamePlayer gamePlayer, String weaponName) {
-        if (equipmentSpecs.containsKey(weaponName)) {
+        if (this.equipmentExists(weaponName)) {
             return this.createEquipment(weaponName, gamePlayer);
         }
 
-        if (gunSpecs.containsKey(weaponName)) {
+        if (this.gunExists(weaponName)) {
             return this.createGun(weaponName, gamePlayer);
         }
 
@@ -109,7 +110,7 @@ public class WeaponCreator {
      * @return           whether the weapon exists
      */
     public boolean exists(String weaponName) {
-        return this.getNameList().contains(weaponName);
+        return this.getNameList().contains(weaponName.toUpperCase());
     }
 
     private List<String> getNameList() {
@@ -125,7 +126,7 @@ public class WeaponCreator {
      * @return              whether an equipment specification with the given name exists
      */
     public boolean equipmentExists(String equipmentName) {
-        return equipmentSpecs.containsKey(equipmentName);
+        return equipmentSpecs.containsKey(equipmentName.toUpperCase());
     }
 
     /**
@@ -135,6 +136,6 @@ public class WeaponCreator {
      * @return        whether a gun specification with the given name exists
      */
     public boolean gunExists(String gunName) {
-        return gunSpecs.containsKey(gunName);
+        return gunSpecs.containsKey(gunName.toUpperCase());
     }
 }

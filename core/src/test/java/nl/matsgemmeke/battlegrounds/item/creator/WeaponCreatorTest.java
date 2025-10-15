@@ -13,6 +13,9 @@ import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 
@@ -20,25 +23,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class WeaponCreatorTest {
+@ExtendWith(MockitoExtension.class)
+class WeaponCreatorTest {
 
     private static final String EQUIPMENT_NAME = "Frag Grenade";
     private static final String GUN_NAME = "MP5";
 
+    @Mock
     private Provider<EquipmentFactory> equipmentFactoryProvider;
+    @Mock
     private Provider<FirearmFactory> gunFactoryProvider;
 
+    private WeaponCreator weaponCreator;
+
     @BeforeEach
-    public void setUp() {
-        equipmentFactoryProvider = mock();
-        gunFactoryProvider = mock();
+    void setUp() {
+        weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
     }
 
     @Test
-    public void createEquipmentThrowsWeaponNotFoundExceptionWhenNoEquipmentSpecsExistByGivenEquipmentName() {
+    void createEquipmentThrowsWeaponNotFoundExceptionWhenNoEquipmentSpecsExistByGivenEquipmentName() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
 
         assertThatThrownBy(() -> weaponCreator.createEquipment("fail", gamePlayer))
                 .isInstanceOf(WeaponNotFoundException.class)
@@ -46,7 +51,7 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void createEquipmentReturnsEquipmentInstanceBasedOnGivenEquipmentName() {
+    void createEquipmentReturnsEquipmentInstanceBasedOnGivenEquipmentName() {
         Equipment equipment = mock(Equipment.class);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
@@ -56,7 +61,6 @@ public class WeaponCreatorTest {
 
         when(equipmentFactoryProvider.get()).thenReturn(equipmentFactory);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
         weaponCreator.addEquipmentSpec(EQUIPMENT_NAME, equipmentSpec);
         Equipment createdEquipment = weaponCreator.createEquipment(EQUIPMENT_NAME, gamePlayer);
 
@@ -64,10 +68,8 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void createGunThrowsWeaponNotFoundExceptionWhenNoGunSpecsExistByGivenGunName() {
+    void createGunThrowsWeaponNotFoundExceptionWhenNoGunSpecsExistByGivenGunName() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
 
         assertThatThrownBy(() -> weaponCreator.createGun("fail", gamePlayer))
                 .isInstanceOf(WeaponNotFoundException.class)
@@ -75,7 +77,7 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void createGunReturnsGunInstanceBasedOnGivenGunName() {
+    void createGunReturnsGunInstanceBasedOnGivenGunName() {
         Firearm firearm = mock(Firearm.class);
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
@@ -85,7 +87,6 @@ public class WeaponCreatorTest {
 
         when(gunFactoryProvider.get()).thenReturn(gunFactory);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
         weaponCreator.addGunSpec(GUN_NAME, gunSpec);
         Gun gun = weaponCreator.createGun(GUN_NAME, gamePlayer);
 
@@ -93,7 +94,7 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void createWeaponReturnsEquipmentInstanceBasedOnGivenEquipmentName() {
+    void createWeaponReturnsEquipmentInstanceBasedOnGivenEquipmentName() {
         Equipment equipment = mock(Equipment.class);
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
@@ -103,7 +104,6 @@ public class WeaponCreatorTest {
 
         when(equipmentFactoryProvider.get()).thenReturn(equipmentFactory);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
         weaponCreator.addEquipmentSpec(EQUIPMENT_NAME, equipmentSpec);
         Weapon weapon = weaponCreator.createWeapon(gamePlayer, EQUIPMENT_NAME);
 
@@ -111,7 +111,7 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void createWeaponReturnsGunInstanceBasedOnGivenGunName() {
+    void createWeaponReturnsGunInstanceBasedOnGivenGunName() {
         Firearm firearm = mock(Firearm.class);
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
@@ -121,7 +121,6 @@ public class WeaponCreatorTest {
 
         when(gunFactoryProvider.get()).thenReturn(gunFactory);
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
         weaponCreator.addGunSpec(GUN_NAME, gunSpec);
         Weapon weapon = weaponCreator.createWeapon(gamePlayer, GUN_NAME);
 
@@ -129,10 +128,8 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void createWeaponThrowsWeaponNotFoundExceptionWhenGivenNameMatchesNoneOfTheSpecifications() {
+    void createWeaponThrowsWeaponNotFoundExceptionWhenGivenNameMatchesNoneOfTheSpecifications() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
 
         assertThatThrownBy(() -> weaponCreator.createWeapon(gamePlayer, "nothing"))
                 .isInstanceOf(WeaponNotFoundException.class)
@@ -140,10 +137,9 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void existsReturnsTrueWhenSpecificationOfGivenWeaponNameExists() {
+    void existsReturnsTrueWhenSpecificationOfGivenWeaponNameExists() {
         GunSpec gunSpec = this.createGunSpec();
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
         weaponCreator.addGunSpec(GUN_NAME, gunSpec);
         boolean exists = weaponCreator.exists(GUN_NAME);
 
@@ -151,26 +147,23 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void existsReturnsFalseWhenSpecificationOfGivenWeaponNameDoesNotExist() {
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
+    void existsReturnsFalseWhenSpecificationOfGivenWeaponNameDoesNotExist() {
         boolean exists = weaponCreator.exists(GUN_NAME);
 
         assertThat(exists).isFalse();
     }
 
     @Test
-    public void equipmentExistsReturnsFalseWhenWhenEquipmentSpecByGivenNameDoesNotExist() {
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
+    void equipmentExistsReturnsFalseWhenWhenEquipmentSpecByGivenNameDoesNotExist() {
         boolean equipmentExists = weaponCreator.equipmentExists(EQUIPMENT_NAME);
 
         assertThat(equipmentExists).isFalse();
     }
 
     @Test
-    public void equipmentExistsReturnsTrueWhenEquipmentSpecByGivenNameExists() {
+    void equipmentExistsReturnsTrueWhenEquipmentSpecByGivenNameExists() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
         weaponCreator.addEquipmentSpec(EQUIPMENT_NAME, equipmentSpec);
         boolean equipmentExists = weaponCreator.equipmentExists(EQUIPMENT_NAME);
 
@@ -178,18 +171,16 @@ public class WeaponCreatorTest {
     }
 
     @Test
-    public void gunExistsReturnsFalseWhenWhenGunSpecByGivenNameDoesNotExist() {
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
+    void gunExistsReturnsFalseWhenWhenGunSpecByGivenNameDoesNotExist() {
         boolean gunExists = weaponCreator.gunExists(GUN_NAME);
 
         assertThat(gunExists).isFalse();
     }
 
     @Test
-    public void gunExistsReturnsTrueWhenGunSpecByGivenNameExists() {
+    void gunExistsReturnsTrueWhenGunSpecByGivenNameExists() {
         GunSpec gunSpec = this.createGunSpec();
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
         weaponCreator.addGunSpec(GUN_NAME, gunSpec);
         boolean gunExists = weaponCreator.gunExists(GUN_NAME);
 
