@@ -5,7 +5,6 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentState;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentStateRepository;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -14,14 +13,13 @@ import java.util.UUID;
 
 public class SqliteEquipmentStateRepository implements EquipmentStateRepository {
 
-    @NotNull
     private final Dao<Equipment, Integer> equipmentDao;
 
-    public SqliteEquipmentStateRepository(@NotNull Dao<Equipment, Integer> equipmentDao) {
+    public SqliteEquipmentStateRepository(Dao<Equipment, Integer> equipmentDao) {
         this.equipmentDao = equipmentDao;
     }
 
-    public void deleteByPlayerUuid(@NotNull UUID playerUuid) {
+    public void deleteByPlayerUuid(UUID playerUuid) {
         try {
             PreparedQuery<Equipment> statement = equipmentDao.queryBuilder()
                     .where().eq("player_uuid", playerUuid.toString())
@@ -34,8 +32,7 @@ public class SqliteEquipmentStateRepository implements EquipmentStateRepository 
         }
     }
 
-    @NotNull
-    public List<EquipmentState> findByPlayerUuid(@NotNull UUID playerUuid) {
+    public List<EquipmentState> findByPlayerUuid(UUID playerUuid) {
         try {
             PreparedQuery<Equipment> statement = equipmentDao.queryBuilder()
                     .where().eq("player_uuid", playerUuid.toString())
@@ -47,7 +44,7 @@ public class SqliteEquipmentStateRepository implements EquipmentStateRepository 
         }
     }
 
-    public void save(@NotNull Collection<EquipmentState> equipmentStates) {
+    public void save(Collection<EquipmentState> equipmentStates) {
         List<Equipment> equipment = equipmentStates.stream().map(this::convertEquipmentStateToEquipment).toList();
 
         try {
@@ -57,18 +54,16 @@ public class SqliteEquipmentStateRepository implements EquipmentStateRepository 
         }
     }
 
-    @NotNull
-    private EquipmentState convertEquipmentToEquipmentState(@NotNull Equipment equipment) {
+    private EquipmentState convertEquipmentToEquipmentState(Equipment equipment) {
         UUID playerUuid = UUID.fromString(equipment.getPlayerUuid());
 
-        return new EquipmentState(playerUuid, equipment.getEquipmentId(), equipment.getItemSlot());
+        return new EquipmentState(playerUuid, equipment.getEquipmentName(), equipment.getItemSlot());
     }
 
-    @NotNull
-    private Equipment convertEquipmentStateToEquipment(@NotNull EquipmentState equipmentState) {
+    private Equipment convertEquipmentStateToEquipment(EquipmentState equipmentState) {
         Equipment equipment = new Equipment();
         equipment.setPlayerUuid(equipmentState.playerUuid().toString());
-        equipment.setEquipmentId(equipmentState.equipmentId());
+        equipment.setEquipmentName(equipmentState.equipmentName());
         equipment.setItemSlot(equipmentState.itemSlot());
         return equipment;
     }

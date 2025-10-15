@@ -70,9 +70,9 @@ public class BattlegroundsCommand extends BaseCommand {
     @CommandPermission("battlegrounds.giveweapon")
     @Conditions("open-mode-presence")
     @Subcommand("giveweapon")
-    public void onGiveWeapon(@NotNull Player player, @Conditions("existent-weapon-id") String weaponId) {
+    public void onGiveWeapon(Player player, String[] args) {
         GiveWeaponCommand command = this.getSubcommand("giveweapon");
-        command.execute(player, weaponId);
+        command.execute(player, args);
     }
 
     @CommandPermission("battlegrounds.reload")

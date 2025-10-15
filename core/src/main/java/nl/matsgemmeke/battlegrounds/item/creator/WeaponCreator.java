@@ -4,18 +4,13 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -23,71 +18,66 @@ import java.util.stream.Stream;
  */
 public class WeaponCreator {
 
-    @NotNull
     private final Map<String, EquipmentSpec> equipmentSpecs;
-    @NotNull
     private final Map<String, GunSpec> gunSpecs;
-    @NotNull
     private final Provider<EquipmentFactory> equipmentFactoryProvider;
-    @NotNull
     private final Provider<FirearmFactory> gunFactoryProvider;
 
-    public WeaponCreator(@NotNull Provider<EquipmentFactory> equipmentFactoryProvider, @NotNull Provider<FirearmFactory> gunFactoryProvider) {
+    public WeaponCreator(Provider<EquipmentFactory> equipmentFactoryProvider, Provider<FirearmFactory> gunFactoryProvider) {
         this.equipmentFactoryProvider = equipmentFactoryProvider;
         this.gunFactoryProvider = gunFactoryProvider;
         this.equipmentSpecs = new HashMap<>();
         this.gunSpecs = new HashMap<>();
     }
 
-    public void addEquipmentSpec(@NotNull String id, @NotNull EquipmentSpec equipmentSpec) {
-        equipmentSpecs.put(id, equipmentSpec);
+    public void addEquipmentSpec(String id, EquipmentSpec equipmentSpec) {
+        equipmentSpecs.put(id.toUpperCase(), equipmentSpec);
     }
 
-    public void addGunSpec(@NotNull String id, @NotNull GunSpec spec) {
-        gunSpecs.put(id, spec);
+    public void addGunSpec(String id, GunSpec spec) {
+        gunSpecs.put(id.toUpperCase(), spec);
     }
 
     /**
-     * Creates an {@link Equipment} item for a given player in a specific game. The newly created equipment item will
-     * automatically be assigned to the player.
+     * Creates an {@link Equipment} item for a given player. The newly created equipment item wil automatically be
+     * assigned to this player.
      *
-     * @param equipmentId              the equipment id
+     * @param equipmentName            the equipment id
      * @param gamePlayer               the player to which the equipment will be assigned to
-     * @param gameKey                  the game key
      * @throws WeaponNotFoundException when the WeaponCreator does not contain a specification for the given equipment
-     *                                 id
-     * @return                         an equipment instance that is created based of the given equipment id
+     *                                 name
+     * @return                         an equipment instance that is created based of the given equipment name
      */
-    @NotNull
-    public Equipment createEquipment(@NotNull String equipmentId, @NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey) {
-        if (!equipmentSpecs.containsKey(equipmentId)) {
-            throw new WeaponNotFoundException("The weapon creator does not contain a specification for an equipment item by the id '%s'".formatted(equipmentId));
+    public Equipment createEquipment(String equipmentName, GamePlayer gamePlayer) {
+        String upperCaseName = equipmentName.toUpperCase();
+
+        if (!this.equipmentExists(upperCaseName)) {
+            throw new WeaponNotFoundException("The weapon creator does not contain a specification for an equipment item by the name '%s'".formatted(equipmentName));
         }
 
         EquipmentFactory equipmentFactory = equipmentFactoryProvider.get();
-        EquipmentSpec equipmentSpec = equipmentSpecs.get(equipmentId);
+        EquipmentSpec equipmentSpec = equipmentSpecs.get(upperCaseName);
 
         return equipmentFactory.create(equipmentSpec, gamePlayer);
     }
 
     /**
-     * Creates a {@link Gun} for a given player in a specific game. The newly created gun will automatically be
-     * assigned to the player.
+     * Creates a {@link Gun} for a given player. The newly created gun will automatically be assigned to this player.
      *
-     * @param gunId                    the gun id
+     * @param gunName                  the gun name
      * @param gamePlayer               the player to which the gun will be assigned to
-     * @param gameKey                  the game key
-     * @throws WeaponNotFoundException when the weapon creator does not contain a specification for the given gun id
-     * @return                         a gun instance that is created based of the given gun id
+     * @throws WeaponNotFoundException when the weapon creator does not contain a specification for the given gun name
+     * @return                         a gun instance that is created based of the given gun name
      */
-    @NotNull
-    public Gun createGun(@NotNull String gunId, @NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey) {
-        if (!gunSpecs.containsKey(gunId)) {
-            throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the id '%s'".formatted(gunId));
+    public Gun createGun(String gunName, GamePlayer gamePlayer) {
+        String upperCaseName = gunName.toUpperCase();
+
+        if (!gunSpecs.containsKey(upperCaseName)) {
+            throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the name '%s'".formatted(gunName));
         }
 
         FirearmFactory gunFactory = gunFactoryProvider.get();
-        GunSpec gunSpec = gunSpecs.get(gunId);
+        GunSpec gunSpec = gunSpecs.get(upperCaseName);
 
         return gunFactory.create(gunSpec, gamePlayer);
     }
@@ -97,57 +87,55 @@ public class WeaponCreator {
      * to the player
      *
      * @param gamePlayer the player to create the weapon for
-     * @param gameKey the game key of the game where the player is in
-     * @param weaponId the weapon id
-     * @throws WeaponNotFoundException when the instance does not contain a specification for the given weapon id
-     * @return a weapon instance that is created based of the specification of the given weapon id
+     * @param weaponName the weapon name
+     * @throws WeaponNotFoundException when the instance does not contain a specification for the given weapon name
+     * @return a weapon instance that is created based of the specification of the given weapon name
      */
-    @NotNull
-    public Weapon createWeapon(@NotNull GamePlayer gamePlayer, @NotNull GameKey gameKey, @NotNull String weaponId) {
-        if (equipmentSpecs.containsKey(weaponId)) {
-            return this.createEquipment(weaponId, gamePlayer, gameKey);
+    public Weapon createWeapon(GamePlayer gamePlayer, String weaponName) {
+        if (this.equipmentExists(weaponName)) {
+            return this.createEquipment(weaponName, gamePlayer);
         }
 
-        if (gunSpecs.containsKey(weaponId)) {
-            return this.createGun(weaponId, gamePlayer, gameKey);
+        if (this.gunExists(weaponName)) {
+            return this.createGun(weaponName, gamePlayer);
         }
 
-        throw new WeaponNotFoundException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponId));
+        throw new WeaponNotFoundException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponName));
     }
 
     /**
-     * Gets whether a weapon id or name exists in the configuration.
+     * Gets whether a weapon name exists in the configuration.
      *
-     * @param weaponId the weapon id
-     * @return whether the weapon exists
+     * @param weaponName the weapon name
+     * @return           whether the weapon exists
      */
-    public boolean exists(@NotNull String weaponId) {
-        return this.getIdList().contains(weaponId);
+    public boolean exists(String weaponName) {
+        return this.getNameList().contains(weaponName.toUpperCase());
     }
 
-    private List<String> getIdList() {
+    private List<String> getNameList() {
         return Stream.of(equipmentSpecs.keySet(), gunSpecs.keySet())
                 .flatMap(Collection::stream)
                 .toList();
     }
 
     /**
-     * Gets whether an equipment specification is loaded with a specific id.
+     * Gets whether an equipment specification is loaded with a specific name.
      *
-     * @param equipmentId the equipment id
-     * @return            whether an equipment specification with the given id exists
+     * @param equipmentName the equipment name
+     * @return              whether an equipment specification with the given name exists
      */
-    public boolean equipmentExists(@NotNull String equipmentId) {
-        return equipmentSpecs.containsKey(equipmentId);
+    public boolean equipmentExists(String equipmentName) {
+        return equipmentSpecs.containsKey(equipmentName.toUpperCase());
     }
 
     /**
-     * Gets whether a gun specification is loaded with a specific id.
+     * Gets whether a gun specification is loaded with a specific name.
      *
-     * @param gunId the gun id
-     * @return      whether a gun specification with the given id exists
+     * @param gunName the gun name
+     * @return        whether a gun specification with the given name exists
      */
-    public boolean gunExists(@NotNull String gunId) {
-        return gunSpecs.containsKey(gunId);
+    public boolean gunExists(String gunName) {
+        return gunSpecs.containsKey(gunName.toUpperCase());
     }
 }

@@ -9,6 +9,8 @@ import nl.matsgemmeke.battlegrounds.configuration.item.gun.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
+import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
 import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
@@ -27,8 +29,6 @@ import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,10 +42,11 @@ public class FirearmFactory {
     private static final double DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER = 1.0;
 
     private final BattlegroundsConfiguration config;
-    private final DefaultFirearmFactory defaultGunFactory;
     private final FirearmControlsFactory controlsFactory;
+    private final GunInfoProvider gunInfoProvider;
     private final GunRegistry gunRegistry;
     private final NamespacedKeyCreator keyCreator;
+    private final Provider<DefaultFirearm> defaultFirearmProvider;
     private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     private final ReloadSystemFactory reloadSystemFactory;
     private final ShootHandlerFactory shootHandlerFactory;
@@ -53,45 +54,51 @@ public class FirearmFactory {
     @Inject
     public FirearmFactory(
             BattlegroundsConfiguration config,
-            DefaultFirearmFactory defaultGunFactory,
             FirearmControlsFactory controlsFactory,
+            GunInfoProvider gunInfoProvider,
             GunRegistry gunRegistry,
             NamespacedKeyCreator keyCreator,
+            Provider<DefaultFirearm> defaultFirearmProvider,
             Provider<DefaultScopeAttachment> scopeAttachmentProvider,
             ReloadSystemFactory reloadSystemFactory,
             ShootHandlerFactory shootHandlerFactory
     ) {
         this.config = config;
-        this.defaultGunFactory = defaultGunFactory;
         this.controlsFactory = controlsFactory;
+        this.gunInfoProvider = gunInfoProvider;
         this.gunRegistry = gunRegistry;
         this.keyCreator = keyCreator;
+        this.defaultFirearmProvider = defaultFirearmProvider;
         this.scopeAttachmentProvider = scopeAttachmentProvider;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
     }
 
     public Firearm create(GunSpec spec) {
-        Firearm firearm = this.createInstance(spec);
+        Firearm gun = this.createInstance(spec);
 
-        gunRegistry.register(firearm);
+        gunRegistry.register(gun);
 
-        return firearm;
+        this.registerGunFireSimulationInfo(gun, spec);
+
+        return gun;
     }
 
     public Firearm create(GunSpec spec, GamePlayer gamePlayer) {
-        Firearm firearm = this.createInstance(spec);
-        firearm.setHolder(gamePlayer);
+        Firearm gun = this.createInstance(spec);
+        gun.setHolder(gamePlayer);
 
-        gunRegistry.register(firearm, gamePlayer);
+        gunRegistry.register(gun, gamePlayer);
 
-        return firearm;
+        this.registerGunFireSimulationInfo(gun, spec);
+
+        return gun;
     }
 
     private Firearm createInstance(GunSpec spec) {
         double headshotDamageMultiplier = this.getHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
 
-        DefaultFirearm firearm = defaultGunFactory.create(spec.id);
+        DefaultFirearm firearm = defaultFirearmProvider.get();
         firearm.setName(spec.name);
         firearm.setDescription(spec.description);
         firearm.setHeadshotDamageMultiplier(headshotDamageMultiplier);
@@ -143,7 +150,7 @@ public class FirearmFactory {
         return firearm;
     }
 
-    private double getHeadshotDamageMultiplier(@Nullable Double specValue) {
+    private double getHeadshotDamageMultiplier(Double specValue) {
         if (specValue != null) {
             return specValue;
         }
@@ -151,8 +158,7 @@ public class FirearmFactory {
         return DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER;
     }
 
-    @NotNull
-    private ItemTemplate createItemTemplate(@NotNull ItemSpec spec) {
+    private ItemTemplate createItemTemplate(ItemSpec spec) {
         UUID uuid = UUID.randomUUID();
         NamespacedKey key = keyCreator.create(TEMPLATE_ID_KEY);
         Material material = Material.valueOf(spec.material);
@@ -167,5 +173,15 @@ public class FirearmFactory {
         itemTemplate.setDamage(damage);
         itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
         return itemTemplate;
+    }
+
+    private void registerGunFireSimulationInfo(Gun gun, GunSpec spec) {
+        UUID gunId = gun.getId();
+
+        List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shooting.projectile.shotSounds);
+        int rateOfFire = gun.getRateOfFire();
+        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
+
+        gunInfoProvider.registerGunFireSimulationInfo(gunId, gunFireSimulationInfo);
     }
 }

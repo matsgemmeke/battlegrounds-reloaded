@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.storage;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
@@ -32,11 +31,11 @@ import static org.mockito.Mockito.*;
 public class OpenModeStatePersistenceHandlerTest {
 
     private static final UUID PLAYER_UUID = UUID.randomUUID();
-    private static final String GUN_ID = "TEST_GUN";
+    private static final String GUN_NAME = "Test Gun";
     private static final int GUN_MAGAZINE_AMMO = 10;
     private static final int GUN_RESERVE_AMMO = 20;
     private static final int GUN_ITEM_SLOT = 5;
-    private static final String EQUIPMENT_ID = "TEST_EQUIPMENT";
+    private static final String EQUIPMENT_NAME = "Test Equipment";
     private static final int EQUIPMENT_ITEM_SLOT = 6;
 
     private EquipmentRegistry equipmentRegistry;
@@ -58,8 +57,8 @@ public class OpenModeStatePersistenceHandlerTest {
 
     @Test
     public void loadPlayerStateAssignsItemsToGamePlayerBasedOnSavedState() {
-        GunState gunState = new GunState(PLAYER_UUID, GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
-        EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_ID, EQUIPMENT_ITEM_SLOT);
+        GunState gunState = new GunState(PLAYER_UUID, GUN_NAME, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
+        EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_NAME, EQUIPMENT_ITEM_SLOT);
         PlayerState gamePlayerState = new PlayerState(PLAYER_UUID, List.of(gunState), List.of(equipmentState));
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(0, 0, 0, 0);
         ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
@@ -78,10 +77,10 @@ public class OpenModeStatePersistenceHandlerTest {
         when(equipment.getItemStack()).thenReturn(equipmentItemStack);
 
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(gamePlayerState);
-        when(weaponCreator.createGun(GUN_ID, gamePlayer, GameKey.ofOpenMode())).thenReturn(gun);
-        when(weaponCreator.createEquipment(EQUIPMENT_ID, gamePlayer, GameKey.ofOpenMode())).thenReturn(equipment);
-        when(weaponCreator.gunExists(GUN_ID)).thenReturn(true);
-        when(weaponCreator.equipmentExists(EQUIPMENT_ID)).thenReturn(true);
+        when(weaponCreator.createGun(GUN_NAME, gamePlayer)).thenReturn(gun);
+        when(weaponCreator.createEquipment(EQUIPMENT_NAME, gamePlayer)).thenReturn(equipment);
+        when(weaponCreator.gunExists(GUN_NAME)).thenReturn(true);
+        when(weaponCreator.equipmentExists(EQUIPMENT_NAME)).thenReturn(true);
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(equipmentRegistry, gunRegistry, logger, playerRegistry, playerStateStorage, weaponCreator);
         statePersistenceHandler.loadPlayerState(gamePlayer);
@@ -91,13 +90,13 @@ public class OpenModeStatePersistenceHandlerTest {
 
         verify(inventory).setItem(GUN_ITEM_SLOT, gunItemStack);
         verify(inventory).setItem(EQUIPMENT_ITEM_SLOT, equipmentItemStack);
-        verify(weaponCreator).createGun(GUN_ID, gamePlayer, GameKey.ofOpenMode());
-        verify(weaponCreator).createEquipment(EQUIPMENT_ID, gamePlayer, GameKey.ofOpenMode());
+        verify(weaponCreator).createGun(GUN_NAME, gamePlayer);
+        verify(weaponCreator).createEquipment(EQUIPMENT_NAME, gamePlayer);
     }
 
     @Test
-    public void loadPlayerStateLogsErrorMessageWhenLoadingGunStateWhoseGunIdDoesNotExist() {
-        GunState gunState = new GunState(PLAYER_UUID, GUN_ID, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
+    public void loadPlayerStateLogsErrorMessageWhenLoadingGunStateWhoseGunNameDoesNotExist() {
+        GunState gunState = new GunState(PLAYER_UUID, GUN_NAME, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         PlayerState playerState = new PlayerState(PLAYER_UUID, List.of(gunState), List.of());
 
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
@@ -105,17 +104,17 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(playerState);
-        when(weaponCreator.gunExists(GUN_ID)).thenReturn(false);
+        when(weaponCreator.gunExists(GUN_NAME)).thenReturn(false);
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(equipmentRegistry, gunRegistry, logger, playerRegistry, playerStateStorage, weaponCreator);
         statePersistenceHandler.loadPlayerState(gamePlayer);
 
-        verify(logger).severe("Attempted to load gun 'TEST_GUN' from the open mode of player TestPlayer, but it does not exist anymore");
+        verify(logger).severe("Attempted to load gun 'Test Gun' from the open mode of player TestPlayer, but it does not exist anymore");
     }
 
     @Test
-    public void loadPlayerStateLogsErrorMessageWhenLoadingEquipmentStateWhoseEquipmentIdDoesNotExist() {
-        EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_ID, EQUIPMENT_ITEM_SLOT);
+    public void loadPlayerStateLogsErrorMessageWhenLoadingEquipmentStateWhoseEquipmentNameDoesNotExist() {
+        EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_NAME, EQUIPMENT_ITEM_SLOT);
         PlayerState playerState = new PlayerState(PLAYER_UUID, List.of(), List.of(equipmentState));
 
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
@@ -123,12 +122,12 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(playerState);
-        when(weaponCreator.equipmentExists(EQUIPMENT_ID)).thenReturn(false);
+        when(weaponCreator.equipmentExists(EQUIPMENT_NAME)).thenReturn(false);
 
         OpenModeStatePersistenceHandler statePersistenceHandler = new OpenModeStatePersistenceHandler(equipmentRegistry, gunRegistry, logger, playerRegistry, playerStateStorage, weaponCreator);
         statePersistenceHandler.loadPlayerState(gamePlayer);
 
-        verify(logger).severe("Attempted to load equipment 'TEST_EQUIPMENT' from the open mode of player TestPlayer, but it does not exist anymore");
+        verify(logger).severe("Attempted to load equipment 'Test Equipment' from the open mode of player TestPlayer, but it does not exist anymore");
     }
 
     @Test
@@ -140,12 +139,12 @@ public class OpenModeStatePersistenceHandlerTest {
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
         Gun gun = mock(Gun.class);
-        when(gun.getId()).thenReturn(GUN_ID);
+        when(gun.getName()).thenReturn(GUN_NAME);
         when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
         when(gun.getItemStack()).thenReturn(null);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(equipment.getName()).thenReturn(EQUIPMENT_NAME);
         when(equipment.getItemStack()).thenReturn(null);
 
         when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
@@ -169,11 +168,11 @@ public class OpenModeStatePersistenceHandlerTest {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
 
         Gun gun = mock(Gun.class);
-        when(gun.getId()).thenReturn(GUN_ID);
+        when(gun.getName()).thenReturn(GUN_NAME);
         when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(equipment.getName()).thenReturn(EQUIPMENT_NAME);
 
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
         when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
@@ -204,12 +203,12 @@ public class OpenModeStatePersistenceHandlerTest {
         ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
 
         Gun gun = mock(Gun.class);
-        when(gun.getId()).thenReturn(GUN_ID);
+        when(gun.getName()).thenReturn(GUN_NAME);
         when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
         when(gun.getItemStack()).thenReturn(gunItemStack);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(equipment.getName()).thenReturn(EQUIPMENT_NAME);
         when(equipment.getItemStack()).thenReturn(equipmentItemStack);
 
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
@@ -231,12 +230,12 @@ public class OpenModeStatePersistenceHandlerTest {
 
         assertThat(savedPlayerState.playerUuid()).isEqualTo(PLAYER_UUID);
         assertThat(savedPlayerState.gunStates()).hasSize(1);
-        assertThat(savedPlayerState.gunStates().get(0).gunId()).isEqualTo(GUN_ID);
+        assertThat(savedPlayerState.gunStates().get(0).gunName()).isEqualTo(GUN_NAME);
         assertThat(savedPlayerState.gunStates().get(0).magazineAmmo()).isEqualTo(GUN_MAGAZINE_AMMO);
         assertThat(savedPlayerState.gunStates().get(0).reserveAmmo()).isEqualTo(GUN_RESERVE_AMMO);
         assertThat(savedPlayerState.gunStates().get(0).itemSlot()).isEqualTo(GUN_ITEM_SLOT);
         assertThat(savedPlayerState.equipmentStates()).hasSize(1);
-        assertThat(savedPlayerState.equipmentStates().get(0).equipmentId()).isEqualTo(EQUIPMENT_ID);
+        assertThat(savedPlayerState.equipmentStates().get(0).equipmentName()).isEqualTo(EQUIPMENT_NAME);
         assertThat(savedPlayerState.equipmentStates().get(0).itemSlot()).isEqualTo(EQUIPMENT_ITEM_SLOT);
     }
 

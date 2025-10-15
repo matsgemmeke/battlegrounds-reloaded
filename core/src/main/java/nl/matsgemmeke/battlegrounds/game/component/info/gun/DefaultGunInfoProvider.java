@@ -2,29 +2,26 @@ package nl.matsgemmeke.battlegrounds.game.component.info.gun;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class DefaultGunInfoProvider implements GunInfoProvider {
 
-    @NotNull
     private final GunRegistry gunRegistry;
-    @NotNull
+    private final Map<UUID, GunFireSimulationInfo> gunFireSimulationInfoByGunId;
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public DefaultGunInfoProvider(@NotNull GunRegistry gunRegistry, @NotNull PlayerRegistry playerRegistry) {
+    public DefaultGunInfoProvider(GunRegistry gunRegistry, PlayerRegistry playerRegistry) {
         this.gunRegistry = gunRegistry;
         this.playerRegistry = playerRegistry;
+        this.gunFireSimulationInfoByGunId = new HashMap<>();
     }
 
+    @Override
     public Optional<GunFireSimulationInfo> getGunFireSimulationInfo(UUID uniqueId) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(uniqueId).orElse(null);
 
@@ -38,9 +35,11 @@ public class DefaultGunInfoProvider implements GunInfoProvider {
             return Optional.empty();
         }
 
-        List<GameSound> shotSounds = gun.getShotSounds();
-        int rateOfFire = gun.getRateOfFire();
+        return Optional.ofNullable(gunFireSimulationInfoByGunId.get(gun.getId()));
+    }
 
-        return Optional.of(new GunFireSimulationInfo(shotSounds, rateOfFire));
+    @Override
+    public void registerGunFireSimulationInfo(UUID gunId, GunFireSimulationInfo info) {
+        gunFireSimulationInfoByGunId.put(gunId, info);
     }
 }

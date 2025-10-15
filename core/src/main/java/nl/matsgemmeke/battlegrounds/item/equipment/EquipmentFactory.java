@@ -82,7 +82,7 @@ public class EquipmentFactory {
     }
 
     private Equipment createInstance(EquipmentSpec spec) {
-        DefaultEquipment equipment = new DefaultEquipment(spec.id);
+        DefaultEquipment equipment = new DefaultEquipment();
         equipment.setName(spec.name);
         equipment.setDescription(spec.description);
 

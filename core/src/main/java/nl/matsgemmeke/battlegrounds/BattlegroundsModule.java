@@ -61,7 +61,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffe
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectPerformanceFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.gun.DefaultFirearmFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
@@ -182,9 +181,6 @@ public class BattlegroundsModule implements Module {
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
                 .build(DeploymentHandlerFactory.class));
-
-        binder.install(new FactoryModuleBuilder()
-                .build(DefaultFirearmFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)

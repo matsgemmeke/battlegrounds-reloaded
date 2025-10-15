@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,24 +22,19 @@ import java.util.logging.Logger;
 
 public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
-    @NotNull
     private final File itemsFolder;
-    @NotNull
     private final Logger logger;
-    @NotNull
     private final Provider<EquipmentFactory> equipmentFactoryProvider;
-    @NotNull
     private final Provider<FirearmFactory> gunFactoryProvider;
-    @NotNull
     private final SpecDeserializer specDeserializer;
 
     @Inject
     public WeaponCreatorProvider(
-            @NotNull Provider<EquipmentFactory> equipmentFactoryProvider,
-            @NotNull Provider<FirearmFactory> gunFactoryProvider,
-            @NotNull SpecDeserializer specDeserializer,
-            @Named("ItemsFolder") @NotNull File itemsFolder,
-            @Named("Battlegrounds") @NotNull Logger logger
+            Provider<EquipmentFactory> equipmentFactoryProvider,
+            Provider<FirearmFactory> gunFactoryProvider,
+            SpecDeserializer specDeserializer,
+            @Named("ItemsFolder") File itemsFolder,
+            @Named("Battlegrounds") Logger logger
     ) {
         this.equipmentFactoryProvider = equipmentFactoryProvider;
         this.gunFactoryProvider = gunFactoryProvider;
@@ -49,6 +43,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         this.logger = logger;
     }
 
+    @Override
     public WeaponCreator get() {
         if (!itemsFolder.exists()) {
             itemsFolder.mkdirs();
@@ -85,7 +80,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         return weaponCreator;
     }
 
-    private void copyResourcesFiles(@NotNull File itemsDirectory) {
+    private void copyResourcesFiles(File itemsDirectory) {
         URI uri = this.getResourcesURI();
         Path target = itemsDirectory.toPath();
 
@@ -110,14 +105,14 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         return this.getClass().getResource("/items").toURI();
     }
 
-    private void readItemFile(@NotNull File itemFile, @NotNull WeaponCreator creator) {
+    private void readItemFile(File itemFile, WeaponCreator creator) {
         String id = null;
 
         try {
             YamlDocument document = YamlDocument.create(itemFile);
 
-            if ((id = document.getString("id")) == null) {
-                logger.severe("An error occurred while loading file '%s': Identifier 'id' is missing".formatted(itemFile.getName()));
+            if ((id = document.getString("name")) == null) {
+                logger.severe("An error occurred while loading file '%s': Identifier 'name' is missing".formatted(itemFile.getName()));
                 return;
             }
 
@@ -131,14 +126,14 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         }
     }
 
-    private void addItemSpec(@NotNull WeaponCreator creator, @NotNull File file, @NotNull YamlDocument document) {
-        String id = document.getString("id");
+    private void addItemSpec(WeaponCreator creator, File file, YamlDocument document) {
+        String name = document.getString("name");
 
         if (document.getString("equipment-type") != null) {
             EquipmentSpec equipmentSpec = specDeserializer.deserializeSpec(file, EquipmentSpec.class);
             ObjectValidator.validate(equipmentSpec);
 
-            creator.addEquipmentSpec(id, equipmentSpec);
+            creator.addEquipmentSpec(name, equipmentSpec);
             return;
         }
 
@@ -146,10 +141,10 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             GunSpec gunSpec = specDeserializer.deserializeSpec(file, GunSpec.class);
             ObjectValidator.validate(gunSpec);
 
-            creator.addGunSpec(id, gunSpec);
+            creator.addGunSpec(name, gunSpec);
             return;
         }
 
-        logger.severe("An error occurred while loading item '%s': no item type is specified".formatted(id));
+        logger.severe("An error occurred while loading item '%s': no item type is specified".formatted(name));
     }
 }

@@ -10,8 +10,8 @@ public class Equipment {
     private int id;
     @DatabaseField(columnName = "player_uuid", canBeNull = false)
     private String playerUuid;
-    @DatabaseField(columnName = "equipment_id", canBeNull = false)
-    private String equipmentId;
+    @DatabaseField(columnName = "equipment_name", canBeNull = false)
+    private String equipmentName;
     @DatabaseField(columnName = "item_slot", canBeNull = false, defaultValue = "0")
     private int itemSlot;
 
@@ -34,12 +34,12 @@ public class Equipment {
         this.playerUuid = playerUuid;
     }
 
-    public String getEquipmentId() {
-        return equipmentId;
+    public String getEquipmentName() {
+        return equipmentName;
     }
 
-    public void setEquipmentId(String equipmentId) {
-        this.equipmentId = equipmentId;
+    public void setEquipmentName(String equipmentName) {
+        this.equipmentName = equipmentName;
     }
 
     public int getItemSlot() {

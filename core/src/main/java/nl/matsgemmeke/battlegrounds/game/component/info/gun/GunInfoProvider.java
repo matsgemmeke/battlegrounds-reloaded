@@ -6,4 +6,6 @@ import java.util.UUID;
 public interface GunInfoProvider {
 
     Optional<GunFireSimulationInfo> getGunFireSimulationInfo(UUID entityId);
+
+    void registerGunFireSimulationInfo(UUID gunId, GunFireSimulationInfo info);
 }
