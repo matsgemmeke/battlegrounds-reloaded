@@ -13,7 +13,6 @@ import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -21,25 +20,14 @@ public class GiveWeaponCommand extends CommandSource {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
 
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
     private final Provider<PlayerRegistry> playerRegistryProvider;
-    @NotNull
     private final Translator translator;
-    @NotNull
     private final WeaponCreator weaponCreator;
 
     @Inject
-    public GiveWeaponCommand(
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameScope gameScope,
-            @NotNull Provider<PlayerRegistry> playerRegistryProvider,
-            @NotNull Translator translator,
-            @NotNull WeaponCreator weaponCreator
-    ) {
+    public GiveWeaponCommand(GameContextProvider gameContextProvider, GameScope gameScope, Provider<PlayerRegistry> playerRegistryProvider, Translator translator, WeaponCreator weaponCreator) {
         super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText(), "bg giveweapon <weapon>");
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
@@ -48,22 +36,30 @@ public class GiveWeaponCommand extends CommandSource {
         this.weaponCreator = weaponCreator;
     }
 
-    public void execute(@NotNull Player player, @NotNull String weaponId) {
+    public void execute(Player player, String[] args) {
         GameContext gameContext = gameContextProvider.getGameContext(GAME_KEY)
                 .orElseThrow(() -> new UnknownGameKeyException("No game context found game key %s".formatted(GAME_KEY)));
+
+        String weaponName = String.join(" ", args);
+
+        if (!weaponCreator.exists(weaponName)) {
+            Map<String, Object> values = Map.of("bg_weapon", weaponName);
+            String message = translator.translate(TranslationKey.WEAPON_NOT_EXISTS.getPath()).replace(values);
+
+            player.sendMessage(message);
+            return;
+        }
 
         gameScope.runInScope(gameContext, () -> {
             PlayerRegistry playerRegistry = playerRegistryProvider.get();
             GamePlayer gamePlayer = playerRegistry.findByEntity(player)
                     .orElseThrow(() -> new IllegalStateException("Unable to find GamePlayer instance for player %s despite being registered".formatted(player.getName())));
-
-            Weapon weapon = weaponCreator.createWeapon(gamePlayer, weaponId);
-
-            player.getInventory().addItem(weapon.getItemStack());
+            Weapon weapon = weaponCreator.createWeapon(gamePlayer, weaponName);
 
             Map<String, Object> values = Map.of("bg_weapon", weapon.getName());
             String message = translator.translate(TranslationKey.WEAPON_GIVEN.getPath()).replace(values);
 
+            player.getInventory().addItem(weapon.getItemStack());
             player.sendMessage(message);
         });
     }

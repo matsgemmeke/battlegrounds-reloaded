@@ -15,50 +15,68 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class GiveWeaponCommandTest {
+@ExtendWith(MockitoExtension.class)
+class GiveWeaponCommandTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-    private static final String WEAPON_ID = "TEST_WEAPON";
+    private static final String[] ARGS = { "test", "weapon" };
 
+    @Mock
     private GameContextProvider gameContextProvider;
+    @Mock
     private GameScope gameScope;
+    @Mock
     private Player player;
+    @Mock
     private Provider<PlayerRegistry> playerRegistryProvider;
+    @Mock
     private Translator translator;
+    @Mock
     private WeaponCreator weaponCreator;
 
-    @BeforeEach
-    public void setUp() {
-        gameContextProvider = mock(GameContextProvider.class);
-        gameScope = mock(GameScope.class);
-        player = mock(Player.class);
-        playerRegistryProvider = mock();
-        weaponCreator = mock(WeaponCreator.class);
+    private GiveWeaponCommand command;
 
-        translator = mock(Translator.class);
+    @BeforeEach
+    void setUp() {
         when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn(new TextTemplate("test"));
+
+        command = new GiveWeaponCommand(gameContextProvider, gameScope, playerRegistryProvider, translator, weaponCreator);
     }
 
     @Test
-    public void executeThrowsUnknownGameKeyExceptionWhenOpenModeGameKeyIsNotRegistered() {
+    void executeThrowsUnknownGameKeyExceptionWhenOpenModeGameKeyIsNotRegistered() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        GiveWeaponCommand command = new GiveWeaponCommand(gameContextProvider, gameScope, playerRegistryProvider, translator, weaponCreator);
-
-        assertThatThrownBy(() -> command.execute(player, WEAPON_ID))
+        assertThatThrownBy(() -> command.execute(player, ARGS))
                 .isInstanceOf(UnknownGameKeyException.class)
                 .hasMessage("No game context found game key OPEN-MODE");
     }
 
     @Test
-    public void executeThrowsIllegalStateExceptionWhenUnableToFindGamePlayerInstanceForGivenPlayer() {
+    void executeSendsErrorMessageToPlayerGivenArgsDoNoFormExistingWeaponName() {
+        GameContext gameContext = mock(GameContext.class);
+        String message = "message";
+
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(translator.translate(TranslationKey.WEAPON_NOT_EXISTS.getPath())).thenReturn(new TextTemplate(message));
+        when(weaponCreator.exists("test weapon")).thenReturn(false);
+
+        command.execute(player, ARGS);
+
+        verify(player).sendMessage(message);
+    }
+
+    @Test
+    void executeThrowsIllegalStateExceptionWhenUnableToFindGamePlayerInstanceForGivenPlayer() {
         GameContext gameContext = mock(GameContext.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
@@ -67,20 +85,21 @@ public class GiveWeaponCommandTest {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(player.getName()).thenReturn("TestPlayer");
+        when(weaponCreator.exists("test weapon")).thenReturn(true);
 
-        GiveWeaponCommand command = new GiveWeaponCommand(gameContextProvider, gameScope, playerRegistryProvider, translator, weaponCreator);
-        command.execute(player, WEAPON_ID);
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(1);
+            runnable.run();
+            return null;
+        }).when(gameScope).runInScope(eq(gameContext), any());
 
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(gameScope).runInScope(eq(gameContext), runnableCaptor.capture());
-
-        assertThatThrownBy(() -> runnableCaptor.getValue().run())
+        assertThatThrownBy(() -> command.execute(player, ARGS))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Unable to find GamePlayer instance for player TestPlayer despite being registered");
     }
 
     @Test
-    public void executeGivesAssignedWeaponToPlayer() {
+    void executeGivesAssignedWeaponToPlayer() {
         String message = "weapon given: %bg_weapon%";
         GameContext gameContext = mock(GameContext.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
@@ -99,15 +118,16 @@ public class GiveWeaponCommandTest {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
-        when(weaponCreator.createWeapon(gamePlayer, WEAPON_ID)).thenReturn(weapon);
+        when(weaponCreator.exists("test weapon")).thenReturn(true);
+        when(weaponCreator.createWeapon(gamePlayer, "test weapon")).thenReturn(weapon);
 
-        GiveWeaponCommand command = new GiveWeaponCommand(gameContextProvider, gameScope, playerRegistryProvider, translator, weaponCreator);
-        command.execute(player, WEAPON_ID);
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(1);
+            runnable.run();
+            return null;
+        }).when(gameScope).runInScope(eq(gameContext), any());
 
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(gameScope).runInScope(eq(gameContext), runnableCaptor.capture());
-
-        runnableCaptor.getValue().run();
+        command.execute(player, ARGS);
 
         verify(inventory).addItem(itemStack);
         verify(player).sendMessage("weapon given: test");
