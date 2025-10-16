@@ -61,7 +61,7 @@ public class HitscanLauncherTest {
         when(hitBlock.getType()).thenReturn(hitBlockMaterial);
         when(hitBlock.getWorld()).thenReturn(world);
 
-        LaunchContext launchContext = new LaunchContext(entity, source, direction);
+        LaunchContext launchContext = new LaunchContext(entity, source, direction, world);
 
         when(collisionDetector.producesBlockCollisionAt(hitLocation)).thenReturn(true);
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false);
@@ -94,7 +94,7 @@ public class HitscanLauncherTest {
         Block hitBlock = mock(Block.class);
         when(hitBlock.getWorld()).thenReturn(world);
 
-        LaunchContext launchContext = new LaunchContext(entity, source, direction);
+        LaunchContext launchContext = new LaunchContext(entity, source, direction, world);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false, true);

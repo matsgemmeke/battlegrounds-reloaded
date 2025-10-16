@@ -71,7 +71,7 @@ public class FireballLauncherTest {
         Schedule schedule = mock(Schedule.class);
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(schedule);
 
-        LaunchContext context = new LaunchContext(entity, source, direction);
+        LaunchContext context = new LaunchContext(entity, source, direction, world);
 
         doAnswer(invocation -> {
             ProjectileHitAction projectileHitAction = invocation.getArgument(1);

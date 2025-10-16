@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.trigger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an object that can be monitored by a {@link Trigger}.
@@ -25,7 +24,6 @@ public interface TriggerTarget {
      *
      * @return the trigger source location
      */
-    @NotNull
     Location getLocation();
 
     Vector getVelocity();

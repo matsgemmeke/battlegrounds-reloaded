@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
@@ -11,10 +13,24 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballPropert
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanProperties;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLaunchProperties;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncherFactory;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
-import org.junit.jupiter.api.BeforeEach;
+import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -22,23 +38,30 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class ProjectileLauncherFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class ProjectileLauncherFactoryTest {
 
+    private static final String TEMPLATE_ID_KEY = "template-id";
+
+    @Mock
     private FireballLauncherFactory fireballLauncherFactory;
+    @Mock
     private HitscanLauncherFactory hitscanLauncherFactory;
+    @Mock
     private ItemEffectFactory itemEffectFactory;
-    private ParticleEffectMapper particleEffectMapper;
-
-    @BeforeEach
-    public void setUp() {
-        fireballLauncherFactory = mock(FireballLauncherFactory.class);
-        hitscanLauncherFactory = mock(HitscanLauncherFactory.class);
-        itemEffectFactory = mock(ItemEffectFactory.class);
-        particleEffectMapper = new ParticleEffectMapper();
-    }
+    @Mock
+    private ItemLauncherFactory itemLauncherFactory;
+    @Mock
+    private NamespacedKeyCreator namespacedKeyCreator;
+    @Spy
+    private ParticleEffectMapper particleEffectMapper = new ParticleEffectMapper();
+    @Mock
+    private TriggerExecutorFactory triggerExecutorFactory;
+    @InjectMocks
+    private ProjectileLauncherFactory projectileLauncherFactory;
 
     @Test
-    public void createReturnsInstanceOfFireballLauncher() {
+    void createReturnsInstanceOfFireballLauncher() {
         FireballLauncher fireballLauncher = mock(FireballLauncher.class);
         ProjectileSpec projectileSpec = this.createProjectileSpec("FIREBALL");
         ItemEffect itemEffect = mock(ItemEffect.class);
@@ -46,7 +69,6 @@ public class ProjectileLauncherFactoryTest {
         when(fireballLauncherFactory.create(any(FireballProperties.class), eq(itemEffect))).thenReturn(fireballLauncher);
         when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
 
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
 
         ArgumentCaptor<FireballProperties> fireballPropertiesCaptor = ArgumentCaptor.forClass(FireballProperties.class);
@@ -68,11 +90,9 @@ public class ProjectileLauncherFactoryTest {
     }
 
     @Test
-    public void createThrowsProjectileLauncherCreationExceptionWhenCreatingFireballLauncherWhileRequiredVariablesAreMissing() {
+    void createThrowsProjectileLauncherCreationExceptionWhenCreatingFireballLauncherWhileRequiredVariablesAreMissing() {
         ProjectileSpec projectileSpec = this.createProjectileSpec("FIREBALL");
         projectileSpec.velocity = null;
-
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
 
         assertThatThrownBy(() -> projectileLauncherFactory.create(projectileSpec))
                 .isInstanceOf(ProjectileLauncherCreationException.class)
@@ -80,7 +100,7 @@ public class ProjectileLauncherFactoryTest {
     }
     
     @Test
-    public void createReturnsInstanceOfHitscanLauncher() {
+    void createReturnsInstanceOfHitscanLauncher() {
         HitscanLauncher hitscanLauncher = mock(HitscanLauncher.class);
         ProjectileSpec projectileSpec = this.createProjectileSpec("HITSCAN");
         ItemEffect itemEffect = mock(ItemEffect.class);
@@ -88,7 +108,6 @@ public class ProjectileLauncherFactoryTest {
         when(hitscanLauncherFactory.create(any(HitscanProperties.class), eq(itemEffect))).thenReturn(hitscanLauncher);
         when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
 
-        ProjectileLauncherFactory projectileLauncherFactory = new ProjectileLauncherFactory(fireballLauncherFactory, hitscanLauncherFactory, itemEffectFactory, particleEffectMapper);
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
 
         ArgumentCaptor<HitscanProperties> hitscanPropertiesCaptor = ArgumentCaptor.forClass(HitscanProperties.class);
@@ -108,6 +127,37 @@ public class ProjectileLauncherFactoryTest {
         assertThat(createdProjectileLauncher).isEqualTo(hitscanLauncher);
     }
 
+    @Test
+    void createReturnsInstanceOfItemLauncher() {
+        ProjectileSpec projectileSpec = this.createProjectileSpec("ITEM");
+        ItemEffect itemEffect = mock(ItemEffect.class);
+        ItemLauncher itemLauncher = mock(ItemLauncher.class);
+        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
+
+        Plugin plugin = mock(Plugin.class);
+        when(plugin.getName()).thenReturn("Battlegrounds");
+
+        NamespacedKey templateKey = new NamespacedKey(plugin, TEMPLATE_ID_KEY);
+
+        when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
+        when(itemLauncherFactory.create(any(ItemLaunchProperties.class), eq(itemEffect))).thenReturn(itemLauncher);
+        when(namespacedKeyCreator.create(TEMPLATE_ID_KEY)).thenReturn(templateKey);
+        when(triggerExecutorFactory.create(projectileSpec.triggers.get("impact"))).thenReturn(triggerExecutor);
+
+        ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
+
+        ArgumentCaptor<ItemLaunchProperties> propertiesCaptor = ArgumentCaptor.forClass(ItemLaunchProperties.class);
+        verify(itemLauncherFactory).create(propertiesCaptor.capture(), eq(itemEffect));
+
+        ItemLaunchProperties properties = propertiesCaptor.getValue();
+        assertThat(properties.shotSounds()).isEmpty();
+        assertThat(properties.velocity()).isEqualTo(2.0);
+
+        assertThat(createdProjectileLauncher).isEqualTo(itemLauncher);
+
+        verify(itemLauncher).addTriggerExecutor(triggerExecutor);
+    }
+
     private ProjectileSpec createProjectileSpec(String type) {
         ParticleEffectSpec trajectoryParticleEffectSpec = new ParticleEffectSpec();
         trajectoryParticleEffectSpec.particle = "FLAME";
@@ -117,10 +167,21 @@ public class ProjectileLauncherFactoryTest {
         trajectoryParticleEffectSpec.offsetZ = 0.3;
         trajectoryParticleEffectSpec.extra = 0.0;
 
+        ItemSpec itemSpec = new ItemSpec();
+        itemSpec.material = "STICK";
+        itemSpec.damage = 1;
+
+        TriggerSpec triggerSpec = new TriggerSpec();
+        triggerSpec.type = "IMPACT";
+        triggerSpec.delay = 5L;
+        triggerSpec.interval = 1L;
+
         ProjectileSpec projectileSpec = new ProjectileSpec();
         projectileSpec.type = type;
+        projectileSpec.item = itemSpec;
         projectileSpec.trajectoryParticleEffect = trajectoryParticleEffectSpec;
         projectileSpec.velocity = 2.0;
+        projectileSpec.triggers = Map.of("impact", triggerSpec);
         return projectileSpec;
     }
 }

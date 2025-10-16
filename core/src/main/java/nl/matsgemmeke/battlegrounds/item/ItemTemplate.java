@@ -24,16 +24,16 @@ public class ItemTemplate {
     @NotNull
     private final Material material;
     @NotNull
-    private final NamespacedKey key;
+    private final NamespacedKey templateKey;
     @NotNull
     private final UUID templateId;
     private int damage;
     @Nullable
     private TextTemplate displayNameTemplate;
 
-    public ItemTemplate(@NotNull UUID templateId, @NotNull NamespacedKey key, @NotNull Material material) {
+    public ItemTemplate(@NotNull UUID templateId, @NotNull NamespacedKey templateKey, @NotNull Material material) {
         this.templateId = templateId;
-        this.key = key;
+        this.templateKey = templateKey;
         this.material = material;
         this.dataEntries = new ArrayList<>();
     }
@@ -119,7 +119,7 @@ public class ItemTemplate {
             itemMeta.setDisplayName(displayName);
         }
 
-        itemMeta.getPersistentDataContainer().set(key, new UUIDDataType(), templateId);
+        itemMeta.getPersistentDataContainer().set(templateKey, new UUIDDataType(), templateId);
 
         for (PersistentDataEntry<?, ?> dataEntry : dataEntries) {
             this.applyDataEntry(itemMeta.getPersistentDataContainer(), dataEntry);
@@ -148,7 +148,7 @@ public class ItemTemplate {
             return false;
         }
 
-        UUID uuid = itemMeta.getPersistentDataContainer().get(key, new UUIDDataType());
+        UUID uuid = itemMeta.getPersistentDataContainer().get(templateKey, new UUIDDataType());
         return uuid != null && uuid.equals(templateId);
     }
 }
