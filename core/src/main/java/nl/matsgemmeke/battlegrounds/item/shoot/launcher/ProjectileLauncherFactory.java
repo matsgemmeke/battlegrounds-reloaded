@@ -111,10 +111,12 @@ public class ProjectileLauncherFactory {
 
         ItemLauncher itemLauncher = itemLauncherFactory.create(properties, itemEffect);
 
-        for (TriggerSpec triggerSpec : spec.triggers.values()) {
-            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
+        if (spec.triggers != null) {
+            for (TriggerSpec triggerSpec : spec.triggers.values()) {
+                TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 
-            itemLauncher.addTriggerExecutor(triggerExecutor);
+                itemLauncher.addTriggerExecutor(triggerExecutor);
+            }
         }
 
         return itemLauncher;
