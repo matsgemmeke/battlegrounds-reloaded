@@ -19,21 +19,17 @@ import java.util.*;
  */
 public class ItemTemplate {
 
-    @NotNull
     private final List<PersistentDataEntry<?, ?>> dataEntries;
-    @NotNull
     private final Material material;
-    @NotNull
     private final NamespacedKey templateKey;
-    @NotNull
     private final UUID templateId;
     private int damage;
     @Nullable
     private TextTemplate displayNameTemplate;
 
-    public ItemTemplate(@NotNull UUID templateId, @NotNull NamespacedKey templateKey, @NotNull Material material) {
-        this.templateId = templateId;
+    public ItemTemplate(NamespacedKey templateKey, UUID templateId, Material material) {
         this.templateKey = templateKey;
+        this.templateId = templateId;
         this.material = material;
         this.dataEntries = new ArrayList<>();
     }
@@ -70,9 +66,8 @@ public class ItemTemplate {
      *
      * @return the template display name text template
      */
-    @Nullable
-    public TextTemplate getDisplayNameTemplate() {
-        return displayNameTemplate;
+    public Optional<TextTemplate> getDisplayNameTemplate() {
+        return Optional.ofNullable(displayNameTemplate);
     }
 
     /**

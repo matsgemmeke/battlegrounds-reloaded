@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.trigger.impact;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -58,7 +59,7 @@ public class ImpactTriggerTest {
         Vector velocity = new Vector(1, -1, 1);
 
         World world = mock(World.class);
-        when(world.rayTraceBlocks(targetLocation, velocity, 1.0)).thenReturn(null);
+        when(world.rayTraceBlocks(targetLocation, velocity, 3.0, FluidCollisionMode.NEVER, true)).thenReturn(null);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -78,7 +79,7 @@ public class ImpactTriggerTest {
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), (Block) null, null);
 
         World world = mock(World.class);
-        when(world.rayTraceBlocks(targetLocation, velocity, 1.0)).thenReturn(rayTraceResult);
+        when(world.rayTraceBlocks(targetLocation, velocity, 3.0, FluidCollisionMode.NEVER, true)).thenReturn(rayTraceResult);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -99,7 +100,7 @@ public class ImpactTriggerTest {
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), hitBlock, null);
 
         World world = mock(World.class);
-        when(world.rayTraceBlocks(targetLocation, velocity, 1.0)).thenReturn(rayTraceResult);
+        when(world.rayTraceBlocks(targetLocation, velocity, 3.0, FluidCollisionMode.NEVER, true)).thenReturn(rayTraceResult);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -123,7 +124,7 @@ public class ImpactTriggerTest {
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), hitBlock, BlockFace.NORTH);
 
         World world = mock(World.class);
-        when(world.rayTraceBlocks(targetLocation, velocity, 1.0)).thenReturn(rayTraceResult);
+        when(world.rayTraceBlocks(targetLocation, velocity, 3.0, FluidCollisionMode.NEVER, true)).thenReturn(rayTraceResult);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -147,7 +148,7 @@ public class ImpactTriggerTest {
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), hitBlock, BlockFace.NORTH);
 
         World world = mock(World.class);
-        when(world.rayTraceBlocks(targetLocation, velocity, 1.0)).thenReturn(rayTraceResult);
+        when(world.rayTraceBlocks(targetLocation, velocity, 3.0, FluidCollisionMode.NEVER, true)).thenReturn(rayTraceResult);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);

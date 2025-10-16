@@ -3,14 +3,13 @@ package nl.matsgemmeke.battlegrounds.item.trigger.impact;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 public class ImpactTrigger implements Trigger {
-
-    private static final double RAY_TRACE_MAX_DISTANCE = 1.0;
 
     @Override
     public boolean activates(TriggerContext context) {
@@ -29,7 +28,7 @@ public class ImpactTrigger implements Trigger {
         }
 
         World world = target.getWorld();
-        RayTraceResult rayTraceResult = world.rayTraceBlocks(projectileLocation, velocity, RAY_TRACE_MAX_DISTANCE);
+        RayTraceResult rayTraceResult = world.rayTraceBlocks(projectileLocation, velocity, velocity.lengthSquared(), FluidCollisionMode.NEVER, true);
 
         return rayTraceResult != null
                 && rayTraceResult.getHitBlock() != null

@@ -99,11 +99,11 @@ public class ProjectileLauncherFactory {
         ItemSpec itemSpec = this.validateSpecVar(spec.item, "material", "ITEM");
         List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);
 
-        UUID templateId = UUID.randomUUID();
         NamespacedKey templateKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
+        UUID templateId = UUID.randomUUID();
         Material material = Material.valueOf(itemSpec.material);
 
-        ItemTemplate itemTemplate = new ItemTemplate(templateId, templateKey, material);
+        ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
         itemTemplate.setDamage(itemSpec.damage);
 
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, shotSounds, velocity);
