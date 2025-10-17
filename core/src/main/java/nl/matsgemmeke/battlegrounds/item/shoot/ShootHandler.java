@@ -85,8 +85,8 @@ public class ShootHandler {
         performer.setHeldItem(itemStack);
     }
 
-    public boolean cancel() {
-        return fireMode.cancelCycle();
+    public void cancel() {
+        fireMode.cancelCycle();
     }
 
     public int getRateOfFire() {

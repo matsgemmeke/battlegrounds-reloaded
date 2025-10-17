@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -10,6 +11,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,6 +21,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class HitscanLauncher implements ProjectileLauncher {
@@ -32,6 +38,8 @@ public class HitscanLauncher implements ProjectileLauncher {
     private final HitscanProperties properties;
     private final ItemEffect itemEffect;
     private final ParticleEffectSpawner particleEffectSpawner;
+    private final Scheduler scheduler;
+    private final Set<Schedule> soundPlaySchedules;
     private final TargetFinder targetFinder;
 
     @Inject
@@ -39,6 +47,7 @@ public class HitscanLauncher implements ProjectileLauncher {
             AudioEmitter audioEmitter,
             CollisionDetector collisionDetector,
             ParticleEffectSpawner particleEffectSpawner,
+            Scheduler scheduler,
             TargetFinder targetFinder,
             @Assisted HitscanProperties properties,
             @Assisted ItemEffect itemEffect
@@ -46,11 +55,19 @@ public class HitscanLauncher implements ProjectileLauncher {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
         this.particleEffectSpawner = particleEffectSpawner;
+        this.scheduler = scheduler;
         this.targetFinder = targetFinder;
         this.properties = properties;
         this.itemEffect = itemEffect;
+        this.soundPlaySchedules = new HashSet<>();
     }
 
+    @Override
+    public void cancel() {
+        soundPlaySchedules.forEach(Schedule::stop);
+    }
+
+    @Override
     public void launch(@NotNull LaunchContext context) {
         boolean hit;
         double distance = DISTANCE_START;
@@ -59,7 +76,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         Location startingLocation = context.direction();
         Entity entity = context.entity();
 
-        audioEmitter.playSounds(properties.shotSounds(), startingLocation);
+        this.scheduleSoundPlayTasks(properties.shotSounds(), entity);
 
         do {
             Vector vector = startingLocation.getDirection().multiply(distance);
@@ -67,6 +84,16 @@ public class HitscanLauncher implements ProjectileLauncher {
             hit = this.processProjectileStep(entity, startingLocation, projectileLocation);
             distance += DISTANCE_JUMP;
         } while (!hit && distance < projectileRange);
+    }
+
+    private void scheduleSoundPlayTasks(List<GameSound> sounds, Entity entity) {
+        for (GameSound sound : sounds) {
+            Schedule schedule = scheduler.createSingleRunSchedule(sound.getDelay());
+            schedule.addTask(() -> audioEmitter.playSound(sound, entity.getLocation()));
+            schedule.start();
+
+            soundPlaySchedules.add(schedule);
+        }
     }
 
     private boolean processProjectileStep(Entity entity, Location startingLocation, Location projectileLocation) {

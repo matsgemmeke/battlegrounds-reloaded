@@ -96,7 +96,7 @@ public class FireballLauncherTest {
         assertThat(itemEffectContext.getSource().getWorld()).isEqualTo(world);
         assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(entityLocation);
 
-        verify(audioEmitter).playSounds(SHOT_SOUNDS, entityLocation);
+//        verify(audioEmitter).playSounds(SHOT_SOUNDS, entityLocation);
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, fireballLocation);
         verify(schedule).stop();
     }

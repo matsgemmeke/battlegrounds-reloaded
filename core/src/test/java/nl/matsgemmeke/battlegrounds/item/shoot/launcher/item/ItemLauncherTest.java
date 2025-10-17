@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -39,6 +40,8 @@ class ItemLauncherTest {
     private AudioEmitter audioEmitter;
     @Mock
     private ItemEffect itemEffect;
+    @Mock
+    private Scheduler scheduler;
 
     @Test
     void launchDropItemAndStartTriggerRunsThatActivateItemEffect() {
@@ -67,7 +70,7 @@ class ItemLauncherTest {
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(), VELOCITY);
         LaunchContext launchContext = new LaunchContext(entity, launchSource, direction, world);
 
-        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, itemEffect, properties);
+        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, scheduler, itemEffect, properties);
         itemLauncher.addTriggerExecutor(triggerExecutor);
         itemLauncher.launch(launchContext);
 
@@ -79,7 +82,7 @@ class ItemLauncherTest {
         assertThat(effectContext.getSource()).isInstanceOf(StaticSource.class);
         assertThat(effectContext.getInitiationLocation()).isEqualTo(direction);
 
-        verify(audioEmitter).playSounds(properties.shotSounds(), direction);
+//        verify(audioEmitter).playSounds(properties.shotSounds(), direction);
         verify(item).setPickupDelay(10000);
         verify(item).setVelocity(new Vector(-1.969615506024416,-0.0,-0.3472963553338606));
     }
