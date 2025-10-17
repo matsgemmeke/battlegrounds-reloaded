@@ -89,7 +89,7 @@ public class FireballLauncher implements ProjectileLauncher {
 
     private void onHit(Entity entity, Location initiationLocation, Fireball fireball, Schedule schedule) {
         Location fireballLocation = fireball.getLocation();
-        World fireballWorld = fireballLocation.getWorld();
+        World fireballWorld = fireball.getWorld();
 
         StaticSource source = new StaticSource(fireballLocation, fireballWorld);
         ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
