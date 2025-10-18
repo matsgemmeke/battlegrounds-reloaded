@@ -113,7 +113,7 @@ public class ItemEffectFactory {
                 boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
                 boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
 
-                RangeProfile rangeProfile = new RangeProfile(rangeProfileSpec.longRange.damage, rangeProfileSpec.longRange.distance, rangeProfileSpec.mediumRange.damage, rangeProfileSpec.mediumRange.distance, rangeProfileSpec.shortRange.damage, rangeProfileSpec.shortRange.distance);
+                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
                 ExplosionProperties properties = new ExplosionProperties(rangeProfile, power, damageBlocks, spreadFire);
 
                 ExplosionEffect explosionEffect = explosionEffectProvider.get();
