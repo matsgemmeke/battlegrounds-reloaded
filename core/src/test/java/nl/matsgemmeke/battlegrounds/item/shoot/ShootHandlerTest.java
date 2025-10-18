@@ -15,34 +15,49 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ShootHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class ShootHandlerTest {
 
-    private AmmunitionStorage ammunitionStorage;
+    @Mock
     private FireMode fireMode;
+    @Mock
     private ItemRepresentation itemRepresentation;
+    @Mock
     private ProjectileLauncher projectileLauncher;
+    @Mock
     private Recoil recoil;
+    @Mock
     private SpreadPattern spreadPattern;
 
+    private AmmunitionStorage ammunitionStorage;
+    private ShootHandler shootHandler;
+
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ammunitionStorage = new AmmunitionStorage(10, 20, 10, 20);
-        fireMode = mock(FireMode.class);
-        itemRepresentation = mock(ItemRepresentation.class);
-        projectileLauncher = mock(ProjectileLauncher.class);
-        recoil = mock(Recoil.class);
-        spreadPattern = mock(SpreadPattern.class);
+        shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation, recoil);
     }
 
     @Test
-    public void shootStartsFireModeThatActivatesShot() {
+    void cancelCancelsFireModeAndProjectileLauncher() {
+        shootHandler.cancel();
+
+        verify(fireMode).cancelCycle();
+        verify(projectileLauncher).cancel();
+    }
+
+    @Test
+    void shootStartsFireModeThatActivatesShot() {
         Entity entity = mock(Entity.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         Location shootingDirection = new Location(null, 1, 1, 1, 90.0f, 0.0f);
@@ -54,7 +69,6 @@ public class ShootHandlerTest {
         when(itemRepresentation.update()).thenReturn(itemStack);
         when(spreadPattern.getShotDirections(shootingDirection)).thenReturn(List.of(shootingDirection));
 
-        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation, recoil);
         shootHandler.registerObservers();
         shootHandler.shoot(performer);
 
@@ -77,12 +91,11 @@ public class ShootHandlerTest {
     }
 
     @Test
-    public void shootStartsFireModeThatDoesNotActivateShotWhenMagazineIsEmpty() {
+    void shootStartsFireModeThatDoesNotActivateShotWhenMagazineIsEmpty() {
         ShotPerformer performer = mock(ShotPerformer.class);
 
         ammunitionStorage.setMagazineAmmo(0);
 
-        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation, recoil);
         shootHandler.registerObservers();
         shootHandler.shoot(performer);
 

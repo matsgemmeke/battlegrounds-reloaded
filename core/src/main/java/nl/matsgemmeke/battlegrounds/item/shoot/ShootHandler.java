@@ -87,6 +87,7 @@ public class ShootHandler {
 
     public void cancel() {
         fireMode.cancelCycle();
+        projectileLauncher.cancel();
     }
 
     public int getRateOfFire() {
