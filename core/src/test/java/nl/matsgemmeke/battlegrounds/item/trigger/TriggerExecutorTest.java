@@ -36,8 +36,10 @@ class TriggerExecutorTest {
         TriggerTarget target = mock(TriggerTarget.class);
         TriggerContext context = new TriggerContext(entity, target);
 
+        triggerExecutor.setRepeating(true);
+
         TriggerRun triggerRun = triggerExecutor.createTriggerRun(context);
 
-        assertThat(triggerRun).isNotNull();
+        assertThat(triggerRun.isRepeating()).isTrue();
     }
 }

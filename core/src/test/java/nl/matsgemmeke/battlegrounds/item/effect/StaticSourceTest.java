@@ -5,11 +5,14 @@ import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class StaticSourceTest {
+@ExtendWith(MockitoExtension.class)
+class StaticSourceTest {
 
     private Location location;
     private World world;
@@ -21,11 +24,11 @@ public class StaticSourceTest {
     }
 
     @Test
-    public void existsAlwaysReturnsFalse() {
+    public void existsAlwaysReturnsTrue() {
         StaticSource source = new StaticSource(location, world);
         boolean exists = source.exists();
 
-        assertThat(exists).isFalse();
+        assertThat(exists).isTrue();
     }
 
     @Test

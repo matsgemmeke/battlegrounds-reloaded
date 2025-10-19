@@ -1,11 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.projectile;
 
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
 
-public class ItemProjectile implements Projectile {
+public class ItemProjectile implements Projectile, ItemEffectSource {
 
     private final Item item;
 
@@ -46,5 +47,15 @@ public class ItemProjectile implements Projectile {
     @Override
     public boolean exists() {
         return !item.isDead();
+    }
+
+    @Override
+    public boolean isReleased() {
+        return true;
+    }
+
+    @Override
+    public void remove() {
+        item.remove();
     }
 }

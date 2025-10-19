@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
+import nl.matsgemmeke.battlegrounds.item.projectile.ItemProjectile;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
@@ -118,7 +118,7 @@ class ItemLauncherTest {
 
         ItemEffectContext effectContext = effectContextCaptor.getValue();
         assertThat(effectContext.getEntity()).isEqualTo(entity);
-        assertThat(effectContext.getSource()).isInstanceOf(StaticSource.class);
+        assertThat(effectContext.getSource()).isInstanceOf(ItemProjectile.class);
         assertThat(effectContext.getInitiationLocation()).isEqualTo(direction);
 
         verify(audioEmitter).playSound(gameSound, direction);

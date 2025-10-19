@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.ItemProjectile;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
@@ -85,10 +84,7 @@ public class ItemLauncher implements ProjectileLauncher {
     }
 
     private void startItemEffect(Entity entity, ItemProjectile projectile, Location initiationLocation) {
-        Location sourceLocation = projectile.getLocation();
-        World sourceWorld = projectile.getWorld();
-        StaticSource source = new StaticSource(sourceLocation, sourceWorld);
-        ItemEffectContext effectContext = new ItemEffectContext(entity, source, initiationLocation);
+        ItemEffectContext effectContext = new ItemEffectContext(entity, projectile, initiationLocation);
 
         itemEffect.startPerformance(effectContext);
     }

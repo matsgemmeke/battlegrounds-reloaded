@@ -18,7 +18,7 @@ public class StaticSource implements ItemEffectSource {
     }
 
     public boolean exists() {
-        return false;
+        return true;
     }
 
     @NotNull
