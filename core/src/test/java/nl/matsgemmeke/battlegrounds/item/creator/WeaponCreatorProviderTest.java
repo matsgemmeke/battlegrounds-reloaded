@@ -4,7 +4,7 @@ import com.google.inject.Provider;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
-import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
+import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 public class WeaponCreatorProviderTest {
@@ -26,7 +26,7 @@ public class WeaponCreatorProviderTest {
     private File tempDirectory;
     private Logger logger;
     private Provider<EquipmentFactory> equipmentFactoryProvider;
-    private Provider<FirearmFactory> gunFactoryProvider;
+    private Provider<GunFactory> gunFactoryProvider;
     private SpecDeserializer specDeserializer;
 
     @BeforeEach
@@ -50,7 +50,7 @@ public class WeaponCreatorProviderTest {
         WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, specDeserializer, itemsFolder, logger));
         when(provider.createResourceURI()).thenThrow(new URISyntaxException("fail", "test"));
 
-        assertThrows(IllegalStateException.class, provider::get);
+        assertThatThrownBy(provider::get).isInstanceOf(IllegalStateException.class);
     }
 
     @Test

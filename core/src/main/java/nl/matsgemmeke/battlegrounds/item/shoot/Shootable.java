@@ -29,9 +29,7 @@ public interface Shootable {
     /**
      * Makes the item shoot.
      *
-     * @return whether the item has shot
+     * @param performer the entity who performs the shot
      */
-    boolean shoot();
-
-    void shoot(@NotNull ShotPerformer performer);
+    void shoot(ShotPerformer performer);
 }

@@ -7,8 +7,8 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
-import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -21,9 +21,9 @@ public class WeaponCreator {
     private final Map<String, EquipmentSpec> equipmentSpecs;
     private final Map<String, GunSpec> gunSpecs;
     private final Provider<EquipmentFactory> equipmentFactoryProvider;
-    private final Provider<FirearmFactory> gunFactoryProvider;
+    private final Provider<GunFactory> gunFactoryProvider;
 
-    public WeaponCreator(Provider<EquipmentFactory> equipmentFactoryProvider, Provider<FirearmFactory> gunFactoryProvider) {
+    public WeaponCreator(Provider<EquipmentFactory> equipmentFactoryProvider, Provider<GunFactory> gunFactoryProvider) {
         this.equipmentFactoryProvider = equipmentFactoryProvider;
         this.gunFactoryProvider = gunFactoryProvider;
         this.equipmentSpecs = new HashMap<>();
@@ -76,7 +76,7 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the name '%s'".formatted(gunName));
         }
 
-        FirearmFactory gunFactory = gunFactoryProvider.get();
+        GunFactory gunFactory = gunFactoryProvider.get();
         GunSpec gunSpec = gunSpecs.get(upperCaseName);
 
         return gunFactory.create(gunSpec, gamePlayer);

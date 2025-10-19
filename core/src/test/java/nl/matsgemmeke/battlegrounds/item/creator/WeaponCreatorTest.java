@@ -8,9 +8,8 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
-import nl.matsgemmeke.battlegrounds.item.gun.Firearm;
-import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +31,7 @@ class WeaponCreatorTest {
     @Mock
     private Provider<EquipmentFactory> equipmentFactoryProvider;
     @Mock
-    private Provider<FirearmFactory> gunFactoryProvider;
+    private Provider<GunFactory> gunFactoryProvider;
 
     private WeaponCreator weaponCreator;
 
@@ -78,19 +77,19 @@ class WeaponCreatorTest {
 
     @Test
     void createGunReturnsGunInstanceBasedOnGivenGunName() {
-        Firearm firearm = mock(Firearm.class);
+        Gun gun = mock(Gun.class);
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        FirearmFactory gunFactory = mock(FirearmFactory.class);
-        when(gunFactory.create(gunSpec, gamePlayer)).thenReturn(firearm);
+        GunFactory gunFactory = mock(GunFactory.class);
+        when(gunFactory.create(gunSpec, gamePlayer)).thenReturn(gun);
 
         when(gunFactoryProvider.get()).thenReturn(gunFactory);
 
         weaponCreator.addGunSpec(GUN_NAME, gunSpec);
-        Gun gun = weaponCreator.createGun(GUN_NAME, gamePlayer);
+        Gun result = weaponCreator.createGun(GUN_NAME, gamePlayer);
 
-        assertThat(gun).isEqualTo(firearm);
+        assertThat(result).isEqualTo(gun);
     }
 
     @Test
@@ -112,19 +111,19 @@ class WeaponCreatorTest {
 
     @Test
     void createWeaponReturnsGunInstanceBasedOnGivenGunName() {
-        Firearm firearm = mock(Firearm.class);
+        Gun gun = mock(Gun.class);
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        FirearmFactory gunFactory = mock(FirearmFactory.class);
-        when(gunFactory.create(gunSpec, gamePlayer)).thenReturn(firearm);
+        GunFactory gunFactory = mock(GunFactory.class);
+        when(gunFactory.create(gunSpec, gamePlayer)).thenReturn(gun);
 
         when(gunFactoryProvider.get()).thenReturn(gunFactory);
 
         weaponCreator.addGunSpec(GUN_NAME, gunSpec);
         Weapon weapon = weaponCreator.createWeapon(gamePlayer, GUN_NAME);
 
-        assertThat(weapon).isEqualTo(firearm);
+        assertThat(weapon).isEqualTo(gun);
     }
 
     @Test

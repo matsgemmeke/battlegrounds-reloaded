@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls.shoot;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import nl.matsgemmeke.battlegrounds.item.shoot.ShotPerformer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -79,7 +80,7 @@ public class ShootFunctionTest {
 
         assertFalse(performed);
 
-        verify(gun, never()).shoot();
+        verify(gun, never()).shoot(any(ShotPerformer.class));
     }
 
     @Test

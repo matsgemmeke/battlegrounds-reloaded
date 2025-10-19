@@ -1,12 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
-import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
+import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
@@ -19,25 +19,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public abstract class BaseGun extends BaseWeapon implements Gun {
+public class DefaultGun extends BaseWeapon implements Gun {
 
-    protected double damageAmplifier;
-    protected AmmunitionStorage ammunitionStorage;
+    private double damageAmplifier;
+    private AmmunitionStorage ammunitionStorage;
     @Nullable
-    protected GunHolder holder;
-    @NotNull
-    protected ItemControls<GunHolder> controls;
+    private GunHolder holder;
+    private ItemControls<GunHolder> controls;
     @Nullable
-    protected ItemTemplate itemTemplate;
-    protected RangeProfile rangeProfile;
+    private ItemTemplate itemTemplate;
+    private RangeProfile rangeProfile;
     @Nullable
-    protected Recoil recoil;
-    protected ReloadSystem reloadSystem;
+    private Recoil recoil;
+    private ReloadSystem reloadSystem;
     @Nullable
-    protected ScopeAttachment scopeAttachment;
+    private ScopeAttachment scopeAttachment;
     private ShootHandler shootHandler;
 
-    public BaseGun() {
+    public DefaultGun() {
         this.controls = new ItemControls<>();
     }
 
@@ -133,6 +132,10 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         return scopeAttachment != null && scopeAttachment.applyEffect(scopeUser);
     }
 
+    public boolean canShoot() {
+        return ammunitionStorage.getMagazineAmmo() > 0;
+    }
+
     public boolean cancelReload() {
         return reloadSystem.cancelReload();
     }
@@ -175,6 +178,24 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         return scopeAttachment != null && scopeAttachment.isScoped();
     }
 
+    public void onChangeFrom() {
+        controls.cancelAllFunctions();
+
+        if (holder == null) {
+            return;
+        }
+
+        controls.performAction(Action.CHANGE_FROM, holder);
+    }
+
+    public void onChangeTo() {
+        if (holder == null) {
+            return;
+        }
+
+        controls.performAction(Action.CHANGE_TO, holder);
+    }
+
     public void onDrop() {
         if (holder == null) {
             return;
@@ -185,14 +206,42 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         holder = null;
     }
 
+    public void onLeftClick() {
+        if (holder == null) {
+            return;
+        }
+
+        controls.performAction(Action.LEFT_CLICK, holder);
+    }
+
+    public void onRightClick() {
+        if (holder == null) {
+            return;
+        }
+
+        controls.performAction(Action.RIGHT_CLICK, holder);
+    }
+
     public void onPickUp(@NotNull GunHolder holder) {
         this.holder = holder;
 
         controls.performAction(Action.PICKUP_ITEM, holder);
     }
 
+    public void onSwapFrom() {
+        if (holder == null) {
+            return;
+        }
+
+        controls.performAction(Action.SWAP_FROM, holder);
+    }
+
     public void onSwapTo() {
-        System.out.println("swap to");
+        if (holder == null) {
+            return;
+        }
+
+        controls.performAction(Action.SWAP_TO, holder);
     }
 
     public void reload(@NotNull ReloadPerformer performer) {

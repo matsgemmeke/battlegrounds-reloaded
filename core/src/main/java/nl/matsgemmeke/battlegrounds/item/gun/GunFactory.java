@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class FirearmFactory {
+public class GunFactory {
 
     private static final String ACTION_EXECUTOR_ID_KEY = "action-executor-id";
     private static final String ACTION_EXECUTOR_ID_VALUE = "gun";
@@ -42,23 +42,23 @@ public class FirearmFactory {
     private static final double DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER = 1.0;
 
     private final BattlegroundsConfiguration config;
-    private final FirearmControlsFactory controlsFactory;
+    private final GunControlsFactory controlsFactory;
     private final GunInfoProvider gunInfoProvider;
     private final GunRegistry gunRegistry;
     private final NamespacedKeyCreator keyCreator;
-    private final Provider<DefaultFirearm> defaultFirearmProvider;
+    private final Provider<DefaultGun> defaultGunProvider;
     private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     private final ReloadSystemFactory reloadSystemFactory;
     private final ShootHandlerFactory shootHandlerFactory;
 
     @Inject
-    public FirearmFactory(
+    public GunFactory(
             BattlegroundsConfiguration config,
-            FirearmControlsFactory controlsFactory,
+            GunControlsFactory controlsFactory,
             GunInfoProvider gunInfoProvider,
             GunRegistry gunRegistry,
             NamespacedKeyCreator keyCreator,
-            Provider<DefaultFirearm> defaultFirearmProvider,
+            Provider<DefaultGun> defaultGunProvider,
             Provider<DefaultScopeAttachment> scopeAttachmentProvider,
             ReloadSystemFactory reloadSystemFactory,
             ShootHandlerFactory shootHandlerFactory
@@ -68,14 +68,14 @@ public class FirearmFactory {
         this.gunInfoProvider = gunInfoProvider;
         this.gunRegistry = gunRegistry;
         this.keyCreator = keyCreator;
-        this.defaultFirearmProvider = defaultFirearmProvider;
+        this.defaultGunProvider = defaultGunProvider;
         this.scopeAttachmentProvider = scopeAttachmentProvider;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
     }
 
-    public Firearm create(GunSpec spec) {
-        Firearm gun = this.createInstance(spec);
+    public Gun create(GunSpec spec) {
+        Gun gun = this.createInstance(spec);
 
         gunRegistry.register(gun);
 
@@ -84,8 +84,8 @@ public class FirearmFactory {
         return gun;
     }
 
-    public Firearm create(GunSpec spec, GamePlayer gamePlayer) {
-        Firearm gun = this.createInstance(spec);
+    public Gun create(GunSpec spec, GamePlayer gamePlayer) {
+        Gun gun = this.createInstance(spec);
         gun.setHolder(gamePlayer);
 
         gunRegistry.register(gun, gamePlayer);
@@ -95,38 +95,37 @@ public class FirearmFactory {
         return gun;
     }
 
-    private Firearm createInstance(GunSpec spec) {
+    private Gun createInstance(GunSpec spec) {
         double headshotDamageMultiplier = this.getHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
 
-        DefaultFirearm firearm = defaultFirearmProvider.get();
-        firearm.setName(spec.name);
-        firearm.setDescription(spec.description);
-        firearm.setHeadshotDamageMultiplier(headshotDamageMultiplier);
+        DefaultGun gun = defaultGunProvider.get();
+        gun.setName(spec.name);
+        gun.setDescription(spec.description);
 
         ItemTemplate itemTemplate = this.createItemTemplate(spec.item);
         ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
         itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, spec.name);
 
-        firearm.setItemTemplate(itemTemplate);
+        gun.setItemTemplate(itemTemplate);
 
         double damageAmplifier = config.getGunDamageAmplifier();
-        firearm.setDamageAmplifier(damageAmplifier);
+        gun.setDamageAmplifier(damageAmplifier);
 
         int magazineSize = spec.ammo.magazineSize;
         int reserveAmmo = spec.ammo.defaultMagazineAmount * magazineSize;
         int maxAmmo = spec.ammo.maxMagazineAmount * magazineSize;
 
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
-        firearm.setAmmunitionStorage(ammunitionStorage);
+        gun.setAmmunitionStorage(ammunitionStorage);
 
-        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, firearm);
-        firearm.setReloadSystem(reloadSystem);
+        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, gun);
+        gun.setReloadSystem(reloadSystem);
 
-        ItemControls<GunHolder> controls = controlsFactory.create(spec.controls, firearm);
-        firearm.setControls(controls);
+        ItemControls<GunHolder> controls = controlsFactory.create(spec.controls, gun);
+        gun.setControls(controls);
 
         ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, ammunitionStorage, itemRepresentation);
-        firearm.setShootHandler(shootHandler);
+        gun.setShootHandler(shootHandler);
 
         ScopeSpec scopeSpec = spec.scope;
 
@@ -142,12 +141,12 @@ public class FirearmFactory {
             scopeAttachment.configureStopSounds(stopSounds);
             scopeAttachment.configureChangeMagnificationSounds(changeMagnificationSounds);
 
-            firearm.setScopeAttachment(scopeAttachment);
+            gun.setScopeAttachment(scopeAttachment);
         }
 
-        firearm.update();
+        gun.update();
 
-        return firearm;
+        return gun;
     }
 
     private double getHeadshotDamageMultiplier(Double specValue) {

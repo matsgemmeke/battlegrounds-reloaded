@@ -11,7 +11,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
-import nl.matsgemmeke.battlegrounds.item.gun.FirearmFactory;
+import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +25,13 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
     private final File itemsFolder;
     private final Logger logger;
     private final Provider<EquipmentFactory> equipmentFactoryProvider;
-    private final Provider<FirearmFactory> gunFactoryProvider;
+    private final Provider<GunFactory> gunFactoryProvider;
     private final SpecDeserializer specDeserializer;
 
     @Inject
     public WeaponCreatorProvider(
             Provider<EquipmentFactory> equipmentFactoryProvider,
-            Provider<FirearmFactory> gunFactoryProvider,
+            Provider<GunFactory> gunFactoryProvider,
             SpecDeserializer specDeserializer,
             @Named("ItemsFolder") File itemsFolder,
             @Named("Battlegrounds") Logger logger

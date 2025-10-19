@@ -3,49 +3,49 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
-public class FirearmControlsFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class GunControlsFactoryTest {
 
-    private Firearm firearm;
-
-    @BeforeEach
-    public void setUp() {
-        firearm = mock(Firearm.class);
-    }
+    @Mock
+    private Gun gun;
+    @InjectMocks
+    private GunControlsFactory controlsFactory;
 
     @Test
-    public void createMakesItemControlsWithRequiredControls() {
+    void createMakesItemControlsWithRequiredControls() {
         ControlsSpec spec = new ControlsSpec();
         spec.reload = "LEFT_CLICK";
         spec.shoot = "RIGHT_CLICK";
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
-        ItemControls<GunHolder> controls = controlsFactory.create(spec, firearm);
+        ItemControls<GunHolder> controls = controlsFactory.create(spec, gun);
 
         assertThat(controls).isNotNull();
     }
 
     @Test
-    public void createMakesItemControlsWithUseScopeAndStopScopeControls() {
+    void createMakesItemControlsWithUseScopeAndStopScopeControls() {
         ControlsSpec spec = new ControlsSpec();
         spec.reload = "LEFT_CLICK";
         spec.shoot = "RIGHT_CLICK";
         spec.scopeUse = "RIGHT_CLICK";
         spec.scopeStop = "LEFT_CLICK";
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
-        ItemControls<GunHolder> controls = controlsFactory.create(spec, firearm);
+        GunControlsFactory controlsFactory = new GunControlsFactory();
+        ItemControls<GunHolder> controls = controlsFactory.create(spec, gun);
 
         assertThat(controls).isNotNull();
     }
 
     @Test
-    public void createMakesItemControlsWithChangeScopeMagnificationControls() {
+    void createMakesItemControlsWithChangeScopeMagnificationControls() {
         ControlsSpec spec = new ControlsSpec();
         spec.reload = "LEFT_CLICK";
         spec.shoot = "RIGHT_CLICK";
@@ -53,8 +53,8 @@ public class FirearmControlsFactoryTest {
         spec.scopeStop = "LEFT_CLICK";
         spec.scopeChangeMagnification = "SWAP_FROM";
 
-        FirearmControlsFactory controlsFactory = new FirearmControlsFactory();
-        ItemControls<GunHolder> controls = controlsFactory.create(spec, firearm);
+        GunControlsFactory controlsFactory = new GunControlsFactory();
+        ItemControls<GunHolder> controls = controlsFactory.create(spec, gun);
 
         assertThat(controls).isNotNull();
     }
