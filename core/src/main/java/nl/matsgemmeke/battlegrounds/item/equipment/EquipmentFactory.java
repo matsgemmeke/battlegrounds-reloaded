@@ -96,14 +96,14 @@ public class EquipmentFactory {
         ItemSpec throwItemSpec = spec.items.throwItem;
 
         if (activatorItemSpec != null) {
-            UUID activatorUUID = UUID.randomUUID();
-            NamespacedKey activatorKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
+            NamespacedKey activatorTemplateKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
+            UUID activatorTemplateId = UUID.randomUUID();
             Material activatorItemMaterial = Material.valueOf(activatorItemSpec.material);
 
             NamespacedKey actionExecutorIdKey = namespacedKeyCreator.create(ACTION_EXECUTOR_ID_KEY);
             PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
 
-            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorUUID, activatorKey, activatorItemMaterial);
+            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorTemplateKey, activatorTemplateId, activatorItemMaterial);
             activatorItemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
             activatorItemTemplate.setDamage(activatorItemSpec.damage);
             activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorItemSpec.displayName));
@@ -113,11 +113,11 @@ public class EquipmentFactory {
         }
 
         if (throwItemSpec != null) {
-            UUID throwItemUUID = UUID.randomUUID();
-            NamespacedKey throwItemKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
+            NamespacedKey throwItemTemplateKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
+            UUID throwItemTemplateId = UUID.randomUUID();
             Material throwItemMaterial = Material.valueOf(throwItemSpec.material);
 
-            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemUUID, throwItemKey, throwItemMaterial);
+            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemTemplateKey, throwItemTemplateId, throwItemMaterial);
             throwItemTemplate.setDamage(throwItemSpec.damage);
             throwItemTemplate.setDisplayNameTemplate(new TextTemplate(throwItemSpec.displayName));
 
@@ -134,8 +134,8 @@ public class EquipmentFactory {
     }
 
     private ItemTemplate createDisplayItemTemplate(ItemSpec spec) {
-        UUID uuid = UUID.randomUUID();
-        NamespacedKey key = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
+        NamespacedKey templateKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
+        UUID templateId = UUID.randomUUID();
         Material material = Material.valueOf(spec.material);
         String displayName = spec.displayName;
         int damage = spec.damage;
@@ -143,7 +143,7 @@ public class EquipmentFactory {
         NamespacedKey actionExecutorIdKey = namespacedKeyCreator.create(ACTION_EXECUTOR_ID_KEY);
         PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
 
-        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
+        ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
         itemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
         itemTemplate.setDamage(damage);
         itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));

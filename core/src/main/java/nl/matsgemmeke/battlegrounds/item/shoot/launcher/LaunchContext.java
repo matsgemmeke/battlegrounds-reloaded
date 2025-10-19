@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-public record LaunchContext(Entity entity, ProjectileLaunchSource source, Location direction) {
+public record LaunchContext(Entity entity, ProjectileLaunchSource source, Location direction, World world) {
 }

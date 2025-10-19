@@ -120,13 +120,12 @@ public class DefaultFirearmTest {
     @Test
     public void cancelShootingCycleCancelsShootHandler() {
         ShootHandler shootHandler = mock(ShootHandler.class);
-        when(shootHandler.cancel()).thenReturn(true);
 
         DefaultFirearm firearm = new DefaultFirearm(audioEmitter, collisionDetector, damageProcessor, targetFinder);
         firearm.setShootHandler(shootHandler);
-        boolean cancelled = firearm.cancelShooting();
+        firearm.cancelShooting();
 
-        assertTrue(cancelled);
+        verify(shootHandler).cancel();
     }
 
     @Test

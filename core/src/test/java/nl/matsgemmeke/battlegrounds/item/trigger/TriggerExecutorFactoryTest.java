@@ -73,6 +73,7 @@ public class TriggerExecutorFactoryTest {
         spec.delay = DELAY;
         spec.interval = INTERVAL;
         spec.range = RANGE;
+        spec.repeating = true;
 
         EnemyProximityTrigger trigger = mock(EnemyProximityTrigger.class);
         when(enemyProximityTriggerProvider.get()).thenReturn(trigger);
@@ -80,7 +81,7 @@ public class TriggerExecutorFactoryTest {
         TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
         TriggerExecutor triggerExecutor = factory.create(spec);
 
-        assertThat(triggerExecutor).isNotNull();
+        assertThat(triggerExecutor.isRepeating()).isTrue();
     }
 
     @Test
@@ -94,7 +95,7 @@ public class TriggerExecutorFactoryTest {
         TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
         TriggerExecutor triggerExecutor = factory.create(spec);
 
-        assertThat(triggerExecutor).isNotNull();
+        assertThat(triggerExecutor.isRepeating()).isFalse();
     }
 
     @Test
@@ -107,7 +108,7 @@ public class TriggerExecutorFactoryTest {
         TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
         TriggerExecutor triggerExecutor = factory.create(spec);
 
-        assertThat(triggerExecutor).isNotNull();
+        assertThat(triggerExecutor.isRepeating()).isFalse();
     }
 
     @Test
@@ -119,7 +120,7 @@ public class TriggerExecutorFactoryTest {
         TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
         TriggerExecutor triggerExecutor = factory.create(spec);
 
-        assertThat(triggerExecutor).isNotNull();
+        assertThat(triggerExecutor.isRepeating()).isFalse();
     }
 
     @Test
@@ -131,6 +132,6 @@ public class TriggerExecutorFactoryTest {
         TriggerExecutorFactory factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, scheduler);
         TriggerExecutor triggerExecutor = factory.create(spec);
 
-        assertThat(triggerExecutor).isNotNull();
+        assertThat(triggerExecutor.isRepeating()).isFalse();
     }
 }

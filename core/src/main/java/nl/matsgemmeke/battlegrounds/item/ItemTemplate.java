@@ -19,21 +19,17 @@ import java.util.*;
  */
 public class ItemTemplate {
 
-    @NotNull
     private final List<PersistentDataEntry<?, ?>> dataEntries;
-    @NotNull
     private final Material material;
-    @NotNull
-    private final NamespacedKey key;
-    @NotNull
+    private final NamespacedKey templateKey;
     private final UUID templateId;
     private int damage;
     @Nullable
     private TextTemplate displayNameTemplate;
 
-    public ItemTemplate(@NotNull UUID templateId, @NotNull NamespacedKey key, @NotNull Material material) {
+    public ItemTemplate(NamespacedKey templateKey, UUID templateId, Material material) {
+        this.templateKey = templateKey;
         this.templateId = templateId;
-        this.key = key;
         this.material = material;
         this.dataEntries = new ArrayList<>();
     }
@@ -70,9 +66,8 @@ public class ItemTemplate {
      *
      * @return the template display name text template
      */
-    @Nullable
-    public TextTemplate getDisplayNameTemplate() {
-        return displayNameTemplate;
+    public Optional<TextTemplate> getDisplayNameTemplate() {
+        return Optional.ofNullable(displayNameTemplate);
     }
 
     /**
@@ -119,7 +114,7 @@ public class ItemTemplate {
             itemMeta.setDisplayName(displayName);
         }
 
-        itemMeta.getPersistentDataContainer().set(key, new UUIDDataType(), templateId);
+        itemMeta.getPersistentDataContainer().set(templateKey, new UUIDDataType(), templateId);
 
         for (PersistentDataEntry<?, ?> dataEntry : dataEntries) {
             this.applyDataEntry(itemMeta.getPersistentDataContainer(), dataEntry);
@@ -148,7 +143,7 @@ public class ItemTemplate {
             return false;
         }
 
-        UUID uuid = itemMeta.getPersistentDataContainer().get(key, new UUIDDataType());
+        UUID uuid = itemMeta.getPersistentDataContainer().get(templateKey, new UUIDDataType());
         return uuid != null && uuid.equals(templateId);
     }
 }

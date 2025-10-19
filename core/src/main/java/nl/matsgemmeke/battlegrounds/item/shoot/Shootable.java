@@ -8,12 +8,9 @@ import org.jetbrains.annotations.NotNull;
 public interface Shootable {
 
     /**
-     * Attempts to cancel the current shooting cycle. Returns true {@code true} if the shooting cycle or cooldown was
-     * cancelled, otherwise {@code false}.
-     *
-     * @return whether the shooting cycle was successfully cancelled
+     * Attempts to cancel the current shooting cycle.
      */
-    boolean cancelShooting();
+    void cancelShooting();
 
     /**
      * Gets whether the shooting mechanism of the item is capable of shooting.

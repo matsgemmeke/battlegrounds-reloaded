@@ -32,6 +32,7 @@ effect:
       delay: 10
       interval: 10
       range: 2.5
+      repeating: true
 items:
   display-item:
     material: SHEARS

@@ -60,8 +60,6 @@ public class ShootFunctionTest {
 
     @Test
     public void cancelCancelsGunShooting() {
-        when(gun.cancelShooting()).thenReturn(true);
-
         ShootFunction function = new ShootFunction(gun);
         boolean cancelled = function.cancel();
 

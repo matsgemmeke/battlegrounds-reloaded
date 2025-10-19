@@ -159,8 +159,8 @@ public class FirearmFactory {
     }
 
     private ItemTemplate createItemTemplate(ItemSpec spec) {
-        UUID uuid = UUID.randomUUID();
-        NamespacedKey key = keyCreator.create(TEMPLATE_ID_KEY);
+        NamespacedKey templateKey = keyCreator.create(TEMPLATE_ID_KEY);
+        UUID templateId = UUID.randomUUID();
         Material material = Material.valueOf(spec.material);
         String displayName = spec.displayName;
         int damage = spec.damage;
@@ -168,7 +168,7 @@ public class FirearmFactory {
         NamespacedKey actionExecutorIdKey = keyCreator.create(ACTION_EXECUTOR_ID_KEY);
         PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
 
-        ItemTemplate itemTemplate = new ItemTemplate(uuid, key, material);
+        ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
         itemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
         itemTemplate.setDamage(damage);
         itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));

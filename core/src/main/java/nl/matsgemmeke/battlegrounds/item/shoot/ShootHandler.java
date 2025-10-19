@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -68,9 +69,10 @@ public class ShootHandler {
         Entity entity = performer.getEntity();
         Location shootingDirection = performer.getShootingDirection();
         List<Location> shotDirections = spreadPattern.getShotDirections(shootingDirection);
+        World world = entity.getWorld();
 
         for (Location shotDirection : shotDirections) {
-            LaunchContext context = new LaunchContext(entity, performer, shotDirection);
+            LaunchContext context = new LaunchContext(entity, performer, shotDirection, world);
 
             projectileLauncher.launch(context);
         }
@@ -83,8 +85,9 @@ public class ShootHandler {
         performer.setHeldItem(itemStack);
     }
 
-    public boolean cancel() {
-        return fireMode.cancelCycle();
+    public void cancel() {
+        fireMode.cancelCycle();
+        projectileLauncher.cancel();
     }
 
     public int getRateOfFire() {

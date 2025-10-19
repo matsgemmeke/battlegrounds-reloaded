@@ -141,8 +141,8 @@ public abstract class BaseGun extends BaseWeapon implements Gun {
         return scopeAttachment != null && scopeAttachment.removeEffect();
     }
 
-    public boolean cancelShooting() {
-        return shootHandler.cancel();
+    public void cancelShooting() {
+        shootHandler.cancel();
     }
 
     public boolean changeScopeMagnification() {

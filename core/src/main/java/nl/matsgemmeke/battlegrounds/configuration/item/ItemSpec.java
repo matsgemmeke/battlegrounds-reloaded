@@ -9,7 +9,6 @@ public class ItemSpec {
     @Required
     @EnumValue(type = Material.class)
     public String material;
-    @Required
     public String displayName;
     @Required
     public Integer damage;

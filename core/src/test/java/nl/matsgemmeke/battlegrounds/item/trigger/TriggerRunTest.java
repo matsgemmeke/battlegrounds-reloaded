@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
+import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -56,34 +56,43 @@ class TriggerRunTest {
         TriggerObserver observer = mock(TriggerObserver.class);
 
         when(trigger.activates(context)).thenReturn(false);
+        doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
         triggerRun.addObserver(observer);
         triggerRun.start();
-
-        ArgumentCaptor<ScheduleTask> taskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
-        verify(schedule).addTask(taskCaptor.capture());
-
-        taskCaptor.getValue().run();
 
         verify(schedule).start();
         verifyNoInteractions(observer);
     }
 
     @Test
-    void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivates() {
+    void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivatesAndStopsItselfWhenRepeatingIsFalse() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
         when(trigger.activates(context)).thenReturn(true);
+        doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
         triggerRun.addObserver(observer);
         triggerRun.start();
 
-        ArgumentCaptor<ScheduleTask> taskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
-        verify(schedule).addTask(taskCaptor.capture());
+        verify(schedule).start();
+        verify(schedule).stop();
+        verify(observer).onActivate();
+    }
 
-        taskCaptor.getValue().run();
+    @Test
+    void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivatesAndContinuesWhenRepeatingIsTrue() {
+        TriggerObserver observer = mock(TriggerObserver.class);
+
+        when(trigger.activates(context)).thenReturn(true);
+        doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
+
+        triggerRun.addObserver(observer);
+        triggerRun.setRepeating(true);
+        triggerRun.start();
 
         verify(schedule).start();
+        verify(schedule, never()).stop();
         verify(observer).onActivate();
     }
 }

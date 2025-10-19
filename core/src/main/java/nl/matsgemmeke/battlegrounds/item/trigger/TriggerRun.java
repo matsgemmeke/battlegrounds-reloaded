@@ -11,6 +11,7 @@ public class TriggerRun {
     private final Set<TriggerObserver> observers;
     private final Trigger trigger;
     private final TriggerContext context;
+    private boolean repeating;
     private boolean started;
 
     public TriggerRun(Schedule schedule, Trigger trigger, TriggerContext context) {
@@ -18,7 +19,16 @@ public class TriggerRun {
         this.trigger = trigger;
         this.context = context;
         this.observers = new HashSet<>();
+        this.repeating = false;
         this.started = false;
+    }
+
+    public boolean isRepeating() {
+        return repeating;
+    }
+
+    public void setRepeating(boolean repeating) {
+        this.repeating = repeating;
     }
 
     public void addObserver(TriggerObserver observer) {
@@ -51,5 +61,9 @@ public class TriggerRun {
         }
 
         observers.forEach(TriggerObserver::onActivate);
+
+        if (!repeating) {
+            schedule.stop();
+        }
     }
 }

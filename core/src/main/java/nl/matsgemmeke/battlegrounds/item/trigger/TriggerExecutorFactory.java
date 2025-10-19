@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.scheduled.ScheduledTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -17,13 +16,11 @@ import java.util.function.Supplier;
 
 public class TriggerExecutorFactory {
 
-    @NotNull
     private final Provider<EnemyProximityTrigger> enemyProximityTriggerProvider;
-    @NotNull
     private final Scheduler scheduler;
 
     @Inject
-    public TriggerExecutorFactory(@NotNull Provider<EnemyProximityTrigger> enemyProximityTriggerProvider, @NotNull Scheduler scheduler) {
+    public TriggerExecutorFactory(Provider<EnemyProximityTrigger> enemyProximityTriggerProvider, Scheduler scheduler) {
         this.enemyProximityTriggerProvider = enemyProximityTriggerProvider;
         this.scheduler = scheduler;
     }
@@ -31,7 +28,7 @@ public class TriggerExecutorFactory {
     public TriggerExecutor create(TriggerSpec spec) {
         TriggerType triggerType = TriggerType.valueOf(spec.type);
 
-        switch (triggerType) {
+        TriggerExecutor triggerExecutor = switch (triggerType) {
             case ENEMY_PROXIMITY -> {
                 long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
                 long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
@@ -42,7 +39,7 @@ public class TriggerExecutorFactory {
 
                 Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
 
-                return new TriggerExecutor(trigger, scheduleSupplier);
+                yield new TriggerExecutor(trigger, scheduleSupplier);
             }
             case FLOOR_HIT -> {
                 long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
@@ -51,7 +48,7 @@ public class TriggerExecutorFactory {
                 FloorHitTrigger trigger = new FloorHitTrigger();
                 Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
 
-                return new TriggerExecutor(trigger, scheduleSupplier);
+                yield new TriggerExecutor(trigger, scheduleSupplier);
             }
             case IMPACT -> {
                 Long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
@@ -60,7 +57,7 @@ public class TriggerExecutorFactory {
                 ImpactTrigger trigger = new ImpactTrigger();
                 Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
 
-                return new TriggerExecutor(trigger, scheduleSupplier);
+                yield new TriggerExecutor(trigger, scheduleSupplier);
             }
             case SCHEDULED -> {
                 List<Long> offsetDelays = this.validateSpecVar(spec.offsetDelays, "offsetDelays", triggerType);
@@ -75,14 +72,17 @@ public class TriggerExecutorFactory {
                     scheduleSupplier = () -> scheduler.createSingleRunSchedule(offsetDelays.get(0));
                 }
 
-                return new TriggerExecutor(trigger, scheduleSupplier);
+                yield new TriggerExecutor(trigger, scheduleSupplier);
             }
-        }
+        };
 
-        throw new TriggerCreationException("Unknown trigger type '%s'".formatted(spec.type));
+        boolean repeating = Boolean.TRUE.equals(spec.repeating);
+
+        triggerExecutor.setRepeating(repeating);
+        return triggerExecutor;
     }
 
-    private <T> T validateSpecVar(@Nullable T value, @NotNull String valueName, @NotNull Object triggerType) {
+    private <T> T validateSpecVar(@Nullable T value, String valueName, Object triggerType) {
         if (value == null) {
             throw new TriggerCreationException("Cannot create trigger %s because of invalid spec: Required '%s' value is missing".formatted(triggerType, valueName));
         }
