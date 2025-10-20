@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
+import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.entity.Entity;
@@ -57,18 +57,18 @@ public class OpenModeDamageProcessorTest {
     }
 
     @Test
-    public void performsAllDamageCheckWhenProcessingDamageEvent() {
+    public void appliesAllDamageModifiersWhenProcessingDamageEvent() {
         Entity damager = mock(Entity.class);
         Entity entity = mock(Entity.class);
 
-        DamageCheck damageCheck = mock(DamageCheck.class);
+        DamageModifier damageModifier = mock(DamageModifier.class);
         DamageEvent damageEvent = new DamageEvent(damager, null, entity, null, DamageType.BULLET_DAMAGE, 10.0);
 
         OpenModeDamageProcessor damageProcessor = new OpenModeDamageProcessor(openModeGameKey, deploymentInfoProvider);
-        damageProcessor.addDamageCheck(damageCheck);
+        damageProcessor.addDamageModifier(damageModifier);
         damageProcessor.processDamage(damageEvent);
 
-        verify(damageCheck).process(damageEvent);
+        verify(damageModifier).apply(damageEvent);
     }
 
     @Test

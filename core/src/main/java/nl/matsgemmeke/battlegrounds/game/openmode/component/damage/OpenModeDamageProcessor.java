@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
-import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
+import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.jetbrains.annotations.NotNull;
@@ -16,22 +16,19 @@ import java.util.List;
 
 public class OpenModeDamageProcessor implements DamageProcessor {
 
-    @NotNull
     private final DeploymentInfoProvider deploymentInfoProvider;
-    @NotNull
     private final GameKey gameKey;
-    @NotNull
-    private final List<DamageCheck> damageChecks;
+    private final List<DamageModifier> damageModifiers;
 
     @Inject
-    public OpenModeDamageProcessor(@NotNull GameKey gameKey, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
+    public OpenModeDamageProcessor(GameKey gameKey, DeploymentInfoProvider deploymentInfoProvider) {
         this.gameKey = gameKey;
         this.deploymentInfoProvider = deploymentInfoProvider;
-        this.damageChecks = new ArrayList<>();
+        this.damageModifiers = new ArrayList<>();
     }
 
-    public void addDamageCheck(@NotNull DamageCheck damageCheck) {
-        damageChecks.add(damageCheck);
+    public void addDamageModifier(DamageModifier damageModifier) {
+        damageModifiers.add(damageModifier);
     }
 
     public boolean isDamageAllowed(GameKey gameKey) {
@@ -46,8 +43,8 @@ public class OpenModeDamageProcessor implements DamageProcessor {
 
     @NotNull
     public DamageEvent processDamage(@NotNull DamageEvent event) {
-        for (DamageCheck damageCheck : damageChecks) {
-            damageCheck.process(event);
+        for (DamageModifier damageModifier : damageModifiers) {
+            damageModifier.apply(event);
         }
 
         return event;
