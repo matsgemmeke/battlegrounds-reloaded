@@ -7,6 +7,7 @@ public class DefaultExplosionDamageModifier implements DamageModifier {
 
     private static final double DEFAULT_EXPLOSION_DAMAGE = 0.0;
 
+    @Override
     public void apply(DamageEvent event) {
         if (event.getDamageType() != DamageType.EXPLOSIVE_DAMAGE) {
             return;

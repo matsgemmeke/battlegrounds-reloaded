@@ -14,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -22,36 +21,27 @@ public class OpenModeInitializer {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
 
-    @NotNull
     private final BattlegroundsConfiguration configuration;
-    @NotNull
     private final EventDispatcher eventDispatcher;
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
     private final Provider<EquipmentActionExecutor> equipmentActionExecutorProvider;
-    @NotNull
     private final Provider<GunActionExecutor> gunActionExecutorProvider;
-    @NotNull
     private final Provider<PlayerRegistry> playerRegistryProvider;
-    @NotNull
     private final Provider<StatePersistenceHandler> statePersistenceHandlerProvider;
-    @NotNull
     private final Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider;
 
     @Inject
     public OpenModeInitializer(
-            @NotNull BattlegroundsConfiguration configuration,
-            @NotNull EventDispatcher eventDispatcher,
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameScope gameScope,
-            @NotNull Provider<EquipmentActionExecutor> equipmentActionExecutorProvider,
-            @NotNull Provider<GunActionExecutor> gunActionExecutorProvider,
-            @NotNull Provider<PlayerRegistry> playerRegistryProvider,
-            @NotNull Provider<StatePersistenceHandler> statePersistenceHandlerProvider,
-            @NotNull Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider
+            BattlegroundsConfiguration configuration,
+            EventDispatcher eventDispatcher,
+            GameContextProvider gameContextProvider,
+            GameScope gameScope,
+            Provider<EquipmentActionExecutor> equipmentActionExecutorProvider,
+            Provider<GunActionExecutor> gunActionExecutorProvider,
+            Provider<PlayerRegistry> playerRegistryProvider,
+            Provider<StatePersistenceHandler> statePersistenceHandlerProvider,
+            Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider
     ) {
         this.configuration = configuration;
         this.eventDispatcher = eventDispatcher;

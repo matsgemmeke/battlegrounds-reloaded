@@ -26,7 +26,7 @@ class DefaultExplosionDamageModifierTest {
     private DefaultExplosionDamageModifier modifier;
 
     @Test
-    public void shouldNotAlterDamageForEventsWithoutDefaultExplosionDamageCause() {
+    void shouldNotAlterDamageForEventsWithoutDefaultExplosionDamageCause() {
         DamageEvent event = new DamageEvent(damager, GAME_KEY, entity, GAME_KEY, DamageType.BULLET_DAMAGE, DAMAGE);
 
         modifier.apply(event);
@@ -35,7 +35,7 @@ class DefaultExplosionDamageModifierTest {
     }
 
     @Test
-    public void negateExplosionDamageForEventsWithDefaultExplosionDamageCause() {
+    void negateExplosionDamageForEventsWithDefaultExplosionDamageCause() {
         DamageEvent event = new DamageEvent(damager, GAME_KEY, entity, GAME_KEY, DamageType.EXPLOSIVE_DAMAGE, DAMAGE);
 
         modifier.apply(event);
