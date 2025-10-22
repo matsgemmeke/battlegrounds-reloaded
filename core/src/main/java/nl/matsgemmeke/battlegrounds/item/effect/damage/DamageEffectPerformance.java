@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.effect.damage;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxPart;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -22,11 +24,13 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
     private final DamageProcessor damageProcessor;
     private final DamageProperties properties;
+    private final HitboxResolver hitboxResolver;
     private final TargetFinder targetFinder;
 
     @Inject
-    public DamageEffectPerformance(DamageProcessor damageProcessor, TargetFinder targetFinder, @Assisted DamageProperties properties) {
+    public DamageEffectPerformance(DamageProcessor damageProcessor, HitboxResolver hitboxResolver, TargetFinder targetFinder, @Assisted DamageProperties properties) {
         this.damageProcessor = damageProcessor;
+        this.hitboxResolver = hitboxResolver;
         this.targetFinder = targetFinder;
         this.properties = properties;
     }
@@ -45,9 +49,10 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         Location sourceLocation = context.getSource().getLocation();
 
         for (GameEntity target : targetFinder.findEnemyTargets(entityId, sourceLocation, ENTITY_FINDING_RANGE)) {
-            Location targetLocation = target.getEntity().getLocation();
+            Entity targetEntity = target.getEntity();
+            Location targetLocation = targetEntity.getLocation();
 
-            Damage damage = this.createDamage(initiationLocation, targetLocation);
+            Damage damage = this.createDamage(targetEntity, initiationLocation, targetLocation);
             target.damage(damage);
         }
 
@@ -59,11 +64,36 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         }
     }
 
-    private Damage createDamage(Location originLocation, Location targetLocation) {
-        double distance = originLocation.distance(targetLocation);
+    private Damage createDamage(Entity entity, Location initiationLocation, Location targetLocation) {
+        double damageMultiplier = this.getHitboxDamageMultiplier(entity, initiationLocation);
+        double distance = initiationLocation.distance(targetLocation);
+        double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
+        double totalDamageAmount = distanceDamageAmount * damageMultiplier;
+
+        DamageType damageType = properties.damageType();
+
+        return new Damage(totalDamageAmount, damageType);
+    }
+
+    private Damage createDamage(Location initiationLocation, Location targetLocation) {
+        double distance = initiationLocation.distance(targetLocation);
         double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
         DamageType damageType = properties.damageType();
 
         return new Damage(damageAmount, damageType);
+    }
+
+    private double getHitboxDamageMultiplier(Entity entity, Location hitLocation) {
+        HitboxPart hitboxPart = hitboxResolver.resolveHitboxPart(entity, hitLocation).orElse(null);
+
+        if (hitboxPart == null) {
+            return 0;
+        }
+
+        return switch (hitboxPart) {
+            case HEAD -> properties.hitboxDamageProfile().headshotDamageMultiplier();
+            case BODY -> properties.hitboxDamageProfile().bodyDamageMultiplier();
+            case LEGS -> properties.hitboxDamageProfile().legsDamageMultiplier();
+        };
     }
 }
