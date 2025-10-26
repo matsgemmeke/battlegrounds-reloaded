@@ -205,21 +205,21 @@ public class ItemEffectFactoryTest {
         assertThat(itemEffect).isEqualTo(gunFireSimulationEffect);
     }
 
-//    @Test
-//    public void makeCreatesInstanceOfMarkSpawnPointEffect() {
-//        MarkSpawnPointEffect markSpawnPointEffect = mock(MarkSpawnPointEffect.class);
-//
-//        ItemEffectSpec spec = new ItemEffectSpec();
-//        spec.type = "MARK_SPAWN_POINT";
-//        spec.triggers = Map.of("timed", triggerSpec);
-//
-//        when(markSpawnPointEffectProvider.get()).thenReturn(markSpawnPointEffect);
-//
-//        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-//        ItemEffect itemEffect = factory.create(spec);
-//
-//        assertThat(itemEffect).isEqualTo(markSpawnPointEffect);
-//    }
+    @Test
+    public void makeCreatesInstanceOfMarkSpawnPointEffect() {
+        MarkSpawnPointEffect markSpawnPointEffect = mock(MarkSpawnPointEffect.class);
+
+        MarkSpawnPointEffectSpec spec = new MarkSpawnPointEffectSpec();
+        spec.effectType = "MARK_SPAWN_POINT";
+        spec.triggers = Map.of("timed", triggerSpec);
+
+        when(markSpawnPointEffectProvider.get()).thenReturn(markSpawnPointEffect);
+
+        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
+        ItemEffect itemEffect = factory.create(spec);
+
+        assertThat(itemEffect).isEqualTo(markSpawnPointEffect);
+    }
 
     @Test
     public void createInstanceForSmokeScreenEffectType() {

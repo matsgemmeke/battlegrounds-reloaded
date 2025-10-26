@@ -158,7 +158,7 @@ public class ItemEffectFactory {
                 gunFireSimulationEffect.setProperties(properties);
                 yield gunFireSimulationEffect;
             }
-//            case MARK_SPAWN_POINT -> markSpawnPointEffectProvider.get();
+            case MARK_SPAWN_POINT -> markSpawnPointEffectProvider.get();
             case SMOKE_SCREEN -> {
                 SmokeScreenEffectSpec spec = (SmokeScreenEffectSpec) itemEffectSpec;
 
