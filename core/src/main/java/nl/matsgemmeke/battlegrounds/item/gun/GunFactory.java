@@ -96,8 +96,6 @@ public class GunFactory {
     }
 
     private Gun createInstance(GunSpec spec) {
-        double headshotDamageMultiplier = this.getHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
-
         DefaultGun gun = defaultGunProvider.get();
         gun.setName(spec.name);
         gun.setDescription(spec.description);

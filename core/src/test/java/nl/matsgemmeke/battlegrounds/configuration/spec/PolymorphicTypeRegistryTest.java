@@ -21,7 +21,7 @@ class PolymorphicTypeRegistryTest {
 
     @Test
     void resolveReturnsEmptyOptionalWhenNoRuleForGivenValueNameIsRegistered() {
-        Optional<Class<?>> type = PolymorphicTypeRegistry.resolve("effect-type", "SMOKE_SCREEN");
+        Optional<Class<?>> type = PolymorphicTypeRegistry.resolve("effect-type", "UNKNOWN");
 
         assertThat(type).isEmpty();
     }

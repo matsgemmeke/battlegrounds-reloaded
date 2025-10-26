@@ -22,7 +22,6 @@ public class ProjectileSpec {
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "FIREBALL")
     public Double velocity;
     public ParticleEffectSpec trajectoryParticleEffect;
-    public Double headshotDamageMultiplier;
     public String shotSounds;
     public String suppressedShotSounds;
     public Map<String, TriggerSpec> triggers;

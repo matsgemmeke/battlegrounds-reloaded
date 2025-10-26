@@ -15,6 +15,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
+import nl.matsgemmeke.battlegrounds.item.mapper.HitboxMultiplierProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
 
 public class ItemEffectFactoryTest {
 
+    private HitboxMultiplierProfileMapper hitboxMultiplierProfileMapper;
     private ParticleEffectMapper particleEffectMapper;
     private Provider<CombustionEffect> combustionEffectProvider;
     private Provider<DamageEffect> damageEffectProvider;
@@ -44,8 +46,11 @@ public class ItemEffectFactoryTest {
     private TriggerExecutorFactory triggerExecutorFactory;
     private TriggerSpec triggerSpec;
 
+    private ItemEffectFactory itemEffectFactory;
+
     @BeforeEach
     public void setUp() {
+        hitboxMultiplierProfileMapper = new HitboxMultiplierProfileMapper();
         particleEffectMapper = new ParticleEffectMapper();
         combustionEffectProvider = mock();
         damageEffectProvider = mock();
@@ -59,6 +64,8 @@ public class ItemEffectFactoryTest {
 
         triggerExecutorFactory = mock(TriggerExecutorFactory.class);
         when(triggerExecutorFactory.create(triggerSpec)).thenReturn(mock(TriggerExecutor.class));
+
+        itemEffectFactory = new ItemEffectFactory(hitboxMultiplierProfileMapper, particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
     }
 
     @Test
@@ -81,8 +88,7 @@ public class ItemEffectFactoryTest {
 
         when(combustionEffectProvider.get()).thenReturn(combustionEffect);
 
-        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-        ItemEffect itemEffect = factory.create(spec);
+        ItemEffect itemEffect = itemEffectFactory.create(spec);
 
         ArgumentCaptor<CombustionProperties> propertiesCaptor = ArgumentCaptor.forClass(CombustionProperties.class);
         verify(combustionEffect).setProperties(propertiesCaptor.capture());
@@ -111,18 +117,19 @@ public class ItemEffectFactoryTest {
     @Test
     public void createInstanceForDamageEffectType() {
         DamageEffect damageEffect = mock(DamageEffect.class);
+        HitboxMultiplierSpec hitboxMultiplierSpec = this.createHitboxMultiplierSpec();
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
 
         DamageEffectSpec spec = new DamageEffectSpec();
         spec.effectType = "DAMAGE";
         spec.triggers = Map.of("timed", triggerSpec);
+        spec.hitboxMultipliers = hitboxMultiplierSpec;
         spec.range = rangeProfileSpec;
         spec.damageType = "BULLET_DAMAGE";
 
         when(damageEffectProvider.get()).thenReturn(damageEffect);
 
-        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-        ItemEffect itemEffect = factory.create(spec);
+        ItemEffect itemEffect = itemEffectFactory.create(spec);
 
         assertThat(itemEffect).isEqualTo(damageEffect);
     }
@@ -142,8 +149,7 @@ public class ItemEffectFactoryTest {
 
         when(explosionEffectProvider.get()).thenReturn(explosionEffect);
 
-        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-        ItemEffect itemEffect = factory.create(spec);
+        ItemEffect itemEffect = itemEffectFactory.create(spec);
 
         assertThat(itemEffect).isEqualTo(explosionEffect);
     }
@@ -164,8 +170,7 @@ public class ItemEffectFactoryTest {
 
         when(flashEffectProvider.get()).thenReturn(flashEffect);
 
-        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-        ItemEffect itemEffect = factory.create(spec);
+        ItemEffect itemEffect = itemEffectFactory.create(spec);
 
         assertThat(itemEffect).isEqualTo(flashEffect);
     }
@@ -187,8 +192,7 @@ public class ItemEffectFactoryTest {
 
         when(gunFireSimulationEffectProvider.get()).thenReturn(gunFireSimulationEffect);
 
-        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-        ItemEffect itemEffect = factory.create(spec);
+        ItemEffect itemEffect = itemEffectFactory.create(spec);
 
         ArgumentCaptor<GunFireSimulationProperties> propertiesCaptor = ArgumentCaptor.forClass(GunFireSimulationProperties.class);
         verify(gunFireSimulationEffect).setProperties(propertiesCaptor.capture());
@@ -215,8 +219,7 @@ public class ItemEffectFactoryTest {
 
         when(markSpawnPointEffectProvider.get()).thenReturn(markSpawnPointEffect);
 
-        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-        ItemEffect itemEffect = factory.create(spec);
+        ItemEffect itemEffect = itemEffectFactory.create(spec);
 
         assertThat(itemEffect).isEqualTo(markSpawnPointEffect);
     }
@@ -240,8 +243,7 @@ public class ItemEffectFactoryTest {
 
         when(smokeScreenEffectProvider.get()).thenReturn(smokeScreenEffect);
 
-        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-        ItemEffect itemEffect = factory.create(spec);
+        ItemEffect itemEffect = itemEffectFactory.create(spec);
 
         ArgumentCaptor<SmokeScreenProperties> propertiesCaptor = ArgumentCaptor.forClass(SmokeScreenProperties.class);
         verify(smokeScreenEffect).setProperties(propertiesCaptor.capture());
@@ -271,8 +273,7 @@ public class ItemEffectFactoryTest {
         spec.triggers = Map.of("timed", triggerSpec);
         spec.notificationSounds = "AMBIENT_CAVE-1-1-0";
 
-        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-        ItemEffect itemEffect = factory.create(spec);
+        ItemEffect itemEffect = itemEffectFactory.create(spec);
 
         assertThat(itemEffect).isInstanceOf(SoundNotificationEffect.class);
     }
@@ -282,11 +283,17 @@ public class ItemEffectFactoryTest {
         ExplosionEffectSpec spec = new ExplosionEffectSpec();
         spec.effectType = "EXPLOSION";
 
-        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-
-        assertThatThrownBy(() -> factory.create(spec))
+        assertThatThrownBy(() -> itemEffectFactory.create(spec))
                 .isInstanceOf(ItemEffectCreationException.class)
                 .hasMessage("Cannot create EXPLOSION because of invalid spec: Required 'rangeProfile' value is missing");
+    }
+
+    private HitboxMultiplierSpec createHitboxMultiplierSpec() {
+        HitboxMultiplierSpec spec = new HitboxMultiplierSpec();
+        spec.head = 1.5;
+        spec.body = 1.0;
+        spec.legs = 0.5;
+        return spec;
     }
 
     private ParticleEffectSpec createParticleEffectSpec() {

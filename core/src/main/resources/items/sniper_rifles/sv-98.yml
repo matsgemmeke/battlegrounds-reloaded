@@ -32,7 +32,6 @@ shooting:
     cycle-cooldown: 20
   projectile:
     type: HITSCAN
-    headshot-damage-multiplier: 2.0
     shot-sounds: ENTITY_BLAZE_HURT-8-1-0, ENTITY_GENERIC_EXPLODE-8-1.5-0, ENTITY_GENERIC_EXPLODE-0.5-0.5-0, BLOCK_STONE_BUTTON_CLICK_ON-1-1-14, BLOCK_WOODEN_DOOR_CLOSE-1-2-14
     suppressed-sounds: ENTITY_BLAZE_HURT-6-2-0, ENTITY_GENERIC_EXPLODE-0.5-1.5-0, ENTITY_FIREWORK_BLAST-6-1-0, BLOCK_STONE_BUTTON_CLICK_ON-1-1-14, BLOCK_WOODEN_DOOR_CLOSE-1-2-14
     effect:
@@ -48,6 +47,10 @@ shooting:
         long-range:
           damage: 98.0
           distance: 200.0
+      hitbox-multipliers:
+        head: 2.0
+        body: 1
+        legs: 0.8
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1

@@ -91,9 +91,9 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         }
 
         return switch (hitboxPart) {
-            case HEAD -> properties.hitboxDamageProfile().headshotDamageMultiplier();
-            case BODY -> properties.hitboxDamageProfile().bodyDamageMultiplier();
-            case LEGS -> properties.hitboxDamageProfile().legsDamageMultiplier();
+            case HEAD -> properties.hitboxMultiplierProfile().headshotDamageMultiplier();
+            case BODY -> properties.hitboxMultiplierProfile().bodyDamageMultiplier();
+            case LEGS -> properties.hitboxMultiplierProfile().legsDamageMultiplier();
         };
     }
 }

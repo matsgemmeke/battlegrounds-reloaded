@@ -58,7 +58,6 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.shooting.fireMode.cycleCooldown).isNull();
 
         assertThat(gunSpec.shooting.projectile.type).isEqualTo("HITSCAN");
-        assertThat(gunSpec.shooting.projectile.headshotDamageMultiplier).isEqualTo(1.4);
 
         assertThat(gunSpec.shooting.projectile.effect.effectType).isEqualTo("DAMAGE");
         assertThat(gunSpec.shooting.projectile.effect.triggers).isEmpty();

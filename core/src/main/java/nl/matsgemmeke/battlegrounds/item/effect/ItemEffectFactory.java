@@ -15,6 +15,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.HitboxMultiplierProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
@@ -25,6 +26,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
+import nl.matsgemmeke.battlegrounds.item.mapper.HitboxMultiplierProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
@@ -36,6 +38,7 @@ import java.util.List;
 
 public class ItemEffectFactory {
 
+    private final HitboxMultiplierProfileMapper hitboxMultiplierProfileMapper;
     private final ParticleEffectMapper particleEffectMapper;
     private final Provider<CombustionEffect> combustionEffectProvider;
     private final Provider<DamageEffect> damageEffectProvider;
@@ -49,6 +52,7 @@ public class ItemEffectFactory {
 
     @Inject
     public ItemEffectFactory(
+            HitboxMultiplierProfileMapper hitboxMultiplierProfileMapper,
             ParticleEffectMapper particleEffectMapper,
             Provider<CombustionEffect> combustionEffectProvider,
             Provider<DamageEffect> damageEffectProvider,
@@ -60,6 +64,7 @@ public class ItemEffectFactory {
             RangeProfileMapper rangeProfileMapper,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
+        this.hitboxMultiplierProfileMapper = hitboxMultiplierProfileMapper;
         this.particleEffectMapper = particleEffectMapper;
         this.combustionEffectProvider = combustionEffectProvider;
         this.damageEffectProvider = damageEffectProvider;
@@ -100,13 +105,15 @@ public class ItemEffectFactory {
             }
             case DAMAGE -> {
                 DamageEffectSpec spec = (DamageEffectSpec) itemEffectSpec;
+
+                HitboxMultiplierProfile hitboxMultiplierProfile = hitboxMultiplierProfileMapper.map(spec.hitboxMultipliers);
                 RangeProfile rangeProfile = rangeProfileMapper.map(spec.range);
                 DamageType damageType = DamageType.valueOf(spec.damageType);
 
-//                DamageProperties properties = new DamageProperties(rangeProfile, damageType);
+                DamageProperties properties = new DamageProperties(hitboxMultiplierProfile, rangeProfile, damageType);
 
                 DamageEffect damageEffect = damageEffectProvider.get();
-//                damageEffect.setProperties(properties);
+                damageEffect.setProperties(properties);
                 yield damageEffect;
             }
             case EXPLOSION -> {
