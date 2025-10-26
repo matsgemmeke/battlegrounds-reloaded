@@ -3,9 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
-import nl.matsgemmeke.battlegrounds.configuration.item.effect.CombustionEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.effect.DamageEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.effect.ExplosionEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
@@ -140,18 +138,24 @@ public class ItemEffectFactory {
 //                flashEffect.setProperties(properties);
 //                yield flashEffect;
 //            }
-//            case GUN_FIRE_SIMULATION -> {
-//                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-//                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
-//                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
-//                ActivationPatternSpec activationPatternSpec = this.validateSpecVar(spec.activationPattern, "activationPattern", itemEffectType);
-//
-//                GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, activationPatternSpec.burstInterval, activationPatternSpec.maxBurstDuration, activationPatternSpec.minBurstDuration, activationPatternSpec.maxDelayDuration, activationPatternSpec.minDelayDuration, maxDuration, minDuration);
-//
-//                GunFireSimulationEffect gunFireSimulationEffect = gunFireSimulationEffectProvider.get();
-//                gunFireSimulationEffect.setProperties(properties);
-//                yield gunFireSimulationEffect;
-//            }
+            case GUN_FIRE_SIMULATION -> {
+                GunFireSimulationEffectSpec spec = (GunFireSimulationEffectSpec) itemEffectSpec;
+
+                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
+                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
+                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
+                long burstInterval = this.validateSpecVar(spec.burstInterval, "burstInterval", itemEffectType);
+                long minBurstDuration = this.validateSpecVar(spec.minBurstDuration, "minBurstDuration", itemEffectType);
+                long maxBurstDuration = this.validateSpecVar(spec.maxBurstDuration, "maxBurstDuration", itemEffectType);
+                long minDelayDuration = this.validateSpecVar(spec.minDelayDuration, "minDelayDuration", itemEffectType);
+                long maxDelayDuration = this.validateSpecVar(spec.maxDelayDuration, "maxDelayDuration", itemEffectType);
+
+                GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, burstInterval, minBurstDuration, maxBurstDuration, minDelayDuration, maxDelayDuration, minDuration, maxDuration);
+
+                GunFireSimulationEffect gunFireSimulationEffect = gunFireSimulationEffectProvider.get();
+                gunFireSimulationEffect.setProperties(properties);
+                yield gunFireSimulationEffect;
+            }
 //            case MARK_SPAWN_POINT -> markSpawnPointEffectProvider.get();
 //            case SMOKE_SCREEN -> {
 //                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.CombustionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.DamageEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ExplosionEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.GunFireSimulationEffectSpec;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ public final class PolymorphicTypeRegistry {
         register("effect-type", "COMBUSTION", CombustionEffectSpec.class);
         register("effect-type", "DAMAGE", DamageEffectSpec.class);
         register("effect-type", "EXPLOSION", ExplosionEffectSpec.class);
+        register("effect-type", "GUN_FIRE_SIMULATION", GunFireSimulationEffectSpec.class);
     }
 
     public static void register(String keyName, String valueName, Class<?> targetClass) {
