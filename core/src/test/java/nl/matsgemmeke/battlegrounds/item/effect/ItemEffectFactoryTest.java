@@ -149,27 +149,27 @@ public class ItemEffectFactoryTest {
         assertThat(itemEffect).isEqualTo(explosionEffect);
     }
 
-//    @Test
-//    public void createInstanceForFlashEffectType() {
-//        FlashEffect flashEffect = mock(FlashEffect.class);
-//        PotionEffectSpec potionEffectSpec = this.createPotionEffectSpec();
-//
-//        ItemEffectSpec spec = new ItemEffectSpec();
-//        spec.type = "FLASH";
-//        spec.triggers = Map.of("timed", triggerSpec);
-//        spec.maxSize = 5.0;
-//        spec.power = 2.0f;
-//        spec.damageBlocks = true;
-//        spec.spreadFire = false;
-//        spec.potionEffect = potionEffectSpec;
-//
-//        when(flashEffectProvider.get()).thenReturn(flashEffect);
-//
-//        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-//        ItemEffect itemEffect = factory.create(spec);
-//
-//        assertThat(itemEffect).isEqualTo(flashEffect);
-//    }
+    @Test
+    public void createInstanceForFlashEffectType() {
+        FlashEffect flashEffect = mock(FlashEffect.class);
+        PotionEffectSpec potionEffectSpec = this.createPotionEffectSpec();
+
+        FlashEffectSpec spec = new FlashEffectSpec();
+        spec.effectType = "FLASH";
+        spec.triggers = Map.of("timed", triggerSpec);
+        spec.range = 5.0;
+        spec.power = 2.0f;
+        spec.damageBlocks = true;
+        spec.spreadFire = false;
+        spec.potionEffect = potionEffectSpec;
+
+        when(flashEffectProvider.get()).thenReturn(flashEffect);
+
+        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
+        ItemEffect itemEffect = factory.create(spec);
+
+        assertThat(itemEffect).isEqualTo(flashEffect);
+    }
 
     @Test
     public void makeCreatesInstanceOfGunFireSimulationEffect() {

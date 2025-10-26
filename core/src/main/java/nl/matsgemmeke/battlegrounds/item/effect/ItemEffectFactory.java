@@ -124,20 +124,22 @@ public class ItemEffectFactory {
                 explosionEffect.setProperties(properties);
                 yield explosionEffect;
             }
-//            case FLASH -> {
-//                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
-//                float power = this.validateSpecVar(spec.power, "power", itemEffectType);
-//                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
-//                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
-//                PotionEffectSpec potionEffectSpec = this.validateSpecVar(spec.potionEffect, "potionEffect", itemEffectType);
-//
-//                PotionEffectProperties potionEffect = new PotionEffectProperties(potionEffectSpec.duration, potionEffectSpec.amplifier, potionEffectSpec.ambient, potionEffectSpec.particles, potionEffectSpec.icon);
-//                FlashProperties properties = new FlashProperties(potionEffect, maxSize, power, damageBlocks, spreadFire);
-//
-//                FlashEffect flashEffect = flashEffectProvider.get();
-//                flashEffect.setProperties(properties);
-//                yield flashEffect;
-//            }
+            case FLASH -> {
+                FlashEffectSpec spec = (FlashEffectSpec) itemEffectSpec;
+
+                double range = this.validateSpecVar(spec.range, "range", itemEffectType);
+                float power = this.validateSpecVar(spec.power, "power", itemEffectType);
+                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
+                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
+                PotionEffectSpec potionEffectSpec = this.validateSpecVar(spec.potionEffect, "potionEffect", itemEffectType);
+
+                PotionEffectProperties potionEffect = new PotionEffectProperties(potionEffectSpec.duration, potionEffectSpec.amplifier, potionEffectSpec.ambient, potionEffectSpec.particles, potionEffectSpec.icon);
+                FlashProperties properties = new FlashProperties(potionEffect, range, power, damageBlocks, spreadFire);
+
+                FlashEffect flashEffect = flashEffectProvider.get();
+                flashEffect.setProperties(properties);
+                yield flashEffect;
+            }
             case GUN_FIRE_SIMULATION -> {
                 GunFireSimulationEffectSpec spec = (GunFireSimulationEffectSpec) itemEffectSpec;
 

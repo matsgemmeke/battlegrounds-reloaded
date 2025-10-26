@@ -8,14 +8,19 @@ public class PotionEffectSpec {
     @Required
     @EnumValue(type = PotionEffectType.class)
     public String type;
+
     @Required
     public Integer duration;
+
     @Required
     public Integer amplifier;
+
     @Required
     public Boolean ambient;
+
     @Required
     public Boolean particles;
+
     @Required
     public Boolean icon;
 
