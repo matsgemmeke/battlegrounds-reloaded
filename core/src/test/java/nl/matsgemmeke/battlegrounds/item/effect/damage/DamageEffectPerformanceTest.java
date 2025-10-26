@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -32,10 +33,12 @@ class DamageEffectPerformanceTest {
 
     private static final RangeProfile RANGE_PROFILE = new RangeProfile(30.0, 1.0, 20.0, 2.0, 10.0, 3.0);
     private static final DamageType DAMAGE_TYPE = DamageType.BULLET_DAMAGE;
-    private static final DamageProperties PROPERTIES = new DamageProperties(RANGE_PROFILE, DAMAGE_TYPE);
+    private static final DamageProperties PROPERTIES = new DamageProperties(null, RANGE_PROFILE, DAMAGE_TYPE);
 
     @Mock
     private DamageProcessor damageProcessor;
+    @Mock
+    private HitboxResolver hitboxResolver;
     @Mock
     private TargetFinder targetFinder;
 
@@ -43,7 +46,7 @@ class DamageEffectPerformanceTest {
 
     @BeforeEach
     void setUp() {
-        damageEffectPerformance = new DamageEffectPerformance(damageProcessor, targetFinder, PROPERTIES);
+        damageEffectPerformance = new DamageEffectPerformance(damageProcessor, hitboxResolver, targetFinder, PROPERTIES);
     }
 
     @Test

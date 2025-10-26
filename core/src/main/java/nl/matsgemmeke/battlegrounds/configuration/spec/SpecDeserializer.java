@@ -29,7 +29,7 @@ public class SpecDeserializer {
         SpecPropertyUtils propertyUtils = new SpecPropertyUtils();
         propertyUtils.setSkipMissingProperties(true);
 
-        Constructor constructor = new Constructor(type, new LoaderOptions());
+        Constructor constructor = new SpecConstructor(type, new LoaderOptions());
         constructor.setPropertyUtils(propertyUtils);
 
         DumperOptions dumperOptions = new DumperOptions();

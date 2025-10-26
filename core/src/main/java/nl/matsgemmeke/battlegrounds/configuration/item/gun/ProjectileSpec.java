@@ -1,13 +1,12 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.gun;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ConditionalRequired;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
-import org.bukkit.Material;
 
 import java.util.Map;
 

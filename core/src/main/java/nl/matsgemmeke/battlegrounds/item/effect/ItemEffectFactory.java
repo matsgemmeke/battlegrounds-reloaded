@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.DamageEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -71,108 +73,107 @@ public class ItemEffectFactory {
     }
 
     public ItemEffect create(ItemEffectSpec spec) {
-        ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.type);
+        ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.effectType);
 
         ItemEffect itemEffect = switch (itemEffectType) {
-            case COMBUSTION -> {
-                double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
-                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
-                double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
-                long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
-                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
-                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
-                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
-                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
-                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-
-                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
-                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
-
-                CombustionProperties properties = new CombustionProperties(activationSounds, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
-
-                CombustionEffect combustionEffect = combustionEffectProvider.get();
-                combustionEffect.setProperties(properties);
-                yield combustionEffect;
-            }
+//            case COMBUSTION -> {
+//                double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
+//                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
+//                double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
+//                long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
+//                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
+//                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
+//                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
+//                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
+//                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
+//
+//                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
+//                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
+//
+//                CombustionProperties properties = new CombustionProperties(activationSounds, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
+//
+//                CombustionEffect combustionEffect = combustionEffectProvider.get();
+//                combustionEffect.setProperties(properties);
+//                yield combustionEffect;
+//            }
             case DAMAGE -> {
-                String damageTypeValue = this.validateSpecVar(spec.damageType, "damageType", itemEffectType);
-                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
+                DamageEffectSpec damageEffectSpec = (DamageEffectSpec) spec;
+                RangeProfile rangeProfile = rangeProfileMapper.map(damageEffectSpec.range);
+                DamageType damageType = DamageType.valueOf(damageEffectSpec.damageType);
 
-                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
-                DamageType damageType = DamageType.valueOf(damageTypeValue);
-
-                DamageProperties properties = new DamageProperties(rangeProfile, damageType);
+//                DamageProperties properties = new DamageProperties(rangeProfile, damageType);
 
                 DamageEffect damageEffect = damageEffectProvider.get();
-                damageEffect.setProperties(properties);
+//                damageEffect.setProperties(properties);
                 yield damageEffect;
             }
-            case EXPLOSION -> {
-                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
-                float power = this.validateSpecVar(spec.power, "power", itemEffectType);
-                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
-                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
-
-                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
-                ExplosionProperties properties = new ExplosionProperties(rangeProfile, power, damageBlocks, spreadFire);
-
-                ExplosionEffect explosionEffect = explosionEffectProvider.get();
-                explosionEffect.setProperties(properties);
-                yield explosionEffect;
-            }
-            case FLASH -> {
-                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
-                float power = this.validateSpecVar(spec.power, "power", itemEffectType);
-                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
-                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
-                PotionEffectSpec potionEffectSpec = this.validateSpecVar(spec.potionEffect, "potionEffect", itemEffectType);
-
-                PotionEffectProperties potionEffect = new PotionEffectProperties(potionEffectSpec.duration, potionEffectSpec.amplifier, potionEffectSpec.ambient, potionEffectSpec.particles, potionEffectSpec.icon);
-                FlashProperties properties = new FlashProperties(potionEffect, maxSize, power, damageBlocks, spreadFire);
-
-                FlashEffect flashEffect = flashEffectProvider.get();
-                flashEffect.setProperties(properties);
-                yield flashEffect;
-            }
-            case GUN_FIRE_SIMULATION -> {
-                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
-                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
-                ActivationPatternSpec activationPatternSpec = this.validateSpecVar(spec.activationPattern, "activationPattern", itemEffectType);
-
-                GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, activationPatternSpec.burstInterval, activationPatternSpec.maxBurstDuration, activationPatternSpec.minBurstDuration, activationPatternSpec.maxDelayDuration, activationPatternSpec.minDelayDuration, maxDuration, minDuration);
-
-                GunFireSimulationEffect gunFireSimulationEffect = gunFireSimulationEffectProvider.get();
-                gunFireSimulationEffect.setProperties(properties);
-                yield gunFireSimulationEffect;
-            }
-            case MARK_SPAWN_POINT -> markSpawnPointEffectProvider.get();
-            case SMOKE_SCREEN -> {
-                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
-                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
-                double density = this.validateSpecVar(spec.density, "density", itemEffectType);
-                double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
-                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
-                double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
-                long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
-                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect, "particleEffect", itemEffectType);
-
-                ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
-
-                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
-
-                SmokeScreenEffect smokeScreenEffect = smokeScreenEffectProvider.get();
-                smokeScreenEffect.setProperties(properties);
-                yield smokeScreenEffect;
-            }
-            case SOUND_NOTIFICATION -> {
-                List<GameSound> notificationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-
-                SoundNotificationEffect soundNotificationEffect = new SoundNotificationEffect();
-                soundNotificationEffect.setNotificationSounds(notificationSounds);
-                yield soundNotificationEffect;
-            }
+//            case EXPLOSION -> {
+//                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
+//                float power = this.validateSpecVar(spec.power, "power", itemEffectType);
+//                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
+//                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
+//
+//                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
+//                ExplosionProperties properties = new ExplosionProperties(rangeProfile, power, damageBlocks, spreadFire);
+//
+//                ExplosionEffect explosionEffect = explosionEffectProvider.get();
+//                explosionEffect.setProperties(properties);
+//                yield explosionEffect;
+//            }
+//            case FLASH -> {
+//                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
+//                float power = this.validateSpecVar(spec.power, "power", itemEffectType);
+//                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
+//                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
+//                PotionEffectSpec potionEffectSpec = this.validateSpecVar(spec.potionEffect, "potionEffect", itemEffectType);
+//
+//                PotionEffectProperties potionEffect = new PotionEffectProperties(potionEffectSpec.duration, potionEffectSpec.amplifier, potionEffectSpec.ambient, potionEffectSpec.particles, potionEffectSpec.icon);
+//                FlashProperties properties = new FlashProperties(potionEffect, maxSize, power, damageBlocks, spreadFire);
+//
+//                FlashEffect flashEffect = flashEffectProvider.get();
+//                flashEffect.setProperties(properties);
+//                yield flashEffect;
+//            }
+//            case GUN_FIRE_SIMULATION -> {
+//                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
+//                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
+//                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
+//                ActivationPatternSpec activationPatternSpec = this.validateSpecVar(spec.activationPattern, "activationPattern", itemEffectType);
+//
+//                GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, activationPatternSpec.burstInterval, activationPatternSpec.maxBurstDuration, activationPatternSpec.minBurstDuration, activationPatternSpec.maxDelayDuration, activationPatternSpec.minDelayDuration, maxDuration, minDuration);
+//
+//                GunFireSimulationEffect gunFireSimulationEffect = gunFireSimulationEffectProvider.get();
+//                gunFireSimulationEffect.setProperties(properties);
+//                yield gunFireSimulationEffect;
+//            }
+//            case MARK_SPAWN_POINT -> markSpawnPointEffectProvider.get();
+//            case SMOKE_SCREEN -> {
+//                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
+//                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
+//                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
+//                double density = this.validateSpecVar(spec.density, "density", itemEffectType);
+//                double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
+//                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
+//                double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
+//                long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
+//                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect, "particleEffect", itemEffectType);
+//
+//                ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
+//
+//                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
+//
+//                SmokeScreenEffect smokeScreenEffect = smokeScreenEffectProvider.get();
+//                smokeScreenEffect.setProperties(properties);
+//                yield smokeScreenEffect;
+//            }
+//            case SOUND_NOTIFICATION -> {
+//                List<GameSound> notificationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
+//
+//                SoundNotificationEffect soundNotificationEffect = new SoundNotificationEffect();
+//                soundNotificationEffect.setNotificationSounds(notificationSounds);
+//                yield soundNotificationEffect;
+//            }
+            default -> throw new IllegalStateException("Unexpected value: " + itemEffectType);
         };
 
         for (TriggerSpec triggerSpec : spec.triggers.values()) {

@@ -60,12 +60,7 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.shooting.projectile.type).isEqualTo("HITSCAN");
         assertThat(gunSpec.shooting.projectile.headshotDamageMultiplier).isEqualTo(1.4);
 
-        assertThat(gunSpec.shooting.projectile.effect.range.shortRange.damage).isEqualTo(35.0);
-        assertThat(gunSpec.shooting.projectile.effect.range.shortRange.distance).isEqualTo(20.0);
-        assertThat(gunSpec.shooting.projectile.effect.range.mediumRange.damage).isEqualTo(28.0);
-        assertThat(gunSpec.shooting.projectile.effect.range.mediumRange.distance).isEqualTo(45.0);
-        assertThat(gunSpec.shooting.projectile.effect.range.longRange.damage).isEqualTo(20.0);
-        assertThat(gunSpec.shooting.projectile.effect.range.longRange.distance).isEqualTo(70.0);
+        assertThat(gunSpec.shooting.projectile.effect.effectType).isEqualTo(35.0);
 
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.particle).isEqualTo("REDSTONE");
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.count).isEqualTo(1);
