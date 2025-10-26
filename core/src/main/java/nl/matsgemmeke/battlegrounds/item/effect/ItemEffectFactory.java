@@ -159,25 +159,27 @@ public class ItemEffectFactory {
                 yield gunFireSimulationEffect;
             }
 //            case MARK_SPAWN_POINT -> markSpawnPointEffectProvider.get();
-//            case SMOKE_SCREEN -> {
-//                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-//                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
-//                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
-//                double density = this.validateSpecVar(spec.density, "density", itemEffectType);
-//                double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
-//                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
-//                double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
-//                long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
-//                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect, "particleEffect", itemEffectType);
-//
-//                ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
-//
-//                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
-//
-//                SmokeScreenEffect smokeScreenEffect = smokeScreenEffectProvider.get();
-//                smokeScreenEffect.setProperties(properties);
-//                yield smokeScreenEffect;
-//            }
+            case SMOKE_SCREEN -> {
+                SmokeScreenEffectSpec spec = (SmokeScreenEffectSpec) itemEffectSpec;
+
+                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
+                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
+                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
+                double density = this.validateSpecVar(spec.density, "density", itemEffectType);
+                double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
+                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
+                double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
+                long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
+                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect, "particleEffect", itemEffectType);
+
+                ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
+
+                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
+
+                SmokeScreenEffect smokeScreenEffect = smokeScreenEffectProvider.get();
+                smokeScreenEffect.setProperties(properties);
+                yield smokeScreenEffect;
+            }
             case SOUND_NOTIFICATION -> {
                 SoundNotificationEffectSpec spec = (SoundNotificationEffectSpec) itemEffectSpec;
 

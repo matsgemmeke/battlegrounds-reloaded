@@ -16,6 +16,7 @@ public final class PolymorphicTypeRegistry {
         register("effect-type", "EXPLOSION", ExplosionEffectSpec.class);
         register("effect-type", "FLASH", FlashEffectSpec.class);
         register("effect-type", "GUN_FIRE_SIMULATION", GunFireSimulationEffectSpec.class);
+        register("effect-type", "SMOKE_SCREEN", SmokeScreenEffectSpec.class);
         register("effect-type", "SOUND_NOTIFICATION", SoundNotificationEffectSpec.class);
     }
 

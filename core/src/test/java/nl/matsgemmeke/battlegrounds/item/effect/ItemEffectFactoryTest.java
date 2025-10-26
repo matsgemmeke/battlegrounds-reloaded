@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
-import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
@@ -222,48 +221,48 @@ public class ItemEffectFactoryTest {
 //        assertThat(itemEffect).isEqualTo(markSpawnPointEffect);
 //    }
 
-//    @Test
-//    public void createInstanceForSmokeScreenEffectType() {
-//        SmokeScreenEffect smokeScreenEffect = mock(SmokeScreenEffect.class);
-//        ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec();
-//
-//        ItemEffectSpec spec = new ItemEffectSpec();
-//        spec.type = "SMOKE_SCREEN";
-//        spec.triggers = Map.of("timed", triggerSpec);
-//        spec.minSize = 2.5;
-//        spec.maxSize = 5.0;
-//        spec.density = 5.0;
-//        spec.growth = 0.5;
-//        spec.growthInterval = 5L;
-//        spec.minDuration = 100L;
-//        spec.maxDuration = 200L;
-//        spec.particleEffect = particleEffectSpec;
-//
-//        when(smokeScreenEffectProvider.get()).thenReturn(smokeScreenEffect);
-//
-//        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-//        ItemEffect itemEffect = factory.create(spec);
-//
-//        ArgumentCaptor<SmokeScreenProperties> propertiesCaptor = ArgumentCaptor.forClass(SmokeScreenProperties.class);
-//        verify(smokeScreenEffect).setProperties(propertiesCaptor.capture());
-//
-//        SmokeScreenProperties properties = propertiesCaptor.getValue();
-//        assertThat(properties.minDuration()).isEqualTo(spec.minDuration);
-//        assertThat(properties.maxDuration()).isEqualTo(spec.maxDuration);
-//        assertThat(properties.density()).isEqualTo(spec.density);
-//        assertThat(properties.minSize()).isEqualTo(spec.minSize);
-//        assertThat(properties.maxSize()).isEqualTo(spec.maxSize);
-//        assertThat(properties.growth()).isEqualTo(spec.growth);
-//        assertThat(properties.growthInterval()).isEqualTo(spec.growthInterval);
-//        assertThat(properties.particleEffect().particle()).isEqualTo(Particle.CAMPFIRE_COSY_SMOKE);
-//        assertThat(properties.particleEffect().count()).isEqualTo(particleEffectSpec.count);
-//        assertThat(properties.particleEffect().offsetX()).isEqualTo(particleEffectSpec.offsetX);
-//        assertThat(properties.particleEffect().offsetY()).isEqualTo(particleEffectSpec.offsetY);
-//        assertThat(properties.particleEffect().offsetZ()).isEqualTo(particleEffectSpec.offsetZ);
-//        assertThat(properties.particleEffect().extra()).isEqualTo(particleEffectSpec.extra);
-//
-//        assertThat(itemEffect).isEqualTo(smokeScreenEffect);
-//    }
+    @Test
+    public void createInstanceForSmokeScreenEffectType() {
+        SmokeScreenEffect smokeScreenEffect = mock(SmokeScreenEffect.class);
+        ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec();
+
+        SmokeScreenEffectSpec spec = new SmokeScreenEffectSpec();
+        spec.effectType = "SMOKE_SCREEN";
+        spec.triggers = Map.of("timed", triggerSpec);
+        spec.minSize = 2.5;
+        spec.maxSize = 5.0;
+        spec.density = 5.0;
+        spec.growth = 0.5;
+        spec.growthInterval = 5L;
+        spec.minDuration = 100L;
+        spec.maxDuration = 200L;
+        spec.particleEffect = particleEffectSpec;
+
+        when(smokeScreenEffectProvider.get()).thenReturn(smokeScreenEffect);
+
+        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
+        ItemEffect itemEffect = factory.create(spec);
+
+        ArgumentCaptor<SmokeScreenProperties> propertiesCaptor = ArgumentCaptor.forClass(SmokeScreenProperties.class);
+        verify(smokeScreenEffect).setProperties(propertiesCaptor.capture());
+
+        SmokeScreenProperties properties = propertiesCaptor.getValue();
+        assertThat(properties.minDuration()).isEqualTo(spec.minDuration);
+        assertThat(properties.maxDuration()).isEqualTo(spec.maxDuration);
+        assertThat(properties.density()).isEqualTo(spec.density);
+        assertThat(properties.minSize()).isEqualTo(spec.minSize);
+        assertThat(properties.maxSize()).isEqualTo(spec.maxSize);
+        assertThat(properties.growth()).isEqualTo(spec.growth);
+        assertThat(properties.growthInterval()).isEqualTo(spec.growthInterval);
+        assertThat(properties.particleEffect().particle()).isEqualTo(Particle.CAMPFIRE_COSY_SMOKE);
+        assertThat(properties.particleEffect().count()).isEqualTo(particleEffectSpec.count);
+        assertThat(properties.particleEffect().offsetX()).isEqualTo(particleEffectSpec.offsetX);
+        assertThat(properties.particleEffect().offsetY()).isEqualTo(particleEffectSpec.offsetY);
+        assertThat(properties.particleEffect().offsetZ()).isEqualTo(particleEffectSpec.offsetZ);
+        assertThat(properties.particleEffect().extra()).isEqualTo(particleEffectSpec.extra);
+
+        assertThat(itemEffect).isEqualTo(smokeScreenEffect);
+    }
 
     @Test
     public void makeCreatesInstanceOfSoundNotificationEffect() {
