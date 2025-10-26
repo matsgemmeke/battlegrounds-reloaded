@@ -178,13 +178,15 @@ public class ItemEffectFactory {
 //                smokeScreenEffect.setProperties(properties);
 //                yield smokeScreenEffect;
 //            }
-//            case SOUND_NOTIFICATION -> {
-//                List<GameSound> notificationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-//
-//                SoundNotificationEffect soundNotificationEffect = new SoundNotificationEffect();
-//                soundNotificationEffect.setNotificationSounds(notificationSounds);
-//                yield soundNotificationEffect;
-//            }
+            case SOUND_NOTIFICATION -> {
+                SoundNotificationEffectSpec spec = (SoundNotificationEffectSpec) itemEffectSpec;
+
+                List<GameSound> notificationSounds = DefaultGameSound.parseSounds(spec.notificationSounds);
+
+                SoundNotificationEffect soundNotificationEffect = new SoundNotificationEffect();
+                soundNotificationEffect.setNotificationSounds(notificationSounds);
+                yield soundNotificationEffect;
+            }
             default -> throw new IllegalStateException("Unexpected value: " + itemEffectType);
         };
 

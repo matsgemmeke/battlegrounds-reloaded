@@ -265,18 +265,18 @@ public class ItemEffectFactoryTest {
 //        assertThat(itemEffect).isEqualTo(smokeScreenEffect);
 //    }
 
-//    @Test
-//    public void makeCreatesInstanceOfSoundNotificationEffect() {
-//        ItemEffectSpec spec = new ItemEffectSpec();
-//        spec.type = "SOUND_NOTIFICATION";
-//        spec.triggers = Map.of("timed", triggerSpec);
-//        spec.activationSounds = "AMBIENT_CAVE-1-1-0";
-//
-//        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
-//        ItemEffect itemEffect = factory.create(spec);
-//
-//        assertThat(itemEffect).isInstanceOf(SoundNotificationEffect.class);
-//    }
+    @Test
+    public void makeCreatesInstanceOfSoundNotificationEffect() {
+        SoundNotificationEffectSpec spec = new SoundNotificationEffectSpec();
+        spec.effectType = "SOUND_NOTIFICATION";
+        spec.triggers = Map.of("timed", triggerSpec);
+        spec.notificationSounds = "AMBIENT_CAVE-1-1-0";
+
+        ItemEffectFactory factory = new ItemEffectFactory(particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
+        ItemEffect itemEffect = factory.create(spec);
+
+        assertThat(itemEffect).isInstanceOf(SoundNotificationEffect.class);
+    }
 
     @Test
     public void createThrowsItemEffectCreationExceptionWhenRequiredSpecValueIsNull() {
