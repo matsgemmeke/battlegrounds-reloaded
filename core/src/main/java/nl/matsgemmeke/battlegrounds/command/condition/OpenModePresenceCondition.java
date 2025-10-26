@@ -14,7 +14,7 @@ import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -22,22 +22,13 @@ public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer>
 
     private static final GameKey OPEN_MODE_GAME_KEY = GameKey.ofOpenMode();
 
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
     private final Provider<PlayerRegistry> playerRegistryProvider;
-    @NotNull
     private final Translator translator;
 
     @Inject
-    public OpenModePresenceCondition(
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameScope gameScope,
-            @NotNull Provider<PlayerRegistry> playerRegistryProvider,
-            @NotNull Translator translator
-    ) {
+    public OpenModePresenceCondition(GameContextProvider gameContextProvider, GameScope gameScope, Provider<PlayerRegistry> playerRegistryProvider, Translator translator) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.playerRegistryProvider = playerRegistryProvider;
@@ -45,6 +36,12 @@ public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer>
     }
 
     public void validateCondition(ConditionContext<BukkitCommandIssuer> conditionContext) throws InvalidCommandArgument {
+        Player player = conditionContext.getIssuer().getPlayer();
+
+        if (player == null) {
+            throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath()).getText());
+        }
+
         UUID playerId = conditionContext.getIssuer().getPlayer().getUniqueId();
 
         GameContext gameContext = gameContextProvider.getGameContext(OPEN_MODE_GAME_KEY).orElseThrow(() -> {
