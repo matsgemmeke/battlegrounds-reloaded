@@ -28,7 +28,7 @@ shooting:
     shot-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
     suppressed-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
     effect:
-      type: DAMAGE
+      effect-type: DAMAGE
       damage-type: BULLET_DAMAGE
       range:
         short-range:

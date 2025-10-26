@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.CombustionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.DamageEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
@@ -72,34 +73,36 @@ public class ItemEffectFactory {
         this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
-    public ItemEffect create(ItemEffectSpec spec) {
-        ItemEffectType itemEffectType = ItemEffectType.valueOf(spec.effectType);
+    public ItemEffect create(ItemEffectSpec itemEffectSpec) {
+        ItemEffectType itemEffectType = ItemEffectType.valueOf(itemEffectSpec.effectType);
 
         ItemEffect itemEffect = switch (itemEffectType) {
-//            case COMBUSTION -> {
-//                double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
-//                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
-//                double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
-//                long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
-//                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
-//                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
-//                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
-//                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
-//                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
-//
-//                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
-//                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
-//
-//                CombustionProperties properties = new CombustionProperties(activationSounds, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
-//
-//                CombustionEffect combustionEffect = combustionEffectProvider.get();
-//                combustionEffect.setProperties(properties);
-//                yield combustionEffect;
-//            }
+            case COMBUSTION -> {
+                CombustionEffectSpec spec = (CombustionEffectSpec) itemEffectSpec;
+
+                double minSize = this.validateSpecVar(spec.minSize, "minSize", itemEffectType);
+                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
+                double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
+                long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
+                long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
+                long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
+                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
+                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
+                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
+
+                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
+                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
+
+                CombustionProperties properties = new CombustionProperties(activationSounds, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
+
+                CombustionEffect combustionEffect = combustionEffectProvider.get();
+                combustionEffect.setProperties(properties);
+                yield combustionEffect;
+            }
             case DAMAGE -> {
-                DamageEffectSpec damageEffectSpec = (DamageEffectSpec) spec;
-                RangeProfile rangeProfile = rangeProfileMapper.map(damageEffectSpec.range);
-                DamageType damageType = DamageType.valueOf(damageEffectSpec.damageType);
+                DamageEffectSpec spec = (DamageEffectSpec) itemEffectSpec;
+                RangeProfile rangeProfile = rangeProfileMapper.map(spec.range);
+                DamageType damageType = DamageType.valueOf(spec.damageType);
 
 //                DamageProperties properties = new DamageProperties(rangeProfile, damageType);
 
@@ -176,7 +179,7 @@ public class ItemEffectFactory {
             default -> throw new IllegalStateException("Unexpected value: " + itemEffectType);
         };
 
-        for (TriggerSpec triggerSpec : spec.triggers.values()) {
+        for (TriggerSpec triggerSpec : itemEffectSpec.triggers.values()) {
             TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 
             itemEffect.addTriggerExecutor(triggerExecutor);

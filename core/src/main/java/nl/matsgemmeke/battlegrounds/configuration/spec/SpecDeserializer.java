@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec;
 
-import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -15,8 +14,7 @@ import java.io.InputStream;
 
 public class SpecDeserializer {
 
-    @NotNull
-    public <T> T deserializeSpec(@NotNull File file, @NotNull Class<T> type) {
+    public <T> T deserializeSpec(File file, Class<T> type) {
         InputStream inputStream;
         String path = file.getPath().replace("\\", "/");
 

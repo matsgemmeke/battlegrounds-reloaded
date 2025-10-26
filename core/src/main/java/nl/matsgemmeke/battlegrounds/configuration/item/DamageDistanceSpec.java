@@ -6,6 +6,7 @@ public class DamageDistanceSpec {
 
     @Required
     public Double damage;
+
     @Required
     public Double distance;
 }

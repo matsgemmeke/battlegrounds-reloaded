@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.CombustionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.DamageEffectSpec;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ public final class PolymorphicTypeRegistry {
     private static final Map<String, Map<String, Class<?>>> rules = new HashMap<>();
 
     static {
+        register("effect-type", "COMBUSTION", CombustionEffectSpec.class);
         register("effect-type", "DAMAGE", DamageEffectSpec.class);
     }
 
