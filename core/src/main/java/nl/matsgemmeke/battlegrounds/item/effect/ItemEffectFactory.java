@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.CombustionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.DamageEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.ExplosionEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
@@ -110,19 +111,21 @@ public class ItemEffectFactory {
 //                damageEffect.setProperties(properties);
                 yield damageEffect;
             }
-//            case EXPLOSION -> {
-//                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
-//                float power = this.validateSpecVar(spec.power, "power", itemEffectType);
-//                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
-//                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
-//
-//                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
-//                ExplosionProperties properties = new ExplosionProperties(rangeProfile, power, damageBlocks, spreadFire);
-//
-//                ExplosionEffect explosionEffect = explosionEffectProvider.get();
-//                explosionEffect.setProperties(properties);
-//                yield explosionEffect;
-//            }
+            case EXPLOSION -> {
+                ExplosionEffectSpec spec = (ExplosionEffectSpec) itemEffectSpec;
+
+                RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
+                float power = this.validateSpecVar(spec.power, "power", itemEffectType);
+                boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
+                boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
+
+                RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
+                ExplosionProperties properties = new ExplosionProperties(rangeProfile, power, damageBlocks, spreadFire);
+
+                ExplosionEffect explosionEffect = explosionEffectProvider.get();
+                explosionEffect.setProperties(properties);
+                yield explosionEffect;
+            }
 //            case FLASH -> {
 //                double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
 //                float power = this.validateSpecVar(spec.power, "power", itemEffectType);
