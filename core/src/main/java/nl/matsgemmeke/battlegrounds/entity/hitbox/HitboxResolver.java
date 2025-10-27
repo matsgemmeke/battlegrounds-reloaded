@@ -7,19 +7,26 @@ import org.bukkit.entity.EntityType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class HitboxResolver {
 
-    private static final Map<EntityType, Hitbox> hitboxes = new HashMap<>();
+    private static final Map<EntityType, Function<Entity, Hitbox>> hitboxes = new HashMap<>();
 
     static {
-        hitboxes.put(EntityType.PLAYER, new HumanoidHitbox());
+        hitboxes.put(EntityType.PLAYER, HumanoidHitbox::new);
     }
 
     public Optional<HitboxPart> resolveHitboxPart(Entity entity, Location hitLocation) {
-        Hitbox hitbox = hitboxes.get(entity.getType());
+        var function = hitboxes.get(entity.getType());
 
-        if (hitbox == null || !hitbox.intersects(hitLocation)) {
+        if (function == null) {
+            return Optional.empty();
+        }
+
+        Hitbox hitbox = function.apply(entity);
+
+        if (!hitbox.intersects(hitLocation)) {
             return Optional.empty();
         }
 
