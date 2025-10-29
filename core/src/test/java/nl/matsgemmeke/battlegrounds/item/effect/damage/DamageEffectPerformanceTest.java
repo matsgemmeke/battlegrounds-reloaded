@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -38,15 +37,13 @@ class DamageEffectPerformanceTest {
     @Mock
     private DamageProcessor damageProcessor;
     @Mock
-    private HitboxResolver hitboxResolver;
-    @Mock
     private TargetFinder targetFinder;
 
     private DamageEffectPerformance damageEffectPerformance;
 
     @BeforeEach
     void setUp() {
-        damageEffectPerformance = new DamageEffectPerformance(damageProcessor, hitboxResolver, targetFinder, PROPERTIES);
+        damageEffectPerformance = new DamageEffectPerformance(damageProcessor, targetFinder, PROPERTIES);
     }
 
     @Test

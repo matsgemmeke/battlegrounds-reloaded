@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.TargetType;
@@ -21,17 +23,14 @@ import java.util.*;
 
 public class OpenModeTargetFinder implements TargetFinder {
 
-    @NotNull
     private final DeploymentInfoProvider deploymentInfoProvider;
-    @NotNull
+    private final HitboxResolver hitboxResolver;
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public OpenModeTargetFinder(
-            @NotNull DeploymentInfoProvider deploymentInfoProvider,
-            @NotNull PlayerRegistry playerRegistry
-    ) {
+    public OpenModeTargetFinder(DeploymentInfoProvider deploymentInfoProvider, HitboxResolver hitboxResolver, PlayerRegistry playerRegistry) {
         this.deploymentInfoProvider = deploymentInfoProvider;
+        this.hitboxResolver = hitboxResolver;
         this.playerRegistry = playerRegistry;
     }
 
@@ -71,8 +70,12 @@ public class OpenModeTargetFinder implements TargetFinder {
                 continue;
             }
 
-            if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity) {
-                targets.add(new OpenModeEntity((LivingEntity) entity));
+            if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
+                // TODO handle optional
+                Hitbox hitbox = hitboxResolver.resolveHitbox(entity).orElse(null);
+                GameEntity target = new OpenModeEntity(livingEntity, hitbox);
+
+                targets.add(target);
             }
         }
 
@@ -125,8 +128,12 @@ public class OpenModeTargetFinder implements TargetFinder {
                 continue;
             }
 
-            if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity) {
-                targets.add(new OpenModeEntity((LivingEntity) entity));
+            if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
+                // TODO handle optional
+                Hitbox hitbox = hitboxResolver.resolveHitbox(entity).orElse(null);
+                GameEntity target = new OpenModeEntity(livingEntity, hitbox);
+
+                targets.add(target);
             }
         }
 

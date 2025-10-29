@@ -3,12 +3,13 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.PlayerHitbox;
 import nl.matsgemmeke.battlegrounds.game.EntityContainer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -64,12 +65,13 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         playerContainer.removeEntity(playerUuid);
     }
 
-    @NotNull
-    public GamePlayer registerEntity(@NotNull Player player) {
+    public GamePlayer registerEntity(Player player) {
+        Hitbox hitbox = new PlayerHitbox(player);
+
         UUID playerId = player.getUniqueId();
         gameContextProvider.registerEntity(playerId, gameKey);
 
-        GamePlayer gamePlayer = gamePlayerFactory.create(player);
+        GamePlayer gamePlayer = gamePlayerFactory.create(player, hitbox);
         playerContainer.addEntity(gamePlayer);
 
         return gamePlayer;

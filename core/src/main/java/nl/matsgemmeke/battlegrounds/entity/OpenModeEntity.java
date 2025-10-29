@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.Location;
@@ -12,13 +13,14 @@ import java.util.UUID;
 
 public class OpenModeEntity implements GameEntity {
 
+    private final Hitbox hitbox;
+    private final LivingEntity entity;
     @Nullable
     private Damage lastDamage;
-    @NotNull
-    private final LivingEntity entity;
 
-    public OpenModeEntity(@NotNull LivingEntity entity) {
+    public OpenModeEntity(LivingEntity entity, Hitbox hitbox) {
         this.entity = entity;
+        this.hitbox = hitbox;
     }
 
     @NotNull
@@ -32,6 +34,11 @@ public class OpenModeEntity implements GameEntity {
 
     public void setHealth(double health) {
         entity.setHealth(health);
+    }
+
+    @Override
+    public Hitbox getHitbox() {
+        return hitbox;
     }
 
     @Nullable

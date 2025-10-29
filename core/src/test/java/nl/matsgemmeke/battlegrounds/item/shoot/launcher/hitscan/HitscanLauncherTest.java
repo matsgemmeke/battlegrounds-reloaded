@@ -112,7 +112,7 @@ class HitscanLauncherTest {
 
         ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
         assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
-        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
         assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
 
         verify(audioEmitter).playSound(gameSound, direction);
@@ -155,7 +155,7 @@ class HitscanLauncherTest {
 
         ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
         assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
-        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
         assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
 
         verify(audioEmitter).playSound(gameSound, direction);

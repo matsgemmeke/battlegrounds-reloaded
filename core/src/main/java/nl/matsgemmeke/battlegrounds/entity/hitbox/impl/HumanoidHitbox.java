@@ -1,8 +1,13 @@
-package nl.matsgemmeke.battlegrounds.entity.hitbox;
+package nl.matsgemmeke.battlegrounds.entity.hitbox.impl;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxPart;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+
+import java.util.Optional;
 
 public class HumanoidHitbox implements Hitbox {
 
@@ -13,10 +18,21 @@ public class HumanoidHitbox implements Hitbox {
     private static final double WIDTH_ADULT = 0.6;
     private static final double WIDTH_BABY = 0.6;
 
-    private final Entity entity;
+    private final LivingEntity entity;
 
-    public HumanoidHitbox(Entity entity) {
+    public HumanoidHitbox(LivingEntity entity) {
         this.entity = entity;
+    }
+
+    @Override
+    public Optional<HitboxPart> getHitPart(Location location) {
+        Location entityLocation = entity.getLocation();
+
+        if (entityLocation.getWorld() != location.getWorld()) {
+            return Optional.empty();
+        }
+
+        return Optional.empty();
     }
 
     @Override

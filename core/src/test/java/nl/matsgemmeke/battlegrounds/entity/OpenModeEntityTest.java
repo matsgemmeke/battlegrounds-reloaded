@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.LivingEntity;
@@ -19,16 +20,18 @@ import static org.mockito.Mockito.*;
 
 public class OpenModeEntityTest {
 
+    private Hitbox hitbox;
     private LivingEntity entity;
 
     @BeforeEach
     public void setUp() {
+        hitbox = mock(Hitbox.class);
         this.entity = mock(LivingEntity.class);
     }
 
     @Test
     public void getLastDamageReturnsNullIfEntityHasNotTakenDamage() {
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
         Damage lastDamage = openModeEntity.getLastDamage();
 
         assertNull(lastDamage);
@@ -41,7 +44,7 @@ public class OpenModeEntityTest {
         when(entity.getHealth()).thenReturn(20.0);
         when(entity.isDead()).thenReturn(false);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
         openModeEntity.damage(damage);
         Damage lastDamage = openModeEntity.getLastDamage();
 
@@ -68,7 +71,7 @@ public class OpenModeEntityTest {
 
         Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
         double damageDealt = openModeEntity.damage(damage);
 
         assertEquals(expectedDamageDealt, damageDealt);
@@ -82,7 +85,7 @@ public class OpenModeEntityTest {
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
         double damageDealt = openModeEntity.damage(damage);
 
         assertEquals(0.0, damageDealt);
@@ -96,7 +99,7 @@ public class OpenModeEntityTest {
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
         double damageDealt = openModeEntity.damage(damage);
 
         assertEquals(0.0, damageDealt);

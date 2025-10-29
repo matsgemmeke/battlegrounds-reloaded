@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.bukkit.entity.Player;
@@ -36,7 +37,7 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
@@ -53,7 +54,7 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
@@ -70,7 +71,7 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
@@ -86,7 +87,7 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
@@ -102,7 +103,7 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
@@ -121,7 +122,7 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
@@ -140,7 +141,7 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         playerRegistry.registerEntity(player);
@@ -159,7 +160,7 @@ public class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
 
         DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
         GamePlayer createdGamePlayer = playerRegistry.registerEntity(player);

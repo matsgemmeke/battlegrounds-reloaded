@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.effect.damage;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxPart;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -24,13 +24,11 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
     private final DamageProcessor damageProcessor;
     private final DamageProperties properties;
-    private final HitboxResolver hitboxResolver;
     private final TargetFinder targetFinder;
 
     @Inject
-    public DamageEffectPerformance(DamageProcessor damageProcessor, HitboxResolver hitboxResolver, TargetFinder targetFinder, @Assisted DamageProperties properties) {
+    public DamageEffectPerformance(DamageProcessor damageProcessor, TargetFinder targetFinder, @Assisted DamageProperties properties) {
         this.damageProcessor = damageProcessor;
-        this.hitboxResolver = hitboxResolver;
         this.targetFinder = targetFinder;
         this.properties = properties;
     }
@@ -45,28 +43,26 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
     public void perform(ItemEffectContext context) {
         Entity entity = context.getEntity();
         UUID entityId = entity.getUniqueId();
-        Location initiationLocation = context.getInitiationLocation();
         Location sourceLocation = context.getSource().getLocation();
 
         for (GameEntity target : targetFinder.findEnemyTargets(entityId, sourceLocation, ENTITY_FINDING_RANGE)) {
-            Entity targetEntity = target.getEntity();
-            Location targetLocation = targetEntity.getLocation();
+            Location targetLocation = target.getLocation();
 
-            Damage damage = this.createDamage(targetEntity, initiationLocation, targetLocation);
+            Damage damage = this.createDamage(target, sourceLocation, targetLocation);
             target.damage(damage);
         }
 
         for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(entityId, sourceLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {
             Location objectLocation = deploymentObject.getLocation();
 
-            Damage damage = this.createDamage(initiationLocation, objectLocation);
+            Damage damage = this.createDamage(sourceLocation, objectLocation);
             damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
         }
     }
 
-    private Damage createDamage(Entity entity, Location initiationLocation, Location targetLocation) {
-        double damageMultiplier = this.getHitboxDamageMultiplier(entity, initiationLocation);
-        double distance = initiationLocation.distance(targetLocation);
+    private Damage createDamage(GameEntity target, Location sourceLocation, Location targetLocation) {
+        double damageMultiplier = this.getHitboxDamageMultiplier(target, sourceLocation);
+        double distance = sourceLocation.distance(targetLocation);
         double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
         double totalDamageAmount = distanceDamageAmount * damageMultiplier;
 
@@ -83,8 +79,9 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         return new Damage(damageAmount, damageType);
     }
 
-    private double getHitboxDamageMultiplier(Entity entity, Location hitLocation) {
-        HitboxPart hitboxPart = hitboxResolver.resolveHitboxPart(entity, hitLocation).orElse(null);
+    private double getHitboxDamageMultiplier(GameEntity target, Location hitLocation) {
+        Hitbox hitbox = target.getHitbox();
+        HitboxPart hitboxPart = hitbox.getHitPart(hitLocation).orElse(null);
 
         if (hitboxPart == null) {
             return 0;

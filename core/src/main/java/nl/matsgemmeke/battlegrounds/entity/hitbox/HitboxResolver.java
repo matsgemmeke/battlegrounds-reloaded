@@ -1,35 +1,32 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
-import org.bukkit.Location;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.HumanoidHitbox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Zombie;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 public class HitboxResolver {
 
-    private static final Map<EntityType, Function<Entity, Hitbox>> hitboxes = new HashMap<>();
+    private static final Map<EntityType, HitboxFactory<? extends Entity>> hitboxFactories = new HashMap<>();
 
     static {
-        hitboxes.put(EntityType.PLAYER, HumanoidHitbox::new);
+        hitboxFactories.put(EntityType.ZOMBIE, entity -> new HumanoidHitbox((Zombie) entity));
     }
 
-    public Optional<HitboxPart> resolveHitboxPart(Entity entity, Location hitLocation) {
-        var function = hitboxes.get(entity.getType());
+    @SuppressWarnings("unchecked")
+    public Optional<Hitbox> resolveHitbox(Entity entity) {
+        var hitboxFactory = hitboxFactories.get(entity.getType());
 
-        if (function == null) {
+        if (hitboxFactory == null) {
             return Optional.empty();
         }
 
-        Hitbox hitbox = function.apply(entity);
+        HitboxFactory<Entity> factory = (HitboxFactory<Entity>) hitboxFactory;
 
-        if (!hitbox.intersects(hitLocation)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(HitboxPart.BODY);
+        return Optional.of(factory.create(entity));
     }
 }

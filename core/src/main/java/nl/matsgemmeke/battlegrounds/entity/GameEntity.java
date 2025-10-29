@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.damage.Damageable;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,6 +19,13 @@ public interface GameEntity extends Damageable, Identifiable {
      */
     @NotNull
     LivingEntity getEntity();
+
+    /**
+     * Gets the hitbox of the entity.
+     *
+     * @return the entity hitbox
+     */
+    Hitbox getHitbox();
 
     /**
      * Gets the location of the entity.

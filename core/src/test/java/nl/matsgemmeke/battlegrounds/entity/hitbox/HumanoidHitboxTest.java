@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.HumanoidHitbox;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class HumanoidHitboxTest {
         Location entityLocation = new Location(mock(World.class), 10.0, 10.0, 10.0);
         Location location = new Location(mock(World.class), 10.0, 11.0, 10.0);
 
-        Entity entity = mock(Player.class);
+        LivingEntity entity = mock(Player.class);
         when(entity.getLocation()).thenReturn(entityLocation);
 
         HumanoidHitbox humanoidHitbox = new HumanoidHitbox(entity);
@@ -38,7 +39,7 @@ class HumanoidHitboxTest {
         Location entityLocation = new Location(world, 10.0, 10.0, 10.0);
         Location location = new Location(world, 11.0, 11.0, 11.0);
 
-        Entity entity = mock(Player.class);
+        LivingEntity entity = mock(Player.class);
         when(entity.getLocation()).thenReturn(entityLocation);
 
         HumanoidHitbox humanoidHitbox = new HumanoidHitbox(entity);
