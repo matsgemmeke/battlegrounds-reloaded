@@ -1,8 +1,10 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.HumanoidHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.PlayerHitbox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 
 import java.util.HashMap;
@@ -14,6 +16,7 @@ public class HitboxResolver {
     private static final Map<EntityType, HitboxFactory<? extends Entity>> hitboxFactories = new HashMap<>();
 
     static {
+        hitboxFactories.put(EntityType.PLAYER, entity -> new PlayerHitbox((Player) entity));
         hitboxFactories.put(EntityType.ZOMBIE, entity -> new HumanoidHitbox((Zombie) entity));
     }
 

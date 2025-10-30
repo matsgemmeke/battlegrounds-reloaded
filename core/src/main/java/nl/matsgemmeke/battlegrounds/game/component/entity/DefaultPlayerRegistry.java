@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.PlayerHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.EntityContainer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -17,20 +17,18 @@ import java.util.UUID;
 
 public class DefaultPlayerRegistry implements PlayerRegistry {
 
-    @NotNull
     private final DefaultGamePlayerFactory gamePlayerFactory;
-    @NotNull
     private final EntityContainer<GamePlayer> playerContainer;
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameKey gameKey;
+    private final HitboxResolver hitboxResolver;
 
     @Inject
-    public DefaultPlayerRegistry(@NotNull DefaultGamePlayerFactory gamePlayerFactory, @NotNull GameContextProvider gameContextProvider, @NotNull GameKey gameKey) {
+    public DefaultPlayerRegistry(DefaultGamePlayerFactory gamePlayerFactory, GameContextProvider gameContextProvider, GameKey gameKey, HitboxResolver hitboxResolver) {
         this.gamePlayerFactory = gamePlayerFactory;
         this.gameContextProvider = gameContextProvider;
         this.gameKey = gameKey;
+        this.hitboxResolver = hitboxResolver;
         this.playerContainer = new EntityContainer<>();
     }
 
@@ -66,7 +64,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     }
 
     public GamePlayer registerEntity(Player player) {
-        Hitbox hitbox = new PlayerHitbox(player);
+        Hitbox hitbox = hitboxResolver.resolveHitbox(player).orElse(null);
 
         UUID playerId = player.getUniqueId();
         gameContextProvider.registerEntity(playerId, gameKey);
