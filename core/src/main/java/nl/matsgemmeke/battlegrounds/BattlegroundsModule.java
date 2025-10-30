@@ -9,6 +9,8 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfigurationProvider;
+import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
@@ -134,6 +136,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(EquipmentStateRepository.class).toProvider(SqliteEquipmentStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
+        binder.bind(HitboxConfiguration.class).toProvider(HitboxConfigurationProvider.class).in(Singleton.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(Singleton.class);
 

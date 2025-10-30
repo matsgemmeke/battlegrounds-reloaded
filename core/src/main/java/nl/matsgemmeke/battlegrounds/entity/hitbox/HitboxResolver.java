@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.HumanoidHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.PlayerHitbox;
 import org.bukkit.entity.Entity;
@@ -18,6 +20,13 @@ public class HitboxResolver {
     static {
         hitboxFactories.put(EntityType.PLAYER, entity -> new PlayerHitbox((Player) entity));
         hitboxFactories.put(EntityType.ZOMBIE, entity -> new HumanoidHitbox((Zombie) entity));
+    }
+
+    private final HitboxConfiguration hitboxConfiguration;
+
+    @Inject
+    public HitboxResolver(HitboxConfiguration hitboxConfiguration) {
+        this.hitboxConfiguration = hitboxConfiguration;
     }
 
     @SuppressWarnings("unchecked")

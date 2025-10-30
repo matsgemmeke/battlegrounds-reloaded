@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 public abstract class BasePluginConfiguration implements PluginConfiguration {
 
@@ -64,6 +65,14 @@ public abstract class BasePluginConfiguration implements PluginConfiguration {
 
     public int getInteger(@NotNull String path, int def) {
         return document.getInt(path, def);
+    }
+
+    public Optional<Double> getOptionalDouble(String route) {
+        return document.getOptionalDouble(route);
+    }
+
+    public Optional<Section> getOptionalSection(String route) {
+        return document.getOptionalSection(route);
     }
 
     @NotNull
