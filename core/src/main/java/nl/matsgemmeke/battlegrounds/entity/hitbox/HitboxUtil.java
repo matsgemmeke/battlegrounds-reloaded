@@ -23,14 +23,18 @@ public final class HitboxUtil {
     }
 
     private static boolean intersectsHitboxComponent(Location location, Location boxLocation, HitboxComponent component) {
+        double height = component.height();
         double halfWidth = component.width() / 2;
+        double offsetX = component.offsetX();
+        double offsetY = component.offsetY();
+        double offsetZ = component.offsetZ();
 
-        double minX = boxLocation.getX() - halfWidth;
-        double maxX = boxLocation.getX() + halfWidth;
-        double minY = boxLocation.getY();
-        double maxY = boxLocation.getY() + component.height();
-        double minZ = boxLocation.getZ() - halfWidth;
-        double maxZ = boxLocation.getZ() + halfWidth;
+        double minX = boxLocation.getX() - halfWidth + offsetX;
+        double maxX = boxLocation.getX() + halfWidth + offsetX;
+        double minY = boxLocation.getY() + offsetY;
+        double maxY = boxLocation.getY() + height + offsetY;
+        double minZ = boxLocation.getZ() - halfWidth + offsetZ;
+        double maxZ = boxLocation.getZ() + halfWidth + offsetZ;
 
         double locX = location.getX();
         double locY = location.getY();

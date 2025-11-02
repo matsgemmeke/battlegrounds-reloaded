@@ -1,8 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.impl;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxPart;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxUtil;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.LivingEntity;
@@ -11,13 +10,6 @@ import java.util.Optional;
 
 public class HumanoidHitbox implements Hitbox {
 
-    private static final double BODY_HEIGHT_ADULT = 1.4;
-    private static final double BODY_HEIGHT_BABY = 0.6;
-    private static final double HEAD_HEIGHT_ADULT = 1.8;
-    private static final double HEAD_HEIGHT_BABY = 1;
-    private static final double WIDTH_ADULT = 0.6;
-    private static final double WIDTH_BABY = 0.6;
-
     private final LivingEntity entity;
 
     public HumanoidHitbox(LivingEntity entity) {
@@ -25,10 +17,10 @@ public class HumanoidHitbox implements Hitbox {
     }
 
     @Override
-    public Optional<HitboxPart> getHitPart(Location location) {
-        Location entityLocation = entity.getLocation();
+    public Optional<HitboxComponentType> getHitboxComponentType(Location location) {
+        Location playerLocation = entity.getLocation();
 
-        if (entityLocation.getWorld() != location.getWorld()) {
+        if (playerLocation.getWorld() != location.getWorld()) {
             return Optional.empty();
         }
 
@@ -44,9 +36,11 @@ public class HumanoidHitbox implements Hitbox {
         }
 
         if (entity instanceof Ageable && !((Ageable) entity).isAdult()) {
-            return HitboxUtil.intersectsBox(location, entityLocation, HEAD_HEIGHT_BABY, WIDTH_BABY);
+//            return HitboxUtil.intersectsBox(location, entityLocation, HEAD_HEIGHT_BABY, WIDTH_BABY);
         } else {
-            return HitboxUtil.intersectsBox(location, entityLocation, HEAD_HEIGHT_ADULT, WIDTH_ADULT);
+//            return HitboxUtil.intersectsBox(location, entityLocation, HEAD_HEIGHT_ADULT, WIDTH_ADULT);
         }
+
+        return false;
     }
 }
