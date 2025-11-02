@@ -2,46 +2,67 @@ package nl.matsgemmeke.battlegrounds.configuration.hitbox;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BasePluginConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxComponentDefinition;
+import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
+import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
+import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Optional;
+import java.util.*;
 
 public class HitboxConfiguration extends BasePluginConfiguration {
 
     private static final boolean READ_ONLY = true;
     private static final String HITBOX_SECTION_ROOT = "hitbox";
 
+    private static final String HITBOX_COMPONENT_TYPE_FALLBACK = "TORSO";
+    private static final List<Double> HITBOX_COMPONENT_SIZE_FALLBACK = Collections.emptyList();
+    private static final List<Double> HITBOX_COMPONENT_OFFSET_FALLBACK = Collections.emptyList();
+
     public HitboxConfiguration(File file, InputStream resource) {
         super(file, resource, READ_ONLY);
     }
 
-    public Optional<VerticalHitbox> getVerticalHitbox(String entity, String position) {
-        String sectionRoute = this.createSectionRoute(entity, position);
+    public Optional<HitboxDefinition> getHitboxDefinition(String entityType, String position) {
+        String sectionRoute = this.createSectionRoute(entityType, position);
         Section section = this.getOptionalSection(sectionRoute).orElse(null);
 
         if (section == null) {
             return Optional.empty();
         }
 
-        String bodyHeightRoute = this.createPropertyRoute(entity, position, "height-body");
-        String headHeightRoute = this.createPropertyRoute(entity, position, "height-head");
-        String legsHeightRoute = this.createPropertyRoute(entity, position, "height-legs");
-        String widthRoute = this.createPropertyRoute(entity, position, "width");
+        List<HitboxComponentDefinition> componentDefinitions = new ArrayList<>();
+        Map<String, Object> hitboxDefinitions = section.getStringRouteMappedValues(false);
 
-        Double bodyHeight = this.getOptionalDouble(bodyHeightRoute).orElse(0.0);
-        Double headHeight = this.getOptionalDouble(headHeightRoute).orElse(0.0);
-        Double legsHeight = this.getOptionalDouble(legsHeightRoute).orElse(0.0);
-        Double width = this.getOptionalDouble(widthRoute).orElse(0.0);
+        for (Object hitboxDefinition : hitboxDefinitions.values()) {
+            Section hitboxDefinitionSection = (Section) hitboxDefinition;
 
-        return Optional.of(new VerticalHitbox(bodyHeight, headHeight, legsHeight, width));
+            String type = hitboxDefinitionSection.getOptionalString("type").orElse(HITBOX_COMPONENT_TYPE_FALLBACK);
+            Double[] size = hitboxDefinitionSection.getOptionalDoubleList("size").orElse(HITBOX_COMPONENT_SIZE_FALLBACK).toArray(Double[]::new);
+            Double[] offset = hitboxDefinitionSection.getOptionalDoubleList("offset").orElse(HITBOX_COMPONENT_OFFSET_FALLBACK).toArray(Double[]::new);
+
+            HitboxComponentDefinition componentDefinition = new HitboxComponentDefinition();
+            componentDefinition.type = type;
+            componentDefinition.size = size;
+            componentDefinition.offset = offset;
+
+            try {
+                ObjectValidator.validate(componentDefinition);
+            } catch (ValidationException e) {
+                throw new InvalidHitboxDefinitionException("Validation failed for the hitbox definition for %s for the position %s: %s".formatted(entityType, position, e.getMessage()));
+            }
+
+            componentDefinitions.add(componentDefinition);
+        }
+
+        HitboxDefinition hitboxDefinition = new HitboxDefinition();
+        hitboxDefinition.components = componentDefinitions;
+
+        return Optional.of(hitboxDefinition);
     }
 
-    private String createSectionRoute(String entity, String position) {
-        return HITBOX_SECTION_ROOT + "-" + entity + "." + position;
-    }
-
-    private String createPropertyRoute(String entity, String position, String property) {
-        return HITBOX_SECTION_ROOT + "-" + entity + "." + position + "." + property;
+    private String createSectionRoute(String entityType, String position) {
+        return HITBOX_SECTION_ROOT + "-" + entityType + "." + position;
     }
 }

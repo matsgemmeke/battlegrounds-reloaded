@@ -35,6 +35,6 @@ class HitboxConfigurationProviderTest {
         HitboxConfiguration configuration = provider.get();
         configuration.load();
 
-        assertThat(configuration.getVerticalHitbox("player", "upright")).isNotEmpty();
+        assertThat(configuration.getHitboxDefinition("player", "standing")).isNotEmpty();
     }
 }

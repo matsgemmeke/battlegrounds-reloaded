@@ -1,17 +1,15 @@
 # Player hitbox configuration
 hitbox-player:
-  upright:
-    height-body: 1.4
-    height-head: 1.8
-    height-legs: 0.7
-    width: 0.6
-  sneaking:
-    height-body: 1.4
-    height-head: 1.8
-    height-legs: 0.7
-    width: 0.6
-  sleeping:
-    height: 0.2
-    width-body: 1.4
-    width-head: 1.8
-    width-legs: 0.7
+  standing:
+    head:
+      type: HEAD
+      size: [0.4, 0.4, 0.4]
+      offset: [0.0, 1.4, 0.0]
+    torso:
+      type: TORSO
+      size: [0.7, 0.4, 0.2]
+      offset: [0.0, 0.7, 0.0]
+    legs:
+      type: LIMBS
+      size: [0.7, 0.4, 0.2]
+      offset: [0.0, 0.0, 0.0]

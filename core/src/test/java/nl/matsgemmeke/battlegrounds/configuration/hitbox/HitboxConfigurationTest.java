@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.hitbox;
 
+import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,7 @@ import java.io.*;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
 class HitboxConfigurationTest {
@@ -26,31 +28,53 @@ class HitboxConfigurationTest {
     }
 
     @Test
-    void getVerticalHitboxReturnsEmptyOptionalWhenPlayerUprightSectionIsMissing() throws FileNotFoundException {
-        File resourceFile = new File("src/test/resources/hitbox-configuration/hitboxes.yml");
+    void getHitboxDefinitionReturnsEmptyOptionalWhenGivenSectionIsMissing() throws FileNotFoundException {
+        File resourceFile = new File("src/test/resources/hitbox-configuration/empty-hitboxes-file/hitboxes.yml");
         InputStream resource = new FileInputStream(resourceFile);
 
         HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(hitboxesFile, resource);
         hitboxConfiguration.load();
-        Optional<VerticalHitbox> playerUprightHitbox = hitboxConfiguration.getVerticalHitbox("player", "upright");
+        Optional<HitboxDefinition> hitboxDefinitionOptional = hitboxConfiguration.getHitboxDefinition("player", "standing");
 
-        assertThat(playerUprightHitbox).isEmpty();
+        assertThat(hitboxDefinitionOptional).isEmpty();
     }
 
     @Test
-    void getVerticalHitboxReturnsOptionalWithPlayerUprightHitboxWithValuesFromFile() throws FileNotFoundException {
+    void getHitboxDefinitionThrowsInvalidHitboxDefinitionExceptionWhenHitboxDefinitionForGivenEntityTypeAndPositionFailsValidation() throws FileNotFoundException {
+        File resourceFile = new File("src/test/resources/hitbox-configuration/invalid-hitboxes-file/hitboxes.yml");
+        InputStream resource = new FileInputStream(resourceFile);
+
+        HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(hitboxesFile, resource);
+        hitboxConfiguration.load();
+
+        assertThatThrownBy(() -> hitboxConfiguration.getHitboxDefinition("player", "standing"))
+                .isInstanceOf(InvalidHitboxDefinitionException.class)
+                .hasMessage("Validation failed for the hitbox definition for player for the position standing: Invalid HitboxComponentType value 'fail' for field 'type'");
+    }
+
+    @Test
+    void getHitboxDefinitionReturnsOptionalWithHitboxDefinitionContaingValuesFromFile() throws FileNotFoundException {
         File resourceFile = new File("src/main/resources/hitboxes.yml");
         InputStream resource = new FileInputStream(resourceFile);
 
         HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(hitboxesFile, resource);
         hitboxConfiguration.load();
-        Optional<VerticalHitbox> playerUprightHitbox = hitboxConfiguration.getVerticalHitbox("player", "upright");
+        Optional<HitboxDefinition> hitboxDefinitionOptional = hitboxConfiguration.getHitboxDefinition("player", "standing");
 
-        assertThat(playerUprightHitbox).hasValueSatisfying(hitbox -> {
-            assertThat(hitbox.bodyHeight()).isEqualTo(1.4);
-            assertThat(hitbox.headHeight()).isEqualTo(1.8);
-            assertThat(hitbox.legsHeight()).isEqualTo(0.7);
-            assertThat(hitbox.width()).isEqualTo(0.6);
+        assertThat(hitboxDefinitionOptional).hasValueSatisfying(hitboxDefinition -> {
+            assertThat(hitboxDefinition.components).hasSize(3);
+
+            assertThat(hitboxDefinition.components.get(0).type).isEqualTo("HEAD");
+            assertThat(hitboxDefinition.components.get(0).size).containsExactly(0.4, 0.4, 0.4);
+            assertThat(hitboxDefinition.components.get(0).offset).containsExactly(0.0, 1.4, 0.0);
+
+            assertThat(hitboxDefinition.components.get(1).type).isEqualTo("TORSO");
+            assertThat(hitboxDefinition.components.get(1).size).containsExactly(0.7, 0.4, 0.2);
+            assertThat(hitboxDefinition.components.get(1).offset).containsExactly(0.0, 0.7, 0.0);
+
+            assertThat(hitboxDefinition.components.get(2).type).isEqualTo("LIMBS");
+            assertThat(hitboxDefinition.components.get(2).size).containsExactly(0.7, 0.4, 0.2);
+            assertThat(hitboxDefinition.components.get(2).offset).containsExactly(0.0, 0.0, 0.0);
         });
     }
 }
