@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Annotation;
 
 /**
@@ -23,5 +21,5 @@ public interface Validator<T extends Annotation> {
      * @param context the context of the validation
      * @param annotation the annotation placed on the field that is being validated
      */
-    void validate(@NotNull ValidationContext context, @NotNull T annotation);
+    void validate(ValidationContext context, T annotation);
 }
