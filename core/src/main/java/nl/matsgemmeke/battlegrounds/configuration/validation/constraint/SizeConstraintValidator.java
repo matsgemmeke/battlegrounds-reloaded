@@ -31,15 +31,15 @@ public class SizeConstraintValidator implements Validator<Size> {
         }
 
         if (exact >= 0 && size != exact) {
-            throw new ValidationException("Collection size must be exactly " + exact);
+            throw new ValidationException("Amount of items must be exactly " + exact);
         }
 
         if (size < min) {
-            throw new ValidationException("Collection size must be greater than " + min);
+            throw new ValidationException("Amount of items must be greater than " + min);
         }
 
         if (size > max) {
-            throw new ValidationException("Collection size must be less than " + max);
+            throw new ValidationException("Amount of items must be less than " + max);
         }
     }
 }

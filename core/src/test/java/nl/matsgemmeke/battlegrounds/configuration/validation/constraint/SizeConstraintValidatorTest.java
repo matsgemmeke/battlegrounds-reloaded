@@ -43,7 +43,7 @@ class SizeConstraintValidatorTest {
 
         assertThatThrownBy(() -> validator.validate(context, annotation))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("Collection size must be exactly 1");
+                .hasMessage("Amount of items must be exactly 1");
     }
 
     @Test
@@ -54,7 +54,7 @@ class SizeConstraintValidatorTest {
 
         assertThatThrownBy(() -> validator.validate(context, annotation))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("Collection size must be greater than 1");
+                .hasMessage("Amount of items must be greater than 1");
     }
 
     @Test
@@ -65,6 +65,6 @@ class SizeConstraintValidatorTest {
 
         assertThatThrownBy(() -> validator.validate(context, annotation))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("Collection size must be less than 2");
+                .hasMessage("Amount of items must be less than 2");
     }
 }
