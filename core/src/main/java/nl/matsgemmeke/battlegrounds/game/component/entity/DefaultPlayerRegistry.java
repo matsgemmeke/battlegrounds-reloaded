@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.EntityContainer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;

@@ -16,6 +16,7 @@ import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProv
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -124,6 +125,7 @@ public class BattlegroundsModule implements Module {
         // Singleton bindings
         binder.bind(EventDispatcher.class).in(Singleton.class);
         binder.bind(GameContextProvider.class).in(Singleton.class);
+        binder.bind(HitboxResolver.class).in(Singleton.class);
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
         binder.bind(ParticleEffectSpawner.class).in(Singleton.class);

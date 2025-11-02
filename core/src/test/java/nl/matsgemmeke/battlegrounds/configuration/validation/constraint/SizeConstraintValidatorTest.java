@@ -61,7 +61,7 @@ class SizeConstraintValidatorTest {
     void validateThrowsValidationExceptionWhenSizeIsGreaterThanMax() throws NoSuchFieldException {
         ValidationObject object = new ValidationObject();
         Size annotation = object.getClass().getDeclaredField("sizeWithMinMax").getAnnotation(Size.class);
-        ValidationContext context = new ValidationContext("sizeWithMinMax", new double[] {1, 2, 3}, Map.of());
+        ValidationContext context = new ValidationContext("sizeWithMinMax", new double[] { 1, 2, 3 }, Map.of());
 
         assertThatThrownBy(() -> validator.validate(context, annotation))
                 .isInstanceOf(ValidationException.class)

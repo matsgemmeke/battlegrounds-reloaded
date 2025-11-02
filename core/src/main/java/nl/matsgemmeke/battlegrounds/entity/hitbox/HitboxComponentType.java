@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
-public enum HitboxPart {
+public enum HitboxComponentType {
 
     HEAD,
-    BODY,
-    LEGS
+    TORSO,
+    LIMBS
 }

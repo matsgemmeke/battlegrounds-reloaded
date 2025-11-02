@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface Hitbox {
 
-    Optional<HitboxPart> getHitPart(Location location);
+    Optional<HitboxComponentType> getHitboxComponentType(Location location);
 
     boolean intersects(Location location);
 }

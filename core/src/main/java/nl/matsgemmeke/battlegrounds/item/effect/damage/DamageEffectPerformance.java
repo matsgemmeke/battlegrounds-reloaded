@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxPart;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -81,16 +81,16 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
     private double getHitboxDamageMultiplier(GameEntity target, Location hitLocation) {
         Hitbox hitbox = target.getHitbox();
-        HitboxPart hitboxPart = hitbox.getHitPart(hitLocation).orElse(null);
+        HitboxComponentType hitboxComponentType = hitbox.getHitboxComponentType(hitLocation).orElse(null);
 
-        if (hitboxPart == null) {
+        if (hitboxComponentType == null) {
             return 0;
         }
 
-        return switch (hitboxPart) {
+        return switch (hitboxComponentType) {
             case HEAD -> properties.hitboxMultiplierProfile().headshotDamageMultiplier();
-            case BODY -> properties.hitboxMultiplierProfile().bodyDamageMultiplier();
-            case LEGS -> properties.hitboxMultiplierProfile().legsDamageMultiplier();
+            case TORSO -> properties.hitboxMultiplierProfile().bodyDamageMultiplier();
+            case LIMBS -> properties.hitboxMultiplierProfile().legsDamageMultiplier();
         };
     }
 }

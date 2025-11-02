@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.bukkit.entity.Player;

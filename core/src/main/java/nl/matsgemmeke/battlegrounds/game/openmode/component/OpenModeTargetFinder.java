@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.TargetType;
