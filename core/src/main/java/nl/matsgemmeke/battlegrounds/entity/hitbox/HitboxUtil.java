@@ -9,17 +9,26 @@ public final class HitboxUtil {
      *
      * @param location    the location
      * @param boxLocation the center location of the box
-     * @param height      the box height
-     * @param width       the box width
+     * @param hitbox      the hitbox of the entity's current position
      * @return            whether the given location intersets the given box properties
      */
-    public static boolean intersectsBox(Location location, Location boxLocation, double height, double width) {
-        double halfWidth = width / 2;
+    public static boolean intersectsHitbox(Location location, Location boxLocation, PositionHitbox hitbox) {
+        for (HitboxComponent component : hitbox.components()) {
+            if (intersectsHitboxComponent(location, boxLocation, component)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean intersectsHitboxComponent(Location location, Location boxLocation, HitboxComponent component) {
+        double halfWidth = component.width() / 2;
 
         double minX = boxLocation.getX() - halfWidth;
         double maxX = boxLocation.getX() + halfWidth;
         double minY = boxLocation.getY();
-        double maxY = boxLocation.getY() + height;
+        double maxY = boxLocation.getY() + component.height();
         double minZ = boxLocation.getZ() - halfWidth;
         double maxZ = boxLocation.getZ() + halfWidth;
 
