@@ -2,46 +2,41 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class EntityContainer<T extends GameEntity> {
 
-    @NotNull
-    private Map<UUID, T> entities;
+    private final Map<UUID, T> entities;
 
     public EntityContainer() {
         this.entities = new HashMap<>();
     }
 
-    public void addEntity(@NotNull T entity) {
+    public void addEntity(T entity) {
         UUID uuid = entity.getEntity().getUniqueId();
         entities.put(uuid, entity);
     }
 
-    @Nullable
-    public T getEntity(@NotNull Entity entity) {
+    public Optional<T> getEntity(Entity entity) {
         for (T gameEntity : entities.values()) {
             if (gameEntity.getEntity() == entity) {
-                return gameEntity;
+                return Optional.of(gameEntity);
             }
         }
-        return null;
+
+        return Optional.empty();
     }
 
-    @Nullable
-    public T getEntity(@NotNull UUID uuid) {
-        return entities.get(uuid);
+    public Optional<T> getEntity(UUID uniqueId) {
+        return Optional.ofNullable(entities.get(uniqueId));
     }
 
-    @NotNull
     public Collection<T> getEntities() {
         return entities.values();
     }
 
-    public void removeEntity(@NotNull UUID uuid) {
-        entities.remove(uuid);
+    public void removeEntity(UUID uniqueId) {
+        entities.remove(uniqueId);
     }
 }

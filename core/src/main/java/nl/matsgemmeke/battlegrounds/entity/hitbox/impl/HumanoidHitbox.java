@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.impl;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.LivingEntity;
@@ -11,9 +10,11 @@ import java.util.Optional;
 public class HumanoidHitbox implements Hitbox {
 
     private final LivingEntity entity;
+    private final PositionHitbox standingHitbox;
 
-    public HumanoidHitbox(LivingEntity entity) {
+    public HumanoidHitbox(LivingEntity entity, PositionHitbox standingHitbox) {
         this.entity = entity;
+        this.standingHitbox = standingHitbox;
     }
 
     @Override
@@ -24,7 +25,13 @@ public class HumanoidHitbox implements Hitbox {
             return Optional.empty();
         }
 
-        return Optional.empty();
+        HitboxComponent intersectedComponent = HitboxUtil.getIntersectedHitboxComponent(location, playerLocation, standingHitbox).orElse(null);
+
+        if (intersectedComponent == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(intersectedComponent.type());
     }
 
     @Override
@@ -41,6 +48,6 @@ public class HumanoidHitbox implements Hitbox {
 //            return HitboxUtil.intersectsBox(location, entityLocation, HEAD_HEIGHT_ADULT, WIDTH_ADULT);
         }
 
-        return false;
+        return HitboxUtil.intersectsHitbox(location, entityLocation, standingHitbox);
     }
 }

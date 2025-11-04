@@ -84,7 +84,7 @@ public class OpenModeInitializer {
             UUID playerId = player.getUniqueId();
             gameContextProvider.registerEntity(playerId, GAME_KEY);
 
-            GamePlayer gamePlayer = playerRegistry.registerEntity(player);
+            GamePlayer gamePlayer = playerRegistry.register(player);
             gamePlayer.setPassive(configuration.isEnabledRegisterPlayersAsPassive());
 
             statePersistenceHandler.loadPlayerState(gamePlayer);

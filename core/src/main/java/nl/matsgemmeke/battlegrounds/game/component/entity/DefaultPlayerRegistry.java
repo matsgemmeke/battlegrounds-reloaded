@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.game.EntityContainer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -32,7 +31,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         this.playerContainer = new EntityContainer<>();
     }
 
-    public Optional<GamePlayer> findByEntity(@NotNull Player player) {
+    public Optional<GamePlayer> findByEntity(Player player) {
         for (GamePlayer gamePlayer : playerContainer.getEntities()) {
             if (gamePlayer.getEntity() == player) {
                 return Optional.of(gamePlayer);
@@ -43,27 +42,26 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     }
 
     public Optional<GamePlayer> findByUniqueId(UUID uuid) {
-        return Optional.ofNullable(playerContainer.getEntity(uuid));
+        return playerContainer.getEntity(uuid);
     }
 
-    @NotNull
     public Collection<GamePlayer> getAll() {
         return playerContainer.getEntities();
     }
 
-    public boolean isRegistered(@NotNull Player player) {
-        return playerContainer.getEntity(player) != null;
+    public boolean isRegistered(Player player) {
+        return playerContainer.getEntity(player).isPresent();
     }
 
-    public boolean isRegistered(@NotNull UUID uuid) {
-        return playerContainer.getEntity(uuid) != null;
+    public boolean isRegistered(UUID uniqueId) {
+        return playerContainer.getEntity(uniqueId).isPresent();
     }
 
-    public void deregister(@NotNull UUID playerUuid) {
-        playerContainer.removeEntity(playerUuid);
+    public void deregister(UUID uniqueId) {
+        playerContainer.removeEntity(uniqueId);
     }
 
-    public GamePlayer registerEntity(Player player) {
+    public GamePlayer register(Player player) {
         Hitbox hitbox = hitboxResolver.resolveHitbox(player).orElse(null);
 
         UUID playerId = player.getUniqueId();

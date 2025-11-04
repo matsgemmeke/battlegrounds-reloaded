@@ -1,4 +1,4 @@
-# Player hitbox configuration
+# Player hitbox
 hitbox-player:
   standing:
     head:
@@ -12,4 +12,20 @@ hitbox-player:
     legs:
       type: LIMBS
       size: [0.7, 0.4, 0.2]
+      offset: [0.0, 0.0, 0.0]
+
+# Zombie hitbox
+hitbox-zombie:
+  standing:
+    head:
+      type: HEAD
+      size: [0.4, 0.4, 0.4]
+      offset: [0.0, 1.6, 0.0]
+    torso:
+      type: TORSO
+      size: [0.8, 0.4, 0.2]
+      offset: [0.0, 0.8, 0.0]
+    legs:
+      type: LIMBS
+      size: [0.8, 0.4, 0.2]
       offset: [0.0, 0.0, 0.0]

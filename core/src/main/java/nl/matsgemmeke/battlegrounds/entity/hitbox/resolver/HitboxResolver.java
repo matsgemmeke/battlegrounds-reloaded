@@ -6,11 +6,10 @@ import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefini
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitboxDefaults;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.HumanoidHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.PlayerHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.mapper.HitboxMapper;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +32,7 @@ public class HitboxResolver {
 
     public void registerHitboxFactories() {
         hitboxFactories.put(EntityType.PLAYER, entity -> this.createPlayerHitbox((Player) entity));
+        hitboxFactories.put(EntityType.ZOMBIE, entity -> this.createZombieHitbox((Zombie) entity));
     }
 
     public Optional<Hitbox> resolveHitbox(Entity entity) {
@@ -45,7 +45,7 @@ public class HitboxResolver {
         return Optional.of(hitboxFactory.create(entity));
     }
 
-    private PlayerHitbox createPlayerHitbox(Player player) {
+    private Hitbox createPlayerHitbox(Player player) {
         HitboxDefinition standingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "standing").orElse(null);
 
         PositionHitbox standingHitbox;
@@ -57,5 +57,19 @@ public class HitboxResolver {
         }
 
         return new PlayerHitbox(player, standingHitbox);
+    }
+
+    private Hitbox createZombieHitbox(Zombie zombie) {
+        HitboxDefinition standingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("zombie", "standing").orElse(null);
+
+        PositionHitbox standingHitbox;
+
+        if (standingHitboxDefinition != null) {
+            standingHitbox = hitboxMapper.map(standingHitboxDefinition);
+        } else {
+            standingHitbox = PositionHitboxDefaults.DEFAULT_ZOMBIE_STANDING_HITBOX;
+        }
+
+        return new HumanoidHitbox(zombie, standingHitbox);
     }
 }

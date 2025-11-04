@@ -50,7 +50,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(player);
 
         assertThat(gamePlayerOptional).hasValue(gamePlayer);
@@ -67,7 +67,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(otherPlayer);
 
         assertThat(gamePlayerOptional).isEmpty();
@@ -84,7 +84,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID);
 
         assertThat(gamePlayerOptional).hasValue(gamePlayer);
@@ -100,7 +100,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
 
         assertThat(gamePlayers).containsExactly(gamePlayer);
@@ -116,7 +116,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         boolean registered = playerRegistry.isRegistered(player);
 
         assertThat(registered).isTrue();
@@ -135,7 +135,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         boolean registered = playerRegistry.isRegistered(uuid);
 
         assertThat(registered).isTrue();
@@ -154,7 +154,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         playerRegistry.deregister(playerUuid);
 
         assertThat(playerRegistry.findByUniqueId(playerUuid)).isEmpty();
@@ -173,7 +173,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
-        GamePlayer createdGamePlayer = playerRegistry.registerEntity(player);
+        GamePlayer createdGamePlayer = playerRegistry.register(player);
 
         assertThat(createdGamePlayer).isEqualTo(gamePlayer);
 

@@ -2,7 +2,29 @@ package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
 import org.bukkit.Location;
 
+import java.util.Optional;
+
 public final class HitboxUtil {
+
+    /**
+     * Gets the intersected {@link HitboxComponent} of a given location.
+     *
+     * @param location    the location
+     * @param boxLocation the center location of the box
+     * @param hitbox      the hitbox of the entity's current position
+     * @return            an optional containing the intersected hitbox component or empty when no components are
+     *                    intersected by the given location
+     */
+    public static Optional<HitboxComponent> getIntersectedHitboxComponent(Location location, Location boxLocation, PositionHitbox hitbox) {
+        for (HitboxComponent component : hitbox.components()) {
+            System.out.println("checking component " + component.type());
+            if (intersectsHitboxComponent(location, boxLocation, component)) {
+                return Optional.of(component);
+            }
+        }
+
+        return Optional.empty();
+    }
 
     /**
      * Gets whether a location intersects with given box properties.
