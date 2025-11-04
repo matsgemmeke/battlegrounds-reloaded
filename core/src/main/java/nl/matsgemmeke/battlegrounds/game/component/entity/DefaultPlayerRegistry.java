@@ -31,6 +31,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         this.playerContainer = new EntityContainer<>();
     }
 
+    @Override
     public Optional<GamePlayer> findByEntity(Player player) {
         for (GamePlayer gamePlayer : playerContainer.getEntities()) {
             if (gamePlayer.getEntity() == player) {
@@ -41,26 +42,32 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         return Optional.empty();
     }
 
+    @Override
     public Optional<GamePlayer> findByUniqueId(UUID uuid) {
         return playerContainer.getEntity(uuid);
     }
 
+    @Override
     public Collection<GamePlayer> getAll() {
         return playerContainer.getEntities();
     }
 
+    @Override
     public boolean isRegistered(Player player) {
         return playerContainer.getEntity(player).isPresent();
     }
 
+    @Override
     public boolean isRegistered(UUID uniqueId) {
         return playerContainer.getEntity(uniqueId).isPresent();
     }
 
+    @Override
     public void deregister(UUID uniqueId) {
         playerContainer.removeEntity(uniqueId);
     }
 
+    @Override
     public GamePlayer register(Player player) {
         Hitbox hitbox = hitboxResolver.resolveHitbox(player).orElse(null);
 
