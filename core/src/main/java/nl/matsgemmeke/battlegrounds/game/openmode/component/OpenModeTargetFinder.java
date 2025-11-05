@@ -10,7 +10,9 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.TargetType;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.entity.LivingEntityRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,12 +27,14 @@ public class OpenModeTargetFinder implements TargetFinder {
 
     private final DeploymentInfoProvider deploymentInfoProvider;
     private final HitboxResolver hitboxResolver;
+    private final LivingEntityRegistry livingEntityRegistry;
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public OpenModeTargetFinder(DeploymentInfoProvider deploymentInfoProvider, HitboxResolver hitboxResolver, PlayerRegistry playerRegistry) {
+    public OpenModeTargetFinder(DeploymentInfoProvider deploymentInfoProvider, HitboxResolver hitboxResolver, LivingEntityRegistry livingEntityRegistry, PlayerRegistry playerRegistry) {
         this.deploymentInfoProvider = deploymentInfoProvider;
         this.hitboxResolver = hitboxResolver;
+        this.livingEntityRegistry = livingEntityRegistry;
         this.playerRegistry = playerRegistry;
     }
 
@@ -82,8 +86,8 @@ public class OpenModeTargetFinder implements TargetFinder {
         return targets;
     }
 
-    public List<UUID> findTargets(TargetQuery query) {
-        List<UUID> result = new ArrayList<>();
+    public List<Target> findTargets(TargetQuery query) {
+        List<Target> targets = new ArrayList<>();
         Location location = query.getLocation().orElseThrow(() -> new IllegalArgumentException("No location provided"));
         World world = Optional.ofNullable(location.getWorld()).orElseThrow(() -> new IllegalArgumentException("Provided location has no world"));
 
@@ -96,23 +100,23 @@ public class OpenModeTargetFinder implements TargetFinder {
             playerRegistry.getAll().stream()
                     .filter(gamePlayer -> !enemiesOnly || uniqueId.map(id -> !id.equals(gamePlayer.getUniqueId())).orElse(true))
                     .filter(gamePlayer -> gamePlayer.getLocation().distanceSquared(location) <= range)
-                    .map(GamePlayer::getUniqueId)
-                    .forEach(result::add);
+                    .forEach(targets::add);
 
             world.getNearbyEntities(location, range, range, range).stream()
                     .filter(entity -> entity.getType() != EntityType.PLAYER)
-                    .map(Entity::getUniqueId)
-                    .forEach(result::add);
+                    .filter(LivingEntity.class::isInstance)
+                    .map(entity -> livingEntityRegistry.register((LivingEntity) entity))
+                    .filter(gameEntity -> gameEntity.getHitbox().intersects(location))
+                    .forEach(targets::add);
         });
         deploymentObjectFindingRange.ifPresent(range -> {
             deploymentInfoProvider.getAllDeploymentObjects().stream()
                     .filter(deploymentObject -> !enemiesOnly || uniqueId.map(id -> !id.equals(deploymentObject.getUniqueId())).orElse(true))
                     .filter(deploymentObject -> deploymentObject.getLocation().distanceSquared(location) <= range)
-                    .map(DeploymentObject::getUniqueId)
-                    .forEach(result::add);
+                    .forEach(targets::add);
         });
 
-        return result;
+        return targets;
     }
 
     @NotNull

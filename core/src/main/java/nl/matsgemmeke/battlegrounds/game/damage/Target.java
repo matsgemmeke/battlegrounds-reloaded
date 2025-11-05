@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A game object that is able to take damage.
  */
-public interface Damageable {
+public interface Target {
 
     double getHealth();
 

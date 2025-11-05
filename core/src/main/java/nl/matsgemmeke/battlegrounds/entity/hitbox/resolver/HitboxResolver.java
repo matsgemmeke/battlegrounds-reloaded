@@ -47,7 +47,6 @@ public class HitboxResolver {
 
     private Hitbox createPlayerHitbox(Player player) {
         HitboxDefinition standingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "standing").orElse(null);
-
         PositionHitbox standingHitbox;
 
         if (standingHitboxDefinition != null) {
@@ -61,7 +60,6 @@ public class HitboxResolver {
 
     private Hitbox createZombieHitbox(Zombie zombie) {
         HitboxDefinition standingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("zombie", "standing").orElse(null);
-
         PositionHitbox standingHitbox;
 
         if (standingHitboxDefinition != null) {
