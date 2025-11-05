@@ -79,7 +79,7 @@ class DefaultPlayerRegistryTest {
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
@@ -95,7 +95,7 @@ class DefaultPlayerRegistryTest {
         Player player = mock(Player.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
@@ -124,51 +124,43 @@ class DefaultPlayerRegistryTest {
 
     @Test
     void isRegisteredReturnsTrueIfStorageContainsEntryWithGivenUUID() {
-        UUID uuid = UUID.randomUUID();
-
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
         playerRegistry.register(player);
-        boolean registered = playerRegistry.isRegistered(uuid);
+        boolean registered = playerRegistry.isRegistered(PLAYER_UNIQUE_ID);
 
         assertThat(registered).isTrue();
     }
 
     @Test
     void deregisterRemovesGivenPlayerUuidFromPlayerContainer() {
-        UUID playerUuid = UUID.randomUUID();
+        GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(playerUuid);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
 
         playerRegistry.register(player);
-        playerRegistry.deregister(playerUuid);
+        playerRegistry.deregister(PLAYER_UNIQUE_ID);
 
-        assertThat(playerRegistry.findByUniqueId(playerUuid)).isEmpty();
+        assertThat(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).isEmpty();
     }
 
     @Test
     void registerEntityCreatesNewInstanceOfGamePlayerAndRegisterToGameStorage() {
-        UUID playerId = UUID.randomUUID();
+        GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(playerId);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
@@ -177,6 +169,6 @@ class DefaultPlayerRegistryTest {
 
         assertThat(createdGamePlayer).isEqualTo(gamePlayer);
 
-        verify(gameContextProvider).registerEntity(playerId, GAME_KEY);
+        verify(gameContextProvider).registerEntity(PLAYER_UNIQUE_ID, GAME_KEY);
     }
 }

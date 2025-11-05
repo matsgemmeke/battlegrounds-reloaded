@@ -14,8 +14,8 @@ public class EntityContainer<T extends GameEntity> {
     }
 
     public void addEntity(T entity) {
-        UUID uuid = entity.getEntity().getUniqueId();
-        entities.put(uuid, entity);
+        UUID uniqueId = entity.getUniqueId();
+        entities.put(uniqueId, entity);
     }
 
     public Optional<T> getEntity(Entity entity) {

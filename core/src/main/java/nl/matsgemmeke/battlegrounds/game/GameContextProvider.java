@@ -111,8 +111,8 @@ public class GameContextProvider {
         games.put(gameKey, game);
     }
 
-    public void registerEntity(UUID entityId, GameKey gameKey) {
-        entityGameKeyMap.put(entityId, gameKey);
+    public void registerEntity(UUID uniqueId, GameKey gameKey) {
+        entityGameKeyMap.put(uniqueId, gameKey);
     }
 
     /**

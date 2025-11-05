@@ -105,10 +105,10 @@ public class OpenModeTargetFinderTest {
         when(targetPlayer.getUniqueId()).thenReturn(targetUniqueId);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getUniqueId()).thenReturn(entityUniqueId);
 
         GamePlayer target = mock(GamePlayer.class);
-        when(target.getEntity()).thenReturn(targetPlayer);
+        when(target.getUniqueId()).thenReturn(targetUniqueId);
 
         World world = mock(World.class);
         Location location = new Location(world, 1.0, 1.0, 1.0);

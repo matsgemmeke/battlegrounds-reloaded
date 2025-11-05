@@ -71,8 +71,8 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     public GamePlayer register(Player player) {
         Hitbox hitbox = hitboxResolver.resolveHitbox(player).orElse(null);
 
-        UUID playerId = player.getUniqueId();
-        gameContextProvider.registerEntity(playerId, gameKey);
+        UUID uniqueId = player.getUniqueId();
+        gameContextProvider.registerEntity(uniqueId, gameKey);
 
         GamePlayer gamePlayer = gamePlayerFactory.create(player, hitbox);
         playerContainer.addEntity(gamePlayer);

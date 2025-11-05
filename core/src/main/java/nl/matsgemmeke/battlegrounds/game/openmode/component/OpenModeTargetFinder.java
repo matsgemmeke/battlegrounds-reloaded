@@ -61,7 +61,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         for (Entity entity : entities) {
             GamePlayer gamePlayer = playerRegistry.findByUniqueId(entity.getUniqueId()).orElse(null);
 
-            if (gamePlayer != null && gamePlayer.getEntity().getUniqueId().equals(entityId)) {
+            if (gamePlayer != null && gamePlayer.getUniqueId().equals(entityId)) {
                 continue;
             }
 
