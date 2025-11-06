@@ -147,14 +147,6 @@ public class GunFactory {
         return gun;
     }
 
-    private double getHeadshotDamageMultiplier(Double specValue) {
-        if (specValue != null) {
-            return specValue;
-        }
-
-        return DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER;
-    }
-
     private ItemTemplate createItemTemplate(ItemSpec spec) {
         NamespacedKey templateKey = keyCreator.create(TEMPLATE_ID_KEY);
         UUID templateId = UUID.randomUUID();

@@ -26,12 +26,18 @@ public class OpenModeLivingEntityRegistry implements LivingEntityRegistry {
 
     @Override
     public Optional<GameEntity> findByUniqueId(UUID uniqueId) {
-        return Optional.of(livingEntities.get(uniqueId));
+        return Optional.ofNullable(livingEntities.get(uniqueId));
     }
 
     @Override
     public GameEntity register(LivingEntity entity) {
         UUID uniqueId = entity.getUniqueId();
+        GameEntity existingEntity = livingEntities.get(uniqueId);
+
+        if (existingEntity != null) {
+            return existingEntity;
+        }
+
         Hitbox hitbox = hitboxResolver.resolveHitbox(entity).orElseThrow();
         OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
 

@@ -43,16 +43,27 @@ class HitboxUtilTest {
         });
     }
 
-    @ParameterizedTest
+    @Test
+    void getIntersectedHitboxComponentReturnsEmptyOptionalWhenGivenLocationIntersectsNoComponents() {
+        World world = mock(World.class);
+        Location location = new Location(world, 1, 1, 1);
+        Location boxLocation = new Location(world, 0, 0, 0, 0, 0);
+
+        Optional<HitboxComponent> hitboxComponentOptional = HitboxUtil.getIntersectedHitboxComponent(location, boxLocation, POSITION_HITBOX);
+
+        assertThat(hitboxComponentOptional).isEmpty();
+    }
+
+    @ParameterizedTest(name = "X: {0}, Y: {1}, Z: {2}")
     @CsvSource({
-            "11.0,10.0,10.0",
-            "10.0,11.0,10.0",
-            "10.0,10.0,11.0"
+            "1.0,0.0,0.0",
+            "0.0,3.0,0.0",
+            "0.0,0.0,1.0"
     })
     void intersectsHitboxReturnsFalseWhenAnyAxisIsOutsideGivenPositionBox(double x, double y, double z) {
         World world = mock(World.class);
         Location location = new Location(world, x, y, z);
-        Location boxLocation = new Location(world, 10.0, 10.0, 10.0);
+        Location boxLocation = new Location(world, 0, 0, 0, 0, 0);
 
         boolean intersects = HitboxUtil.intersectsHitbox(location, boxLocation, POSITION_HITBOX);
 
