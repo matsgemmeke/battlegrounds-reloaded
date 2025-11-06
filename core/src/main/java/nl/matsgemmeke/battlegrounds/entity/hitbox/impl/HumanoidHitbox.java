@@ -19,13 +19,13 @@ public class HumanoidHitbox implements Hitbox {
 
     @Override
     public Optional<HitboxComponentType> getHitboxComponentType(Location location) {
-        Location playerLocation = entity.getLocation();
+        Location entityLocation = entity.getLocation();
 
-        if (playerLocation.getWorld() != location.getWorld()) {
+        if (entityLocation.getWorld() != location.getWorld()) {
             return Optional.empty();
         }
 
-        HitboxComponent intersectedComponent = HitboxUtil.getIntersectedHitboxComponent(location, playerLocation, standingHitbox).orElse(null);
+        HitboxComponent intersectedComponent = HitboxUtil.getIntersectedHitboxComponent(location, entityLocation, standingHitbox).orElse(null);
 
         if (intersectedComponent == null) {
             return Optional.empty();

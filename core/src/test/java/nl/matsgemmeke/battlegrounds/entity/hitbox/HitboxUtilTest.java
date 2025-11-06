@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,10 +14,34 @@ import static org.mockito.Mockito.mock;
 
 class HitboxUtilTest {
 
-    private static final double HEIGHT = 0.5;
-    private static final double WIDTH = 0.5;
-    private static final double DEPTH = 0.5;
-    private static final double OFFSET = 0.0;
+    private static final HitboxComponent HEAD_COMPONENT = new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.4, 0.4, 0.0, 1.4, 0.0);
+    private static final HitboxComponent BODY_COMPONENT = new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.4, 0.2, 0.0, 0.7, 0.0);
+    private static final HitboxComponent LEGS_COMPONENT = new HitboxComponent(HitboxComponentType.LIMBS, 0.7, 0.4, 0.2, 0.0, 0.0, 0.0);
+    /**
+     * A position hitbox similar to a player's.
+     */
+    private static final PositionHitbox POSITION_HITBOX = new PositionHitbox(Set.of(HEAD_COMPONENT, BODY_COMPONENT, LEGS_COMPONENT));
+
+    @ParameterizedTest(name = "X: {0}, Y: {1}, Z: {2}, Box yaw: {3}")
+    @CsvSource({
+            // These are all variables that will barely hit the side of the torso hitbox
+            "0.20,1.0,0.00,0.0",
+            "0.185,1.0,0.075,22.5",
+            "0.141,1.0,0.141,45.0",
+            "0.075,1.0,0.185,67.5",
+            "0.00,1.0,0.20,90.0"
+    })
+    void getIntersectedHitboxComponentReturnsOptionalWithInterestedHitboxComponent(double x, double y, double z, float boxYaw) {
+        World world = mock(World.class);
+        Location location = new Location(world, x, y, z);
+        Location boxLocation = new Location(world, 0, 0, 0, boxYaw, 0);
+
+        Optional<HitboxComponent> hitboxComponentOptional = HitboxUtil.getIntersectedHitboxComponent(location, boxLocation, POSITION_HITBOX);
+
+        assertThat(hitboxComponentOptional).hasValueSatisfying(hitboxComponent -> {
+            assertThat(hitboxComponent.type()).isEqualTo(HitboxComponentType.TORSO);
+        });
+    }
 
     @ParameterizedTest
     @CsvSource({
@@ -28,9 +53,8 @@ class HitboxUtilTest {
         World world = mock(World.class);
         Location location = new Location(world, x, y, z);
         Location boxLocation = new Location(world, 10.0, 10.0, 10.0);
-        PositionHitbox positionHitbox = this.createPositionHitbox();
 
-        boolean intersects = HitboxUtil.intersectsHitbox(location, boxLocation, positionHitbox);
+        boolean intersects = HitboxUtil.intersectsHitbox(location, boxLocation, POSITION_HITBOX);
 
         assertThat(intersects).isFalse();
     }
@@ -40,16 +64,9 @@ class HitboxUtilTest {
         World world = mock(World.class);
         Location location = new Location(world, 9.9, 10.1, 10.1);
         Location boxLocation = new Location(world, 10.0, 10.0, 10.0);
-        PositionHitbox positionHitbox = this.createPositionHitbox();
 
-        boolean intersects = HitboxUtil.intersectsHitbox(location, boxLocation, positionHitbox);
+        boolean intersects = HitboxUtil.intersectsHitbox(location, boxLocation, POSITION_HITBOX);
 
         assertThat(intersects).isTrue();
-    }
-
-    private PositionHitbox createPositionHitbox() {
-        HitboxComponent hitboxComponent = new HitboxComponent(HitboxComponentType.TORSO, HEIGHT, WIDTH, DEPTH, OFFSET, OFFSET, OFFSET);
-
-        return new PositionHitbox(Set.of(hitboxComponent));
     }
 }

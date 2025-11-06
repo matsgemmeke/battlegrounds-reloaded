@@ -17,7 +17,6 @@ public final class HitboxUtil {
      */
     public static Optional<HitboxComponent> getIntersectedHitboxComponent(Location location, Location boxLocation, PositionHitbox hitbox) {
         for (HitboxComponent component : hitbox.components()) {
-            System.out.println("checking component " + component.type());
             if (intersectsHitboxComponent(location, boxLocation, component)) {
                 return Optional.of(component);
             }
@@ -47,23 +46,26 @@ public final class HitboxUtil {
     private static boolean intersectsHitboxComponent(Location location, Location boxLocation, HitboxComponent component) {
         double height = component.height();
         double halfWidth = component.width() / 2;
+        double halfDepth = component.depth() / 2;
         double offsetX = component.offsetX();
         double offsetY = component.offsetY();
         double offsetZ = component.offsetZ();
 
-        double minX = boxLocation.getX() - halfWidth + offsetX;
-        double maxX = boxLocation.getX() + halfWidth + offsetX;
-        double minY = boxLocation.getY() + offsetY;
-        double maxY = boxLocation.getY() + height + offsetY;
-        double minZ = boxLocation.getZ() - halfWidth + offsetZ;
-        double maxZ = boxLocation.getZ() + halfWidth + offsetZ;
+        double difX = location.getX() - boxLocation.getX();
+        double difY = location.getY() - boxLocation.getY();
+        double difZ = location.getZ() - boxLocation.getZ();
 
-        double locX = location.getX();
-        double locY = location.getY();
-        double locZ = location.getZ();
+        double yaw = Math.toRadians(boxLocation.getYaw());
 
-        return locX >= minX && locX <= maxX
-                && locY >= minY && locY <= maxY
-                && locZ >= minZ && locZ <= maxZ;
+        double rotatedX = difX * Math.cos(-yaw) - difZ * Math.sin(-yaw);
+        double rotatedZ = difX * Math.sin(-yaw) + difZ * Math.cos(-yaw);
+
+        rotatedX -= offsetX;
+        difY -= offsetY;
+        rotatedZ -= offsetZ;
+
+        return rotatedX >= -halfWidth && rotatedX <= halfWidth
+                && difY >= 0 && difY <= height
+                && rotatedZ >= -halfDepth && rotatedZ <= halfDepth;
     }
 }
