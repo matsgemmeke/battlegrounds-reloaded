@@ -9,7 +9,6 @@ admin:
   session-not-exists: "&cA session by the id %bg_session% doesn't exist."
   session-removal-failed: "&cFailed to remove session %bg_session%!"
   session-removed: "&6You have removed session &f%bg_session% &6and its content."
-  tool-not-defined: "&cPlease define a tool to execute."
   tool-not-exists: "&cA tool by the name of %bg_tool% doesn't exist."
   weapon-not-exists: "&cA weapon with the id %bg_weapon% doesn't exist."
 
@@ -21,6 +20,7 @@ commands:
   description-setmainlobby: "Sets the main lobby location"
   description-tools: "Provides miscellaneous tools for operating the plugin"
   description-tools-hitbox: "Displays hitboxes of nearby entities"
+  help-menu-command: " · %bg_command_usage%"
   help-menu-title: "&6&l Battlegrounds Help Menu"
   tools-menu-title: "&6&l List of tools"
   weapon-given: "&6You have been given a %bg_weapon%."
