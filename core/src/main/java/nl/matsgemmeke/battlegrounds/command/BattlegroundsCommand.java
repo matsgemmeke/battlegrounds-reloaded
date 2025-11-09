@@ -44,14 +44,18 @@ public class BattlegroundsCommand extends BaseCommand {
         command.execute(sender, id);
     }
 
+    @CatchUnknown
+    public void onCatchUnknown(CommandSender sender) {
+        sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
+    }
+
     @Default
-    public void onDefault(@NotNull CommandSender sender) {
+    @HelpCommand
+    public void onDefault(CommandSender sender) {
         sender.sendMessage(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText());
         sender.sendMessage(EMPTY_MESSAGE);
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-
+        if (sender instanceof Player player) {
             for (CommandSource subcommand : subcommands) {
                 TextComponent message = new TextComponent(subcommand.getUsage());
                 message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, subcommand.getUsage()));
