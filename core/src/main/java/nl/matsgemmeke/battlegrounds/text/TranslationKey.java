@@ -25,6 +25,7 @@ public enum TranslationKey {
     SESSION_NOT_EXISTS("admin.session-not-exists"),
     SESSION_REMOVAL_FAILED("admin.session-removal-failed"),
     SESSION_REMOVED("admin.session-removed"),
+    TOOL_HITBOX_SUCCESSFUL("admin.tool-hitbox-successful"),
     TOOL_NOT_EXISTS("admin.tool-not-exists"),
     TOOLS_MENU_TITLE("commands.tools-menu-title"),
     UNKNOWN_COMMAND("errors.unknown-command"),

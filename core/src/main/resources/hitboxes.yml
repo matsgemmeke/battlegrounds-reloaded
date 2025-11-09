@@ -19,13 +19,13 @@ hitbox-zombie:
   standing:
     head:
       type: HEAD
-      size: [0.4, 0.4, 0.4]
-      offset: [0.0, 1.6, 0.0]
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 1.5, 0.0]
     torso:
       type: TORSO
-      size: [0.8, 0.4, 0.2]
+      size: [0.7, 0.5, 0.3]
       offset: [0.0, 0.8, 0.0]
     legs:
       type: LIMBS
-      size: [0.8, 0.4, 0.2]
+      size: [0.8, 0.5, 0.3]
       offset: [0.0, 0.0, 0.0]

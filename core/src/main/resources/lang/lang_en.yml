@@ -9,6 +9,7 @@ admin:
   session-not-exists: "&cA session by the id %bg_session% doesn't exist."
   session-removal-failed: "&cFailed to remove session %bg_session%!"
   session-removed: "&6You have removed session &f%bg_session% &6and its content."
+  tool-hitbox-successful: "&6Displaying hitboxes for &f%bg_seconds% &6seconds inside a range of &f%bg_range% &6blocks."
   tool-not-exists: "&cA tool by the name of %bg_tool% doesn't exist."
   weapon-not-exists: "&cA weapon with the id %bg_weapon% doesn't exist."
 

@@ -1,10 +1,7 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.command.tool.DisplayHitboxesTool;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
@@ -43,9 +40,10 @@ public class ToolsCommand extends BaseCommand {
         sender.sendMessage(" ");
     }
 
-    @CommandPermission("battlegrounds.tools.hitbox")
     @Subcommand("hitbox")
-    public void onHitbox(Player player) {
-        displayHitboxesTool.execute(player);
+    @CommandCompletion("<seconds> <range>")
+    @CommandPermission("battlegrounds.tools.hitbox")
+    public void onHitbox(Player player, int seconds, @Default("10.0") double range) {
+        displayHitboxesTool.execute(player, seconds, range);
     }
 }

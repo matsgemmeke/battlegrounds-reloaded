@@ -18,6 +18,11 @@ public class HumanoidHitbox implements Hitbox {
     }
 
     @Override
+    public PositionHitbox getCurrentPositionHitbox() {
+        return standingHitbox;
+    }
+
+    @Override
     public Optional<HitboxComponentType> getHitboxComponentType(Location location) {
         Location entityLocation = entity.getLocation();
 

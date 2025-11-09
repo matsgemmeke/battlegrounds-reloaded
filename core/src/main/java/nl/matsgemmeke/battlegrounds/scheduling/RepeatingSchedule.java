@@ -3,27 +3,25 @@ package nl.matsgemmeke.battlegrounds.scheduling;
 import com.google.inject.Inject;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class RepeatingSchedule implements Schedule {
 
-    @NotNull
     private final Plugin plugin;
-    @NotNull
     private final Set<ScheduleTask> scheduleTasks;
-    @Nullable
     private BukkitTask bukkitTask;
     private long delay;
+    private long duration;
+    private long elapsedTicks;
     private long interval;
 
     @Inject
-    public RepeatingSchedule(@NotNull Plugin plugin) {
+    public RepeatingSchedule(Plugin plugin) {
         this.plugin = plugin;
         this.scheduleTasks = new HashSet<>();
+        this.duration = Long.MAX_VALUE;
     }
 
     public long getDelay() {
@@ -34,6 +32,14 @@ public class RepeatingSchedule implements Schedule {
         this.delay = delay;
     }
 
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
     public long getInterval() {
         return interval;
     }
@@ -42,7 +48,7 @@ public class RepeatingSchedule implements Schedule {
         this.interval = interval;
     }
 
-    public void addTask(@NotNull ScheduleTask task) {
+    public void addTask(ScheduleTask task) {
         scheduleTasks.add(task);
     }
 
@@ -59,7 +65,19 @@ public class RepeatingSchedule implements Schedule {
             throw new ScheduleException("Schedule is already running");
         }
 
-        bukkitTask = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> scheduleTasks.forEach(ScheduleTask::run), delay, interval);
+        elapsedTicks = 0;
+        bukkitTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::performTasks, delay, interval);
+    }
+
+    private void performTasks() {
+        elapsedTicks += interval;
+
+        if (elapsedTicks > duration) {
+            bukkitTask.cancel();
+            return;
+        }
+
+        scheduleTasks.forEach(ScheduleTask::run);
     }
 
     public void stop() {
