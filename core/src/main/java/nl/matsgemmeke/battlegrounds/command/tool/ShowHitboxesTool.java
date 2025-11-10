@@ -21,7 +21,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Map;
 
-public class DisplayHitboxesTool {
+public class ShowHitboxesTool {
 
     private static final long SCHEDULE_DELAY = 0L;
     private static final long SCHEDULE_INTERVAL = 1L;
@@ -42,7 +42,7 @@ public class DisplayHitboxesTool {
     private final Translator translator;
 
     @Inject
-    public DisplayHitboxesTool(HitboxResolver hitboxResolver, Scheduler scheduler, Translator translator) {
+    public ShowHitboxesTool(HitboxResolver hitboxResolver, Scheduler scheduler, Translator translator) {
         this.hitboxResolver = hitboxResolver;
         this.scheduler = scheduler;
         this.translator = translator;
@@ -81,12 +81,12 @@ public class DisplayHitboxesTool {
                 // Add half the height to get the center location of the box
                 baseLocation.add(0, component.height() / 2, 0);
 
-                this.displayHitboxComponentOutline(baseLocation, component, entity.getLocation().getYaw());
+                this.displayHitboxComponentOutline(world, baseLocation, component, entity.getLocation().getYaw());
             }
         }
     }
 
-    private void displayHitboxComponentOutline(Location location, HitboxComponent component, float yaw) {
+    private void displayHitboxComponentOutline(World world, Location location, HitboxComponent component, float yaw) {
         Vector[] corners = this.getCornerVectors(component);
         double radians = Math.toRadians(yaw);
         double cos = Math.cos(radians);
@@ -116,7 +116,7 @@ public class DisplayHitboxesTool {
                 Location particleLocation = location.clone().add(point);
                 Color color = COMPONENT_TYPE_COLORS.get(component.type());
 
-                location.getWorld().spawnParticle(Particle.REDSTONE, particleLocation, 1, 0, 0,0, 0, new DustOptions(color, 1.0f));
+                world.spawnParticle(Particle.REDSTONE, particleLocation, 1, 0, 0,0, 0, new DustOptions(color, 1.0f));
             }
         }
     }

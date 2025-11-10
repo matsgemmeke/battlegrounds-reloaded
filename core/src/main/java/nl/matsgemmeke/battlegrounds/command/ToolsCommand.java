@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.command.tool.DisplayHitboxesTool;
+import nl.matsgemmeke.battlegrounds.command.tool.ShowHitboxesTool;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
@@ -16,12 +16,12 @@ import java.util.Map;
 @Subcommand("tools")
 public class ToolsCommand extends BaseCommand {
 
-    private final DisplayHitboxesTool displayHitboxesTool;
+    private final ShowHitboxesTool showHitboxesTool;
     private final Translator translator;
 
     @Inject
-    public ToolsCommand(DisplayHitboxesTool displayHitboxesTool, Translator translator) {
-        this.displayHitboxesTool = displayHitboxesTool;
+    public ToolsCommand(ShowHitboxesTool showHitboxesTool, Translator translator) {
+        this.showHitboxesTool = showHitboxesTool;
         this.translator = translator;
     }
 
@@ -44,6 +44,6 @@ public class ToolsCommand extends BaseCommand {
     @CommandCompletion("<seconds> <range>")
     @CommandPermission("battlegrounds.tools.hitbox")
     public void onHitbox(Player player, int seconds, @Default("10.0") double range) {
-        displayHitboxesTool.execute(player, seconds, range);
+        showHitboxesTool.execute(player, seconds, range);
     }
 }
