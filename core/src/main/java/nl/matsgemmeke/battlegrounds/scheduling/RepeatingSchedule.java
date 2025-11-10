@@ -81,7 +81,7 @@ public class RepeatingSchedule implements Schedule {
     }
 
     public void stop() {
-        if (bukkitTask == null) {
+        if (bukkitTask == null || bukkitTask.isCancelled()) {
             return;
         }
 
