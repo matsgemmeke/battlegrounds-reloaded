@@ -34,9 +34,15 @@ public class ToolsCommand extends BaseCommand {
             return;
         }
 
+        Map<String, Object> hitboxValues = Map.of(
+                "bg_usage", "/bg tools hitbox",
+                "bg_description", translator.translate(TranslationKey.DESCRIPTION_TOOLS_HITBOX.getPath()).getText()
+        );
+        String hitboxMessage = translator.translate(TranslationKey.TOOLS_MENU_COMMAND.getPath()).replace(hitboxValues);
+
         sender.sendMessage(translator.translate(TranslationKey.TOOLS_MENU_TITLE.getPath()).getText());
         sender.sendMessage(" ");
-        sender.sendMessage(" /bg tools hitbox - Show hitboxes of nearby entities");
+        sender.sendMessage(hitboxMessage);
         sender.sendMessage(" ");
     }
 

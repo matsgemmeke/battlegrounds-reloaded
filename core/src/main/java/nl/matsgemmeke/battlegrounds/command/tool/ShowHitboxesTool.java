@@ -28,7 +28,7 @@ public class ShowHitboxesTool {
     private static final Map<HitboxComponentType, Color> COMPONENT_TYPE_COLORS = Map.of(
             HitboxComponentType.HEAD, Color.RED,
             HitboxComponentType.TORSO, Color.YELLOW,
-            HitboxComponentType.LIMBS, Color.BLUE
+            HitboxComponentType.LIMBS, Color.AQUA
     );
     private static final int[][] EDGES = {
             { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 0 },
@@ -52,16 +52,16 @@ public class ShowHitboxesTool {
         long duration = (long) seconds * 20;
 
         Schedule schedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, SCHEDULE_INTERVAL, duration);
-        schedule.addTask(() -> this.displayNearbyEntityHitboxes(player, range));
+        schedule.addTask(() -> this.drawNearbyEntityHitboxes(player, range));
         schedule.start();
 
         Map<String, Object> values = Map.of("bg_range", range, "bg_seconds", seconds);
-        String message = translator.translate(TranslationKey.TOOL_HITBOX_SUCCESSFUL.getPath()).replace(values);
+        String message = translator.translate(TranslationKey.TOOL_HITBOX_SUCCESS.getPath()).replace(values);
 
         player.sendMessage(message);
     }
 
-    private void displayNearbyEntityHitboxes(Player player, double range) {
+    private void drawNearbyEntityHitboxes(Player player, double range) {
         Location playerLocation = player.getLocation();
         World world = player.getWorld();
 
@@ -76,24 +76,26 @@ public class ShowHitboxesTool {
 
             for (HitboxComponent component : positionHitbox.components()) {
                 Location baseLocation = entity.getLocation();
-                // Add component offsets
-                baseLocation.add(component.offsetX(), component.offsetY(), component.offsetZ());
                 // Add half the height to get the center location of the box
                 baseLocation.add(0, component.height() / 2, 0);
+                // Add only the offset Y to the base location, as it is not affected by rotation
+                baseLocation.add(0, component.offsetY(), 0);
 
-                this.displayHitboxComponentOutline(world, baseLocation, component, entity.getLocation().getYaw());
+                this.drawHitboxComponent(world, baseLocation, component, baseLocation.getYaw());
             }
         }
     }
 
-    private void displayHitboxComponentOutline(World world, Location location, HitboxComponent component, float yaw) {
+    private void drawHitboxComponent(World world, Location location, HitboxComponent component, float yaw) {
         Vector[] corners = this.getCornerVectors(component);
+
         double radians = Math.toRadians(yaw);
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
 
-        // todo
-        Vector offsetVector = new Vector(component.offsetX(), component.offsetY(), component.offsetZ());
+        double offsetX = component.offsetX() * cos - component.offsetZ() * sin;
+        double offsetZ = component.offsetX() * sin + component.offsetZ() * cos;
+        Vector offsetVector = new Vector(offsetX, 0, offsetZ);
 
         for (Vector corner : corners) {
             double x = corner.getX();
@@ -101,6 +103,7 @@ public class ShowHitboxesTool {
 
             corner.setX(x * cos - z * sin);
             corner.setZ(x * sin + z * cos);
+            corner.add(offsetVector);
         }
 
         for (int[] edge : EDGES) {

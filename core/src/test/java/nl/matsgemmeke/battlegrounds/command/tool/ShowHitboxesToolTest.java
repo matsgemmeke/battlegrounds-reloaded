@@ -17,8 +17,9 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -44,11 +45,16 @@ class ShowHitboxesToolTest {
     @InjectMocks
     private ShowHitboxesTool showHitboxesTool;
 
-    @Test
-    void executeStartsScheduleThatShowsHitboxesOfNearbyEntitiesForGivenAmountOfSeconds() {
-        Location entityLocation = new Location(null, 10.0, 10.0, 10.0, 0.0f, 0.0f);
+    @ParameterizedTest
+    @CsvSource({
+            "0.2,0.2,0.2,0.0",
+            "0.2,0.2,0.2,22.5",
+            "0.2,0.2,0.2,45.0"
+    })
+    void executeStartsScheduleThatShowsHitboxesOfNearbyEntitiesForGivenAmountOfSeconds(double height, double width, double depth, float yaw) {
+        Location entityLocation = new Location(null, 10.0, 10.0, 10.0, yaw, 0.0f);
         Location playerLocation = new Location(null, 0, 0, 0);
-        HitboxComponent component = new HitboxComponent(HitboxComponentType.TORSO, 0.2, 0.2, 0.2, 0, 0, 0);
+        HitboxComponent component = new HitboxComponent(HitboxComponentType.TORSO, height, width, depth, 0, 0, 0);
         PositionHitbox positionHitbox = new PositionHitbox(Set.of(component));
         Schedule schedule = mock(Schedule.class);
 
@@ -67,7 +73,7 @@ class ShowHitboxesToolTest {
 
         when(hitboxResolver.resolveHitbox(entity)).thenReturn(Optional.of(hitbox));
         when(scheduler.createRepeatingSchedule(0L, 1L, 200L)).thenReturn(schedule);
-        when(translator.translate(TranslationKey.TOOL_HITBOX_SUCCESSFUL.getPath())).thenReturn(new TextTemplate("Displaying hitboxes for %bg_seconds% seconds inside a range of %bg_range% blocks."));
+        when(translator.translate(TranslationKey.TOOL_HITBOX_SUCCESS.getPath())).thenReturn(new TextTemplate("Displaying hitboxes for %bg_seconds% seconds inside a range of %bg_range% blocks."));
 
         doAnswer(invocation -> {
             ScheduleTask task = invocation.getArgument(0);

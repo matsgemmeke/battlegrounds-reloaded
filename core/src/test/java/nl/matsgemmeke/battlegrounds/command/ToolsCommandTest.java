@@ -36,6 +36,20 @@ class ToolsCommandTest {
     }
 
     @Test
+    void onDefaultSendToolsMenuMessageWhenNoArgsAreDefined() {
+        CommandSender commandSender = mock(CommandSender.class);
+
+        when(translator.translate(TranslationKey.TOOLS_MENU_TITLE.getPath())).thenReturn(new TextTemplate("&6&l List of tools"));
+        when(translator.translate(TranslationKey.TOOLS_MENU_COMMAND.getPath())).thenReturn(new TextTemplate(" ● %bg_usage% - %bg_description%"));
+        when(translator.translate(TranslationKey.DESCRIPTION_TOOLS_HITBOX.getPath())).thenReturn(new TextTemplate("Shows hitboxes of nearby entities"));
+
+        command.onDefault(commandSender, new String[0]);
+
+        verify(commandSender).sendMessage("&6&l List of tools");
+        verify(commandSender).sendMessage(" ● /bg tools hitbox - Shows hitboxes of nearby entities");
+    }
+
+    @Test
     void onHitboxExecutesShowHitboxesTool() {
         Player player = mock(Player.class);
 
