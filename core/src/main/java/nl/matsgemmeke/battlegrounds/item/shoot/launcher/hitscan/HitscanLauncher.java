@@ -19,7 +19,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,12 +27,13 @@ import java.util.UUID;
 
 public class HitscanLauncher implements ProjectileLauncher {
 
-    private static final double DISTANCE_JUMP = 0.1;
     private static final double DISTANCE_START = 0.5;
+    private static final double DISTANCE_STEP = 0.1;
+    private static final int MAX_STEPS = 1000;
     /**
      * The distance interval (in blocks) at which particles are spawned along the hitscan path.
      */
-    private static final double PARTICLE_STEP = 0.5;
+    private static final double PARTICLE_PER_STEPS = 5;
     private static final double FINDING_RANGE_DEPLOYMENT_OBJECTS = 0.3;
     private static final double FINDING_RANGE_ENTITIES = 0.1;
 
@@ -72,10 +72,9 @@ public class HitscanLauncher implements ProjectileLauncher {
     }
 
     @Override
-    public void launch(@NotNull LaunchContext context) {
+    public void launch(LaunchContext context) {
         boolean hit;
-        double distance = DISTANCE_START;
-        double projectileRange = 50.0;
+        int steps = 0;
 
         Location startingLocation = context.direction();
         Vector direction = startingLocation.getDirection();
@@ -84,11 +83,9 @@ public class HitscanLauncher implements ProjectileLauncher {
         this.scheduleSoundPlayTasks(properties.shotSounds(), entity);
 
         do {
-            Vector vector = direction.clone().multiply(distance);
-            Location projectileLocation = startingLocation.clone().add(vector);
-            hit = this.processProjectileStep(entity, projectileLocation, distance);
-            distance += DISTANCE_JUMP;
-        } while (!hit && distance < projectileRange);
+            hit = this.processProjectileStep(entity, startingLocation, direction, steps);
+            steps++;
+        } while (!hit && steps < MAX_STEPS);
     }
 
     private void scheduleSoundPlayTasks(List<GameSound> sounds, Entity entity) {
@@ -101,10 +98,14 @@ public class HitscanLauncher implements ProjectileLauncher {
         }
     }
 
-    private boolean processProjectileStep(Entity entity, Location projectileLocation, double distance) {
+    private boolean processProjectileStep(Entity entity, Location startingLocation, Vector direction, int steps) {
+        double distance = DISTANCE_START + steps * DISTANCE_STEP;
+
+        Vector vector = direction.clone().multiply(distance);
+        Location projectileLocation = startingLocation.clone().add(vector);
         ParticleEffect trajectoryParticleEffect = properties.trajectoryParticleEffect();
 
-        if (trajectoryParticleEffect != null && distance % PARTICLE_STEP == 0) {
+        if (trajectoryParticleEffect != null && steps % PARTICLE_PER_STEPS == 0) {
             particleEffectSpawner.spawnParticleEffect(trajectoryParticleEffect, projectileLocation);
         }
 
