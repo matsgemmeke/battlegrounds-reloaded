@@ -28,8 +28,12 @@ import java.util.UUID;
 
 public class HitscanLauncher implements ProjectileLauncher {
 
-    private static final double DISTANCE_JUMP = 0.5;
+    private static final double DISTANCE_JUMP = 0.1;
     private static final double DISTANCE_START = 0.5;
+    /**
+     * The distance interval (in blocks) at which particles are spawned along the hitscan path.
+     */
+    private static final double PARTICLE_STEP = 0.5;
     private static final double FINDING_RANGE_DEPLOYMENT_OBJECTS = 0.3;
     private static final double FINDING_RANGE_ENTITIES = 0.1;
 
@@ -74,14 +78,15 @@ public class HitscanLauncher implements ProjectileLauncher {
         double projectileRange = 50.0;
 
         Location startingLocation = context.direction();
+        Vector direction = startingLocation.getDirection();
         Entity entity = context.entity();
 
         this.scheduleSoundPlayTasks(properties.shotSounds(), entity);
 
         do {
-            Vector vector = startingLocation.getDirection().multiply(distance);
+            Vector vector = direction.clone().multiply(distance);
             Location projectileLocation = startingLocation.clone().add(vector);
-            hit = this.processProjectileStep(entity, startingLocation, projectileLocation);
+            hit = this.processProjectileStep(entity, projectileLocation, distance);
             distance += DISTANCE_JUMP;
         } while (!hit && distance < projectileRange);
     }
@@ -96,10 +101,10 @@ public class HitscanLauncher implements ProjectileLauncher {
         }
     }
 
-    private boolean processProjectileStep(Entity entity, Location startingLocation, Location projectileLocation) {
+    private boolean processProjectileStep(Entity entity, Location projectileLocation, double distance) {
         ParticleEffect trajectoryParticleEffect = properties.trajectoryParticleEffect();
 
-        if (trajectoryParticleEffect != null) {
+        if (trajectoryParticleEffect != null && distance % PARTICLE_STEP == 0) {
             particleEffectSpawner.spawnParticleEffect(trajectoryParticleEffect, projectileLocation);
         }
 

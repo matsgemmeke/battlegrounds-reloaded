@@ -15,6 +15,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class DamageEffectPerformance extends BaseItemEffectPerformance {
@@ -61,7 +62,7 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
     }
 
     private Damage createDamage(GameEntity target, Location sourceLocation, Location targetLocation) {
-        double damageMultiplier = this.getHitboxDamageMultiplier(target, sourceLocation);
+        double damageMultiplier = this.getHitboxDamageMultiplier(target, sourceLocation).orElse(0.0);
         double distance = sourceLocation.distance(targetLocation);
         double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
         double totalDamageAmount = distanceDamageAmount * damageMultiplier;
@@ -79,18 +80,18 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         return new Damage(damageAmount, damageType);
     }
 
-    private double getHitboxDamageMultiplier(GameEntity target, Location hitLocation) {
+    private Optional<Double> getHitboxDamageMultiplier(GameEntity target, Location hitLocation) {
         Hitbox hitbox = target.getHitbox();
         HitboxComponentType hitboxComponentType = hitbox.getHitboxComponentType(hitLocation).orElse(null);
 
         if (hitboxComponentType == null) {
-            return 0;
+            return Optional.empty();
         }
 
         return switch (hitboxComponentType) {
-            case HEAD -> properties.hitboxMultiplierProfile().headshotDamageMultiplier();
-            case TORSO -> properties.hitboxMultiplierProfile().bodyDamageMultiplier();
-            case LIMBS -> properties.hitboxMultiplierProfile().legsDamageMultiplier();
+            case HEAD -> Optional.of(properties.hitboxMultiplierProfile().headshotDamageMultiplier());
+            case TORSO -> Optional.of(properties.hitboxMultiplierProfile().bodyDamageMultiplier());
+            case LIMBS -> Optional.of(properties.hitboxMultiplierProfile().legsDamageMultiplier());
         };
     }
 }

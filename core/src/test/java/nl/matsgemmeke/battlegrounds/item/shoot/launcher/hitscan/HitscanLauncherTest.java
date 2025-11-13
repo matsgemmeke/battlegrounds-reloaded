@@ -79,7 +79,7 @@ class HitscanLauncherTest {
         ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
-        Location hitLocation = new Location(world, 0.0, 0.0, 1.0, 0.0f, 0.0f);
+        Location hitLocation = new Location(world, 0.0, 0.0, 0.6, 0.0f, 0.0f);
         Material hitBlockMaterial = Material.STONE;
 
         Entity entity = mock(Entity.class);
@@ -116,7 +116,7 @@ class HitscanLauncherTest {
         assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
 
         verify(audioEmitter).playSound(gameSound, direction);
-        verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
+        verify(particleEffectSpawner, times(1)).spawnParticleEffect(eq(TRAJECTORY_PARTICLE_EFFECT), any(Location.class));
         verify(world).playEffect(hitLocation, org.bukkit.Effect.STEP_SOUND, hitBlockMaterial);
     }
 
@@ -125,7 +125,7 @@ class HitscanLauncherTest {
         ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
-        Location hitLocation = new Location(world, 0.0, 0.0, 1.0, 0.0f, 0.0f);
+        Location hitLocation = new Location(world, 0.0, 0.0, 0.6, 0.0f, 0.0f);
 
         Entity entity = mock(Entity.class);
         when(entity.getLocation()).thenReturn(direction);
@@ -159,6 +159,6 @@ class HitscanLauncherTest {
         assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
 
         verify(audioEmitter).playSound(gameSound, direction);
-        verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, hitLocation);
+        verify(particleEffectSpawner, times(1)).spawnParticleEffect(eq(TRAJECTORY_PARTICLE_EFFECT), any(Location.class));
     }
 }
