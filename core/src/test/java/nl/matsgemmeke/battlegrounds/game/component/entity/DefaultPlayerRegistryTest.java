@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -31,6 +31,8 @@ class DefaultPlayerRegistryTest {
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
+    private HitboxProvider hitboxProvider;
+    @Mock
     private HitboxResolver hitboxResolver;
 
     private DefaultPlayerRegistry playerRegistry;
@@ -47,8 +49,8 @@ class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
 
         playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(player);
@@ -64,8 +66,8 @@ class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
 
         playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(otherPlayer);
@@ -81,8 +83,8 @@ class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
 
         playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID);
@@ -97,8 +99,8 @@ class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
 
         playerRegistry.register(player);
         Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
@@ -113,8 +115,8 @@ class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
 
         playerRegistry.register(player);
         boolean registered = playerRegistry.isRegistered(player);
@@ -130,8 +132,8 @@ class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
 
         playerRegistry.register(player);
         boolean registered = playerRegistry.isRegistered(PLAYER_UNIQUE_ID);
@@ -146,8 +148,8 @@ class DefaultPlayerRegistryTest {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
 
         playerRegistry.register(player);
         playerRegistry.deregister(PLAYER_UNIQUE_ID);
@@ -162,8 +164,8 @@ class DefaultPlayerRegistryTest {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(eq(player), any(Hitbox.class))).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitbox(player)).thenReturn(Optional.of(mock(Hitbox.class)));
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
 
         GamePlayer createdGamePlayer = playerRegistry.register(player);
 

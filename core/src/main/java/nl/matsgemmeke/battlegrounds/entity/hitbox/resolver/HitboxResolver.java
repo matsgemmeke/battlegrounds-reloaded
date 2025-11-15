@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.HumanoidHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.PlayerHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.mapper.HitboxMapper;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.PlayerHitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.ZombieHitboxProvider;
 import org.bukkit.entity.*;
 
@@ -41,6 +42,7 @@ public class HitboxResolver {
     }
 
     private void registerHitboxProviders() {
+        hitboxProviders.put(EntityType.PLAYER, this.createPlayerHitboxProvider());
         hitboxProviders.put(EntityType.ZOMBIE, this.createZombieHitboxProvider());
     }
 
@@ -75,6 +77,20 @@ public class HitboxResolver {
         }
 
         return new PlayerHitbox(player, standingHitbox);
+    }
+
+    private HitboxProvider createPlayerHitboxProvider() {
+        HitboxDefinition standingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "standing").orElse(null);
+
+        PositionHitbox standingHitbox;
+
+        if (standingHitboxDefinition != null) {
+            standingHitbox = hitboxMapper.map(standingHitboxDefinition);
+        } else {
+            standingHitbox = HitboxDefaults.PLAYER_STANDING;
+        }
+
+        return new PlayerHitboxProvider(standingHitbox);
     }
 
     private HitboxProvider createZombieHitboxProvider() {

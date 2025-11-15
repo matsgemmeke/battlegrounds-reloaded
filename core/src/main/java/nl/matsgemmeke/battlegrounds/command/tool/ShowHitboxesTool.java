@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.command.tool;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -66,13 +66,13 @@ public class ShowHitboxesTool {
         World world = player.getWorld();
 
         for (Entity entity : world.getNearbyEntities(playerLocation, range, range, range)) {
-            Hitbox hitbox = hitboxResolver.resolveHitbox(entity).orElse(null);
+            HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity).orElse(null);
 
-            if (hitbox == null) {
+            if (hitboxProvider == null) {
                 continue;
             }
 
-            PositionHitbox positionHitbox = hitbox.getCurrentPositionHitbox();
+            PositionHitbox positionHitbox = hitboxProvider.provideHitbox(entity);
 
             for (HitboxComponent component : positionHitbox.components()) {
                 Location baseLocation = entity.getLocation();
