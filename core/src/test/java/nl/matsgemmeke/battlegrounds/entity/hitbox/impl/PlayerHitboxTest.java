@@ -28,7 +28,7 @@ class PlayerHitboxTest {
 
     @BeforeEach
     void setUp() {
-        PositionHitbox standingHitbox = PositionHitboxDefaults.DEFAULT_PLAYER_STANDING_HITBOX;
+        PositionHitbox standingHitbox = PositionHitboxDefaults.PLAYER_STANDING;
 
         playerHitbox = new PlayerHitbox(player, standingHitbox);
     }

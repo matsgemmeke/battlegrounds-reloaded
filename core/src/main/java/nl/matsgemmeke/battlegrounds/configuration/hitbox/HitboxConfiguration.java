@@ -14,7 +14,6 @@ import java.util.*;
 public class HitboxConfiguration extends BasePluginConfiguration {
 
     private static final boolean READ_ONLY = true;
-    private static final String HITBOX_SECTION_ROOT = "hitbox";
 
     private static final String HITBOX_COMPONENT_TYPE_FALLBACK = "TORSO";
     private static final List<Double> HITBOX_COMPONENT_SIZE_FALLBACK = Collections.emptyList();
@@ -25,8 +24,7 @@ public class HitboxConfiguration extends BasePluginConfiguration {
     }
 
     public Optional<HitboxDefinition> getHitboxDefinition(String entityType, String position) {
-        String sectionRoute = this.createSectionRoute(entityType, position);
-        Section section = this.getOptionalSection(sectionRoute).orElse(null);
+        Section section = this.getOptionalSection(entityType + "." + position).orElse(null);
 
         if (section == null) {
             return Optional.empty();
@@ -60,9 +58,5 @@ public class HitboxConfiguration extends BasePluginConfiguration {
         hitboxDefinition.components = componentDefinitions;
 
         return Optional.of(hitboxDefinition);
-    }
-
-    private String createSectionRoute(String entityType, String position) {
-        return HITBOX_SECTION_ROOT + "-" + entityType + "." + position;
     }
 }

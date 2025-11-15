@@ -1,5 +1,5 @@
 # Player hitbox
-hitbox-player:
+player:
   standing:
     head:
       type: HEAD
@@ -23,8 +23,8 @@ hitbox-player:
       offset: [ 0.0, 0.0, 0.0 ]
 
 # Zombie hitbox
-hitbox-zombie:
-  standing:
+zombie:
+  adult-standing:
     head:
       type: HEAD
       size: [0.5, 0.5, 0.5]
@@ -36,11 +36,11 @@ hitbox-zombie:
     left-arm:
       type: LIMBS
       size: [0.25, 0.25, 0.8]
-      offset: [-0.35, 1.20, 0.30]
+      offset: [-0.35, 1.2, 0.3]
     right-arm:
       type: LIMBS
       size: [0.25, 0.25, 0.8]
-      offset: [0.35, 1.20, 0.30]
+      offset: [0.35, 1.2, 0.3]
     legs:
       type: LIMBS
       size: [0.8, 0.5, 0.3]

@@ -80,7 +80,7 @@ class HitboxResolverTest {
         Zombie zombie = mock(Zombie.class);
         when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
 
-        when(hitboxConfiguration.getHitboxDefinition("zombie", "standing")).thenReturn(Optional.ofNullable(hitboxDefinition));
+        when(hitboxConfiguration.getHitboxDefinition("zombie", "adult-standing")).thenReturn(Optional.ofNullable(hitboxDefinition));
 
         Optional<Hitbox> hitboxOptional = hitboxResolver.resolveHitbox(zombie);
 

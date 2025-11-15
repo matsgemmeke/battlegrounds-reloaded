@@ -1,4 +1,4 @@
-hitbox-player:
+player:
   standing:
     head:
       type: fail

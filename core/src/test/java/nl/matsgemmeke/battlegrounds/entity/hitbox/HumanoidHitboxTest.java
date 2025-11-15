@@ -26,7 +26,7 @@ class HumanoidHitboxTest {
 
     @BeforeEach
     void setUp() {
-        PositionHitbox standingHitbox = PositionHitboxDefaults.DEFAULT_ZOMBIE_STANDING_HITBOX;
+        PositionHitbox standingHitbox = PositionHitboxDefaults.ZOMBIE_ADULT_STANDING;
 
         humanoidHitbox = new HumanoidHitbox(entity, standingHitbox);
     }
