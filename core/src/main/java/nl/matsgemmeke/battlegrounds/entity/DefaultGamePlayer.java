@@ -3,7 +3,8 @@ package nl.matsgemmeke.battlegrounds.entity;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
@@ -29,7 +30,7 @@ public class DefaultGamePlayer implements GamePlayer {
     private static final float SPRINTING_ACCURACY = 0.5f;
     private static final int OPERATING_FOOD_LEVEL = 6;
 
-    private final Hitbox hitbox;
+    private final HitboxProvider hitboxProvider;
     private final InternalsProvider internals;
     private final Player player;
     private final Set<ItemEffect> effects;
@@ -40,9 +41,9 @@ public class DefaultGamePlayer implements GamePlayer {
     private int previousFoodLevel;
 
     @Inject
-    public DefaultGamePlayer(InternalsProvider internals, @Assisted Player player, @Assisted Hitbox hitbox) {
+    public DefaultGamePlayer(InternalsProvider internals, @Assisted Player player, @Assisted HitboxProvider hitboxProvider) {
         this.player = player;
-        this.hitbox = hitbox;
+        this.hitboxProvider = hitboxProvider;
         this.internals = internals;
         this.effects = new HashSet<>();
         this.canDeploy = true;
@@ -68,11 +69,6 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public void setHealth(double health) {
         player.setHealth(health);
-    }
-
-    @Override
-    public Hitbox getHitbox() {
-        return hitbox;
     }
 
     @Nullable
@@ -156,6 +152,11 @@ public class DefaultGamePlayer implements GamePlayer {
     }
 
     @NotNull
+    public Location getDeployLocation() {
+        return player.getEyeLocation();
+    }
+
+    @NotNull
     public ItemStack getHeldItem() {
         return player.getInventory().getItemInMainHand();
     }
@@ -164,9 +165,9 @@ public class DefaultGamePlayer implements GamePlayer {
         player.getInventory().setItemInMainHand(itemStack);
     }
 
-    @NotNull
-    public Location getDeployLocation() {
-        return player.getEyeLocation();
+    @Override
+    public PositionHitbox getHitbox() {
+        return hitboxProvider.provideHitbox(player);
     }
 
     @NotNull

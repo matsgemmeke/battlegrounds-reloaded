@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
 import org.bukkit.entity.Entity;
+
 public interface HitboxProvider {
 
     /**

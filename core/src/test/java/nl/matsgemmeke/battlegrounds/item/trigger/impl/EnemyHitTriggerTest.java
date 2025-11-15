@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
@@ -54,7 +54,7 @@ class EnemyHitTriggerTest {
         Location triggerTargetLocation = new Location(null, 1, 1, 1);
         TriggerContext context = new TriggerContext(entity, triggerTarget);
 
-        Hitbox hitbox = mock(Hitbox.class);
+        PositionHitbox hitbox = mock(PositionHitbox.class);
         when(hitbox.intersects(triggerTargetLocation)).thenReturn(intersects);
 
         GameEntity gameEntity = mock(GameEntity.class);

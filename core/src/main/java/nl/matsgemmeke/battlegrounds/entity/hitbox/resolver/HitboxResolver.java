@@ -54,6 +54,16 @@ public class HitboxResolver {
         return Optional.of(hitboxFactory.create(entity));
     }
 
+    public Optional<HitboxProvider> resolveHitboxProvider(Entity entity) {
+        HitboxProvider hitboxProvider = hitboxProviders.get(entity.getType());
+
+        if (hitboxProvider == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(hitboxProvider);
+    }
+
     private Hitbox createPlayerHitbox(Player player) {
         HitboxDefinition standingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "standing").orElse(null);
         PositionHitbox standingHitbox;

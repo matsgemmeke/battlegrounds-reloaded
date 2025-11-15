@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.entity.LivingEntityRegistry;
 import org.bukkit.entity.LivingEntity;
@@ -38,8 +38,8 @@ public class OpenModeLivingEntityRegistry implements LivingEntityRegistry {
             return existingEntity;
         }
 
-        Hitbox hitbox = hitboxResolver.resolveHitbox(entity).orElseThrow();
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
+        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity).orElseThrow();
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
 
         livingEntities.put(uniqueId, openModeEntity);
 

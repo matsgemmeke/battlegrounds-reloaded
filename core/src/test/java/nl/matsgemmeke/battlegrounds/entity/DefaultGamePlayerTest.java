@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
@@ -40,7 +41,7 @@ class DefaultGamePlayerTest {
     @Mock
     private InternalsProvider internals;
     @Mock
-    private Hitbox hitbox;
+    private HitboxProvider hitboxProvider;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private Player player;
     @InjectMocks
@@ -189,6 +190,17 @@ class DefaultGamePlayerTest {
         Location deployLocation = gamePlayer.getDeployLocation();
 
         assertThat(deployLocation).isEqualTo(eyeLocation);
+    }
+
+    @Test
+    void getHitboxReturnsHitboxInstanceCreatedFromHitboxProvider() {
+        PositionHitbox hitbox = mock(PositionHitbox.class);
+
+        when(hitboxProvider.provideHitbox(player)).thenReturn(hitbox);
+
+        PositionHitbox result = gamePlayer.getHitbox();
+
+        assertThat(result).isEqualTo(hitbox);
     }
 
     @Test

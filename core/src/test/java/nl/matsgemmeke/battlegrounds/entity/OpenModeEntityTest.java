@@ -1,58 +1,58 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
-public class OpenModeEntityTest {
+@ExtendWith(MockitoExtension.class)
+class OpenModeEntityTest {
 
-    private Hitbox hitbox;
+    @Mock
+    private HitboxProvider hitboxProvider;
+    @Mock
     private LivingEntity entity;
-
-    @BeforeEach
-    public void setUp() {
-        hitbox = mock(Hitbox.class);
-        this.entity = mock(LivingEntity.class);
-    }
+    @InjectMocks
+    private OpenModeEntity openModeEntity;
 
     @Test
-    public void getLastDamageReturnsNullIfEntityHasNotTakenDamage() {
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
+    void getLastDamageReturnsNullIfEntityHasNotTakenDamage() {
         Damage lastDamage = openModeEntity.getLastDamage();
 
-        assertNull(lastDamage);
+        assertThat(lastDamage).isNull();
     }
 
     @Test
-    public void getLastDamageReturnsLastDamageDealtToPlayer() {
+    void getLastDamageReturnsLastDamageDealtToPlayer() {
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
         when(entity.getHealth()).thenReturn(20.0);
         when(entity.isDead()).thenReturn(false);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
         openModeEntity.damage(damage);
         Damage lastDamage = openModeEntity.getLastDamage();
 
-        assertEquals(damage, lastDamage);
+        assertThat(lastDamage).isEqualTo(damage);
     }
 
     @NotNull
-    private static Stream<Arguments> damageScenarios() {
+    static Stream<Arguments> damageScenarios() {
         return Stream.of(
                 arguments(50.0, 50.0, 20.0, 10.0),
                 arguments(5000.0, 5000.0, 20.0, 0.0)
@@ -61,49 +61,54 @@ public class OpenModeEntityTest {
 
     @ParameterizedTest
     @MethodSource("damageScenarios")
-    public void damageReturnsDealtDamageAndLowersHealth(
-            double damageAmount,
-            double expectedDamageDealt,
-            double health,
-            double expectedHealth
-    ) {
+    void damageReturnsDealtDamageAndLowersHealth(double damageAmount, double expectedDamageDealt, double health, double expectedHealth) {
         when(entity.getHealth()).thenReturn(health);
 
         Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
         double damageDealt = openModeEntity.damage(damage);
 
-        assertEquals(expectedDamageDealt, damageDealt);
+        assertThat(damageDealt).isEqualTo(expectedDamageDealt);
 
         verify(entity).setHealth(expectedHealth);
     }
 
     @Test
-    public void damageDoesNotApplyDamageIfEntityIsDead() {
+    void damageDoesNotApplyDamageIfEntityIsDead() {
         when(entity.isDead()).thenReturn(true);
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
         double damageDealt = openModeEntity.damage(damage);
 
-        assertEquals(0.0, damageDealt);
+        assertThat(damageDealt).isZero();
 
         verify(entity, never()).setHealth(anyDouble());
     }
 
     @Test
-    public void damageDoesNotApplyDamageIfHealthIsBelowZero() {
+    void damageDoesNotApplyDamageIfHealthIsBelowZero() {
         when(entity.getHealth()).thenReturn(0.0);
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitbox);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
         double damageDealt = openModeEntity.damage(damage);
 
-        assertEquals(0.0, damageDealt);
+        assertThat(damageDealt).isZero();
 
         verify(entity, never()).setHealth(anyDouble());
+    }
+
+    @Test
+    void getHitboxReturnsHitboxInstanceCreatedFromHitboxProvider() {
+        PositionHitbox hitbox = mock(PositionHitbox.class);
+
+        when(hitboxProvider.provideHitbox(entity)).thenReturn(hitbox);
+
+        PositionHitbox result = openModeEntity.getHitbox();
+
+        assertThat(result).isEqualTo(hitbox);
     }
 }

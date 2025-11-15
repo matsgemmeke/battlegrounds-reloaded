@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.effect.damage;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -81,8 +81,8 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
     }
 
     private Optional<Double> getHitboxDamageMultiplier(GameEntity target, Location hitLocation) {
-        Hitbox hitbox = target.getHitbox();
-        HitboxComponentType hitboxComponentType = hitbox.getHitboxComponentType(hitLocation).orElse(null);
+        PositionHitbox hitbox = target.getHitbox();
+        HitboxComponentType hitboxComponentType = hitbox.getIntersectedHitboxComponentType(hitLocation).orElse(null);
 
         if (hitboxComponentType == null) {
             return Optional.empty();

@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
@@ -76,8 +76,8 @@ public class OpenModeTargetFinder implements TargetFinder {
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
                 // TODO handle optional
-                Hitbox hitbox = hitboxResolver.resolveHitbox(entity).orElse(null);
-                GameEntity target = new OpenModeEntity(livingEntity, hitbox);
+                HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity).orElse(null);
+                GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
 
                 targets.add(target);
             }
@@ -134,8 +134,8 @@ public class OpenModeTargetFinder implements TargetFinder {
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
                 // TODO handle optional
-                Hitbox hitbox = hitboxResolver.resolveHitbox(entity).orElse(null);
-                GameEntity target = new OpenModeEntity(livingEntity, hitbox);
+                HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity).orElse(null);
+                GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
 
                 targets.add(target);
             }
