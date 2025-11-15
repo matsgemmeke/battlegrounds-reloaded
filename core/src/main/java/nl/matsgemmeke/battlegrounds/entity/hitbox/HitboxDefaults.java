@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
 import java.util.Set;
 
-public final class PositionHitboxDefaults {
+public final class HitboxDefaults {
 
     public static final PositionHitbox PLAYER_STANDING = new PositionHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 1.4, 0.0),

@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxDefaults;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitboxDefaults;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.HumanoidHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.PlayerHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.mapper.HitboxMapper;
@@ -61,7 +61,7 @@ public class HitboxResolver {
         if (standingHitboxDefinition != null) {
             standingHitbox = hitboxMapper.map(standingHitboxDefinition);
         } else {
-            standingHitbox = PositionHitboxDefaults.PLAYER_STANDING;
+            standingHitbox = HitboxDefaults.PLAYER_STANDING;
         }
 
         return new PlayerHitbox(player, standingHitbox);
@@ -77,13 +77,13 @@ public class HitboxResolver {
         if (adultStandingHitboxDefinition != null) {
             standingHitboxAdult = hitboxMapper.map(adultStandingHitboxDefinition);
         } else {
-            standingHitboxAdult = PositionHitboxDefaults.ZOMBIE_ADULT_STANDING;
+            standingHitboxAdult = HitboxDefaults.ZOMBIE_ADULT_STANDING;
         }
 
         if (babyStandingHitboxDefinition != null) {
             standingHitboxBaby = hitboxMapper.map(babyStandingHitboxDefinition);
         } else {
-            standingHitboxBaby = PositionHitboxDefaults.ZOMBIE_BABY_STANDING;
+            standingHitboxBaby = HitboxDefaults.ZOMBIE_BABY_STANDING;
         }
 
         return new ZombieHitboxProvider(standingHitboxAdult, standingHitboxBaby);
@@ -96,7 +96,7 @@ public class HitboxResolver {
         if (standingHitboxDefinition != null) {
             standingHitbox = hitboxMapper.map(standingHitboxDefinition);
         } else {
-            standingHitbox = PositionHitboxDefaults.ZOMBIE_ADULT_STANDING;
+            standingHitbox = HitboxDefaults.ZOMBIE_ADULT_STANDING;
         }
 
         return new HumanoidHitbox(zombie, standingHitbox);

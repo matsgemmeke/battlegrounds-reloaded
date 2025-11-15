@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.impl;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxDefaults;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitboxDefaults;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ class PlayerHitboxTest {
 
     @BeforeEach
     void setUp() {
-        PositionHitbox standingHitbox = PositionHitboxDefaults.PLAYER_STANDING;
+        PositionHitbox standingHitbox = HitboxDefaults.PLAYER_STANDING;
 
         playerHitbox = new PlayerHitbox(player, standingHitbox);
     }
