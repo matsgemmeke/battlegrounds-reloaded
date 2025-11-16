@@ -2,45 +2,45 @@ player:
   standing:
     head:
       type: HEAD
-      size: [ 0.5, 0.5, 0.5 ]
-      offset: [ 0.0, 1.4, 0.0 ]
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 1.4, 0.0]
     torso:
       type: TORSO
-      size: [ 0.7, 0.5, 0.3 ]
-      offset: [ 0.0, 0.7, 0.0 ]
+      size: [0.7, 0.5, 0.3]
+      offset: [0.0, 0.7, 0.0]
     left-arm:
       type: LIMBS
-      size: [ 0.7, 0.2, 0.3 ]
-      offset: [ 0.35, 0.7, 0.0 ]
+      size: [0.7, 0.2, 0.3]
+      offset: [0.35, 0.7, 0.0]
     right-arm:
       type: LIMBS
-      size: [ 0.7, 0.2, 0.3 ]
-      offset: [ -0.35, 0.7, 0.0 ]
+      size: [0.7, 0.2, 0.3]
+      offset: [-0.35, 0.7, 0.0]
     legs:
       type: LIMBS
-      size: [ 0.7, 0.5, 0.3 ]
-      offset: [ 0.0, 0.0, 0.0 ]
+      size: [0.7, 0.5, 0.3]
+      offset: [0.0, 0.0, 0.0]
   sneaking:
     head:
       type: HEAD
-      size: [ 0.5, 0.5, 0.5 ]
-      offset: [ 0.0, 1.0, 0.0 ]
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 1.0, 0.0]
     torso:
       type: TORSO
-      size: [ 0.5, 0.5, 0.5 ]
-      offset: [ 0.0, 0.5, -0.2 ]
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 0.5, -0.2]
     left-arm:
       type: LIMBS
-      size: [ 0.7, 0.2, 0.5 ]
-      offset: [ 0.35, 0.4, -0.1 ]
+      size: [0.7, 0.2, 0.5]
+      offset: [0.35, 0.4, -0.1]
     right-arm:
       type: LIMBS
-      size: [ 0.7, 0.2, 0.5 ]
-      offset: [ -0.35, 0.4, -0.1 ]
+      size: [0.7, 0.2, 0.5]
+      offset: [-0.35, 0.4, -0.1]
     legs:
       type: LIMBS
-      size: [ 0.5, 0.5, 0.3 ]
-      offset: [ 0.0, 0.0, -0.2 ]
+      size: [0.5, 0.5, 0.3]
+      offset: [0.0, 0.0, -0.2]
 
 zombie:
   adult-standing:
@@ -67,21 +67,21 @@ zombie:
   baby-standing:
     head:
       type: HEAD
-      size: [ 0.4, 0.4, 0.4 ]
-      offset: [ 0.0, 0.7, 0.0 ]
+      size: [0.4, 0.4, 0.4]
+      offset: [0.0, 0.7, 0.0]
     torso:
       type: TORSO
-      size: [ 0.35, 0.3, 0.2 ]
-      offset: [ 0.0, 0.35, 0.0 ]
+      size: [0.35, 0.3, 0.2]
+      offset: [0.0, 0.35, 0.0]
     left-arm:
       type: LIMBS
-      size: [ 0.15, 0.15, 0.4 ]
-      offset: [0.15, 0.55, 0.15 ]
+      size: [0.15, 0.15, 0.4]
+      offset: [0.15, 0.55, 0.15]
     right-arm:
       type: LIMBS
-      size: [ 0.15, 0.15, 0.4 ]
-      offset: [-0.15, 0.55, 0.15 ]
+      size: [0.15, 0.15, 0.4]
+      offset: [-0.15, 0.55, 0.15]
     legs:
       type: LIMBS
-      size: [ 0.35, 0.3, 0.2 ]
-      offset: [ 0.0, 0.0, 0.0 ]
+      size: [0.35, 0.3, 0.2]
+      offset: [0.0, 0.0, 0.0]
