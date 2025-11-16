@@ -18,6 +18,10 @@ public class Hitbox {
         this.relativeHitbox = relativeHitbox;
     }
 
+    public Location getBaseLocation() {
+        return baseLocation;
+    }
+
     public Set<HitboxComponent> getComponents() {
         return relativeHitbox.components();
     }

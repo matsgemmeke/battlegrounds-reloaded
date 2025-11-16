@@ -75,13 +75,13 @@ public class ShowHitboxesTool {
             Hitbox hitbox = hitboxProvider.provideHitbox(entity);
 
             for (HitboxComponent component : hitbox.getComponents()) {
-                Location baseLocation = entity.getLocation();
+                Location componentBaseLocation = hitbox.getBaseLocation().clone();
                 // Add half the height to get the center location of the box
-                baseLocation.add(0, component.height() / 2, 0);
+                componentBaseLocation.add(0, component.height() / 2, 0);
                 // Add only the offset Y to the base location, as it is not affected by rotation
-                baseLocation.add(0, component.offsetY(), 0);
+                componentBaseLocation.add(0, component.offsetY(), 0);
 
-                this.drawHitboxComponent(world, baseLocation, component, baseLocation.getYaw());
+                this.drawHitboxComponent(world, componentBaseLocation, component, componentBaseLocation.getYaw());
             }
         }
     }

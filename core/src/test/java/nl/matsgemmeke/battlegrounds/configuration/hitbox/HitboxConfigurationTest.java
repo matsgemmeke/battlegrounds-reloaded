@@ -74,11 +74,11 @@ class HitboxConfigurationTest {
 
             assertThat(hitboxDefinition.components.get(2).type).isEqualTo("LIMBS");
             assertThat(hitboxDefinition.components.get(2).size).containsExactly(0.7, 0.2, 0.3);
-            assertThat(hitboxDefinition.components.get(2).offset).containsExactly(-0.35, 0.7, 0.0);
+            assertThat(hitboxDefinition.components.get(2).offset).containsExactly(0.35, 0.7, 0.0);
 
             assertThat(hitboxDefinition.components.get(3).type).isEqualTo("LIMBS");
             assertThat(hitboxDefinition.components.get(3).size).containsExactly(0.7, 0.2, 0.3);
-            assertThat(hitboxDefinition.components.get(3).offset).containsExactly(0.35, 0.7, 0.0);
+            assertThat(hitboxDefinition.components.get(3).offset).containsExactly(-0.35, 0.7, 0.0);
 
             assertThat(hitboxDefinition.components.get(4).type).isEqualTo("LIMBS");
             assertThat(hitboxDefinition.components.get(4).size).containsExactly(0.7, 0.5, 0.3);

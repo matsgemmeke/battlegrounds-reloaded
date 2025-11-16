@@ -20,6 +20,14 @@ public final class HitboxDefaults {
             new HitboxComponent(HitboxComponentType.LIMBS, 0.7, 0.5, 0.3, 0.0, 0.0, 0.0)
     ));
 
+    public static final RelativeHitbox PLAYER_SLEEPING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 1.4, 0.0),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 0.3, 0.0, 0.7, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.7, 0.2, 0.3, -0.35, 0.7, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.7, 0.2, 0.3, 0.35, 0.7, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.7, 0.5, 0.3, 0.0, 0.0, 0.0)
+    ));
+
     public static final RelativeHitbox ZOMBIE_ADULT_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 1.5, 0.0),
             new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 0.3, 0.0, 0.8, 0.0),

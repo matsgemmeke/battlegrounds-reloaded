@@ -22,8 +22,9 @@ class PlayerHitboxProviderTest {
 
     private static final RelativeHitbox STANDING_HITBOX = new RelativeHitbox(Collections.emptySet());
     private static final RelativeHitbox SNEAKING_HITBOX = new RelativeHitbox(Collections.emptySet());
+    private static final RelativeHitbox SLEEPING_HITBOX = new RelativeHitbox(Collections.emptySet());
 
-    private final PlayerHitboxProvider hitboxProvider = new PlayerHitboxProvider(STANDING_HITBOX, SNEAKING_HITBOX);
+    private final PlayerHitboxProvider hitboxProvider = new PlayerHitboxProvider(STANDING_HITBOX, SNEAKING_HITBOX, SLEEPING_HITBOX);
 
     @Test
     void provideHitboxThrowsHitboxProvisionExceptionWhenGivenEntityIsNoPlayer() {
@@ -43,6 +44,16 @@ class PlayerHitboxProviderTest {
         Hitbox hitbox = hitboxProvider.provideHitbox(player);
 
         assertThat(hitbox.getComponents()).isSameAs(SNEAKING_HITBOX.components());
+    }
+
+    @Test
+    void provideHitboxReturnsSneakingHitboxWhenPlayerIsSleeping() {
+        Player player = mock(Player.class);
+        when(player.getPose()).thenReturn(Pose.SLEEPING);
+
+        Hitbox hitbox = hitboxProvider.provideHitbox(player);
+
+        assertThat(hitbox.getComponents()).isSameAs(SLEEPING_HITBOX.components());
     }
 
     @Test

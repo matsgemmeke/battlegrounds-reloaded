@@ -52,19 +52,24 @@ class HitboxResolverTest {
 
     static List<Arguments> playerHitboxDefinitions() {
         return List.of(
-                arguments(null, null),
-                arguments(createHitboxDefinition(), createHitboxDefinition())
+                arguments(null, null, null),
+                arguments(createHitboxDefinition(), createHitboxDefinition(), createHitboxDefinition())
         );
     }
 
     @ParameterizedTest
     @MethodSource("playerHitboxDefinitions")
-    void resolveHitboxReturnsPlayerHitboxWithDefaultPositionHitboxWhenNoDefinitionIsNotFound(HitboxDefinition standingHitboxDefinition, HitboxDefinition sneakingHitboxDefinition) {
+    void resolveHitboxReturnsPlayerHitboxWithDefaultPositionHitboxWhenNoDefinitionIsNotFound(
+            HitboxDefinition standingHitboxDefinition,
+            HitboxDefinition sneakingHitboxDefinition,
+            HitboxDefinition sleepingHitboxDefinition
+    ) {
         Player player = mock(Player.class);
         when(player.getType()).thenReturn(EntityType.PLAYER);
 
         when(hitboxConfiguration.getHitboxDefinition("player", "standing")).thenReturn(Optional.ofNullable(standingHitboxDefinition));
         when(hitboxConfiguration.getHitboxDefinition("player", "sneaking")).thenReturn(Optional.ofNullable(sneakingHitboxDefinition));
+        when(hitboxConfiguration.getHitboxDefinition("player", "sleeping")).thenReturn(Optional.ofNullable(sleepingHitboxDefinition));
 
         hitboxResolver.registerHitboxProviders();
         Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(player);

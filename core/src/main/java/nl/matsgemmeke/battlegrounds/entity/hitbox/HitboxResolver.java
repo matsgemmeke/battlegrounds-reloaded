@@ -47,9 +47,11 @@ public class HitboxResolver {
     private HitboxProvider createPlayerHitboxProvider() {
         HitboxDefinition standingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "standing").orElse(null);
         HitboxDefinition sneakingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "sneaking").orElse(null);
+        HitboxDefinition sleepingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "sleeping").orElse(null);
 
         RelativeHitbox standingHitbox;
         RelativeHitbox sneakingHitbox;
+        RelativeHitbox sleepingHitbox;
 
         if (standingHitboxDefinition != null) {
             standingHitbox = hitboxMapper.map(standingHitboxDefinition);
@@ -63,7 +65,13 @@ public class HitboxResolver {
             sneakingHitbox = HitboxDefaults.PLAYER_SNEAKING;
         }
 
-        return new PlayerHitboxProvider(standingHitbox, sneakingHitbox);
+        if (sleepingHitboxDefinition != null) {
+            sleepingHitbox = hitboxMapper.map(sleepingHitboxDefinition);
+        } else {
+            sleepingHitbox = HitboxDefaults.PLAYER_SLEEPING;
+        }
+
+        return new PlayerHitboxProvider(standingHitbox, sneakingHitbox, sleepingHitbox);
     }
 
     private HitboxProvider createZombieHitboxProvider() {

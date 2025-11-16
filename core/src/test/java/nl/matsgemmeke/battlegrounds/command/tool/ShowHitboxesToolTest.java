@@ -53,15 +53,13 @@ class ShowHitboxesToolTest {
             "0.2,0.2,0.2,45.0"
     })
     void executeStartsScheduleThatShowsHitboxesOfNearbyEntitiesForGivenAmountOfSeconds(double height, double width, double depth, float yaw) {
-        Location entityLocation = new Location(null, 10.0, 10.0, 10.0, yaw, 0.0f);
+        Location baseLocation = new Location(null, 10.0, 10.0, 10.0, yaw, 0.0f);
         Location playerLocation = new Location(null, 0, 0, 0);
         HitboxComponent component = new HitboxComponent(HitboxComponentType.TORSO, height, width, depth, 0, 0, 0);
         RelativeHitbox relativeHitbox = new RelativeHitbox(Set.of(component));
-        Hitbox hitbox = new Hitbox(entityLocation, relativeHitbox);
-        Schedule schedule = mock(Schedule.class);
-
+        Hitbox hitbox = new Hitbox(baseLocation, relativeHitbox);
         Entity entity = mock(Entity.class);
-        when(entity.getLocation()).thenReturn(entityLocation);
+        Schedule schedule = mock(Schedule.class);
 
         World world = mock(World.class);
         when(world.getNearbyEntities(playerLocation, RANGE, RANGE, RANGE)).thenReturn(List.of(entity));
