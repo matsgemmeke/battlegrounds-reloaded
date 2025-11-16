@@ -11,11 +11,11 @@ player:
     left-arm:
       type: LIMBS
       size: [ 0.7, 0.2, 0.3 ]
-      offset: [ -0.35, 0.7, 0.0 ]
+      offset: [ 0.35, 0.7, 0.0 ]
     right-arm:
       type: LIMBS
       size: [ 0.7, 0.2, 0.3 ]
-      offset: [ 0.35, 0.7, 0.0 ]
+      offset: [ -0.35, 0.7, 0.0 ]
     legs:
       type: LIMBS
       size: [ 0.7, 0.5, 0.3 ]
@@ -55,11 +55,11 @@ zombie:
     left-arm:
       type: LIMBS
       size: [0.25, 0.25, 0.8]
-      offset: [-0.35, 1.2, 0.3]
+      offset: [0.35, 1.2, 0.3]
     right-arm:
       type: LIMBS
       size: [0.25, 0.25, 0.8]
-      offset: [0.35, 1.2, 0.3]
+      offset: [-0.35, 1.2, 0.3]
     legs:
       type: LIMBS
       size: [0.8, 0.5, 0.3]
@@ -76,11 +76,11 @@ zombie:
     left-arm:
       type: LIMBS
       size: [ 0.15, 0.15, 0.4 ]
-      offset: [ -0.15, 0.55, 0.15 ]
+      offset: [0.15, 0.55, 0.15 ]
     right-arm:
       type: LIMBS
       size: [ 0.15, 0.15, 0.4 ]
-      offset: [ 0.15, 0.55, 0.15 ]
+      offset: [-0.15, 0.55, 0.15 ]
     legs:
       type: LIMBS
       size: [ 0.35, 0.3, 0.2 ]
