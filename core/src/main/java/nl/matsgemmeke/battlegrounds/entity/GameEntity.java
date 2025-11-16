@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,7 +25,7 @@ public interface GameEntity extends Target, Identifiable {
      *
      * @return the entity hitbox
      */
-    PositionHitbox getHitbox();
+    Hitbox getHitbox();
 
     /**
      * Gets the location of the entity.

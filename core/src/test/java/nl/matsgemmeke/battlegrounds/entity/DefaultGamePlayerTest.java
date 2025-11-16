@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -194,11 +194,11 @@ class DefaultGamePlayerTest {
 
     @Test
     void getHitboxReturnsHitboxInstanceCreatedFromHitboxProvider() {
-        PositionHitbox hitbox = mock(PositionHitbox.class);
+        Hitbox hitbox = mock(Hitbox.class);
 
         when(hitboxProvider.provideHitbox(player)).thenReturn(hitbox);
 
-        PositionHitbox result = gamePlayer.getHitbox();
+        Hitbox result = gamePlayer.getHitbox();
 
         assertThat(result).isEqualTo(hitbox);
     }

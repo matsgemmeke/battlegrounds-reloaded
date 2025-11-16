@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -80,7 +80,7 @@ public class OpenModeEntity implements GameEntity {
     }
 
     @Override
-    public PositionHitbox getHitbox() {
+    public Hitbox getHitbox() {
         return hitboxProvider.provideHitbox(entity);
     }
 

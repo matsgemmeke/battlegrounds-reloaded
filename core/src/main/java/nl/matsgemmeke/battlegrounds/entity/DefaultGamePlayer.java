@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.entity;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -166,7 +166,7 @@ public class DefaultGamePlayer implements GamePlayer {
     }
 
     @Override
-    public PositionHitbox getHitbox() {
+    public Hitbox getHitbox() {
         return hitboxProvider.provideHitbox(player);
     }
 

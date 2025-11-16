@@ -6,14 +6,14 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * A hitbox for a specific entity position.
+ * A hitbox position into a specific base location.
  */
-public class PositionHitbox {
+public class Hitbox {
 
     private final Location baseLocation;
     private final RelativeHitbox relativeHitbox;
 
-    public PositionHitbox(Location baseLocation, RelativeHitbox relativeHitbox) {
+    public Hitbox(Location baseLocation, RelativeHitbox relativeHitbox) {
         this.baseLocation = baseLocation;
         this.relativeHitbox = relativeHitbox;
     }

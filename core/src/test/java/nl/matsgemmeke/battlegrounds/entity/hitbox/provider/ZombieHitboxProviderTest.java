@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -39,7 +39,7 @@ class ZombieHitboxProviderTest {
         Zombie zombie = mock(Zombie.class);
         when(zombie.isAdult()).thenReturn(false);
 
-        PositionHitbox hitbox = hitboxProvider.provideHitbox(zombie);
+        Hitbox hitbox = hitboxProvider.provideHitbox(zombie);
 
         assertThat(hitbox.getComponents()).isSameAs(BABY_STANDING_HITBOX.components());
     }
@@ -49,7 +49,7 @@ class ZombieHitboxProviderTest {
         Zombie zombie = mock(Zombie.class);
         when(zombie.isAdult()).thenReturn(true);
 
-        PositionHitbox hitbox = hitboxProvider.provideHitbox(zombie);
+        Hitbox hitbox = hitboxProvider.provideHitbox(zombie);
 
         assertThat(hitbox.getComponents()).isSameAs(ADULT_STANDING_HITBOX.components());
     }

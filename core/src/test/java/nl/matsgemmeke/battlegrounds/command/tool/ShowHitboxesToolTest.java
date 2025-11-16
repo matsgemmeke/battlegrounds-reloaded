@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.command.tool;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
@@ -57,7 +57,7 @@ class ShowHitboxesToolTest {
         Location playerLocation = new Location(null, 0, 0, 0);
         HitboxComponent component = new HitboxComponent(HitboxComponentType.TORSO, height, width, depth, 0, 0, 0);
         RelativeHitbox relativeHitbox = new RelativeHitbox(Set.of(component));
-        PositionHitbox positionHitbox = new PositionHitbox(entityLocation, relativeHitbox);
+        Hitbox hitbox = new Hitbox(entityLocation, relativeHitbox);
         Schedule schedule = mock(Schedule.class);
 
         Entity entity = mock(Entity.class);
@@ -71,7 +71,7 @@ class ShowHitboxesToolTest {
         when(player.getWorld()).thenReturn(world);
 
         HitboxProvider hitboxProvider = mock(HitboxProvider.class);
-        when(hitboxProvider.provideHitbox(entity)).thenReturn(positionHitbox);
+        when(hitboxProvider.provideHitbox(entity)).thenReturn(hitbox);
 
         when(hitboxResolver.resolveHitboxProvider(entity)).thenReturn(Optional.of(hitboxProvider));
         when(scheduler.createRepeatingSchedule(0L, 1L, 200L)).thenReturn(schedule);

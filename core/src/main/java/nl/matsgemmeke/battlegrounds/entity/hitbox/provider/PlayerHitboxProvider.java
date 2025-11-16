@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -15,13 +15,13 @@ public class PlayerHitboxProvider implements HitboxProvider {
     }
 
     @Override
-    public PositionHitbox provideHitbox(Entity entity) {
+    public Hitbox provideHitbox(Entity entity) {
         if (!(entity instanceof Player player)) {
             throw new HitboxProvisionException("Cannot provide a hitbox for an entity %s as it is not a player".formatted(entity.getType()));
         }
 
         Location baseLocation = player.getLocation();
 
-        return new PositionHitbox(baseLocation, standingHitbox);
+        return new Hitbox(baseLocation, standingHitbox);
     }
 }

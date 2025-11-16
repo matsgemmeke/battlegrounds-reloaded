@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import org.bukkit.entity.Entity;
 
 public interface HitboxProvider {
@@ -11,5 +11,5 @@ public interface HitboxProvider {
      * @param entity the entity
      * @return       the corresponding hitbox
      */
-    PositionHitbox provideHitbox(Entity entity);
+    Hitbox provideHitbox(Entity entity);
 }

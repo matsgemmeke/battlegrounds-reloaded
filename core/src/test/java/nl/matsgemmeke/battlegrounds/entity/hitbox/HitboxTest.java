@@ -12,13 +12,13 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class PositionHitboxTest {
+class HitboxTest {
 
     private static final HitboxComponent HEAD_COMPONENT = new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.4, 0.4, 0.0, 1.4, 0.0);
     private static final HitboxComponent BODY_COMPONENT = new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.4, 0.2, 0.0, 0.7, 0.0);
     private static final HitboxComponent LEGS_COMPONENT = new HitboxComponent(HitboxComponentType.LIMBS, 0.7, 0.4, 0.2, 0.0, 0.0, 0.0);
     /**
-     * A position hitbox similar to a player's.
+     * A relative hitbox setup similar to a player's.
      */
     private static final RelativeHitbox RELATIVE_HITBOX = new RelativeHitbox(Set.of(HEAD_COMPONENT, BODY_COMPONENT, LEGS_COMPONENT));
 
@@ -36,7 +36,7 @@ class PositionHitboxTest {
         Location location = new Location(world, x, y, z);
         Location baseLocation = new Location(world, 0, 0, 0, boxYaw, 0);
 
-        PositionHitbox hitbox = new PositionHitbox(baseLocation, RELATIVE_HITBOX);
+        Hitbox hitbox = new Hitbox(baseLocation, RELATIVE_HITBOX);
         Optional<HitboxComponent> hitboxComponentOptional = hitbox.getIntersectedHitboxComponent(location);
 
         assertThat(hitboxComponentOptional).hasValueSatisfying(hitboxComponent -> {
@@ -50,7 +50,7 @@ class PositionHitboxTest {
         Location location = new Location(world, 1, 1, 1);
         Location baseLocation = new Location(world, 0, 0, 0, 0, 0);
 
-        PositionHitbox hitbox = new PositionHitbox(baseLocation, RELATIVE_HITBOX);
+        Hitbox hitbox = new Hitbox(baseLocation, RELATIVE_HITBOX);
         Optional<HitboxComponent> hitboxComponentOptional = hitbox.getIntersectedHitboxComponent(location);
 
         assertThat(hitboxComponentOptional).isEmpty();
@@ -67,7 +67,7 @@ class PositionHitboxTest {
         Location location = new Location(world, x, y, z);
         Location baseLocation = new Location(world, 0, 0, 0, 0, 0);
 
-        PositionHitbox hitbox = new PositionHitbox(baseLocation, RELATIVE_HITBOX);
+        Hitbox hitbox = new Hitbox(baseLocation, RELATIVE_HITBOX);
         boolean intersects = hitbox.intersects(location);
 
         assertThat(intersects).isFalse();
@@ -79,7 +79,7 @@ class PositionHitboxTest {
         Location location = new Location(world, 9.9, 10.1, 10.1);
         Location baseLocation = new Location(world, 10.0, 10.0, 10.0);
 
-        PositionHitbox hitbox = new PositionHitbox(baseLocation, RELATIVE_HITBOX);
+        Hitbox hitbox = new Hitbox(baseLocation, RELATIVE_HITBOX);
         boolean intersects = hitbox.intersects(location);
 
         assertThat(intersects).isTrue();

@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -75,7 +75,7 @@ class DamageEffectPerformanceTest {
 
         ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
-        PositionHitbox hitbox = mock(PositionHitbox.class);
+        Hitbox hitbox = mock(Hitbox.class);
         when(hitbox.getIntersectedHitboxComponent(sourceLocation)).thenReturn(Optional.empty());
 
         GamePlayer target = mock(GamePlayer.class);
@@ -114,7 +114,7 @@ class DamageEffectPerformanceTest {
 
         ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
-        PositionHitbox hitbox = mock(PositionHitbox.class);
+        Hitbox hitbox = mock(Hitbox.class);
         when(hitbox.getIntersectedHitboxComponent(sourceLocation)).thenReturn(Optional.of(hitboxComponent));
 
         GamePlayer target = mock(GamePlayer.class);

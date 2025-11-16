@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -17,7 +17,7 @@ public class ZombieHitboxProvider implements HitboxProvider {
     }
 
     @Override
-    public PositionHitbox provideHitbox(Entity entity) {
+    public Hitbox provideHitbox(Entity entity) {
         if (!(entity instanceof Zombie zombie)) {
             throw new HitboxProvisionException("Cannot provide a hitbox for an entity %s as it is not a zombie".formatted(entity.getType()));
         }
@@ -25,9 +25,9 @@ public class ZombieHitboxProvider implements HitboxProvider {
         Location baseLocation = entity.getLocation();
 
         if (!zombie.isAdult()) {
-            return new PositionHitbox(baseLocation, standingHitboxBaby);
+            return new Hitbox(baseLocation, standingHitboxBaby);
         }
 
-        return new PositionHitbox(baseLocation, standingHitboxAdult);
+        return new Hitbox(baseLocation, standingHitboxAdult);
     }
 }

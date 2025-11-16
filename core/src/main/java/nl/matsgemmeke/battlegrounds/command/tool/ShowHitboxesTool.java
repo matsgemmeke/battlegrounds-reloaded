@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.command.tool;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -72,9 +72,9 @@ public class ShowHitboxesTool {
                 continue;
             }
 
-            PositionHitbox positionHitbox = hitboxProvider.provideHitbox(entity);
+            Hitbox hitbox = hitboxProvider.provideHitbox(entity);
 
-            for (HitboxComponent component : positionHitbox.getComponents()) {
+            for (HitboxComponent component : hitbox.getComponents()) {
                 Location baseLocation = entity.getLocation();
                 // Add half the height to get the center location of the box
                 baseLocation.add(0, component.height() / 2, 0);

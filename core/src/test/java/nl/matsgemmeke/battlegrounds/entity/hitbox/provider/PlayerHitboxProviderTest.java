@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ class PlayerHitboxProviderTest {
     void provideHitboxReturnsHitboxForStanding() {
         Player player = mock(Player.class);
 
-        PositionHitbox hitbox = hitboxProvider.provideHitbox(player);
+        Hitbox hitbox = hitboxProvider.provideHitbox(player);
 
         assertThat(hitbox.getComponents()).isSameAs(STANDING_HITBOX.components());
     }
