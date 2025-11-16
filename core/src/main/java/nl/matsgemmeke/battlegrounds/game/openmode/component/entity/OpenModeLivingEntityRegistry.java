@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.entity.LivingEntityRegistry;
 import org.bukkit.entity.LivingEntity;
 

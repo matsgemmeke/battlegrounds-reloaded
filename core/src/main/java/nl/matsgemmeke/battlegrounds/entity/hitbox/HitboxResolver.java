@@ -1,10 +1,8 @@
-package nl.matsgemmeke.battlegrounds.entity.hitbox.resolver;
+package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxDefaults;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.mapper.HitboxMapper;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.PlayerHitboxProvider;

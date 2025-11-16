@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import org.bukkit.entity.LivingEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
