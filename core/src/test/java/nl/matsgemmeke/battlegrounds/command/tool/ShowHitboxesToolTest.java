@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.command.tool;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
@@ -55,7 +56,8 @@ class ShowHitboxesToolTest {
         Location entityLocation = new Location(null, 10.0, 10.0, 10.0, yaw, 0.0f);
         Location playerLocation = new Location(null, 0, 0, 0);
         HitboxComponent component = new HitboxComponent(HitboxComponentType.TORSO, height, width, depth, 0, 0, 0);
-        PositionHitbox positionHitbox = new PositionHitbox(Set.of(component));
+        RelativeHitbox relativeHitbox = new RelativeHitbox(Set.of(component));
+        PositionHitbox positionHitbox = new PositionHitbox(entityLocation, relativeHitbox);
         Schedule schedule = mock(Schedule.class);
 
         Entity entity = mock(Entity.class);
@@ -68,10 +70,10 @@ class ShowHitboxesToolTest {
         when(player.getLocation()).thenReturn(playerLocation);
         when(player.getWorld()).thenReturn(world);
 
-        Hitbox hitbox = mock(Hitbox.class);
-        when(hitbox.getCurrentPositionHitbox()).thenReturn(positionHitbox);
+        HitboxProvider hitboxProvider = mock(HitboxProvider.class);
+        when(hitboxProvider.provideHitbox(entity)).thenReturn(positionHitbox);
 
-        when(hitboxResolver.resolveHitbox(entity)).thenReturn(Optional.of(hitbox));
+        when(hitboxResolver.resolveHitboxProvider(entity)).thenReturn(Optional.of(hitboxProvider));
         when(scheduler.createRepeatingSchedule(0L, 1L, 200L)).thenReturn(schedule);
         when(translator.translate(TranslationKey.TOOL_HITBOX_SUCCESS.getPath())).thenReturn(new TextTemplate("Displaying hitboxes for %bg_seconds% seconds inside a range of %bg_range% blocks."));
 

@@ -74,7 +74,7 @@ public class ShowHitboxesTool {
 
             PositionHitbox positionHitbox = hitboxProvider.provideHitbox(entity);
 
-            for (HitboxComponent component : positionHitbox.components()) {
+            for (HitboxComponent component : positionHitbox.getComponents()) {
                 Location baseLocation = entity.getLocation();
                 // Add half the height to get the center location of the box
                 baseLocation.add(0, component.height() / 2, 0);

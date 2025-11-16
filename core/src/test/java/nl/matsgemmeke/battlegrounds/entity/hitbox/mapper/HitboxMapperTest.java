@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.entity.hitbox.mapper;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxComponentDefinition;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -24,9 +24,9 @@ class HitboxMapperTest {
         HitboxDefinition hitboxDefinition = new HitboxDefinition();
         hitboxDefinition.components = List.of(hitboxComponentDefinition);
 
-        PositionHitbox positionHitbox = hitboxMapper.map(hitboxDefinition);
+        RelativeHitbox relativeHitbox = hitboxMapper.map(hitboxDefinition);
 
-        assertThat(positionHitbox.components()).satisfiesExactly(hitboxComponent -> {
+        assertThat(relativeHitbox.components()).satisfiesExactly(hitboxComponent -> {
             assertThat(hitboxComponent.type()).isEqualTo(HitboxComponentType.TORSO);
             assertThat(hitboxComponent.height()).isEqualTo(0.7);
             assertThat(hitboxComponent.width()).isEqualTo(0.4);

@@ -3,10 +3,10 @@ package nl.matsgemmeke.battlegrounds.entity.hitbox.resolve;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxComponentDefinition;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.HumanoidHitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.impl.PlayerHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.mapper.HitboxMapper;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.PlayerHitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.ZombieHitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.resolver.HitboxResolver;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -46,9 +46,9 @@ class HitboxResolverTest {
         Entity entity = mock(Entity.class);
         when(entity.getType()).thenReturn(EntityType.UNKNOWN);
 
-        Optional<Hitbox> hitboxOptional = hitboxResolver.resolveHitbox(entity);
+        Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(entity);
 
-        assertThat(hitboxOptional).isEmpty();
+        assertThat(hitboxProviderOptional).isEmpty();
     }
 
     static List<Arguments> playerHitboxDefinitions() {
@@ -64,27 +64,31 @@ class HitboxResolverTest {
 
         when(hitboxConfiguration.getHitboxDefinition("player", "standing")).thenReturn(Optional.ofNullable(hitboxDefinition));
 
-        Optional<Hitbox> hitboxOptional = hitboxResolver.resolveHitbox(player);
+        hitboxResolver.registerHitboxProviders();
+        Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(player);
 
-        assertThat(hitboxOptional).hasValueSatisfying(hitbox -> assertThat(hitbox).isInstanceOf(PlayerHitbox.class));
+        assertThat(hitboxProviderOptional).hasValueSatisfying(hitbox -> assertThat(hitbox).isInstanceOf(PlayerHitboxProvider.class));
     }
 
     static List<Arguments> zombieHitboxDefinitions() {
-        return List.of(arguments(createHitboxDefinition()));
+        return List.of(
+                arguments(null, null),
+                arguments(createHitboxDefinition(), createHitboxDefinition())
+        );
     }
 
     @ParameterizedTest
-    @NullSource
     @MethodSource("zombieHitboxDefinitions")
-    void resolveHitboxReturnsHumanoidHitboxForZombieEntityRegardlessWhetherHitboxDefinitionIsFoundOrNot(HitboxDefinition hitboxDefinition) {
+    void resolveHitboxReturnsHumanoidHitboxForZombieEntityRegardlessWhetherHitboxDefinitionIsFoundOrNot(HitboxDefinition adultStandingHitboxDefinition, HitboxDefinition babyStandingHitboxDefinition) {
         Zombie zombie = mock(Zombie.class);
         when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
 
-        when(hitboxConfiguration.getHitboxDefinition("zombie", "adult-standing")).thenReturn(Optional.ofNullable(hitboxDefinition));
+        when(hitboxConfiguration.getHitboxDefinition("zombie", "adult-standing")).thenReturn(Optional.ofNullable(adultStandingHitboxDefinition));
+        when(hitboxConfiguration.getHitboxDefinition("zombie", "baby-standing")).thenReturn(Optional.ofNullable(babyStandingHitboxDefinition));
 
-        Optional<Hitbox> hitboxOptional = hitboxResolver.resolveHitbox(zombie);
+        Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(zombie);
 
-        assertThat(hitboxOptional).hasValueSatisfying(hitbox -> assertThat(hitbox).isInstanceOf(HumanoidHitbox.class));
+        assertThat(hitboxProviderOptional).hasValueSatisfying(hitboxProvider -> assertThat(hitboxProvider).isInstanceOf(ZombieHitboxProvider.class));
     }
 
     private static HitboxDefinition createHitboxDefinition() {

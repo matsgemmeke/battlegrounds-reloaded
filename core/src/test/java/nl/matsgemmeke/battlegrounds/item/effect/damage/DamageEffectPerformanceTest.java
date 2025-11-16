@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
@@ -75,7 +76,7 @@ class DamageEffectPerformanceTest {
         ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
         PositionHitbox hitbox = mock(PositionHitbox.class);
-        when(hitbox.getIntersectedHitboxComponentType(sourceLocation)).thenReturn(Optional.empty());
+        when(hitbox.getIntersectedHitboxComponent(sourceLocation)).thenReturn(Optional.empty());
 
         GamePlayer target = mock(GamePlayer.class);
         when(target.getHitbox()).thenReturn(hitbox);
@@ -101,6 +102,7 @@ class DamageEffectPerformanceTest {
         Location initiationLocation = new Location(world, 1, 0, 0);
         Location sourceLocation = new Location(world, 2, 0, 0);
         Location targetLocation = new Location(world, 2, 0, 0);
+        HitboxComponent hitboxComponent = new HitboxComponent(hitboxComponentType, 0, 0, 0, 0, 0, 0);
         Location deploymentObjectLocation = new Location(world, 2, 0, 0);
         UUID entityId = UUID.randomUUID();
 
@@ -113,7 +115,7 @@ class DamageEffectPerformanceTest {
         ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
         PositionHitbox hitbox = mock(PositionHitbox.class);
-        when(hitbox.getIntersectedHitboxComponentType(sourceLocation)).thenReturn(Optional.of(hitboxComponentType));
+        when(hitbox.getIntersectedHitboxComponent(sourceLocation)).thenReturn(Optional.of(hitboxComponent));
 
         GamePlayer target = mock(GamePlayer.class);
         when(target.getHitbox()).thenReturn(hitbox);

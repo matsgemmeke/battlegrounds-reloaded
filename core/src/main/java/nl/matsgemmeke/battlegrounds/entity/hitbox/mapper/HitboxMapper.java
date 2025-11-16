@@ -4,18 +4,18 @@ import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxCompon
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Mapper that converts {@link HitboxDefinition} objects loaded from configuration files into {@link PositionHitbox}
+ * Mapper that converts {@link HitboxDefinition} objects loaded from configuration files into {@link RelativeHitbox}
  * instances.
  */
 public class HitboxMapper {
 
-    public PositionHitbox map(HitboxDefinition hitboxDefinition) {
+    public RelativeHitbox map(HitboxDefinition hitboxDefinition) {
         Set<HitboxComponent> components = new HashSet<>();
 
         for (HitboxComponentDefinition componentDefinition : hitboxDefinition.components) {
@@ -30,6 +30,6 @@ public class HitboxMapper {
             components.add(new HitboxComponent(type, height, width, depth, offsetX, offsetY, offsetZ));
         }
 
-        return new PositionHitbox(components);
+        return new RelativeHitbox(components);
     }
 }

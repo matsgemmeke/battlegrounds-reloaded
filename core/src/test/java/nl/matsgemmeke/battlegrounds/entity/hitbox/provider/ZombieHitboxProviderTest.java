@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.PositionHitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -18,8 +19,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ZombieHitboxProviderTest {
 
-    private static final PositionHitbox ADULT_STANDING_HITBOX = new PositionHitbox(Collections.emptySet());
-    private static final PositionHitbox BABY_STANDING_HITBOX = new PositionHitbox(Collections.emptySet());
+    private static final RelativeHitbox ADULT_STANDING_HITBOX = new RelativeHitbox(Collections.emptySet());
+    private static final RelativeHitbox BABY_STANDING_HITBOX = new RelativeHitbox(Collections.emptySet());
 
     private final ZombieHitboxProvider hitboxProvider = new ZombieHitboxProvider(ADULT_STANDING_HITBOX, BABY_STANDING_HITBOX);
 
@@ -40,7 +41,7 @@ class ZombieHitboxProviderTest {
 
         PositionHitbox hitbox = hitboxProvider.provideHitbox(zombie);
 
-        assertThat(hitbox).isSameAs(BABY_STANDING_HITBOX);
+        assertThat(hitbox.getComponents()).isSameAs(BABY_STANDING_HITBOX.components());
     }
 
     @Test
@@ -50,6 +51,6 @@ class ZombieHitboxProviderTest {
 
         PositionHitbox hitbox = hitboxProvider.provideHitbox(zombie);
 
-        assertThat(hitbox).isSameAs(ADULT_STANDING_HITBOX);
+        assertThat(hitbox.getComponents()).isSameAs(ADULT_STANDING_HITBOX.components());
     }
 }

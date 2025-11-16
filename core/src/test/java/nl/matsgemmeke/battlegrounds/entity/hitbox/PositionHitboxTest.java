@@ -12,7 +12,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class HitboxUtilTest {
+class PositionHitboxTest {
 
     private static final HitboxComponent HEAD_COMPONENT = new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.4, 0.4, 0.0, 1.4, 0.0);
     private static final HitboxComponent BODY_COMPONENT = new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.4, 0.2, 0.0, 0.7, 0.0);
@@ -20,7 +20,7 @@ class HitboxUtilTest {
     /**
      * A position hitbox similar to a player's.
      */
-    private static final PositionHitbox POSITION_HITBOX = new PositionHitbox(Set.of(HEAD_COMPONENT, BODY_COMPONENT, LEGS_COMPONENT));
+    private static final RelativeHitbox RELATIVE_HITBOX = new RelativeHitbox(Set.of(HEAD_COMPONENT, BODY_COMPONENT, LEGS_COMPONENT));
 
     @ParameterizedTest(name = "X: {0}, Y: {1}, Z: {2}, Box yaw: {3}")
     @CsvSource({
@@ -34,9 +34,10 @@ class HitboxUtilTest {
     void getIntersectedHitboxComponentReturnsOptionalWithInterestedHitboxComponent(double x, double y, double z, float boxYaw) {
         World world = mock(World.class);
         Location location = new Location(world, x, y, z);
-        Location boxLocation = new Location(world, 0, 0, 0, boxYaw, 0);
+        Location baseLocation = new Location(world, 0, 0, 0, boxYaw, 0);
 
-        Optional<HitboxComponent> hitboxComponentOptional = HitboxUtil.getIntersectedHitboxComponent(location, boxLocation, POSITION_HITBOX);
+        PositionHitbox hitbox = new PositionHitbox(baseLocation, RELATIVE_HITBOX);
+        Optional<HitboxComponent> hitboxComponentOptional = hitbox.getIntersectedHitboxComponent(location);
 
         assertThat(hitboxComponentOptional).hasValueSatisfying(hitboxComponent -> {
             assertThat(hitboxComponent.type()).isEqualTo(HitboxComponentType.TORSO);
@@ -47,9 +48,10 @@ class HitboxUtilTest {
     void getIntersectedHitboxComponentReturnsEmptyOptionalWhenGivenLocationIntersectsNoComponents() {
         World world = mock(World.class);
         Location location = new Location(world, 1, 1, 1);
-        Location boxLocation = new Location(world, 0, 0, 0, 0, 0);
+        Location baseLocation = new Location(world, 0, 0, 0, 0, 0);
 
-        Optional<HitboxComponent> hitboxComponentOptional = HitboxUtil.getIntersectedHitboxComponent(location, boxLocation, POSITION_HITBOX);
+        PositionHitbox hitbox = new PositionHitbox(baseLocation, RELATIVE_HITBOX);
+        Optional<HitboxComponent> hitboxComponentOptional = hitbox.getIntersectedHitboxComponent(location);
 
         assertThat(hitboxComponentOptional).isEmpty();
     }
@@ -63,9 +65,10 @@ class HitboxUtilTest {
     void intersectsHitboxReturnsFalseWhenAnyAxisIsOutsideGivenPositionBox(double x, double y, double z) {
         World world = mock(World.class);
         Location location = new Location(world, x, y, z);
-        Location boxLocation = new Location(world, 0, 0, 0, 0, 0);
+        Location baseLocation = new Location(world, 0, 0, 0, 0, 0);
 
-        boolean intersects = HitboxUtil.intersectsHitbox(location, boxLocation, POSITION_HITBOX);
+        PositionHitbox hitbox = new PositionHitbox(baseLocation, RELATIVE_HITBOX);
+        boolean intersects = hitbox.intersects(location);
 
         assertThat(intersects).isFalse();
     }
@@ -74,9 +77,10 @@ class HitboxUtilTest {
     void intersectsHitboxReturnsTrueWhenAllAxesAreInsideGivenBox() {
         World world = mock(World.class);
         Location location = new Location(world, 9.9, 10.1, 10.1);
-        Location boxLocation = new Location(world, 10.0, 10.0, 10.0);
+        Location baseLocation = new Location(world, 10.0, 10.0, 10.0);
 
-        boolean intersects = HitboxUtil.intersectsHitbox(location, boxLocation, POSITION_HITBOX);
+        PositionHitbox hitbox = new PositionHitbox(baseLocation, RELATIVE_HITBOX);
+        boolean intersects = hitbox.intersects(location);
 
         assertThat(intersects).isTrue();
     }
