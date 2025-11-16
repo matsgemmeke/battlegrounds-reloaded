@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -52,17 +51,20 @@ class HitboxResolverTest {
     }
 
     static List<Arguments> playerHitboxDefinitions() {
-        return List.of(arguments(createHitboxDefinition()));
+        return List.of(
+                arguments(null, null),
+                arguments(createHitboxDefinition(), createHitboxDefinition())
+        );
     }
 
     @ParameterizedTest
-    @NullSource
     @MethodSource("playerHitboxDefinitions")
-    void resolveHitboxReturnsPlayerHitboxWithDefaultPositionHitboxWhenNoDefinitionIsNotFound(HitboxDefinition hitboxDefinition) {
+    void resolveHitboxReturnsPlayerHitboxWithDefaultPositionHitboxWhenNoDefinitionIsNotFound(HitboxDefinition standingHitboxDefinition, HitboxDefinition sneakingHitboxDefinition) {
         Player player = mock(Player.class);
         when(player.getType()).thenReturn(EntityType.PLAYER);
 
-        when(hitboxConfiguration.getHitboxDefinition("player", "standing")).thenReturn(Optional.ofNullable(hitboxDefinition));
+        when(hitboxConfiguration.getHitboxDefinition("player", "standing")).thenReturn(Optional.ofNullable(standingHitboxDefinition));
+        when(hitboxConfiguration.getHitboxDefinition("player", "sneaking")).thenReturn(Optional.ofNullable(sneakingHitboxDefinition));
 
         hitboxResolver.registerHitboxProviders();
         Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(player);

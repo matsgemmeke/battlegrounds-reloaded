@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Pose;
 import org.bukkit.entity.Zombie;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +21,9 @@ import static org.mockito.Mockito.when;
 class PlayerHitboxProviderTest {
 
     private static final RelativeHitbox STANDING_HITBOX = new RelativeHitbox(Collections.emptySet());
+    private static final RelativeHitbox SNEAKING_HITBOX = new RelativeHitbox(Collections.emptySet());
 
-    private final PlayerHitboxProvider hitboxProvider = new PlayerHitboxProvider(STANDING_HITBOX);
+    private final PlayerHitboxProvider hitboxProvider = new PlayerHitboxProvider(STANDING_HITBOX, SNEAKING_HITBOX);
 
     @Test
     void provideHitboxThrowsHitboxProvisionExceptionWhenGivenEntityIsNoPlayer() {
@@ -34,8 +36,19 @@ class PlayerHitboxProviderTest {
     }
 
     @Test
-    void provideHitboxReturnsHitboxForStanding() {
+    void provideHitboxReturnsSneakingHitboxWhenPlayerIsSneaking() {
         Player player = mock(Player.class);
+        when(player.getPose()).thenReturn(Pose.SNEAKING);
+
+        Hitbox hitbox = hitboxProvider.provideHitbox(player);
+
+        assertThat(hitbox.getComponents()).isSameAs(SNEAKING_HITBOX.components());
+    }
+
+    @Test
+    void provideHitboxReturnsStandingHitboxWhenPlayerHasDefaultPose() {
+        Player player = mock(Player.class);
+        when(player.getPose()).thenReturn(Pose.STANDING);
 
         Hitbox hitbox = hitboxProvider.provideHitbox(player);
 
