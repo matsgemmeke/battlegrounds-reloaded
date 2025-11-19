@@ -75,6 +75,8 @@ import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFac
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanLauncher;
@@ -217,6 +219,9 @@ public class BattlegroundsModule implements Module {
                 .implement(ProjectileEffect.class, TrailEffect.class)
                 .build(TrailEffectFactory.class));
 
+        binder.install(new FactoryModuleBuilder()
+                .implement(ProjectileLauncher.class, ArrowLauncher.class)
+                .build(ArrowLauncherFactory.class));
         binder.install(new FactoryModuleBuilder()
                 .implement(ProjectileLauncher.class, FireballLauncher.class)
                 .build(FireballLauncherFactory.class));

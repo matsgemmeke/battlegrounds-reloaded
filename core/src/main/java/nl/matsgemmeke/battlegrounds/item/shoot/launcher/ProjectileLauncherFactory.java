@@ -12,6 +12,8 @@ import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncherFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan.HitscanLauncherFactory;
@@ -32,6 +34,7 @@ public class ProjectileLauncherFactory {
 
     private static final String TEMPLATE_ID_KEY = "template-id";
 
+    private final ArrowLauncherFactory arrowLauncherFactory;
     private final FireballLauncherFactory fireballLauncherFactory;
     private final HitscanLauncherFactory hitscanLauncherFactory;
     private final ItemEffectFactory itemEffectFactory;
@@ -42,6 +45,7 @@ public class ProjectileLauncherFactory {
 
     @Inject
     public ProjectileLauncherFactory(
+            ArrowLauncherFactory arrowLauncherFactory,
             FireballLauncherFactory fireballLauncherFactory,
             HitscanLauncherFactory hitscanLauncherFactory,
             ItemEffectFactory itemEffectFactory,
@@ -50,6 +54,7 @@ public class ProjectileLauncherFactory {
             ParticleEffectMapper particleEffectMapper,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
+        this.arrowLauncherFactory = arrowLauncherFactory;
         this.fireballLauncherFactory = fireballLauncherFactory;
         this.hitscanLauncherFactory = hitscanLauncherFactory;
         this.itemEffectFactory = itemEffectFactory;
@@ -63,6 +68,15 @@ public class ProjectileLauncherFactory {
         ProjectileLauncherType projectileLauncherType = ProjectileLauncherType.valueOf(spec.type);
 
         switch (projectileLauncherType) {
+            case ARROW -> {
+                List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);
+                double velocity = this.validateSpecVar(spec.velocity, "velocity", projectileLauncherType);
+
+                ArrowProperties properties = new ArrowProperties(shotSounds, velocity);
+                ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
+
+                return arrowLauncherFactory.create(properties, itemEffect);
+            }
             case FIREBALL -> {
                 List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);
                 ParticleEffect trajectoryParticleEffect = this.createParticleEffect(spec.trajectoryParticleEffect);

@@ -7,6 +7,9 @@ import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncher;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncherFactory;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballProperties;
@@ -42,7 +45,10 @@ import static org.mockito.Mockito.*;
 class ProjectileLauncherFactoryTest {
 
     private static final String TEMPLATE_ID_KEY = "template-id";
+    private static final double VELOCITY = 2.0;
 
+    @Mock
+    private ArrowLauncherFactory arrowLauncherFactory;
     @Mock
     private FireballLauncherFactory fireballLauncherFactory;
     @Mock
@@ -59,6 +65,27 @@ class ProjectileLauncherFactoryTest {
     private TriggerExecutorFactory triggerExecutorFactory;
     @InjectMocks
     private ProjectileLauncherFactory projectileLauncherFactory;
+
+    @Test
+    void createReturnsInstanceOfArrowLauncher() {
+        ArrowLauncher arrowLauncher = mock(ArrowLauncher.class);
+        ProjectileSpec projectileSpec = this.createProjectileSpec("ARROW");
+        ItemEffect itemEffect = mock(ItemEffect.class);
+
+        when(arrowLauncherFactory.create(any(ArrowProperties.class), eq(itemEffect))).thenReturn(arrowLauncher);
+        when(itemEffectFactory.create(projectileSpec.effect)).thenReturn(itemEffect);
+
+        ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
+
+        assertThat(createdProjectileLauncher).isEqualTo(arrowLauncher);
+
+        ArgumentCaptor<ArrowProperties> arrowPropertiesCaptor = ArgumentCaptor.forClass(ArrowProperties.class);
+        verify(arrowLauncherFactory).create(arrowPropertiesCaptor.capture(), eq(itemEffect));
+
+        ArrowProperties arrowProperties = arrowPropertiesCaptor.getValue();
+        assertThat(arrowProperties.shotSounds()).isEmpty();
+        assertThat(arrowProperties.velocity()).isEqualTo(VELOCITY);
+    }
 
     @Test
     void createReturnsInstanceOfFireballLauncher() {
@@ -84,7 +111,7 @@ class ProjectileLauncherFactoryTest {
             assertThat(particleEffect.offsetZ()).isEqualTo(0.3);
             assertThat(particleEffect.extra()).isEqualTo(0.0);
         });
-        assertThat(fireballProperties.velocity()).isEqualTo(2.0);
+        assertThat(fireballProperties.velocity()).isEqualTo(VELOCITY);
 
         assertThat(createdProjectileLauncher).isEqualTo(fireballLauncher);
     }
@@ -151,7 +178,7 @@ class ProjectileLauncherFactoryTest {
 
         ItemLaunchProperties properties = propertiesCaptor.getValue();
         assertThat(properties.shotSounds()).isEmpty();
-        assertThat(properties.velocity()).isEqualTo(2.0);
+        assertThat(properties.velocity()).isEqualTo(VELOCITY);
 
         assertThat(createdProjectileLauncher).isEqualTo(itemLauncher);
 
@@ -180,7 +207,7 @@ class ProjectileLauncherFactoryTest {
         projectileSpec.type = type;
         projectileSpec.item = itemSpec;
         projectileSpec.trajectoryParticleEffect = trajectoryParticleEffectSpec;
-        projectileSpec.velocity = 2.0;
+        projectileSpec.velocity = VELOCITY;
         projectileSpec.triggers = Map.of("impact", triggerSpec);
         return projectileSpec;
     }

@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ConditionalRequired;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
-import org.bukkit.Material;
 
 import java.util.Map;
 
@@ -20,7 +19,7 @@ public class ProjectileSpec {
     public ItemEffectSpec effect;
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "ITEM")
     public ItemSpec item;
-    @ConditionalRequired(conditionalFieldName = "type", matchValues = "FIREBALL")
+    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "ARROW", "FIREBALL", "ITEM" })
     public Double velocity;
     public ParticleEffectSpec trajectoryParticleEffect;
     public Double headshotDamageMultiplier;
@@ -29,6 +28,6 @@ public class ProjectileSpec {
     public Map<String, TriggerSpec> triggers;
 
     private enum ProjectileType {
-        FIREBALL, HITSCAN, ITEM
+        ARROW, FIREBALL, HITSCAN, ITEM
     }
 }
