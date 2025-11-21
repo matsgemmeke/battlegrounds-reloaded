@@ -91,19 +91,19 @@ spider:
     head:
       type: HEAD
       size: [ 0.5, 0.5, 0.5 ]
-      offset: [ 0.0, 1.5, 0.0 ]
+      offset: [ 0.0, 0.3, 0.45 ]
     torso:
       type: TORSO
-      size: [ 0.7, 0.5, 0.3 ]
-      offset: [ 0.0, 0.8, 0.0 ]
+      size: [ 0.5, 0.6, 1.1 ]
+      offset: [ 0.0, 0.3, -0.4 ]
     left-arm:
       type: LIMBS
-      size: [ 0.25, 0.25, 0.8 ]
-      offset: [ 0.35, 1.2, 0.3 ]
+      size: [ 0.5, 0.7, 1.6 ]
+      offset: [ 0.65, 0.0, -0.1 ]
     right-arm:
       type: LIMBS
-      size: [ 0.25, 0.25, 0.8 ]
-      offset: [ -0.35, 1.2, 0.3 ]
+      size: [ 0.5, 0.7, 1.6 ]
+      offset: [ -0.65, 0.0, -0.1 ]
 
 zombie:
   adult-standing:
