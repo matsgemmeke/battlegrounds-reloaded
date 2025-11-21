@@ -1,44 +1,43 @@
 package nl.matsgemmeke.battlegrounds.configuration.hitbox;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BasePluginConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxComponentDefinition;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
+import java.util.function.Supplier;
 
 public class HitboxConfiguration extends BasePluginConfiguration {
 
     private static final boolean READ_ONLY = true;
 
     private static final String HITBOX_COMPONENT_TYPE_FALLBACK = "TORSO";
-    private static final List<Double> HITBOX_COMPONENT_SIZE_FALLBACK = Collections.emptyList();
-    private static final List<Double> HITBOX_COMPONENT_OFFSET_FALLBACK = Collections.emptyList();
 
     public HitboxConfiguration(File file, InputStream resource) {
         super(file, resource, READ_ONLY);
     }
 
     public Optional<HitboxDefinition> getHitboxDefinition(String entityType, String position) {
-        Section section = this.getOptionalSection(entityType + "." + position).orElse(null);
+        ConfigurationSection section = this.getOptionalSection(entityType + "." + position).orElse(null);
 
         if (section == null) {
             return Optional.empty();
         }
 
         List<HitboxComponentDefinition> componentDefinitions = new ArrayList<>();
-        Map<String, Object> hitboxDefinitions = section.getStringRouteMappedValues(false);
+        Map<String, Object> hitboxDefinitions = section.getValues(false);
 
         for (Object hitboxDefinition : hitboxDefinitions.values()) {
-            Section hitboxDefinitionSection = (Section) hitboxDefinition;
+            ConfigurationSection hitboxDefinitionSection = (ConfigurationSection) hitboxDefinition;
 
-            String type = hitboxDefinitionSection.getOptionalString("type").orElse(HITBOX_COMPONENT_TYPE_FALLBACK);
-            Double[] size = hitboxDefinitionSection.getOptionalDoubleList("size").orElse(HITBOX_COMPONENT_SIZE_FALLBACK).toArray(Double[]::new);
-            Double[] offset = hitboxDefinitionSection.getOptionalDoubleList("offset").orElse(HITBOX_COMPONENT_OFFSET_FALLBACK).toArray(Double[]::new);
+            String type = Optional.ofNullable(hitboxDefinitionSection.getString("type")).orElse(HITBOX_COMPONENT_TYPE_FALLBACK);
+            Double[] size = hitboxDefinitionSection.getDoubleList("size").toArray(Double[]::new);
+            Double[] offset = hitboxDefinitionSection.getDoubleList("offset").toArray(Double[]::new);
 
             HitboxComponentDefinition componentDefinition = new HitboxComponentDefinition();
             componentDefinition.type = type;
