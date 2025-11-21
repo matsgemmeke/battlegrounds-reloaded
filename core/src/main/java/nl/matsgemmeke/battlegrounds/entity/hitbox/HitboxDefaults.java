@@ -36,6 +36,13 @@ public final class HitboxDefaults {
             new HitboxComponent(HitboxComponentType.LIMBS, 0.8, 0.5, 0.2, 0.0, 0.0, 0.0)
     ));
 
+    public static final RelativeHitbox SPIDER_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 0.3, 0.45),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.5, 0.6, 1.1, 0.0, 0.3, -0.4),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.5, 0.7, 1.6, 0.65, 0.0, -0.1),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.5, 0.7, 1.6, -0.65, 0.0, -0.1)
+    ));
+
     public static final RelativeHitbox ZOMBIE_ADULT_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 1.5, 0.0),
             new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 0.3, 0.0, 0.8, 0.0),

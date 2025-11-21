@@ -32,7 +32,8 @@ public class HitboxResolver {
 
     public void registerHitboxProviders() {
         hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
-        hitboxProviders.put(EntityType.SKELETON, this::createSkeletonHitboxProvider);
+        hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", HitboxDefaults.SKELETON_STANDING));
+        hitboxProviders.put(EntityType.SPIDER, () -> this.createDefaultHitboxProvider("spider", "standing", HitboxDefaults.SPIDER_STANDING));
         hitboxProviders.put(EntityType.ZOMBIE, this::createZombieHitboxProvider);
     }
 
@@ -54,8 +55,8 @@ public class HitboxResolver {
         return new PlayerHitboxProvider(standingHitbox, sneakingHitbox, sleepingHitbox);
     }
 
-    private HitboxProvider createSkeletonHitboxProvider() {
-        RelativeHitbox standingHitbox = this.createRelativeHitbox("skeleton", "standing", HitboxDefaults.SKELETON_STANDING);
+    private HitboxProvider createDefaultHitboxProvider(String entityType, String pose, RelativeHitbox defaultHitbox) {
+        RelativeHitbox standingHitbox = this.createRelativeHitbox(entityType, pose, defaultHitbox);
 
         return new DefaultHitboxProvider(standingHitbox);
     }

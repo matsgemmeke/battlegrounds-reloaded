@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Zombie;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,7 +21,6 @@ class DefaultHitboxProviderTest {
 
     @Test
     void provideHitboxReturnsHitboxForStanding() {
-        Zombie
         Entity entity = mock(Entity.class);
 
         Hitbox hitbox = hitboxProvider.provideHitbox(entity);
