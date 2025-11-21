@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -121,7 +120,7 @@ public abstract class BasePluginConfiguration implements PluginConfiguration {
 
             yamlConfiguration = YamlConfiguration.loadConfiguration(file);
             return true;
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
             return false;
         }
@@ -130,11 +129,10 @@ public abstract class BasePluginConfiguration implements PluginConfiguration {
     public boolean save() {
         try {
             yamlConfiguration.save(file);
+            return true;
         } catch (IOException e) {
             return false;
         }
-
-        return true;
     }
 
     public void setValue(@NotNull String path, @NotNull Object value) {

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.MockedStatic;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
@@ -82,13 +81,13 @@ public class WeaponCreatorProviderTest {
         File itemsFolder = new File(tempDirectory.getPath() + "/items");
 
         MockedStatic<YamlConfiguration> yamlConfiguration = mockStatic(YamlConfiguration.class);
-        yamlConfiguration.when(() -> YamlConfiguration.loadConfiguration(any(File.class))).thenThrow(new IOException("An IO error occurred"));
+        yamlConfiguration.when(() -> YamlConfiguration.loadConfiguration(any(File.class))).thenThrow(new IllegalArgumentException("An error occurred"));
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, specDeserializer, itemsFolder, logger);
         provider.get();
 
-        verify(logger).severe("Unable to load item configuration file 'olympia.yml': An IO error occurred");
-        verify(logger).severe("Unable to load item configuration file 'mp5.yml': An IO error occurred");
+        verify(logger).severe("Unable to load item configuration file 'olympia.yml': An error occurred");
+        verify(logger).severe("Unable to load item configuration file 'mp5.yml': An error occurred");
 
         yamlConfiguration.close();
     }
