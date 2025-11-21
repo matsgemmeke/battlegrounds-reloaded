@@ -4,6 +4,22 @@ import java.util.Set;
 
 public final class HitboxDefaults {
 
+    public static final RelativeHitbox ENDERMAN_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 2.3, 0.0),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 0.3, 0.0, 1.6, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 1.8, 0.2, 0.3, 0.35, 0.5, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 1.8, 0.2, 0.3, -0.35, 0.5, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 1.6, 0.5, 0.3, 0.0, 0.0, 0.0)
+    ));
+
+    public static final RelativeHitbox ENDERMAN_CARRYING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 2.3, 0.0),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 0.3, 0.0, 1.6, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 1.6, 0.2, 0.6, 0.35, 0.7, 0.3),
+            new HitboxComponent(HitboxComponentType.LIMBS, 1.6, 0.2, 0.6, -0.35, 0.7, 0.3),
+            new HitboxComponent(HitboxComponentType.LIMBS, 1.6, 0.5, 0.3, 0.0, 0.0, 0.0)
+    ));
+
     public static final RelativeHitbox PLAYER_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 1.4, 0.0),
             new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 0.3, 0.0, 0.7, 0.0),

@@ -4,10 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.mapper.HitboxMapper;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.DefaultHitboxProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.PlayerHitboxProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.ZombieHitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.*;
 import org.bukkit.entity.*;
 
 import java.util.HashMap;
@@ -31,6 +28,7 @@ public class HitboxResolver {
     }
 
     public void registerHitboxProviders() {
+        hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
         hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", HitboxDefaults.SKELETON_STANDING));
         hitboxProviders.put(EntityType.SPIDER, () -> this.createDefaultHitboxProvider("spider", "standing", HitboxDefaults.SPIDER_STANDING));
@@ -45,6 +43,13 @@ public class HitboxResolver {
         }
 
         return Optional.of(hitboxProvider.get());
+    }
+
+    private HitboxProvider createEndermanHitboxProvider() {
+        RelativeHitbox standingHitbox = this.createRelativeHitbox("enderman", "standing", HitboxDefaults.ENDERMAN_STANDING);
+        RelativeHitbox carryingHitbox = this.createRelativeHitbox("enderman", "carrying", HitboxDefaults.ENDERMAN_CARRYING);
+
+        return new EndermanHitboxProvider(standingHitbox, carryingHitbox);
     }
 
     private HitboxProvider createPlayerHitboxProvider() {
