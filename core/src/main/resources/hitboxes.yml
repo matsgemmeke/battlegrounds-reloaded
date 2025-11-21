@@ -45,23 +45,23 @@ player:
     head:
       type: HEAD
       size: [ 0.5, 0.5, 0.5 ]
-      offset: [ 0.0, 1.0, 0.0 ]
+      offset: [ 0.0, -0.3, -0.1 ]
     torso:
       type: TORSO
-      size: [ 0.5, 0.5, 0.5 ]
-      offset: [ 0.0, 0.5, -0.2 ]
+      size: [ 0.3, 0.5, 0.7 ]
+      offset: [ 0.0, -0.3, 0.4 ]
     left-arm:
       type: LIMBS
-      size: [ 0.7, 0.2, 0.5 ]
-      offset: [ 0.35, 0.4, -0.1 ]
+      size: [ 0.3, 0.2, 0.7 ]
+      offset: [ 0.35, -0.3, 0.4 ]
     right-arm:
       type: LIMBS
-      size: [ 0.7, 0.2, 0.5 ]
-      offset: [ -0.35, 0.4, -0.1 ]
+      size: [ 0.3, 0.2, 0.7 ]
+      offset: [ -0.35, -0.3, 0.4 ]
     legs:
       type: LIMBS
-      size: [ 0.5, 0.5, 0.3 ]
-      offset: [ 0.0, 0.0, -0.2 ]
+      size: [ 0.3, 0.5, 0.7 ]
+      offset: [ 0.0, -0.3, 1.1 ]
 
 zombie:
   adult-standing:
