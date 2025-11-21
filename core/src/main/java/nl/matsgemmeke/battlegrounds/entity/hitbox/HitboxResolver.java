@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.mapper.HitboxMapper;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.DefaultHitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.PlayerHitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.ZombieHitboxProvider;
@@ -31,6 +32,7 @@ public class HitboxResolver {
 
     public void registerHitboxProviders() {
         hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
+        hitboxProviders.put(EntityType.SKELETON, this::createSkeletonHitboxProvider);
         hitboxProviders.put(EntityType.ZOMBIE, this::createZombieHitboxProvider);
     }
 
@@ -45,54 +47,29 @@ public class HitboxResolver {
     }
 
     private HitboxProvider createPlayerHitboxProvider() {
-        HitboxDefinition standingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "standing").orElse(null);
-        HitboxDefinition sneakingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "sneaking").orElse(null);
-        HitboxDefinition sleepingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("player", "sleeping").orElse(null);
-
-        RelativeHitbox standingHitbox;
-        RelativeHitbox sneakingHitbox;
-        RelativeHitbox sleepingHitbox;
-
-        if (standingHitboxDefinition != null) {
-            standingHitbox = hitboxMapper.map(standingHitboxDefinition);
-        } else {
-            standingHitbox = HitboxDefaults.PLAYER_STANDING;
-        }
-
-        if (sneakingHitboxDefinition != null) {
-            sneakingHitbox = hitboxMapper.map(sneakingHitboxDefinition);
-        } else {
-            sneakingHitbox = HitboxDefaults.PLAYER_SNEAKING;
-        }
-
-        if (sleepingHitboxDefinition != null) {
-            sleepingHitbox = hitboxMapper.map(sleepingHitboxDefinition);
-        } else {
-            sleepingHitbox = HitboxDefaults.PLAYER_SLEEPING;
-        }
+        RelativeHitbox standingHitbox = this.createRelativeHitbox("player", "standing", HitboxDefaults.PLAYER_STANDING);
+        RelativeHitbox sneakingHitbox = this.createRelativeHitbox("player", "sneaking", HitboxDefaults.PLAYER_SNEAKING);
+        RelativeHitbox sleepingHitbox = this.createRelativeHitbox("player", "sleeping", HitboxDefaults.PLAYER_SLEEPING);
 
         return new PlayerHitboxProvider(standingHitbox, sneakingHitbox, sleepingHitbox);
     }
 
+    private HitboxProvider createSkeletonHitboxProvider() {
+        RelativeHitbox standingHitbox = this.createRelativeHitbox("skeleton", "standing", HitboxDefaults.SKELETON_STANDING);
+
+        return new DefaultHitboxProvider(standingHitbox);
+    }
+
     private HitboxProvider createZombieHitboxProvider() {
-        HitboxDefinition adultStandingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("zombie", "adult-standing").orElse(null);
-        HitboxDefinition babyStandingHitboxDefinition = hitboxConfiguration.getHitboxDefinition("zombie", "baby-standing").orElse(null);
-
-        RelativeHitbox standingHitboxAdult;
-        RelativeHitbox standingHitboxBaby;
-
-        if (adultStandingHitboxDefinition != null) {
-            standingHitboxAdult = hitboxMapper.map(adultStandingHitboxDefinition);
-        } else {
-            standingHitboxAdult = HitboxDefaults.ZOMBIE_ADULT_STANDING;
-        }
-
-        if (babyStandingHitboxDefinition != null) {
-            standingHitboxBaby = hitboxMapper.map(babyStandingHitboxDefinition);
-        } else {
-            standingHitboxBaby = HitboxDefaults.ZOMBIE_BABY_STANDING;
-        }
+        RelativeHitbox standingHitboxAdult = this.createRelativeHitbox("zombie", "adult-standing", HitboxDefaults.ZOMBIE_ADULT_STANDING);
+        RelativeHitbox standingHitboxBaby = this.createRelativeHitbox("zombie", "baby-standing", HitboxDefaults.ZOMBIE_BABY_STANDING);
 
         return new ZombieHitboxProvider(standingHitboxAdult, standingHitboxBaby);
+    }
+
+    private RelativeHitbox createRelativeHitbox(String entityType, String pose, RelativeHitbox defaultHitbox) {
+        HitboxDefinition hitboxDefinition = hitboxConfiguration.getHitboxDefinition(entityType, pose).orElse(null);
+
+        return hitboxDefinition != null ? hitboxMapper.map(hitboxDefinition) : defaultHitbox;
     }
 }
