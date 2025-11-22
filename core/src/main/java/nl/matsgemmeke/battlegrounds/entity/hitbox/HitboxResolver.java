@@ -28,6 +28,7 @@ public class HitboxResolver {
     }
 
     public void registerHitboxProviders() {
+        hitboxProviders.put(EntityType.CREEPER, () -> this.createDefaultHitboxProvider("creeper", "standing", HitboxDefaults.CREEPER_STANDING));
         hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
         hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", HitboxDefaults.SKELETON_STANDING));

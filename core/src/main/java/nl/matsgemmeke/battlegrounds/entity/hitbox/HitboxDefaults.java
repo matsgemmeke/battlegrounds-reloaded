@@ -4,6 +4,12 @@ import java.util.Set;
 
 public final class HitboxDefaults {
 
+    public static final RelativeHitbox CREEPER_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 1.1, 0.0),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 0.3, 0.0, 0.4, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.4, 0.5, 0.8, 0.0, 0.0, 0.0)
+    ));
+
     public static final RelativeHitbox ENDERMAN_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 2.3, 0.0),
             new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 0.3, 0.0, 1.6, 0.0),
