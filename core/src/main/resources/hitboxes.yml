@@ -1,17 +1,53 @@
+cow:
+  adult-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.4]
+      offset: [0.0, 1.0, 0.7]
+    torso:
+      type: TORSO
+      size: [0.7, 0.8, 1.2]
+      offset: [0.0, 0.7, -0.1]
+    front-legs:
+      type: LIMBS
+      size: [0.7, 0.8, 0.3]
+      offset: [0.0, 0.0, 0.35]
+    hind-legs:
+      type: LIMBS
+      size: [0.7, 0.8, 0.3]
+      offset: [0.0, 0.0, -0.45]
+  baby-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.4]
+      offset: [0.0, 0.35, 0.45]
+    torso:
+      type: TORSO
+      size: [0.3, 0.4, 0.55]
+      offset: [0.0, 0.35, 0.0]
+    front-legs:
+      type: LIMBS
+      size: [0.35, 0.4, 0.15]
+      offset: [0.0, 0.0, 0.2]
+    hind-legs:
+      type: LIMBS
+      size: [0.35, 0.4, 0.15]
+      offset: [0.0, 0.0, -0.25]
+
 creeper:
   standing:
     head:
       type: HEAD
-      size: [ 0.5, 0.5, 0.5 ]
-      offset: [ 0.0, 1.1, 0.0 ]
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 1.1, 0.0]
     torso:
       type: TORSO
-      size: [ 0.7, 0.5, 0.3 ]
-      offset: [ 0.0, 0.4, 0.0 ]
+      size: [0.7, 0.5, 0.3]
+      offset: [0.0, 0.4, 0.0]
     legs:
       type: LIMBS
-      size: [ 0.4, 0.5, 0.8 ]
-      offset: [ 0.0, 0.0, 0.0 ]
+      size: [0.4, 0.5, 0.8]
+      offset: [0.0, 0.0, 0.0]
 
 enderman:
   standing:
@@ -103,24 +139,24 @@ player:
   sleeping:
     head:
       type: HEAD
-      size: [ 0.5, 0.5, 0.5 ]
-      offset: [ 0.0, -0.3, -0.1 ]
+      size: [0.5, 0.5, 0.5]
+      offset: [ 0.0, -0.3, -0.1]
     torso:
       type: TORSO
-      size: [ 0.3, 0.5, 0.7 ]
-      offset: [ 0.0, -0.3, 0.4 ]
+      size: [0.3, 0.5, 0.7]
+      offset: [ 0.0, -0.3, 0.4]
     left-arm:
       type: LIMBS
-      size: [ 0.3, 0.2, 0.7 ]
-      offset: [ 0.35, -0.3, 0.4 ]
+      size: [0.3, 0.2, 0.7]
+      offset: [ 0.35, -0.3, 0.4]
     right-arm:
       type: LIMBS
-      size: [ 0.3, 0.2, 0.7 ]
-      offset: [ -0.35, -0.3, 0.4 ]
+      size: [0.3, 0.2, 0.7]
+      offset: [ -0.35, -0.3, 0.4]
     legs:
       type: LIMBS
-      size: [ 0.3, 0.5, 0.7 ]
-      offset: [ 0.0, -0.3, 1.1 ]
+      size: [0.3, 0.5, 0.7]
+      offset: [0.0, -0.3, 1.1]
 
 skeleton:
   standing:
@@ -160,15 +196,15 @@ spider:
       offset: [0.0, 0.3, 0.45]
     torso:
       type: TORSO
-      size: [ 0.5, 0.6, 1.1 ]
+      size: [0.5, 0.6, 1.1]
       offset: [0.0, 0.3, -0.4]
     left-arm:
       type: LIMBS
-      size: [ 0.5, 0.7, 1.6 ]
+      size: [0.5, 0.7, 1.6]
       offset: [0.65, 0.0, -0.1]
     right-arm:
       type: LIMBS
-      size: [ 0.5, 0.7, 1.6 ]
+      size: [0.5, 0.7, 1.6]
       offset: [-0.65, 0.0, -0.1]
 
 zombie:

@@ -17,25 +17,25 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ZombieHitboxProviderTest {
+class AgeableHitboxProviderTest {
 
     private static final RelativeHitbox ADULT_STANDING_HITBOX = new RelativeHitbox(Collections.emptySet());
     private static final RelativeHitbox BABY_STANDING_HITBOX = new RelativeHitbox(Collections.emptySet());
 
-    private final ZombieHitboxProvider hitboxProvider = new ZombieHitboxProvider(ADULT_STANDING_HITBOX, BABY_STANDING_HITBOX);
+    private final AgeableHitboxProvider hitboxProvider = new AgeableHitboxProvider(ADULT_STANDING_HITBOX, BABY_STANDING_HITBOX);
 
     @Test
-    void provideHitboxThrowsHitboxProvisionExceptionWhenGivenEntityIsNoZombie() {
+    void provideHitboxThrowsHitboxProvisionExceptionWhenGivenEntityIsNotAgeable() {
         Player player = mock(Player.class);
         when(player.getType()).thenReturn(EntityType.PLAYER);
 
         assertThatThrownBy(() -> hitboxProvider.provideHitbox(player))
                 .isInstanceOf(HitboxProvisionException.class)
-                .hasMessage("Cannot provide a hitbox for an entity PLAYER as it is not a zombie");
+                .hasMessage("Cannot provide a hitbox for an entity PLAYER as it is not an ageable entity");
     }
 
     @Test
-    void provideHitboxReturnsHitboxForBabyStandingWhenZombieIsNoAdult() {
+    void provideHitboxReturnsHitboxForBabyStandingWhenEntityIsNoAdult() {
         Zombie zombie = mock(Zombie.class);
         when(zombie.isAdult()).thenReturn(false);
 
@@ -45,7 +45,7 @@ class ZombieHitboxProviderTest {
     }
 
     @Test
-    void provideHitboxReturnsHitboxForAdultStandingWhenZombieIsAdult() {
+    void provideHitboxReturnsHitboxForAdultStandingWhenEntityIsAdult() {
         Zombie zombie = mock(Zombie.class);
         when(zombie.isAdult()).thenReturn(true);
 

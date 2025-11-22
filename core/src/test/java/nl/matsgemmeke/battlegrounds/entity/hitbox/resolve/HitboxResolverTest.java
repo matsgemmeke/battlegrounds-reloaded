@@ -5,9 +5,9 @@ import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxCompon
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.mapper.HitboxMapper;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.AgeableHitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.PlayerHitboxProvider;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.ZombieHitboxProvider;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -95,7 +95,7 @@ class HitboxResolverTest {
 
         Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(zombie);
 
-        assertThat(hitboxProviderOptional).hasValueSatisfying(hitboxProvider -> assertThat(hitboxProvider).isInstanceOf(ZombieHitboxProvider.class));
+        assertThat(hitboxProviderOptional).hasValueSatisfying(hitboxProvider -> assertThat(hitboxProvider).isInstanceOf(AgeableHitboxProvider.class));
     }
 
     private static HitboxDefinition createHitboxDefinition() {

@@ -28,13 +28,14 @@ public class HitboxResolver {
     }
 
     public void registerHitboxProviders() {
+        hitboxProviders.put(EntityType.COW, () -> this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", HitboxDefaults.COW_ADULT_STANDING, HitboxDefaults.COW_BABY_STANDING));
         hitboxProviders.put(EntityType.CREEPER, () -> this.createDefaultHitboxProvider("creeper", "standing", HitboxDefaults.CREEPER_STANDING));
         hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
         hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", HitboxDefaults.SKELETON_STANDING));
         hitboxProviders.put(EntityType.SLIME, this::createSlimeHitboxProvider);
         hitboxProviders.put(EntityType.SPIDER, () -> this.createDefaultHitboxProvider("spider", "standing", HitboxDefaults.SPIDER_STANDING));
-        hitboxProviders.put(EntityType.ZOMBIE, this::createZombieHitboxProvider);
+        hitboxProviders.put(EntityType.ZOMBIE, () -> this.createAgeableHitboxProvider("zombie", "adult-standing", "baby-standing", HitboxDefaults.ZOMBIE_ADULT_STANDING, HitboxDefaults.ZOMBIE_BABY_STANDING));
     }
 
     public Optional<HitboxProvider> resolveHitboxProvider(Entity entity) {
@@ -45,6 +46,13 @@ public class HitboxResolver {
         }
 
         return Optional.of(hitboxProvider.get());
+    }
+
+    private HitboxProvider createAgeableHitboxProvider(String entityType, String adultPose, String babyPose, RelativeHitbox adultDefaultHitbox, RelativeHitbox babyDefaultHitbox) {
+        RelativeHitbox standingHitboxAdult = this.createRelativeHitbox(entityType, adultPose, adultDefaultHitbox);
+        RelativeHitbox standingHitboxBaby = this.createRelativeHitbox(entityType, babyPose, babyDefaultHitbox);
+
+        return new AgeableHitboxProvider(standingHitboxAdult, standingHitboxBaby);
     }
 
     private HitboxProvider createDefaultHitboxProvider(String entityType, String pose, RelativeHitbox defaultHitbox) {
@@ -72,13 +80,6 @@ public class HitboxResolver {
         RelativeHitbox standingHitbox = this.createRelativeHitbox("slime", "standing", HitboxDefaults.SLIME_STANDING);
 
         return new SlimeHitboxProvider(standingHitbox);
-    }
-
-    private HitboxProvider createZombieHitboxProvider() {
-        RelativeHitbox standingHitboxAdult = this.createRelativeHitbox("zombie", "adult-standing", HitboxDefaults.ZOMBIE_ADULT_STANDING);
-        RelativeHitbox standingHitboxBaby = this.createRelativeHitbox("zombie", "baby-standing", HitboxDefaults.ZOMBIE_BABY_STANDING);
-
-        return new ZombieHitboxProvider(standingHitboxAdult, standingHitboxBaby);
     }
 
     private RelativeHitbox createRelativeHitbox(String entityType, String pose, RelativeHitbox defaultHitbox) {
