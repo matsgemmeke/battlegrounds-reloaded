@@ -64,6 +64,20 @@ public final class HitboxDefaults {
             new HitboxComponent(HitboxComponentType.LIMBS, 0.3, 0.5, 0.7, 0.0, -0.3, 1.1)
     ));
 
+    public static final RelativeHitbox SHEEP_ADULT_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 0.9, 0.6),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.6, 0.8, 1.2, 0.0, 0.6, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.6, 0.8, 0.3, 0.0, 0.0, 0.3),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.6, 0.8, 0.3, 0.0, 0.0, -0.45)
+    ));
+
+    public static final RelativeHitbox SHEEP_BABY_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 0.4, 0.35),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.3, 0.4, 0.65, 0.0, 0.3, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.3, 0.4, 0.15, 0.0, 0.0, 0.15),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.3, 0.4, 0.15, 0.0, 0.0, -0.25)
+    ));
+
     public static final RelativeHitbox SKELETON_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 1.5, 0.0),
             new HitboxComponent(HitboxComponentType.TORSO, 0.75, 0.5, 0.3, 0.0, 0.75, 0.0),
