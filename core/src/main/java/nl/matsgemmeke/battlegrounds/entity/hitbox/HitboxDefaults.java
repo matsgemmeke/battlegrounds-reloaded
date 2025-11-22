@@ -40,6 +40,20 @@ public final class HitboxDefaults {
             new HitboxComponent(HitboxComponentType.LIMBS, 1.6, 0.5, 0.3, 0.0, 0.0, 0.0)
     ));
 
+    public static final RelativeHitbox PIG_ADULT_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.6, 0.0, 0.5, 0.65),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.5, 0.7, 1.0, 0.0, 0.35, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.35, 0.8, 0.3, 0.0, 0.0, 0.35),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.35, 0.8, 0.3, 0.0, 0.0, -0.4)
+    ));
+
+    public static final RelativeHitbox PIG_BABY_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.6, 0.0, 0.25, 0.4),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.3, 0.4, 0.5, 0.0, 0.15, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.15, 0.4, 0.15, 0.0, 0.0, 0.15),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.15, 0.4, 0.15, 0.0, 0.0, -0.25)
+    ));
+
     public static final RelativeHitbox PLAYER_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 1.4, 0.0),
             new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 0.3, 0.0, 0.7, 0.0),

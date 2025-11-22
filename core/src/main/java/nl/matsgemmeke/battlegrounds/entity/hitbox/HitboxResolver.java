@@ -31,6 +31,7 @@ public class HitboxResolver {
         hitboxProviders.put(EntityType.COW, () -> this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", HitboxDefaults.COW_ADULT_STANDING, HitboxDefaults.COW_BABY_STANDING));
         hitboxProviders.put(EntityType.CREEPER, () -> this.createDefaultHitboxProvider("creeper", "standing", HitboxDefaults.CREEPER_STANDING));
         hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
+        hitboxProviders.put(EntityType.PIG, () -> this.createAgeableHitboxProvider("pig", "adult-standing", "baby-standing", HitboxDefaults.PIG_ADULT_STANDING, HitboxDefaults.PIG_BABY_STANDING));
         hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         hitboxProviders.put(EntityType.SHEEP, () -> this.createAgeableHitboxProvider("sheep", "adult-standing", "baby-standing", HitboxDefaults.SHEEP_ADULT_STANDING, HitboxDefaults.SHEEP_BABY_STANDING));
         hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", HitboxDefaults.SKELETON_STANDING));
