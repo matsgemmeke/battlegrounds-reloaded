@@ -115,19 +115,19 @@ skeleton:
       offset: [0.0, 1.5, 0.0]
     torso:
       type: TORSO
-      size: [0.7, 0.5, 0.3]
-      offset: [0.0, 0.8, 0.0]
+      size: [0.75, 0.5, 0.3]
+      offset: [0.0, 0.75, 0.0]
     left-arm:
       type: LIMBS
-      size: [0.25, 0.25, 0.8]
-      offset: [0.35, 1.2, 0.3]
+      size: [0.75, 0.2, 0.2]
+      offset: [0.35, 0.75, 0.0]
     right-arm:
       type: LIMBS
-      size: [0.25, 0.25, 0.8]
-      offset: [-0.35, 1.2, 0.3]
+      size: [0.75, 0.2, 0.2]
+      offset: [-0.35, 0.75, 0.0]
     legs:
       type: LIMBS
-      size: [0.8, 0.5, 0.3]
+      size: [0.75, 0.4, 0.3]
       offset: [0.0, 0.0, 0.0]
 
 slime:
@@ -141,20 +141,20 @@ spider:
   standing:
     head:
       type: HEAD
-      size: [ 0.5, 0.5, 0.5 ]
-      offset: [ 0.0, 0.3, 0.45 ]
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 0.3, 0.45]
     torso:
       type: TORSO
       size: [ 0.5, 0.6, 1.1 ]
-      offset: [ 0.0, 0.3, -0.4 ]
+      offset: [0.0, 0.3, -0.4]
     left-arm:
       type: LIMBS
       size: [ 0.5, 0.7, 1.6 ]
-      offset: [ 0.65, 0.0, -0.1 ]
+      offset: [0.65, 0.0, -0.1]
     right-arm:
       type: LIMBS
       size: [ 0.5, 0.7, 1.6 ]
-      offset: [ -0.65, 0.0, -0.1 ]
+      offset: [-0.65, 0.0, -0.1]
 
 zombie:
   adult-standing:
@@ -164,19 +164,19 @@ zombie:
       offset: [0.0, 1.5, 0.0]
     torso:
       type: TORSO
-      size: [0.7, 0.5, 0.3]
-      offset: [0.0, 0.8, 0.0]
+      size: [0.75, 0.5, 0.3]
+      offset: [0.0, 0.75, 0.0]
     left-arm:
       type: LIMBS
-      size: [0.25, 0.25, 0.8]
+      size: [0.25, 0.25, 0.75]
       offset: [0.35, 1.2, 0.3]
     right-arm:
       type: LIMBS
-      size: [0.25, 0.25, 0.8]
+      size: [0.25, 0.25, 0.75]
       offset: [-0.35, 1.2, 0.3]
     legs:
       type: LIMBS
-      size: [0.8, 0.5, 0.3]
+      size: [0.75, 0.5, 0.3]
       offset: [0.0, 0.0, 0.0]
   baby-standing:
     head:

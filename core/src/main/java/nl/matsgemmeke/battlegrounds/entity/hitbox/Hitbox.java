@@ -35,7 +35,7 @@ public class Hitbox {
      */
     public Optional<HitboxComponent> getIntersectedHitboxComponent(Location location) {
         for (HitboxComponent component : relativeHitbox.components()) {
-            if (intersectsHitboxComponent(location, baseLocation, component)) {
+            if (this.intersectsHitboxComponent(location, baseLocation, component)) {
                 return Optional.of(component);
             }
         }
@@ -51,7 +51,7 @@ public class Hitbox {
      */
     public boolean intersects(Location location) {
         for (HitboxComponent component : relativeHitbox.components()) {
-            if (intersectsHitboxComponent(location, baseLocation, component)) {
+            if (this.intersectsHitboxComponent(location, baseLocation, component)) {
                 return true;
             }
         }
