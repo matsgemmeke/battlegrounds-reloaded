@@ -4,6 +4,18 @@ import java.util.Set;
 
 public final class HitboxDefaults {
 
+    public static final RelativeHitbox CHICKEN_ADULT_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.3, 0.3, 0.0, 0.55, 0.3),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.4, 0.5, 0.55, 0.0, 0.3, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.3, 0.5, 0.2, 0.0, 0.0, 0.0)
+    ));
+
+    public static final RelativeHitbox CHICKEN_BABY_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.3, 0.3, 0.0, 0.2, 0.2),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.2, 0.2, 0.3, 0.0, 0.1, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.1, 0.2, 0.2, 0.0, 0.0, 0.0)
+    ));
+
     public static final RelativeHitbox COW_ADULT_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.4, 0.0, 1.0, 0.7),
             new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.8, 1.2, 0.0, 0.7, -0.1),

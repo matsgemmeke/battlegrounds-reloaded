@@ -28,6 +28,7 @@ public class HitboxResolver {
     }
 
     public void registerHitboxProviders() {
+        hitboxProviders.put(EntityType.CHICKEN, () -> this.createAgeableHitboxProvider("chicken", "adult-standing", "baby-standing", HitboxDefaults.CHICKEN_ADULT_STANDING, HitboxDefaults.CHICKEN_BABY_STANDING));
         hitboxProviders.put(EntityType.COW, () -> this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", HitboxDefaults.COW_ADULT_STANDING, HitboxDefaults.COW_BABY_STANDING));
         hitboxProviders.put(EntityType.CREEPER, () -> this.createDefaultHitboxProvider("creeper", "standing", HitboxDefaults.CREEPER_STANDING));
         hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
