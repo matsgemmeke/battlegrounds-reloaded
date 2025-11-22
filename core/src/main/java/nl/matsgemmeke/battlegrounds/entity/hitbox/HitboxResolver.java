@@ -31,6 +31,7 @@ public class HitboxResolver {
         hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
         hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", HitboxDefaults.SKELETON_STANDING));
+        hitboxProviders.put(EntityType.SLIME, this::createSlimeHitboxProvider);
         hitboxProviders.put(EntityType.SPIDER, () -> this.createDefaultHitboxProvider("spider", "standing", HitboxDefaults.SPIDER_STANDING));
         hitboxProviders.put(EntityType.ZOMBIE, this::createZombieHitboxProvider);
     }
@@ -43,6 +44,12 @@ public class HitboxResolver {
         }
 
         return Optional.of(hitboxProvider.get());
+    }
+
+    private HitboxProvider createDefaultHitboxProvider(String entityType, String pose, RelativeHitbox defaultHitbox) {
+        RelativeHitbox standingHitbox = this.createRelativeHitbox(entityType, pose, defaultHitbox);
+
+        return new DefaultHitboxProvider(standingHitbox);
     }
 
     private HitboxProvider createEndermanHitboxProvider() {
@@ -60,10 +67,10 @@ public class HitboxResolver {
         return new PlayerHitboxProvider(standingHitbox, sneakingHitbox, sleepingHitbox);
     }
 
-    private HitboxProvider createDefaultHitboxProvider(String entityType, String pose, RelativeHitbox defaultHitbox) {
-        RelativeHitbox standingHitbox = this.createRelativeHitbox(entityType, pose, defaultHitbox);
+    private HitboxProvider createSlimeHitboxProvider() {
+        RelativeHitbox standingHitbox = this.createRelativeHitbox("slime", "standing", HitboxDefaults.SLIME_STANDING);
 
-        return new DefaultHitboxProvider(standingHitbox);
+        return new SlimeHitboxProvider(standingHitbox);
     }
 
     private HitboxProvider createZombieHitboxProvider() {

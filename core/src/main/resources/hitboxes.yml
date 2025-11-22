@@ -130,6 +130,13 @@ skeleton:
       size: [0.8, 0.5, 0.3]
       offset: [0.0, 0.0, 0.0]
 
+slime:
+  standing:
+    body:
+      type: TORSO
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 0.0, 0.0]
+
 spider:
   standing:
     head:

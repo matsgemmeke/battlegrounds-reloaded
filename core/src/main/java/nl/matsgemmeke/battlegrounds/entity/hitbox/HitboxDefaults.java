@@ -52,6 +52,10 @@ public final class HitboxDefaults {
             new HitboxComponent(HitboxComponentType.LIMBS, 0.8, 0.5, 0.2, 0.0, 0.0, 0.0)
     ));
 
+    public static final RelativeHitbox SLIME_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.TORSO, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0)
+    ));
+
     public static final RelativeHitbox SPIDER_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 0.3, 0.45),
             new HitboxComponent(HitboxComponentType.TORSO, 0.5, 0.6, 1.1, 0.0, 0.3, -0.4),

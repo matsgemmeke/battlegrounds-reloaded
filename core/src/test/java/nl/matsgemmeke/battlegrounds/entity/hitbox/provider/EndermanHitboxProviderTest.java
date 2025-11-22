@@ -23,7 +23,7 @@ class EndermanHitboxProviderTest {
     private final EndermanHitboxProvider hitboxProvider = new EndermanHitboxProvider(STANDING_HITBOX, CARRYING_HITBOX);
 
     @Test
-    void provideHitboxThrowsHitboxProvisionExceptionWhenGivenEntityIsNoZombie() {
+    void provideHitboxThrowsHitboxProvisionExceptionWhenGivenEntityIsNoEnderman() {
         Player player = mock(Player.class);
         when(player.getType()).thenReturn(EntityType.PLAYER);
 
