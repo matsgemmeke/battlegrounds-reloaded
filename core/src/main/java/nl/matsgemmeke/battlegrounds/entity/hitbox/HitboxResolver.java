@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import static nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxDefaults.*;
+
 public class HitboxResolver {
 
     private final HitboxConfiguration hitboxConfiguration;
@@ -28,17 +30,18 @@ public class HitboxResolver {
     }
 
     public void registerHitboxProviders() {
-        hitboxProviders.put(EntityType.CHICKEN, () -> this.createAgeableHitboxProvider("chicken", "adult-standing", "baby-standing", HitboxDefaults.CHICKEN_ADULT_STANDING, HitboxDefaults.CHICKEN_BABY_STANDING));
-        hitboxProviders.put(EntityType.COW, () -> this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", HitboxDefaults.COW_ADULT_STANDING, HitboxDefaults.COW_BABY_STANDING));
-        hitboxProviders.put(EntityType.CREEPER, () -> this.createDefaultHitboxProvider("creeper", "standing", HitboxDefaults.CREEPER_STANDING));
+        hitboxProviders.put(EntityType.CHICKEN, () -> this.createAgeableHitboxProvider("chicken", "adult-standing", "baby-standing", CHICKEN_ADULT_STANDING, CHICKEN_BABY_STANDING));
+        hitboxProviders.put(EntityType.COW, () -> this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", COW_ADULT_STANDING, COW_BABY_STANDING));
+        hitboxProviders.put(EntityType.CREEPER, () -> this.createDefaultHitboxProvider("creeper", "standing", CREEPER_STANDING));
         hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
-        hitboxProviders.put(EntityType.PIG, () -> this.createAgeableHitboxProvider("pig", "adult-standing", "baby-standing", HitboxDefaults.PIG_ADULT_STANDING, HitboxDefaults.PIG_BABY_STANDING));
+        hitboxProviders.put(EntityType.PIG, () -> this.createAgeableHitboxProvider("pig", "adult-standing", "baby-standing", PIG_ADULT_STANDING, PIG_BABY_STANDING));
         hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
-        hitboxProviders.put(EntityType.SHEEP, () -> this.createAgeableHitboxProvider("sheep", "adult-standing", "baby-standing", HitboxDefaults.SHEEP_ADULT_STANDING, HitboxDefaults.SHEEP_BABY_STANDING));
-        hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", HitboxDefaults.SKELETON_STANDING));
+        hitboxProviders.put(EntityType.SHEEP, () -> this.createAgeableHitboxProvider("sheep", "adult-standing", "baby-standing", SHEEP_ADULT_STANDING, SHEEP_BABY_STANDING));
+        hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", SKELETON_STANDING));
         hitboxProviders.put(EntityType.SLIME, this::createSlimeHitboxProvider);
-        hitboxProviders.put(EntityType.SPIDER, () -> this.createDefaultHitboxProvider("spider", "standing", HitboxDefaults.SPIDER_STANDING));
-        hitboxProviders.put(EntityType.ZOMBIE, () -> this.createAgeableHitboxProvider("zombie", "adult-standing", "baby-standing", HitboxDefaults.ZOMBIE_ADULT_STANDING, HitboxDefaults.ZOMBIE_BABY_STANDING));
+        hitboxProviders.put(EntityType.SPIDER, () -> this.createDefaultHitboxProvider("spider", "standing", SPIDER_STANDING));
+        hitboxProviders.put(EntityType.WOLF, () -> this.createSittableHitboxProvider("wolf", "adult-standing", "adult-sitting", "baby-standing", "baby-sitting", WOLF_ADULT_STANDING, WOLF_ADULT_SITTING, WOLF_BABY_STANDING, WOLF_BABY_SITTING));
+        hitboxProviders.put(EntityType.ZOMBIE, () -> this.createAgeableHitboxProvider("zombie", "adult-standing", "baby-standing", ZOMBIE_ADULT_STANDING, ZOMBIE_BABY_STANDING));
     }
 
     public Optional<HitboxProvider> resolveHitboxProvider(Entity entity) {
@@ -65,22 +68,41 @@ public class HitboxResolver {
     }
 
     private HitboxProvider createEndermanHitboxProvider() {
-        RelativeHitbox standingHitbox = this.createRelativeHitbox("enderman", "standing", HitboxDefaults.ENDERMAN_STANDING);
-        RelativeHitbox carryingHitbox = this.createRelativeHitbox("enderman", "carrying", HitboxDefaults.ENDERMAN_CARRYING);
+        RelativeHitbox standingHitbox = this.createRelativeHitbox("enderman", "standing", ENDERMAN_STANDING);
+        RelativeHitbox carryingHitbox = this.createRelativeHitbox("enderman", "carrying", ENDERMAN_CARRYING);
 
         return new EndermanHitboxProvider(standingHitbox, carryingHitbox);
     }
 
     private HitboxProvider createPlayerHitboxProvider() {
-        RelativeHitbox standingHitbox = this.createRelativeHitbox("player", "standing", HitboxDefaults.PLAYER_STANDING);
-        RelativeHitbox sneakingHitbox = this.createRelativeHitbox("player", "sneaking", HitboxDefaults.PLAYER_SNEAKING);
-        RelativeHitbox sleepingHitbox = this.createRelativeHitbox("player", "sleeping", HitboxDefaults.PLAYER_SLEEPING);
+        RelativeHitbox standingHitbox = this.createRelativeHitbox("player", "standing", PLAYER_STANDING);
+        RelativeHitbox sneakingHitbox = this.createRelativeHitbox("player", "sneaking", PLAYER_SNEAKING);
+        RelativeHitbox sleepingHitbox = this.createRelativeHitbox("player", "sleeping", PLAYER_SLEEPING);
 
         return new PlayerHitboxProvider(standingHitbox, sneakingHitbox, sleepingHitbox);
     }
 
+    private HitboxProvider createSittableHitboxProvider(
+            String entityType,
+            String adultStandingPose,
+            String adultSittingPose,
+            String babyStandingPose,
+            String babySittingPose,
+            RelativeHitbox adultStandingDefaultHitbox,
+            RelativeHitbox adultSittingDefaultHitbox,
+            RelativeHitbox babyStandingDefaultHitbox,
+            RelativeHitbox babySittingDefaultHitbox
+    ) {
+        RelativeHitbox adultStandingHitbox = this.createRelativeHitbox(entityType, adultStandingPose, adultStandingDefaultHitbox);
+        RelativeHitbox adultSittingHitbox = this.createRelativeHitbox(entityType, adultSittingPose, adultSittingDefaultHitbox);
+        RelativeHitbox babyStandingHitbox = this.createRelativeHitbox(entityType, babyStandingPose, babyStandingDefaultHitbox);
+        RelativeHitbox babySittingHitbox = this.createRelativeHitbox(entityType, babySittingPose, babySittingDefaultHitbox);
+
+        return new SittableAgeableHitboxProvider(adultStandingHitbox, adultSittingHitbox, babyStandingHitbox, babySittingHitbox);
+    }
+
     private HitboxProvider createSlimeHitboxProvider() {
-        RelativeHitbox standingHitbox = this.createRelativeHitbox("slime", "standing", HitboxDefaults.SLIME_STANDING);
+        RelativeHitbox standingHitbox = this.createRelativeHitbox("slime", "standing", SLIME_STANDING);
 
         return new SlimeHitboxProvider(standingHitbox);
     }

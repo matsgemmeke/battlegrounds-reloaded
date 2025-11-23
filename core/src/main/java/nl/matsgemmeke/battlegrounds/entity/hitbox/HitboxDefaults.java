@@ -123,6 +123,32 @@ public final class HitboxDefaults {
             new HitboxComponent(HitboxComponentType.LIMBS, 0.5, 0.7, 1.6, -0.65, 0.0, -0.1)
     ));
 
+    public static final RelativeHitbox WOLF_ADULT_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.4, 0.5, 0.0, 0.45, 0.55),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.5, 0.6, 1.0, 0.0, 0.4, -0.1),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.4, 0.5, 0.2, 0.0, 0.0, 0.2),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.4, 0.5, 0.2, 0.0, 0.0, -0.4)
+    ));
+
+    public static final RelativeHitbox WOLF_ADULT_SITTING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.4, 0.5, 0.0, 0.45, 0.45),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.8, 0.6, 0.7, 0.0, 0.0, -0.1),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.3, 0.6, 0.2, 0.0, 0.0, 0.4)
+    ));
+
+    public static final RelativeHitbox WOLF_BABY_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.4, 0.5, 0.0, 0.15, 0.45),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.3, 0.3, 0.5, 0.0, 0.15, -0.05),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.15, 0.3, 0.15, 0.0, 0.0, 0.15),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.15, 0.3, 0.15, 0.0, 0.0, -0.2)
+    ));
+
+    public static final RelativeHitbox WOLF_BABY_SITTING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.4, 0.5, 0.0, 0.15, 0.4),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.4, 0.3, 0.4, 0.0, 0.0, -0.05),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.1, 0.3, 0.1, 0.0, 0.0, 0.25)
+    ));
+
     public static final RelativeHitbox ZOMBIE_ADULT_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.5, 0.0, 1.5, 0.0),
             new HitboxComponent(HitboxComponentType.TORSO, 0.75, 0.5, 0.3, 0.0, 0.75, 0.0),
