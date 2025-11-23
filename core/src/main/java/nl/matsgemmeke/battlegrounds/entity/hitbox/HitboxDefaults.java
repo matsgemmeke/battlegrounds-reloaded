@@ -52,6 +52,14 @@ public final class HitboxDefaults {
             new HitboxComponent(HitboxComponentType.LIMBS, 0.5, 1.6, 0.3, 0.0, 0.0, 0.0)
     ));
 
+    public static final RelativeHitbox IRON_GOLEM_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.7, 0.6, 0.0, 2.0, 0.25),
+            new HitboxComponent(HitboxComponentType.TORSO, 1.1, 1.0, 0.7, 0.0, 1.0, 0.1),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.3, 1.9, 0.4, 0.7, 0.2, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.3, 1.9, 0.4, -0.7, 0.2, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 1.0, 1.0, 0.5, 0.0, 0.0, 0.0)
+    ));
+
     public static final RelativeHitbox PIG_ADULT_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.6, 0.0, 0.5, 0.65),
             new HitboxComponent(HitboxComponentType.TORSO, 0.7, 0.5, 1.0, 0.0, 0.35, 0.0),

@@ -36,6 +36,7 @@ public class HitboxResolver {
         hitboxProviders.put(EntityType.COW, () -> this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", COW_ADULT_STANDING, COW_BABY_STANDING));
         hitboxProviders.put(EntityType.CREEPER, () -> this.createDefaultHitboxProvider("creeper", "standing", CREEPER_STANDING));
         hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
+        hitboxProviders.put(EntityType.IRON_GOLEM, () -> this.createDefaultHitboxProvider("iron-golem", "standing", IRON_GOLEM_STANDING));
         hitboxProviders.put(EntityType.PIG, () -> this.createAgeableHitboxProvider("pig", "adult-standing", "baby-standing", PIG_ADULT_STANDING, PIG_BABY_STANDING));
         hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         hitboxProviders.put(EntityType.SHEEP, () -> this.createAgeableHitboxProvider("sheep", "adult-standing", "baby-standing", SHEEP_ADULT_STANDING, SHEEP_BABY_STANDING));
