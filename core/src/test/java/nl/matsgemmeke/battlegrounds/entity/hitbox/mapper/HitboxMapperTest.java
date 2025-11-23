@@ -28,8 +28,8 @@ class HitboxMapperTest {
 
         assertThat(relativeHitbox.components()).satisfiesExactly(hitboxComponent -> {
             assertThat(hitboxComponent.type()).isEqualTo(HitboxComponentType.TORSO);
-            assertThat(hitboxComponent.height()).isEqualTo(0.7);
-            assertThat(hitboxComponent.width()).isEqualTo(0.4);
+            assertThat(hitboxComponent.width()).isEqualTo(0.7);
+            assertThat(hitboxComponent.height()).isEqualTo(0.4);
             assertThat(hitboxComponent.depth()).isEqualTo(0.2);
             assertThat(hitboxComponent.offsetX()).isEqualTo(0.0);
             assertThat(hitboxComponent.offsetY()).isEqualTo(0.7);

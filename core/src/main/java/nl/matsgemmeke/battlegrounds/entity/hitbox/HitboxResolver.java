@@ -16,6 +16,8 @@ import static nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxDefaults.*;
 
 public class HitboxResolver {
 
+    private static final HitboxProvider FALLBACK_PROVIDER = new BoundingBoxHitboxProvider();
+
     private final HitboxConfiguration hitboxConfiguration;
     private final HitboxMapper hitboxMapper;
     private final Map<EntityType, Supplier<HitboxProvider>> hitboxProviders;
@@ -48,7 +50,7 @@ public class HitboxResolver {
         Supplier<HitboxProvider> hitboxProvider = hitboxProviders.get(entity.getType());
 
         if (hitboxProvider == null) {
-            return Optional.empty();
+            return Optional.of(FALLBACK_PROVIDER);
         }
 
         return Optional.of(hitboxProvider.get());

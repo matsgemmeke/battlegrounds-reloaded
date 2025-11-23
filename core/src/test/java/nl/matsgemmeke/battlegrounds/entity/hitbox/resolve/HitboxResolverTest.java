@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefini
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.mapper.HitboxMapper;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.AgeableHitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.BoundingBoxHitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.PlayerHitboxProvider;
 import org.bukkit.entity.Entity;
@@ -47,7 +48,9 @@ class HitboxResolverTest {
 
         Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(entity);
 
-        assertThat(hitboxProviderOptional).isEmpty();
+        assertThat(hitboxProviderOptional).hasValueSatisfying(hitboxProvider -> {
+            assertThat(hitboxProvider).isInstanceOf(BoundingBoxHitboxProvider.class);
+        });
     }
 
     static List<Arguments> playerHitboxDefinitions() {
@@ -74,7 +77,9 @@ class HitboxResolverTest {
         hitboxResolver.registerHitboxProviders();
         Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(player);
 
-        assertThat(hitboxProviderOptional).hasValueSatisfying(hitbox -> assertThat(hitbox).isInstanceOf(PlayerHitboxProvider.class));
+        assertThat(hitboxProviderOptional).hasValueSatisfying(hitbox -> {
+            assertThat(hitbox).isInstanceOf(PlayerHitboxProvider.class);
+        });
     }
 
     static List<Arguments> zombieHitboxDefinitions() {
@@ -95,7 +100,9 @@ class HitboxResolverTest {
 
         Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(zombie);
 
-        assertThat(hitboxProviderOptional).hasValueSatisfying(hitboxProvider -> assertThat(hitboxProvider).isInstanceOf(AgeableHitboxProvider.class));
+        assertThat(hitboxProviderOptional).hasValueSatisfying(hitboxProvider -> {
+            assertThat(hitboxProvider).isInstanceOf(AgeableHitboxProvider.class);
+        });
     }
 
     private static HitboxDefinition createHitboxDefinition() {
