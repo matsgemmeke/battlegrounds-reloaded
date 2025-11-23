@@ -142,7 +142,6 @@ public class GunFactoryTest {
 
         GunSpec spec = this.createGunSpec();
         spec.scope = scopeSpec;
-        spec.shooting.projectile.headshotDamageMultiplier = null;
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);

@@ -70,7 +70,7 @@ public class OpenModeInitializerTest {
         when(player.getUniqueId()).thenReturn(playerId);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
+        when(playerRegistry.register(player)).thenReturn(gamePlayer);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
 
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);

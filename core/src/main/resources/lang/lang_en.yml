@@ -9,6 +9,8 @@ admin:
   session-not-exists: "&cA session by the id %bg_session% doesn't exist."
   session-removal-failed: "&cFailed to remove session %bg_session%!"
   session-removed: "&6You have removed session &f%bg_session% &6and its content."
+  tool-hitbox-success: "&6Showing hitboxes for &f%bg_seconds% &6seconds inside a range of &f%bg_range% &6blocks."
+  tool-not-exists: "&cA tool by the name of %bg_tool% doesn't exist."
   weapon-not-exists: "&cA weapon with the id %bg_weapon% doesn't exist."
 
 commands:
@@ -17,9 +19,16 @@ commands:
   description-reload: "Reloads all configuration files"
   description-removesession: "Removes a session and all of its arenas"
   description-setmainlobby: "Sets the main lobby location"
+  description-tools: "Provides miscellaneous tools for operating the plugin"
+  description-tools-hitbox: "Shows hitboxes of nearby entities"
+  help-menu-command: " ● %bg__usage%"
   help-menu-title: "&6&l Battlegrounds Help Menu"
+  tools-menu-command: " ● /bg tools hitbox <seconds> <range>"
+  tools-menu-title: "&6&l List of tools"
   weapon-given: "&6You have been given a %bg_weapon%."
 
 errors:
+  command-sender-must-be-player: "&cMust be a player to use this command."
   not-in-open-mode: "&cUnable to perform action; you are not in open mode."
   open-mode-not-exists: "&cUnable to perform action; open mode is not enabled."
+  unknown-command: "&cUnknown command, please type /bg help"

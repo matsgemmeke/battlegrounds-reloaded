@@ -38,6 +38,15 @@ class BattlegroundsCommandTest {
     }
 
     @Test
+    void onCatchUnknownSendsErrorMessageToCommandSender() {
+        when(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(new TextTemplate("test"));
+
+        bgCommand.onCatchUnknown(player);
+
+        verify(player).sendMessage("test");
+    }
+
+    @Test
     void onDefaultShowsHelpMenuToPlayerAsJSONMessages() {
         String title = "title";
         ReloadCommand command = mock(ReloadCommand.class);

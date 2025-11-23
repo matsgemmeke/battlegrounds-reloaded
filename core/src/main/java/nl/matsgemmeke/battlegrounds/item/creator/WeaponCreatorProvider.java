@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.creator;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
-import dev.dejvokep.boostedyaml.YamlDocument;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
@@ -12,9 +11,9 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -109,25 +108,25 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         String id = null;
 
         try {
-            YamlDocument document = YamlDocument.create(itemFile);
+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(itemFile);
 
-            if ((id = document.getString("name")) == null) {
+            if ((id = configuration.getString("name")) == null) {
                 logger.severe("An error occurred while loading file '%s': Identifier 'name' is missing".formatted(itemFile.getName()));
                 return;
             }
 
-            this.addItemSpec(creator, itemFile, document);
-        } catch (IOException | IllegalArgumentException e) {
+            this.addItemSpec(creator, itemFile, configuration);
+        } catch (IllegalArgumentException e) {
             logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
         } catch (ValidationException e) {
             logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
         }
     }
 
-    private void addItemSpec(WeaponCreator creator, File file, YamlDocument document) {
-        String name = document.getString("name");
+    private void addItemSpec(WeaponCreator creator, File file, YamlConfiguration configuration) {
+        String name = configuration.getString("name");
 
-        if (document.getString("equipment-type") != null) {
+        if (configuration.getString("equipment-type") != null) {
             EquipmentSpec equipmentSpec = specDeserializer.deserializeSpec(file, EquipmentSpec.class);
             ObjectValidator.validate(equipmentSpec);
 
@@ -135,7 +134,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             return;
         }
 
-        if (document.getString("gun-type") != null) {
+        if (configuration.getString("gun-type") != null) {
             GunSpec gunSpec = specDeserializer.deserializeSpec(file, GunSpec.class);
             ObjectValidator.validate(gunSpec);
 

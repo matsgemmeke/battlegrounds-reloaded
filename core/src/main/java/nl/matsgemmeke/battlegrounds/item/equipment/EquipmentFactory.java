@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.item.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;

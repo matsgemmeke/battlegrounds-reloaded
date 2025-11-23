@@ -96,8 +96,6 @@ public class GunFactory {
     }
 
     private Gun createInstance(GunSpec spec) {
-        double headshotDamageMultiplier = this.getHeadshotDamageMultiplier(spec.shooting.projectile.headshotDamageMultiplier);
-
         DefaultGun gun = defaultGunProvider.get();
         gun.setName(spec.name);
         gun.setDescription(spec.description);
@@ -147,14 +145,6 @@ public class GunFactory {
         gun.update();
 
         return gun;
-    }
-
-    private double getHeadshotDamageMultiplier(Double specValue) {
-        if (specValue != null) {
-            return specValue;
-        }
-
-        return DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER;
     }
 
     private ItemTemplate createItemTemplate(ItemSpec spec) {

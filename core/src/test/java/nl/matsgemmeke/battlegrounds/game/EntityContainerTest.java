@@ -6,21 +6,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class EntityContainerTest {
+class EntityContainerTest {
 
     private GamePlayer gamePlayer;
     private Player player;
     private UUID uuid;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         uuid = UUID.randomUUID();
 
         player = mock(Player.class);
@@ -31,33 +31,31 @@ public class EntityContainerTest {
     }
 
     @Test
-    public void shouldAddEntityToCollection() {
+    void addEntityAddsEntityToCollection() {
         EntityContainer<GamePlayer> container = new EntityContainer<>();
         container.addEntity(gamePlayer);
 
-        assertEquals(gamePlayer, container.getEntity(player));
+        assertThat(container.getEntity(player)).hasValue(gamePlayer);
     }
 
     @Test
-    public void shouldReturnNullIfThereIsNoCorrespondingEntity() {
+    void getEntityReturnsEmptyOptionalWhenThereIsNoCorrespondingEntity() {
         GamePlayer otherPlayer = this.createNewGamePlayer();
 
         EntityContainer<GamePlayer> container = new EntityContainer<>();
         container.addEntity(otherPlayer);
+        Optional<GamePlayer> entityOptional = container.getEntity(player);
 
-        assertNull(container.getEntity(player));
+        assertThat(entityOptional).isEmpty();
     }
 
     @Test
-    public void shouldReturnAllStoredInstances() {
-        GamePlayer otherPlayer = this.createNewGamePlayer();
-
+    void getEntitiesReturnsAllStoredInstances() {
         EntityContainer<GamePlayer> container = new EntityContainer<>();
-        container.addEntity(otherPlayer);
-
+        container.addEntity(gamePlayer);
         Collection<GamePlayer> players = container.getEntities();
 
-        assertEquals(1, players.size());
+        assertThat(players).containsExactly(gamePlayer);
     }
 
     private GamePlayer createNewGamePlayer() {
@@ -71,11 +69,11 @@ public class EntityContainerTest {
     }
 
     @Test
-    public void shouldRemoveEntityFromCollection() {
+    void removeEntityRemovesEntityFromCollection() {
         EntityContainer<GamePlayer> container = new EntityContainer<>();
         container.addEntity(gamePlayer);
         container.removeEntity(uuid);
 
-        assertNull(container.getEntity(uuid));
+        assertThat(container.getEntity(uuid)).isEmpty();
     }
 }

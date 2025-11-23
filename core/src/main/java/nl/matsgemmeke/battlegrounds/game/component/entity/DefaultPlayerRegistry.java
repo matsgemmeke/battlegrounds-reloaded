@@ -3,12 +3,12 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.EntityContainer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -16,24 +16,23 @@ import java.util.UUID;
 
 public class DefaultPlayerRegistry implements PlayerRegistry {
 
-    @NotNull
     private final DefaultGamePlayerFactory gamePlayerFactory;
-    @NotNull
     private final EntityContainer<GamePlayer> playerContainer;
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameKey gameKey;
+    private final HitboxResolver hitboxResolver;
 
     @Inject
-    public DefaultPlayerRegistry(@NotNull DefaultGamePlayerFactory gamePlayerFactory, @NotNull GameContextProvider gameContextProvider, @NotNull GameKey gameKey) {
+    public DefaultPlayerRegistry(DefaultGamePlayerFactory gamePlayerFactory, GameContextProvider gameContextProvider, GameKey gameKey, HitboxResolver hitboxResolver) {
         this.gamePlayerFactory = gamePlayerFactory;
         this.gameContextProvider = gameContextProvider;
         this.gameKey = gameKey;
+        this.hitboxResolver = hitboxResolver;
         this.playerContainer = new EntityContainer<>();
     }
 
-    public Optional<GamePlayer> findByEntity(@NotNull Player player) {
+    @Override
+    public Optional<GamePlayer> findByEntity(Player player) {
         for (GamePlayer gamePlayer : playerContainer.getEntities()) {
             if (gamePlayer.getEntity() == player) {
                 return Optional.of(gamePlayer);
@@ -43,33 +42,39 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         return Optional.empty();
     }
 
+    @Override
     public Optional<GamePlayer> findByUniqueId(UUID uuid) {
-        return Optional.ofNullable(playerContainer.getEntity(uuid));
+        return playerContainer.getEntity(uuid);
     }
 
-    @NotNull
+    @Override
     public Collection<GamePlayer> getAll() {
         return playerContainer.getEntities();
     }
 
-    public boolean isRegistered(@NotNull Player player) {
-        return playerContainer.getEntity(player) != null;
+    @Override
+    public boolean isRegistered(Player player) {
+        return playerContainer.getEntity(player).isPresent();
     }
 
-    public boolean isRegistered(@NotNull UUID uuid) {
-        return playerContainer.getEntity(uuid) != null;
+    @Override
+    public boolean isRegistered(UUID uniqueId) {
+        return playerContainer.getEntity(uniqueId).isPresent();
     }
 
-    public void deregister(@NotNull UUID playerUuid) {
-        playerContainer.removeEntity(playerUuid);
+    @Override
+    public void deregister(UUID uniqueId) {
+        playerContainer.removeEntity(uniqueId);
     }
 
-    @NotNull
-    public GamePlayer registerEntity(@NotNull Player player) {
-        UUID playerId = player.getUniqueId();
-        gameContextProvider.registerEntity(playerId, gameKey);
+    @Override
+    public GamePlayer register(Player player) {
+        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(player);
 
-        GamePlayer gamePlayer = gamePlayerFactory.create(player);
+        UUID uniqueId = player.getUniqueId();
+        gameContextProvider.registerEntity(uniqueId, gameKey);
+
+        GamePlayer gamePlayer = gamePlayerFactory.create(player, hitboxProvider);
         playerContainer.addEntity(gamePlayer);
 
         return gamePlayer;

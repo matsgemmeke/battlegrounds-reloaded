@@ -24,11 +24,10 @@ shooting:
     cycle-cooldown: 2
   projectile:
     type: HITSCAN
-    headshot-damage-multiplier: 1.4
     shot-sounds: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
     effect:
-      type: DAMAGE
+      effect-type: DAMAGE
       damage-type: BULLET_DAMAGE
       range:
         short-range:
@@ -40,6 +39,10 @@ shooting:
         long-range:
           damage: 22.0
           distance: 50.0
+      hitbox-multipliers:
+        head: 1.4
+        body: 1
+        legs: 0.5
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1

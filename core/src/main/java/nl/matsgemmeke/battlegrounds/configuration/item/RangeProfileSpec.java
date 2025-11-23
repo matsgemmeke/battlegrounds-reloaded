@@ -6,8 +6,10 @@ public class RangeProfileSpec {
 
     @Required
     public DamageDistanceSpec shortRange;
+
     @Required
     public DamageDistanceSpec mediumRange;
+
     @Required
     public DamageDistanceSpec longRange;
 }

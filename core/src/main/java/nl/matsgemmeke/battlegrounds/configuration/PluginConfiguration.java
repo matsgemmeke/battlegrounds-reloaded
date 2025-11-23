@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +17,7 @@ public interface PluginConfiguration {
      * @param path the path to create the section at
      * @return the newly created section
      */
-    @NotNull
-    Section createSection(@NotNull String path);
+    ConfigurationSection createSection(String path);
 
     /**
      * Gets an object from the configuration file. Returns null if the given path does not lead to a value in the
@@ -88,22 +87,21 @@ public interface PluginConfiguration {
     int getInteger(@NotNull String path, int def);
 
     /**
-     * Gets the root {@link Section} of the configuration file.
+     * Gets the root {@link Configuration} of the configuration file.
      *
      * @return the root section
      */
-    @NotNull
-    Section getRoot();
+    Configuration getRoot();
 
     /**
-     * Gets a {@link Section} value from configuration file. Returns null if the given path does not lead
+     * Gets a {@link ConfigurationSection} value from configuration file. Returns null if the given path does not lead
      * to a value in the configuration file.
      *
      * @param path the path to the value
      * @return the value of the given path or null if the path does not lead to a value
      */
     @Nullable
-    Section getSection(@NotNull String path);
+    ConfigurationSection getSection(@NotNull String path);
 
     /**
      * Gets a string value from the configuration file. Returns null if the given path does not lead to a value in the

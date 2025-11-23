@@ -2,11 +2,24 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
-public interface PlayerRegistry extends EntityRegistry<GamePlayer, Player> {
+public interface PlayerRegistry {
 
-    void deregister(@NotNull UUID playerUuid);
+    Optional<GamePlayer> findByEntity(Player entity);
+
+    Optional<GamePlayer> findByUniqueId(UUID uniqueId);
+
+    Collection<GamePlayer> getAll();
+
+    boolean isRegistered(Player player);
+
+    boolean isRegistered(UUID uniqueId);
+
+    void deregister(UUID uniqueId);
+
+    GamePlayer register(Player player);
 }
