@@ -13,9 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 import org.bukkit.entity.Zombie;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Set;
 
@@ -24,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class PlayerHitboxProviderTest {
 
     private static final RelativeHitbox STANDING_HITBOX = new RelativeHitbox(Set.of(new HitboxComponent(null, 1, 1, 1, 1, 1, 1)));

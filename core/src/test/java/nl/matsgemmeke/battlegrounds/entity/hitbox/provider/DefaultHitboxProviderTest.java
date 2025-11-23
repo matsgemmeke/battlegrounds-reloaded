@@ -4,15 +4,12 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-@ExtendWith(MockitoExtension.class)
 class DefaultHitboxProviderTest {
 
     private static final RelativeHitbox STANDING_HITBOX = new RelativeHitbox(Collections.emptySet());
