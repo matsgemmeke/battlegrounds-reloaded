@@ -40,7 +40,7 @@ public class OpenModePlayerLifecycleHandlerTest {
         OpenModePlayerLifecycleHandler playerLifecycleHandler = new OpenModePlayerLifecycleHandler(configuration, itemLifecycleHandler, playerRegistry, statePersistenceHandler);
         playerLifecycleHandler.handlePlayerJoin(player);
 
-        verify(playerRegistry, never()).registerEntity(any(Player.class));
+        verify(playerRegistry, never()).register(any(Player.class));
         verifyNoInteractions(statePersistenceHandler);
     }
 
@@ -50,13 +50,13 @@ public class OpenModePlayerLifecycleHandlerTest {
         Player player = mock(Player.class);
 
         when(configuration.isEnabledRegisterPlayersAsPassive()).thenReturn(true);
-        when(playerRegistry.registerEntity(player)).thenReturn(gamePlayer);
+        when(playerRegistry.register(player)).thenReturn(gamePlayer);
 
         OpenModePlayerLifecycleHandler playerLifecycleHandler = new OpenModePlayerLifecycleHandler(configuration, itemLifecycleHandler, playerRegistry, statePersistenceHandler);
         playerLifecycleHandler.handlePlayerJoin(player);
 
         verify(gamePlayer).setPassive(true);
-        verify(playerRegistry).registerEntity(player);
+        verify(playerRegistry).register(player);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
+import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.Size;
+import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.SizeConstraintValidator;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
@@ -19,6 +21,7 @@ public class ObjectValidator {
         registerValidator(Required.class, new RequiredValidator());
         registerValidator(EnumValue.class, new EnumValueValidator());
         registerValidator(Regex.class, new RegexValidator());
+        registerValidator(Size.class, new SizeConstraintValidator());
         registerValidator(ConditionalRequired.class, new ConditionalRequiredValidator());
     }
 

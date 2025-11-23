@@ -1,0 +1,508 @@
+chicken:
+  adult-standing:
+    head:
+      type: HEAD
+      size: [0.3, 0.4, 0.3]
+      offset: [0.0, 0.55, 0.3]
+    torso:
+      type: TORSO
+      size: [0.5, 0.4, 0.55]
+      offset: [0.0, 0.3, 0.0]
+    legs:
+      type: LIMBS
+      size: [0.5, 0.3, 0.2]
+      offset: [0.0, 0.0, 0.0]
+  baby-standing:
+    head:
+      type: HEAD
+      size: [0.3, 0.4, 0.3]
+      offset: [0.0, 0.2, 0.2]
+    torso:
+      type: TORSO
+      size: [0.2, 0.2, 0.3]
+      offset: [0.0, 0.1, 0.0]
+    legs:
+      type: LIMBS
+      size: [0.2, 0.1, 0.2]
+      offset: [0.0, 0.0, 0.0]
+
+cow:
+  adult-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.4]
+      offset: [0.0, 1.0, 0.7]
+    torso:
+      type: TORSO
+      size: [0.8, 0.7, 1.2]
+      offset: [0.0, 0.7, -0.1]
+    front-legs:
+      type: LIMBS
+      size: [0.8, 0.7, 0.3]
+      offset: [0.0, 0.0, 0.35]
+    hind-legs:
+      type: LIMBS
+      size: [0.8, 0.7, 0.3]
+      offset: [0.0, 0.0, -0.45]
+  baby-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.4]
+      offset: [0.0, 0.35, 0.45]
+    torso:
+      type: TORSO
+      size: [0.4, 0.3, 0.55]
+      offset: [0.0, 0.35, 0.0]
+    front-legs:
+      type: LIMBS
+      size: [0.4, 0.35, 0.15]
+      offset: [0.0, 0.0, 0.2]
+    hind-legs:
+      type: LIMBS
+      size: [0.4, 0.35, 0.15]
+      offset: [0.0, 0.0, -0.25]
+
+creeper:
+  standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 1.1, 0.0]
+    torso:
+      type: TORSO
+      size: [0.5, 0.7, 0.3]
+      offset: [0.0, 0.4, 0.0]
+    legs:
+      type: LIMBS
+      size: [0.5, 0.4, 0.8]
+      offset: [0.0, 0.0, 0.0]
+
+enderman:
+  standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 2.3, 0.0]
+    torso:
+      type: TORSO
+      size: [0.5, 0.7, 0.3]
+      offset: [0.0, 1.6, 0.0]
+    left-arm:
+      type: LIMBS
+      size: [0.2, 1.8, 0.3]
+      offset: [0.35, 0.5, 0.0]
+    right-arm:
+      type: LIMBS
+      size: [0.2, 1.8, 0.3]
+      offset: [-0.35, 0.5, 0.0]
+    legs:
+      type: LIMBS
+      size: [0.5, 1.6, 0.3]
+      offset: [0.0, 0.0, 0.0]
+  carrying:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 2.3, 0.0]
+    torso:
+      type: TORSO
+      size: [0.5, 0.7, 0.3]
+      offset: [0.0, 1.6, 0.0]
+    left-arm:
+      type: LIMBS
+      size: [0.2, 1.6, 0.6]
+      offset: [0.35, 0.7, 0.3]
+    right-arm:
+      type: LIMBS
+      size: [0.2, 1.6, 0.6]
+      offset: [-0.35, 0.7, 0.3]
+    legs:
+      type: LIMBS
+      size: [0.5, 1.6, 0.3]
+      offset: [0.0, 0.0, 0.0]
+
+iron-golem:
+  standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.7, 0.6]
+      offset: [0.0, 2.0, 0.25]
+    torso:
+      type: TORSO
+      size: [1.1, 1.0, 0.7]
+      offset: [0.0, 1.0, 0.1]
+    left-arm:
+      type: LIMBS
+      size: [0.3, 1.9, 0.4]
+      offset: [0.7, 0.2, 0.0]
+    right-arm:
+      type: LIMBS
+      size: [0.3, 1.9, 0.4]
+      offset: [-0.7, 0.2, 0.0]
+    legs:
+      type: LIMBS
+      size: [1.0, 1.0, 0.5]
+      offset: [0.0, 0.0, 0.0]
+
+
+pig:
+  adult-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.6]
+      offset: [0.0, 0.5, 0.65]
+    torso:
+      type: TORSO
+      size: [0.7, 0.5, 1.0]
+      offset: [0.0, 0.35, 0.0]
+    front-legs:
+      type: LIMBS
+      size: [0.8, 0.35, 0.3]
+      offset: [0.0, 0.0, 0.35]
+    hind-legs:
+      type: LIMBS
+      size: [0.8, 0.35, 0.3]
+      offset: [0.0, 0.0, -0.4]
+  baby-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.6]
+      offset: [0.0, 0.25, 0.4]
+    torso:
+      type: TORSO
+      size: [0.4, 0.3, 0.5]
+      offset: [0.0, 0.15, 0.0]
+    front-legs:
+      type: LIMBS
+      size: [0.4, 0.15, 0.15]
+      offset: [0.0, 0.0, 0.15]
+    hind-legs:
+      type: LIMBS
+      size: [0.4, 0.15, 0.15]
+      offset: [0.0, 0.0, -0.25]
+
+player:
+  standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 1.4, 0.0]
+    torso:
+      type: TORSO
+      size: [0.5, 0.7, 0.3]
+      offset: [0.0, 0.7, 0.0]
+    left-arm:
+      type: LIMBS
+      size: [0.2, 0.7, 0.3]
+      offset: [0.35, 0.7, 0.0]
+    right-arm:
+      type: LIMBS
+      size: [0.2, 0.7, 0.3]
+      offset: [-0.35, 0.7, 0.0]
+    legs:
+      type: LIMBS
+      size: [0.5, 0.7, 0.3]
+      offset: [0.0, 0.0, 0.0]
+  sneaking:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 1.0, 0.0]
+    torso:
+      type: TORSO
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 0.5, -0.2]
+    left-arm:
+      type: LIMBS
+      size: [0.2, 0.7, 0.5]
+      offset: [0.35, 0.4, -0.1]
+    right-arm:
+      type: LIMBS
+      size: [0.2, 0.7, 0.5]
+      offset: [-0.35, 0.4, -0.1]
+    legs:
+      type: LIMBS
+      size: [0.5, 0.5, 0.3]
+      offset: [0.0, 0.0, -0.2]
+  sleeping:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [ 0.0, -0.3, -0.1]
+    torso:
+      type: TORSO
+      size: [0.5, 0.3, 0.7]
+      offset: [ 0.0, -0.3, 0.4]
+    left-arm:
+      type: LIMBS
+      size: [0.2, 0.3, 0.7]
+      offset: [ 0.35, -0.3, 0.4]
+    right-arm:
+      type: LIMBS
+      size: [0.2, 0.3, 0.7]
+      offset: [ -0.35, -0.3, 0.4]
+    legs:
+      type: LIMBS
+      size: [0.5, 0.3, 0.7]
+      offset: [0.0, -0.3, 1.1]
+
+sheep:
+  adult-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 0.9, 0.6]
+    torso:
+      type: TORSO
+      size: [0.8, 0.6, 1.2]
+      offset: [0.0, 0.6, 0.0]
+    front-legs:
+      type: LIMBS
+      size: [0.8, 0.6, 0.3]
+      offset: [0.0, 0.0, 0.3]
+    hind-legs:
+      type: LIMBS
+      size: [0.8, 0.6, 0.3]
+      offset: [0.0, 0.0, -0.45]
+  baby-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 0.4, 0.35]
+    torso:
+      type: TORSO
+      size: [0.4, 0.3, 0.65]
+      offset: [0.0, 0.3, 0.0]
+    front-legs:
+      type: LIMBS
+      size: [0.4, 0.3, 0.15]
+      offset: [0.0, 0.0, 0.15]
+    hind-legs:
+      type: LIMBS
+      size: [0.4, 0.3, 0.15]
+      offset: [0.0, 0.0, -0.25]
+
+skeleton:
+  standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 1.5, 0.0]
+    torso:
+      type: TORSO
+      size: [0.5, 0.75, 0.3]
+      offset: [0.0, 0.75, 0.0]
+    left-arm:
+      type: LIMBS
+      size: [0.2, 0.75, 0.2]
+      offset: [0.35, 0.75, 0.0]
+    right-arm:
+      type: LIMBS
+      size: [0.2, 0.75, 0.2]
+      offset: [-0.35, 0.75, 0.0]
+    legs:
+      type: LIMBS
+      size: [0.4, 0.75, 0.3]
+      offset: [0.0, 0.0, 0.0]
+
+slime:
+  standing:
+    body:
+      type: TORSO
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 0.0, 0.0]
+
+spider:
+  standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 0.3, 0.45]
+    torso:
+      type: TORSO
+      size: [0.6, 0.5, 1.1]
+      offset: [0.0, 0.3, -0.4]
+    left-legs:
+      type: LIMBS
+      size: [0.7, 0.5, 1.6]
+      offset: [0.65, 0.0, -0.1]
+    right-legs:
+      type: LIMBS
+      size: [0.7, 0.5, 1.6]
+      offset: [-0.65, 0.0, -0.1]
+
+villager:
+  adult-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.6, 0.5]
+      offset: [0.0, 1.4, 0.0]
+    torso:
+      type: TORSO
+      size: [0.6, 0.8, 0.4]
+      offset: [0.0, 0.6, 0.0]
+    arms:
+      type: LIMBS
+      size: [0.9, 0.5, 0.4]
+      offset: [0.0, 0.9, 0.2]
+    legs:
+      type: LIMBS
+      size: [0.6, 0.6, 0.4]
+      offset: [0.0, 0.0, 0.0]
+  adult-sleeping:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.6]
+      offset: [0.0, -0.3, -0.2]
+    torso:
+      type: TORSO
+      size: [0.6, 0.4, 0.8]
+      offset: [0.0, -0.2, 0.5]
+    arms:
+      type: LIMBS
+      size: [0.9, 0.4, 0.5]
+      offset: [0.0, -0.1, 0.4]
+    legs:
+      type: LIMBS
+      size: [0.6, 0.4, 0.6]
+      offset: [0.0, -0.2, 1.2]
+  baby-standing:
+    head:
+      type: HEAD
+      size: [0.25, 0.3, 0.25]
+      offset: [0.0, 0.7, 0.0]
+    torso:
+      type: TORSO
+      size: [0.3, 0.4, 0.2]
+      offset: [0.0, 0.3, 0.0]
+    arms:
+      type: LIMBS
+      size: [0.45, 0.25, 0.2]
+      offset: [0.0, 0.45, 0.1]
+    legs:
+      type: LIMBS
+      size: [0.3, 0.3, 0.2]
+      offset: [0.0, 0.0, 0.0]
+  baby-sleeping:
+    head:
+      type: HEAD
+      size: [0.25, 0.25, 0.3]
+      offset: [0.0, -0.15, -0.1]
+    torso:
+      type: TORSO
+      size: [0.3, 0.2, 0.4]
+      offset: [0.0, -0.1, 0.25]
+    arms:
+      type: LIMBS
+      size: [0.45, 0.2, 0.25]
+      offset: [0.0, -0.05, 0.2]
+    legs:
+      type: LIMBS
+      size: [0.3, 0.2, 0.3]
+      offset: [0.0, -0.1, 0.6]
+
+wolf:
+  adult-standing:
+    head:
+      type: HEAD
+      size: [0.4, 0.4, 0.5]
+      offset: [0.0, 0.45, 0.55]
+    torso:
+      type: TORSO
+      size: [0.6, 0.5, 1.0]
+      offset: [0.0, 0.4, -0.1]
+    front-legs:
+      type: LIMBS
+      size: [0.5, 0.4, 0.2]
+      offset: [0.0, 0.0, 0.2]
+    hind-legs:
+      type: LIMBS
+      size: [0.5, 0.4, 0.2]
+      offset: [0.0, 0.0, -0.4]
+  adult-sitting:
+    head:
+      type: HEAD
+      size: [0.4, 0.4, 0.5]
+      offset: [0.0, 0.45, 0.45]
+    torso:
+      type: TORSO
+      size: [0.6, 0.8, 0.7]
+      offset: [0.0, 0.0, -0.1]
+    legs:
+      type: LIMBS
+      size: [0.6, 0.3, 0.2]
+      offset: [0.0, 0.0, 0.4]
+  baby-standing:
+    head:
+      type: HEAD
+      size: [0.4, 0.4, 0.5]
+      offset: [0.0, 0.15, 0.45]
+    torso:
+      type: TORSO
+      size: [0.3, 0.3, 0.5]
+      offset: [0.0, 0.15, -0.05]
+    front-legs:
+      type: LIMBS
+      size: [0.3, 0.15, 0.15]
+      offset: [0.0, 0.0, 0.15]
+    hind-legs:
+      type: LIMBS
+      size: [0.3, 0.15, 0.15]
+      offset: [0.0, 0.0, -0.2]
+  baby-sitting:
+    head:
+      type: HEAD
+      size: [0.4, 0.4, 0.5]
+      offset: [0.0, 0.15, 0.4]
+    torso:
+      type: TORSO
+      size: [0.3, 0.4, 0.4]
+      offset: [0.0, 0.0, -0.05]
+    legs:
+      type: LIMBS
+      size: [0.3, 0.1, 0.1]
+      offset: [0.0, 0.0, 0.25]
+
+zombie:
+  adult-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.5]
+      offset: [0.0, 1.5, 0.0]
+    torso:
+      type: TORSO
+      size: [0.5, 0.75, 0.3]
+      offset: [0.0, 0.75, 0.0]
+    left-arm:
+      type: LIMBS
+      size: [0.25, 0.25, 0.75]
+      offset: [0.35, 1.2, 0.3]
+    right-arm:
+      type: LIMBS
+      size: [0.25, 0.25, 0.75]
+      offset: [-0.35, 1.2, 0.3]
+    legs:
+      type: LIMBS
+      size: [0.5, 0.75, 0.3]
+      offset: [0.0, 0.0, 0.0]
+  baby-standing:
+    head:
+      type: HEAD
+      size: [0.4, 0.4, 0.4]
+      offset: [0.0, 0.7, 0.0]
+    torso:
+      type: TORSO
+      size: [0.3, 0.35, 0.2]
+      offset: [0.0, 0.35, 0.0]
+    left-arm:
+      type: LIMBS
+      size: [0.15, 0.15, 0.4]
+      offset: [0.15, 0.55, 0.15]
+    right-arm:
+      type: LIMBS
+      size: [0.15, 0.15, 0.4]
+      offset: [-0.15, 0.55, 0.15]
+    legs:
+      type: LIMBS
+      size: [0.3, 0.35, 0.2]
+      offset: [0.0, 0.0, 0.0]

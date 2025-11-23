@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
 import com.google.inject.Provider;
-import dev.dejvokep.boostedyaml.YamlDocument;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.MockedStatic;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
@@ -81,16 +80,16 @@ public class WeaponCreatorProviderTest {
     public void getLogsErrorMessageWhenItemFileFailsToLoad() {
         File itemsFolder = new File(tempDirectory.getPath() + "/items");
 
-        MockedStatic<YamlDocument> yamlDocument = mockStatic(YamlDocument.class);
-        yamlDocument.when(() -> YamlDocument.create(any(File.class))).thenThrow(new IOException("An IO error occurred"));
+        MockedStatic<YamlConfiguration> yamlConfiguration = mockStatic(YamlConfiguration.class);
+        yamlConfiguration.when(() -> YamlConfiguration.loadConfiguration(any(File.class))).thenThrow(new IllegalArgumentException("An error occurred"));
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, specDeserializer, itemsFolder, logger);
         provider.get();
 
-        verify(logger).severe("Unable to load item configuration file 'olympia.yml': An IO error occurred");
-        verify(logger).severe("Unable to load item configuration file 'mp5.yml': An IO error occurred");
+        verify(logger).severe("Unable to load item configuration file 'olympia.yml': An error occurred");
+        verify(logger).severe("Unable to load item configuration file 'mp5.yml': An error occurred");
 
-        yamlDocument.close();
+        yamlConfiguration.close();
     }
 
     @Test

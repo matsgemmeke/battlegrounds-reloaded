@@ -43,7 +43,7 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
 
         boolean passive = configuration.isEnabledRegisterPlayersAsPassive();
 
-        GamePlayer gamePlayer = playerRegistry.registerEntity(player);
+        GamePlayer gamePlayer = playerRegistry.register(player);
         gamePlayer.setPassive(passive);
 
         statePersistenceHandler.loadPlayerState(gamePlayer);

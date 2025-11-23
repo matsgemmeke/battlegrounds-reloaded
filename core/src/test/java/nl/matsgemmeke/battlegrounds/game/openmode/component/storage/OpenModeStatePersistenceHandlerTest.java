@@ -66,8 +66,8 @@ public class OpenModeStatePersistenceHandlerTest {
         PlayerInventory inventory = mock(PlayerInventory.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
         when(gamePlayer.getEntity().getInventory()).thenReturn(inventory);
-        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
 
         Gun gun = mock(Gun.class);
         when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
@@ -99,8 +99,8 @@ public class OpenModeStatePersistenceHandlerTest {
         GunState gunState = new GunState(PLAYER_UUID, GUN_NAME, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         PlayerState playerState = new PlayerState(PLAYER_UUID, List.of(gunState), List.of());
 
-        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
-        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(playerState);
@@ -117,8 +117,8 @@ public class OpenModeStatePersistenceHandlerTest {
         EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_NAME, EQUIPMENT_ITEM_SLOT);
         PlayerState playerState = new PlayerState(PLAYER_UUID, List.of(), List.of(equipmentState));
 
-        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
-        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(playerState);
@@ -134,8 +134,8 @@ public class OpenModeStatePersistenceHandlerTest {
     public void savePlayerStateLogsErrorWhenSavingCollectedDataWithItemsWithoutItemStack() {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
 
-        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
-        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
         Gun gun = mock(Gun.class);
@@ -174,8 +174,8 @@ public class OpenModeStatePersistenceHandlerTest {
         Equipment equipment = mock(Equipment.class);
         when(equipment.getName()).thenReturn(EQUIPMENT_NAME);
 
-        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
-        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
         when(gamePlayer.getItemSlot(gun)).thenReturn(Optional.empty());
         when(gamePlayer.getItemSlot(equipment)).thenReturn(Optional.empty());
         when(gamePlayer.getName()).thenReturn("TestPlayer");
@@ -211,8 +211,8 @@ public class OpenModeStatePersistenceHandlerTest {
         when(equipment.getName()).thenReturn(EQUIPMENT_NAME);
         when(equipment.getItemStack()).thenReturn(equipmentItemStack);
 
-        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
-        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
         when(gamePlayer.getItemSlot(gun)).thenReturn(Optional.of(GUN_ITEM_SLOT));
         when(gamePlayer.getItemSlot(equipment)).thenReturn(Optional.of(EQUIPMENT_ITEM_SLOT));
 

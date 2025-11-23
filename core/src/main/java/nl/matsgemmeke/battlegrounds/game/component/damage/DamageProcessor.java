@@ -3,18 +3,18 @@ package nl.matsgemmeke.battlegrounds.game.component.damage;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
-import nl.matsgemmeke.battlegrounds.game.damage.check.DamageCheck;
+import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.jetbrains.annotations.NotNull;
 
 public interface DamageProcessor {
 
     /**
-     * Adds a {@link DamageCheck} to the DamageProcessor.
+     * Adds a {@link DamageModifier} to the damage processor.
      *
-     * @param damageCheck the damage check
+     * @param modifier the damage modifier
      */
-    void addDamageCheck(@NotNull DamageCheck damageCheck);
+    void addDamageModifier(DamageModifier modifier);
 
     /**
      * Determines whether damage is allowed between entities from different game contexts. This method checks if the

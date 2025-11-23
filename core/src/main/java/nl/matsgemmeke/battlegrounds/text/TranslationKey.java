@@ -4,11 +4,15 @@ import org.jetbrains.annotations.NotNull;
 
 public enum TranslationKey {
 
+    COMMAND_SENDER_MUST_BE_PLAYER("errors.command-sender-must-be-player"),
     DESCRIPTION_CREATESESSION("commands.description-createsession"),
     DESCRIPTION_GIVEWEAPON("commands.description-giveweapon"),
     DESCRIPTION_RELOAD("commands.description-reload"),
     DESCRIPTION_REMOVESESSION("commands.description-removesession"),
     DESCRIPTION_SETMAINLOBBY("commands.description-setmainlobby"),
+    DESCRIPTION_TOOLS("commands.description-tools"),
+    DESCRIPTION_TOOLS_HITBOX("commands.description-tools-hitbox"),
+    HELP_MENU_COMMAND("commands.help-menu-command"),
     HELP_MENU_TITLE("commands.help-menu-title"),
     MAIN_LOBBY_SET("admin.main-lobby-set"),
     NOT_IN_OPEN_MODE("errors.not-in-open-mode"),
@@ -22,6 +26,11 @@ public enum TranslationKey {
     SESSION_NOT_EXISTS("admin.session-not-exists"),
     SESSION_REMOVAL_FAILED("admin.session-removal-failed"),
     SESSION_REMOVED("admin.session-removed"),
+    TOOL_HITBOX_SUCCESS("admin.tool-hitbox-success"),
+    TOOL_NOT_EXISTS("admin.tool-not-exists"),
+    TOOLS_MENU_COMMAND("commands.tools-menu-command"),
+    TOOLS_MENU_TITLE("commands.tools-menu-title"),
+    UNKNOWN_COMMAND("errors.unknown-command"),
     WEAPON_GIVEN("commands.weapon-given"),
     WEAPON_NOT_EXISTS("admin.weapon-not-exists");
 

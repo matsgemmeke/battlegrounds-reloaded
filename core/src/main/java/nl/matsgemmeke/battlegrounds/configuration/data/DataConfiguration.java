@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.data;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import nl.matsgemmeke.battlegrounds.configuration.BasePluginConfiguration;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,13 +16,13 @@ public class DataConfiguration extends BasePluginConfiguration {
 
     @Nullable
     public Location getMainLobbyLocation() {
-        Section section = this.getSection("main-lobby");
+        ConfigurationSection section = this.getSection("main-lobby");
 
         if (section == null) {
             return null;
         }
 
-        return Location.deserialize(section.getStringRouteMappedValues(false));
+        return Location.deserialize(section.getValues(false));
     }
 
     public void setMainLobbyLocation(@NotNull Location location) {

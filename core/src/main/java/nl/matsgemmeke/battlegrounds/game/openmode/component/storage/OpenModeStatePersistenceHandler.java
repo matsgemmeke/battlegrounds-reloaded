@@ -50,8 +50,8 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     }
 
     public void loadPlayerState(GamePlayer gamePlayer) {
-        UUID playerUuid = gamePlayer.getEntity().getUniqueId();
-        PlayerState playerState = playerStateStorage.getPlayerState(playerUuid);
+        UUID uniqueId = gamePlayer.getUniqueId();
+        PlayerState playerState = playerStateStorage.getPlayerState(uniqueId);
 
         playerState.gunStates().forEach(gunState -> this.loadGunState(gamePlayer, gunState));
         playerState.equipmentStates().forEach(equipmentState -> this.loadEquipmentState(gamePlayer, equipmentState));
@@ -99,10 +99,10 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
                 .flatMap(Optional::stream)
                 .toList();
 
-        UUID playerUuid = gamePlayer.getEntity().getUniqueId();
-        PlayerState playerState = new PlayerState(playerUuid, gunStates, equipmentStates);
+        UUID uniqueId = gamePlayer.getUniqueId();
+        PlayerState playerState = new PlayerState(uniqueId, gunStates, equipmentStates);
 
-        playerStateStorage.deletePlayerState(playerUuid);
+        playerStateStorage.deletePlayerState(uniqueId);
         playerStateStorage.savePlayerState(playerState);
     }
 
@@ -127,7 +127,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     }
 
     private Optional<GunState> convertToGunState(GamePlayer gamePlayer, Gun gun) {
-        UUID playerUuid = gamePlayer.getEntity().getUniqueId();
+        UUID uniqueId = gamePlayer.getUniqueId();
         String gunName = gun.getName();
         int magazineAmmo = gun.getAmmunitionStorage().getMagazineAmmo();
         int reserveAmmo = gun.getAmmunitionStorage().getReserveAmmo();
@@ -138,11 +138,11 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         }
 
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(gun);
-        return itemSlot.map(itemSlotValue -> new GunState(playerUuid, gunName, magazineAmmo, reserveAmmo, itemSlotValue));
+        return itemSlot.map(itemSlotValue -> new GunState(uniqueId, gunName, magazineAmmo, reserveAmmo, itemSlotValue));
     }
 
     private Optional<EquipmentState> convertToEquipmentState(GamePlayer gamePlayer, Equipment equipment) {
-        UUID playerUuid = gamePlayer.getEntity().getUniqueId();
+        UUID uniqueId = gamePlayer.getUniqueId();
         String equipmentName = equipment.getName();
         ItemStack itemStack = equipment.getItemStack();
 
@@ -151,6 +151,6 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         }
 
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(equipment);
-        return itemSlot.map(integer -> new EquipmentState(playerUuid, equipmentName, integer));
+        return itemSlot.map(integer -> new EquipmentState(uniqueId, equipmentName, integer));
     }
 }

@@ -1,13 +1,18 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 public abstract class BasePluginConfiguration implements PluginConfiguration {
 
@@ -16,7 +21,7 @@ public abstract class BasePluginConfiguration implements PluginConfiguration {
     private final File file;
     @Nullable
     private final InputStream resource;
-    private YamlDocument document;
+    private YamlConfiguration yamlConfiguration;
 
     public BasePluginConfiguration(@NotNull File file, @Nullable InputStream resource) {
         this(file, resource, false);
@@ -33,68 +38,89 @@ public abstract class BasePluginConfiguration implements PluginConfiguration {
     }
 
     @NotNull
-    public Section createSection(@NotNull String path) {
-        return document.createSection(path);
+    public ConfigurationSection createSection(@NotNull String path) {
+        return yamlConfiguration.createSection(path);
     }
 
     @Nullable
     public Object get(@NotNull String path) {
-        return document.get(path);
+        return yamlConfiguration.get(path);
     }
 
     public boolean getBoolean(@NotNull String path) {
-        return document.getBoolean(path);
+        return yamlConfiguration.getBoolean(path);
     }
 
     public boolean getBoolean(@NotNull String path, boolean def) {
-        return document.getBoolean(path, def);
+        return yamlConfiguration.getBoolean(path, def);
     }
 
     public double getDouble(@NotNull String path) {
-        return document.getDouble(path);
+        return yamlConfiguration.getDouble(path);
     }
 
     public double getDouble(@NotNull String path, double def) {
-        return document.getDouble(path, def);
+        return yamlConfiguration.getDouble(path, def);
     }
 
     public int getInteger(@NotNull String path) {
-        return document.getInt(path);
+        return yamlConfiguration.getInt(path);
     }
 
     public int getInteger(@NotNull String path, int def) {
-        return document.getInt(path, def);
+        return yamlConfiguration.getInt(path, def);
     }
 
-    @NotNull
-    public Section getRoot() {
-        return document.getRoot();
+    public Optional<Double> getOptionalDouble(String route) {
+        return Optional.ofNullable(yamlConfiguration.getObject(route, Double.class));
+    }
+
+    public Optional<ConfigurationSection> getOptionalSection(String route) {
+        return Optional.ofNullable(yamlConfiguration.getConfigurationSection(route));
+    }
+
+    public Configuration getRoot() {
+        return yamlConfiguration.getRoot();
     }
 
     @Nullable
-    public Section getSection(@NotNull String path) {
-        return document.getSection(path);
+    public ConfigurationSection getSection(@NotNull String path) {
+        return yamlConfiguration.getConfigurationSection(path);
     }
 
     @Nullable
     public String getString(@NotNull String path) {
-        return document.getString(path);
+        return yamlConfiguration.getString(path);
     }
 
     @Nullable
     public String getString(@NotNull String path, @Nullable String def) {
-        return document.getString(path, def);
+        return yamlConfiguration.getString(path, def);
+    }
+
+    public Map<String, Object> getValues(String path) {
+        Object obj = this.get(path);
+
+        if (!(obj instanceof Map map)) {
+            return Collections.emptyMap();
+        }
+
+        return map;
     }
 
     public boolean load() {
         try {
-            if (resource != null) {
-                document = YamlDocument.create(file, resource);
-            } else {
-                document = YamlDocument.create(file);
+            if (!file.exists() && resource != null) {
+                file.getParentFile().mkdirs();
+
+                try (InputStream in = resource) {
+                    Files.copy(in, file.toPath());
+                }
             }
+
+            yamlConfiguration = YamlConfiguration.loadConfiguration(file);
             return true;
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
             return false;
         }
@@ -102,12 +128,11 @@ public abstract class BasePluginConfiguration implements PluginConfiguration {
 
     public boolean save() {
         try {
-            document.save();
+            yamlConfiguration.save(file);
+            return true;
         } catch (IOException e) {
             return false;
         }
-
-        return true;
     }
 
     public void setValue(@NotNull String path, @NotNull Object value) {
@@ -115,6 +140,6 @@ public abstract class BasePluginConfiguration implements PluginConfiguration {
             throw new UnsupportedOperationException("Configuration file is read-only");
         }
 
-        document.set(path, value);
+        yamlConfiguration.set(path, value);
     }
 }

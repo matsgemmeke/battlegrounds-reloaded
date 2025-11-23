@@ -1,5 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.Location;
@@ -12,13 +14,14 @@ import java.util.UUID;
 
 public class OpenModeEntity implements GameEntity {
 
+    private final HitboxProvider hitboxProvider;
+    private final LivingEntity entity;
     @Nullable
     private Damage lastDamage;
-    @NotNull
-    private final LivingEntity entity;
 
-    public OpenModeEntity(@NotNull LivingEntity entity) {
+    public OpenModeEntity(LivingEntity entity, HitboxProvider hitboxProvider) {
         this.entity = entity;
+        this.hitboxProvider = hitboxProvider;
     }
 
     @NotNull
@@ -74,6 +77,11 @@ public class OpenModeEntity implements GameEntity {
         entity.setHealth(finalHealth);
 
         return damage.amount();
+    }
+
+    @Override
+    public Hitbox getHitbox() {
+        return hitboxProvider.provideHitbox(entity);
     }
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {

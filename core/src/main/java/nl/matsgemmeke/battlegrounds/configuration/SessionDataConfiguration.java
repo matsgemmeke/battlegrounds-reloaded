@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * Class used to load and save configurations for a {@link Session} instance in a config file.
@@ -12,7 +13,7 @@ import java.io.File;
 public class SessionDataConfiguration extends BasePluginConfiguration {
 
     public SessionDataConfiguration(@NotNull File file) {
-        super(file, null);
+        super(file, (InputStream) null);
     }
 
     @NotNull

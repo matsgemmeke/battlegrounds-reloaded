@@ -39,7 +39,7 @@ class GunFireSimulationEffectPerformanceTest {
     private static final long MAX_TOTAL_DURATION = 30L;
     private static final long MIN_TOTAL_DURATION = 20L;
     private static final List<GameSound> GENERIC_SHOTS_SOUNDS = Collections.emptyList();
-    private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(GENERIC_SHOTS_SOUNDS, BURST_INTERVAL, MAX_BURST_DURATION, MIN_BURST_DURATION, MAX_DELAY_DURATION, MIN_DELAY_DURATION, MAX_TOTAL_DURATION, MIN_TOTAL_DURATION);
+    private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(GENERIC_SHOTS_SOUNDS, BURST_INTERVAL, MIN_BURST_DURATION, MAX_BURST_DURATION, MIN_DELAY_DURATION, MAX_DELAY_DURATION, MIN_TOTAL_DURATION, MAX_TOTAL_DURATION);
 
     @Mock
     private AudioEmitter audioEmitter;

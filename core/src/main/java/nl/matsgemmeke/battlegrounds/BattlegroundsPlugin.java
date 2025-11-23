@@ -74,6 +74,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     private void setUpCommands() {
         BattlegroundsCommand bgCommand = injector.getInstance(BattlegroundsCommand.class);
+        ToolsCommand toolsCommand = injector.getInstance(ToolsCommand.class);
 
         // Add all subcommands to the battlegrounds command
         bgCommand.addSubcommand(injector.getInstance(CreateSessionCommand.class));
@@ -85,6 +86,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         // Register the command to ACF
         PaperCommandManager commandManager = new PaperCommandManager(this);
         commandManager.registerCommand(bgCommand);
+        commandManager.registerCommand(toolsCommand);
 
         // Register custom conditions to ACF
         var commandConditions = commandManager.getCommandConditions();

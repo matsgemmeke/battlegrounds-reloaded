@@ -2,11 +2,16 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -15,157 +20,157 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DefaultPlayerRegistryTest {
+@ExtendWith(MockitoExtension.class)
+class DefaultPlayerRegistryTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final UUID PLAYER_UNIQUE_ID = UUID.randomUUID();
 
+    @Mock
     private DefaultGamePlayerFactory gamePlayerFactory;
+    @Mock
     private GameContextProvider gameContextProvider;
+    @Mock
+    private HitboxProvider hitboxProvider;
+    @Mock
+    private HitboxResolver hitboxResolver;
+
+    private DefaultPlayerRegistry playerRegistry;
 
     @BeforeEach
-    public void setUp() {
-        gamePlayerFactory = mock(DefaultGamePlayerFactory.class);
-        gameContextProvider = mock(GameContextProvider.class);
+    void setUp() {
+        playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY, hitboxResolver);
     }
 
     @Test
-    public void findByEntityReturnsOptionalWithMatchingEntity() {
+    void findByEntityReturnsOptionalWithMatchingEntity() {
         Player player = mock(Player.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(player);
 
         assertThat(gamePlayerOptional).hasValue(gamePlayer);
     }
 
     @Test
-    public void findByEntityReturnsEmptyOptionalWhereThereIsNoMatch() {
+    void findByEntityReturnsEmptyOptionalWhereThereIsNoMatch() {
         Player player = mock(Player.class);
         Player otherPlayer = mock(Player.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(otherPlayer);
 
         assertThat(gamePlayerOptional).isEmpty();
     }
 
     @Test
-    public void findByUniqueIdReturnsMatchingEntity() {
+    void findByUniqueIdReturnsMatchingEntity() {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID);
 
         assertThat(gamePlayerOptional).hasValue(gamePlayer);
     }
 
     @Test
-    public void getAllReturnsPlayersFromStorage() {
+    void getAllReturnsPlayersFromStorage() {
         Player player = mock(Player.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
 
         assertThat(gamePlayers).containsExactly(gamePlayer);
     }
 
     @Test
-    public void isRegisteredReturnsTrueIfStorageContainsRecordWithCorrespondingPlayerEntity() {
+    void isRegisteredReturnsTrueIfStorageContainsRecordWithCorrespondingPlayerEntity() {
         Player player = mock(Player.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getEntity()).thenReturn(player);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
-        playerRegistry.registerEntity(player);
+        playerRegistry.register(player);
         boolean registered = playerRegistry.isRegistered(player);
 
         assertThat(registered).isTrue();
     }
 
     @Test
-    public void isRegisteredReturnsTrueIfStorageContainsEntryWithGivenUUID() {
-        UUID uuid = UUID.randomUUID();
-
+    void isRegisteredReturnsTrueIfStorageContainsEntryWithGivenUUID() {
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
-        playerRegistry.registerEntity(player);
-        boolean registered = playerRegistry.isRegistered(uuid);
+        playerRegistry.register(player);
+        boolean registered = playerRegistry.isRegistered(PLAYER_UNIQUE_ID);
 
         assertThat(registered).isTrue();
     }
 
     @Test
-    public void deregisterRemovesGivenPlayerUuidFromPlayerContainer() {
-        UUID playerUuid = UUID.randomUUID();
+    void deregisterRemovesGivenPlayerUuidFromPlayerContainer() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(playerUuid);
+        when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
+        playerRegistry.register(player);
+        playerRegistry.deregister(PLAYER_UNIQUE_ID);
 
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
-        playerRegistry.registerEntity(player);
-        playerRegistry.deregister(playerUuid);
-
-        assertThat(playerRegistry.findByUniqueId(playerUuid)).isEmpty();
+        assertThat(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).isEmpty();
     }
 
     @Test
-    public void registerEntityCreatesNewInstanceOfGamePlayerAndRegisterToGameStorage() {
-        UUID playerId = UUID.randomUUID();
+    void registerEntityCreatesNewInstanceOfGamePlayerAndRegisterToGameStorage() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(playerId);
+        when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
+        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
-        when(gamePlayerFactory.create(player)).thenReturn(gamePlayer);
-
-        DefaultPlayerRegistry playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY);
-        GamePlayer createdGamePlayer = playerRegistry.registerEntity(player);
+        GamePlayer createdGamePlayer = playerRegistry.register(player);
 
         assertThat(createdGamePlayer).isEqualTo(gamePlayer);
 
-        verify(gameContextProvider).registerEntity(playerId, GAME_KEY);
+        verify(gameContextProvider).registerEntity(PLAYER_UNIQUE_ID, GAME_KEY);
     }
 }

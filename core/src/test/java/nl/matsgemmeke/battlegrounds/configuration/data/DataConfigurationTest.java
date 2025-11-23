@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.configuration.data;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Location;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -69,10 +69,10 @@ public class DataConfigurationTest {
         dataConfiguration.load();
         dataConfiguration.setMainLobbyLocation(location);
 
-        Section section = dataConfiguration.getSection("main-lobby");
-
-        assertEquals(x, section.getDouble("x"), 0.0);
-        assertEquals(y, section.getDouble("y"), 0.0);
-        assertEquals(z, section.getDouble("z"), 0.0);
+        assertThat(dataConfiguration.getValues("main-lobby"))
+                .hasSize(5)
+                .containsEntry("x", 1.0)
+                .containsEntry("y", 2.0)
+                .containsEntry("z", 3.0);
     }
 }

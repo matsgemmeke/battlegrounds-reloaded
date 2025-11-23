@@ -1,10 +1,9 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public interface DefaultGamePlayerFactory {
 
-    @NotNull
-    GamePlayer create(@NotNull Player player);
+    GamePlayer create(Player player, HitboxProvider hitboxProvider);
 }

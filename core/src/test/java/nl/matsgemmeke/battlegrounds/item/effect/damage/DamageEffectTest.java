@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DamageEffectTest {
 
-    private static final DamageProperties PROPERTIES = new DamageProperties(null, null);
+    private static final DamageProperties PROPERTIES = new DamageProperties(null, null, null);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final ItemEffectContext CONTEXT = createContext();
 

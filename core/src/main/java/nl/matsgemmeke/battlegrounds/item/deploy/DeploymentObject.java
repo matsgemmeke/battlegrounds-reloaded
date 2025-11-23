@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.entity.Identifiable;
-import nl.matsgemmeke.battlegrounds.game.damage.Damageable;
+import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents an object that is produced as a result of a deployment action.
  */
-public interface DeploymentObject extends ItemEffectSource, Damageable, Identifiable {
+public interface DeploymentObject extends ItemEffectSource, Target, Identifiable {
 
     /**
      * Gets the amount of ticks this deployment object will cause the deployer to have a cooldown before they can

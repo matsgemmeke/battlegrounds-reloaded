@@ -5,35 +5,43 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-public class RepeatingScheduleTest {
+@ExtendWith(MockitoExtension.class)
+class RepeatingScheduleTest {
 
-    private static final long INTERVAL = 1L;
-    private static final long DELAY = 5L;
+    private static final long DELAY = 1L;
+    private static final long INTERVAL = 5L;
+    private static final long DURATION = 6L;
 
+    @Mock
     private BukkitScheduler bukkitScheduler;
+    @Mock
+    private BukkitTask bukkitTask;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private Plugin plugin;
+    @Mock
+    private ScheduleTask scheduleTask;
+    @InjectMocks
+    private RepeatingSchedule schedule;
 
     @BeforeEach
-    public void setUp() {
-        bukkitScheduler = mock(BukkitScheduler.class);
-
-        plugin = mock(Plugin.class, Mockito.RETURNS_DEEP_STUBS);
+    void setUp() {
         when(plugin.getServer().getScheduler()).thenReturn(bukkitScheduler);
     }
 
     @Test
-    public void clearTasksRemovesAllTasksFromSchedule() {
-        ScheduleTask scheduleTask = mock(ScheduleTask.class);
-
-        RepeatingSchedule schedule = new RepeatingSchedule(plugin);
+    void clearTasksRemovesAllTasksFromSchedule() {
         schedule.setDelay(DELAY);
         schedule.setInterval(INTERVAL);
         schedule.addTask(scheduleTask);
@@ -48,19 +56,16 @@ public class RepeatingScheduleTest {
     }
 
     @Test
-    public void isRunningReturnsFalseWhenNotRunning() {
-        RepeatingSchedule schedule = new RepeatingSchedule(plugin);
+    void isRunningReturnsFalseWhenNotRunning() {
         boolean running = schedule.isRunning();
 
         assertThat(running).isFalse();
     }
 
     @Test
-    public void isRunningReturnsTrueWhenRunning() {
-        BukkitTask bukkitTask = mock(BukkitTask.class);
+    void isRunningReturnsTrueWhenRunning() {
         when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong())).thenReturn(bukkitTask);
 
-        RepeatingSchedule schedule = new RepeatingSchedule(plugin);
         schedule.start();
         boolean running = schedule.isRunning();
 
@@ -68,33 +73,25 @@ public class RepeatingScheduleTest {
     }
 
     @Test
-    public void startThrowsScheduleExceptionWhenAlreadyStarted() {
-        BukkitTask bukkitTask = mock(BukkitTask.class);
+    void startThrowsScheduleExceptionWhenAlreadyStarted() {
         when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong())).thenReturn(bukkitTask);
 
-        RepeatingSchedule schedule = new RepeatingSchedule(plugin);
         schedule.start();
 
         assertThatThrownBy(schedule::start).isInstanceOf(ScheduleException.class).hasMessage("Schedule is already running");
     }
 
     @Test
-    public void startRunsTaskTimerWithGivenDelayAndIntervalThatRunsScheduleTasks() {
-        long delay = 5L;
-        long interval = 1L;
-        ScheduleTask scheduleTask = mock(ScheduleTask.class);
+    void startRunsTaskTimerWithGivenDelayAndIntervalThatRunsScheduleTasks() {
+        when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), eq(DELAY), eq(INTERVAL))).thenReturn(bukkitTask);
 
-        BukkitTask bukkitTask = mock(BukkitTask.class);
-        when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), eq(delay), eq(interval))).thenReturn(bukkitTask);
-
-        RepeatingSchedule schedule = new RepeatingSchedule(plugin);
-        schedule.setDelay(delay);
-        schedule.setInterval(interval);
+        schedule.setDelay(DELAY);
+        schedule.setInterval(INTERVAL);
         schedule.addTask(scheduleTask);
         schedule.start();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(bukkitScheduler).runTaskTimer(eq(plugin), runnableCaptor.capture(), eq(delay), eq(interval));
+        verify(bukkitScheduler).runTaskTimer(eq(plugin), runnableCaptor.capture(), eq(DELAY), eq(INTERVAL));
 
         runnableCaptor.getValue().run();
 
@@ -102,27 +99,42 @@ public class RepeatingScheduleTest {
     }
 
     @Test
-    public void stopDoesNotCancelBukkitTaskWhenNotRunning() {
-        BukkitTask bukkitTask = mock(BukkitTask.class);
-        when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong())).thenReturn(bukkitTask);
+    void startRunsTaskTimerWithGivenDelayAndIntervalThatStopsAfterGivenDuration() {
+        when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), eq(DELAY), eq(INTERVAL))).thenReturn(bukkitTask);
 
-        RepeatingSchedule schedule = new RepeatingSchedule(plugin);
-        schedule.stop();
+        schedule.addTask(scheduleTask);
+        schedule.setDelay(DELAY);
+        schedule.setInterval(INTERVAL);
+        schedule.setDuration(DURATION);
+        schedule.start();
 
-        verifyNoInteractions(bukkitTask);
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        verify(bukkitScheduler).runTaskTimer(eq(plugin), runnableCaptor.capture(), eq(DELAY), eq(INTERVAL));
+
+        runnableCaptor.getValue().run();
+        runnableCaptor.getValue().run();
+
+        verify(scheduleTask, times(1)).run();
+        verify(bukkitTask).cancel();
     }
 
     @Test
-    public void stopCancelsBukkitTaskWhenRunning() {
-        long delay = 5L;
-        long interval = 1L;
+    void stopDoesNotCancelBukkitTaskWhenNotRunning() {
+        when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), anyLong(), anyLong())).thenReturn(bukkitTask);
 
-        BukkitTask bukkitTask = mock(BukkitTask.class);
-        when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), eq(delay), eq(interval))).thenReturn(bukkitTask);
+        schedule.start();
+        schedule.stop();
+        schedule.stop();
 
-        RepeatingSchedule schedule = new RepeatingSchedule(plugin);
-        schedule.setDelay(delay);
-        schedule.setInterval(interval);
+        verify(bukkitTask, times(1)).cancel();
+    }
+
+    @Test
+    void stopCancelsBukkitTaskWhenRunning() {
+        when(bukkitScheduler.runTaskTimer(eq(plugin), any(Runnable.class), eq(DELAY), eq(INTERVAL))).thenReturn(bukkitTask);
+
+        schedule.setDelay(DELAY);
+        schedule.setInterval(INTERVAL);
         schedule.start();
         schedule.stop();
 

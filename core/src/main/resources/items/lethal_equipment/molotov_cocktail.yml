@@ -23,7 +23,7 @@ deploy:
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
 effect:
-  type: COMBUSTION
+  effect-type: COMBUSTION
   activation-sounds: BLOCK_GLASS_BREAK-1-1-0
   min-size: 0.5
   max-size: 3.0
