@@ -5,8 +5,8 @@ package nl.matsgemmeke.battlegrounds.entity.hitbox;
  */
 public record HitboxComponent(
         HitboxComponentType type,
-        double height,
         double width,
+        double height,
         double depth,
         double offsetX,
         double offsetY,
