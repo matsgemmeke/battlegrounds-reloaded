@@ -26,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
@@ -71,7 +70,7 @@ class ShowHitboxesToolTest {
         HitboxProvider hitboxProvider = mock(HitboxProvider.class);
         when(hitboxProvider.provideHitbox(entity)).thenReturn(hitbox);
 
-        when(hitboxResolver.resolveHitboxProvider(entity)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(entity)).thenReturn(hitboxProvider);
         when(scheduler.createRepeatingSchedule(0L, 1L, 200L)).thenReturn(schedule);
         when(translator.translate(TranslationKey.TOOL_HITBOX_SUCCESS.getPath())).thenReturn(new TextTemplate("Displaying hitboxes for %bg_seconds% seconds inside a range of %bg_range% blocks."));
 

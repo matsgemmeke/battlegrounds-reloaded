@@ -38,7 +38,7 @@ public class OpenModeLivingEntityRegistry implements LivingEntityRegistry {
             return existingEntity;
         }
 
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity).orElseThrow();
+        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
         OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
 
         livingEntities.put(uniqueId, openModeEntity);

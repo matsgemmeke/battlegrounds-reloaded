@@ -46,11 +46,9 @@ class HitboxResolverTest {
         Entity entity = mock(Entity.class);
         when(entity.getType()).thenReturn(EntityType.UNKNOWN);
 
-        Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(entity);
+        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
 
-        assertThat(hitboxProviderOptional).hasValueSatisfying(hitboxProvider -> {
-            assertThat(hitboxProvider).isInstanceOf(BoundingBoxHitboxProvider.class);
-        });
+        assertThat(hitboxProvider).isInstanceOf(BoundingBoxHitboxProvider.class);
     }
 
     static List<Arguments> playerHitboxDefinitions() {
@@ -75,11 +73,9 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("player", "sleeping")).thenReturn(Optional.ofNullable(sleepingHitboxDefinition));
 
         hitboxResolver.registerHitboxProviders();
-        Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(player);
+        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(player);
 
-        assertThat(hitboxProviderOptional).hasValueSatisfying(hitbox -> {
-            assertThat(hitbox).isInstanceOf(PlayerHitboxProvider.class);
-        });
+        assertThat(hitboxProvider).isInstanceOf(PlayerHitboxProvider.class);
     }
 
     static List<Arguments> zombieHitboxDefinitions() {
@@ -98,11 +94,9 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("zombie", "adult-standing")).thenReturn(Optional.ofNullable(adultStandingHitboxDefinition));
         when(hitboxConfiguration.getHitboxDefinition("zombie", "baby-standing")).thenReturn(Optional.ofNullable(babyStandingHitboxDefinition));
 
-        Optional<HitboxProvider> hitboxProviderOptional = hitboxResolver.resolveHitboxProvider(zombie);
+        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(zombie);
 
-        assertThat(hitboxProviderOptional).hasValueSatisfying(hitboxProvider -> {
-            assertThat(hitboxProvider).isInstanceOf(AgeableHitboxProvider.class);
-        });
+        assertThat(hitboxProvider).isInstanceOf(AgeableHitboxProvider.class);
     }
 
     private static HitboxDefinition createHitboxDefinition() {

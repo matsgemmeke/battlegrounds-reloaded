@@ -41,7 +41,7 @@ class OpenModeLivingEntityRegistryTest {
         LivingEntity livingEntity = mock(LivingEntity.class);
         when(livingEntity.getUniqueId()).thenReturn(UNIQUE_ID);
 
-        when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
         livingEntityRegistry.register(livingEntity);
         Optional<GameEntity> gameEntityOptional = livingEntityRegistry.findByUniqueId(UNIQUE_ID);
@@ -56,7 +56,7 @@ class OpenModeLivingEntityRegistryTest {
         HitboxProvider hitboxProvider = mock(HitboxProvider.class);
         LivingEntity livingEntity = mock(LivingEntity.class);
 
-        when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
         GameEntity gameEntity = livingEntityRegistry.register(livingEntity);
 
@@ -68,7 +68,7 @@ class OpenModeLivingEntityRegistryTest {
         HitboxProvider hitboxProvider = mock(HitboxProvider.class);
         LivingEntity livingEntity = mock(LivingEntity.class);
 
-        when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
         GameEntity gameEntity1 = livingEntityRegistry.register(livingEntity);
         GameEntity gameEntity2 = livingEntityRegistry.register(livingEntity);

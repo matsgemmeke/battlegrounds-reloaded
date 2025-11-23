@@ -75,8 +75,7 @@ public class OpenModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
-                // TODO handle optional
-                HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity).orElse(null);
+                HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
                 GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
 
                 targets.add(target);
@@ -133,8 +132,7 @@ public class OpenModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
-                // TODO handle optional
-                HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity).orElse(null);
+                HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
                 GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
 
                 targets.add(target);

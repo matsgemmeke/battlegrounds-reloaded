@@ -9,7 +9,6 @@ import org.bukkit.entity.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import static nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxDefaults.*;
@@ -48,14 +47,14 @@ public class HitboxResolver {
         hitboxProviders.put(EntityType.ZOMBIE, () -> this.createAgeableHitboxProvider("zombie", "adult-standing", "baby-standing", ZOMBIE_ADULT_STANDING, ZOMBIE_BABY_STANDING));
     }
 
-    public Optional<HitboxProvider> resolveHitboxProvider(Entity entity) {
+    public HitboxProvider resolveHitboxProvider(Entity entity) {
         Supplier<HitboxProvider> hitboxProvider = hitboxProviders.get(entity.getType());
 
         if (hitboxProvider == null) {
-            return Optional.of(FALLBACK_PROVIDER);
+            return FALLBACK_PROVIDER;
         }
 
-        return Optional.of(hitboxProvider.get());
+        return hitboxProvider.get();
     }
 
     private HitboxProvider createAgeableHitboxProvider(String entityType, String adultPose, String babyPose, RelativeHitbox adultDefaultHitbox, RelativeHitbox babyDefaultHitbox) {

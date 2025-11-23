@@ -50,7 +50,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayer.getEntity()).thenReturn(player);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(player);
@@ -67,7 +67,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayer.getEntity()).thenReturn(player);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(otherPlayer);
@@ -84,7 +84,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID);
@@ -100,7 +100,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
@@ -116,7 +116,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayer.getEntity()).thenReturn(player);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         boolean registered = playerRegistry.isRegistered(player);
@@ -133,7 +133,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         boolean registered = playerRegistry.isRegistered(PLAYER_UNIQUE_ID);
@@ -149,7 +149,7 @@ class DefaultPlayerRegistryTest {
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         playerRegistry.deregister(PLAYER_UNIQUE_ID);
@@ -165,7 +165,7 @@ class DefaultPlayerRegistryTest {
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(Optional.of(hitboxProvider));
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         GamePlayer createdGamePlayer = playerRegistry.register(player);
 

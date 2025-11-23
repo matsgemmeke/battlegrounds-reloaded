@@ -69,7 +69,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
 
     @Override
     public GamePlayer register(Player player) {
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(player).orElse(null);
+        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(player);
 
         UUID uniqueId = player.getUniqueId();
         gameContextProvider.registerEntity(uniqueId, gameKey);
