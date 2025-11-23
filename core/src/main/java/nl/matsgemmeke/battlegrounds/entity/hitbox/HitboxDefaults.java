@@ -131,6 +131,34 @@ public final class HitboxDefaults {
             new HitboxComponent(HitboxComponentType.LIMBS, 0.7, 0.5, 1.6, -0.65, 0.0, -0.1)
     ));
 
+    public static final RelativeHitbox VILLAGER_ADULT_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.6, 0.5, 0.0, 1.4, 0.0),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.6, 0.8, 0.4, 0.0, 0.6, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.9, 0.5, 0.4, 0.0, 0.9, 0.2),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.6, 0.6, 0.4, 0.0, 0.0, 0.0)
+    ));
+
+    public static final RelativeHitbox VILLAGER_ADULT_SLEEPING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.5, 0.5, 0.6, 0.0, -0.3, -0.2),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.6, 0.4, 0.8, 0.0, -0.2, 0.5),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.9, 0.4, 0.5, 0.0, -0.1, 0.4),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.6, 0.4, 0.6, 0.0, -0.2, 1.2)
+    ));
+
+    public static final RelativeHitbox VILLAGER_BABY_STANDING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.25, 0.3, 0.25, 0.0, 0.7, 0.0),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.3, 0.4, 0.2, 0.0, 0.3, 0.0),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.45, 0.25, 0.2, 0.0, 0.45, 0.1),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.3, 0.3, 0.2, 0.0, 0.0, 0.0)
+    ));
+
+    public static final RelativeHitbox VILLAGER_BABY_SLEEPING = new RelativeHitbox(Set.of(
+            new HitboxComponent(HitboxComponentType.HEAD, 0.25, 0.25, 0.3, 0.0, -0.15, -0.1),
+            new HitboxComponent(HitboxComponentType.TORSO, 0.3, 0.2, 0.4, 0.0, -0.1, 0.25),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.45, 0.2, 0.25, 0.0, -0.05, 0.2),
+            new HitboxComponent(HitboxComponentType.LIMBS, 0.3, 0.2, 0.3, 0.0, -0.1, 0.6)
+    ));
+
     public static final RelativeHitbox WOLF_ADULT_STANDING = new RelativeHitbox(Set.of(
             new HitboxComponent(HitboxComponentType.HEAD, 0.4, 0.4, 0.5, 0.0, 0.45, 0.55),
             new HitboxComponent(HitboxComponentType.TORSO, 0.6, 0.5, 1.0, 0.0, 0.4, -0.1),

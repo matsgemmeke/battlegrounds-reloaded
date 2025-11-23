@@ -331,6 +331,76 @@ spider:
       size: [0.7, 0.5, 1.6]
       offset: [-0.65, 0.0, -0.1]
 
+villager:
+  adult-standing:
+    head:
+      type: HEAD
+      size: [0.5, 0.6, 0.5]
+      offset: [0.0, 1.4, 0.0]
+    torso:
+      type: TORSO
+      size: [0.6, 0.8, 0.4]
+      offset: [0.0, 0.6, 0.0]
+    arms:
+      type: LIMBS
+      size: [0.9, 0.5, 0.4]
+      offset: [0.0, 0.9, 0.2]
+    legs:
+      type: LIMBS
+      size: [0.6, 0.6, 0.4]
+      offset: [0.0, 0.0, 0.0]
+  adult-sleeping:
+    head:
+      type: HEAD
+      size: [0.5, 0.5, 0.6]
+      offset: [0.0, -0.3, -0.2]
+    torso:
+      type: TORSO
+      size: [0.6, 0.4, 0.8]
+      offset: [0.0, -0.2, 0.5]
+    arms:
+      type: LIMBS
+      size: [0.9, 0.4, 0.5]
+      offset: [0.0, -0.1, 0.4]
+    legs:
+      type: LIMBS
+      size: [0.6, 0.4, 0.6]
+      offset: [0.0, -0.2, 1.2]
+  baby-standing:
+    head:
+      type: HEAD
+      size: [0.25, 0.3, 0.25]
+      offset: [0.0, 0.7, 0.0]
+    torso:
+      type: TORSO
+      size: [0.3, 0.4, 0.2]
+      offset: [0.0, 0.3, 0.0]
+    arms:
+      type: LIMBS
+      size: [0.45, 0.25, 0.2]
+      offset: [0.0, 0.45, 0.1]
+    legs:
+      type: LIMBS
+      size: [0.3, 0.3, 0.2]
+      offset: [0.0, 0.0, 0.0]
+  baby-sleeping:
+    head:
+      type: HEAD
+      size: [0.25, 0.25, 0.3]
+      offset: [0.0, -0.15, -0.1]
+    torso:
+      type: TORSO
+      size: [0.3, 0.2, 0.4]
+      offset: [0.0, -0.1, 0.25]
+    arms:
+      type: LIMBS
+      size: [0.45, 0.2, 0.25]
+      offset: [0.0, -0.05, 0.2]
+    legs:
+      type: LIMBS
+      size: [0.3, 0.2, 0.3]
+      offset: [0.0, -0.1, 0.6]
+
 wolf:
   adult-standing:
     head:
