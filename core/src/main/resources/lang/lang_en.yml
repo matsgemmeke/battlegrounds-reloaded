@@ -23,7 +23,7 @@ commands:
   description-tools-hitbox: "Shows hitboxes of nearby entities"
   help-menu-command: " ● %bg__usage%"
   help-menu-title: "&6&l Battlegrounds Help Menu"
-  tools-menu-command: " ● %bg_usage% - %bg_description%"
+  tools-menu-command: " ● /bg tools hitbox <seconds> <range>"
   tools-menu-title: "&6&l List of tools"
   weapon-given: "&6You have been given a %bg_weapon%."
 
