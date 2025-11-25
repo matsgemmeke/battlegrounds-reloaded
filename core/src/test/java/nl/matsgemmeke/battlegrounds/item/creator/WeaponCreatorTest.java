@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.creator;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
@@ -10,6 +11,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,17 +30,20 @@ class WeaponCreatorTest {
 
     private static final String EQUIPMENT_NAME = "Frag Grenade";
     private static final String GUN_NAME = "MP5";
+    private static final String MELEE_WEAPON_NAME = "Combat Knife";
 
     @Mock
     private Provider<EquipmentFactory> equipmentFactoryProvider;
     @Mock
     private Provider<GunFactory> gunFactoryProvider;
+    @Mock
+    private Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider;
 
     private WeaponCreator weaponCreator;
 
     @BeforeEach
     void setUp() {
-        weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
+        weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider);
     }
 
     @Test
@@ -90,6 +96,32 @@ class WeaponCreatorTest {
         Gun result = weaponCreator.createGun(GUN_NAME, gamePlayer);
 
         assertThat(result).isEqualTo(gun);
+    }
+
+    @Test
+    void createMeleeWeaponThrowsWeaponNotFoundExceptionWhenNoMeleeWeaponSpecsExistByGivenName() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+
+        assertThatThrownBy(() -> weaponCreator.createMeleeWeapon("fail", gamePlayer))
+                .isInstanceOf(WeaponNotFoundException.class)
+                .hasMessage("The weapon creator does not contain a specification for a melee weapon by the name 'fail'");
+    }
+
+    @Test
+    void createMeleeWeaponReturnsMeleeWeaponInstanceBasedOnGivenName() {
+        MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
+        MeleeWeaponSpec meleeWeaponSpec = this.createMeleeWeaponSpec();
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+
+        MeleeWeaponFactory meleeWeaponFactory = mock(MeleeWeaponFactory.class);
+        when(meleeWeaponFactory.create(meleeWeaponSpec, gamePlayer)).thenReturn(meleeWeapon);
+
+        when(meleeWeaponFactoryProvider.get()).thenReturn(meleeWeaponFactory);
+
+        weaponCreator.addMeleeWeaponSpec(MELEE_WEAPON_NAME, meleeWeaponSpec);
+        MeleeWeapon result = weaponCreator.createMeleeWeapon(MELEE_WEAPON_NAME, gamePlayer);
+
+        assertThat(result).isEqualTo(meleeWeapon);
     }
 
     @Test
@@ -198,5 +230,12 @@ class WeaponCreatorTest {
 
         SpecDeserializer specDeserializer = new SpecDeserializer();
         return specDeserializer.deserializeSpec(file, GunSpec.class);
+    }
+
+    private MeleeWeaponSpec createMeleeWeaponSpec() {
+        File file = new File("src/main/resources/items/melee_weapons/combat_knife.yml");
+
+        SpecDeserializer specDeserializer = new SpecDeserializer();
+        return specDeserializer.deserializeSpec(file, MeleeWeaponSpec.class);
     }
 }

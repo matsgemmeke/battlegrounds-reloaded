@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponFactory;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -25,18 +26,21 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
     private final Logger logger;
     private final Provider<EquipmentFactory> equipmentFactoryProvider;
     private final Provider<GunFactory> gunFactoryProvider;
+    private final Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider;
     private final SpecDeserializer specDeserializer;
 
     @Inject
     public WeaponCreatorProvider(
             Provider<EquipmentFactory> equipmentFactoryProvider,
             Provider<GunFactory> gunFactoryProvider,
+            Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider,
             SpecDeserializer specDeserializer,
             @Named("ItemsFolder") File itemsFolder,
             @Named("Battlegrounds") Logger logger
     ) {
         this.equipmentFactoryProvider = equipmentFactoryProvider;
         this.gunFactoryProvider = gunFactoryProvider;
+        this.meleeWeaponFactoryProvider = meleeWeaponFactoryProvider;
         this.specDeserializer = specDeserializer;
         this.itemsFolder = itemsFolder;
         this.logger = logger;
@@ -49,7 +53,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.copyResourcesFiles(itemsFolder);
         }
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider);
+        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider);
         File[] itemFolderFiles = itemsFolder.listFiles();
 
         if (itemFolderFiles == null || itemFolderFiles.length == 0) {

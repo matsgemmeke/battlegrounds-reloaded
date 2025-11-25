@@ -3,13 +3,14 @@ package nl.matsgemmeke.battlegrounds.entity;
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A player who participates in a {@link Game}.
  */
-public interface GamePlayer extends GameEntity, EquipmentHolder, GunHolder {
+public interface GamePlayer extends GameEntity, EquipmentHolder, GunHolder, MeleeWeaponHolder {
 
     /**
      * Gets the {@link Player} entity of the object.

@@ -1,0 +1,13 @@
+name: Combat Knife
+description: Standard issue military knife. Fast, quiet and deadly.
+level-unlocked: 1
+price: 500
+damage:
+  damage-amount: 75.0
+  throwable: false
+items:
+  display-item:
+    material: IRON_SWORD
+    display-name: '&f%name%'
+    amount: 1
+    damage: 1

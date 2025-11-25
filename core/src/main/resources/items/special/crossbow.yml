@@ -27,7 +27,7 @@ shooting:
     velocity: 3.0
     shot-sounds: BLOCK_WOODEN_DOOR_CLOSE-2-2-0, ENTITY_ARROW_SHOOT-2-1-1
     effect:
-      type: DAMAGE
+      effect-type: DAMAGE
       damage-type: ARROW_DAMAGE
       range:
         short-range:
@@ -39,5 +39,9 @@ shooting:
         long-range:
           damage: 80.0
           distance: 100.0
+      hitbox-multipliers:
+        head: 2.0
+        body: 1
+        legs: 0.8
   spread-pattern:
     type: SINGLE_PROJECTILE
