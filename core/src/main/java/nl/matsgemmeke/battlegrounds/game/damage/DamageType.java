@@ -8,6 +8,10 @@ import java.util.Optional;
 public enum DamageType {
 
     /**
+     * Damage caused by an arrow.
+     */
+    ARROW_DAMAGE,
+    /**
      * Damage caused by an entity physically attacking another
      */
     ATTACK_DAMAGE,

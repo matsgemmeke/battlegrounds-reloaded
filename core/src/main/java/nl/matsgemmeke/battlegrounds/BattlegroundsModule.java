@@ -177,6 +177,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(GunRegistry.class).to(DefaultGunRegistry.class).in(GameScoped.class);
         binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class).in(GameScoped.class);
         binder.bind(LivingEntityRegistry.class).toProvider(LivingEntityRegistryProvider.class).in(GameScoped.class);
+        binder.bind(MeleeWeaponRegistry.class).to(DefaultMeleeWeaponRegistry.class).in(GameScoped.class);
         binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
         binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
         binder.bind(ProjectileHitActionRegistry.class).in(GameScoped.class);

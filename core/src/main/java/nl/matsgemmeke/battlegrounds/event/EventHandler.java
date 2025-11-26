@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.event;
 
 import org.bukkit.event.Event;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Handles logic execution based on a certain event.
@@ -15,5 +14,5 @@ public interface EventHandler<T extends Event> {
      *
      * @param event the event
      */
-    void handle(@NotNull T event);
+    void handle(T event);
 }

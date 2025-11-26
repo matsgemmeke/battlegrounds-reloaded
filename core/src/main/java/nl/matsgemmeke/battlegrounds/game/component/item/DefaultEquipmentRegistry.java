@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
-import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +20,6 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
     @NotNull
     private final List<Equipment> unassignedEquipment;
 
-    @Inject
     public DefaultEquipmentRegistry() {
         this.assignedEquipment = new ConcurrentHashMap<>();
         this.unassignedEquipment = new ArrayList<>();

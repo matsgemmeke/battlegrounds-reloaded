@@ -12,28 +12,25 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.jetbrains.annotations.NotNull;
 
 public class EntityDamageByEntityEventHandler implements EventHandler<EntityDamageByEntityEvent> {
 
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
     private final Provider<DamageProcessor> damageProcessorProvider;
 
     @Inject
-    public EntityDamageByEntityEventHandler(@NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope, @NotNull Provider<DamageProcessor> damageProcessorProvider) {
+    public EntityDamageByEntityEventHandler(GameContextProvider gameContextProvider, GameScope gameScope, Provider<DamageProcessor> damageProcessorProvider) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.damageProcessorProvider = damageProcessorProvider;
     }
 
-    public void handle(@NotNull EntityDamageByEntityEvent event) {
+    public void handle(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
-        Entity damager = event.getDamager();
+        Entity damager = this.resolveEntityDamager(event.getDamager());
         GameKey entityGameKey = gameContextProvider.getGameKeyByEntityId(entity.getUniqueId()).orElse(null);
         GameKey damagerGameKey = gameContextProvider.getGameKeyByEntityId(damager.getUniqueId()).orElse(null);
 
@@ -75,5 +72,13 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
 
         // Only set the event damage so the damage animation and physics are kept
         event.setDamage(result.getDamage());
+    }
+
+    private Entity resolveEntityDamager(Entity eventDamager) {
+        if (eventDamager instanceof Projectile projectile && projectile.getShooter() instanceof Entity projectileShooter) {
+            return projectileShooter;
+        }
+
+        return eventDamager;
     }
 }

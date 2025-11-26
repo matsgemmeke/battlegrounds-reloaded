@@ -6,6 +6,7 @@ import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ResourceLoader;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
@@ -143,6 +144,14 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             ObjectValidator.validate(gunSpec);
 
             creator.addGunSpec(name, gunSpec);
+            return;
+        }
+
+        if (file.getParentFile().getName().endsWith("melee_weapons")) {
+            MeleeWeaponSpec meleeWeaponSpec = specDeserializer.deserializeSpec(file, MeleeWeaponSpec.class);
+            ObjectValidator.validate(meleeWeaponSpec);
+
+            creator.addMeleeWeaponSpec(name, meleeWeaponSpec);
             return;
         }
 
