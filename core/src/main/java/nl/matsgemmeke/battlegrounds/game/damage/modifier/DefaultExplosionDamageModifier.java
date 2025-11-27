@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.damage.modifier;
 
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageEventNew;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 
 public class DefaultExplosionDamageModifier implements DamageModifier {
@@ -14,5 +15,14 @@ public class DefaultExplosionDamageModifier implements DamageModifier {
         }
 
         event.setDamage(DEFAULT_EXPLOSION_DAMAGE);
+    }
+
+    @Override
+    public DamageEventNew apply(DamageEventNew damageEvent) {
+        if (damageEvent.damage().type() != DamageType.EXPLOSIVE_DAMAGE) {
+            return damageEvent;
+        }
+
+        return damageEvent.modifyDamageAmount(DEFAULT_EXPLOSION_DAMAGE);
     }
 }

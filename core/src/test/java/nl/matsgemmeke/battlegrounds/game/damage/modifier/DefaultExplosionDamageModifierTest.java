@@ -1,11 +1,12 @@
 package nl.matsgemmeke.battlegrounds.game.damage.modifier;
 
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.game.damage.*;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -41,5 +42,16 @@ class DefaultExplosionDamageModifierTest {
         modifier.apply(event);
 
         assertThat(event.getDamage()).isEqualTo(0.0);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "BULLET_DAMAGE,100.0", "EXPLOSIVE_DAMAGE,0.0" })
+    void applyReturnsDamageEventWithModifiedDamageDependingOnDamageType(DamageType damageType, double expectedDamageAmount) {
+        DamageNew damage = new DamageNew(DAMAGE, damageType);
+        DamageEventNew damageEvent = new DamageEventNew(entity, damager, damage);
+
+        DamageEventNew result = modifier.apply(damageEvent);
+
+        assertThat(result.damage().amount()).isEqualTo(expectedDamageAmount);
     }
 }
