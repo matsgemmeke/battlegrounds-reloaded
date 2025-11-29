@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface MeleeWeapon extends Weapon, Interactable<MeleeWeaponHolder> {
 
+    double getAttackDamage();
+
     /**
      * Gets the holder of the melee weapon. Returns an empty optional if the melee weapon does not have a holder.
      *

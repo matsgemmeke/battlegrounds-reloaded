@@ -15,6 +15,7 @@ import java.util.Optional;
 public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     private final ItemControls<MeleeWeaponHolder> controls;
+    private double attackDamage;
     @Nullable
     private ItemTemplate displayItemTemplate;
     @Nullable
@@ -24,6 +25,15 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     public DefaultMeleeWeapon(ItemControls<MeleeWeaponHolder> controls) {
         this.controls = controls;
+    }
+
+    @Override
+    public double getAttackDamage() {
+        return attackDamage;
+    }
+
+    public void setAttackDamage(double attackDamage) {
+        this.attackDamage = attackDamage;
     }
 
     public Optional<ItemTemplate> getDisplayItemTemplate() {

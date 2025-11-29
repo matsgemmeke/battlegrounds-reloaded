@@ -13,7 +13,7 @@ public class DamageTypeTest {
     public void mapReturnsOptionalWithEntityAttackDamageTypeWhenGivenEntityAttackDamageCause() {
         Optional<DamageType> damageTypeOptional = DamageType.map(DamageCause.ENTITY_ATTACK);
 
-        assertThat(damageTypeOptional).hasValue(DamageType.ATTACK_DAMAGE);
+        assertThat(damageTypeOptional).hasValue(DamageType.MELEE_DAMAGE);
     }
 
     @Test
