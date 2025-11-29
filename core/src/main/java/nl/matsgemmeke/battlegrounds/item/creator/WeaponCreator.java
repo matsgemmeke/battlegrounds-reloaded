@@ -134,6 +134,10 @@ public class WeaponCreator {
             return this.createGun(weaponName, gamePlayer);
         }
 
+        if (this.meleeWeaponExists(weaponName)) {
+            return this.createMeleeWeapon(weaponName, gamePlayer);
+        }
+
         throw new WeaponNotFoundException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponName));
     }
 
@@ -148,7 +152,7 @@ public class WeaponCreator {
     }
 
     private List<String> getNameList() {
-        return Stream.of(equipmentSpecs.keySet(), gunSpecs.keySet())
+        return Stream.of(equipmentSpecs.keySet(), gunSpecs.keySet(), meleeWeaponSpecs.keySet())
                 .flatMap(Collection::stream)
                 .toList();
     }
@@ -171,5 +175,15 @@ public class WeaponCreator {
      */
     public boolean gunExists(String gunName) {
         return gunSpecs.containsKey(gunName.toUpperCase());
+    }
+
+    /**
+     * Gets whether a melee weapon specification is loaded with a specific name.
+     *
+     * @param meleeWeaponName the melee weapon name
+     * @return                whether a melee weapon specification with the given name exists
+     */
+    public boolean meleeWeaponExists(String meleeWeaponName) {
+        return meleeWeaponSpecs.containsKey(meleeWeaponName.toUpperCase());
     }
 }

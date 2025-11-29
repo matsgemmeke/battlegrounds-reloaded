@@ -159,6 +159,23 @@ class WeaponCreatorTest {
     }
 
     @Test
+    void createWeaponReturnsMeleeWeaponInstanceBasedOnGivenMeleeWeaponName() {
+        MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
+        MeleeWeaponSpec meleeWeaponSpec = this.createMeleeWeaponSpec();
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+
+        MeleeWeaponFactory meleeWeaponFactory = mock(MeleeWeaponFactory.class);
+        when(meleeWeaponFactory.create(meleeWeaponSpec, gamePlayer)).thenReturn(meleeWeapon);
+
+        when(meleeWeaponFactoryProvider.get()).thenReturn(meleeWeaponFactory);
+
+        weaponCreator.addMeleeWeaponSpec(MELEE_WEAPON_NAME, meleeWeaponSpec);
+        Weapon weapon = weaponCreator.createWeapon(gamePlayer, MELEE_WEAPON_NAME);
+
+        assertThat(weapon).isEqualTo(meleeWeapon);
+    }
+
+    @Test
     void createWeaponThrowsWeaponNotFoundExceptionWhenGivenNameMatchesNoneOfTheSpecifications() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
@@ -216,6 +233,23 @@ class WeaponCreatorTest {
         boolean gunExists = weaponCreator.gunExists(GUN_NAME);
 
         assertThat(gunExists).isTrue();
+    }
+
+    @Test
+    void meleeWeaponExistsReturnsFalseWhenWhenMeleeWeaponSpecByGivenNameDoesNotExist() {
+        boolean meleeWeaponExists = weaponCreator.meleeWeaponExists(MELEE_WEAPON_NAME);
+
+        assertThat(meleeWeaponExists).isFalse();
+    }
+
+    @Test
+    void meleeWeaponExistsReturnsTrueWhenMeleeWeaponSpecByGivenNameExists() {
+        MeleeWeaponSpec meleeWeaponSpec = this.createMeleeWeaponSpec();
+
+        weaponCreator.addMeleeWeaponSpec(MELEE_WEAPON_NAME, meleeWeaponSpec);
+        boolean meleeWeaponExists = weaponCreator.meleeWeaponExists(MELEE_WEAPON_NAME);
+
+        assertThat(meleeWeaponExists).isTrue();
     }
 
     private EquipmentSpec createEquipmentSpec() {
