@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MeleeWeaponRegistry {
@@ -17,6 +18,14 @@ public interface MeleeWeaponRegistry {
      * @return          an optional containing the matching melee weapon or empty when not found
      */
     Optional<MeleeWeapon> getAssignedMeleeWeapon(MeleeWeaponHolder holder, ItemStack itemStack);
+
+    /**
+     * Gets all registered melee weapons that are assigned to a given holder.
+     *
+     * @param holder the item holder
+     * @return       a list of melee weapons assigned to the holder
+     */
+    List<MeleeWeapon> getAssignedMeleeWeapons(MeleeWeaponHolder holder);
 
     /**
      * Registers an unassigned melee weapon to the registry.

@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +30,11 @@ public class DefaultMeleeWeaponRegistry implements MeleeWeaponRegistry {
         return assignedMeleeWeapons.get(holder).stream()
                 .filter(meleeWeapon -> meleeWeapon.isMatching(itemStack))
                 .findFirst();
+    }
+
+    @Override
+    public List<MeleeWeapon> getAssignedMeleeWeapons(MeleeWeaponHolder holder) {
+        return assignedMeleeWeapons.getOrDefault(holder, Collections.emptyList());
     }
 
     @Override

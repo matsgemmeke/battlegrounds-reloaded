@@ -4,8 +4,13 @@ import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentState;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunStateRepository;
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponState;
+import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponStateRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,37 +18,39 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class PlayerStateStorageTest {
+@ExtendWith(MockitoExtension.class)
+class PlayerStateStorageTest {
 
     private static final UUID PLAYER_UUID = UUID.randomUUID();
 
+    @Mock
     private EquipmentStateRepository equipmentStateRepository;
+    @Mock
     private GunStateRepository gunStateRepository;
-
-    @BeforeEach
-    public void setUp() {
-        equipmentStateRepository = mock(EquipmentStateRepository.class);
-        gunStateRepository = mock(GunStateRepository.class);
-    }
+    @Mock
+    private MeleeWeaponStateRepository meleeWeaponStateRepository;
+    @InjectMocks
+    private PlayerStateStorage playerStateStorage;
 
     @Test
-    public void deletePlayerStateDeletesPlayerDataFromRepositories() {
-        PlayerStateStorage playerStateStorage = new PlayerStateStorage(equipmentStateRepository, gunStateRepository);
+    void deletePlayerStateDeletesPlayerDataFromRepositories() {
         playerStateStorage.deletePlayerState(PLAYER_UUID);
 
         verify(gunStateRepository).deleteByPlayerUuid(PLAYER_UUID);
         verify(equipmentStateRepository).deleteByPlayerUuid(PLAYER_UUID);
+        verify(meleeWeaponStateRepository).deleteByPlayerUuid(PLAYER_UUID);
     }
 
     @Test
-    public void getPlayerStateReturnsPlayerStateWithDataFromRepositories() {
+    void getPlayerStateReturnsPlayerStateWithDataFromRepositories() {
         GunState gunState = new GunState(PLAYER_UUID, "TEST_GUN", 10, 20, 5);
         EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, "TEST_EQUIPMENT", 6);
+        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, "TEST_MELEE_WEAPON", 7);
 
         when(gunStateRepository.findByPlayerUuid(PLAYER_UUID)).thenReturn(List.of(gunState));
         when(equipmentStateRepository.findByPlayerUuid(PLAYER_UUID)).thenReturn(List.of(equipmentState));
+        when(meleeWeaponStateRepository.findByPlayerUuid(PLAYER_UUID)).thenReturn(List.of(meleeWeaponState));
 
-        PlayerStateStorage playerStateStorage = new PlayerStateStorage(equipmentStateRepository, gunStateRepository);
         PlayerState playerState = playerStateStorage.getPlayerState(PLAYER_UUID);
 
         assertThat(playerState.playerUuid()).isEqualTo(PLAYER_UUID);
@@ -52,17 +59,20 @@ public class PlayerStateStorageTest {
     }
 
     @Test
-    public void savePlayerStateSendsDataToCorrespondingRepositories() {
+    void savePlayerStateSendsDataToCorrespondingRepositories() {
         GunState gunState = new GunState(PLAYER_UUID, "TEST_GUN", 10, 20, 5);
         List<GunState> gunStates = List.of(gunState);
         EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, "TEST_EQUIPMENT", 6);
         List<EquipmentState> equipmentStates = List.of(equipmentState);
-        PlayerState playerState = new PlayerState(PLAYER_UUID, gunStates, equipmentStates);
+        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, "TEST_MELEE_WEAPON", 7);
+        List<MeleeWeaponState> meleeWeaponStates = List.of(meleeWeaponState);
 
-        PlayerStateStorage playerStateStorage = new PlayerStateStorage(equipmentStateRepository, gunStateRepository);
+        PlayerState playerState = new PlayerState(PLAYER_UUID, gunStates, equipmentStates, meleeWeaponStates);
+
         playerStateStorage.savePlayerState(playerState);
 
         verify(gunStateRepository).save(gunStates);
         verify(equipmentStateRepository).save(equipmentStates);
+        verify(meleeWeaponStateRepository).save(meleeWeaponStates);
     }
 }
