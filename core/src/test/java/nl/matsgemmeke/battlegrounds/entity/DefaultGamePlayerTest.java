@@ -157,6 +157,17 @@ class DefaultGamePlayerTest {
     }
 
     @Test
+    void getAttackStrengthReturnsPlayerAttackCooldown() {
+        float attackCooldown = 0.5F;
+
+        when(player.getAttackCooldown()).thenReturn(attackCooldown);
+
+        float attackStrength = gamePlayer.getAttackStrength();
+
+        assertThat(attackStrength).isEqualTo(attackCooldown);
+    }
+
+    @Test
     void getHeldItemReturnsItemInMainHand() {
         ItemStack itemStack = new ItemStack(Material.STONE);
 

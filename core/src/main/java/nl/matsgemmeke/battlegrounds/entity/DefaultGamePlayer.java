@@ -146,6 +146,11 @@ public class DefaultGamePlayer implements GamePlayer {
         return damage.amount();
     }
 
+    @Override
+    public float getAttackStrength() {
+        return player.getAttackCooldown();
+    }
+
     @NotNull
     public Location getAudioPlayLocation() {
         return player.getLocation();
