@@ -53,7 +53,7 @@ public class EventDispatcher {
         for (Entry<Class<? extends Event>, List<EventHandlerMethod>> entry : eventMethods.entrySet()) {
             Class<? extends Event> eventClass = entry.getKey();
 
-            if (eventClass.isAssignableFrom(event.getClass())) {
+            if (eventClass == event.getClass()) {
                 for (EventHandlerMethod method : entry.getValue()) {
                     try {
                         method.invoke(event);

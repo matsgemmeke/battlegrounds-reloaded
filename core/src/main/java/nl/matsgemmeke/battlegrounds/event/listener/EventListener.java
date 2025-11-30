@@ -42,11 +42,6 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamageByEntity(@NotNull EntityDamageByEntityEvent event) {
-        this.dispatchEvent(event);
-    }
-
-    @EventHandler
     public void onEntityPickupItem(@NotNull EntityPickupItemEvent event) {
         this.dispatchEvent(event);
     }
