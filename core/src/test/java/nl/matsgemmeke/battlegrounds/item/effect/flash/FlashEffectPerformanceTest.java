@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.flash;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -24,7 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,25 +66,20 @@ class FlashEffectPerformanceTest {
 
     @Test
     void performPerformsEffectAndAppliesBlindnessPotionEffectToAllTargetsInsideLongRangeDistance() {
-        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
-        Player player = mock(Player.class);
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
         Schedule cancelSchedule = mock(Schedule.class);
+        PotionEffectReceiver target = mock(PotionEffectReceiver.class);
 
-        GameEntity target = mock(GameEntity.class);
-        when(target.getEntity()).thenReturn(player);
-
-        when(entity.getUniqueId()).thenReturn(entityId);
         when(scheduler.createSingleRunSchedule(POTION_EFFECT_DURATION)).thenReturn(cancelSchedule);
         when(source.getLocation()).thenReturn(SOURCE_LOCATION);
         when(source.getWorld()).thenReturn(world);
-        when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
+        when(targetFinder.findPotionEffectReceivers(SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
 
         performance.perform(context);
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
-        verify(player).addPotionEffect(potionEffectCaptor.capture());
+        verify(target).addPotionEffect(potionEffectCaptor.capture());
 
         PotionEffect potionEffect = potionEffectCaptor.getValue();
 
@@ -110,60 +105,51 @@ class FlashEffectPerformanceTest {
     @ParameterizedTest
     @MethodSource("potionEffectScenarios")
     void rollbackDoesNotRemovePotionEffectFromEntities(PotionEffect potionEffect) {
-        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
 
-        Player player = mock(Player.class);
-        when(player.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(potionEffect);
-
-        GameEntity gameEntity = mock(GameEntity.class);
-        when(gameEntity.getEntity()).thenReturn(player);
+        PotionEffectReceiver target = mock(PotionEffectReceiver.class);
+        when(target.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(Optional.ofNullable(potionEffect));
 
         Schedule cancelSchedule = mock(Schedule.class);
         when(cancelSchedule.isRunning()).thenReturn(true);
 
-        when(entity.getUniqueId()).thenReturn(entityId);
         when(scheduler.createSingleRunSchedule(POTION_EFFECT_DURATION)).thenReturn(cancelSchedule);
         when(source.getLocation()).thenReturn(SOURCE_LOCATION);
         when(source.getWorld()).thenReturn(world);
-        when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(gameEntity));
+        when(targetFinder.findPotionEffectReceivers(SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
 
         performance.perform(context);
         performance.rollback();
 
-        verify(player, never()).removePotionEffect(any(PotionEffectType.class));
+        verify(target, never()).removePotionEffect(any(PotionEffectType.class));
     }
 
     @Test
     void rollbackRemovesAppliedPotionEffectsFromEntities() {
-        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
         Player player = mock(Player.class);
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
-
-        GameEntity gameEntity = mock(GameEntity.class);
-        when(gameEntity.getEntity()).thenReturn(player);
+        PotionEffectReceiver target = mock(PotionEffectReceiver.class);
 
         Schedule cancelSchedule = mock(Schedule.class);
         when(cancelSchedule.isRunning()).thenReturn(true);
 
-        when(entity.getUniqueId()).thenReturn(entityId);
         when(scheduler.createSingleRunSchedule(POTION_EFFECT_DURATION)).thenReturn(cancelSchedule);
         when(source.getLocation()).thenReturn(SOURCE_LOCATION);
         when(source.getWorld()).thenReturn(world);
-        when(targetFinder.findTargets(entityId, SOURCE_LOCATION, RANGE)).thenReturn(List.of(gameEntity));
+        when(targetFinder.findPotionEffectReceivers(SOURCE_LOCATION, RANGE)).thenReturn(List.of(target));
 
         performance.perform(context);
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
-        verify(player).addPotionEffect(potionEffectCaptor.capture());
+        verify(target).addPotionEffect(potionEffectCaptor.capture());
 
-        when(player.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(potionEffectCaptor.getValue());
+        when(target.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(Optional.of(potionEffectCaptor.getValue()));
 
         performance.rollback();
 
-        verify(player).removePotionEffect(PotionEffectType.BLINDNESS);
+        verify(target).removePotionEffect(PotionEffectType.BLINDNESS);
         verify(cancelSchedule).stop();
     }
 }

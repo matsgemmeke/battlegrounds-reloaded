@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A player who participates in a {@link Game}.
  */
-public interface GamePlayer extends GameEntity, EquipmentHolder, GunHolder, MeleeWeaponHolder {
+public interface GamePlayer extends GameEntity, EquipmentHolder, GunHolder, MeleeWeaponHolder, PotionEffectReceiver {
 
     /**
      * Gets the {@link Player} entity of the object.

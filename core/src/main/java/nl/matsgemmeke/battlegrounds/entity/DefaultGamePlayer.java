@@ -16,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,6 +103,21 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public void setPassive(boolean passive) {
         this.passive = passive;
+    }
+
+    @Override
+    public void addPotionEffect(PotionEffect potionEffect) {
+        player.addPotionEffect(potionEffect);
+    }
+
+    @Override
+    public Optional<PotionEffect> getPotionEffect(PotionEffectType potionEffectType) {
+        return Optional.ofNullable(player.getPotionEffect(potionEffectType));
+    }
+
+    @Override
+    public void removePotionEffect(PotionEffectType potionEffectType) {
+        player.removePotionEffect(potionEffectType);
     }
 
     public boolean addEffect(@NotNull ItemEffect effect) {

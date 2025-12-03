@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +44,15 @@ public interface TargetFinder {
      */
     @NotNull
     List<GameEntity> findEnemyTargets(@NotNull UUID entityId, @NotNull Location location, double range);
+
+    /**
+     * Finds targets that can receive potion effects within a specified range around a location.
+     *
+     * @param location the location
+     * @param range    the range
+     * @return         a list of game entities that are able to receive potion effects, within the given range
+     */
+    List<PotionEffectReceiver> findPotionEffectReceivers(Location location, double range);
 
     /**
      * Looks for potential targets for the given entity around a specific location.

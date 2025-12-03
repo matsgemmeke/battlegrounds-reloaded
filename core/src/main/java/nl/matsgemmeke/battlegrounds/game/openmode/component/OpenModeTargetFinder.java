@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
+import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
@@ -81,6 +82,18 @@ public class OpenModeTargetFinder implements TargetFinder {
                 targets.add(target);
             }
         }
+
+        return targets;
+    }
+
+    @Override
+    public List<PotionEffectReceiver> findPotionEffectReceivers(Location location, double range) {
+        List<PotionEffectReceiver> targets = new ArrayList<>();
+        World world = Optional.ofNullable(location.getWorld()).orElseThrow(() -> new IllegalArgumentException("Provided location has no world"));
+
+        playerRegistry.getAll().stream()
+                .filter(gamePlayer -> gamePlayer.getLocation().distance(location) <= range)
+                .forEach(targets::add);
 
         return targets;
     }

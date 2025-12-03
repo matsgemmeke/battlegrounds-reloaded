@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -75,6 +77,42 @@ class DefaultGamePlayerTest {
         UUID uniqueId = gamePlayer.getUniqueId();
 
         assertThat(uniqueId).isEqualTo(playerUniqueId);
+    }
+
+    @Test
+    void addPotionEffectAddsPotionEffectToPlayer() {
+        PotionEffect potionEffect = mock(PotionEffect.class);
+
+        gamePlayer.addPotionEffect(potionEffect);
+
+        verify(player).addPotionEffect(potionEffect);
+    }
+
+    @Test
+    void getPotionEffectReturnsEmptyOptionalWhenPlayerDoesNotHaveGivenPotionEffectType() {
+        when(player.getPotionEffect(PotionEffectType.SPEED)).thenReturn(null);
+
+        Optional<PotionEffect> potionEffectOptional = gamePlayer.getPotionEffect(PotionEffectType.SPEED);
+
+        assertThat(potionEffectOptional).isEmpty();
+    }
+
+    @Test
+    void getPotionEffectReturnsOptionalWithActivePotionEffectOnPlayer() {
+        PotionEffect potionEffect = mock(PotionEffect.class);
+
+        when(player.getPotionEffect(PotionEffectType.SPEED)).thenReturn(potionEffect);
+
+        Optional<PotionEffect> potionEffectOptional = gamePlayer.getPotionEffect(PotionEffectType.SPEED);
+
+        assertThat(potionEffectOptional).hasValue(potionEffect);
+    }
+
+    @Test
+    void removePotionEffectRemovesPotionEffectFromPlayer() {
+        gamePlayer.removePotionEffect(PotionEffectType.SPEED);
+
+        verify(player).removePotionEffect(PotionEffectType.SPEED);
     }
 
     @Test
