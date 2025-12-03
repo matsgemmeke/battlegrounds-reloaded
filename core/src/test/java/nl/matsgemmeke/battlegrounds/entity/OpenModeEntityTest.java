@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,6 +52,42 @@ class OpenModeEntityTest {
         Damage lastDamage = openModeEntity.getLastDamage();
 
         assertThat(lastDamage).isEqualTo(damage);
+    }
+
+    @Test
+    void addPotionEffectAddsPotionEffectToEntity() {
+        PotionEffect potionEffect = mock(PotionEffect.class);
+
+        openModeEntity.addPotionEffect(potionEffect);
+
+        verify(entity).addPotionEffect(potionEffect);
+    }
+
+    @Test
+    void getPotionEffectReturnsEmptyOptionalWhenEntityDoesNotHaveGivenPotionEffectType() {
+        when(entity.getPotionEffect(PotionEffectType.SPEED)).thenReturn(null);
+
+        Optional<PotionEffect> potionEffectOptional = openModeEntity.getPotionEffect(PotionEffectType.SPEED);
+
+        assertThat(potionEffectOptional).isEmpty();
+    }
+
+    @Test
+    void getPotionEffectReturnsOptionalWithActivePotionEffectOnEntity() {
+        PotionEffect potionEffect = mock(PotionEffect.class);
+
+        when(entity.getPotionEffect(PotionEffectType.SPEED)).thenReturn(potionEffect);
+
+        Optional<PotionEffect> potionEffectOptional = openModeEntity.getPotionEffect(PotionEffectType.SPEED);
+
+        assertThat(potionEffectOptional).hasValue(potionEffect);
+    }
+
+    @Test
+    void removePotionEffectRemovesPotionEffectFromEntity() {
+        openModeEntity.removePotionEffect(PotionEffectType.SPEED);
+
+        verify(entity).removePotionEffect(PotionEffectType.SPEED);
     }
 
     @NotNull

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import org.bukkit.entity.LivingEntity;
@@ -29,9 +29,9 @@ class OpenModeLivingEntityRegistryTest {
 
     @Test
     void findByUniqueIdReturnsEmptyOptionalWhenGivenUniqueIdIsNotRegistered() {
-        Optional<GameEntity> gameEntityOptional = livingEntityRegistry.findByUniqueId(UNIQUE_ID);
+        Optional<GameMob> gameMobOptional = livingEntityRegistry.findByUniqueId(UNIQUE_ID);
 
-        assertThat(gameEntityOptional).isEmpty();
+        assertThat(gameMobOptional).isEmpty();
     }
 
     @Test
@@ -44,9 +44,9 @@ class OpenModeLivingEntityRegistryTest {
         when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
         livingEntityRegistry.register(livingEntity);
-        Optional<GameEntity> gameEntityOptional = livingEntityRegistry.findByUniqueId(UNIQUE_ID);
+        Optional<GameMob> gameMobOptional = livingEntityRegistry.findByUniqueId(UNIQUE_ID);
 
-        assertThat(gameEntityOptional).hasValueSatisfying(gameEntity -> {
+        assertThat(gameMobOptional).hasValueSatisfying(gameEntity -> {
             assertThat(gameEntity.getEntity()).isEqualTo(livingEntity);
         });
     }
@@ -58,9 +58,9 @@ class OpenModeLivingEntityRegistryTest {
 
         when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
-        GameEntity gameEntity = livingEntityRegistry.register(livingEntity);
+        GameMob gameMob = livingEntityRegistry.register(livingEntity);
 
-        assertThat(gameEntity.getEntity()).isEqualTo(livingEntity);
+        assertThat(gameMob.getEntity()).isEqualTo(livingEntity);
     }
 
     @Test
@@ -70,10 +70,10 @@ class OpenModeLivingEntityRegistryTest {
 
         when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
-        GameEntity gameEntity1 = livingEntityRegistry.register(livingEntity);
-        GameEntity gameEntity2 = livingEntityRegistry.register(livingEntity);
+        GameMob gameMob1 = livingEntityRegistry.register(livingEntity);
+        GameMob gameMob2 = livingEntityRegistry.register(livingEntity);
 
-        assertThat(gameEntity2.getEntity()).isEqualTo(livingEntity);
-        assertThat(gameEntity2).isEqualTo(gameEntity1);
+        assertThat(gameMob2.getEntity()).isEqualTo(livingEntity);
+        assertThat(gameMob2).isEqualTo(gameMob1);
     }
 }

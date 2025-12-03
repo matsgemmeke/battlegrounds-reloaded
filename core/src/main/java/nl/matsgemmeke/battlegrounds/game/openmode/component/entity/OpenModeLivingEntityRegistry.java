@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -16,32 +16,32 @@ import java.util.UUID;
 public class OpenModeLivingEntityRegistry implements LivingEntityRegistry {
 
     private final HitboxResolver hitboxResolver;
-    private final Map<UUID, GameEntity> livingEntities;
+    private final Map<UUID, GameMob> mobs;
 
     @Inject
     public OpenModeLivingEntityRegistry(HitboxResolver hitboxResolver) {
         this.hitboxResolver = hitboxResolver;
-        this.livingEntities = new HashMap<>();
+        this.mobs = new HashMap<>();
     }
 
     @Override
-    public Optional<GameEntity> findByUniqueId(UUID uniqueId) {
-        return Optional.ofNullable(livingEntities.get(uniqueId));
+    public Optional<GameMob> findByUniqueId(UUID uniqueId) {
+        return Optional.ofNullable(mobs.get(uniqueId));
     }
 
     @Override
-    public GameEntity register(LivingEntity entity) {
+    public GameMob register(LivingEntity entity) {
         UUID uniqueId = entity.getUniqueId();
-        GameEntity existingEntity = livingEntities.get(uniqueId);
+        GameMob existingMob = mobs.get(uniqueId);
 
-        if (existingEntity != null) {
-            return existingEntity;
+        if (existingMob != null) {
+            return existingMob;
         }
 
         HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
         OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
 
-        livingEntities.put(uniqueId, openModeEntity);
+        mobs.put(uniqueId, openModeEntity);
 
         return openModeEntity;
     }

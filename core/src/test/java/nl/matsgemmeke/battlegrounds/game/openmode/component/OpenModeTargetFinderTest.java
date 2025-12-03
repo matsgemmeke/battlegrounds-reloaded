@@ -1,8 +1,10 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.TargetType;
@@ -13,10 +15,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -140,11 +139,22 @@ class OpenModeTargetFinderTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getLocation()).thenReturn(playerLocation);
 
+        LivingEntity entity = mock(LivingEntity.class);
+        when(entity.getType()).thenReturn(EntityType.UNKNOWN);
+
+        Hitbox gameMobHitbox = mock(Hitbox.class);
+        when(gameMobHitbox.intersects(givenLocation)).thenReturn(true);
+
+        GameMob gameMob = mock(GameMob.class);
+        when(gameMob.getHitbox()).thenReturn(gameMobHitbox);
+
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
+        when(livingEntityRegistry.register(entity)).thenReturn(gameMob);
+        when(world.getNearbyEntities(givenLocation, RANGE, RANGE, RANGE)).thenReturn(List.of(entity));
 
         List<PotionEffectReceiver> targets = targetFinder.findPotionEffectReceivers(givenLocation, RANGE);
 
-        assertThat(targets).containsExactly(gamePlayer);
+        assertThat(targets).containsExactly(gamePlayer, gameMob);
     }
 
     @Test

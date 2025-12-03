@@ -7,12 +7,15 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
-public class OpenModeEntity implements GameEntity {
+public class OpenModeEntity implements GameMob {
 
     private final HitboxProvider hitboxProvider;
     private final LivingEntity entity;
@@ -59,6 +62,21 @@ public class OpenModeEntity implements GameEntity {
     @NotNull
     public World getWorld() {
         return entity.getWorld();
+    }
+
+    @Override
+    public void addPotionEffect(PotionEffect potionEffect) {
+        entity.addPotionEffect(potionEffect);
+    }
+
+    @Override
+    public Optional<PotionEffect> getPotionEffect(PotionEffectType potionEffectType) {
+        return Optional.ofNullable(entity.getPotionEffect(potionEffectType));
+    }
+
+    @Override
+    public void removePotionEffect(PotionEffectType potionEffectType) {
+        entity.removePotionEffect(potionEffectType);
     }
 
     public double damage(@NotNull Damage damage) {

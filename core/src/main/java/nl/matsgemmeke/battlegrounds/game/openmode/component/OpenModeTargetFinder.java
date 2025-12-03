@@ -95,6 +95,13 @@ public class OpenModeTargetFinder implements TargetFinder {
                 .filter(gamePlayer -> gamePlayer.getLocation().distance(location) <= range)
                 .forEach(targets::add);
 
+        world.getNearbyEntities(location, range, range, range).stream()
+                .filter(entity -> entity.getType() != EntityType.PLAYER)
+                .filter(LivingEntity.class::isInstance)
+                .map(entity -> livingEntityRegistry.register((LivingEntity) entity))
+                .filter(gameMob -> gameMob.getHitbox().intersects(location))
+                .forEach(targets::add);
+
         return targets;
     }
 
