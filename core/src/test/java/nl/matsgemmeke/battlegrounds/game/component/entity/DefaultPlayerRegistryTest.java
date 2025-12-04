@@ -43,39 +43,6 @@ class DefaultPlayerRegistryTest {
     }
 
     @Test
-    void findByEntityReturnsOptionalWithMatchingEntity() {
-        Player player = mock(Player.class);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
-
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
-
-        playerRegistry.register(player);
-        Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(player);
-
-        assertThat(gamePlayerOptional).hasValue(gamePlayer);
-    }
-
-    @Test
-    void findByEntityReturnsEmptyOptionalWhereThereIsNoMatch() {
-        Player player = mock(Player.class);
-        Player otherPlayer = mock(Player.class);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
-
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
-
-        playerRegistry.register(player);
-        Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(otherPlayer);
-
-        assertThat(gamePlayerOptional).isEmpty();
-    }
-
-    @Test
     void findByUniqueIdReturnsMatchingEntity() {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
@@ -106,22 +73,6 @@ class DefaultPlayerRegistryTest {
         Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
 
         assertThat(gamePlayers).containsExactly(gamePlayer);
-    }
-
-    @Test
-    void isRegisteredReturnsTrueIfStorageContainsRecordWithCorrespondingPlayerEntity() {
-        Player player = mock(Player.class);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
-
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
-
-        playerRegistry.register(player);
-        boolean registered = playerRegistry.isRegistered(player);
-
-        assertThat(registered).isTrue();
     }
 
     @Test

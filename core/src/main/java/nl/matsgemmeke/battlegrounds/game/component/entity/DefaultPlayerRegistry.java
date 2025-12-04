@@ -32,17 +32,6 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     }
 
     @Override
-    public Optional<GamePlayer> findByEntity(Player player) {
-        for (GamePlayer gamePlayer : playerContainer.getEntities()) {
-            if (gamePlayer.getEntity() == player) {
-                return Optional.of(gamePlayer);
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
     public Optional<GamePlayer> findByUniqueId(UUID uuid) {
         return playerContainer.getEntity(uuid);
     }
@@ -50,11 +39,6 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     @Override
     public Collection<GamePlayer> getAll() {
         return playerContainer.getEntities();
-    }
-
-    @Override
-    public boolean isRegistered(Player player) {
-        return playerContainer.getEntity(player).isPresent();
     }
 
     @Override

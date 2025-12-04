@@ -106,8 +106,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.throwItemTemplate = throwItemTemplate;
     }
 
-    public void activateDeployment(@NotNull EquipmentHolder holder) {
-        deploymentHandler.activateDeployment(holder, holder.getEntity());
+    public void activateDeployment(EquipmentHolder holder) {
+        deploymentHandler.activateDeployment(holder);
     }
 
     public void cleanup() {

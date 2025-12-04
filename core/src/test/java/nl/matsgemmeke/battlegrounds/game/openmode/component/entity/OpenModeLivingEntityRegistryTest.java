@@ -47,33 +47,37 @@ class OpenModeLivingEntityRegistryTest {
         Optional<GameMob> gameMobOptional = livingEntityRegistry.findByUniqueId(UNIQUE_ID);
 
         assertThat(gameMobOptional).hasValueSatisfying(gameEntity -> {
-            assertThat(gameEntity.getEntity()).isEqualTo(livingEntity);
+            assertThat(gameEntity.getUniqueId()).isEqualTo(UNIQUE_ID);
         });
     }
 
     @Test
     void registerReturnsNewGameEntityInstanceOfGivenLivingEntity() {
         HitboxProvider hitboxProvider = mock(HitboxProvider.class);
+
         LivingEntity livingEntity = mock(LivingEntity.class);
+        when(livingEntity.getUniqueId()).thenReturn(UNIQUE_ID);
 
         when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
         GameMob gameMob = livingEntityRegistry.register(livingEntity);
 
-        assertThat(gameMob.getEntity()).isEqualTo(livingEntity);
+        assertThat(gameMob.getUniqueId()).isEqualTo(UNIQUE_ID);
     }
 
     @Test
     void registerReturnsSameGameEntityInstanceOfGivenLivingEntityWhenAlreadyRegistered() {
         HitboxProvider hitboxProvider = mock(HitboxProvider.class);
+
         LivingEntity livingEntity = mock(LivingEntity.class);
+        when(livingEntity.getUniqueId()).thenReturn(UNIQUE_ID);
 
         when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
         GameMob gameMob1 = livingEntityRegistry.register(livingEntity);
         GameMob gameMob2 = livingEntityRegistry.register(livingEntity);
 
-        assertThat(gameMob2.getEntity()).isEqualTo(livingEntity);
+        assertThat(gameMob2.getUniqueId()).isEqualTo(UNIQUE_ID);
         assertThat(gameMob2).isEqualTo(gameMob1);
     }
 }

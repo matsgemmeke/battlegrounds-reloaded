@@ -81,7 +81,7 @@ public interface Equipment extends Weapon, Cleanable, DeployableItem, Interactab
      *
      * @param holder the holder that activates the deployment
      */
-    void activateDeployment(@NotNull EquipmentHolder holder);
+    void activateDeployment(EquipmentHolder holder);
 
     /**
      * Retrieves the deployment object associated with the equipment item if it has been deployed.
@@ -93,7 +93,7 @@ public interface Equipment extends Weapon, Cleanable, DeployableItem, Interactab
 
     /**
      * Gets whether the equipment's activator is ready for use. Returns {@code true} if the equipment has an activator
-     * and is ready to be triggered, otherwise {code false}.
+     * and is ready to be triggered, otherwise {@code false}.
      *
      * @return whether the activator item is ready for use
      */

@@ -34,7 +34,7 @@ class DeploymentHandlerTest {
     private static final boolean UNDO_EFFECT_ON_DESTRUCTION = true;
     private static final boolean REMOVE_DEPLOYMENT_ON_CLEANUP = true;
     private static final List<GameSound> ACTIVATION_SOUNDS = Collections.emptyList();
-    private static final Location DEPLOYER_LOCATION = new Location(null, 1, 1, 1);
+    private static final Location DEPLOYMENT_LOCATION = new Location(null, 1, 1, 1);
     private static final long DEPLOYMENT_OBJECT_COOLDOWN = 3L;
     private static final long MANUAL_ACTIVATION_DELAY = 10L;
     private static final ParticleEffect DESTRUCTION_PARTICLE_EFFECT = new ParticleEffect(Particle.ASH, 1, 0, 0, 0, 0, null, null);
@@ -66,13 +66,13 @@ class DeploymentHandlerTest {
             return null;
         }).when(delaySchedule).addTask(any(ScheduleTask.class));
 
-        when(deployerEntity.getLocation()).thenReturn(DEPLOYER_LOCATION);
+        when(deployer.getDeployLocation()).thenReturn(DEPLOYMENT_LOCATION);
         when(scheduler.createSingleRunSchedule(MANUAL_ACTIVATION_DELAY)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.activateDeployment(deployer, deployerEntity);
+        deploymentHandler.activateDeployment(deployer);
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, DEPLOYER_LOCATION);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, DEPLOYMENT_LOCATION);
         verify(deployer).setHeldItem(null);
         verify(itemEffect).activatePerformances();
     }

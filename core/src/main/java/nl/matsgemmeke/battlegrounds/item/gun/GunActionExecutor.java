@@ -23,7 +23,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleChangeFromAction(@NotNull Player player, @NotNull ItemStack changedItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;
@@ -40,7 +40,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleChangeToAction(@NotNull Player player, @NotNull ItemStack changedItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;
@@ -57,7 +57,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleDropItemAction(@NotNull Player player, @NotNull ItemStack droppedItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;
@@ -76,7 +76,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;
@@ -93,7 +93,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handlePickupItemAction(@NotNull Player player, @NotNull ItemStack pickupItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;
@@ -112,7 +112,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;
@@ -129,7 +129,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleSwapFromAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;
@@ -146,7 +146,7 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     public boolean handleSwapToAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;

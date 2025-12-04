@@ -39,6 +39,7 @@ import static org.mockito.Mockito.when;
 class OpenModeTargetFinderTest {
 
     private static final double RANGE = 0.1;
+    private static final UUID ENTITY_UNIQUE_ID = UUID.randomUUID();
 
     @Mock
     private DeploymentInfoProvider deploymentInfoProvider;
@@ -324,20 +325,20 @@ class OpenModeTargetFinderTest {
 
     @Test
     void findTargetsReturnsEntitiesThatAreNotPlayers() {
-        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
-
         Location location = new Location(world, 1, 1, 1);
         double range = 0.1;
 
         Entity entity = mock(Zombie.class);
         when(entity.getType()).thenReturn(EntityType.ZOMBIE);
+        when(entity.getUniqueId()).thenReturn(ENTITY_UNIQUE_ID);
 
         when(world.getNearbyEntities(location, range, range, range)).thenReturn(List.of(entity));
 
-        List<GameEntity> targets = targetFinder.findTargets(entityId, location, range);
+        List<GameEntity> targets = targetFinder.findTargets(ENTITY_UNIQUE_ID, location, range);
 
-        assertEquals(1, targets.size());
-        assertEquals(entity, targets.get(0).getEntity());
+        assertThat(targets).satisfiesExactly(target -> {
+            assertThat(target.getUniqueId()).isEqualTo(ENTITY_UNIQUE_ID);
+        });
     }
 }

@@ -35,7 +35,7 @@ public class EquipmentActionExecutor implements ActionExecutor {
     }
 
     public boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;
@@ -56,7 +56,7 @@ public class EquipmentActionExecutor implements ActionExecutor {
     }
 
     public boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
-        GamePlayer gamePlayer = playerRegistry.findByEntity(player).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return true;

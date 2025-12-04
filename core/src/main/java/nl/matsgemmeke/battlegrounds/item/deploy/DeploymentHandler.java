@@ -51,8 +51,8 @@ public class DeploymentHandler {
         return deploymentObject;
     }
 
-    public void activateDeployment(Deployer deployer, Entity deployerEntity) {
-        audioEmitter.playSounds(deploymentProperties.manualActivationSounds(), deployerEntity.getLocation());
+    public void activateDeployment(Deployer deployer) {
+        audioEmitter.playSounds(deploymentProperties.manualActivationSounds(), deployer.getDeployLocation());
 
         deployer.setHeldItem(null);
 

@@ -9,13 +9,9 @@ import java.util.UUID;
 
 public interface PlayerRegistry {
 
-    Optional<GamePlayer> findByEntity(Player entity);
-
     Optional<GamePlayer> findByUniqueId(UUID uniqueId);
 
     Collection<GamePlayer> getAll();
-
-    boolean isRegistered(Player player);
 
     boolean isRegistered(UUID uniqueId);
 
