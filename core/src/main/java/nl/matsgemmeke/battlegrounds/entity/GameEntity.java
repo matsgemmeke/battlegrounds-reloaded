@@ -4,10 +4,12 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import org.bukkit.Location;
 
+import java.util.UUID;
+
 /**
  * An entity object which holds information and can perform actions in Battlegrounds.
  */
-public interface GameEntity extends Target, Identifiable {
+public interface GameEntity extends Target {
 
     /**
      * Gets the hitbox of the entity.
@@ -29,4 +31,12 @@ public interface GameEntity extends Target, Identifiable {
      * @return the entity name
      */
     String getName();
+
+    /**
+     * Gets the unique id of the game entity. Usually this will return the unique id of the corresponding entity.
+     * Otherwise, a separate id will be used.
+     *
+     * @return the game entity's unique id
+     */
+    UUID getUniqueId();
 }
