@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.component.entity.LivingEntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.HashMap;
@@ -13,13 +13,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class OpenModeLivingEntityRegistry implements LivingEntityRegistry {
+public class OpenModeMobRegistry implements MobRegistry {
 
     private final HitboxResolver hitboxResolver;
     private final Map<UUID, GameMob> mobs;
 
     @Inject
-    public OpenModeLivingEntityRegistry(HitboxResolver hitboxResolver) {
+    public OpenModeMobRegistry(HitboxResolver hitboxResolver) {
         this.hitboxResolver = hitboxResolver;
         this.mobs = new HashMap<>();
     }

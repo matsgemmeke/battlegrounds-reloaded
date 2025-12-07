@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.TargetType;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.entity.LivingEntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -46,7 +46,7 @@ class OpenModeTargetFinderTest {
     @Mock
     private HitboxResolver hitboxResolver;
     @Mock
-    private LivingEntityRegistry livingEntityRegistry;
+    private MobRegistry mobRegistry;
     @Mock
     private PlayerRegistry playerRegistry;
     @InjectMocks
@@ -150,7 +150,7 @@ class OpenModeTargetFinderTest {
         when(gameMob.getHitbox()).thenReturn(gameMobHitbox);
 
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
-        when(livingEntityRegistry.register(entity)).thenReturn(gameMob);
+        when(mobRegistry.register(entity)).thenReturn(gameMob);
         when(world.getNearbyEntities(givenLocation, RANGE, RANGE, RANGE)).thenReturn(List.of(entity));
 
         List<PotionEffectReceiver> targets = targetFinder.findPotionEffectReceivers(givenLocation, RANGE);

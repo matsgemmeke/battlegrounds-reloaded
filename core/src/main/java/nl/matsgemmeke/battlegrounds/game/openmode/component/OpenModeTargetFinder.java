@@ -11,7 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.TargetType;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.entity.LivingEntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -28,14 +28,14 @@ public class OpenModeTargetFinder implements TargetFinder {
 
     private final DeploymentInfoProvider deploymentInfoProvider;
     private final HitboxResolver hitboxResolver;
-    private final LivingEntityRegistry livingEntityRegistry;
+    private final MobRegistry mobRegistry;
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public OpenModeTargetFinder(DeploymentInfoProvider deploymentInfoProvider, HitboxResolver hitboxResolver, LivingEntityRegistry livingEntityRegistry, PlayerRegistry playerRegistry) {
+    public OpenModeTargetFinder(DeploymentInfoProvider deploymentInfoProvider, HitboxResolver hitboxResolver, MobRegistry mobRegistry, PlayerRegistry playerRegistry) {
         this.deploymentInfoProvider = deploymentInfoProvider;
         this.hitboxResolver = hitboxResolver;
-        this.livingEntityRegistry = livingEntityRegistry;
+        this.mobRegistry = mobRegistry;
         this.playerRegistry = playerRegistry;
     }
 
@@ -98,7 +98,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         world.getNearbyEntities(location, range, range, range).stream()
                 .filter(entity -> entity.getType() != EntityType.PLAYER)
                 .filter(LivingEntity.class::isInstance)
-                .map(entity -> livingEntityRegistry.register((LivingEntity) entity))
+                .map(entity -> mobRegistry.register((LivingEntity) entity))
                 .filter(gameMob -> gameMob.getHitbox().intersects(location))
                 .forEach(targets::add);
 
@@ -124,7 +124,7 @@ public class OpenModeTargetFinder implements TargetFinder {
             world.getNearbyEntities(location, range, range, range).stream()
                     .filter(entity -> entity.getType() != EntityType.PLAYER)
                     .filter(LivingEntity.class::isInstance)
-                    .map(entity -> livingEntityRegistry.register((LivingEntity) entity))
+                    .map(entity -> mobRegistry.register((LivingEntity) entity))
                     .filter(gameEntity -> gameEntity.getHitbox().intersects(location))
                     .forEach(targets::add);
         });

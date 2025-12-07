@@ -9,10 +9,10 @@ import nl.matsgemmeke.battlegrounds.game.component.ComponentRouterProvider;
 
 import java.util.Map;
 
-public class LivingEntityRegistryProvider extends ComponentRouterProvider<LivingEntityRegistry> {
+public class MobRegistryProvider extends ComponentRouterProvider<MobRegistry> {
 
     @Inject
-    public LivingEntityRegistryProvider(GameScope gameScope, Map<GameContextType, Provider<LivingEntityRegistry>> implementations, TypeLiteral<LivingEntityRegistry> typeLiteral) {
+    public MobRegistryProvider(GameScope gameScope, Map<GameContextType, Provider<MobRegistry>> implementations, TypeLiteral<MobRegistry> typeLiteral) {
         super(gameScope, implementations, typeLiteral);
     }
 }

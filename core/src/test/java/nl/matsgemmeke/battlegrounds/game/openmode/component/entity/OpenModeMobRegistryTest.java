@@ -18,18 +18,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModeLivingEntityRegistryTest {
+class OpenModeMobRegistryTest {
 
     private static final UUID UNIQUE_ID = UUID.randomUUID();
 
     @Mock
     private HitboxResolver hitboxResolver;
     @InjectMocks
-    private OpenModeLivingEntityRegistry livingEntityRegistry;
+    private OpenModeMobRegistry mobRegistry;
 
     @Test
     void findByUniqueIdReturnsEmptyOptionalWhenGivenUniqueIdIsNotRegistered() {
-        Optional<GameMob> gameMobOptional = livingEntityRegistry.findByUniqueId(UNIQUE_ID);
+        Optional<GameMob> gameMobOptional = mobRegistry.findByUniqueId(UNIQUE_ID);
 
         assertThat(gameMobOptional).isEmpty();
     }
@@ -43,8 +43,8 @@ class OpenModeLivingEntityRegistryTest {
 
         when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
-        livingEntityRegistry.register(livingEntity);
-        Optional<GameMob> gameMobOptional = livingEntityRegistry.findByUniqueId(UNIQUE_ID);
+        mobRegistry.register(livingEntity);
+        Optional<GameMob> gameMobOptional = mobRegistry.findByUniqueId(UNIQUE_ID);
 
         assertThat(gameMobOptional).hasValueSatisfying(gameEntity -> {
             assertThat(gameEntity.getUniqueId()).isEqualTo(UNIQUE_ID);
@@ -60,7 +60,7 @@ class OpenModeLivingEntityRegistryTest {
 
         when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
-        GameMob gameMob = livingEntityRegistry.register(livingEntity);
+        GameMob gameMob = mobRegistry.register(livingEntity);
 
         assertThat(gameMob.getUniqueId()).isEqualTo(UNIQUE_ID);
     }
@@ -74,8 +74,8 @@ class OpenModeLivingEntityRegistryTest {
 
         when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
-        GameMob gameMob1 = livingEntityRegistry.register(livingEntity);
-        GameMob gameMob2 = livingEntityRegistry.register(livingEntity);
+        GameMob gameMob1 = mobRegistry.register(livingEntity);
+        GameMob gameMob2 = mobRegistry.register(livingEntity);
 
         assertThat(gameMob2.getUniqueId()).isEqualTo(UNIQUE_ID);
         assertThat(gameMob2).isEqualTo(gameMob1);

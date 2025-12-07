@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeLivingEntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -22,56 +22,56 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class LivingEntityRegistryProviderTest {
+class MobRegistryProviderTest {
 
-    private static final TypeLiteral<LivingEntityRegistry> TYPE_LITERAL = TypeLiteral.get(LivingEntityRegistry.class);
+    private static final TypeLiteral<MobRegistry> TYPE_LITERAL = TypeLiteral.get(MobRegistry.class);
 
     @Mock
     private GameScope gameScope;
 
     @Test
     void getThrowsComponentProvisionExceptionWhenGameScopeHasNoEnteredGameContext() {
-        Map<GameContextType, Provider<LivingEntityRegistry>> implementations = Map.of();
+        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of();
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.empty());
 
-        LivingEntityRegistryProvider provider = new LivingEntityRegistryProvider(gameScope, implementations, TYPE_LITERAL);
+        MobRegistryProvider provider = new MobRegistryProvider(gameScope, implementations, TYPE_LITERAL);
 
         assertThatThrownBy(provider::get)
                 .isInstanceOf(ComponentProvisionException.class)
-                .hasMessage("Cannot provide instance of LivingEntityRegistry: the game scope is empty");
+                .hasMessage("Cannot provide instance of MobRegistry: the game scope is empty");
     }
 
     @Test
     void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
         GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<LivingEntityRegistry>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
-        LivingEntityRegistryProvider provider = new LivingEntityRegistryProvider(gameScope, implementations, TYPE_LITERAL);
+        MobRegistryProvider provider = new MobRegistryProvider(gameScope, implementations, TYPE_LITERAL);
 
         assertThatThrownBy(provider::get)
                 .isInstanceOf(ComponentProvisionException.class)
-                .hasMessage("Cannot provide instance of LivingEntityRegistry: no implementation bound for ARENA_MODE");
+                .hasMessage("Cannot provide instance of MobRegistry: no implementation bound for ARENA_MODE");
     }
 
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
         GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
-        OpenModeLivingEntityRegistry livingEntityRegistry = mock(OpenModeLivingEntityRegistry.class);
+        OpenModeMobRegistry mobRegistry = mock(OpenModeMobRegistry.class);
 
-        Provider<LivingEntityRegistry> livingEntityRegistryProvider = mock();
-        when(livingEntityRegistryProvider.get()).thenReturn(livingEntityRegistry);
+        Provider<MobRegistry> mobRegistryProvider = mock();
+        when(mobRegistryProvider.get()).thenReturn(mobRegistry);
 
-        Map<GameContextType, Provider<LivingEntityRegistry>> implementations = Map.of(GameContextType.OPEN_MODE, livingEntityRegistryProvider);
+        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.OPEN_MODE, mobRegistryProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
-        LivingEntityRegistryProvider provider = new LivingEntityRegistryProvider(gameScope, implementations, TYPE_LITERAL);
-        LivingEntityRegistry result = provider.get();
+        MobRegistryProvider provider = new MobRegistryProvider(gameScope, implementations, TYPE_LITERAL);
+        MobRegistry result = provider.get();
 
-        assertThat(result).isEqualTo(livingEntityRegistry);
+        assertThat(result).isEqualTo(mobRegistry);
     }
 }
 

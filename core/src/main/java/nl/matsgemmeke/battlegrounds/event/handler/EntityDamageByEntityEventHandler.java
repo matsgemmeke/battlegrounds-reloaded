@@ -44,6 +44,8 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
 
         EventDamageResult eventDamageResult = eventDamageAdapter.processMeleeDamage(entity, damager, damageAmount);
 
+        System.out.println("processMeleeDamage called with result " + eventDamageResult);
+
         event.setDamage(eventDamageResult.damageAmount());
     }
 

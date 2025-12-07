@@ -32,8 +32,8 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapterProv
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.entity.LivingEntityRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.entity.LivingEntityRegistryProvider;
+import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistryProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
@@ -50,7 +50,7 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeLivingEntityRegistry;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
@@ -165,8 +165,8 @@ public class BattlegroundsModule implements Module {
         MapBinder<GameContextType, EventDamageAdapter> eventDamageAdapterMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, EventDamageAdapter.class);
         eventDamageAdapterMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeEventDamageAdapter.class);
 
-        MapBinder<GameContextType, LivingEntityRegistry> livingEntityRegistryMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, LivingEntityRegistry.class);
-        livingEntityRegistryMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeLivingEntityRegistry.class);
+        MapBinder<GameContextType, MobRegistry> mobRegistryMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, MobRegistry.class);
+        mobRegistryMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeMobRegistry.class);
 
         MapBinder<GameContextType, StatePersistenceHandler> statePersistenceHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, StatePersistenceHandler.class);
         statePersistenceHandlerMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeStatePersistenceHandler.class);
@@ -186,8 +186,8 @@ public class BattlegroundsModule implements Module {
         binder.bind(GunInfoProvider.class).to(DefaultGunInfoProvider.class).in(GameScoped.class);
         binder.bind(GunRegistry.class).to(DefaultGunRegistry.class).in(GameScoped.class);
         binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class).in(GameScoped.class);
-        binder.bind(LivingEntityRegistry.class).toProvider(LivingEntityRegistryProvider.class).in(GameScoped.class);
         binder.bind(MeleeWeaponRegistry.class).to(DefaultMeleeWeaponRegistry.class).in(GameScoped.class);
+        binder.bind(MobRegistry.class).toProvider(MobRegistryProvider.class).in(GameScoped.class);
         binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
         binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
         binder.bind(ProjectileHitActionRegistry.class).in(GameScoped.class);

@@ -6,7 +6,7 @@ import org.bukkit.entity.LivingEntity;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface LivingEntityRegistry {
+public interface MobRegistry {
 
     Optional<GameMob> findByUniqueId(UUID uniqueId);
 
