@@ -28,6 +28,7 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDet
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessorProvider;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
+import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapterProvider;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.DefaultPlayerRegistry;
@@ -48,6 +49,7 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeLivingEntityRegistry;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
@@ -160,6 +162,9 @@ public class BattlegroundsModule implements Module {
         MapBinder<GameContextType, DamageProcessor> damageProcessorMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, DamageProcessor.class);
         damageProcessorMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeDamageProcessor.class);
 
+        MapBinder<GameContextType, EventDamageAdapter> eventDamageAdapterMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, EventDamageAdapter.class);
+        eventDamageAdapterMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeEventDamageAdapter.class);
+
         MapBinder<GameContextType, LivingEntityRegistry> livingEntityRegistryMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, LivingEntityRegistry.class);
         livingEntityRegistryMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeLivingEntityRegistry.class);
 
@@ -176,7 +181,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(DamageProcessor.class).toProvider(DamageProcessorProvider.class).in(GameScoped.class);
         binder.bind(DeploymentInfoProvider.class).to(DefaultDeploymentInfoProvider.class).in(GameScoped.class);
         binder.bind(EquipmentRegistry.class).to(DefaultEquipmentRegistry.class).in(GameScoped.class);
-        binder.bind(EventDamageAdapter.class).in(GameScoped.class);
+        binder.bind(EventDamageAdapter.class).toProvider(EventDamageAdapterProvider.class).in(GameScoped.class);
         binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
         binder.bind(GunInfoProvider.class).to(DefaultGunInfoProvider.class).in(GameScoped.class);
         binder.bind(GunRegistry.class).to(DefaultGunRegistry.class).in(GameScoped.class);

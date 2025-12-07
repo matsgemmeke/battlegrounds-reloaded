@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
+import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageResult;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -29,26 +30,21 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
     public void handle(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         Entity damager = this.resolveEntityDamager(event.getDamager());
-        GameKey entityGameKey = gameContextProvider.getGameKeyByEntityId(entity.getUniqueId()).orElse(null);
-        GameKey damagerGameKey = gameContextProvider.getGameKeyByEntityId(damager.getUniqueId()).orElse(null);
+        double damageAmount = event.getDamage();
 
-        if (entityGameKey == null && damagerGameKey == null) {
-            // Do not handle events outside of game instances
+        GameKey gameKey = gameContextProvider.getGameKeyByEntityId(damager.getUniqueId()).orElse(null);
+
+        if (gameKey == null) {
             return;
         }
-
-        GameKey gameKey = damagerGameKey != null ? damagerGameKey : entityGameKey;
 
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
                 .orElseThrow(() -> new EventHandlingException("Unable to process EntityDamageByEntityEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
         EventDamageAdapter eventDamageAdapter = gameScope.supplyInScope(gameContext, eventDamageAdapterProvider::get);
 
-        if (event.getDamager() instanceof Projectile) {
+        EventDamageResult eventDamageResult = eventDamageAdapter.processMeleeDamage(entity, damager, damageAmount);
 
-        } else {
-            eventDamageAdapter.processMeleeDamage(entity, damager);
-            event.setDamage(0);
-        }
+        event.setDamage(eventDamageResult.damageAmount());
     }
 
     private Entity resolveEntityDamager(Entity eventDamager) {

@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageEventNew;
+import nl.matsgemmeke.battlegrounds.game.damage.EntityDamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -52,12 +52,12 @@ public class OpenModeDamageProcessor implements DamageProcessor {
     }
 
     @Override
-    public DamageEventNew processDamage(DamageEventNew damageEvent) {
+    public EntityDamageEvent processDamage(EntityDamageEvent entityDamageEvent) {
         for (DamageModifier damageModifier : damageModifiers) {
-            damageModifier.apply(damageEvent);
+            damageModifier.apply(entityDamageEvent);
         }
 
-        return damageEvent;
+        return entityDamageEvent;
     }
 
     public void processDeploymentObjectDamage(@NotNull DeploymentObject deploymentObject, @NotNull Damage damage) {

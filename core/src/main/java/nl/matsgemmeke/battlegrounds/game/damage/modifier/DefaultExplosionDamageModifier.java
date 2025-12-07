@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.damage.modifier;
 
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageEventNew;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.game.damage.EntityDamageEvent;
 
 public class DefaultExplosionDamageModifier implements DamageModifier {
 
@@ -18,7 +18,7 @@ public class DefaultExplosionDamageModifier implements DamageModifier {
     }
 
     @Override
-    public DamageEventNew apply(DamageEventNew damageEvent) {
+    public EntityDamageEvent apply(EntityDamageEvent damageEvent) {
         if (damageEvent.damage().type() != DamageType.EXPLOSIVE_DAMAGE) {
             return damageEvent;
         }
