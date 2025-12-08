@@ -1,11 +1,13 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageNew;
 import nl.matsgemmeke.battlegrounds.game.damage.EntityDamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
@@ -54,8 +56,13 @@ public class OpenModeDamageProcessor implements DamageProcessor {
     @Override
     public EntityDamageEvent processDamage(EntityDamageEvent entityDamageEvent) {
         for (DamageModifier damageModifier : damageModifiers) {
-            damageModifier.apply(entityDamageEvent);
+            entityDamageEvent = damageModifier.apply(entityDamageEvent);
         }
+
+        GameEntity victim = entityDamageEvent.victim();
+        DamageNew damage = entityDamageEvent.damage();
+
+//        victim.damage(damage);
 
         return entityDamageEvent;
     }

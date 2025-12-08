@@ -54,7 +54,7 @@ public class OpenModeEventDamageAdapter implements EventDamageAdapter {
 
         damageProcessor.processDamage(entityDamageEvent);
 
-        return new EventDamageResult(meleeDamageAmount);
+        return new EventDamageResult(0);
     }
 
     private GameEntity findGameEntity(Entity entity) {

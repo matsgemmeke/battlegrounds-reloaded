@@ -132,7 +132,7 @@ class OpenModeEventDamageAdapterTest {
         verify(damageProcessor).processDamage(entityDamageEventCaptor.capture());
 
         assertThat(entityDamageEventCaptor.getValue()).satisfies(damageEvent -> {
-            assertThat(damageEvent.entity()).isEqualTo(entityGamePlayer);
+            assertThat(damageEvent.victim()).isEqualTo(entityGamePlayer);
             assertThat(damageEvent.damager()).isEqualTo(damagerGamePlayer);
             assertThat(damageEvent.damage()).satisfies(damage -> {
                assertThat(damage.amount()).isEqualTo(MELEE_WEAPON_DAMAGE);
