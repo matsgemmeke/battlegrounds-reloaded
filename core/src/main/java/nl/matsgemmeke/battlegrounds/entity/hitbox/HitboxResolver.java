@@ -20,17 +20,20 @@ public class HitboxResolver {
     private final HitboxConfiguration hitboxConfiguration;
     private final HitboxMapper hitboxMapper;
     private final Map<EntityType, Supplier<HitboxProvider>> hitboxProviders;
+    private final Map<EntityType, Supplier<HitboxProviderNew<? extends Entity>>> entityHitboxProviders;
 
     @Inject
     public HitboxResolver(HitboxConfiguration hitboxConfiguration, HitboxMapper hitboxMapper) {
         this.hitboxConfiguration = hitboxConfiguration;
         this.hitboxMapper = hitboxMapper;
         this.hitboxProviders = new HashMap<>();
+        this.entityHitboxProviders = new HashMap<>();
 
         this.registerHitboxProviders();
+        this.registerEntityHitboxProviders();
     }
 
-    public void registerHitboxProviders() {
+    private void registerHitboxProviders() {
         hitboxProviders.put(EntityType.CHICKEN, () -> this.createAgeableHitboxProvider("chicken", "adult-standing", "baby-standing", CHICKEN_ADULT_STANDING, CHICKEN_BABY_STANDING));
         hitboxProviders.put(EntityType.COW, () -> this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", COW_ADULT_STANDING, COW_BABY_STANDING));
         hitboxProviders.put(EntityType.CREEPER, () -> this.createDefaultHitboxProvider("creeper", "standing", CREEPER_STANDING));
@@ -43,8 +46,11 @@ public class HitboxResolver {
         hitboxProviders.put(EntityType.SLIME, this::createSlimeHitboxProvider);
         hitboxProviders.put(EntityType.SPIDER, () -> this.createDefaultHitboxProvider("spider", "standing", SPIDER_STANDING));
         hitboxProviders.put(EntityType.VILLAGER, this::createVillagerHitboxProvider);
-        hitboxProviders.put(EntityType.WOLF, () -> this.createSittableHitboxProvider("wolf", "adult-standing", "adult-sitting", "baby-standing", "baby-sitting", WOLF_ADULT_STANDING, WOLF_ADULT_SITTING, WOLF_BABY_STANDING, WOLF_BABY_SITTING));
         hitboxProviders.put(EntityType.ZOMBIE, () -> this.createAgeableHitboxProvider("zombie", "adult-standing", "baby-standing", ZOMBIE_ADULT_STANDING, ZOMBIE_BABY_STANDING));
+    }
+
+    private void registerEntityHitboxProviders() {
+        entityHitboxProviders.put(EntityType.WOLF, this::createWolfHitboxProvider);
     }
 
     public HitboxProvider resolveHitboxProvider(Entity entity) {
@@ -55,6 +61,16 @@ public class HitboxResolver {
         }
 
         return hitboxProvider.get();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Entity> HitboxProviderNew<T> resolveHitboxProviderNew(T entity) {
+        if (!entityHitboxProviders.containsKey(entity.getType())) {
+            return (HitboxProviderNew<T>) FALLBACK_PROVIDER.provideHitbox(entity);
+        }
+
+        var hitboxProviderSupplier = entityHitboxProviders.get(entity.getType());
+        return (HitboxProviderNew<T>) hitboxProviderSupplier.get();
     }
 
     private HitboxProvider createAgeableHitboxProvider(String entityType, String adultPose, String babyPose, RelativeHitbox adultDefaultHitbox, RelativeHitbox babyDefaultHitbox) {
@@ -85,25 +101,6 @@ public class HitboxResolver {
         return new PlayerHitboxProvider(standingHitbox, sneakingHitbox, sleepingHitbox);
     }
 
-    private HitboxProvider createSittableHitboxProvider(
-            String entityType,
-            String adultStandingPose,
-            String adultSittingPose,
-            String babyStandingPose,
-            String babySittingPose,
-            RelativeHitbox adultStandingDefaultHitbox,
-            RelativeHitbox adultSittingDefaultHitbox,
-            RelativeHitbox babyStandingDefaultHitbox,
-            RelativeHitbox babySittingDefaultHitbox
-    ) {
-        RelativeHitbox adultStandingHitbox = this.createRelativeHitbox(entityType, adultStandingPose, adultStandingDefaultHitbox);
-        RelativeHitbox adultSittingHitbox = this.createRelativeHitbox(entityType, adultSittingPose, adultSittingDefaultHitbox);
-        RelativeHitbox babyStandingHitbox = this.createRelativeHitbox(entityType, babyStandingPose, babyStandingDefaultHitbox);
-        RelativeHitbox babySittingHitbox = this.createRelativeHitbox(entityType, babySittingPose, babySittingDefaultHitbox);
-
-        return new SittableAgeableHitboxProvider(adultStandingHitbox, adultSittingHitbox, babyStandingHitbox, babySittingHitbox);
-    }
-
     private HitboxProvider createSlimeHitboxProvider() {
         RelativeHitbox standingHitbox = this.createRelativeHitbox("slime", "standing", SLIME_STANDING);
 
@@ -117,6 +114,15 @@ public class HitboxResolver {
         RelativeHitbox babySleepingHitbox = this.createRelativeHitbox("villager", "baby-sleeping", VILLAGER_BABY_SLEEPING);
 
         return new VillagerHitboxProvider(adultStandingHitbox, adultSleepingHitbox, babyStandingHitbox, babySleepingHitbox);
+    }
+
+    private HitboxProviderNew<Wolf> createWolfHitboxProvider() {
+        RelativeHitbox adultStandingHitbox = this.createRelativeHitbox("wolf", "adult-standing", WOLF_ADULT_STANDING);
+        RelativeHitbox adultSittingHitbox = this.createRelativeHitbox("wolf", "adult-sitting", WOLF_ADULT_SITTING);
+        RelativeHitbox babyStandingHitbox = this.createRelativeHitbox("wolf", "baby-standing", WOLF_BABY_STANDING);
+        RelativeHitbox babySittingHitbox = this.createRelativeHitbox("wolf", "baby-sitting", WOLF_BABY_SITTING);
+
+        return new SittableAgeableHitboxProvider<>(adultStandingHitbox, adultSittingHitbox, babyStandingHitbox, babySittingHitbox);
     }
 
     private RelativeHitbox createRelativeHitbox(String entityType, String pose, RelativeHitbox defaultHitbox) {

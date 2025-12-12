@@ -4,13 +4,12 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Sittable;
 
 /**
  * Hitbox provider for ageable entities that are able to stand and sit.
  */
-public class SittableAgeableHitboxProvider implements HitboxProvider {
+public class SittableAgeableHitboxProvider<T extends Ageable & Sittable> implements HitboxProviderNew<T> {
 
     private final RelativeHitbox adultStandingHitbox;
     private final RelativeHitbox adultSittingHitbox;
@@ -25,30 +24,26 @@ public class SittableAgeableHitboxProvider implements HitboxProvider {
     }
 
     @Override
-    public Hitbox provideHitbox(Entity entity) {
-        if (!(entity instanceof Sittable sittableEntity) || !(entity instanceof Ageable ageableEntity)) {
-            throw new HitboxProvisionException("Entity %s is not compatible: expected a sittable and ageable entity".formatted(entity.getType()));
-        }
-
+    public Hitbox provideHitbox(T entity) {
         Location baseLocation = entity.getLocation();
 
-        if (ageableEntity.isAdult()) {
-            return this.createAdultHitbox(baseLocation, sittableEntity);
+        if (entity.isAdult()) {
+            return this.createAdultHitbox(baseLocation, entity);
         } else {
-            return this.createBabyHitbox(baseLocation, sittableEntity);
+            return this.createBabyHitbox(baseLocation, entity);
         }
     }
 
-    private Hitbox createAdultHitbox(Location baseLocation, Sittable sittableEntity) {
-        if (sittableEntity.isSitting()) {
+    private Hitbox createAdultHitbox(Location baseLocation, T entity) {
+        if (entity.isSitting()) {
             return new Hitbox(baseLocation, adultSittingHitbox);
         } else {
             return new Hitbox(baseLocation, adultStandingHitbox);
         }
     }
 
-    private Hitbox createBabyHitbox(Location baseLocation, Sittable sittableEntity) {
-        if (sittableEntity.isSitting()) {
+    private Hitbox createBabyHitbox(Location baseLocation, T entity) {
+        if (entity.isSitting()) {
             return new Hitbox(baseLocation, babySittingHitbox);
         } else {
             return new Hitbox(baseLocation, babyStandingHitbox);

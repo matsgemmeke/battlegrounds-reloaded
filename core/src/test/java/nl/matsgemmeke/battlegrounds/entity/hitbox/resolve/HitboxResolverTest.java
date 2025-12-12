@@ -13,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,14 +32,13 @@ class HitboxResolverTest {
     private HitboxConfiguration hitboxConfiguration;
     @Spy
     private HitboxMapper hitboxMapper = new HitboxMapper();
-    @InjectMocks
-    private HitboxResolver hitboxResolver;
 
     @Test
     void resolveHitboxReturnsBoundingBoxHitboxProviderWhenGivenEntityTypeHasNoLinkedHitboxProvider() {
         Entity entity = mock(Entity.class);
         when(entity.getType()).thenReturn(EntityType.UNKNOWN);
 
+        HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
         HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
 
         assertThat(hitboxProvider).isInstanceOf(BoundingBoxHitboxProvider.class);
@@ -59,7 +57,7 @@ class HitboxResolverTest {
 
         when(hitboxConfiguration.getHitboxDefinition("creeper", "standing")).thenReturn(Optional.ofNullable(standingHitboxDefinition));
 
-        hitboxResolver.registerHitboxProviders();
+        HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
         HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(creeper);
 
         assertThat(hitboxProvider).isInstanceOf(DefaultHitboxProvider.class);
@@ -78,7 +76,7 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("enderman", "standing")).thenReturn(Optional.ofNullable(standingHitboxDefinition));
         when(hitboxConfiguration.getHitboxDefinition("enderman", "carrying")).thenReturn(Optional.ofNullable(carryingHitboxDefinition));
 
-        hitboxResolver.registerHitboxProviders();
+        HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
         HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(enderman);
 
         assertThat(hitboxProvider).isInstanceOf(EndermanHitboxProvider.class);
@@ -98,7 +96,7 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("player", "sneaking")).thenReturn(Optional.ofNullable(sneakingHitboxDefinition));
         when(hitboxConfiguration.getHitboxDefinition("player", "sleeping")).thenReturn(Optional.ofNullable(sleepingHitboxDefinition));
 
-        hitboxResolver.registerHitboxProviders();
+        HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
         HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(player);
 
         assertThat(hitboxProvider).isInstanceOf(PlayerHitboxProvider.class);
@@ -117,6 +115,7 @@ class HitboxResolverTest {
 
         when(hitboxConfiguration.getHitboxDefinition("slime", "standing")).thenReturn(Optional.ofNullable(standingHitboxDefinition));
 
+        HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
         HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(slime);
 
         assertThat(hitboxProvider).isInstanceOf(SlimeHitboxProvider.class);
@@ -142,6 +141,7 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("villager", "baby-standing")).thenReturn(Optional.ofNullable(babyStandingHitboxDefinition));
         when(hitboxConfiguration.getHitboxDefinition("villager", "baby-sleeping")).thenReturn(Optional.ofNullable(babySleepingHitboxDefinition));
 
+        HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
         HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(villager);
 
         assertThat(hitboxProvider).isInstanceOf(VillagerHitboxProvider.class);
@@ -167,7 +167,8 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("wolf", "baby-standing")).thenReturn(Optional.ofNullable(babyStandingHitboxDefinition));
         when(hitboxConfiguration.getHitboxDefinition("wolf", "baby-sitting")).thenReturn(Optional.ofNullable(babySittingHitboxDefinition));
 
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(wolf);
+        HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
+        HitboxProviderNew<Wolf> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(wolf);
 
         assertThat(hitboxProvider).isInstanceOf(SittableAgeableHitboxProvider.class);
     }
@@ -185,6 +186,7 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("zombie", "adult-standing")).thenReturn(Optional.ofNullable(adultStandingHitboxDefinition));
         when(hitboxConfiguration.getHitboxDefinition("zombie", "baby-standing")).thenReturn(Optional.ofNullable(babyStandingHitboxDefinition));
 
+        HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
         HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(zombie);
 
         assertThat(hitboxProvider).isInstanceOf(AgeableHitboxProvider.class);
