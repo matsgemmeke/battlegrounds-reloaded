@@ -116,7 +116,7 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("slime", "standing")).thenReturn(Optional.ofNullable(standingHitboxDefinition));
 
         HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(slime);
+        HitboxProviderNew<Slime> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(slime);
 
         assertThat(hitboxProvider).isInstanceOf(SlimeHitboxProvider.class);
     }

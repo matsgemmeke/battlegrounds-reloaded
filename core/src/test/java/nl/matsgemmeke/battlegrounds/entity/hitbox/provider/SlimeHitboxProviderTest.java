@@ -4,15 +4,12 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,16 +20,6 @@ class SlimeHitboxProviderTest {
     ));
 
     private final SlimeHitboxProvider hitboxProvider = new SlimeHitboxProvider(STANDING_HITBOX);
-
-    @Test
-    void provideHitboxThrowsHitboxProvisionExceptionWhenGivenEntityIsNoSlime() {
-        Player player = mock(Player.class);
-        when(player.getType()).thenReturn(EntityType.PLAYER);
-
-        assertThatThrownBy(() -> hitboxProvider.provideHitbox(player))
-                .isInstanceOf(HitboxProvisionException.class)
-                .hasMessage("Cannot provide a hitbox for an entity PLAYER as it is not a slime");
-    }
 
     @Test
     void provideHitboxReturnsStandingHitboxWhenSlimeSizeEquals1() {
