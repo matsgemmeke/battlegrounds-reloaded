@@ -15,7 +15,7 @@ import static nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxDefaults.*;
 
 public class HitboxResolver {
 
-    private static final HitboxProvider FALLBACK_PROVIDER = new BoundingBoxHitboxProvider();
+    private static final HitboxProviderNew<Entity> FALLBACK_PROVIDER = new BoundingBoxHitboxProvider();
 
     private final HitboxConfiguration hitboxConfiguration;
     private final HitboxMapper hitboxMapper;
@@ -57,7 +57,7 @@ public class HitboxResolver {
         Supplier<HitboxProvider> hitboxProvider = hitboxProviders.get(entity.getType());
 
         if (hitboxProvider == null) {
-            return FALLBACK_PROVIDER;
+            return null;
         }
 
         return hitboxProvider.get();
@@ -66,7 +66,7 @@ public class HitboxResolver {
     @SuppressWarnings("unchecked")
     public <T extends Entity> HitboxProviderNew<T> resolveHitboxProviderNew(T entity) {
         if (!entityHitboxProviders.containsKey(entity.getType())) {
-            return (HitboxProviderNew<T>) FALLBACK_PROVIDER.provideHitbox(entity);
+            return (HitboxProviderNew<T>) FALLBACK_PROVIDER;
         }
 
         var hitboxProviderSupplier = entityHitboxProviders.get(entity.getType());

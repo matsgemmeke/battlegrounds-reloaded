@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -67,10 +67,10 @@ class ShowHitboxesToolTest {
         when(player.getLocation()).thenReturn(playerLocation);
         when(player.getWorld()).thenReturn(world);
 
-        HitboxProvider hitboxProvider = mock(HitboxProvider.class);
+        HitboxProviderNew<Entity> hitboxProvider = mock();
         when(hitboxProvider.provideHitbox(entity)).thenReturn(hitbox);
 
-        when(hitboxResolver.resolveHitboxProvider(entity)).thenReturn(hitboxProvider);
+        when(hitboxResolver.resolveHitboxProviderNew(entity)).thenReturn(hitboxProvider);
         when(scheduler.createRepeatingSchedule(0L, 1L, 200L)).thenReturn(schedule);
         when(translator.translate(TranslationKey.TOOL_HITBOX_SUCCESS.getPath())).thenReturn(new TextTemplate("Displaying hitboxes for %bg_seconds% seconds inside a range of %bg_range% blocks."));
 

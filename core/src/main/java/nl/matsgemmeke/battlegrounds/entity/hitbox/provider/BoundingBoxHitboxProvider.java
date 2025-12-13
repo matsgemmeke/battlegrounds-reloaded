@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * A fallback hitbox provider that creates a hitbox based on the entity's bounding box.
  */
-public class BoundingBoxHitboxProvider implements HitboxProvider {
+public class BoundingBoxHitboxProvider implements HitboxProviderNew<Entity> {
 
     @Override
     public Hitbox provideHitbox(Entity entity) {
