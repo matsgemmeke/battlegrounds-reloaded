@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
@@ -32,7 +32,7 @@ public class DefaultGamePlayer implements GamePlayer {
     private static final float SPRINTING_ACCURACY = 0.5f;
     private static final int OPERATING_FOOD_LEVEL = 6;
 
-    private final HitboxProvider hitboxProvider;
+    private final HitboxProviderNew<Player> hitboxProvider;
     private final InternalsProvider internals;
     private final Player player;
     private final Set<ItemEffect> effects;
@@ -43,7 +43,7 @@ public class DefaultGamePlayer implements GamePlayer {
     private int previousFoodLevel;
 
     @Inject
-    public DefaultGamePlayer(InternalsProvider internals, @Assisted Player player, @Assisted HitboxProvider hitboxProvider) {
+    public DefaultGamePlayer(InternalsProvider internals, @Assisted Player player, @Assisted HitboxProviderNew<Player> hitboxProvider) {
         this.player = player;
         this.hitboxProvider = hitboxProvider;
         this.internals = internals;

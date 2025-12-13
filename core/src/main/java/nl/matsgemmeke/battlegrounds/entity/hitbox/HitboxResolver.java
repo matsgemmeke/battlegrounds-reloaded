@@ -40,7 +40,6 @@ public class HitboxResolver {
         hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
         hitboxProviders.put(EntityType.IRON_GOLEM, () -> this.createDefaultHitboxProvider("iron-golem", "standing", IRON_GOLEM_STANDING));
         hitboxProviders.put(EntityType.PIG, () -> this.createAgeableHitboxProvider("pig", "adult-standing", "baby-standing", PIG_ADULT_STANDING, PIG_BABY_STANDING));
-        hitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         hitboxProviders.put(EntityType.SHEEP, () -> this.createAgeableHitboxProvider("sheep", "adult-standing", "baby-standing", SHEEP_ADULT_STANDING, SHEEP_BABY_STANDING));
         hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", SKELETON_STANDING));
         hitboxProviders.put(EntityType.SLIME, this::createSlimeHitboxProvider);
@@ -50,6 +49,7 @@ public class HitboxResolver {
     }
 
     private void registerEntityHitboxProviders() {
+        entityHitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         entityHitboxProviders.put(EntityType.WOLF, this::createWolfHitboxProvider);
     }
 
@@ -93,7 +93,7 @@ public class HitboxResolver {
         return new EndermanHitboxProvider(standingHitbox, carryingHitbox);
     }
 
-    private HitboxProvider createPlayerHitboxProvider() {
+    private HitboxProviderNew<Player> createPlayerHitboxProvider() {
         RelativeHitbox standingHitbox = this.createRelativeHitbox("player", "standing", PLAYER_STANDING);
         RelativeHitbox sneakingHitbox = this.createRelativeHitbox("player", "sneaking", PLAYER_SNEAKING);
         RelativeHitbox sleepingHitbox = this.createRelativeHitbox("player", "sleeping", PLAYER_SLEEPING);

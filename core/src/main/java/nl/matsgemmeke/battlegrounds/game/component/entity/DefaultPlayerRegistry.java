@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
 import nl.matsgemmeke.battlegrounds.game.EntityContainer;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -53,7 +53,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
 
     @Override
     public GamePlayer register(Player player) {
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(player);
+        HitboxProviderNew<Player> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(player);
 
         UUID uniqueId = player.getUniqueId();
         gameContextProvider.registerEntity(uniqueId, gameKey);

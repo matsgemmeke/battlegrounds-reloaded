@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
 import org.bukkit.entity.Player;
 
 public interface DefaultGamePlayerFactory {
 
-    GamePlayer create(Player player, HitboxProvider hitboxProvider);
+    GamePlayer create(Player player, HitboxProviderNew<Player> hitboxProvider);
 }

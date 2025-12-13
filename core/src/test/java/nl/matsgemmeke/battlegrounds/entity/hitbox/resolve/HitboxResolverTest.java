@@ -39,7 +39,7 @@ class HitboxResolverTest {
         when(entity.getType()).thenReturn(EntityType.UNKNOWN);
 
         HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
+        HitboxProviderNew<Entity> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(entity);
 
         assertThat(hitboxProvider).isInstanceOf(BoundingBoxHitboxProvider.class);
     }
@@ -97,7 +97,7 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("player", "sleeping")).thenReturn(Optional.ofNullable(sleepingHitboxDefinition));
 
         HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(player);
+        HitboxProviderNew<Player> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(player);
 
         assertThat(hitboxProvider).isInstanceOf(PlayerHitboxProvider.class);
     }
