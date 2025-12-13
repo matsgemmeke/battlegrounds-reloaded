@@ -37,7 +37,6 @@ public class HitboxResolver {
         hitboxProviders.put(EntityType.CHICKEN, () -> this.createAgeableHitboxProvider("chicken", "adult-standing", "baby-standing", CHICKEN_ADULT_STANDING, CHICKEN_BABY_STANDING));
         hitboxProviders.put(EntityType.COW, () -> this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", COW_ADULT_STANDING, COW_BABY_STANDING));
         hitboxProviders.put(EntityType.CREEPER, () -> this.createDefaultHitboxProvider("creeper", "standing", CREEPER_STANDING));
-        hitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
         hitboxProviders.put(EntityType.IRON_GOLEM, () -> this.createDefaultHitboxProvider("iron-golem", "standing", IRON_GOLEM_STANDING));
         hitboxProviders.put(EntityType.PIG, () -> this.createAgeableHitboxProvider("pig", "adult-standing", "baby-standing", PIG_ADULT_STANDING, PIG_BABY_STANDING));
         hitboxProviders.put(EntityType.SHEEP, () -> this.createAgeableHitboxProvider("sheep", "adult-standing", "baby-standing", SHEEP_ADULT_STANDING, SHEEP_BABY_STANDING));
@@ -47,6 +46,7 @@ public class HitboxResolver {
     }
 
     private void registerEntityHitboxProviders() {
+        entityHitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
         entityHitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         entityHitboxProviders.put(EntityType.SLIME, this::createSlimeHitboxProvider);
         entityHitboxProviders.put(EntityType.VILLAGER, this::createVillagerHitboxProvider);
@@ -86,7 +86,7 @@ public class HitboxResolver {
         return new DefaultHitboxProvider(standingHitbox);
     }
 
-    private HitboxProvider createEndermanHitboxProvider() {
+    private HitboxProviderNew<Enderman> createEndermanHitboxProvider() {
         RelativeHitbox standingHitbox = this.createRelativeHitbox("enderman", "standing", ENDERMAN_STANDING);
         RelativeHitbox carryingHitbox = this.createRelativeHitbox("enderman", "carrying", ENDERMAN_CARRYING);
 

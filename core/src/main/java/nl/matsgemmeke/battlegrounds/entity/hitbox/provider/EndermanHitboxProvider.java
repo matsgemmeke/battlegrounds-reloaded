@@ -4,9 +4,8 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.Location;
 import org.bukkit.entity.Enderman;
-import org.bukkit.entity.Entity;
 
-public class EndermanHitboxProvider implements HitboxProvider {
+public class EndermanHitboxProvider implements HitboxProviderNew<Enderman> {
 
     private final RelativeHitbox carryingHitbox;
     private final RelativeHitbox standingHitbox;
@@ -17,12 +16,8 @@ public class EndermanHitboxProvider implements HitboxProvider {
     }
 
     @Override
-    public Hitbox provideHitbox(Entity entity) {
-        if (!(entity instanceof Enderman enderman)) {
-            throw new HitboxProvisionException("Cannot provide a hitbox for an entity %s as it is not an enderman".formatted(entity.getType()));
-        }
-
-        Location baseLocation = entity.getLocation();
+    public Hitbox provideHitbox(Enderman enderman) {
+        Location baseLocation = enderman.getLocation();
 
         if (enderman.getCarriedBlock() != null) {
             return new Hitbox(baseLocation, carryingHitbox);

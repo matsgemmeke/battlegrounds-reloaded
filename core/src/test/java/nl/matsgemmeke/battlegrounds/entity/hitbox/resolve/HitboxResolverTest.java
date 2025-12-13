@@ -77,7 +77,7 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("enderman", "carrying")).thenReturn(Optional.ofNullable(carryingHitboxDefinition));
 
         HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(enderman);
+        HitboxProviderNew<Enderman> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(enderman);
 
         assertThat(hitboxProvider).isInstanceOf(EndermanHitboxProvider.class);
     }
