@@ -7,11 +7,11 @@ import org.bukkit.entity.Entity;
 /**
  * Hitbox provider for entities with only a standing pose.
  */
-public class DefaultHitboxProvider implements HitboxProvider {
+public class SimpleEntityHitboxProvider implements HitboxProviderNew<Entity> {
 
     private final RelativeHitbox standingHitbox;
 
-    public DefaultHitboxProvider(RelativeHitbox standingHitbox) {
+    public SimpleEntityHitboxProvider(RelativeHitbox standingHitbox) {
         this.standingHitbox = standingHitbox;
     }
 

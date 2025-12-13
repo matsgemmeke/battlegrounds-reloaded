@@ -10,11 +10,11 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class DefaultHitboxProviderTest {
+class SimpleEntityHitboxProviderTest {
 
     private static final RelativeHitbox STANDING_HITBOX = new RelativeHitbox(Collections.emptySet());
 
-    private final DefaultHitboxProvider hitboxProvider = new DefaultHitboxProvider(STANDING_HITBOX);
+    private final SimpleEntityHitboxProvider hitboxProvider = new SimpleEntityHitboxProvider(STANDING_HITBOX);
 
     @Test
     void provideHitboxReturnsHitboxForStanding() {

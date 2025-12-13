@@ -4,12 +4,11 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Entity;
 
 /**
  * Hitbox provider for ageable entities with only a standing pose.
  */
-public class AgeableHitboxProvider implements HitboxProvider {
+public class AgeableHitboxProvider<T extends Ageable> implements HitboxProviderNew<T> {
 
     private final RelativeHitbox standingHitboxAdult;
     private final RelativeHitbox standingHitboxBaby;
@@ -20,11 +19,7 @@ public class AgeableHitboxProvider implements HitboxProvider {
     }
 
     @Override
-    public Hitbox provideHitbox(Entity entity) {
-        if (!(entity instanceof Ageable ageableEntity)) {
-            throw new HitboxProvisionException("Cannot provide a hitbox for an entity %s as it is not an ageable entity".formatted(entity.getType()));
-        }
-
+    public Hitbox provideHitbox(Ageable ageableEntity) {
         Location baseLocation = ageableEntity.getLocation();
 
         if (!ageableEntity.isAdult()) {

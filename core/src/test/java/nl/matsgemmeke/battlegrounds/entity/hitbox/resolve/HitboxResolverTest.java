@@ -51,16 +51,16 @@ class HitboxResolverTest {
     @ParameterizedTest
     @NullSource
     @MethodSource("creeperHitboxDefinitions")
-    void resolveHitboxReturnsDefaultHitboxProviderForCreeperEntity(HitboxDefinition standingHitboxDefinition) {
+    void resolveHitboxReturnsSimpleEntityHitboxProviderForCreeperEntity(HitboxDefinition standingHitboxDefinition) {
         Creeper creeper = mock(Creeper.class);
         when(creeper.getType()).thenReturn(EntityType.CREEPER);
 
         when(hitboxConfiguration.getHitboxDefinition("creeper", "standing")).thenReturn(Optional.ofNullable(standingHitboxDefinition));
 
         HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(creeper);
+        HitboxProviderNew<Creeper> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(creeper);
 
-        assertThat(hitboxProvider).isInstanceOf(DefaultHitboxProvider.class);
+        assertThat(hitboxProvider).isInstanceOf(SimpleEntityHitboxProvider.class);
     }
 
     static List<Arguments> endermanHitboxDefinitions() {
@@ -187,7 +187,7 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("zombie", "baby-standing")).thenReturn(Optional.ofNullable(babyStandingHitboxDefinition));
 
         HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(zombie);
+        HitboxProviderNew<Zombie> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(zombie);
 
         assertThat(hitboxProvider).isInstanceOf(AgeableHitboxProvider.class);
     }
