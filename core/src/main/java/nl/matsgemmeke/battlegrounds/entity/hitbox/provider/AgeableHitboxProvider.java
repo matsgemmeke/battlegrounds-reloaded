@@ -8,7 +8,7 @@ import org.bukkit.entity.Ageable;
 /**
  * Hitbox provider for ageable entities with only a standing pose.
  */
-public class AgeableHitboxProvider<T extends Ageable> implements HitboxProviderNew<T> {
+public class AgeableHitboxProvider<T extends Ageable> implements HitboxProvider<T> {
 
     private final RelativeHitbox standingHitboxAdult;
     private final RelativeHitbox standingHitboxBaby;

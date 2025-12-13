@@ -9,7 +9,7 @@ import org.bukkit.entity.Sittable;
 /**
  * Hitbox provider for ageable entities that are able to stand and sit.
  */
-public class SittableAgeableHitboxProvider<T extends Ageable & Sittable> implements HitboxProviderNew<T> {
+public class SittableAgeableHitboxProvider<T extends Ageable & Sittable> implements HitboxProvider<T> {
 
     private final RelativeHitbox adultStandingHitbox;
     private final RelativeHitbox adultSittingHitbox;

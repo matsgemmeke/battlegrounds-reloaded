@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.Location;
 import org.bukkit.entity.Enderman;
 
-public class EndermanHitboxProvider implements HitboxProviderNew<Enderman> {
+public class EndermanHitboxProvider implements HitboxProvider<Enderman> {
 
     private final RelativeHitbox carryingHitbox;
     private final RelativeHitbox standingHitbox;

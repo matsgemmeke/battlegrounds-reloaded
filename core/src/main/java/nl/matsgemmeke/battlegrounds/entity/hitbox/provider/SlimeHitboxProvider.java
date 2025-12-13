@@ -9,7 +9,7 @@ import org.bukkit.entity.Slime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SlimeHitboxProvider implements HitboxProviderNew<Slime> {
+public class SlimeHitboxProvider implements HitboxProvider<Slime> {
 
     private final RelativeHitbox standingHitbox;
 

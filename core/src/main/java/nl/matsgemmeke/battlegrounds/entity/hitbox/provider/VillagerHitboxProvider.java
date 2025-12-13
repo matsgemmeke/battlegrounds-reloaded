@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.util.HitboxUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Villager;
 
-public class VillagerHitboxProvider implements HitboxProviderNew<Villager> {
+public class VillagerHitboxProvider implements HitboxProvider<Villager> {
 
     private final RelativeHitbox adultStandingHitbox;
     private final RelativeHitbox adultSleepingHitbox;

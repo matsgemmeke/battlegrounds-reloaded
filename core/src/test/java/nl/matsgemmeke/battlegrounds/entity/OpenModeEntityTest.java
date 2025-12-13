@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.LivingEntity;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 class OpenModeEntityTest {
 
     @Mock
-    private HitboxProviderNew<LivingEntity> hitboxProvider;
+    private HitboxProvider<LivingEntity> hitboxProvider;
     @Mock
     private LivingEntity entity;
     @InjectMocks

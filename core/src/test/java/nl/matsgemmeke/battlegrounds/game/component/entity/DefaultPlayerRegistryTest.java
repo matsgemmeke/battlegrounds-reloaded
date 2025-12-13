@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ class DefaultPlayerRegistryTest {
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
-    private HitboxProviderNew<Player> hitboxProvider;
+    private HitboxProvider<Player> hitboxProvider;
     @Mock
     private HitboxResolver hitboxResolver;
 
@@ -51,7 +51,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProviderNew(player)).thenReturn(hitboxProvider);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID);
@@ -67,7 +67,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProviderNew(player)).thenReturn(hitboxProvider);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
@@ -84,7 +84,7 @@ class DefaultPlayerRegistryTest {
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProviderNew(player)).thenReturn(hitboxProvider);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         boolean registered = playerRegistry.isRegistered(PLAYER_UNIQUE_ID);
@@ -100,7 +100,7 @@ class DefaultPlayerRegistryTest {
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProviderNew(player)).thenReturn(hitboxProvider);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
         playerRegistry.deregister(PLAYER_UNIQUE_ID);
@@ -116,7 +116,7 @@ class DefaultPlayerRegistryTest {
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProviderNew(player)).thenReturn(hitboxProvider);
+        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         GamePlayer createdGamePlayer = playerRegistry.register(player);
 

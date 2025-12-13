@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import org.bukkit.entity.LivingEntity;
 
@@ -38,7 +38,7 @@ public class OpenModeMobRegistry implements MobRegistry {
             return existingMob;
         }
 
-        HitboxProviderNew<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(entity);
+        HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
         OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
 
         mobs.put(uniqueId, openModeEntity);

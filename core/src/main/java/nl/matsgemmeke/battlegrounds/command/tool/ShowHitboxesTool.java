@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
@@ -66,7 +66,7 @@ public class ShowHitboxesTool {
         World world = player.getWorld();
 
         for (Entity entity : world.getNearbyEntities(playerLocation, range, range, range)) {
-            HitboxProviderNew<Entity> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(entity);
+            HitboxProvider<Entity> hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
             Hitbox hitbox = hitboxProvider.provideHitbox(entity);
 
             for (HitboxComponent component : hitbox.getComponents()) {

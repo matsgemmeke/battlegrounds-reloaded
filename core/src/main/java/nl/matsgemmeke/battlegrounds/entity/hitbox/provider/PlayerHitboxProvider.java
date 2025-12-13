@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 
-public class PlayerHitboxProvider implements HitboxProviderNew<Player> {
+public class PlayerHitboxProvider implements HitboxProvider<Player> {
 
     private final RelativeHitbox standingHitbox;
     private final RelativeHitbox sneakingHitbox;

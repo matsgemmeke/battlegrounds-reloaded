@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.TargetType;
@@ -20,7 +20,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -77,7 +76,7 @@ public class OpenModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
-                HitboxProviderNew<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(livingEntity);
+                HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(livingEntity);
                 GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
 
                 targets.add(target);
@@ -153,7 +152,7 @@ public class OpenModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
-                HitboxProviderNew<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(livingEntity);
+                HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(livingEntity);
                 GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
 
                 targets.add(target);

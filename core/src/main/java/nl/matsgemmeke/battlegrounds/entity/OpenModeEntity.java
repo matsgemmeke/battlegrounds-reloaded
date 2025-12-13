@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.Location;
@@ -17,12 +17,12 @@ import java.util.UUID;
 
 public class OpenModeEntity implements GameMob {
 
-    private final HitboxProviderNew<LivingEntity> hitboxProvider;
+    private final HitboxProvider<LivingEntity> hitboxProvider;
     private final LivingEntity entity;
     @Nullable
     private Damage lastDamage;
 
-    public OpenModeEntity(LivingEntity entity, HitboxProviderNew<LivingEntity> hitboxProvider) {
+    public OpenModeEntity(LivingEntity entity, HitboxProvider<LivingEntity> hitboxProvider) {
         this.entity = entity;
         this.hitboxProvider = hitboxProvider;
     }

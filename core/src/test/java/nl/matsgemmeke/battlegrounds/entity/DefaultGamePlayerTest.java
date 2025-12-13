@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
@@ -43,7 +43,7 @@ class DefaultGamePlayerTest {
     @Mock
     private InternalsProvider internals;
     @Mock
-    private HitboxProviderNew<Player> hitboxProvider;
+    private HitboxProvider<Player> hitboxProvider;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private Player player;
     @InjectMocks

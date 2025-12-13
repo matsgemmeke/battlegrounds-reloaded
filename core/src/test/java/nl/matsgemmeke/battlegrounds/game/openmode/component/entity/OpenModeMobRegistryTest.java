@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProviderNew;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import org.bukkit.entity.LivingEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,12 +36,12 @@ class OpenModeMobRegistryTest {
 
     @Test
     void findByUniqueIdReturnsOptionalWithMatchingGameEntity() {
-        HitboxProviderNew<LivingEntity> hitboxProvider = mock();
+        HitboxProvider<LivingEntity> hitboxProvider = mock();
 
         LivingEntity livingEntity = mock(LivingEntity.class);
         when(livingEntity.getUniqueId()).thenReturn(UNIQUE_ID);
 
-        when(hitboxResolver.resolveHitboxProviderNew(livingEntity)).thenReturn(hitboxProvider);
+        when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
         mobRegistry.register(livingEntity);
         Optional<GameMob> gameMobOptional = mobRegistry.findByUniqueId(UNIQUE_ID);
@@ -53,12 +53,12 @@ class OpenModeMobRegistryTest {
 
     @Test
     void registerReturnsNewGameEntityInstanceOfGivenLivingEntity() {
-        HitboxProviderNew<LivingEntity> hitboxProvider = mock();
+        HitboxProvider<LivingEntity> hitboxProvider = mock();
 
         LivingEntity livingEntity = mock(LivingEntity.class);
         when(livingEntity.getUniqueId()).thenReturn(UNIQUE_ID);
 
-        when(hitboxResolver.resolveHitboxProviderNew(livingEntity)).thenReturn(hitboxProvider);
+        when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
         GameMob gameMob = mobRegistry.register(livingEntity);
 
@@ -67,12 +67,12 @@ class OpenModeMobRegistryTest {
 
     @Test
     void registerReturnsSameGameEntityInstanceOfGivenLivingEntityWhenAlreadyRegistered() {
-        HitboxProviderNew<LivingEntity> hitboxProvider = mock();
+        HitboxProvider<LivingEntity> hitboxProvider = mock();
 
         LivingEntity livingEntity = mock(LivingEntity.class);
         when(livingEntity.getUniqueId()).thenReturn(UNIQUE_ID);
 
-        when(hitboxResolver.resolveHitboxProviderNew(livingEntity)).thenReturn(hitboxProvider);
+        when(hitboxResolver.resolveHitboxProvider(livingEntity)).thenReturn(hitboxProvider);
 
         GameMob gameMob1 = mobRegistry.register(livingEntity);
         GameMob gameMob2 = mobRegistry.register(livingEntity);
