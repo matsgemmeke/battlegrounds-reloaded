@@ -4,10 +4,9 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.util.HitboxUtil;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Villager;
 
-public class VillagerHitboxProvider implements HitboxProvider {
+public class VillagerHitboxProvider implements HitboxProviderNew<Villager> {
 
     private final RelativeHitbox adultStandingHitbox;
     private final RelativeHitbox adultSleepingHitbox;
@@ -22,11 +21,7 @@ public class VillagerHitboxProvider implements HitboxProvider {
     }
 
     @Override
-    public Hitbox provideHitbox(Entity entity) {
-        if (!(entity instanceof Villager villager)) {
-            throw new HitboxProvisionException("Entity %s is not compatible: expected a villager entity".formatted(entity.getType()));
-        }
-
+    public Hitbox provideHitbox(Villager villager) {
         Location baseLocation = villager.getLocation();
 
         if (villager.isAdult()) {

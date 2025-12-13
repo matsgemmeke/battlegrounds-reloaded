@@ -7,8 +7,6 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Sign;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,16 +30,6 @@ class VillagerHitboxProviderTest {
     private static final RelativeHitbox BABY_SLEEPING_HITBOX = new RelativeHitbox(new HashSet<>());
 
     private final VillagerHitboxProvider hitboxProvider = new VillagerHitboxProvider(ADULT_STANDING_HITBOX, ADULT_SLEEPING_HITBOX, BABY_STANDING_HITBOX, BABY_SLEEPING_HITBOX);
-
-    @Test
-    void provideHitboxThrowsHitboxProvisionExceptionWhenGivenEntityIsNoVillager() {
-        Player player = mock(Player.class);
-        when(player.getType()).thenReturn(EntityType.PLAYER);
-
-        assertThatThrownBy(() -> hitboxProvider.provideHitbox(player))
-                .isInstanceOf(HitboxProvisionException.class)
-                .hasMessage("Entity PLAYER is not compatible: expected a villager entity");
-    }
 
     static List<Arguments> standingScenarios() {
         return List.of(arguments(true, ADULT_STANDING_HITBOX), arguments(false, BABY_STANDING_HITBOX));

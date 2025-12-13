@@ -142,7 +142,7 @@ class HitboxResolverTest {
         when(hitboxConfiguration.getHitboxDefinition("villager", "baby-sleeping")).thenReturn(Optional.ofNullable(babySleepingHitboxDefinition));
 
         HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
-        HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(villager);
+        HitboxProviderNew<Villager> hitboxProvider = hitboxResolver.resolveHitboxProviderNew(villager);
 
         assertThat(hitboxProvider).isInstanceOf(VillagerHitboxProvider.class);
     }

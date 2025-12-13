@@ -43,13 +43,13 @@ public class HitboxResolver {
         hitboxProviders.put(EntityType.SHEEP, () -> this.createAgeableHitboxProvider("sheep", "adult-standing", "baby-standing", SHEEP_ADULT_STANDING, SHEEP_BABY_STANDING));
         hitboxProviders.put(EntityType.SKELETON, () -> this.createDefaultHitboxProvider("skeleton", "standing", SKELETON_STANDING));
         hitboxProviders.put(EntityType.SPIDER, () -> this.createDefaultHitboxProvider("spider", "standing", SPIDER_STANDING));
-        hitboxProviders.put(EntityType.VILLAGER, this::createVillagerHitboxProvider);
         hitboxProviders.put(EntityType.ZOMBIE, () -> this.createAgeableHitboxProvider("zombie", "adult-standing", "baby-standing", ZOMBIE_ADULT_STANDING, ZOMBIE_BABY_STANDING));
     }
 
     private void registerEntityHitboxProviders() {
         entityHitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
         entityHitboxProviders.put(EntityType.SLIME, this::createSlimeHitboxProvider);
+        entityHitboxProviders.put(EntityType.VILLAGER, this::createVillagerHitboxProvider);
         entityHitboxProviders.put(EntityType.WOLF, this::createWolfHitboxProvider);
     }
 
@@ -107,7 +107,7 @@ public class HitboxResolver {
         return new SlimeHitboxProvider(standingHitbox);
     }
 
-    private HitboxProvider createVillagerHitboxProvider() {
+    private HitboxProviderNew<Villager> createVillagerHitboxProvider() {
         RelativeHitbox adultStandingHitbox = this.createRelativeHitbox("villager", "adult-standing", VILLAGER_ADULT_STANDING);
         RelativeHitbox adultSleepingHitbox = this.createRelativeHitbox("villager", "adult-sleeping", VILLAGER_ADULT_SLEEPING);
         RelativeHitbox babyStandingHitbox = this.createRelativeHitbox("villager", "baby-standing", VILLAGER_BABY_STANDING);
