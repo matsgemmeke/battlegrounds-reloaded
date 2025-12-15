@@ -14,18 +14,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PlaceDeployment implements Deployment {
 
     private static final int TARGET_BLOCK_SCAN_DISTANCE = 4;
 
-    @NotNull
     private final AudioEmitter audioEmitter;
     @Nullable
     private PlaceDeploymentProperties properties;
 
     @Inject
-    public PlaceDeployment(@NotNull AudioEmitter audioEmitter) {
+    public PlaceDeployment(AudioEmitter audioEmitter) {
         this.audioEmitter = audioEmitter;
     }
 
@@ -35,6 +35,10 @@ public class PlaceDeployment implements Deployment {
 
     @NotNull
     public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+        return DeploymentResult.failure();
+    }
+
+    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
@@ -42,7 +46,7 @@ public class PlaceDeployment implements Deployment {
         List<Block> targetBlocks = deployer.getLastTwoTargetBlocks(TARGET_BLOCK_SCAN_DISTANCE);
 
         if (targetBlocks.size() != 2 || !targetBlocks.get(1).getType().isOccluding()) {
-            return DeploymentResult.failure();
+            return Optional.empty();
         }
 
         Block targetBlock = targetBlocks.get(1);
@@ -50,7 +54,7 @@ public class PlaceDeployment implements Deployment {
         BlockFace targetBlockFace = targetBlock.getFace(adjacentBlock);
 
         if (targetBlockFace == null) {
-            return DeploymentResult.failure();
+            return Optional.empty();
         }
 
         this.placeBlock(adjacentBlock, targetBlockFace, properties.material());
@@ -64,7 +68,7 @@ public class PlaceDeployment implements Deployment {
 
         deployer.setHeldItem(null);
 
-        return DeploymentResult.success(object);
+        return Optional.of(new DeploymentContext(deployerEntity, object, deployer, object));
     }
 
     private void placeBlock(Block block, BlockFace blockFace, Material material) {

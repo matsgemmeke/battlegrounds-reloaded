@@ -12,6 +12,8 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 /**
  * A deployment system that produces a {@link DeploymentObject} using an {@link Item}.
  */
@@ -36,6 +38,10 @@ public class ThrowDeployment implements Deployment {
 
     @NotNull
     public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+        return DeploymentResult.failure();
+    }
+
+    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
@@ -49,17 +55,17 @@ public class ThrowDeployment implements Deployment {
         item.setPickupDelay(DEFAULT_PICKUP_DELAY);
         item.setVelocity(velocity);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.setCooldown(properties.cooldown());
-        object.setHealth(properties.health());
-        object.setResistances(properties.resistances());
+        ThrowDeploymentObject deploymentObject = new ThrowDeploymentObject(item);
+        deploymentObject.setCooldown(properties.cooldown());
+        deploymentObject.setHealth(properties.health());
+        deploymentObject.setResistances(properties.resistances());
 
-        properties.projectileEffects().forEach(effect -> effect.onLaunch(deployerEntity, object));
+        properties.projectileEffects().forEach(effect -> effect.onLaunch(deployerEntity, deploymentObject));
 
         audioEmitter.playSounds(properties.throwSounds(), deployLocation);
 
         deployer.setHeldItem(null);
 
-        return DeploymentResult.success(object);
+        return Optional.of(new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject));
     }
 }

@@ -3,47 +3,52 @@ package nl.matsgemmeke.battlegrounds.item.deploy.prime;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class PrimeDeploymentTest {
+@ExtendWith(MockitoExtension.class)
+class PrimeDeploymentTest {
 
+    @Mock
     private AudioEmitter audioEmitter;
-
-    @BeforeEach
-    public void setUp() {
-        audioEmitter = mock(AudioEmitter.class);
-    }
+    @InjectMocks
+    private PrimeDeployment deployment;
 
     @Test
-    public void performReturnsNewInstanceOfPrimeDeploymentObjectWithoutPlayingSounds() {
+    void createContextReturnsDeploymentContextOptionalWithPrimeDeploymentObjectWithoutPlayingSounds() {
         ItemStack itemStack = new ItemStack(Material.STICK);
         Entity deployerEntity = mock(Entity.class);
 
         Deployer deployer = mock(Deployer.class);
         when(deployer.getHeldItem()).thenReturn(itemStack);
 
-        PrimeDeployment deployment = new PrimeDeployment(audioEmitter);
-        DeploymentResult result = deployment.perform(deployer, deployerEntity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity);
 
-        assertThat(result.success()).isTrue();
-        assertThat(result.object()).isInstanceOf(PrimeDeploymentObject.class);
+        assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
+            assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
+            assertThat(deploymentContext.deployer()).isEqualTo(deployer);
+            assertThat(deploymentContext.deploymentObject()).isNull();
+        });
 
         verifyNoInteractions(audioEmitter);
     }
 
     @Test
-    public void performReturnsNewInstanceOfPrimeDeploymentObjectAndPlaySoundsInAudioEmitter() {
+    void createContextReturnsDeploymentContextOptionalWithNewInstanceOfPrimeDeploymentObjectAndPlaysSounds() {
         ItemStack itemStack = new ItemStack(Material.STICK);
         List<GameSound> primeSounds = List.of(mock(GameSound.class));
         Location deployerLocation = new Location(null, 1, 1, 1);
@@ -54,12 +59,14 @@ public class PrimeDeploymentTest {
         Entity deployerEntity = mock(Entity.class);
         when(deployerEntity.getLocation()).thenReturn(deployerLocation);
 
-        PrimeDeployment deployment = new PrimeDeployment(audioEmitter);
         deployment.configurePrimeSounds(primeSounds);
-        DeploymentResult result = deployment.perform(deployer, deployerEntity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity);
 
-        assertThat(result.success()).isTrue();
-        assertThat(result.object()).isInstanceOf(PrimeDeploymentObject.class);
+        assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
+            assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
+            assertThat(deploymentContext.deployer()).isEqualTo(deployer);
+            assertThat(deploymentContext.deploymentObject()).isNull();
+        });
 
         verify(audioEmitter).playSounds(primeSounds, deployerLocation);
     }

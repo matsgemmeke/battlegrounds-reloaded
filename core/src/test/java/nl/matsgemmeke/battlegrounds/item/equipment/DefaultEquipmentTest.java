@@ -8,13 +8,23 @@ import nl.matsgemmeke.battlegrounds.item.effect.Activator;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class DefaultEquipmentTest {
+
+    private DefaultEquipment equipment;
+
+    @BeforeEach
+    void setUp() {
+        equipment = new DefaultEquipment();
+    }
 
     @Test
     void activateDeploymentActivatesDeploymentHandler() {
@@ -225,19 +235,38 @@ class DefaultEquipmentTest {
     }
 
     @Test
-    void performDeploymentCallsDeploymentHandler() {
-        Deployment deployment = mock(Deployment.class);
+    void performDeploymentDoesNothingWhenDeploymentProducesNoDeploymentContext() {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
         Player player = mock(Player.class);
         when(holder.getEntity()).thenReturn(player);
 
-        DefaultEquipment equipment = new DefaultEquipment();
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.createContext(holder, player)).thenReturn(Optional.empty());
+
         equipment.setDeploymentHandler(deploymentHandler);
         equipment.performDeployment(deployment, holder);
 
-        verify(deploymentHandler).handleDeployment(deployment, holder, player);
+        verifyNoInteractions(deploymentHandler);
+    }
+
+    @Test
+    void performDeploymentCallsDeploymentHandlerWhenDeploymentProducesDeploymentContext() {
+        DeploymentContext deploymentContext = new DeploymentContext(null, null, null, null);
+        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        Player player = mock(Player.class);
+        when(holder.getEntity()).thenReturn(player);
+
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.createContext(holder, player)).thenReturn(Optional.of(deploymentContext));
+
+        equipment.setDeploymentHandler(deploymentHandler);
+        equipment.performDeployment(deployment, holder);
+
+        verify(deploymentHandler).performDeployment(deploymentContext);
     }
 
     @Test
