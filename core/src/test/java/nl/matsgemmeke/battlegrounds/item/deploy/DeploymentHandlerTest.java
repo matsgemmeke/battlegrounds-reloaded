@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static nl.matsgemmeke.battlegrounds.MockUtils.RUN_SCHEDULE_TASK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -405,5 +406,78 @@ class DeploymentHandlerTest {
         boolean deployed = deploymentHandler.isDeployed();
 
         assertThat(deployed).isTrue();
+    }
+
+    @Test
+    void performDeploymentChangesSourceWhenLatestPerformanceIsStillPerforming() {
+        ItemEffectSource effectSource = mock(ItemEffectSource.class);
+        DeploymentContext context = new DeploymentContext(deployerEntity, effectSource, deployer, null);
+
+        ItemEffectPerformance latestPerformance = mock(ItemEffectPerformance.class);
+        when(latestPerformance.isPerforming()).thenReturn(true);
+
+        when(itemEffect.getLatestPerformance()).thenReturn(Optional.of(latestPerformance));
+
+        DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
+        deploymentHandler.performDeployment(context);
+
+        verify(latestPerformance).changeSource(effectSource);
+    }
+
+    @Test
+    void performDeploymentPerformsPendingDeploymentWhenNoDeploymentObjectIsProducedYet() {
+        Location effectSourceLocation = new Location(null, 1, 1, 1);
+
+        ItemEffectSource effectSource = mock(ItemEffectSource.class);
+        when(effectSource.getLocation()).thenReturn(effectSourceLocation);
+
+        DeploymentContext context = new DeploymentContext(deployerEntity, effectSource, deployer, null);
+
+        when(itemEffect.getLatestPerformance()).thenReturn(Optional.empty());
+
+        DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
+        deploymentHandler.performDeployment(context);
+
+        ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
+
+        assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getEntity()).isEqualTo(deployerEntity);
+            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(effectSourceLocation);
+            assertThat(itemEffectContext.getSource()).isEqualTo(effectSource);
+        });
+    }
+
+    @Test
+    void performDeploymentPerformsCompleteDeploymentWhenDeploymentObjectIsProduced() {
+        Activator activator = mock(Activator.class);
+        ItemEffectSource effectSource = mock(ItemEffectSource.class);
+        Location deployLocation = new Location(null, 1, 1, 1);
+        DeploymentContext context = new DeploymentContext(deployerEntity, effectSource, deployer, deploymentObject);
+
+        Schedule delaySchedule = mock(Schedule.class);
+        doAnswer(RUN_SCHEDULE_TASK).when(delaySchedule).addTask(any(ScheduleTask.class));
+
+        when(deployer.getDeployLocation()).thenReturn(deployLocation);
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
+        when(itemEffect.getLatestPerformance()).thenReturn(Optional.empty());
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
+
+        DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
+        deploymentHandler.setActivator(activator);
+        deploymentHandler.performDeployment(context);
+
+        ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
+
+        assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getEntity()).isEqualTo(deployerEntity);
+            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(deployLocation);
+            assertThat(itemEffectContext.getSource()).isEqualTo(effectSource);
+        });
+
+        verify(activator).prepare(deployer);
+        verify(deployer).setCanDeploy(false);
+        verify(deployer).setCanDeploy(true);
     }
 }

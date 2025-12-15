@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 public class DeploymentHandler {
 
@@ -19,6 +20,7 @@ public class DeploymentHandler {
     private final ItemEffect itemEffect;
     private final ParticleEffectSpawner particleEffectSpawner;
     private final Scheduler scheduler;
+    @Nullable
     private Activator activator;
     private boolean deployed;
     private DeploymentObject deploymentObject;
@@ -137,5 +139,52 @@ public class DeploymentHandler {
 
     public boolean isDeployed() {
         return deployed;
+    }
+
+    public void performDeployment(DeploymentContext context) {
+        ItemEffectSource effectSource = context.effectSource();
+        ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
+
+        if (latestPerformance != null && latestPerformance.isPerforming()) {
+            latestPerformance.changeSource(effectSource);
+            return;
+        }
+
+        Entity entity = context.entity();
+        Deployer deployer = context.deployer();
+        DeploymentObject deploymentObject = context.deploymentObject();
+
+        if (deploymentObject == null) {
+            this.performPendingDeployment(entity, effectSource);
+        } else {
+            this.performCompletedDeployment(entity, effectSource, deployer, deploymentObject);
+        }
+    }
+
+    private void performPendingDeployment(Entity entity, ItemEffectSource effectSource) {
+        Location initiationLocation = effectSource.getLocation();
+        ItemEffectContext context = new ItemEffectContext(entity, effectSource, initiationLocation);
+
+        itemEffect.startPerformance(context);
+    }
+
+    private void performCompletedDeployment(Entity entity, ItemEffectSource effectSource, Deployer deployer, DeploymentObject deploymentObject) {
+        this.deploymentObject = deploymentObject;
+
+        Location initiationLocation = deployer.getDeployLocation();
+        ItemEffectContext context = new ItemEffectContext(entity, effectSource, initiationLocation);
+
+        itemEffect.startPerformance(context);
+
+        deployed = true;
+        deployer.setCanDeploy(false);
+
+        Schedule delaySchedule = scheduler.createSingleRunSchedule(deploymentObject.getCooldown());
+        delaySchedule.addTask(() -> deployer.setCanDeploy(true));
+        delaySchedule.start();
+
+        if (activator != null) {
+            activator.prepare(deployer);
+        }
     }
 }
