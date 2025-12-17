@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.throwing;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -38,6 +39,8 @@ class ThrowDeploymentTest {
 
     @Mock
     private AudioEmitter audioEmitter;
+    @Mock
+    private HitboxResolver hitboxResolver;
     @InjectMocks
     private ThrowDeployment deployment;
 

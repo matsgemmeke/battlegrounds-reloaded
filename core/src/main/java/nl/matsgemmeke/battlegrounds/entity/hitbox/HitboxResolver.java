@@ -15,7 +15,8 @@ import static nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxDefaults.*;
 
 public class HitboxResolver {
 
-    private static final HitboxProvider<Entity> FALLBACK_PROVIDER = new BoundingBoxHitboxProvider();
+    private static final HitboxProvider<Entity> FALLBACK_PROVIDER = new DefaultEntityHitboxProvider();
+    private static final HitboxProvider<StaticBoundingBox> DEPLOYMENT_OBJECT_HITBOX_PROVIDER = new StaticBoundingBoxHitboxProvider();
 
     private final HitboxConfiguration hitboxConfiguration;
     private final HitboxMapper hitboxMapper;
@@ -45,6 +46,10 @@ public class HitboxResolver {
         entityHitboxProviders.put(EntityType.VILLAGER, this::createVillagerHitboxProvider);
         entityHitboxProviders.put(EntityType.WOLF, this::createWolfHitboxProvider);
         entityHitboxProviders.put(EntityType.ZOMBIE, () -> this.createAgeableHitboxProvider("zombie", "adult-standing", "baby-standing", ZOMBIE_ADULT_STANDING, ZOMBIE_BABY_STANDING));
+    }
+
+    public HitboxProvider<StaticBoundingBox> resolveDeploymentObjectHitboxProvider() {
+        return DEPLOYMENT_OBJECT_HITBOX_PROVIDER;
     }
 
     @SuppressWarnings("unchecked")

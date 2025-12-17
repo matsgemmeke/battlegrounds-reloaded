@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxUtil;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.util.HitboxUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;

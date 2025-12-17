@@ -11,9 +11,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class BoundingBoxHitboxProviderTest {
+class DefaultEntityHitboxProviderTest {
 
-    private final BoundingBoxHitboxProvider hitboxProvider = new BoundingBoxHitboxProvider();
+    private final DefaultEntityHitboxProvider hitboxProvider = new DefaultEntityHitboxProvider();
 
     @Test
     void provideHitboxReturnsHitboxBasedOnBoundingBoxOfGivenEntity() {

@@ -1,5 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.place;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -21,22 +24,23 @@ import java.util.UUID;
 public class PlaceDeploymentObject implements DeploymentObject {
 
     private static final double BLOCK_CENTER_OFFSET = 0.5;
+    private static final double BOUNDING_BOX_SIZE = 0.2;
 
+    private final Block block;
+    private final HitboxProvider<StaticBoundingBox> hitboxProvider;
+    private final Material material;
     private final UUID uniqueId;
-    @NotNull
-    private Block block;
     @Nullable
     private Damage lastDamage;
     private double health;
     private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
-    @NotNull
-    private Material material;
 
-    public PlaceDeploymentObject(@NotNull Block block, @NotNull Material material) {
+    public PlaceDeploymentObject(Block block, Material material, HitboxProvider<StaticBoundingBox> hitboxProvider) {
         this.block = block;
         this.material = material;
+        this.hitboxProvider = hitboxProvider;
         this.uniqueId = UUID.randomUUID();
     }
 
@@ -114,6 +118,19 @@ public class PlaceDeploymentObject implements DeploymentObject {
 
     public boolean exists() {
         return block.getType() == material;
+    }
+
+    @Override
+    public Hitbox getHitbox() {
+        Location baseLocation = block.getLocation();
+        StaticBoundingBox boundingBox = new StaticBoundingBox(baseLocation, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE);
+
+        return hitboxProvider.provideHitbox(boundingBox);
+    }
+
+    @Override
+    public String getName() {
+        return this.getClass().getSimpleName();
     }
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {

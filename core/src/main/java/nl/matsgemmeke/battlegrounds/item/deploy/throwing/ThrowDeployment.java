@@ -1,6 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.throwing;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import org.bukkit.Location;
@@ -22,14 +25,15 @@ public class ThrowDeployment implements Deployment {
     // Take a high number to make sure the item cannot be picked up before the deployment is complete
     private static final int DEFAULT_PICKUP_DELAY = 100000;
 
-    @NotNull
     private final AudioEmitter audioEmitter;
+    private final HitboxResolver hitboxResolver;
     @Nullable
     private ThrowDeploymentProperties properties;
 
     @Inject
-    public ThrowDeployment(@NotNull AudioEmitter audioEmitter) {
+    public ThrowDeployment(AudioEmitter audioEmitter, HitboxResolver hitboxResolver) {
         this.audioEmitter = audioEmitter;
+        this.hitboxResolver = hitboxResolver;
     }
 
     public void configureProperties(ThrowDeploymentProperties properties) {
@@ -55,7 +59,9 @@ public class ThrowDeployment implements Deployment {
         item.setPickupDelay(DEFAULT_PICKUP_DELAY);
         item.setVelocity(velocity);
 
-        ThrowDeploymentObject deploymentObject = new ThrowDeploymentObject(item);
+        HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
+
+        ThrowDeploymentObject deploymentObject = new ThrowDeploymentObject(item, hitboxProvider);
         deploymentObject.setCooldown(properties.cooldown());
         deploymentObject.setHealth(properties.health());
         deploymentObject.setResistances(properties.resistances());

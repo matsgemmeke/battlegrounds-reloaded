@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.entity.hitbox.util;
+package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -6,8 +6,16 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Bed;
 
 import java.util.Optional;
+import java.util.Set;
 
 public final class HitboxUtil {
+
+    public static Hitbox createHitbox(StaticBoundingBox boundingBox) {
+        HitboxComponent component = new HitboxComponent(HitboxComponentType.TORSO, boundingBox.widthX(), boundingBox.height(), boundingBox.widthZ(), 0, 0, 0);
+        RelativeHitbox relativeHitbox = new RelativeHitbox(Set.of(component));
+
+        return new Hitbox(boundingBox.baseLocation(), relativeHitbox);
+    }
 
     public static Optional<Location> getBedBaseLocation(Location baseLocation) {
         BlockData blockData = baseLocation.getBlock().getBlockData();

@@ -1,6 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.place;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import org.bukkit.Material;
@@ -21,12 +24,14 @@ public class PlaceDeployment implements Deployment {
     private static final int TARGET_BLOCK_SCAN_DISTANCE = 4;
 
     private final AudioEmitter audioEmitter;
+    private final HitboxResolver hitboxResolver;
     @Nullable
     private PlaceDeploymentProperties properties;
 
     @Inject
-    public PlaceDeployment(AudioEmitter audioEmitter) {
+    public PlaceDeployment(AudioEmitter audioEmitter, HitboxResolver hitboxResolver) {
         this.audioEmitter = audioEmitter;
+        this.hitboxResolver = hitboxResolver;
     }
 
     public void configureProperties(PlaceDeploymentProperties properties) {
@@ -59,7 +64,9 @@ public class PlaceDeployment implements Deployment {
 
         this.placeBlock(adjacentBlock, targetBlockFace, properties.material());
 
-        PlaceDeploymentObject object = new PlaceDeploymentObject(adjacentBlock, properties.material());
+        HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
+
+        PlaceDeploymentObject object = new PlaceDeploymentObject(adjacentBlock, properties.material(), hitboxProvider);
         object.setCooldown(properties.cooldown());
         object.setHealth(properties.health());
         object.setResistances(properties.resistances());

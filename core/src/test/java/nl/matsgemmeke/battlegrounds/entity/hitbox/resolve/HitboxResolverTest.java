@@ -34,14 +34,14 @@ class HitboxResolverTest {
     private HitboxMapper hitboxMapper = new HitboxMapper();
 
     @Test
-    void resolveHitboxReturnsBoundingBoxHitboxProviderWhenGivenEntityTypeHasNoLinkedHitboxProvider() {
+    void resolveHitboxReturnsDefaultEntityHitboxProviderWhenGivenEntityTypeHasNoLinkedHitboxProvider() {
         Entity entity = mock(Entity.class);
         when(entity.getType()).thenReturn(EntityType.UNKNOWN);
 
         HitboxResolver hitboxResolver = new HitboxResolver(hitboxConfiguration, hitboxMapper);
         HitboxProvider<Entity> hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
 
-        assertThat(hitboxProvider).isInstanceOf(BoundingBoxHitboxProvider.class);
+        assertThat(hitboxProvider).isInstanceOf(DefaultEntityHitboxProvider.class);
     }
 
     static List<Arguments> creeperHitboxDefinitions() {

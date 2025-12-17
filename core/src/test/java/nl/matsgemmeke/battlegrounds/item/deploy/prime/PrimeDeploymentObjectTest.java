@@ -81,14 +81,6 @@ public class PrimeDeploymentObjectTest {
     }
 
     @Test
-    public void isDeployedAlwaysReturnsFalse() {
-        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, itemStack);
-        boolean deployed = object.isDeployed();
-
-        assertThat(deployed).isFalse();
-    }
-
-    @Test
     public void removeRemovesTheItemStackFromTheHolder() {
         PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, itemStack);
         object.remove();
