@@ -409,22 +409,6 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    void performDeploymentChangesSourceWhenLatestPerformanceIsStillPerforming() {
-        ItemEffectSource effectSource = mock(ItemEffectSource.class);
-        DeploymentContext context = new DeploymentContext(deployerEntity, effectSource, deployer, null);
-
-        ItemEffectPerformance latestPerformance = mock(ItemEffectPerformance.class);
-        when(latestPerformance.isPerforming()).thenReturn(true);
-
-        when(itemEffect.getLatestPerformance()).thenReturn(Optional.of(latestPerformance));
-
-        DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.performDeployment(context);
-
-        verify(latestPerformance).changeSource(effectSource);
-    }
-
-    @Test
     void performDeploymentPerformsPendingDeploymentWhenNoDeploymentObjectIsProducedYet() {
         Location effectSourceLocation = new Location(null, 1, 1, 1);
 

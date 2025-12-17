@@ -145,7 +145,7 @@ public class DeploymentHandler {
         ItemEffectSource effectSource = context.effectSource();
         ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
 
-        if (latestPerformance != null && latestPerformance.isPerforming()) {
+        if (latestPerformance != null) {
             latestPerformance.changeSource(effectSource);
             return;
         }
