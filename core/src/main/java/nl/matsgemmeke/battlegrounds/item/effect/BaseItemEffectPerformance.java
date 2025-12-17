@@ -25,11 +25,6 @@ public abstract class BaseItemEffectPerformance implements ItemEffectPerformance
     }
 
     @Override
-    public boolean isReleased() {
-        return context != null && context.getSource().isReleased();
-    }
-
-    @Override
     public void setContext(ItemEffectContext context) {
         this.context = context;
     }

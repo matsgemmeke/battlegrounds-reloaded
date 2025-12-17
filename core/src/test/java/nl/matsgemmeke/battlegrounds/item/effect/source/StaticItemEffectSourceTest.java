@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.effect;
+package nl.matsgemmeke.battlegrounds.item.effect.source;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -6,34 +6,35 @@ import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-class StaticSourceTest {
+class StaticItemEffectSourceTest {
 
-    private Location location;
+    @Mock
     private World world;
 
+    private StaticItemEffectSource source;
+
     @BeforeEach
-    public void setUp() {
-        world = mock(World.class);
-        location = new Location(world, 1.0, 1.0, 1.0);
+    void setUp() {
+        Location location = new Location(world, 1.0, 1.0, 1.0);
+
+        source = new StaticItemEffectSource(location, world);
     }
 
     @Test
-    public void existsAlwaysReturnsTrue() {
-        StaticSource source = new StaticSource(location, world);
+    void existsAlwaysReturnsTrue() {
         boolean exists = source.exists();
 
         assertThat(exists).isTrue();
     }
 
     @Test
-    public void getVelocityReturnsZeroVector() {
-        StaticSource source = new StaticSource(location, world);
+    void getVelocityReturnsZeroVector() {
         Vector velocity = source.getVelocity();
 
         assertThat(velocity.getX()).isZero();

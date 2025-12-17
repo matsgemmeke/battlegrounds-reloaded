@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
@@ -91,7 +91,7 @@ public class FireballLauncher implements ProjectileLauncher {
         Location fireballLocation = fireball.getLocation();
         World fireballWorld = fireball.getWorld();
 
-        StaticSource source = new StaticSource(fireballLocation, fireballWorld);
+        StaticItemEffectSource source = new StaticItemEffectSource(fireballLocation, fireballWorld);
         ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
         itemEffect.startPerformance(context);

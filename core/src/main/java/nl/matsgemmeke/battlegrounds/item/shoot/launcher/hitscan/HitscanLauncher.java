@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -129,7 +129,7 @@ public class HitscanLauncher implements ProjectileLauncher {
     private void startPerformance(Entity entity, Location projectileLocation) {
         Location sourceLocation = projectileLocation.clone();
         World world = projectileLocation.getBlock().getWorld();
-        StaticSource source = new StaticSource(sourceLocation, world);
+        StaticItemEffectSource source = new StaticItemEffectSource(sourceLocation, world);
 
         ItemEffectContext context = new ItemEffectContext(entity, source, projectileLocation);
 

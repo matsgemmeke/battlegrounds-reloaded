@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.StaticSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
@@ -73,7 +73,7 @@ public class ArrowLauncher implements ProjectileLauncher {
         Location arrowLocation = arrow.getLocation();
         World arrowWorld = arrow.getWorld();
 
-        StaticSource source = new StaticSource(arrowLocation, arrowWorld);
+        StaticItemEffectSource source = new StaticItemEffectSource(arrowLocation, arrowWorld);
         ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
 
         itemEffect.startPerformance(context);

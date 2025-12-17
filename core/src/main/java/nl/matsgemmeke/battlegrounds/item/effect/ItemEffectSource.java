@@ -4,7 +4,5 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 
 public interface ItemEffectSource extends TriggerTarget {
 
-    boolean isReleased();
-
     void remove();
 }

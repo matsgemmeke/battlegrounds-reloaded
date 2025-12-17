@@ -110,7 +110,7 @@ public class DeploymentHandler {
 
         ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
 
-        if (latestPerformance != null && !latestPerformance.isReleased()) {
+        if (latestPerformance != null) {
             latestPerformance.changeSource(deploymentObject);
         } else {
             Location initiationLocation = deployer.getDeployLocation();

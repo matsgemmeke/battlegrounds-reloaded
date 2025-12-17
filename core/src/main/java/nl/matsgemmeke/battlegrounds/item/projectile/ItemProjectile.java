@@ -50,11 +50,6 @@ public class ItemProjectile implements Projectile, ItemEffectSource {
     }
 
     @Override
-    public boolean isReleased() {
-        return true;
-    }
-
-    @Override
     public void remove() {
         item.remove();
     }

@@ -98,10 +98,6 @@ public class PlaceDeploymentObject implements DeploymentObject {
     }
 
     @Override
-    public boolean isReleased() {
-        return true;
-    }
-
     public double damage(@NotNull Damage damage) {
         lastDamage = damage;
 

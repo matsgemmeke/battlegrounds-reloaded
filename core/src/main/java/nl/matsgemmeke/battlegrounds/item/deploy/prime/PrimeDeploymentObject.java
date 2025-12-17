@@ -47,11 +47,6 @@ public class PrimeDeploymentObject implements ItemEffectSource {
         return !deployerEntity.isDead();
     }
 
-    @Override
-    public boolean isReleased() {
-        return false;
-    }
-
     public void remove() {
         deployer.removeItem(itemStack);
     }
