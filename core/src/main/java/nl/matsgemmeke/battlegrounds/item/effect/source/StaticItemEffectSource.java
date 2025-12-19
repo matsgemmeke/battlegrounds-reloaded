@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.effect.source;
 
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;

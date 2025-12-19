@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
