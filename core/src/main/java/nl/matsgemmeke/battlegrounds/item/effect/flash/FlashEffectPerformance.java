@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -14,7 +15,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -40,7 +40,7 @@ public class FlashEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(@NotNull ItemEffectContext context) {
+    public void perform(ItemEffectContext context) {
         Entity entity = context.getEntity();
         ItemEffectSource source = context.getSource();
 
@@ -48,10 +48,12 @@ public class FlashEffectPerformance extends BaseItemEffectPerformance {
         this.applyPotionEffectToTargets(source.getLocation());
         this.startCancelSchedule();
 
-        source.remove();
+        if (source instanceof RemovableItemEffectSource removableSource) {
+            removableSource.remove();
+        }
     }
 
-    private void createExplosionEffect(@NotNull Entity damageSource, @NotNull ItemEffectSource source) {
+    private void createExplosionEffect(Entity damageSource, ItemEffectSource source) {
         float power = properties.power();
         boolean setFire = properties.setFire();
         boolean breakBlocks = properties.breakBlocks();

@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -63,7 +64,9 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         }
 
         // Remove the source before creating the explosion to prevent calling an extra EntityDamageByEntityEvent
-        source.remove();
+        if (source instanceof RemovableItemEffectSource removableSource) {
+            removableSource.remove();
+        }
 
         world.createExplosion(sourceLocation, properties.power(), properties.setFire(), properties.breakBlocks(), entity);
     }

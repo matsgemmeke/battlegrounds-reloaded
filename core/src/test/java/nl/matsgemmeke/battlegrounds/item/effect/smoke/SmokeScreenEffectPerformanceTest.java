@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -240,7 +240,7 @@ class SmokeScreenEffectPerformanceTest {
     void performRemovesSourceAndCancelsRepeatingScheduleOnceEffectIsOver() {
         Location sourceLocation = new Location(null, 0, 0, 0);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        RemovableItemEffectSource source = mock(RemovableItemEffectSource.class);
         when(source.getLocation()).thenReturn(sourceLocation);
 
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);

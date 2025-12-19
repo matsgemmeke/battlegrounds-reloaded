@@ -1,15 +1,14 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.entity.Identifiable;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an object that is produced as a result of a deployment action.
  */
-public interface DeploymentObject extends GameEntity, ItemEffectSource, Identifiable {
+public interface DeploymentObject extends GameEntity, RemovableItemEffectSource {
 
     /**
      * Gets the amount of ticks this deployment object will cause the deployer to have a cooldown before they can

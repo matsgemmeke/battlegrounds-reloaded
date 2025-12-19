@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.entity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.util.UUID;
 
@@ -39,4 +40,11 @@ public interface GameEntity extends Target {
      * @return the game entity's unique id
      */
     UUID getUniqueId();
+
+    /**
+     * Gets the world the game entity is located in.
+     *
+     * @return the game entity world
+     */
+    World getWorld();
 }

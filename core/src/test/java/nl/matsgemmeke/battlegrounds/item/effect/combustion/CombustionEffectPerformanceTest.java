@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -65,9 +65,9 @@ class CombustionEffectPerformanceTest {
     @Mock
     private Entity entity;
     @Mock
-    private ItemEffectSource source;
-    @Mock
     private MetadataValueEditor metadataValueEditor;
+    @Mock
+    private RemovableItemEffectSource source;
     @Mock
     private Scheduler scheduler;
     @Mock

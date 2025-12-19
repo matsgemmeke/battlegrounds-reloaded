@@ -39,9 +39,4 @@ public class StaticItemEffectSource implements ItemEffectSource {
     public World getWorld() {
         return world;
     }
-
-    @Override
-    public void remove() {
-        // No-op because a static location cannot be removed
-    }
 }

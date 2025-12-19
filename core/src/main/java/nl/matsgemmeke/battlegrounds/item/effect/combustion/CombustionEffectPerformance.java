@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
@@ -85,7 +86,9 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
         cancelSchedule.addTask(this::rollback);
         cancelSchedule.start();
 
-        source.remove();
+        if (source instanceof RemovableItemEffectSource removableSource) {
+            removableSource.remove();
+        }
     }
 
     private void inflictDamage(UUID entityId, Location location) {

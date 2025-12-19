@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 
@@ -104,8 +105,11 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
         }
 
         if (elapsedTicks > totalDuration) {
-            source.remove();
             repeatingSchedule.stop();
+
+            if (source instanceof RemovableItemEffectSource removableSource) {
+                removableSource.remove();
+            }
         }
     }
 

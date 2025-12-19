@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -171,7 +172,7 @@ class GunFireSimulationEffectPerformanceTest {
         UUID entityId = UUID.randomUUID();
         Schedule repeatingSchedule = mock(Schedule.class);
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        RemovableItemEffectSource source = mock(RemovableItemEffectSource.class);
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(SOURCE_LOCATION);
 

@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -148,8 +149,11 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
     }
 
     private void expire(ItemEffectContext context) {
-        context.getSource().remove();
         this.rollback();
+
+        if (context.getSource() instanceof RemovableItemEffectSource removableSource) {
+            removableSource.remove();
+        }
     }
 
     @Override

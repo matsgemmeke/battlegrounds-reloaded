@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -51,7 +51,7 @@ class FlashEffectPerformanceTest {
     @Mock
     private Entity entity;
     @Mock
-    private ItemEffectSource source;
+    private RemovableItemEffectSource source;
     @Mock
     private Scheduler scheduler;
     @Mock
