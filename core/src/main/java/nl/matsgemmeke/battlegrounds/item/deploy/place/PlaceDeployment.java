@@ -13,7 +13,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -38,11 +37,7 @@ public class PlaceDeployment implements Deployment {
         this.properties = properties;
     }
 
-    @NotNull
-    public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
-        return DeploymentResult.failure();
-    }
-
+    @Override
     public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
@@ -99,8 +94,7 @@ public class PlaceDeployment implements Deployment {
         placedBlockState.update(true, true);
     }
 
-    @NotNull
-    private FaceAttachable.AttachedFace getCorrespondingAttachedFace(@NotNull BlockFace blockFace) {
+    private FaceAttachable.AttachedFace getCorrespondingAttachedFace(BlockFace blockFace) {
         switch (blockFace) {
             case UP -> {
                 return FaceAttachable.AttachedFace.FLOOR;

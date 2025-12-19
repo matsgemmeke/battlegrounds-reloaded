@@ -47,8 +47,6 @@ class DeploymentHandlerTest {
     @Mock
     private Deployer deployer;
     @Mock
-    private Deployment deployment;
-    @Mock
     private DeploymentObject deploymentObject;
     @Mock
     private Entity deployerEntity;
@@ -81,16 +79,15 @@ class DeploymentHandlerTest {
 
     @Test
     void cleanupDeploymentDoesNotRemoveDeploymentObjectWhenDeployedAndRemoveDeploymentOnCleanupIsFalse() {
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         DeploymentProperties properties = new DeploymentProperties(List.of(), null, true, true, true, false, 0L);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
-        when(deploymentObject.isDeployed()).thenReturn(true);
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, properties, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.cleanupDeployment();
 
         assertThat(deploymentHandler.isDeployed()).isTrue();
@@ -100,10 +97,14 @@ class DeploymentHandlerTest {
 
     @Test
     void cleanupDeploymentRemovesDeploymentObjectWhenDeployedAndRemoveDeploymentOnCleanupIsTrue() {
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
+        Schedule delaySchedule = mock(Schedule.class);
+
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.cleanupDeployment();
 
         assertThat(deploymentHandler.isDeployed()).isFalse();
@@ -121,12 +122,15 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDoesNotActivateEffectWhenActivateEffectOnDestructionPropertyIsFalse() {
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         DeploymentProperties properties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, false, false, false, false, MANUAL_ACTIVATION_DELAY);
+        Schedule delaySchedule = mock(Schedule.class);
 
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, properties, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(itemEffect).cancelPerformances();
@@ -136,12 +140,15 @@ class DeploymentHandlerTest {
     @Test
     void destroyDeploymentDoesNotActivateEffectWhenDeploymentObjectLastDamageTypeIsEnvironmentalDamage() {
         Damage lastDamage = new Damage(10, DamageType.ENVIRONMENTAL_DAMAGE);
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
+        Schedule delaySchedule = mock(Schedule.class);
 
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
         when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(itemEffect).cancelPerformances();
@@ -150,11 +157,15 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentActivatesEffectWhenDeploymentObjectLastDamageIsNull() {
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
+        Schedule delaySchedule = mock(Schedule.class);
+
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
         when(deploymentObject.getLastDamage()).thenReturn(null);
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(itemEffect).cancelPerformances();
@@ -164,12 +175,15 @@ class DeploymentHandlerTest {
     @Test
     void destroyDeploymentActivatesEffectWhenDeploymentObjectLastDamageTypeIsNotEnvironmentalDamage() {
         Damage lastDamage = new Damage(10, DamageType.BULLET_DAMAGE);
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
+        Schedule delaySchedule = mock(Schedule.class);
 
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
         when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(itemEffect).cancelPerformances();
@@ -178,12 +192,15 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDoesNotRemoveDeploymentObjectWhenRemoveDeploymentOnDestructionPropertyIsFalse() {
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         DeploymentProperties properties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, false, false, false, false, MANUAL_ACTIVATION_DELAY);
+        Schedule delaySchedule = mock(Schedule.class);
 
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, properties, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(deploymentObject, never()).remove();
@@ -192,10 +209,14 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentRemovesDeploymentObjectWhenRemoveDeploymentOnDestructionPropertyIsTrue() {
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
+        Schedule delaySchedule = mock(Schedule.class);
+
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(deploymentObject).remove();
@@ -204,12 +225,15 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDoesNotResetEffectWhenResetEffectOnDestructionPropertyIsFalse() {
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         DeploymentProperties properties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, false, false, false, false, MANUAL_ACTIVATION_DELAY);
+        Schedule delaySchedule = mock(Schedule.class);
 
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, properties, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(itemEffect).cancelPerformances();
@@ -218,10 +242,14 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentUndoesEffectWhenResetEffectOnDestructionPropertyIsTrue() {
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
+        Schedule delaySchedule = mock(Schedule.class);
+
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(itemEffect).cancelPerformances();
@@ -230,12 +258,15 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDoesNotDisplayParticleEffectWhenDestructionParticleEffectPropertyIsNull() {
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         DeploymentProperties properties = new DeploymentProperties(ACTIVATION_SOUNDS, null, false, false, false, false, MANUAL_ACTIVATION_DELAY);
+        Schedule delaySchedule = mock(Schedule.class);
 
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, properties, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(itemEffect).cancelPerformances();
@@ -244,13 +275,16 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDisplaysParticleEffectWhenDestructionParticleEffectPropertyIsNotNull() {
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         Location objectLocation = new Location(null, 1, 1, 1);
+        Schedule delaySchedule = mock(Schedule.class);
 
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
         when(deploymentObject.getLocation()).thenReturn(objectLocation);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.destroyDeployment();
 
         verify(itemEffect).cancelPerformances();
@@ -267,15 +301,15 @@ class DeploymentHandlerTest {
 
     @Test
     void isAwaitingDeploymentReturnsFalseWhenDeploymentHasBeenPerformedWithObjectThatIsAlreadyDeployed() {
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         Schedule delaySchedule = mock(Schedule.class);
 
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
         when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
         when(deploymentObject.isDeployed()).thenReturn(true);
         when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
 
         assertThat(awaitingDeployment).isFalse();
@@ -283,11 +317,15 @@ class DeploymentHandlerTest {
 
     @Test
     void isAwaitingDeploymentReturnsTrueWhenDeploymentHasBeenPerformedWithObjectThatIsNotDeployed() {
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(DeploymentResult.success(deploymentObject));
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
+        Schedule delaySchedule = mock(Schedule.class);
+
+        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
         when(deploymentObject.isDeployed()).thenReturn(false);
+        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         boolean awaitingDeployment = deploymentHandler.isAwaitingDeployment();
 
         assertThat(awaitingDeployment).isTrue();
@@ -303,16 +341,14 @@ class DeploymentHandlerTest {
 
     @Test
     void isDeployedReturnsTrueWhenAnyDeploymentIsPerformed() {
-        DeploymentResult result = DeploymentResult.success(deploymentObject);
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
-        when(deploymentObject.isDeployed()).thenReturn(true);
-        when(deployment.perform(deployer, deployerEntity)).thenReturn(result);
         when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.handleDeployment(deployment, deployer, deployerEntity);
+        deploymentHandler.performDeployment(deploymentContext);
         boolean deployed = deploymentHandler.isDeployed();
 
         assertThat(deployed).isTrue();

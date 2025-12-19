@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,13 +16,11 @@ import java.util.Optional;
  */
 public class PrimeDeployment implements Deployment {
 
-    @NotNull
     private final AudioEmitter audioEmitter;
-    @NotNull
     private List<GameSound> primeSounds;
 
     @Inject
-    public PrimeDeployment(@NotNull AudioEmitter audioEmitter) {
+    public PrimeDeployment(AudioEmitter audioEmitter) {
         this.audioEmitter = audioEmitter;
         this.primeSounds = Collections.emptyList();
     }
@@ -32,11 +29,7 @@ public class PrimeDeployment implements Deployment {
         this.primeSounds = primeSounds;
     }
 
-    @NotNull
-    public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
-        return DeploymentResult.failure();
-    }
-
+    @Override
     public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity) {
         if (!primeSounds.isEmpty()) {
             audioEmitter.playSounds(primeSounds, deployerEntity.getLocation());

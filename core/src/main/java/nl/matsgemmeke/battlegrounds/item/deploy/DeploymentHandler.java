@@ -101,39 +101,6 @@ public class DeploymentHandler {
         }
     }
 
-    public void handleDeployment(Deployment deployment, Deployer deployer, Entity deployerEntity) {
-        DeploymentResult result = deployment.perform(deployer, deployerEntity);
-        deploymentObject = result.object();
-
-        if (!result.success()) {
-            return;
-        }
-
-        ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
-
-        if (latestPerformance != null) {
-            latestPerformance.changeSource(deploymentObject);
-        } else {
-            Location initiationLocation = deployer.getDeployLocation();
-            ItemEffectContext context = new ItemEffectContext(deployerEntity, deploymentObject, initiationLocation);
-
-            itemEffect.startPerformance(context);
-        }
-
-        if (activator != null) {
-            activator.prepare(deployer);
-        }
-
-        if (deploymentObject.isDeployed()) {
-            deployed = true;
-            deployer.setCanDeploy(false);
-
-            Schedule delaySchedule = scheduler.createSingleRunSchedule(deploymentObject.getCooldown());
-            delaySchedule.addTask(() -> deployer.setCanDeploy(true));
-            delaySchedule.start();
-        }
-    }
-
     public boolean isAwaitingDeployment() {
         return deploymentObject != null && !deploymentObject.isDeployed();
     }
