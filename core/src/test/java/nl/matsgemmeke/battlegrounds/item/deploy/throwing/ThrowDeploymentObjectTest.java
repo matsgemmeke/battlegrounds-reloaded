@@ -216,13 +216,6 @@ class ThrowDeploymentObjectTest {
         assertThat(name).isEqualTo("ThrowDeploymentObject");
     }
 
-    @Test
-    void isDeployedAlwaysReturnsTrue() {
-        boolean deployed = deploymentObject.isDeployed();
-
-        assertThat(deployed).isTrue();
-    }
-
     static List<Arguments> resistances() {
         return List.of(
                 arguments(Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.0)),

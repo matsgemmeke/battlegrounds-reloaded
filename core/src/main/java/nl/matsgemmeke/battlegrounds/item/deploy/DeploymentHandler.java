@@ -23,7 +23,8 @@ public class DeploymentHandler {
     private final Scheduler scheduler;
     @Nullable
     private Activator activator;
-    private boolean deployed;
+    private boolean performing;
+    @Nullable
     private DeploymentObject deploymentObject;
 
     @Inject
@@ -39,7 +40,7 @@ public class DeploymentHandler {
         this.scheduler = scheduler;
         this.deploymentProperties = deploymentProperties;
         this.itemEffect = itemEffect;
-        this.deployed = false;
+        this.performing = false;
     }
 
     public Activator getActivator() {
@@ -69,7 +70,7 @@ public class DeploymentHandler {
             return;
         }
 
-        deployed = false;
+        performing = false;
         deploymentObject.remove();
     }
 
@@ -78,7 +79,7 @@ public class DeploymentHandler {
             return;
         }
 
-        deployed = false;
+        performing = false;
         itemEffect.cancelPerformances();
 
         if (deploymentProperties.activateEffectOnDestruction()
@@ -102,11 +103,11 @@ public class DeploymentHandler {
     }
 
     public boolean isAwaitingDeployment() {
-        return deploymentObject != null && !deploymentObject.isDeployed();
+        return performing && deploymentObject == null;
     }
 
-    public boolean isDeployed() {
-        return deployed;
+    public boolean isPerforming() {
+        return performing;
     }
 
     public void performDeployment(DeploymentContext context) {
@@ -117,6 +118,8 @@ public class DeploymentHandler {
             latestPerformance.changeSource(effectSource);
             return;
         }
+
+        performing = true;
 
         Entity entity = context.entity();
         Deployer deployer = context.deployer();
@@ -144,7 +147,6 @@ public class DeploymentHandler {
 
         itemEffect.startPerformance(context);
 
-        deployed = true;
         deployer.setCanDeploy(false);
 
         Schedule delaySchedule = scheduler.createSingleRunSchedule(deploymentObject.getCooldown());

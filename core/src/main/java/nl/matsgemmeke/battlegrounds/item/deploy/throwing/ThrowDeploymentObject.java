@@ -153,10 +153,6 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         return this.getClass().getSimpleName();
     }
 
-    public boolean isDeployed() {
-        return true;
-    }
-
     public boolean isImmuneTo(@NotNull DamageType damageType) {
         return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) <= 0;
     }

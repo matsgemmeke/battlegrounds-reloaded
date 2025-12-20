@@ -121,9 +121,9 @@ class DefaultEquipmentTest {
     }
 
     @Test
-    void isDeployedReturnsFalseWhenDeploymentHandlerHasNotHandledAnyDeployments() {
+    void isDeployedReturnsFalseWhenDeploymentHandlerIsNotPerforming() {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isDeployed()).thenReturn(false);
+        when(deploymentHandler.isPerforming()).thenReturn(false);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDeploymentHandler(deploymentHandler);
@@ -133,9 +133,9 @@ class DefaultEquipmentTest {
     }
 
     @Test
-    void isDeployedReturnsTrueWhenDeploymentHandlerHasHandledDeployments() {
+    void isDeployedReturnsTrueWhenDeploymentHandlerIsPerforming() {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isDeployed()).thenReturn(true);
+        when(deploymentHandler.isPerforming()).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDeploymentHandler(deploymentHandler);

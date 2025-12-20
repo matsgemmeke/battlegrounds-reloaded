@@ -19,13 +19,6 @@ public interface DeploymentObject extends GameEntity, RemovableItemEffectSource 
     long getCooldown();
 
     /**
-     * Gets whether the deployment object has been deployed or is still held by the deployer.
-     *
-     * @return whether the deployment object is deployed
-     */
-    boolean isDeployed();
-
-    /**
      * Gets whether the object matches with a given entity. Returns {@code true} if the object encapsulates the given
      * entity, otherwise {@code false}.
      *

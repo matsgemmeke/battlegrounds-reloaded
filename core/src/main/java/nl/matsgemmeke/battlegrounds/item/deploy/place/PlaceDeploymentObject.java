@@ -93,10 +93,6 @@ public class PlaceDeploymentObject implements DeploymentObject {
         return block.getWorld();
     }
 
-    public boolean isDeployed() {
-        return true;
-    }
-
     @Override
     public double damage(@NotNull Damage damage) {
         lastDamage = damage;

@@ -90,7 +90,7 @@ class DeploymentHandlerTest {
         deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.cleanupDeployment();
 
-        assertThat(deploymentHandler.isDeployed()).isTrue();
+        assertThat(deploymentHandler.isPerforming()).isTrue();
 
         verify(deploymentObject, never()).remove();
     }
@@ -107,7 +107,7 @@ class DeploymentHandlerTest {
         deploymentHandler.performDeployment(deploymentContext);
         deploymentHandler.cleanupDeployment();
 
-        assertThat(deploymentHandler.isDeployed()).isFalse();
+        assertThat(deploymentHandler.isPerforming()).isFalse();
 
         verify(deploymentObject).remove();
     }
@@ -300,12 +300,11 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    void isAwaitingDeploymentReturnsFalseWhenDeploymentHasBeenPerformedWithObjectThatIsAlreadyDeployed() {
+    void isAwaitingDeploymentReturnsFalseWhenCompleteDeploymentIsPerformed() {
         DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
-        when(deploymentObject.isDeployed()).thenReturn(true);
         when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
@@ -316,13 +315,9 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    void isAwaitingDeploymentReturnsTrueWhenDeploymentHasBeenPerformedWithObjectThatIsNotDeployed() {
-        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
-        Schedule delaySchedule = mock(Schedule.class);
-
-        when(deploymentObject.getCooldown()).thenReturn(DEPLOYMENT_OBJECT_COOLDOWN);
-        when(deploymentObject.isDeployed()).thenReturn(false);
-        when(scheduler.createSingleRunSchedule(DEPLOYMENT_OBJECT_COOLDOWN)).thenReturn(delaySchedule);
+    void isAwaitingDeploymentReturnsFalseWhenPendingDeploymentIsPerformed() {
+        ItemEffectSource effectSource = mock(ItemEffectSource.class);
+        DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, effectSource, deployer, null);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.performDeployment(deploymentContext);
@@ -332,15 +327,15 @@ class DeploymentHandlerTest {
     }
 
     @Test
-    void isDeployedReturnsFalseWhenNoDeploymentIsPerformed() {
+    void isPerformingReturnsFalseWhenNoDeploymentIsPerformed() {
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        boolean deployed = deploymentHandler.isDeployed();
+        boolean deployed = deploymentHandler.isPerforming();
 
         assertThat(deployed).isFalse();
     }
 
     @Test
-    void isDeployedReturnsTrueWhenAnyDeploymentIsPerformed() {
+    void isPerformingReturnsTrueWhenAnyDeploymentIsPerformed() {
         DeploymentContext deploymentContext = new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject);
         Schedule delaySchedule = mock(Schedule.class);
 
@@ -349,7 +344,7 @@ class DeploymentHandlerTest {
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.performDeployment(deploymentContext);
-        boolean deployed = deploymentHandler.isDeployed();
+        boolean deployed = deploymentHandler.isPerforming();
 
         assertThat(deployed).isTrue();
     }
