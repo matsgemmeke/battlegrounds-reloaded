@@ -12,7 +12,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -38,11 +37,6 @@ public class ThrowDeployment implements Deployment {
 
     public void configureProperties(ThrowDeploymentProperties properties) {
         this.properties = properties;
-    }
-
-    @NotNull
-    public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
-        return DeploymentResult.failure();
     }
 
     public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity) {

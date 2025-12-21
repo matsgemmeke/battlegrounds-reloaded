@@ -106,6 +106,10 @@ public class DeploymentHandler {
         return performing && deploymentObject == null;
     }
 
+    public boolean isDeployed() {
+        return performing && deploymentObject != null;
+    }
+
     public boolean isPerforming() {
         return performing;
     }
