@@ -56,9 +56,10 @@ public class ThrowDeployment implements Deployment {
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
 
         ThrowDeploymentObject deploymentObject = new ThrowDeploymentObject(item, hitboxProvider);
-        deploymentObject.setCooldown(properties.cooldown());
         deploymentObject.setHealth(properties.health());
         deploymentObject.setResistances(properties.resistances());
+
+        long cooldown = properties.cooldown();
 
         properties.projectileEffects().forEach(effect -> effect.onLaunch(deployerEntity, deploymentObject));
 
@@ -66,6 +67,6 @@ public class ThrowDeployment implements Deployment {
 
         deployer.setHeldItem(null);
 
-        return Optional.of(new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject));
+        return Optional.of(new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject, cooldown));
     }
 }

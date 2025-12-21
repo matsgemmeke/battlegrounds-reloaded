@@ -140,10 +140,10 @@ class PlaceDeploymentTest {
             assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
             assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
-                assertThat(deploymentObject.getCooldown()).isEqualTo(COOLDOWN);
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
             });
+            assertThat(deploymentContext.cooldown()).isEqualTo(COOLDOWN);
         });
 
         verify(adjacentBlockState).setBlockData(switchBlockData);
@@ -177,10 +177,10 @@ class PlaceDeploymentTest {
             assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
             assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
-                assertThat(deploymentObject.getCooldown()).isEqualTo(COOLDOWN);
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
             });
+            assertThat(deploymentContext.cooldown()).isEqualTo(COOLDOWN);
         });
 
         verify(adjacentBlockState, times(2)).setBlockData(switchBlockData);

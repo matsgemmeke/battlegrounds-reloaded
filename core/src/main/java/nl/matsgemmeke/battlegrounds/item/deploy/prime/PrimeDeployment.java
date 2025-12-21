@@ -37,6 +37,6 @@ public class PrimeDeployment implements Deployment {
 
         PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
 
-        return Optional.of(new DeploymentContext(deployerEntity, object, deployer, null));
+        return Optional.of(new DeploymentContext(deployerEntity, object, deployer, null, 0L));
     }
 }

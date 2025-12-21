@@ -114,8 +114,8 @@ public class DeploymentHandler {
         return performing;
     }
 
-    public void performDeployment(DeploymentContext context) {
-        ItemEffectSource effectSource = context.effectSource();
+    public void performDeployment(DeploymentContext deploymentContext) {
+        ItemEffectSource effectSource = deploymentContext.effectSource();
         ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
 
         if (latestPerformance != null) {
@@ -125,35 +125,38 @@ public class DeploymentHandler {
 
         performing = true;
 
-        Entity entity = context.entity();
-        Deployer deployer = context.deployer();
-        DeploymentObject deploymentObject = context.deploymentObject();
-
-        if (deploymentObject == null) {
-            this.performPendingDeployment(entity, effectSource);
+        if (deploymentContext.deploymentObject() == null) {
+            this.performPendingDeployment(deploymentContext);
         } else {
-            this.performCompletedDeployment(entity, effectSource, deployer, deploymentObject);
+            this.performCompletedDeployment(deploymentContext);
         }
     }
 
-    private void performPendingDeployment(Entity entity, ItemEffectSource effectSource) {
+    private void performPendingDeployment(DeploymentContext deploymentContext) {
+        Entity entity = deploymentContext.entity();
+        ItemEffectSource effectSource = deploymentContext.effectSource();
         Location initiationLocation = effectSource.getLocation();
         ItemEffectContext context = new ItemEffectContext(entity, effectSource, initiationLocation);
 
         itemEffect.startPerformance(context);
     }
 
-    private void performCompletedDeployment(Entity entity, ItemEffectSource effectSource, Deployer deployer, DeploymentObject deploymentObject) {
-        this.deploymentObject = deploymentObject;
+    private void performCompletedDeployment(DeploymentContext deploymentContext) {
+        this.deploymentObject = deploymentContext.deploymentObject();
 
+        Entity entity = deploymentContext.entity();
+        ItemEffectSource effectSource = deploymentContext.effectSource();
+        Deployer deployer = deploymentContext.deployer();
         Location initiationLocation = deployer.getDeployLocation();
+        long cooldown = deploymentContext.cooldown();
+
         ItemEffectContext context = new ItemEffectContext(entity, effectSource, initiationLocation);
 
         itemEffect.startPerformance(context);
 
         deployer.setCanDeploy(false);
 
-        Schedule delaySchedule = scheduler.createSingleRunSchedule(deploymentObject.getCooldown());
+        Schedule delaySchedule = scheduler.createSingleRunSchedule(cooldown);
         delaySchedule.addTask(() -> deployer.setCanDeploy(true));
         delaySchedule.start();
 

@@ -33,7 +33,6 @@ public class PlaceDeploymentObject implements DeploymentObject {
     @Nullable
     private Damage lastDamage;
     private double health;
-    private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
 
@@ -42,14 +41,6 @@ public class PlaceDeploymentObject implements DeploymentObject {
         this.material = material;
         this.hitboxProvider = hitboxProvider;
         this.uniqueId = UUID.randomUUID();
-    }
-
-    public long getCooldown() {
-        return cooldown;
-    }
-
-    public void setCooldown(long cooldown) {
-        this.cooldown = cooldown;
     }
 
     public double getHealth() {

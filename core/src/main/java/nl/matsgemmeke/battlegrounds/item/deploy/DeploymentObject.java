@@ -3,20 +3,11 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an object that is produced as a result of a deployment action.
  */
 public interface DeploymentObject extends GameEntity, RemovableItemEffectSource {
-
-    /**
-     * Gets the amount of ticks this deployment object will cause the deployer to have a cooldown before they can
-     * perform another deployment.
-     *
-     * @return the cooldown duration in ticks
-     */
-    long getCooldown();
 
     /**
      * Gets whether the object matches with a given entity. Returns {@code true} if the object encapsulates the given
@@ -25,5 +16,5 @@ public interface DeploymentObject extends GameEntity, RemovableItemEffectSource 
      * @param entity the entity
      * @return whether the object matches with the entity
      */
-    boolean matchesEntity(@NotNull Entity entity);
+    boolean matchesEntity(Entity entity);
 }

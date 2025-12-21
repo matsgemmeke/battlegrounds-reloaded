@@ -34,7 +34,6 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
     private Damage lastDamage;
     private double entityHealth;
     private double health;
-    private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
 
@@ -43,14 +42,6 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         this.hitboxProvider = hitboxProvider;
         this.entityHealth = ENTITY_HEALTH;
         this.uniqueId = UUID.randomUUID();
-    }
-
-    public long getCooldown() {
-        return cooldown;
-    }
-
-    public void setCooldown(long cooldown) {
-        this.cooldown = cooldown;
     }
 
     public double getHealth() {

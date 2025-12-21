@@ -62,15 +62,16 @@ public class PlaceDeployment implements Deployment {
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
 
         PlaceDeploymentObject deploymentObject = new PlaceDeploymentObject(adjacentBlock, properties.material(), hitboxProvider);
-        deploymentObject.setCooldown(properties.cooldown());
         deploymentObject.setHealth(properties.health());
         deploymentObject.setResistances(properties.resistances());
+
+        long cooldown = properties.cooldown();
 
         audioEmitter.playSounds(properties.placeSounds(), adjacentBlock.getLocation());
 
         deployer.setHeldItem(null);
 
-        return Optional.of(new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject));
+        return Optional.of(new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject, cooldown));
     }
 
     private void placeBlock(Block block, BlockFace blockFace, Material material) {

@@ -86,10 +86,10 @@ class ThrowDeploymentTest {
             assertThat(deploymentContext.entity()).isEqualTo(entity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
             assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
-                assertThat(deploymentObject.getCooldown()).isEqualTo(COOLDOWN);
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
             });
+            assertThat(deploymentContext.cooldown()).isEqualTo(COOLDOWN);
         });
 
         verify(audioEmitter).playSounds(throwSounds, deployLocation);

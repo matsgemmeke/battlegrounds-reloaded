@@ -12,11 +12,13 @@ import org.jetbrains.annotations.Nullable;
  * @param deployer         the deployer
  * @param deploymentObject the produced deployment object or null when the deployment is primed but not yet released by
  *                         the deployer
+ * @param cooldown         the cooldown the deployer should not be able to perform another deployment
  */
 public record DeploymentContext(
         @Deprecated Entity entity,
         ItemEffectSource effectSource,
         Deployer deployer,
-        @Nullable DeploymentObject deploymentObject
+        @Nullable DeploymentObject deploymentObject,
+        long cooldown
 ) {
 }
