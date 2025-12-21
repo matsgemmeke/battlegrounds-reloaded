@@ -209,13 +209,6 @@ class ThrowDeploymentObjectTest {
         assertThat(result).isEqualTo(hitbox);
     }
 
-    @Test
-    void getNameReturnsClassName() {
-        String name = deploymentObject.getName();
-
-        assertThat(name).isEqualTo("ThrowDeploymentObject");
-    }
-
     static List<Arguments> resistances() {
         return List.of(
                 arguments(Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.0)),

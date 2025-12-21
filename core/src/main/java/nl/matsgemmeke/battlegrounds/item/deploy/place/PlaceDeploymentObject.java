@@ -111,11 +111,6 @@ public class PlaceDeploymentObject implements DeploymentObject {
         return hitboxProvider.provideHitbox(boundingBox);
     }
 
-    @Override
-    public String getName() {
-        return this.getClass().getSimpleName();
-    }
-
     public boolean isImmuneTo(@NotNull DamageType damageType) {
         return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) == 0;
     }

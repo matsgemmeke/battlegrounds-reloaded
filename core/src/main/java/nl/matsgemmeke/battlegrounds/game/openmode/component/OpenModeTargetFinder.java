@@ -13,7 +13,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetType;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.Target;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -105,8 +105,8 @@ public class OpenModeTargetFinder implements TargetFinder {
         return targets;
     }
 
-    public List<Target> findTargets(TargetQuery query) {
-        List<Target> targets = new ArrayList<>();
+    public List<DamageTarget> findTargets(TargetQuery query) {
+        List<DamageTarget> targets = new ArrayList<>();
         Location location = query.getLocation().orElseThrow(() -> new IllegalArgumentException("No location provided"));
         World world = Optional.ofNullable(location.getWorld()).orElseThrow(() -> new IllegalArgumentException("Provided location has no world"));
 

@@ -157,13 +157,6 @@ class PlaceDeploymentObjectTest {
     }
 
     @Test
-    void getNameReturnsClassName() {
-        String name = deploymentObject.getName();
-
-        assertThat(name).isEqualTo("PlaceDeploymentObject");
-    }
-
-    @Test
     void isImmuneReturnsFalseWhenResistancesIsNull() {
         boolean immune = deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE);
 

@@ -139,11 +139,6 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         return hitboxProvider.provideHitbox(staticBoundingBox);
     }
 
-    @Override
-    public String getName() {
-        return this.getClass().getSimpleName();
-    }
-
     public boolean isImmuneTo(@NotNull DamageType damageType) {
         return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) <= 0;
     }

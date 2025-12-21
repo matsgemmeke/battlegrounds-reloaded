@@ -11,7 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetType;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.Target;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -173,7 +173,7 @@ class OpenModeTargetFinderTest {
         Location findingLocation = new Location(world, 1.0, 1.0, 1.0);
         TargetQuery targetQuery = new TargetQuery().forLocation(findingLocation);
 
-        List<Target> targets = targetFinder.findTargets(targetQuery);
+        List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
 
         assertThat(targets).isEmpty();
     }
@@ -197,7 +197,7 @@ class OpenModeTargetFinderTest {
                 .forLocation(findingLocation)
                 .withRange(TargetType.ENTITY, Double.MAX_VALUE);
 
-        List<Target> targets = targetFinder.findTargets(targetQuery);
+        List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
 
         assertThat(targets).containsExactly(gamePlayer);
     }
@@ -219,7 +219,7 @@ class OpenModeTargetFinderTest {
                 .withRange(TargetType.ENTITY, Double.MAX_VALUE)
                 .enemiesOnly(true);
 
-        List<Target> targets = targetFinder.findTargets(targetQuery);
+        List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
 
         assertThat(targets).isEmpty();
     }
@@ -239,7 +239,7 @@ class OpenModeTargetFinderTest {
                 .forLocation(findingLocation)
                 .withRange(TargetType.DEPLOYMENT_OBJECT, Double.MAX_VALUE);
 
-        List<Target> targets = targetFinder.findTargets(targetQuery);
+        List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
 
         assertThat(targets).containsExactly(deploymentObject);
     }
@@ -261,7 +261,7 @@ class OpenModeTargetFinderTest {
                 .withRange(TargetType.DEPLOYMENT_OBJECT, Double.MAX_VALUE)
                 .enemiesOnly(true);
 
-        List<Target> targets = targetFinder.findTargets(targetQuery);
+        List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
 
         assertThat(targets).isEmpty();
     }
