@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.source;
 
-public interface RemovableItemEffectSource extends ItemEffectSource {
+public interface Removable {
 
     void remove();
 }

@@ -9,7 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -64,10 +65,10 @@ class CombustionEffectPerformanceTest {
     private CollisionDetector collisionDetector;
     @Mock
     private Entity entity;
+    @Mock(extraInterfaces = Removable.class)
+    private ItemEffectSource source;
     @Mock
     private MetadataValueEditor metadataValueEditor;
-    @Mock
-    private RemovableItemEffectSource source;
     @Mock
     private Scheduler scheduler;
     @Mock
@@ -202,9 +203,9 @@ class CombustionEffectPerformanceTest {
         verify(metadataValueEditor, never()).removeMetadata(eq(lowerBlock), anyString());
 
         verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, sourceLocation);
-        verify(source).remove();
         verify(repeatingSchedule, times(2)).stop();
         verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));
+        verify((Removable) source).remove();
     }
 
     @Test

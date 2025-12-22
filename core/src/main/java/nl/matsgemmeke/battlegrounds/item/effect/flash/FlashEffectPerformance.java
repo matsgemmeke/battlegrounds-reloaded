@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -48,7 +48,7 @@ public class FlashEffectPerformance extends BaseItemEffectPerformance {
         this.applyPotionEffectToTargets(source.getLocation());
         this.startCancelSchedule();
 
-        if (source instanceof RemovableItemEffectSource removableSource) {
+        if (source instanceof Removable removableSource) {
             removableSource.remove();
         }
     }

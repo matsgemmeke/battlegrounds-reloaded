@@ -8,7 +8,8 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -58,7 +59,7 @@ class ExplosionEffectPerformanceTest {
         Entity entity = mock(Entity.class);
         World world = mock(World.class);
 
-        RemovableItemEffectSource source = mock(RemovableItemEffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
         when(source.getWorld()).thenReturn(world);
 
         ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
@@ -80,7 +81,7 @@ class ExplosionEffectPerformanceTest {
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(entityId);
 
-        RemovableItemEffectSource source = mock(RemovableItemEffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
         when(source.getLocation()).thenReturn(sourceLocation);
         when(source.getWorld()).thenReturn(world);
 
@@ -101,10 +102,10 @@ class ExplosionEffectPerformanceTest {
         performance.perform(context);
 
         verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, new Damage(SHORT_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
-        verify(source).remove();
         verify(deployerEntity).damage(new Damage(SHORT_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
         verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
         verify(world).createExplosion(sourceLocation, POWER, SET_FIRE, BREAK_BLOCKS, entity);
+        verify((Removable) source).remove();
     }
 
     @Test

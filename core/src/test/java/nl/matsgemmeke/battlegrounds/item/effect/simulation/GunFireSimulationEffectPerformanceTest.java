@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -172,7 +172,7 @@ class GunFireSimulationEffectPerformanceTest {
         UUID entityId = UUID.randomUUID();
         Schedule repeatingSchedule = mock(Schedule.class);
 
-        RemovableItemEffectSource source = mock(RemovableItemEffectSource.class);
+        ItemEffectSource source = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
         when(source.exists()).thenReturn(true);
         when(source.getLocation()).thenReturn(SOURCE_LOCATION);
 
@@ -200,9 +200,9 @@ class GunFireSimulationEffectPerformanceTest {
         // The implementation uses random variables, so check the max and min possible amount of executions
         verify(audioEmitter, atLeast(10)).playSounds(shotSounds, SOURCE_LOCATION);
         verify(audioEmitter, atMost(20)).playSounds(shotSounds, SOURCE_LOCATION);
-        verify(source, atLeast(1)).remove();
-        verify(source, atMost(10)).remove();
         verify(repeatingSchedule, atLeast(1)).stop();
         verify(repeatingSchedule, atMost(10)).stop();
+        verify((Removable) source, atLeast(1)).remove();
+        verify((Removable) source, atMost(10)).remove();
     }
 }

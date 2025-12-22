@@ -1,12 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.projectile;
 
-import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
 
-public class ItemProjectile implements Projectile, RemovableItemEffectSource {
+public class ItemProjectile implements Projectile, ItemEffectSource, Removable {
 
     private final Item item;
 

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
-import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,8 @@ class MarkedSpawnPointTest {
 
     private static final float YAW = 1.0f;
 
-    @Mock
-    private RemovableItemEffectSource source;
+    @Mock(extraInterfaces = Removable.class)
+    private ItemEffectSource source;
 
     private MarkedSpawnPoint spawnPoint;
 
@@ -45,7 +46,7 @@ class MarkedSpawnPointTest {
 
         spawnPoint.onSpawn();
 
-        verify(source).remove();
+        verify((Removable) source).remove();
     }
 
     @Test
@@ -54,6 +55,6 @@ class MarkedSpawnPointTest {
 
         spawnPoint.onSpawn();
 
-        verify(source, never()).remove();
+        verify((Removable) source, never()).remove();
     }
 }

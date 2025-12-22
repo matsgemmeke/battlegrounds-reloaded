@@ -4,7 +4,8 @@ import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.RemovableItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -50,8 +51,8 @@ class FlashEffectPerformanceTest {
 
     @Mock
     private Entity entity;
-    @Mock
-    private RemovableItemEffectSource source;
+    @Mock(extraInterfaces = Removable.class)
+    private ItemEffectSource source;
     @Mock
     private Scheduler scheduler;
     @Mock
@@ -90,9 +91,9 @@ class FlashEffectPerformanceTest {
         assertThat(potionEffect.hasParticles()).isEqualTo(POTION_EFFECT_PARTICLES);
         assertThat(potionEffect.hasIcon()).isEqualTo(POTION_EFFECT_ICON);
 
-        verify(source).remove();
         verify(world).createExplosion(SOURCE_LOCATION, EXPLOSION_POWER, EXPLOSION_SET_FIRE, EXPLOSION_BREAK_BLOCKS, entity);
         verify(cancelSchedule).start();
+        verify((Removable) source).remove();
     }
 
     static Stream<Arguments> potionEffectScenarios() {
