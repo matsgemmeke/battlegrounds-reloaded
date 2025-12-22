@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.EntityDamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
@@ -43,6 +44,8 @@ public interface DamageProcessor {
     DamageEvent processDamage(@NotNull DamageEvent event);
 
     EntityDamageEvent processDamage(EntityDamageEvent damageEvent);
+
+    void processDamage(DamageContext damageContext);
 
     /**
      * Processes damage to be caused to a {@link DeploymentObject}.

@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
@@ -50,7 +51,9 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
             Location targetLocation = target.getLocation();
 
             Damage damage = this.createDamage(target, sourceLocation, targetLocation);
-            target.damage(damage);
+            DamageContext damageContext = new DamageContext(null, target, damage);
+
+            damageProcessor.processDamage(damageContext);
         }
 
         for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(entityId, sourceLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {

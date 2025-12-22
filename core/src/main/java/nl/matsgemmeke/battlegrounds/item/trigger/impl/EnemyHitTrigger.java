@@ -32,10 +32,10 @@ public class EnemyHitTrigger implements Trigger {
             return false;
         }
 
-        UUID entityId = context.entity().getUniqueId();
+        UUID sourceId = context.sourceId();
         Location targetLocation = target.getLocation();
 
-        return !targetFinder.findEnemyTargets(entityId, targetLocation, TARGET_FINDING_RANGE).stream()
+        return !targetFinder.findEnemyTargets(sourceId, targetLocation, TARGET_FINDING_RANGE).stream()
                 .map(GameEntity::getHitbox)
                 .filter(hitbox -> hitbox.intersects(targetLocation))
                 .toList()

@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.damage.modifier;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.game.damage.EntityDamageEvent;
@@ -24,5 +25,14 @@ public class DefaultExplosionDamageModifier implements DamageModifier {
         }
 
         return damageEvent.modifyDamageAmount(DEFAULT_EXPLOSION_DAMAGE);
+    }
+
+    @Override
+    public DamageContext apply(DamageContext damageContext) {
+        if (damageContext.damage().type() != DamageType.EXPLOSIVE_DAMAGE) {
+            return damageContext;
+        }
+
+        return damageContext.modifyDamageAmount(DEFAULT_EXPLOSION_DAMAGE);
     }
 }

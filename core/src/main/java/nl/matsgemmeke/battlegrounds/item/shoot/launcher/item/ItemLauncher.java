@@ -24,6 +24,7 @@ import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Implementation of {@link ProjectileLauncher} that uses {@link Item} entities in their launch.
@@ -61,6 +62,7 @@ public class ItemLauncher implements ProjectileLauncher {
     @Override
     public void launch(LaunchContext context) {
         Entity entity = context.entity();
+        UUID uniqueId = context.entity().getUniqueId();
         World world = context.world();
         Location dropLocation = context.direction();
         Vector velocity = context.direction().getDirection().multiply(properties.velocity());
@@ -72,7 +74,7 @@ public class ItemLauncher implements ProjectileLauncher {
         item.setVelocity(velocity);
 
         ItemProjectile projectile = new ItemProjectile(item);
-        TriggerContext triggerContext = new TriggerContext(entity, projectile);
+        TriggerContext triggerContext = new TriggerContext(uniqueId, projectile);
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);

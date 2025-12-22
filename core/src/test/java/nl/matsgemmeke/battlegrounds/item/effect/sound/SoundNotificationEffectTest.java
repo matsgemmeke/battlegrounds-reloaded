@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SoundNotificationEffectTest {
 
+    private static final UUID SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
     private static final List<GameSound> NOTIFICATION_SOUNDS = Collections.emptyList();
 
@@ -62,17 +64,20 @@ class SoundNotificationEffectTest {
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
         triggerObserverCaptor.getValue().onActivate();
 
-        TriggerContext triggerContext = triggerContextCaptor.getValue();
-        assertThat(triggerContext.entity()).isEqualTo(CONTEXT.getEntity());
-        assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
+        assertThat(triggerContextCaptor.getValue()).satisfies(triggerContext -> {
+            assertThat(triggerContext.sourceId()).isEqualTo(SOURCE_ID);
+            assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
+        });
 
         verify(triggerRun).start();
     }
 
     private static ItemEffectContext createContext() {
-        Entity entity = mock(Entity.class);
         ItemEffectSource source = mock(ItemEffectSource.class);
         Location initiationLocation = new Location(null, 1, 1, 1);
+
+        Entity entity = mock(Entity.class);
+        when(entity.getUniqueId()).thenReturn(SOURCE_ID);
 
         return new ItemEffectContext(entity, source, initiationLocation);
     }

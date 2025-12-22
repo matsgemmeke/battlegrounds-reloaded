@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,16 +25,14 @@ import static org.mockito.Mockito.when;
 class EnemyHitTriggerTest {
 
     private static final double TARGET_FINDING_RANGE = 0.1;
-    private static final UUID ENTITY_UNIQUE_ID = UUID.randomUUID();
+    private static final UUID SOURCE_ID = UUID.randomUUID();
 
-    @Mock
-    private Entity entity;
     @Mock
     private TargetFinder targetFinder;
     @Mock
     private TriggerTarget triggerTarget;
     @InjectMocks
-    private EnemyHitTrigger enemyHitTrigger;
+    private EnemyHitTrigger trigger;
 
     @Test
     void activatesReturnsFalseWhenTriggerTargetInContextDoesNotExist() {
@@ -43,7 +40,7 @@ class EnemyHitTriggerTest {
 
         when(triggerTarget.exists()).thenReturn(false);
 
-        boolean activates = enemyHitTrigger.activates(context);
+        boolean activates = trigger.activates(context);
 
         assertThat(activates).isFalse();
     }
@@ -52,7 +49,7 @@ class EnemyHitTriggerTest {
     @CsvSource({ "true,true", "false,false" })
     void activatesReturnsFalseWhenTriggerTargetDoesIntersectsAnyNearbyEnemyHitboxes(boolean intersects, boolean expectedActivatesResult) {
         Location triggerTargetLocation = new Location(null, 1, 1, 1);
-        TriggerContext context = new TriggerContext(entity, triggerTarget);
+        TriggerContext context = new TriggerContext(SOURCE_ID, triggerTarget);
 
         Hitbox hitbox = mock(Hitbox.class);
         when(hitbox.intersects(triggerTargetLocation)).thenReturn(intersects);
@@ -60,12 +57,11 @@ class EnemyHitTriggerTest {
         GameEntity gameEntity = mock(GameEntity.class);
         when(gameEntity.getHitbox()).thenReturn(hitbox);
 
-        when(entity.getUniqueId()).thenReturn(ENTITY_UNIQUE_ID);
-        when(targetFinder.findEnemyTargets(ENTITY_UNIQUE_ID, triggerTargetLocation, TARGET_FINDING_RANGE)).thenReturn(List.of(gameEntity));
+        when(targetFinder.findEnemyTargets(SOURCE_ID, triggerTargetLocation, TARGET_FINDING_RANGE)).thenReturn(List.of(gameEntity));
         when(triggerTarget.exists()).thenReturn(true);
         when(triggerTarget.getLocation()).thenReturn(triggerTargetLocation);
 
-        boolean activates = enemyHitTrigger.activates(context);
+        boolean activates = trigger.activates(context);
 
         assertThat(activates).isEqualTo(expectedActivatesResult);
     }

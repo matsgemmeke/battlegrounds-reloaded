@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
@@ -64,4 +65,6 @@ public interface TargetFinder {
      */
     @NotNull
     List<GameEntity> findTargets(@NotNull UUID entityId, @NotNull Location location, double range);
+
+    List<DamageTarget> findTargets(TargetQuery query);
 }

@@ -5,16 +5,14 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public abstract class BaseProjectileEffect implements ProjectileEffect {
 
-    @NotNull
     private final Set<TriggerExecutor> triggerExecutors;
-    @NotNull
     private final Set<TriggerRun> triggerRuns;
 
     public BaseProjectileEffect() {
@@ -31,8 +29,9 @@ public abstract class BaseProjectileEffect implements ProjectileEffect {
         triggerRuns.clear();
     }
 
-    public void onLaunch(@NotNull Entity deployerEntity, @NotNull Projectile projectile) {
-        TriggerContext context = new TriggerContext(deployerEntity, projectile);
+    public void onLaunch(Entity deployerEntity, Projectile projectile) {
+        UUID sourceId = deployerEntity.getUniqueId();
+        TriggerContext context = new TriggerContext(sourceId, projectile);
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(context);

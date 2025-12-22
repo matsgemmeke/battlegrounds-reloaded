@@ -3,13 +3,14 @@ package nl.matsgemmeke.battlegrounds.item.trigger;
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -23,7 +24,7 @@ class TriggerRunTest {
     @Mock
     private TriggerTarget target;
     @Spy
-    private TriggerContext context = new TriggerContext(mock(Entity.class), target);
+    private TriggerContext context = new TriggerContext(UUID.randomUUID(), target);
     @InjectMocks
     private TriggerRun triggerRun;
 

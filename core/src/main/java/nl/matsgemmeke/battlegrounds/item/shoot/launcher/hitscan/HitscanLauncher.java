@@ -136,12 +136,12 @@ public class HitscanLauncher implements ProjectileLauncher {
         itemEffect.startPerformance(context);
     }
 
-    private TargetQuery createTargetQuery(UUID entityId, Location location) {
+    private TargetQuery createTargetQuery(UUID uniqueId, Location location) {
         return new TargetQuery()
-                .forEntity(entityId)
-                .forLocation(location)
-                .withRange(TargetType.ENTITY, FINDING_RANGE_ENTITIES)
-                .withRange(TargetType.DEPLOYMENT_OBJECT, FINDING_RANGE_DEPLOYMENT_OBJECTS)
+                .uniqueId(uniqueId)
+                .location(location)
+                .range(TargetType.ENTITY, FINDING_RANGE_ENTITIES)
+                .range(TargetType.DEPLOYMENT_OBJECT, FINDING_RANGE_DEPLOYMENT_OBJECTS)
                 .enemiesOnly(true);
     }
 }

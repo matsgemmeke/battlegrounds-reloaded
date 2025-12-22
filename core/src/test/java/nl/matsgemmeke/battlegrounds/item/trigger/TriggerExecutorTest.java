@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +15,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TriggerExecutorTest {
+
+    private static final UUID SOURCE_ID = UUID.randomUUID();
 
     @Mock
     private Schedule schedule;
@@ -32,9 +34,8 @@ class TriggerExecutorTest {
 
     @Test
     void createTriggerRunReturnsTriggerRunWithStartedScheduleThatDoesNotifyObservers() {
-        Entity entity = mock(Entity.class);
         TriggerTarget target = mock(TriggerTarget.class);
-        TriggerContext context = new TriggerContext(entity, target);
+        TriggerContext context = new TriggerContext(SOURCE_ID, target);
 
         triggerExecutor.setRepeating(true);
 

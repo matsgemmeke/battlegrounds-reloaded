@@ -31,7 +31,7 @@ public class EnemyProximityTrigger implements Trigger {
             return false;
         }
 
-        List<GameEntity> targets = targetFinder.findEnemyTargets(context.entity().getUniqueId(), target.getLocation(), checkingRange);
+        List<GameEntity> targets = targetFinder.findEnemyTargets(context.sourceId(), target.getLocation(), checkingRange);
         return !targets.isEmpty();
     }
 }

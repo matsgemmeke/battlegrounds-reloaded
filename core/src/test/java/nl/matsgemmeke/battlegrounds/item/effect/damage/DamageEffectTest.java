@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +36,7 @@ class DamageEffectTest {
 
     private static final DamageProperties PROPERTIES = new DamageProperties(null, null, null);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final UUID SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
 
     @Mock
@@ -122,9 +124,10 @@ class DamageEffectTest {
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
         triggerObserverCaptor.getValue().onActivate();
 
-        TriggerContext triggerContext = triggerContextCaptor.getValue();
-        assertThat(triggerContext.entity()).isEqualTo(CONTEXT.getEntity());
-        assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
+        assertThat(triggerContextCaptor.getValue()).satisfies(triggerContext -> {
+            assertThat(triggerContext.sourceId()).isEqualTo(SOURCE_ID);
+            assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
+        });
 
         verify(triggerRun).start();
         verify(performance).addTriggerRun(triggerRun);
@@ -182,9 +185,11 @@ class DamageEffectTest {
     }
 
     private static ItemEffectContext createContext() {
-        Entity entity = mock(Entity.class);
         ItemEffectSource source = mock(ItemEffectSource.class);
         Location initiationLocation = new Location(null, 1, 1, 1);
+
+        Entity entity = mock(Entity.class);
+        when(entity.getUniqueId()).thenReturn(SOURCE_ID);
 
         return new ItemEffectContext(entity, source, initiationLocation);
     }

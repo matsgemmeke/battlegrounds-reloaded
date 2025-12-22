@@ -37,8 +37,10 @@ public abstract class BaseItemEffect implements ItemEffect {
         performance.setContext(context);
 
         if (!triggerExecutors.isEmpty()) {
+            UUID uniqueId = context.getEntity().getUniqueId();
+
             for (TriggerExecutor triggerExecutor : triggerExecutors) {
-                TriggerContext triggerContext = new TriggerContext(context.getEntity(), context.getSource());
+                TriggerContext triggerContext = new TriggerContext(uniqueId, context.getSource());
 
                 TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
                 triggerRun.addObserver(performance::start);

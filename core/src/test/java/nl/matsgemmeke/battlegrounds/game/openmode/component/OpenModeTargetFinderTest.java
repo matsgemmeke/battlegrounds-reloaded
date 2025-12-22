@@ -56,7 +56,7 @@ class OpenModeTargetFinderTest {
     void containsTargetsReturnsFalseWhenSearchUsingQueryDoesNotReturnTargets() {
         World world = mock(World.class);
         Location findingLocation = new Location(world, 1.0, 1.0, 1.0);
-        TargetQuery targetQuery = new TargetQuery().forLocation(findingLocation);
+        TargetQuery targetQuery = new TargetQuery().location(findingLocation);
 
         boolean containsTargets = targetFinder.containsTargets(targetQuery);
 
@@ -171,7 +171,7 @@ class OpenModeTargetFinderTest {
     void findTargetsReturnsEmptyListWhenNoRangesAreDefined() {
         World world = mock(World.class);
         Location findingLocation = new Location(world, 1.0, 1.0, 1.0);
-        TargetQuery targetQuery = new TargetQuery().forLocation(findingLocation);
+        TargetQuery targetQuery = new TargetQuery().location(findingLocation);
 
         List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
 
@@ -194,8 +194,8 @@ class OpenModeTargetFinderTest {
         when(world.getNearbyEntities(eq(findingLocation), anyDouble(), anyDouble(), anyDouble())).thenReturn(List.of(entity));
 
         TargetQuery targetQuery = new TargetQuery()
-                .forLocation(findingLocation)
-                .withRange(TargetType.ENTITY, Double.MAX_VALUE);
+                .location(findingLocation)
+                .range(TargetType.ENTITY, Double.MAX_VALUE);
 
         List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
 
@@ -214,9 +214,9 @@ class OpenModeTargetFinderTest {
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
 
         TargetQuery targetQuery = new TargetQuery()
-                .forEntity(playerUniqueId)
-                .forLocation(findingLocation)
-                .withRange(TargetType.ENTITY, Double.MAX_VALUE)
+                .uniqueId(playerUniqueId)
+                .location(findingLocation)
+                .range(TargetType.ENTITY, Double.MAX_VALUE)
                 .enemiesOnly(true);
 
         List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
@@ -236,8 +236,8 @@ class OpenModeTargetFinderTest {
         when(deploymentInfoProvider.getAllDeploymentObjects()).thenReturn(List.of(deploymentObject));
 
         TargetQuery targetQuery = new TargetQuery()
-                .forLocation(findingLocation)
-                .withRange(TargetType.DEPLOYMENT_OBJECT, Double.MAX_VALUE);
+                .location(findingLocation)
+                .range(TargetType.DEPLOYMENT_OBJECT, Double.MAX_VALUE);
 
         List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
 
@@ -256,9 +256,9 @@ class OpenModeTargetFinderTest {
         when(deploymentInfoProvider.getAllDeploymentObjects()).thenReturn(List.of(deploymentObject));
 
         TargetQuery targetQuery = new TargetQuery()
-                .forEntity(deploymentObjectUniqueId)
-                .forLocation(findingLocation)
-                .withRange(TargetType.DEPLOYMENT_OBJECT, Double.MAX_VALUE)
+                .uniqueId(deploymentObjectUniqueId)
+                .location(findingLocation)
+                .range(TargetType.DEPLOYMENT_OBJECT, Double.MAX_VALUE)
                 .enemiesOnly(true);
 
         List<DamageTarget> targets = targetFinder.findTargets(targetQuery);

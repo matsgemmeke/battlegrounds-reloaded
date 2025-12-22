@@ -113,7 +113,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         Optional<UUID> uniqueId = query.getUniqueId();
         Optional<Double> entityFindingRange = query.getRange(TargetType.ENTITY);
         Optional<Double> deploymentObjectFindingRange = query.getRange(TargetType.DEPLOYMENT_OBJECT);
-        boolean enemiesOnly = query.isEnemiesOnly().orElse(false);
+        boolean enemiesOnly = query.isEnemiesOnly();
 
         entityFindingRange.ifPresent(range -> {
             playerRegistry.getAll().stream()

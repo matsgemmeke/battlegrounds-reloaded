@@ -10,31 +10,32 @@ import java.util.UUID;
 public class TargetQuery {
 
     private final Map<TargetType, Double> ranges;
-    private Boolean enemiesOnly;
+    private boolean enemiesOnly;
     private Location location;
     private UUID uniqueId;
 
     public TargetQuery() {
         this.ranges = new EnumMap<>(TargetType.class);
+        this.enemiesOnly = false;
     }
 
-    public TargetQuery enemiesOnly(Boolean enemiesOnly) {
+    public TargetQuery enemiesOnly(boolean enemiesOnly) {
         this.enemiesOnly = enemiesOnly;
         return this;
     }
 
-    public TargetQuery forEntity(UUID uniqueId) {
-        this.uniqueId = uniqueId;
-        return this;
-    }
-
-    public TargetQuery forLocation(Location location) {
+    public TargetQuery location(Location location) {
         this.location = location;
         return this;
     }
 
-    public TargetQuery withRange(TargetType type, double value) {
+    public TargetQuery range(TargetType type, double value) {
         ranges.put(type, value);
+        return this;
+    }
+
+    public TargetQuery uniqueId(UUID uniqueId) {
+        this.uniqueId = uniqueId;
         return this;
     }
 
@@ -50,7 +51,7 @@ public class TargetQuery {
         return Optional.ofNullable(uniqueId);
     }
 
-    public Optional<Boolean> isEnemiesOnly() {
-        return Optional.ofNullable(enemiesOnly);
+    public boolean isEnemiesOnly() {
+        return enemiesOnly;
     }
 }
