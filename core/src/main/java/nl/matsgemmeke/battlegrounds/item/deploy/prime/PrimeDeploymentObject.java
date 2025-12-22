@@ -86,6 +86,11 @@ public class PrimeDeploymentObject implements DeploymentObject, ItemEffectSource
 
     @Override
     public boolean isImmuneTo(@NotNull DamageType damageType) {
+        return true;
+    }
+
+    @Override
+    public boolean isPhysical() {
         return false;
     }
 

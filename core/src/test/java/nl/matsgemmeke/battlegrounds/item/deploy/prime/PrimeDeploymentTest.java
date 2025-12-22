@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.deploy.prime;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import org.bukkit.Location;
@@ -41,7 +42,10 @@ class PrimeDeploymentTest {
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
             assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
-            assertThat(deploymentContext.deploymentObject()).isNull();
+            assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
+                assertThat(deploymentObject.getHealth()).isZero();
+                assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
+            });
         });
 
         verifyNoInteractions(audioEmitter);
@@ -65,7 +69,10 @@ class PrimeDeploymentTest {
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
             assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
-            assertThat(deploymentContext.deploymentObject()).isNull();
+            assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
+                assertThat(deploymentObject.getHealth()).isZero();
+                assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
+            });
         });
 
         verify(audioEmitter).playSounds(primeSounds, deployerLocation);

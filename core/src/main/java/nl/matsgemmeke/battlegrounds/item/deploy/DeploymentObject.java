@@ -11,6 +11,13 @@ import org.bukkit.entity.Entity;
 public interface DeploymentObject extends DamageTarget, Target, RemovableItemEffectSource {
 
     /**
+     * Returns whether the deployment object has a physical embodiment.
+     *
+     * @return whether the deployment object is physical
+     */
+    boolean isPhysical();
+
+    /**
      * Gets whether the object matches with a given entity. Returns {@code true} if the object encapsulates the given
      * entity, otherwise {@code false}.
      *

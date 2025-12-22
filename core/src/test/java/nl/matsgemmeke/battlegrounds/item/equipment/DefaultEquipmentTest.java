@@ -253,7 +253,7 @@ class DefaultEquipmentTest {
 
     @Test
     void performDeploymentCallsDeploymentHandlerWhenDeploymentProducesDeploymentContext() {
-        DeploymentContext deploymentContext = new DeploymentContext(null, null, null, null, 0L);
+        DeploymentContext deploymentContext = new DeploymentContext(null, null, null, 0L);
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
 

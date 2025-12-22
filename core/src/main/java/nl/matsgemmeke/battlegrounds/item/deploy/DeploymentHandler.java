@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.*;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -103,11 +102,11 @@ public class DeploymentHandler {
     }
 
     public boolean isAwaitingDeployment() {
-        return performing && deploymentObject == null;
+        return performing && deploymentObject != null && !deploymentObject.isPhysical();
     }
 
     public boolean isDeployed() {
-        return performing && deploymentObject != null;
+        return performing && deploymentObject != null && deploymentObject.isPhysical();
     }
 
     public boolean isPerforming() {
@@ -115,17 +114,17 @@ public class DeploymentHandler {
     }
 
     public void performDeployment(DeploymentContext deploymentContext) {
-        ItemEffectSource effectSource = deploymentContext.effectSource();
+        performing = true;
+        deploymentObject = deploymentContext.deploymentObject();
+
         ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
 
         if (latestPerformance != null) {
-            latestPerformance.changeSource(effectSource);
+            latestPerformance.changeSource(deploymentObject);
             return;
         }
 
-        performing = true;
-
-        if (deploymentContext.deploymentObject() == null) {
+        if (!deploymentObject.isPhysical()) {
             this.performPendingDeployment(deploymentContext);
         } else {
             this.performCompletedDeployment(deploymentContext);
@@ -134,23 +133,19 @@ public class DeploymentHandler {
 
     private void performPendingDeployment(DeploymentContext deploymentContext) {
         Entity entity = deploymentContext.entity();
-        ItemEffectSource effectSource = deploymentContext.effectSource();
-        Location initiationLocation = effectSource.getLocation();
-        ItemEffectContext context = new ItemEffectContext(entity, effectSource, initiationLocation);
+        Location initiationLocation = deploymentObject.getLocation();
+        ItemEffectContext context = new ItemEffectContext(entity, deploymentObject, initiationLocation);
 
         itemEffect.startPerformance(context);
     }
 
     private void performCompletedDeployment(DeploymentContext deploymentContext) {
-        this.deploymentObject = deploymentContext.deploymentObject();
-
         Entity entity = deploymentContext.entity();
-        ItemEffectSource effectSource = deploymentContext.effectSource();
         Deployer deployer = deploymentContext.deployer();
         Location initiationLocation = deployer.getDeployLocation();
         long cooldown = deploymentContext.cooldown();
 
-        ItemEffectContext context = new ItemEffectContext(entity, effectSource, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(entity, deploymentObject, initiationLocation);
 
         itemEffect.startPerformance(context);
 

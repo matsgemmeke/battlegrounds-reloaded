@@ -115,6 +115,11 @@ public class PlaceDeploymentObject implements DeploymentObject {
         return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) == 0;
     }
 
+    @Override
+    public boolean isPhysical() {
+        return true;
+    }
+
     public boolean matchesEntity(@NotNull Entity entity) {
         // A placed block is never an entity, so always return false
         return false;

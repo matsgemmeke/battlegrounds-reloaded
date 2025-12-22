@@ -71,7 +71,7 @@ public class PlaceDeployment implements Deployment {
 
         deployer.setHeldItem(null);
 
-        return Optional.of(new DeploymentContext(deployerEntity, deploymentObject, deployer, deploymentObject, cooldown));
+        return Optional.of(new DeploymentContext(deployerEntity, deployer, deploymentObject, cooldown));
     }
 
     private void placeBlock(Block block, BlockFace blockFace, Material material) {

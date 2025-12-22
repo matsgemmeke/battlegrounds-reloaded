@@ -93,6 +93,11 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         return item.hasGravity();
     }
 
+    @Override
+    public boolean isPhysical() {
+        return true;
+    }
+
     public void setGravity(boolean gravity) {
         item.setGravity(gravity);
     }
