@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -37,13 +38,15 @@ class PlaceDeploymentObjectTest {
     @Mock
     private Block block;
     @Mock
+    private DestructionListener destructionListener;
+    @Mock
     private HitboxProvider<StaticBoundingBox> hitboxProvider;
 
     private PlaceDeploymentObject deploymentObject;
 
     @BeforeEach
     void setUp() {
-        deploymentObject = new PlaceDeploymentObject(block, MATERIAL, hitboxProvider);
+        deploymentObject = new PlaceDeploymentObject(block, MATERIAL, hitboxProvider, destructionListener);
     }
 
     @ParameterizedTest
@@ -108,8 +111,7 @@ class PlaceDeploymentObjectTest {
         return Stream.of(
                 arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, null),
                 arguments(10.0, 5.0, 100.0, 95.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.BULLET_DAMAGE, 0.5)),
-                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.5)),
-                arguments(1000.0, 1000.0, 100.0, 0.0, DamageType.BULLET_DAMAGE, null)
+                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.5))
         );
     }
 
@@ -131,6 +133,19 @@ class PlaceDeploymentObjectTest {
 
         assertThat(damageDealt).isEqualTo(expectedDamageDealt);
         assertThat(deploymentObject.getHealth()).isEqualTo(expectedHealth);
+    }
+
+    @Test
+    void damageReturnsDealtDamageAndCallsDestructionListenerWhenHealthIsBelowZero() {
+        Damage damage = new Damage(20.0, DamageType.BULLET_DAMAGE);
+
+        deploymentObject.setHealth(10.0);
+        double damageDealt = deploymentObject.damage(damage);
+
+        assertThat(damageDealt).isEqualTo(20.0);
+        assertThat(deploymentObject.getHealth()).isZero();
+
+        verify(destructionListener).onDestroyed();
     }
 
     @Test

@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -27,6 +28,7 @@ public class PlaceDeploymentObject implements DeploymentObject {
     private static final double BOUNDING_BOX_SIZE = 0.2;
 
     private final Block block;
+    private final DestructionListener destructionListener;
     private final HitboxProvider<StaticBoundingBox> hitboxProvider;
     private final Material material;
     private final UUID uniqueId;
@@ -36,10 +38,11 @@ public class PlaceDeploymentObject implements DeploymentObject {
     @Nullable
     private Map<DamageType, Double> resistances;
 
-    public PlaceDeploymentObject(Block block, Material material, HitboxProvider<StaticBoundingBox> hitboxProvider) {
+    public PlaceDeploymentObject(Block block, Material material, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
         this.block = block;
         this.material = material;
         this.hitboxProvider = hitboxProvider;
+        this.destructionListener = destructionListener;
         this.uniqueId = UUID.randomUUID();
     }
 
@@ -95,6 +98,10 @@ public class PlaceDeploymentObject implements DeploymentObject {
         }
 
         health = Math.max(health - damageAmount, 0);
+
+        if (health <= 0.0) {
+            destructionListener.onDestroyed();
+        }
 
         return damageAmount;
     }

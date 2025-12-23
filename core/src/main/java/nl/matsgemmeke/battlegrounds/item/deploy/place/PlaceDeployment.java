@@ -61,7 +61,7 @@ public class PlaceDeployment implements Deployment {
 
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
 
-        PlaceDeploymentObject deploymentObject = new PlaceDeploymentObject(adjacentBlock, properties.material(), hitboxProvider);
+        PlaceDeploymentObject deploymentObject = new PlaceDeploymentObject(adjacentBlock, properties.material(), hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());
         deploymentObject.setResistances(properties.resistances());
 
