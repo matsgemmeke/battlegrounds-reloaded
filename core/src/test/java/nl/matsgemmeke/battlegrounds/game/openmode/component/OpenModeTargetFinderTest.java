@@ -179,30 +179,6 @@ class OpenModeTargetFinderTest {
     }
 
     @Test
-    void findTargetsReturnsEntityTargetsWhoseDistanceIsLessThanRange() {
-        World world = mock(World.class);
-        Location findingLocation = new Location(world, 1.0, 1.0, 1.0);
-        Location playerLocation = new Location(world, 2.0, 1.0, 1.0);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getLocation()).thenReturn(playerLocation);
-
-        Entity entity = mock(Entity.class);
-        when(entity.getType()).thenReturn(EntityType.ZOMBIE);
-
-        when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
-        when(world.getNearbyEntities(eq(findingLocation), anyDouble(), anyDouble(), anyDouble())).thenReturn(List.of(entity));
-
-        TargetQuery targetQuery = new TargetQuery()
-                .location(findingLocation)
-                .range(TargetType.ENTITY, Double.MAX_VALUE);
-
-        List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
-
-        assertThat(targets).containsExactly(gamePlayer);
-    }
-
-    @Test
     void findTargetsReturnsListWithoutEntitiesWithMatchingIdsWhenOnlyFindingEnemies() {
         World world = mock(World.class);
         Location findingLocation = new Location(world, 1.0, 1.0, 1.0);
@@ -222,26 +198,6 @@ class OpenModeTargetFinderTest {
         List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
 
         assertThat(targets).isEmpty();
-    }
-
-    @Test
-    void findTargetsReturnsDeploymentObjectTargetsWhoseDistanceIsLessThanRange() {
-        World world = mock(World.class);
-        Location findingLocation = new Location(world, 1.0, 1.0, 1.0);
-        Location deploymentObjectLocation = new Location(world, 2.0, 1.0, 1.0);
-
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
-        when(deploymentObject.getLocation()).thenReturn(deploymentObjectLocation);
-
-        when(deploymentInfoProvider.getAllDeploymentObjects()).thenReturn(List.of(deploymentObject));
-
-        TargetQuery targetQuery = new TargetQuery()
-                .location(findingLocation)
-                .range(TargetType.DEPLOYMENT_OBJECT, Double.MAX_VALUE);
-
-        List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
-
-        assertThat(targets).containsExactly(deploymentObject);
     }
 
     @Test

@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface Deployment {
 
-    Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity);
+    Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener);
 }

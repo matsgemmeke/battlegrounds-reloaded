@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -27,6 +28,7 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
     // An item entity is no living entity, but it has 4 health before getting destroyed
     private static final double ENTITY_HEALTH = 4.0;
 
+    private final DestructionListener destructionListener;
     private final HitboxProvider<StaticBoundingBox> hitboxProvider;
     private final Item item;
     private final UUID uniqueId;
@@ -37,9 +39,10 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
     @Nullable
     private Map<DamageType, Double> resistances;
 
-    public ThrowDeploymentObject(Item item, HitboxProvider<StaticBoundingBox> hitboxProvider) {
+    public ThrowDeploymentObject(Item item, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
         this.item = item;
         this.hitboxProvider = hitboxProvider;
+        this.destructionListener = destructionListener;
         this.entityHealth = ENTITY_HEALTH;
         this.uniqueId = UUID.randomUUID();
     }
@@ -121,12 +124,17 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
 
             if (entityHealth <= 0) {
                 health = 0;
+                destructionListener.onDestroyed();
             }
 
             return damageAmount;
         }
 
-        health = Math.max(health - damageAmount, 0);
+        health = Math.max(health - damageAmount, 0.0);
+
+        if (health <= 0.0) {
+            destructionListener.onDestroyed();
+        }
 
         return damageAmount;
     }

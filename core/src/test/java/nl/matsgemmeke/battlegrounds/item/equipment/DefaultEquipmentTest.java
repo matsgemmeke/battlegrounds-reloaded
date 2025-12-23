@@ -243,7 +243,7 @@ class DefaultEquipmentTest {
         when(holder.getEntity()).thenReturn(player);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.createContext(holder, player)).thenReturn(Optional.empty());
+        when(deployment.createContext(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
 
         equipment.setDeploymentHandler(deploymentHandler);
         equipment.performDeployment(deployment, holder);
@@ -261,7 +261,7 @@ class DefaultEquipmentTest {
         when(holder.getEntity()).thenReturn(player);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.createContext(holder, player)).thenReturn(Optional.of(deploymentContext));
+        when(deployment.createContext(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentContext));
 
         equipment.setDeploymentHandler(deploymentHandler);
         equipment.performDeployment(deployment, holder);

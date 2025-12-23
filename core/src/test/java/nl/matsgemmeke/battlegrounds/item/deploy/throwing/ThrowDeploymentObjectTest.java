@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.assertj.core.data.Offset;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -36,6 +37,8 @@ import static org.mockito.Mockito.*;
 class ThrowDeploymentObjectTest {
 
     @Mock
+    private DestructionListener destructionListener;
+    @Mock
     private HitboxProvider<StaticBoundingBox> hitboxProvider;
     @Mock
     private Item item;
@@ -66,6 +69,7 @@ class ThrowDeploymentObjectTest {
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(true);
 
+        deploymentObject.setHealth(20.0);
         deploymentObject.damage(damage);
         Damage lastDamage = deploymentObject.getLastDamage();
 
@@ -150,19 +154,17 @@ class ThrowDeploymentObjectTest {
         assertThat(damageDealt).isZero();
     }
 
-    static Stream<Arguments> damageScenarios() {
+    static Stream<Arguments> nonLethalDamageScenarios() {
         return Stream.of(
                 arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, null),
                 arguments(10.0, 5.0, 100.0, 95.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.BULLET_DAMAGE, 0.5)),
                 arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.5)),
-                arguments(1000.0, 1000.0, 100.0, 0.0, DamageType.BULLET_DAMAGE, null),
-                arguments(1.0, 1.0, 100.0, 100.0, DamageType.ENVIRONMENTAL_DAMAGE, null),
-                arguments(4.0, 4.0, 100.0, 0.0, DamageType.ENVIRONMENTAL_DAMAGE, null)
+                arguments(1.0, 1.0, 100.0, 100.0, DamageType.ENVIRONMENTAL_DAMAGE, null)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("damageScenarios")
+    @MethodSource("nonLethalDamageScenarios")
     void damageReturnsDealtDamageAndLowersHealth(
             double damageAmount,
             double expectedDamageDealt,
@@ -182,6 +184,38 @@ class ThrowDeploymentObjectTest {
 
         assertThat(expectedDamageDealt).isEqualTo(damageDealt);
         assertThat(expectedHealth).isEqualTo(deploymentObject.getHealth());
+    }
+
+    static Stream<Arguments> lethalDamageScenarios() {
+        return Stream.of(
+                arguments(1000.0, 1000.0, 100.0, 0.0, DamageType.BULLET_DAMAGE, null),
+                arguments(4.0, 4.0, 100.0, 0.0, DamageType.ENVIRONMENTAL_DAMAGE, null)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("lethalDamageScenarios")
+    void damageReturnsDealtDamageAndDestructsWhenHealthIsBelowZero(
+            double damageAmount,
+            double expectedDamageDealt,
+            double health,
+            double expectedHealth,
+            DamageType damageType,
+            Map<DamageType, Double> resistances
+    ) {
+        Damage damage = new Damage(damageAmount, damageType);
+
+        when(item.isDead()).thenReturn(false);
+        when(item.isValid()).thenReturn(true);
+
+        deploymentObject.setHealth(health);
+        deploymentObject.setResistances(resistances);
+        double damageDealt = deploymentObject.damage(damage);
+
+        assertThat(expectedDamageDealt).isEqualTo(damageDealt);
+        assertThat(expectedHealth).isEqualTo(deploymentObject.getHealth());
+
+        verify(destructionListener).onDestroyed();
     }
 
     @Test

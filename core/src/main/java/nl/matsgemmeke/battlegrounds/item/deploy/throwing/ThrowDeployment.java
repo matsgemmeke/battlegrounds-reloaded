@@ -39,7 +39,7 @@ public class ThrowDeployment implements Deployment {
         this.properties = properties;
     }
 
-    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity) {
+    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
@@ -55,7 +55,7 @@ public class ThrowDeployment implements Deployment {
 
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
 
-        ThrowDeploymentObject deploymentObject = new ThrowDeploymentObject(item, hitboxProvider);
+        ThrowDeploymentObject deploymentObject = new ThrowDeploymentObject(item, hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());
         deploymentObject.setResistances(properties.resistances());
 

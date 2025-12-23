@@ -2,15 +2,16 @@ package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
+import nl.matsgemmeke.battlegrounds.game.component.TargetType;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
@@ -21,7 +22,7 @@ import java.util.UUID;
 
 public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
-    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.3;
+    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.2;
     private static final double ENTITY_FINDING_RANGE = 0.1;
 
     private final DamageProcessor damageProcessor;
@@ -47,7 +48,14 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         UUID entityId = entity.getUniqueId();
         Location sourceLocation = context.getSource().getLocation();
 
-        for (GameEntity target : targetFinder.findEnemyTargets(entityId, sourceLocation, ENTITY_FINDING_RANGE)) {
+        TargetQuery query = new TargetQuery()
+                .uniqueId(entityId)
+                .location(sourceLocation)
+                .range(TargetType.ENTITY, ENTITY_FINDING_RANGE)
+                .range(TargetType.DEPLOYMENT_OBJECT, DEPLOYMENT_OBJECT_FINDING_RANGE)
+                .enemiesOnly(true);
+
+        for (DamageTarget target : targetFinder.findTargets(query)) {
             Location targetLocation = target.getLocation();
 
             Damage damage = this.createDamage(target, sourceLocation, targetLocation);
@@ -55,17 +63,11 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
             damageProcessor.processDamage(damageContext);
         }
-
-        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(entityId, sourceLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {
-            Location objectLocation = deploymentObject.getLocation();
-
-            Damage damage = this.createDamage(sourceLocation, objectLocation);
-            damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
-        }
     }
 
-    private Damage createDamage(GameEntity target, Location sourceLocation, Location targetLocation) {
-        double damageMultiplier = this.getHitboxDamageMultiplier(target, sourceLocation).orElse(0.0);
+    private Damage createDamage(DamageTarget target, Location sourceLocation, Location targetLocation) {
+        Hitbox hitbox = target.getHitbox();
+        double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, sourceLocation).orElse(0.0);
         double distance = sourceLocation.distance(targetLocation);
         double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
         double totalDamageAmount = distanceDamageAmount * damageMultiplier;
@@ -75,16 +77,7 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         return new Damage(totalDamageAmount, damageType);
     }
 
-    private Damage createDamage(Location initiationLocation, Location targetLocation) {
-        double distance = initiationLocation.distance(targetLocation);
-        double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
-        DamageType damageType = properties.damageType();
-
-        return new Damage(damageAmount, damageType);
-    }
-
-    private Optional<Double> getHitboxDamageMultiplier(GameEntity target, Location hitLocation) {
-        Hitbox hitbox = target.getHitbox();
+    private Optional<Double> getHitboxDamageMultiplier(Hitbox hitbox, Location hitLocation) {
         HitboxComponent hitboxComponent = hitbox.getIntersectedHitboxComponent(hitLocation).orElse(null);
 
         if (hitboxComponent == null) {

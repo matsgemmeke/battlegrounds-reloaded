@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -50,6 +51,8 @@ class PlaceDeploymentTest {
     @Mock
     private Deployer deployer;
     @Mock
+    private DestructionListener destructionListener;
+    @Mock
     private Entity deployerEntity;
     @Mock
     private HitboxResolver hitboxResolver;
@@ -58,7 +61,7 @@ class PlaceDeploymentTest {
 
     @Test
     void createContextThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
-        assertThatThrownBy(() -> deployment.createContext(deployer, deployerEntity))
+        assertThatThrownBy(() -> deployment.createContext(deployer, deployerEntity, destructionListener))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
@@ -68,7 +71,7 @@ class PlaceDeploymentTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentContextOptional).isEmpty();
 
@@ -83,7 +86,7 @@ class PlaceDeploymentTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentContextOptional).isEmpty();
 
@@ -101,7 +104,7 @@ class PlaceDeploymentTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentContextOptional).isEmpty();
 
@@ -134,7 +137,7 @@ class PlaceDeploymentTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
             assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
@@ -171,7 +174,7 @@ class PlaceDeploymentTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
             assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);

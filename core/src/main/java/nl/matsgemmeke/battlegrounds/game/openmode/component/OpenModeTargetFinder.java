@@ -118,7 +118,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         entityFindingRange.ifPresent(range -> {
             playerRegistry.getAll().stream()
                     .filter(gamePlayer -> !enemiesOnly || uniqueId.map(id -> !id.equals(gamePlayer.getUniqueId())).orElse(true))
-                    .filter(gamePlayer -> gamePlayer.getLocation().distanceSquared(location) <= range)
+                    .filter(gamePlayer -> gamePlayer.getHitbox().intersects(location))
                     .forEach(targets::add);
 
             world.getNearbyEntities(location, range, range, range).stream()
@@ -131,7 +131,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         deploymentObjectFindingRange.ifPresent(range -> {
             deploymentInfoProvider.getAllDeploymentObjects().stream()
                     .filter(deploymentObject -> !enemiesOnly || uniqueId.map(id -> !id.equals(deploymentObject.getUniqueId())).orElse(true))
-                    .filter(deploymentObject -> deploymentObject.getLocation().distanceSquared(location) <= range)
+                    .filter(deploymentObject -> deploymentObject.getHitbox().intersects(location))
                     .forEach(targets::add);
         });
 

@@ -176,7 +176,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder) {
-        DeploymentContext deploymentContext = deployment.createContext(holder, holder.getEntity()).orElse(null);
+        DestructionListener destructionListener = () -> deploymentHandler.destroyDeployment();
+        DeploymentContext deploymentContext = deployment.createContext(holder, holder.getEntity(), destructionListener).orElse(null);
 
         if (deploymentContext == null) {
             return;

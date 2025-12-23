@@ -38,7 +38,7 @@ public class PlaceDeployment implements Deployment {
     }
 
     @Override
-    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity) {
+    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }

@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PrimeDeploymentTest {
 
+    private static final DestructionListener LISTENER = () -> {};
+
     @Mock
     private AudioEmitter audioEmitter;
     @InjectMocks
@@ -37,7 +40,7 @@ class PrimeDeploymentTest {
         Deployer deployer = mock(Deployer.class);
         when(deployer.getHeldItem()).thenReturn(itemStack);
 
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, LISTENER);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
             assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
@@ -64,7 +67,7 @@ class PrimeDeploymentTest {
         when(deployerEntity.getLocation()).thenReturn(deployerLocation);
 
         deployment.configurePrimeSounds(primeSounds);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, LISTENER);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
             assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);

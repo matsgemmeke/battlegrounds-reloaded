@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,6 +41,8 @@ class ThrowDeploymentTest {
     @Mock
     private AudioEmitter audioEmitter;
     @Mock
+    private DestructionListener destructionListener;
+    @Mock
     private HitboxResolver hitboxResolver;
     @InjectMocks
     private ThrowDeployment deployment;
@@ -49,7 +52,7 @@ class ThrowDeploymentTest {
         Deployer deployer = mock(Deployer.class);
         Entity deployerEntity = mock(Entity.class);
 
-        assertThatThrownBy(() -> deployment.createContext(deployer, deployerEntity))
+        assertThatThrownBy(() -> deployment.createContext(deployer, deployerEntity, destructionListener))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
@@ -80,7 +83,7 @@ class ThrowDeploymentTest {
         when(world.dropItem(deployLocation, itemStack)).thenReturn(item);
 
         deployment.configureProperties(properties);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, entity);
+        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, entity, destructionListener);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
             assertThat(deploymentContext.entity()).isEqualTo(entity);

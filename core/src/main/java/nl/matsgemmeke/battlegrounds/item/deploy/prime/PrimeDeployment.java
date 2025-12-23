@@ -30,7 +30,7 @@ public class PrimeDeployment implements Deployment {
     }
 
     @Override
-    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity) {
+    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
         if (!primeSounds.isEmpty()) {
             audioEmitter.playSounds(primeSounds, deployerEntity.getLocation());
         }

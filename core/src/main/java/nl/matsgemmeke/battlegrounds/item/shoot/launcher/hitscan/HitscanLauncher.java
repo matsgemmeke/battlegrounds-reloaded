@@ -32,7 +32,7 @@ public class HitscanLauncher implements ProjectileLauncher {
     private static final int MAX_STEPS = 1000;
     // The distance interval (in blocks) at which particles are spawned along the hitscan path.
     private static final double PARTICLE_PER_STEPS = 5;
-    private static final double FINDING_RANGE_DEPLOYMENT_OBJECTS = 0.3;
+    private static final double FINDING_RANGE_DEPLOYMENT_OBJECTS = 0.2;
     private static final double FINDING_RANGE_ENTITIES = 0.1;
 
     private final AudioEmitter audioEmitter;
