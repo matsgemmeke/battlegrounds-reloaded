@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
@@ -13,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +37,7 @@ class FlashEffectTest {
 
     private static final FlashProperties PROPERTIES = new FlashProperties(null, 5.0, 1.0f, false, false);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-    private static final UUID SOURCE_ID = UUID.randomUUID();
+    private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
 
     @Mock
@@ -100,8 +100,8 @@ class FlashEffectTest {
         triggerObserverCaptor.getValue().onActivate();
 
         assertThat(triggerContextCaptor.getValue()).satisfies(triggerContext -> {
-            assertThat(triggerContext.sourceId()).isEqualTo(SOURCE_ID);
-            assertThat(triggerContext.target()).isEqualTo(CONTEXT.getSource());
+            assertThat(triggerContext.sourceId()).isEqualTo(DAMAGE_SOURCE_ID);
+            assertThat(triggerContext.target()).isEqualTo(CONTEXT.getEffectSource());
         });
 
         verify(triggerRun).start();
@@ -134,9 +134,9 @@ class FlashEffectTest {
         ItemEffectSource source = mock(ItemEffectSource.class);
         Location initiationLocation = new Location(null, 1, 1, 1);
 
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(SOURCE_ID);
+        DamageSource damageSource = mock(DamageSource.class);
+        when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(entity, source, initiationLocation);
+        return new ItemEffectContext(damageSource, source, initiationLocation);
     }
 }

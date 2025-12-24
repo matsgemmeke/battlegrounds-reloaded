@@ -12,7 +12,7 @@ import java.util.UUID;
 public class MarkSpawnPointEffectPerformance extends BaseItemEffectPerformance {
 
     private final SpawnPointRegistry spawnPointRegistry;
-    private UUID entityId;
+    private UUID uniqueId;
 
     @Inject
     public MarkSpawnPointEffectPerformance(SpawnPointRegistry spawnPointRegistry) {
@@ -26,18 +26,18 @@ public class MarkSpawnPointEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        entityId = context.getEntity().getUniqueId();
+        uniqueId = context.getDamageSource().getUniqueId();
         Location initiationLocation = context.getInitiationLocation();
 
-        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), initiationLocation.getYaw());
+        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getEffectSource(), initiationLocation.getYaw());
 
-        spawnPointRegistry.setCustomSpawnPoint(entityId, spawnPoint);
+        spawnPointRegistry.setCustomSpawnPoint(uniqueId, spawnPoint);
     }
 
     @Override
     public void rollback() {
-        if (entityId != null) {
-            spawnPointRegistry.setCustomSpawnPoint(entityId, null);
+        if (uniqueId != null) {
+            spawnPointRegistry.setCustomSpawnPoint(uniqueId, null);
         }
     }
 }

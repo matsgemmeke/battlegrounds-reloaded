@@ -66,15 +66,16 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        ItemEffectSource source = context.getSource();
-        Location location = source.getLocation();
-        World world = source.getWorld();
+        UUID uniqueId = context.getDamageSource().getUniqueId();
+        ItemEffectSource effectSource = context.getEffectSource();
+        Location location = effectSource.getLocation();
+        World world = effectSource.getWorld();
 
         audioEmitter.playSounds(properties.combustionSounds(), location);
 
         currentRadius = properties.minSize();
 
-        this.inflictDamage(context.getEntity().getUniqueId(), location);
+        this.inflictDamage(uniqueId, location);
 
         schedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, properties.growthInterval());
         schedule.addTask(() -> this.increaseFireCircleRadius(location, world));
@@ -86,7 +87,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
         cancelSchedule.addTask(this::rollback);
         cancelSchedule.start();
 
-        if (source instanceof Removable removableSource) {
+        if (effectSource instanceof Removable removableSource) {
             removableSource.remove();
         }
     }

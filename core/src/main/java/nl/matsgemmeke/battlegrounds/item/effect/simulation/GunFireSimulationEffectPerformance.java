@@ -48,8 +48,8 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
 
     @Override
     public void perform(ItemEffectContext context) {
-        UUID entityId = context.getEntity().getUniqueId();
-        GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId).orElse(null);
+        UUID damageSourceId = context.getDamageSource().getUniqueId();
+        GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(damageSourceId).orElse(null);
 
         if (gunFireSimulationInfo == null) {
             this.simulateGenericGunFire();
@@ -78,10 +78,10 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
     }
 
     private void handleScheduleTick(ItemEffectContext context, List<GameSound> sounds, long interval) {
-        ItemEffectSource source = context.getSource();
+        ItemEffectSource effectSource = context.getEffectSource();
 
         // Stop simulation when source no longer exists
-        if (!source.exists()) {
+        if (!effectSource.exists()) {
             repeatingSchedule.stop();
             return;
         }
@@ -101,13 +101,13 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
         }
 
         if (playingSounds && remainingTicks % interval == 0) {
-            audioEmitter.playSounds(sounds, source.getLocation());
+            audioEmitter.playSounds(sounds, effectSource.getLocation());
         }
 
         if (elapsedTicks > totalDuration) {
             repeatingSchedule.stop();
 
-            if (source instanceof Removable removableSource) {
+            if (effectSource instanceof Removable removableSource) {
                 removableSource.remove();
             }
         }

@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
 public class DeploymentHandler {
@@ -120,7 +119,7 @@ public class DeploymentHandler {
         ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
 
         if (latestPerformance != null) {
-            latestPerformance.changeSource(deploymentObject);
+            latestPerformance.changeEffectSource(deploymentObject);
             return;
         }
 
@@ -132,20 +131,19 @@ public class DeploymentHandler {
     }
 
     private void performPendingDeployment(DeploymentContext deploymentContext) {
-        Entity entity = deploymentContext.entity();
+        Deployer deployer = deploymentContext.deployer();
         Location initiationLocation = deploymentObject.getLocation();
-        ItemEffectContext context = new ItemEffectContext(entity, deploymentObject, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, initiationLocation);
 
         itemEffect.startPerformance(context);
     }
 
     private void performCompletedDeployment(DeploymentContext deploymentContext) {
-        Entity entity = deploymentContext.entity();
         Deployer deployer = deploymentContext.deployer();
         Location initiationLocation = deployer.getDeployLocation();
         long cooldown = deploymentContext.cooldown();
 
-        ItemEffectContext context = new ItemEffectContext(entity, deploymentObject, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, initiationLocation);
 
         itemEffect.startPerformance(context);
 

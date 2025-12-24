@@ -1,28 +1,46 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 
 public class ItemEffectContext {
 
-    private final Entity entity;
+    private final DamageSource damageSource;
     private final Location initiationLocation;
-    private ItemEffectSource source;
+    private ItemEffectSource effectSource;
 
-    public ItemEffectContext(Entity entity, ItemEffectSource source, Location initiationLocation) {
-        this.entity = entity;
-        this.source = source;
+    public ItemEffectContext(DamageSource damageSource, ItemEffectSource effectSource, Location initiationLocation) {
+        this.damageSource = damageSource;
+        this.effectSource = effectSource;
         this.initiationLocation = initiationLocation;
     }
 
     /**
-     * Gets the entity that initiated the effect.
+     * Gets the damage source responsible for the damage that the effect causes.
      *
-     * @return the initiator entity
+     * @return the damage source
      */
-    public Entity getEntity() {
-        return entity;
+    public DamageSource getDamageSource() {
+        return damageSource;
+    }
+
+    /**
+     * Gets the source from where the effect is produced.
+     *
+     * @return the effect source
+     */
+    public ItemEffectSource getEffectSource() {
+        return effectSource;
+    }
+
+    /**
+     * Sets the source from where the effect is produced.
+     *
+     * @param effectSource the effect source
+     */
+    public void setEffectSource(ItemEffectSource effectSource) {
+        this.effectSource = effectSource;
     }
 
     /**
@@ -32,23 +50,5 @@ public class ItemEffectContext {
      */
     public Location getInitiationLocation() {
         return initiationLocation;
-    }
-
-    /**
-     * Gets the source from where the effect is produced.
-     *
-     * @return the effect source
-     */
-    public ItemEffectSource getSource() {
-        return source;
-    }
-
-    /**
-     * Sets the source from where the effect is produced.
-     *
-     * @param source the effect source
-     */
-    public void setSource(ItemEffectSource source) {
-        this.source = source;
     }
 }

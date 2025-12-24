@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.item;
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -19,7 +20,6 @@ import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -40,18 +40,21 @@ class ItemLauncherTest {
     private static final double VELOCITY = 2.0;
     private static final ItemStack ITEM_STACK = new ItemStack(Material.STICK);
     private static final long GAME_SOUND_DELAY = 5L;
+    private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
 
     @Mock
     private AudioEmitter audioEmitter;
     @Mock
+    private DamageSource damageSource;
+    @Mock
     private ItemEffect itemEffect;
+    @Mock
+    private ProjectileLaunchSource projectileSource;
     @Mock
     private Scheduler scheduler;
 
     @Test
     void cancelStopsOngoingSoundPlaySchedules() {
-        Entity entity = mock(Entity.class);
-        ProjectileLaunchSource launchSource = mock(ProjectileLaunchSource.class);
         Location direction = new Location(null, 0, 0, 0, 100.0f, 0);
         Item item = mock(Item.class);
         Schedule soundPlaySchedule = mock(Schedule.class);
@@ -68,7 +71,7 @@ class ItemLauncherTest {
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY);
-        LaunchContext launchContext = new LaunchContext(entity, launchSource, direction, world);
+        LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, scheduler, itemEffect, properties);
         itemLauncher.launch(launchContext);
@@ -80,11 +83,7 @@ class ItemLauncherTest {
     @Test
     void launchDropItemAndStartTriggerRunsThatActivateItemEffect() {
         Item item = mock(Item.class);
-        ProjectileLaunchSource launchSource = mock(ProjectileLaunchSource.class);
         Location direction = new Location(null, 0, 0, 0, 100.0f, 0);
-
-        Entity entity = mock(Entity.class);
-        when(entity.getLocation()).thenReturn(direction);
 
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack()).thenReturn(ITEM_STACK);
@@ -105,7 +104,7 @@ class ItemLauncherTest {
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY);
-        LaunchContext launchContext = new LaunchContext(entity, launchSource, direction, world);
+        LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
@@ -116,12 +115,13 @@ class ItemLauncherTest {
         ArgumentCaptor<ItemEffectContext> effectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
         verify(itemEffect).startPerformance(effectContextCaptor.capture());
 
-        ItemEffectContext effectContext = effectContextCaptor.getValue();
-        assertThat(effectContext.getEntity()).isEqualTo(entity);
-        assertThat(effectContext.getSource()).isInstanceOf(ItemProjectile.class);
-        assertThat(effectContext.getInitiationLocation()).isEqualTo(direction);
+        assertThat(effectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
+            assertThat(itemEffectContext.getEffectSource()).isInstanceOf(ItemProjectile.class);
+            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+        });
 
-        verify(audioEmitter).playSound(gameSound, direction);
+        verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
         verify(item).setPickupDelay(10000);
         verify(item).setVelocity(new Vector(-1.969615506024416,-0.0,-0.3472963553338606));
     }

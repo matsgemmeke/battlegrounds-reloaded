@@ -7,6 +7,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class SoundNotificationEffectPerformance extends BaseItemEffectPerformance {
 
@@ -24,15 +25,15 @@ public class SoundNotificationEffectPerformance extends BaseItemEffectPerformanc
 
     @Override
     public void perform(ItemEffectContext context) {
-        Entity entity = context.getEntity();
+        UUID damageSourceUniqueId = context.getDamageSource().getUniqueId();
 
         // Playing sounds is only possible for players
-        if (!(entity instanceof Player player)) {
-            return;
-        }
-
-        for (GameSound sound : notificationSounds) {
-            player.playSound(player.getLocation(), sound.getSound(), sound.getVolume(), sound.getPitch());
-        }
+//        if (!(entity instanceof Player player)) {
+//            return;
+//        }
+//
+//        for (GameSound sound : notificationSounds) {
+//            player.playSound(player.getLocation(), sound.getSound(), sound.getVolume(), sound.getPitch());
+//        }
     }
 }

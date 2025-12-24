@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -13,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +42,8 @@ class ExplosionEffectPerformanceTest {
     private static final RangeProfile RANGE_PROFILE = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
     private static final ExplosionProperties PROPERTIES = new ExplosionProperties(RANGE_PROFILE, POWER, SET_FIRE, BREAK_BLOCKS);
 
+    private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
+
     @Mock
     private DamageProcessor damageProcessor;
     @Mock
@@ -56,13 +58,13 @@ class ExplosionEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
-        Entity entity = mock(Entity.class);
+        DamageSource damageSource = mock(DamageSource.class);
         World world = mock(World.class);
 
-        ItemEffectSource source = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
-        when(source.getWorld()).thenReturn(world);
+        ItemEffectSource effectSource = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
+        when(effectSource.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -72,20 +74,19 @@ class ExplosionEffectPerformanceTest {
 
     @Test
     void performCreatesExplosionAtSourceLocationAndDamagesAllEntitiesInsideTheLongRangeDistance() {
-        UUID entityId = UUID.randomUUID();
         World world = mock(World.class);
         Location objectLocation = new Location(world, 2, 1, 1);
         Location sourceLocation = new Location(world, 1, 1, 1);
         Location targetLocation = new Location(world, 8, 1, 1);
 
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityId);
+        DamageSource damageSource = mock(DamageSource.class);
+        when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        ItemEffectSource source = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
-        when(source.getLocation()).thenReturn(sourceLocation);
-        when(source.getWorld()).thenReturn(world);
+        ItemEffectSource effectSource = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
+        when(effectSource.getLocation()).thenReturn(sourceLocation);
+        when(effectSource.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
 
         GameEntity deployerEntity = mock(GameEntity.class);
         when(deployerEntity.getLocation()).thenReturn(sourceLocation);
@@ -96,16 +97,16 @@ class ExplosionEffectPerformanceTest {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         when(deploymentObject.getLocation()).thenReturn(objectLocation);
 
-        when(targetFinder.findDeploymentObjects(entityId, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deploymentObject));
-        when(targetFinder.findTargets(entityId, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deployerEntity, target));
+        when(targetFinder.findDeploymentObjects(DAMAGE_SOURCE_ID, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deploymentObject));
+        when(targetFinder.findTargets(DAMAGE_SOURCE_ID, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deployerEntity, target));
 
         performance.perform(context);
 
         verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, new Damage(SHORT_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
         verify(deployerEntity).damage(new Damage(SHORT_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
         verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
-        verify(world).createExplosion(sourceLocation, POWER, SET_FIRE, BREAK_BLOCKS, entity);
-        verify((Removable) source).remove();
+        verify(world).createExplosion(sourceLocation, POWER, SET_FIRE, BREAK_BLOCKS);
+        verify((Removable) effectSource).remove();
     }
 
     @Test

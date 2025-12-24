@@ -10,36 +10,29 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ShootHandler {
 
-    @NotNull
     private final AmmunitionStorage ammunitionStorage;
-    @NotNull
     private final FireMode fireMode;
-    @NotNull
     private final ItemRepresentation itemRepresentation;
-    @NotNull
     private final ProjectileLauncher projectileLauncher;
     @Nullable
     private final Recoil recoil;
-    @NotNull
     private final SpreadPattern spreadPattern;
-    @Nullable
     private ShotPerformer performer;
 
     public ShootHandler(
-            @NotNull FireMode fireMode,
-            @NotNull ProjectileLauncher projectileLauncher,
-            @NotNull SpreadPattern spreadPattern,
-            @NotNull AmmunitionStorage ammunitionStorage,
-            @NotNull ItemRepresentation itemRepresentation,
+            FireMode fireMode,
+            ProjectileLauncher projectileLauncher,
+            SpreadPattern spreadPattern,
+            AmmunitionStorage ammunitionStorage,
+            ItemRepresentation itemRepresentation,
             @Nullable Recoil recoil
     ) {
         this.fireMode = fireMode;
@@ -66,13 +59,13 @@ public class ShootHandler {
         // TODO: Remove this once reloading uses the ItemRepresentation
         itemRepresentation.setPlaceholder(Placeholder.RESERVE_AMMO, String.valueOf(ammunitionStorage.getReserveAmmo()));
 
-        Entity entity = performer.getEntity();
         Location shootingDirection = performer.getShootingDirection();
+        World world = shootingDirection.getWorld();
+        Supplier<Location> soundLocationSupplier = performer::getShootingDirection;
         List<Location> shotDirections = spreadPattern.getShotDirections(shootingDirection);
-        World world = entity.getWorld();
 
         for (Location shotDirection : shotDirections) {
-            LaunchContext context = new LaunchContext(entity, performer, shotDirection, world);
+            LaunchContext context = new LaunchContext(performer, performer, shotDirection, soundLocationSupplier, world);
 
             projectileLauncher.launch(context);
         }
@@ -98,7 +91,7 @@ public class ShootHandler {
         return fireMode.isCycling();
     }
 
-    public void shoot(@NotNull ShotPerformer performer) {
+    public void shoot(ShotPerformer performer) {
         this.performer = performer;
         fireMode.startCycle();
     }

@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -17,13 +18,13 @@ import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class HitscanLauncher implements ProjectileLauncher {
 
@@ -74,29 +75,29 @@ public class HitscanLauncher implements ProjectileLauncher {
         boolean hit;
         int steps = 0;
 
+        DamageSource damageSource = context.damageSource();
         Location startingLocation = context.direction();
         Vector direction = startingLocation.getDirection();
-        Entity entity = context.entity();
 
-        this.scheduleSoundPlayTasks(properties.shotSounds(), entity);
+        this.scheduleSoundPlayTasks(properties.shotSounds(), context.soundLocationSupplier());
 
         do {
-            hit = this.processProjectileStep(entity, startingLocation, direction, steps);
+            hit = this.processProjectileStep(damageSource, startingLocation, direction, steps);
             steps++;
         } while (!hit && steps < MAX_STEPS);
     }
 
-    private void scheduleSoundPlayTasks(List<GameSound> sounds, Entity entity) {
+    private void scheduleSoundPlayTasks(List<GameSound> sounds, Supplier<Location> locationSupplier) {
         for (GameSound sound : sounds) {
             Schedule schedule = scheduler.createSingleRunSchedule(sound.getDelay());
-            schedule.addTask(() -> audioEmitter.playSound(sound, entity.getLocation()));
+            schedule.addTask(() -> audioEmitter.playSound(sound, locationSupplier.get()));
             schedule.start();
 
             soundPlaySchedules.add(schedule);
         }
     }
 
-    private boolean processProjectileStep(Entity entity, Location startingLocation, Vector direction, int steps) {
+    private boolean processProjectileStep(DamageSource damageSource, Location startingLocation, Vector direction, int steps) {
         double distance = DISTANCE_START + steps * DISTANCE_STEP;
 
         Vector vector = direction.clone().multiply(distance);
@@ -112,26 +113,27 @@ public class HitscanLauncher implements ProjectileLauncher {
             Block block = projectileLocation.getBlock();
             block.getWorld().playEffect(projectileLocation, org.bukkit.Effect.STEP_SOUND, block.getType());
 
-            this.startPerformance(entity, projectileLocation);
+            this.startPerformance(damageSource, projectileLocation);
             return true;
         }
 
-        TargetQuery query = this.createTargetQuery(entity.getUniqueId(), projectileLocation);
+        UUID sourceId = damageSource.getUniqueId();
+        TargetQuery query = this.createTargetQuery(sourceId, projectileLocation);
 
         if (targetFinder.containsTargets(query)) {
-            this.startPerformance(entity, projectileLocation);
+            this.startPerformance(damageSource, projectileLocation);
             return true;
         }
 
         return false;
     }
 
-    private void startPerformance(Entity entity, Location projectileLocation) {
+    private void startPerformance(DamageSource damageSource, Location projectileLocation) {
         Location sourceLocation = projectileLocation.clone();
         World world = projectileLocation.getBlock().getWorld();
         StaticItemEffectSource source = new StaticItemEffectSource(sourceLocation, world);
 
-        ItemEffectContext context = new ItemEffectContext(entity, source, projectileLocation);
+        ItemEffectContext context = new ItemEffectContext(damageSource, source, projectileLocation);
 
         itemEffect.startPerformance(context);
     }

@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSourceType;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
@@ -171,6 +172,11 @@ public class DefaultGamePlayer implements GamePlayer {
     @NotNull
     public Location getAudioPlayLocation() {
         return player.getLocation();
+    }
+
+    @Override
+    public DamageSourceType getDamageSourceType() {
+        return DamageSourceType.PLAYER;
     }
 
     @NotNull

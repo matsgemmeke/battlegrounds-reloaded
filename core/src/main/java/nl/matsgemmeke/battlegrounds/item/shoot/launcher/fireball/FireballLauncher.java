@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
@@ -22,6 +23,7 @@ import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class FireballLauncher implements ProjectileLauncher {
 
@@ -61,12 +63,13 @@ public class FireballLauncher implements ProjectileLauncher {
 
     @Override
     public void launch(LaunchContext context) {
-        Entity entity = context.entity();
-        Location initiationLocation = entity.getLocation();
+        DamageSource damageSource = context.damageSource();
+        Location initiationLocation = context.direction();
         Vector velocity = context.direction().getDirection().multiply(properties.velocity());
-        ProjectileLaunchSource source = context.source();
+        ProjectileLaunchSource projectileSource = context.projectileSource();
+        Supplier<Location> soundLocationSupplier = context.soundLocationSupplier();
 
-        Fireball fireball = source.launchProjectile(SmallFireball.class, velocity);
+        Fireball fireball = projectileSource.launchProjectile(SmallFireball.class, velocity);
         fireball.setIsIncendiary(false);
         fireball.setYield(0.0f);
 
@@ -74,9 +77,9 @@ public class FireballLauncher implements ProjectileLauncher {
         schedule.addTask(() -> this.displayParticleEffect(fireball));
         schedule.start();
 
-        projectileHitActionRegistry.registerProjectileHitAction(fireball, () -> this.onHit(entity, initiationLocation, fireball, schedule));
+        projectileHitActionRegistry.registerProjectileHitAction(fireball, () -> this.onHit(damageSource, initiationLocation, fireball, schedule));
 
-        this.scheduleSoundPlayTasks(properties.shotSounds(), entity);
+        this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);
     }
 
     private void displayParticleEffect(Fireball fireball) {
@@ -87,12 +90,12 @@ public class FireballLauncher implements ProjectileLauncher {
         });
     }
 
-    private void onHit(Entity entity, Location initiationLocation, Fireball fireball, Schedule schedule) {
+    private void onHit(DamageSource damageSource, Location initiationLocation, Fireball fireball, Schedule schedule) {
         Location fireballLocation = fireball.getLocation();
         World fireballWorld = fireball.getWorld();
 
-        StaticItemEffectSource source = new StaticItemEffectSource(fireballLocation, fireballWorld);
-        ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
+        StaticItemEffectSource effectSource = new StaticItemEffectSource(fireballLocation, fireballWorld);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, initiationLocation);
 
         itemEffect.startPerformance(context);
 
@@ -101,10 +104,10 @@ public class FireballLauncher implements ProjectileLauncher {
         projectileHitActionRegistry.removeProjectileHitAction(fireball);
     }
 
-    private void scheduleSoundPlayTasks(List<GameSound> sounds, Entity entity) {
+    private void scheduleSoundPlayTasks(List<GameSound> sounds, Supplier<Location> locationSupplier) {
         for (GameSound sound : sounds) {
             Schedule schedule = scheduler.createSingleRunSchedule(sound.getDelay());
-            schedule.addTask(() -> audioEmitter.playSound(sound, entity.getLocation()));
+            schedule.addTask(() -> audioEmitter.playSound(sound, locationSupplier.get()));
             schedule.start();
 
             soundPlaySchedules.add(schedule);

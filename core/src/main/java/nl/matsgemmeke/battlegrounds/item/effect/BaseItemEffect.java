@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
+import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
@@ -37,10 +38,11 @@ public abstract class BaseItemEffect implements ItemEffect {
         performance.setContext(context);
 
         if (!triggerExecutors.isEmpty()) {
-            UUID uniqueId = context.getEntity().getUniqueId();
+            UUID uniqueId = context.getDamageSource().getUniqueId();
+            ItemEffectSource effectSource = context.getEffectSource();
 
             for (TriggerExecutor triggerExecutor : triggerExecutors) {
-                TriggerContext triggerContext = new TriggerContext(uniqueId, context.getSource());
+                TriggerContext triggerContext = new TriggerContext(uniqueId, effectSource);
 
                 TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
                 triggerRun.addObserver(performance::start);

@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
@@ -16,7 +17,6 @@ import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
@@ -56,25 +56,26 @@ public class ArrowLauncher implements ProjectileLauncher {
 
     @Override
     public void launch(LaunchContext context) {
-        Entity entity = context.entity();
-        Location initiationLocation = entity.getLocation();
+        DamageSource damageSource = context.damageSource();
+        Location initiationLocation = context.direction();
         Vector velocity = context.direction().getDirection().multiply(properties.velocity());
-        ProjectileLaunchSource source = context.source();
+        ProjectileLaunchSource projectileSource = context.projectileSource();
+        Supplier<Location> soundLocationSupplier = context.soundLocationSupplier();
 
-        Arrow arrow = source.launchProjectile(Arrow.class, velocity);
+        Arrow arrow = projectileSource.launchProjectile(Arrow.class, velocity);
         arrow.setVelocity(velocity);
 
-        projectileHitActionRegistry.registerProjectileHitAction(arrow, () -> this.onHit(entity, initiationLocation, arrow));
+        projectileHitActionRegistry.registerProjectileHitAction(arrow, () -> this.onHit(damageSource, initiationLocation, arrow));
 
-        this.scheduleSoundPlayTasks(properties.shotSounds(), entity::getLocation);
+        this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);
     }
 
-    private void onHit(Entity entity, Location initiationLocation, Arrow arrow) {
+    private void onHit(DamageSource damageSource, Location initiationLocation, Arrow arrow) {
         Location arrowLocation = arrow.getLocation();
         World arrowWorld = arrow.getWorld();
 
-        StaticItemEffectSource source = new StaticItemEffectSource(arrowLocation, arrowWorld);
-        ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
+        StaticItemEffectSource effectSource = new StaticItemEffectSource(arrowLocation, arrowWorld);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, initiationLocation);
 
         itemEffect.startPerformance(context);
 

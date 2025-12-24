@@ -357,7 +357,7 @@ class DeploymentHandlerTest {
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.performDeployment(deploymentContext);
 
-        verify(effectPerformance).changeSource(deploymentObject);
+        verify(effectPerformance).changeEffectSource(deploymentObject);
     }
 
     @Test
@@ -377,9 +377,9 @@ class DeploymentHandlerTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
-            assertThat(itemEffectContext.getEntity()).isEqualTo(deployerEntity);
+            assertThat(itemEffectContext.getDamageSource()).isEqualTo(deployer);
+            assertThat(itemEffectContext.getEffectSource()).isEqualTo(deploymentObject);
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(deploymentObjectLocation);
-            assertThat(itemEffectContext.getSource()).isEqualTo(deploymentObject);
         });
     }
 
@@ -405,9 +405,9 @@ class DeploymentHandlerTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
-            assertThat(itemEffectContext.getEntity()).isEqualTo(deployerEntity);
+            assertThat(itemEffectContext.getDamageSource()).isEqualTo(deployer);
+            assertThat(itemEffectContext.getEffectSource()).isEqualTo(deploymentObject);
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(deployLocation);
-            assertThat(itemEffectContext.getSource()).isEqualTo(deploymentObject);
         });
 
         verify(activator).prepare(deployer);

@@ -21,8 +21,8 @@ public abstract class BaseItemEffectPerformance implements ItemEffectPerformance
     }
 
     @Override
-    public void changeSource(ItemEffectSource source) {
-        context.setSource(source);
+    public void changeEffectSource(ItemEffectSource effectSource) {
+        context.setEffectSource(effectSource);
     }
 
     @Override

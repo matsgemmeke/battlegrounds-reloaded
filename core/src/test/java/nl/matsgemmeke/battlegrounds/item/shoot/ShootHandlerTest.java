@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,12 +57,10 @@ class ShootHandlerTest {
 
     @Test
     void shootStartsFireModeThatActivatesShot() {
-        Entity entity = mock(Entity.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         Location shootingDirection = new Location(null, 1, 1, 1, 90.0f, 0.0f);
 
         ShotPerformer performer = mock(ShotPerformer.class);
-        when(performer.getEntity()).thenReturn(entity);
         when(performer.getShootingDirection()).thenReturn(shootingDirection);
 
         when(itemRepresentation.update()).thenReturn(itemStack);
@@ -80,9 +77,10 @@ class ShootHandlerTest {
         ArgumentCaptor<LaunchContext> launchContextCaptor = ArgumentCaptor.forClass(LaunchContext.class);
         verify(projectileLauncher).launch(launchContextCaptor.capture());
 
-        LaunchContext launchContext = launchContextCaptor.getValue();
-        assertThat(launchContext.entity()).isEqualTo(entity);
-        assertThat(launchContext.direction()).isEqualTo(shootingDirection);
+        assertThat(launchContextCaptor.getValue()).satisfies(launchContext -> {
+            assertThat(launchContext.damageSource()).isEqualTo(performer);
+            assertThat(launchContext.direction()).isEqualTo(shootingDirection);
+        });
 
         verify(fireMode).startCycle();
         verify(itemRepresentation).setPlaceholder(Placeholder.MAGAZINE_AMMO, "9");

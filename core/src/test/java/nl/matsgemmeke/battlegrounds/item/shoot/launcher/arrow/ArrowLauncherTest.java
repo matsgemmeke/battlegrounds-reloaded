@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
@@ -14,7 +15,6 @@ import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,32 +36,35 @@ class ArrowLauncherTest {
 
     private static final double VELOCITY = 3.0;
     private static final long GAME_SOUND_DELAY = 5L;
+    private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
 
     @Mock
     private AudioEmitter audioEmitter;
+    @Mock
+    private DamageSource damageSource;
     @Mock
     private ItemEffect itemEffect;
     @Mock
     private ProjectileHitActionRegistry projectileHitActionRegistry;
     @Mock
+    private ProjectileLaunchSource projectileSource;
+    @Mock
     private Scheduler scheduler;
 
     @Test
     void cancelStopsOngoingSoundPlaySchedules() {
-        Entity entity = mock(Entity.class);
         World world = mock(World.class);
         Location direction = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
         Arrow arrow = mock(Arrow.class);
         Schedule soundPlaySchedule = mock(Schedule.class);
 
-        ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
-        when(source.launchProjectile(eq(Arrow.class), any(Vector.class))).thenReturn(arrow);
+        when(projectileSource.launchProjectile(eq(Arrow.class), any(Vector.class))).thenReturn(arrow);
 
         GameSound gameSound = mock(GameSound.class);
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
         ArrowProperties properties = new ArrowProperties(List.of(gameSound), VELOCITY);
-        LaunchContext launchContext = new LaunchContext(entity, source, direction, world);
+        LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
@@ -76,7 +79,6 @@ class ArrowLauncherTest {
     void launchLaunchesArrowProjectile() {
         World world = mock(World.class);
         Location arrowLocation = new Location(world, 10.0, 10.0, 10.0);
-        Location entityLocation = new Location(world, 1.0, 1.0, 1.0);
         Location direction = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
 
         Arrow arrow = mock(Arrow.class);
@@ -86,9 +88,6 @@ class ArrowLauncherTest {
         Schedule soundPlaySchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(soundPlaySchedule).addTask(any(ScheduleTask.class));
 
-        Entity entity = mock(Entity.class);
-        when(entity.getLocation()).thenReturn(entityLocation);
-
         GameSound gameSound = mock(GameSound.class);
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
@@ -96,7 +95,7 @@ class ArrowLauncherTest {
         when(source.launchProjectile(eq(Arrow.class), any(Vector.class))).thenReturn(arrow);
 
         ArrowProperties properties = new ArrowProperties(List.of(gameSound), VELOCITY);
-        LaunchContext launchContext = new LaunchContext(entity, source, direction, world);
+        LaunchContext launchContext = new LaunchContext(damageSource, source, direction, () -> LAUNCH_DIRECTION, world);
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
         doAnswer(RUN_PROJECTILE_HIT_ACTION).when(projectileHitActionRegistry).registerProjectileHitAction(eq(arrow), any(ProjectileHitAction.class));
@@ -107,14 +106,15 @@ class ArrowLauncherTest {
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
-        ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
-        assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
-        assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(arrowLocation);
-        assertThat(itemEffectContext.getSource().getWorld()).isEqualTo(world);
-        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(entityLocation);
+        assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
+            assertThat(itemEffectContext.getEffectSource().getLocation()).isEqualTo(arrowLocation);
+            assertThat(itemEffectContext.getEffectSource().getWorld()).isEqualTo(world);
+            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+        });
 
         verify(arrow).setVelocity(new Vector(0, 0, 3.0));
-        verify(audioEmitter).playSound(gameSound, entityLocation);
+        verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
         verify(projectileHitActionRegistry).removeProjectileHitAction(arrow);
     }
 }

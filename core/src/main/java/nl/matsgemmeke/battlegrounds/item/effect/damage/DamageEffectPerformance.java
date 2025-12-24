@@ -8,14 +8,10 @@ import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.TargetType;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -44,13 +40,13 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        Entity entity = context.getEntity();
-        UUID entityId = entity.getUniqueId();
-        Location sourceLocation = context.getSource().getLocation();
+        DamageSource damageSource = context.getDamageSource();
+        UUID damageSourceUniqueId = damageSource.getUniqueId();
+        Location effectSourceLocation = context.getEffectSource().getLocation();
 
         TargetQuery query = new TargetQuery()
-                .uniqueId(entityId)
-                .location(sourceLocation)
+                .uniqueId(damageSourceUniqueId)
+                .location(effectSourceLocation)
                 .range(TargetType.ENTITY, ENTITY_FINDING_RANGE)
                 .range(TargetType.DEPLOYMENT_OBJECT, DEPLOYMENT_OBJECT_FINDING_RANGE)
                 .enemiesOnly(true);
@@ -58,17 +54,17 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         for (DamageTarget target : targetFinder.findTargets(query)) {
             Location targetLocation = target.getLocation();
 
-            Damage damage = this.createDamage(target, sourceLocation, targetLocation);
+            Damage damage = this.createDamage(target, effectSourceLocation, targetLocation);
             DamageContext damageContext = new DamageContext(null, target, damage);
 
             damageProcessor.processDamage(damageContext);
         }
     }
 
-    private Damage createDamage(DamageTarget target, Location sourceLocation, Location targetLocation) {
+    private Damage createDamage(DamageTarget target, Location effectSourceLocation, Location targetLocation) {
         Hitbox hitbox = target.getHitbox();
-        double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, sourceLocation).orElse(0.0);
-        double distance = sourceLocation.distance(targetLocation);
+        double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, effectSourceLocation).orElse(0.0);
+        double distance = effectSourceLocation.distance(targetLocation);
         double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
         double totalDamageAmount = distanceDamageAmount * damageMultiplier;
 

@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -20,7 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -35,6 +35,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class HitscanLauncherTest {
 
+    private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
     private static final long GAME_SOUND_DELAY = 5L;
     private static final ParticleEffect TRAJECTORY_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0.0, 0.0, 0.0, 0.0, null, null);
 
@@ -43,9 +44,13 @@ class HitscanLauncherTest {
     @Mock
     private CollisionDetector collisionDetector;
     @Mock
+    private DamageSource damageSource;
+    @Mock
     private ItemEffect itemEffect;
     @Mock
     private ParticleEffectSpawner particleEffectSpawner;
+    @Mock
+    private ProjectileLaunchSource projectileSource;
     @Mock
     private Scheduler scheduler;
     @Mock
@@ -53,8 +58,6 @@ class HitscanLauncherTest {
 
     @Test
     void cancelStopsOngoingSoundPlaySchedules() {
-        Entity entity = mock(Entity.class);
-        ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Schedule soundPlaySchedule = mock(Schedule.class);
@@ -63,7 +66,7 @@ class HitscanLauncherTest {
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
         HitscanProperties properties = new HitscanProperties(List.of(gameSound), TRAJECTORY_PARTICLE_EFFECT);
-        LaunchContext launchContext = new LaunchContext(entity, source, direction, world);
+        LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
@@ -76,14 +79,10 @@ class HitscanLauncherTest {
 
     @Test
     void launchProducesProjectileStepUntilCollisionIsDetected() {
-        ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Location hitLocation = new Location(world, 0.0, 0.0, 0.6, 0.0f, 0.0f);
         Material hitBlockMaterial = Material.STONE;
-
-        Entity entity = mock(Entity.class);
-        when(entity.getLocation()).thenReturn(direction);
 
         Block hitBlock = mock(Block.class);
         when(hitBlock.getType()).thenReturn(hitBlockMaterial);
@@ -96,7 +95,7 @@ class HitscanLauncherTest {
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
         HitscanProperties properties = new HitscanProperties(List.of(gameSound), TRAJECTORY_PARTICLE_EFFECT);
-        LaunchContext launchContext = new LaunchContext(entity, source, direction, world);
+        LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.producesBlockCollisionAt(hitLocation)).thenReturn(true);
@@ -110,25 +109,22 @@ class HitscanLauncherTest {
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
-        ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
-        assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
-        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
-        assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
+        assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
+            assertThat(itemEffectContext.getEffectSource().getLocation()).isEqualTo(hitLocation);
+            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
+        });
 
-        verify(audioEmitter).playSound(gameSound, direction);
+        verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
         verify(particleEffectSpawner, times(1)).spawnParticleEffect(eq(TRAJECTORY_PARTICLE_EFFECT), any(Location.class));
         verify(world).playEffect(hitLocation, org.bukkit.Effect.STEP_SOUND, hitBlockMaterial);
     }
 
     @Test
     void launchProducesProjectileStepUntilTargetsAreFound() {
-        ProjectileLaunchSource source = mock(ProjectileLaunchSource.class);
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Location hitLocation = new Location(world, 0.0, 0.0, 0.6, 0.0f, 0.0f);
-
-        Entity entity = mock(Entity.class);
-        when(entity.getLocation()).thenReturn(direction);
 
         Block hitBlock = mock(Block.class);
         when(hitBlock.getWorld()).thenReturn(world);
@@ -140,7 +136,7 @@ class HitscanLauncherTest {
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
         HitscanProperties properties = new HitscanProperties(List.of(gameSound), TRAJECTORY_PARTICLE_EFFECT);
-        LaunchContext launchContext = new LaunchContext(entity, source, direction, world);
+        LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
@@ -153,12 +149,13 @@ class HitscanLauncherTest {
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
-        ItemEffectContext itemEffectContext = itemEffectContextCaptor.getValue();
-        assertThat(itemEffectContext.getEntity()).isEqualTo(entity);
-        assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
-        assertThat(itemEffectContext.getSource().getLocation()).isEqualTo(hitLocation);
+        assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
+            assertThat(itemEffectContext.getEffectSource().getLocation()).isEqualTo(hitLocation);
+            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
+        });
 
-        verify(audioEmitter).playSound(gameSound, direction);
+        verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
         verify(particleEffectSpawner, times(1)).spawnParticleEffect(eq(TRAJECTORY_PARTICLE_EFFECT), any(Location.class));
     }
 }

@@ -14,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 
 import java.util.UUID;
 
@@ -39,36 +38,35 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        Entity entity = context.getEntity();
-        UUID entityId = entity.getUniqueId();
-        ItemEffectSource source = context.getSource();
-        Location sourceLocation = source.getLocation();
-        World world = source.getWorld();
+        UUID uniqueId = context.getDamageSource().getUniqueId();
+        ItemEffectSource effectSource = context.getEffectSource();
+        Location effectSourceLocation = effectSource.getLocation();
+        World world = effectSource.getWorld();
 
         double range = properties.rangeProfile().longRangeDistance();
 
-        for (GameEntity target : targetFinder.findTargets(entityId, sourceLocation, range)) {
+        for (GameEntity target : targetFinder.findTargets(uniqueId, effectSourceLocation, range)) {
             Location targetLocation = target.getLocation();
-            Damage damage = this.getDamageForTargetLocation(sourceLocation, targetLocation);
+            Damage damage = this.getDamageForTargetLocation(effectSourceLocation, targetLocation);
 
             target.damage(damage);
         }
 
-        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(entityId, sourceLocation, range)) {
-            if (deploymentObject != source) {
+        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(uniqueId, effectSourceLocation, range)) {
+            if (deploymentObject != effectSource) {
                 Location objectLocation = deploymentObject.getLocation();
-                Damage damage = this.getDamageForTargetLocation(sourceLocation, objectLocation);
+                Damage damage = this.getDamageForTargetLocation(effectSourceLocation, objectLocation);
 
                 damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
             }
         }
 
         // Remove the source before creating the explosion to prevent calling an extra EntityDamageByEntityEvent
-        if (source instanceof Removable removableSource) {
+        if (effectSource instanceof Removable removableSource) {
             removableSource.remove();
         }
 
-        world.createExplosion(sourceLocation, properties.power(), properties.setFire(), properties.breakBlocks(), entity);
+        world.createExplosion(effectSourceLocation, properties.power(), properties.setFire(), properties.breakBlocks());
     }
 
     private Damage getDamageForTargetLocation(Location sourceLocation, Location targetLocation) {

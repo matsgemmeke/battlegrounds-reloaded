@@ -33,4 +33,16 @@ public final class MockUtils {
         triggerObserver.onActivate();
         return null;
     };
+
+    public static Answer<Void> answerScheduleTaskRun(Number times) {
+        return invocation -> {
+            ScheduleTask task = invocation.getArgument(0);
+
+            for (int i = 0; i < times.intValue(); i++) {
+                task.run();
+            }
+
+            return null;
+        };
+    };
 }

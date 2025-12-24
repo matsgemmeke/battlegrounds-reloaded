@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,12 +20,13 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MarkSpawnPointEffectPerformanceTest {
 
-    private final static Location INITIATION_LOCATION = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+    private static final Location INITIATION_LOCATION = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+    private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
     @Mock
-    private Entity entity;
+    private DamageSource damageSource;
     @Mock
-    private ItemEffectSource source;
+    private ItemEffectSource effectSource;
     @Mock
     private SpawnPointRegistry spawnPointRegistry;
     @InjectMocks
@@ -33,7 +34,7 @@ class MarkSpawnPointEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -43,14 +44,13 @@ class MarkSpawnPointEffectPerformanceTest {
 
     @Test
     void performCreatesNewCustomSpawnPointAndAssignsToDeployer() {
-        UUID entityId = UUID.randomUUID();
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
 
-        when(entity.getUniqueId()).thenReturn(entityId);
+        when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
         performance.perform(context);
 
-        verify(spawnPointRegistry).setCustomSpawnPoint(eq(entityId), any(SpawnPoint.class));
+        verify(spawnPointRegistry).setCustomSpawnPoint(eq(DAMAGE_SOURCE_ID), any(SpawnPoint.class));
     }
 
     @Test
@@ -62,14 +62,13 @@ class MarkSpawnPointEffectPerformanceTest {
 
     @Test
     void rollbackResetsSpawnPointWhenHavingPerformed() {
-        UUID entityId = UUID.randomUUID();
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
 
-        when(entity.getUniqueId()).thenReturn(entityId);
+        when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
         performance.perform(context);
         performance.rollback();
 
-        verify(spawnPointRegistry).setCustomSpawnPoint(entityId, null);
+        verify(spawnPointRegistry).setCustomSpawnPoint(DAMAGE_SOURCE_ID, null);
     }
 }

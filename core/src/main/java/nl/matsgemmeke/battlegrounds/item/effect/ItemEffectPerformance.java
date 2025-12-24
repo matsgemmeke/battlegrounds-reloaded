@@ -7,7 +7,7 @@ public interface ItemEffectPerformance {
 
     void addTriggerRun(TriggerRun triggerRun);
 
-    void changeSource(ItemEffectSource source);
+    void changeEffectSource(ItemEffectSource source);
 
     boolean isPerforming();
 
