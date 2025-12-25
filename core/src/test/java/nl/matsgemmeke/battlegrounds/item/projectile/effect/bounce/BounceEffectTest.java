@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
@@ -7,21 +8,21 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.stream.Stream;
 
@@ -30,31 +31,34 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class BounceEffectTest {
+@ExtendWith(MockitoExtension.class)
+class BounceEffectTest {
 
+    private static final int AMOUNT_OF_BOUNCES = 1;
     private static final double HORIZONTAL_FRICTION = 1.0;
     private static final double VERTICAL_FRICTION = 1.0;
-    private static final int AMOUNT_OF_BOUNCES = 1;
+    private static final BounceProperties PROPERTIES = new BounceProperties(AMOUNT_OF_BOUNCES, HORIZONTAL_FRICTION, VERTICAL_FRICTION);
 
-    private BounceProperties properties;
-    private Entity deployerEntity;
+    @Mock
+    private DamageSource damageSource;
+    @Mock
     private Projectile projectile;
+    @Mock
     private TriggerExecutor triggerExecutor;
+    @Mock
     private TriggerRun triggerRun;
 
-    @BeforeEach
-    public void setUp() {
-        properties = new BounceProperties(AMOUNT_OF_BOUNCES, HORIZONTAL_FRICTION, VERTICAL_FRICTION);
-        deployerEntity = mock(Entity.class);
-        projectile = mock(Projectile.class);
-        triggerRun = mock(TriggerRun.class);
+    private BounceEffect effect;
 
-        triggerExecutor = mock(TriggerExecutor.class);
+    @BeforeEach
+    void setUp() {
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
+
+        effect = new BounceEffect(PROPERTIES);
     }
 
     @Test
-    public void onLaunchThrowsProjectileEffectPerformanceExceptionWhenRayTraceResultIsNull() {
+    void onLaunchThrowsProjectileEffectPerformanceExceptionWhenRayTraceResultIsNull() {
         Location projectileLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
 
@@ -66,9 +70,8 @@ public class BounceEffectTest {
         when(projectile.getVelocity()).thenReturn(velocity);
         when(projectile.getWorld()).thenReturn(world);
 
-        BounceEffect effect = new BounceEffect(properties);
         effect.addTriggerExecutor(triggerExecutor);
-        effect.onLaunch(deployerEntity, projectile);
+        effect.onLaunch(damageSource, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
@@ -82,7 +85,7 @@ public class BounceEffectTest {
     }
 
     @Test
-    public void onLaunchThrowsProjectileEffectPerformanceExceptionWhenRayTraceResultHasNoHitBlockFace() {
+    void onLaunchThrowsProjectileEffectPerformanceExceptionWhenRayTraceResultHasNoHitBlockFace() {
         Location projectileLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
 
@@ -96,9 +99,8 @@ public class BounceEffectTest {
         when(projectile.getVelocity()).thenReturn(velocity);
         when(projectile.getWorld()).thenReturn(world);
 
-        BounceEffect effect = new BounceEffect(properties);
         effect.addTriggerExecutor(triggerExecutor);
-        effect.onLaunch(deployerEntity, projectile);
+        effect.onLaunch(damageSource, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
@@ -112,12 +114,11 @@ public class BounceEffectTest {
     }
 
     @Test
-    public void onLaunchStartsTriggerRunThatCancelWhenProjectileNoLongerExists() {
+    void onLaunchStartsTriggerRunThatCancelWhenProjectileNoLongerExists() {
         when(projectile.exists()).thenReturn(false);
 
-        BounceEffect effect = new BounceEffect(properties);
         effect.addTriggerExecutor(triggerExecutor);
-        effect.onLaunch(deployerEntity, projectile);
+        effect.onLaunch(damageSource, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
@@ -130,8 +131,7 @@ public class BounceEffectTest {
     }
 
     @DisplayName("Projectile reflection scenarios")
-    @NotNull
-    private static Stream<Arguments> blockProjectileScenarios() {
+    static Stream<Arguments> blockProjectileScenarios() {
         return Stream.of(
                 arguments(BlockFace.UP, new Vector(0, -1, 0), new Vector(0, 1, 0)),
                 arguments(BlockFace.DOWN, new Vector(0, 1, 0), new Vector(0, -1, 0)),
@@ -144,12 +144,9 @@ public class BounceEffectTest {
 
     @ParameterizedTest
     @MethodSource("blockProjectileScenarios")
-    public void onLaunchStartsTriggerWithObserverThatAltersProjectileVelocity(BlockFace hitBlockFace, Vector velocity, Vector reflection) {
+    void onLaunchStartsTriggerWithObserverThatAltersProjectileVelocity(BlockFace hitBlockFace, Vector velocity, Vector reflection) {
         Location projectileLocation = new Location(null, 0, 0, 0);
-
         Block block = mock(Block.class);
-        when(block.getType()).thenReturn(Material.STONE);
-
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), block, hitBlockFace);
 
         World world = mock(World.class);
@@ -160,9 +157,8 @@ public class BounceEffectTest {
         when(projectile.getVelocity()).thenReturn(velocity);
         when(projectile.getWorld()).thenReturn(world);
 
-        BounceEffect effect = new BounceEffect(properties);
         effect.addTriggerExecutor(triggerExecutor);
-        effect.onLaunch(deployerEntity, projectile);
+        effect.onLaunch(damageSource, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());

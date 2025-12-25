@@ -62,7 +62,7 @@ public class ThrowDeployment implements Deployment {
 
         long cooldown = properties.cooldown();
 
-        properties.projectileEffects().forEach(effect -> effect.onLaunch(deployerEntity, deploymentObject));
+        properties.projectileEffects().forEach(effect -> effect.onLaunch(deployer, deploymentObject));
 
         audioEmitter.playSounds(properties.throwSounds(), deployLocation);
 

@@ -1,49 +1,54 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.trail;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.trigger.*;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
-public class TrailEffectTest {
+@ExtendWith(MockitoExtension.class)
+class TrailEffectTest {
 
     private static final int MAX_ACTIVATIONS = 2;
     private static final ParticleEffect PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0, 0, 0, 0, null, null);
+    private static final TrailProperties PROPERTIES = new TrailProperties(PARTICLE_EFFECT, MAX_ACTIVATIONS);
 
-    private Entity deployerEntity;
+    @Mock
+    private DamageSource damageSource;
+    @Mock
     private ParticleEffectSpawner particleEffectSpawner;
+    @Mock
     private Projectile projectile;
-    private TrailProperties properties;
+    @Mock
     private TriggerExecutor triggerExecutor;
+    @Mock
     private TriggerRun triggerRun;
 
-    @BeforeEach
-    public void setUp() {
-        deployerEntity = mock(Entity.class);
-        particleEffectSpawner = mock(ParticleEffectSpawner.class);
-        projectile = mock(Projectile.class);
-        properties = new TrailProperties(PARTICLE_EFFECT, MAX_ACTIVATIONS);
-        triggerRun = mock(TriggerRun.class);
+    private TrailEffect effect;
 
-        triggerExecutor = mock(TriggerExecutor.class);
+    @BeforeEach
+    void setUp() {
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
+
+        effect = new TrailEffect(particleEffectSpawner, PROPERTIES);
     }
 
     @Test
-    public void onLaunchStartsTriggerRunThatCancelWhenProjectileNoLongerExists() {
+    void onLaunchStartsTriggerRunThatCancelWhenProjectileNoLongerExists() {
         when(projectile.exists()).thenReturn(false);
 
-        TrailEffect effect = new TrailEffect(particleEffectSpawner, properties);
         effect.addTriggerExecutor(triggerExecutor);
-        effect.onLaunch(deployerEntity, projectile);
+        effect.onLaunch(damageSource, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
@@ -55,15 +60,14 @@ public class TrailEffectTest {
     }
 
     @Test
-    public void onLaunchStartsTriggersWithObserverThatSpawnsParticleAtProjectileLocation() {
+    void onLaunchStartsTriggersWithObserverThatSpawnsParticleAtProjectileLocation() {
         Location projectileLocation = new Location(null, 0, 0, 0);
 
         when(projectile.exists()).thenReturn(true);
         when(projectile.getLocation()).thenReturn(projectileLocation);
 
-        TrailEffect effect = new TrailEffect(particleEffectSpawner, properties);
         effect.addTriggerExecutor(triggerExecutor);
-        effect.onLaunch(deployerEntity, projectile);
+        effect.onLaunch(damageSource, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());

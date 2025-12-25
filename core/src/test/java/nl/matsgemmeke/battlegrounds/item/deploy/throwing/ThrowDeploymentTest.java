@@ -98,6 +98,6 @@ class ThrowDeploymentTest {
         verify(deployer).setHeldItem(null);
         verify(item).setPickupDelay(100000);
         verify(item).setVelocity(new Vector(-1.477211629518312,-0.0,-0.26047226650039546));
-        verify(projectileEffect).onLaunch(eq(entity), argThat(projectile -> projectile == deploymentResultOptional.get().deploymentObject()));
+        verify(projectileEffect).onLaunch(eq(deployer), argThat(projectile -> projectile == deploymentResultOptional.get().deploymentObject()));
     }
 }

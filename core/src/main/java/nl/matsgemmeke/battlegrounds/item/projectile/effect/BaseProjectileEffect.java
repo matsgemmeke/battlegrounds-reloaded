@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import org.bukkit.entity.Entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,9 +29,10 @@ public abstract class BaseProjectileEffect implements ProjectileEffect {
         triggerRuns.clear();
     }
 
-    public void onLaunch(Entity deployerEntity, Projectile projectile) {
-        UUID sourceId = deployerEntity.getUniqueId();
-        TriggerContext context = new TriggerContext(sourceId, projectile);
+    @Override
+    public void onLaunch(DamageSource damageSource, Projectile projectile) {
+        UUID damageSourceId = damageSource.getUniqueId();
+        TriggerContext context = new TriggerContext(damageSourceId, projectile);
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(context);
