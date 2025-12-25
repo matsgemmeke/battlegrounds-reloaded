@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,18 +33,18 @@ class PrimeDeploymentTest {
     private PrimeDeployment deployment;
 
     @Test
-    void createContextReturnsDeploymentContextOptionalWithPrimeDeploymentObjectWithoutPlayingSounds() {
+    void performReturnsDeploymentResultOptionalWithPrimeDeploymentObjectWithoutPlayingSounds() {
         ItemStack itemStack = new ItemStack(Material.STICK);
         Entity deployerEntity = mock(Entity.class);
 
         Deployer deployer = mock(Deployer.class);
         when(deployer.getHeldItem()).thenReturn(itemStack);
 
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, LISTENER);
 
-        assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.deployer()).isEqualTo(deployer);
-            assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
+        assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
+            assertThat(deploymentResult.deployer()).isEqualTo(deployer);
+            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isZero();
                 assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
             });
@@ -54,7 +54,7 @@ class PrimeDeploymentTest {
     }
 
     @Test
-    void createContextReturnsDeploymentContextOptionalWithNewInstanceOfPrimeDeploymentObjectAndPlaysSounds() {
+    void performReturnsDeploymentContextOptionalWithNewInstanceOfPrimeDeploymentObjectAndPlaysSounds() {
         ItemStack itemStack = new ItemStack(Material.STICK);
         List<GameSound> primeSounds = List.of(mock(GameSound.class));
         Location deployerLocation = new Location(null, 1, 1, 1);
@@ -66,11 +66,11 @@ class PrimeDeploymentTest {
         when(deployerEntity.getLocation()).thenReturn(deployerLocation);
 
         deployment.configurePrimeSounds(primeSounds);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, LISTENER);
 
-        assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.deployer()).isEqualTo(deployer);
-            assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
+        assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
+            assertThat(deploymentResult.deployer()).isEqualTo(deployer);
+            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isZero();
                 assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
             });

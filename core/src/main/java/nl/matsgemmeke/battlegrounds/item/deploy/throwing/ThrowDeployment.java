@@ -39,7 +39,8 @@ public class ThrowDeployment implements Deployment {
         this.properties = properties;
     }
 
-    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
+    @Override
+    public Optional<DeploymentResult> perform(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
@@ -67,6 +68,6 @@ public class ThrowDeployment implements Deployment {
 
         deployer.setHeldItem(null);
 
-        return Optional.of(new DeploymentContext(deployer, deploymentObject, cooldown));
+        return Optional.of(new DeploymentResult(deployer, deploymentObject, cooldown));
     }
 }

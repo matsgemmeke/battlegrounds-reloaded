@@ -243,7 +243,7 @@ class DefaultEquipmentTest {
         when(holder.getEntity()).thenReturn(player);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.createContext(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
+        when(deployment.perform(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
 
         equipment.setDeploymentHandler(deploymentHandler);
         equipment.performDeployment(deployment, holder);
@@ -253,7 +253,7 @@ class DefaultEquipmentTest {
 
     @Test
     void performDeploymentCallsDeploymentHandlerWhenDeploymentProducesDeploymentContext() {
-        DeploymentContext deploymentContext = new DeploymentContext(null, null, 0L);
+        DeploymentResult deploymentResult = new DeploymentResult(null, null, 0L);
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
@@ -261,12 +261,12 @@ class DefaultEquipmentTest {
         when(holder.getEntity()).thenReturn(player);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.createContext(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentContext));
+        when(deployment.perform(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
 
         equipment.setDeploymentHandler(deploymentHandler);
         equipment.performDeployment(deployment, holder);
 
-        verify(deploymentHandler).performDeployment(deploymentContext);
+        verify(deploymentHandler).processDeploymentResult(deploymentResult);
     }
 
     @Test

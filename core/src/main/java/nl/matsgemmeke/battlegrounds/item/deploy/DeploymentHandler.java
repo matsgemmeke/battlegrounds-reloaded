@@ -112,9 +112,9 @@ public class DeploymentHandler {
         return performing;
     }
 
-    public void performDeployment(DeploymentContext deploymentContext) {
+    public void processDeploymentResult(DeploymentResult deploymentResult) {
         performing = true;
-        deploymentObject = deploymentContext.deploymentObject();
+        deploymentObject = deploymentResult.deploymentObject();
 
         ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
 
@@ -124,24 +124,24 @@ public class DeploymentHandler {
         }
 
         if (!deploymentObject.isPhysical()) {
-            this.performPendingDeployment(deploymentContext);
+            this.processPendingDeployment(deploymentResult);
         } else {
-            this.performCompletedDeployment(deploymentContext);
+            this.processCompletedDeployment(deploymentResult);
         }
     }
 
-    private void performPendingDeployment(DeploymentContext deploymentContext) {
-        Deployer deployer = deploymentContext.deployer();
-        Location initiationLocation = deploymentObject.getLocation();
+    private void processPendingDeployment(DeploymentResult deploymentResult) {
+        Deployer deployer = deploymentResult.deployer();
+        Location initiationLocation = deploymentResult.deploymentObject().getLocation();
         ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, initiationLocation);
 
         itemEffect.startPerformance(context);
     }
 
-    private void performCompletedDeployment(DeploymentContext deploymentContext) {
-        Deployer deployer = deploymentContext.deployer();
+    private void processCompletedDeployment(DeploymentResult deploymentResult) {
+        Deployer deployer = deploymentResult.deployer();
         Location initiationLocation = deployer.getDeployLocation();
-        long cooldown = deploymentContext.cooldown();
+        long cooldown = deploymentResult.cooldown();
 
         ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, initiationLocation);
 

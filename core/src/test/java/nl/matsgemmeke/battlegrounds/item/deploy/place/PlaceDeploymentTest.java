@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -60,41 +60,41 @@ class PlaceDeploymentTest {
     private PlaceDeployment deployment;
 
     @Test
-    void createContextThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
-        assertThatThrownBy(() -> deployment.createContext(deployer, deployerEntity, destructionListener))
+    void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
+        assertThatThrownBy(() -> deployment.perform(deployer, deployerEntity, destructionListener))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
 
     @Test
-    void createContextReturnsEmptyOptionalWhenDeployerDoesNotReturnTwoTargetBlocks() {
+    void performReturnsEmptyOptionalWhenDeployerDoesNotReturnTwoTargetBlocks() {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(deploymentContextOptional).isEmpty();
+        assertThat(deploymentResultOptional).isEmpty();
 
         verifyNoInteractions(audioEmitter);
     }
 
     @Test
-    void createContextReturnsEmptyOptionalWhenDeployerIsTargetingOccludingBlock() {
+    void performReturnsEmptyOptionalWhenDeployerIsTargetingOccludingBlock() {
         Block targetBlock = mock(Block.class);
         when(targetBlock.getType()).thenReturn(Material.OAK_FENCE);
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(deploymentContextOptional).isEmpty();
+        assertThat(deploymentResultOptional).isEmpty();
 
         verifyNoInteractions(audioEmitter);
     }
 
     @Test
-    void createContextReturnsEmptyOptionalWhenAdjacentBlockIsNotConnectedToTargetBlock() {
+    void performReturnsEmptyOptionalWhenAdjacentBlockIsNotConnectedToTargetBlock() {
         Block adjacentBlock = mock(Block.class);
 
         Block targetBlock = mock(Block.class);
@@ -104,9 +104,9 @@ class PlaceDeploymentTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(deploymentContextOptional).isEmpty();
+        assertThat(deploymentResultOptional).isEmpty();
 
         verifyNoInteractions(audioEmitter);
     }
@@ -120,7 +120,7 @@ class PlaceDeploymentTest {
 
     @ParameterizedTest
     @MethodSource("placeBlockArguments")
-    void createContextReturnsOptionalWithDeploymentContextWhenPlacingBlockVertically(BlockFace targetBlockFace, AttachedFace expectedAttachedFace) {
+    void performReturnsOptionalWithDeploymentContextWhenPlacingBlockVertically(BlockFace targetBlockFace, AttachedFace expectedAttachedFace) {
         BlockState adjacentBlockState = mock(BlockState.class);
         Switch switchBlockData = mock(Switch.class);
         Location adjacentBlockLocation = new Location(null, 1, 1, 1);
@@ -137,15 +137,15 @@ class PlaceDeploymentTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.deployer()).isEqualTo(deployer);
-            assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
+        assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
+            assertThat(deploymentResult.deployer()).isEqualTo(deployer);
+            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
             });
-            assertThat(deploymentContext.cooldown()).isEqualTo(COOLDOWN);
+            assertThat(deploymentResult.cooldown()).isEqualTo(COOLDOWN);
         });
 
         verify(adjacentBlockState).setBlockData(switchBlockData);
@@ -155,7 +155,7 @@ class PlaceDeploymentTest {
     }
 
     @Test
-    void createContextReturnsOptionalWithDeploymentContextWhenPlacingBlockHorizontally() {
+    void performReturnsOptionalWithDeploymentContextWhenPlacingBlockHorizontally() {
         BlockFace targetBlockFace = BlockFace.NORTH;
         BlockState adjacentBlockState = mock(BlockState.class);
         Switch switchBlockData = mock(Switch.class);
@@ -173,15 +173,15 @@ class PlaceDeploymentTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.deployer()).isEqualTo(deployer);
-            assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
+        assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
+            assertThat(deploymentResult.deployer()).isEqualTo(deployer);
+            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
             });
-            assertThat(deploymentContext.cooldown()).isEqualTo(COOLDOWN);
+            assertThat(deploymentResult.cooldown()).isEqualTo(COOLDOWN);
         });
 
         verify(adjacentBlockState, times(2)).setBlockData(switchBlockData);

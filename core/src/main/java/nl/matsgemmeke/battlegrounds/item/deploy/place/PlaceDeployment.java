@@ -38,7 +38,7 @@ public class PlaceDeployment implements Deployment {
     }
 
     @Override
-    public Optional<DeploymentContext> createContext(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
+    public Optional<DeploymentResult> perform(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
@@ -71,7 +71,7 @@ public class PlaceDeployment implements Deployment {
 
         deployer.setHeldItem(null);
 
-        return Optional.of(new DeploymentContext(deployer, deploymentObject, cooldown));
+        return Optional.of(new DeploymentResult(deployer, deploymentObject, cooldown));
     }
 
     private void placeBlock(Block block, BlockFace blockFace, Material material) {

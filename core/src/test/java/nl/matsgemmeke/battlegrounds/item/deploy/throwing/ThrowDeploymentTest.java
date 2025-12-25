@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
@@ -48,17 +48,17 @@ class ThrowDeploymentTest {
     private ThrowDeployment deployment;
 
     @Test
-    void createContextThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
+    void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
         Deployer deployer = mock(Deployer.class);
         Entity deployerEntity = mock(Entity.class);
 
-        assertThatThrownBy(() -> deployment.createContext(deployer, deployerEntity, destructionListener))
+        assertThatThrownBy(() -> deployment.perform(deployer, deployerEntity, destructionListener))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
 
     @Test
-    void createContextReturnsOptionalWithNewInstanceOfThrowDeploymentObject() {
+    void performReturnsOptionalWithNewInstanceOfThrowDeploymentObject() {
         ItemStack itemStack = new ItemStack(Material.SHEARS);
         List<GameSound> throwSounds = Collections.emptyList();
         ProjectileEffect projectileEffect = mock(ProjectileEffect.class);
@@ -83,21 +83,21 @@ class ThrowDeploymentTest {
         when(world.dropItem(deployLocation, itemStack)).thenReturn(item);
 
         deployment.configureProperties(properties);
-        Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, entity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, entity, destructionListener);
 
-        assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.deployer()).isEqualTo(deployer);
-            assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
+        assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
+            assertThat(deploymentResult.deployer()).isEqualTo(deployer);
+            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
             });
-            assertThat(deploymentContext.cooldown()).isEqualTo(COOLDOWN);
+            assertThat(deploymentResult.cooldown()).isEqualTo(COOLDOWN);
         });
 
         verify(audioEmitter).playSounds(throwSounds, deployLocation);
         verify(deployer).setHeldItem(null);
         verify(item).setPickupDelay(100000);
         verify(item).setVelocity(new Vector(-1.477211629518312,-0.0,-0.26047226650039546));
-        verify(projectileEffect).onLaunch(eq(entity), argThat(projectile -> projectile == deploymentContextOptional.get().deploymentObject()));
+        verify(projectileEffect).onLaunch(eq(entity), argThat(projectile -> projectile == deploymentResultOptional.get().deploymentObject()));
     }
 }
