@@ -140,7 +140,6 @@ class PlaceDeploymentTest {
         Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
             assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
@@ -177,7 +176,6 @@ class PlaceDeploymentTest {
         Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
             assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);

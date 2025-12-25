@@ -43,7 +43,6 @@ class PrimeDeploymentTest {
         Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, LISTENER);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
             assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isZero();
@@ -70,7 +69,6 @@ class PrimeDeploymentTest {
         Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, deployerEntity, LISTENER);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.entity()).isEqualTo(deployerEntity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
             assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isZero();

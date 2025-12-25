@@ -67,6 +67,6 @@ public class ThrowDeployment implements Deployment {
 
         deployer.setHeldItem(null);
 
-        return Optional.of(new DeploymentContext(deployerEntity, deployer, deploymentObject, cooldown));
+        return Optional.of(new DeploymentContext(deployer, deploymentObject, cooldown));
     }
 }

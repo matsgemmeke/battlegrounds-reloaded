@@ -86,7 +86,6 @@ class ThrowDeploymentTest {
         Optional<DeploymentContext> deploymentContextOptional = deployment.createContext(deployer, entity, destructionListener);
 
         assertThat(deploymentContextOptional).hasValueSatisfying(deploymentContext -> {
-            assertThat(deploymentContext.entity()).isEqualTo(entity);
             assertThat(deploymentContext.deployer()).isEqualTo(deployer);
             assertThat(deploymentContext.deploymentObject()).satisfies(deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
