@@ -25,6 +25,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationProp
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.HitboxMultiplierProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
@@ -47,6 +48,7 @@ public class ItemEffectFactory {
     private final Provider<GunFireSimulationEffect> gunFireSimulationEffectProvider;
     private final Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider;
     private final Provider<SmokeScreenEffect> smokeScreenEffectProvider;
+    private final Provider<SoundNotificationEffect> soundNotificationEffectProvider;
     private final RangeProfileMapper rangeProfileMapper;
     private final TriggerExecutorFactory triggerExecutorFactory;
 
@@ -61,6 +63,7 @@ public class ItemEffectFactory {
             Provider<GunFireSimulationEffect> gunFireSimulationEffectProvider,
             Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
             Provider<SmokeScreenEffect> smokeScreenEffectProvider,
+            Provider<SoundNotificationEffect> soundNotificationEffectProvider,
             RangeProfileMapper rangeProfileMapper,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
@@ -73,6 +76,7 @@ public class ItemEffectFactory {
         this.gunFireSimulationEffectProvider = gunFireSimulationEffectProvider;
         this.markSpawnPointEffectProvider = markSpawnPointEffectProvider;
         this.smokeScreenEffectProvider = smokeScreenEffectProvider;
+        this.soundNotificationEffectProvider = soundNotificationEffectProvider;
         this.rangeProfileMapper = rangeProfileMapper;
         this.triggerExecutorFactory = triggerExecutorFactory;
     }
@@ -191,12 +195,12 @@ public class ItemEffectFactory {
                 SoundNotificationEffectSpec spec = (SoundNotificationEffectSpec) itemEffectSpec;
 
                 List<GameSound> notificationSounds = DefaultGameSound.parseSounds(spec.notificationSounds);
+                SoundNotificationProperties properties = new SoundNotificationProperties(notificationSounds);
 
-                SoundNotificationEffect soundNotificationEffect = new SoundNotificationEffect();
-                soundNotificationEffect.setNotificationSounds(notificationSounds);
+                SoundNotificationEffect soundNotificationEffect = soundNotificationEffectProvider.get();
+                soundNotificationEffect.setProperties(properties);
                 yield soundNotificationEffect;
             }
-            default -> throw new IllegalStateException("Unexpected value: " + itemEffectType);
         };
 
         for (TriggerSpec triggerSpec : itemEffectSpec.triggers.values()) {

@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSourceType;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -245,6 +246,11 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public void modifyCameraRotation(float yaw, float pitch) {
         internals.setPlayerRotation(player, yaw, pitch);
+    }
+
+    @Override
+    public void playSound(Location location, GameSound sound) {
+        player.playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
     }
 
     public void removeItem(@NotNull ItemStack itemStack) {

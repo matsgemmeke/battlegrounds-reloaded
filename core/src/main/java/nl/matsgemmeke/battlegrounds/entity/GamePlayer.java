@@ -1,9 +1,11 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.game.Game;
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,4 +35,12 @@ public interface GamePlayer extends GameEntity, EquipmentHolder, GunHolder, Mele
      * @param passive whether the player is passive
      */
     void setPassive(boolean passive);
+
+    /**
+     * Plays a given sound to the player at a given location.
+     *
+     * @param location the location to play the sound
+     * @param sound    the sound to play
+     */
+    void playSound(Location location, GameSound sound);
 }

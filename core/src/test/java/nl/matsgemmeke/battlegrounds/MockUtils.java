@@ -44,5 +44,5 @@ public final class MockUtils {
 
             return null;
         };
-    };
+    }
 }

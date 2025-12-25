@@ -14,6 +14,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationProp
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.HitboxMultiplierProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
@@ -23,7 +24,11 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import org.bukkit.Particle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
@@ -31,51 +36,51 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class ItemEffectFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class ItemEffectFactoryTest {
 
+    private static final TriggerSpec TRIGGER_SPEC = createTriggerSpec();
+
+    @Spy
     private HitboxMultiplierProfileMapper hitboxMultiplierProfileMapper;
+    @Spy
     private ParticleEffectMapper particleEffectMapper;
+    @Mock
     private Provider<CombustionEffect> combustionEffectProvider;
+    @Mock
     private Provider<DamageEffect> damageEffectProvider;
+    @Mock
     private Provider<ExplosionEffect> explosionEffectProvider;
+    @Mock
     private Provider<FlashEffect> flashEffectProvider;
+    @Mock
     private Provider<GunFireSimulationEffect> gunFireSimulationEffectProvider;
+    @Mock
     private Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider;
+    @Mock
     private Provider<SmokeScreenEffect> smokeScreenEffectProvider;
+    @Mock
+    private Provider<SoundNotificationEffect> soundNotificationEffectProvider;
+    @Spy
     private RangeProfileMapper rangeProfileMapper;
+    @Mock
     private TriggerExecutorFactory triggerExecutorFactory;
-    private TriggerSpec triggerSpec;
 
     private ItemEffectFactory itemEffectFactory;
 
     @BeforeEach
-    public void setUp() {
-        hitboxMultiplierProfileMapper = new HitboxMultiplierProfileMapper();
-        particleEffectMapper = new ParticleEffectMapper();
-        combustionEffectProvider = mock();
-        damageEffectProvider = mock();
-        explosionEffectProvider = mock();
-        flashEffectProvider = mock();
-        gunFireSimulationEffectProvider = mock();
-        markSpawnPointEffectProvider = mock();
-        smokeScreenEffectProvider = mock();
-        rangeProfileMapper = new RangeProfileMapper();
-        triggerSpec = this.createTriggerSpec();
-
-        triggerExecutorFactory = mock(TriggerExecutorFactory.class);
-        when(triggerExecutorFactory.create(triggerSpec)).thenReturn(mock(TriggerExecutor.class));
-
-        itemEffectFactory = new ItemEffectFactory(hitboxMultiplierProfileMapper, particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, rangeProfileMapper, triggerExecutorFactory);
+    void setUp() {
+        itemEffectFactory = new ItemEffectFactory(hitboxMultiplierProfileMapper, particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, soundNotificationEffectProvider, rangeProfileMapper, triggerExecutorFactory);
     }
 
     @Test
-    public void createInstanceForCombustionEffectType() {
+    void createInstanceForCombustionEffectType() {
         CombustionEffect combustionEffect = mock(CombustionEffect.class);
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
 
         CombustionEffectSpec spec = new CombustionEffectSpec();
         spec.effectType = "COMBUSTION";
-        spec.triggers = Map.of("timed", triggerSpec);
+        spec.triggers = Map.of("timed", TRIGGER_SPEC);
         spec.range = rangeProfileSpec;
         spec.minSize = 2.5;
         spec.maxSize = 5.0;
@@ -87,6 +92,7 @@ public class ItemEffectFactoryTest {
         spec.spreadFire = false;
 
         when(combustionEffectProvider.get()).thenReturn(combustionEffect);
+        when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
 
@@ -115,19 +121,20 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void createInstanceForDamageEffectType() {
+    void createInstanceForDamageEffectType() {
         DamageEffect damageEffect = mock(DamageEffect.class);
         HitboxMultiplierSpec hitboxMultiplierSpec = this.createHitboxMultiplierSpec();
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
 
         DamageEffectSpec spec = new DamageEffectSpec();
         spec.effectType = "DAMAGE";
-        spec.triggers = Map.of("timed", triggerSpec);
+        spec.triggers = Map.of("timed", TRIGGER_SPEC);
         spec.hitboxMultipliers = hitboxMultiplierSpec;
         spec.range = rangeProfileSpec;
         spec.damageType = "BULLET_DAMAGE";
 
         when(damageEffectProvider.get()).thenReturn(damageEffect);
+        when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
 
@@ -135,19 +142,20 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void createInstanceForExplosionEffectType() {
+    void createInstanceForExplosionEffectType() {
         ExplosionEffect explosionEffect = mock(ExplosionEffect.class);
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
 
         ExplosionEffectSpec spec = new ExplosionEffectSpec();
         spec.effectType = "EXPLOSION";
-        spec.triggers = Map.of("timed", triggerSpec);
+        spec.triggers = Map.of("timed", TRIGGER_SPEC);
         spec.range = rangeProfileSpec;
         spec.power = 2.0f;
         spec.damageBlocks = true;
         spec.spreadFire = false;
 
         when(explosionEffectProvider.get()).thenReturn(explosionEffect);
+        when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
 
@@ -155,13 +163,13 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void createInstanceForFlashEffectType() {
+    void createInstanceForFlashEffectType() {
         FlashEffect flashEffect = mock(FlashEffect.class);
         PotionEffectSpec potionEffectSpec = this.createPotionEffectSpec();
 
         FlashEffectSpec spec = new FlashEffectSpec();
         spec.effectType = "FLASH";
-        spec.triggers = Map.of("timed", triggerSpec);
+        spec.triggers = Map.of("timed", TRIGGER_SPEC);
         spec.range = 5.0;
         spec.power = 2.0f;
         spec.damageBlocks = true;
@@ -169,6 +177,7 @@ public class ItemEffectFactoryTest {
         spec.potionEffect = potionEffectSpec;
 
         when(flashEffectProvider.get()).thenReturn(flashEffect);
+        when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
 
@@ -176,12 +185,12 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void makeCreatesInstanceOfGunFireSimulationEffect() {
+    void makeCreatesInstanceOfGunFireSimulationEffect() {
         GunFireSimulationEffect gunFireSimulationEffect = mock(GunFireSimulationEffect.class);
 
         GunFireSimulationEffectSpec spec = new GunFireSimulationEffectSpec();
         spec.effectType = "GUN_FIRE_SIMULATION";
-        spec.triggers = Map.of("timed", triggerSpec);
+        spec.triggers = Map.of("timed", TRIGGER_SPEC);
         spec.minDuration = 100L;
         spec.maxDuration = 200L;
         spec.burstInterval = 2L;
@@ -191,6 +200,7 @@ public class ItemEffectFactoryTest {
         spec.maxDelayDuration = 20L;
 
         when(gunFireSimulationEffectProvider.get()).thenReturn(gunFireSimulationEffect);
+        when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
 
@@ -210,14 +220,15 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void makeCreatesInstanceOfMarkSpawnPointEffect() {
+    void makeCreatesInstanceOfMarkSpawnPointEffect() {
         MarkSpawnPointEffect markSpawnPointEffect = mock(MarkSpawnPointEffect.class);
 
         MarkSpawnPointEffectSpec spec = new MarkSpawnPointEffectSpec();
         spec.effectType = "MARK_SPAWN_POINT";
-        spec.triggers = Map.of("timed", triggerSpec);
+        spec.triggers = Map.of("timed", TRIGGER_SPEC);
 
         when(markSpawnPointEffectProvider.get()).thenReturn(markSpawnPointEffect);
+        when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
 
@@ -225,13 +236,13 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void createInstanceForSmokeScreenEffectType() {
+    void createInstanceForSmokeScreenEffectType() {
         SmokeScreenEffect smokeScreenEffect = mock(SmokeScreenEffect.class);
         ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec();
 
         SmokeScreenEffectSpec spec = new SmokeScreenEffectSpec();
         spec.effectType = "SMOKE_SCREEN";
-        spec.triggers = Map.of("timed", triggerSpec);
+        spec.triggers = Map.of("timed", TRIGGER_SPEC);
         spec.minSize = 2.5;
         spec.maxSize = 5.0;
         spec.density = 5.0;
@@ -242,6 +253,7 @@ public class ItemEffectFactoryTest {
         spec.particleEffect = particleEffectSpec;
 
         when(smokeScreenEffectProvider.get()).thenReturn(smokeScreenEffect);
+        when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
 
@@ -267,19 +279,31 @@ public class ItemEffectFactoryTest {
     }
 
     @Test
-    public void makeCreatesInstanceOfSoundNotificationEffect() {
+    void makeCreatesInstanceOfSoundNotificationEffect() {
+        SoundNotificationEffect soundNotificationEffect = mock(SoundNotificationEffect.class);
+
         SoundNotificationEffectSpec spec = new SoundNotificationEffectSpec();
         spec.effectType = "SOUND_NOTIFICATION";
-        spec.triggers = Map.of("timed", triggerSpec);
+        spec.triggers = Map.of("timed", TRIGGER_SPEC);
         spec.notificationSounds = "AMBIENT_CAVE-1-1-0";
 
+        when(soundNotificationEffectProvider.get()).thenReturn(soundNotificationEffect);
+        when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
+
         ItemEffect itemEffect = itemEffectFactory.create(spec);
+
+        ArgumentCaptor<SoundNotificationProperties> propertiesCaptor = ArgumentCaptor.forClass(SoundNotificationProperties.class);
+        verify(soundNotificationEffect).setProperties(propertiesCaptor.capture());
+
+        assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
+           assertThat(properties.notificationSounds()).hasSize(1);
+        });
 
         assertThat(itemEffect).isInstanceOf(SoundNotificationEffect.class);
     }
 
     @Test
-    public void createThrowsItemEffectCreationExceptionWhenRequiredSpecValueIsNull() {
+    void createThrowsItemEffectCreationExceptionWhenRequiredSpecValueIsNull() {
         ExplosionEffectSpec spec = new ExplosionEffectSpec();
         spec.effectType = "EXPLOSION";
 
@@ -338,7 +362,7 @@ public class ItemEffectFactoryTest {
         return spec;
     }
 
-    private TriggerSpec createTriggerSpec() {
+    private static TriggerSpec createTriggerSpec() {
         TriggerSpec spec = new TriggerSpec();
         spec.type = "TIMED";
         spec.delay = 20L;
