@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.effect.Activator;
+import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
-import nl.matsgemmeke.battlegrounds.item.effect.Activator;
+import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
