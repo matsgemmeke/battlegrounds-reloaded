@@ -1,6 +1,16 @@
 package nl.matsgemmeke.battlegrounds.item.effect.source;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import org.bukkit.Location;
+import org.bukkit.World;
 
-public interface ItemEffectSource extends TriggerTarget {
+/**
+ * Represents something that acts as a source for an item effect.
+ */
+public interface ItemEffectSource {
+
+    boolean exists();
+
+    Location getLocation();
+
+    World getWorld();
 }

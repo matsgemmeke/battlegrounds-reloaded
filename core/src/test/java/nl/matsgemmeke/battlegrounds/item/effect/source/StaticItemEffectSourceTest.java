@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.source;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,14 +30,5 @@ class StaticItemEffectSourceTest {
         boolean exists = source.exists();
 
         assertThat(exists).isTrue();
-    }
-
-    @Test
-    void getVelocityReturnsZeroVector() {
-        Vector velocity = source.getVelocity();
-
-        assertThat(velocity.getX()).isZero();
-        assertThat(velocity.getY()).isZero();
-        assertThat(velocity.getZ()).isZero();
     }
 }
