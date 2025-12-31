@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,8 @@ class SoundNotificationEffectPerformanceTest {
     private ItemEffectSource effectSource;
     @Mock
     private PlayerRegistry playerRegistry;
+    @Mock
+    private TriggerTarget triggerTarget;
 
     private SoundNotificationEffectPerformance performance;
 
@@ -48,7 +51,7 @@ class SoundNotificationEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -68,7 +71,7 @@ class SoundNotificationEffectPerformanceTest {
 
     @Test
     void performDoesNothingWhenDamageSourceIsNoPlayer() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(playerRegistry.findByUniqueId(DAMAGE_SOURCE_ID)).thenReturn(Optional.empty());
@@ -79,7 +82,7 @@ class SoundNotificationEffectPerformanceTest {
     @Test
     void performPlaysNotificationSoundsWhenDamageSourceIsPlayer() {
         Location playerLocation = new Location(null, 1, 1, 1);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getLocation()).thenReturn(playerLocation);

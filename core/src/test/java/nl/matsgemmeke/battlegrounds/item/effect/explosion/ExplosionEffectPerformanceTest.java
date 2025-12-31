@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,12 +60,13 @@ class ExplosionEffectPerformanceTest {
     @Test
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
         DamageSource damageSource = mock(DamageSource.class);
+        TriggerTarget triggerTarget = mock(TriggerTarget.class);
         World world = mock(World.class);
 
         ItemEffectSource effectSource = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
         when(effectSource.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -78,6 +80,7 @@ class ExplosionEffectPerformanceTest {
         Location objectLocation = new Location(world, 2, 1, 1);
         Location sourceLocation = new Location(world, 1, 1, 1);
         Location targetLocation = new Location(world, 8, 1, 1);
+        TriggerTarget triggerTarget = mock(TriggerTarget.class);
 
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
@@ -86,7 +89,7 @@ class ExplosionEffectPerformanceTest {
         when(effectSource.getLocation()).thenReturn(sourceLocation);
         when(effectSource.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         GameEntity deployerEntity = mock(GameEntity.class);
         when(deployerEntity.getLocation()).thenReturn(sourceLocation);

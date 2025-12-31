@@ -13,6 +13,7 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.ItemTriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -76,19 +77,21 @@ public class ItemLauncher implements ProjectileLauncher {
         item.setVelocity(velocity);
 
         ItemProjectile projectile = new ItemProjectile(item);
+        ItemTriggerTarget triggerTarget = new ItemTriggerTarget(item);
+
         TriggerContext triggerContext = new TriggerContext(damageSourceId, projectile);
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-            triggerRun.addObserver(() -> this.startItemEffect(damageSource, projectile, dropLocation));
+            triggerRun.addObserver(() -> this.startItemEffect(damageSource, projectile, triggerTarget, dropLocation));
             triggerRun.start();
         }
 
         this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);
     }
 
-    private void startItemEffect(DamageSource damageSource, ItemProjectile projectile, Location initiationLocation) {
-        ItemEffectContext effectContext = new ItemEffectContext(damageSource, projectile, initiationLocation);
+    private void startItemEffect(DamageSource damageSource, ItemProjectile projectile, ItemTriggerTarget triggerTarget, Location initiationLocation) {
+        ItemEffectContext effectContext = new ItemEffectContext(damageSource, projectile, triggerTarget, initiationLocation);
 
         itemEffect.startPerformance(effectContext);
     }

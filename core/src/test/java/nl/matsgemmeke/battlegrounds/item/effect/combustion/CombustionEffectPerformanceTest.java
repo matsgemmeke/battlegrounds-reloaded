@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -76,6 +77,8 @@ class CombustionEffectPerformanceTest {
     private Scheduler scheduler;
     @Mock
     private TargetFinder targetFinder;
+    @Mock
+    private TriggerTarget triggerTarget;
 
     private CombustionEffectPerformance performance;
 
@@ -93,7 +96,7 @@ class CombustionEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsTrueWhenPerforming() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
         Schedule cancelSchedule = mock(Schedule.class);
 
         Schedule repeatingSchedule = mock(Schedule.class);
@@ -110,7 +113,7 @@ class CombustionEffectPerformanceTest {
 
     @Test
     void performCreatesFireCircleAtSourceLocationAndResetsEffectAfterMaxDuration() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
         Schedule cancelSchedule = mock(Schedule.class);
         Schedule repeatingSchedule = mock(Schedule.class);
 
@@ -212,7 +215,7 @@ class CombustionEffectPerformanceTest {
 
     @Test
     void rollbackResetsAffectedBlocksAndTriggerRuns() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
         Location blockLocation = new Location(null, 0, 0, 0);
         Location effectSourceLocation = new Location(null, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);

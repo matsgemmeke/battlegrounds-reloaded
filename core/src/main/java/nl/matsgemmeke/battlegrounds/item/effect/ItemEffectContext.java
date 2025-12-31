@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.Location;
 
 public class ItemEffectContext {
@@ -9,46 +10,32 @@ public class ItemEffectContext {
     private final DamageSource damageSource;
     private final Location initiationLocation;
     private ItemEffectSource effectSource;
+    private TriggerTarget triggerTarget;
 
-    public ItemEffectContext(DamageSource damageSource, ItemEffectSource effectSource, Location initiationLocation) {
+    public ItemEffectContext(DamageSource damageSource, ItemEffectSource effectSource, TriggerTarget triggerTarget, Location initiationLocation) {
         this.damageSource = damageSource;
         this.effectSource = effectSource;
+        this.triggerTarget = triggerTarget;
         this.initiationLocation = initiationLocation;
     }
 
-    /**
-     * Gets the damage source responsible for the damage that the effect causes.
-     *
-     * @return the damage source
-     */
     public DamageSource getDamageSource() {
         return damageSource;
     }
 
-    /**
-     * Gets the source from where the effect is produced.
-     *
-     * @return the effect source
-     */
     public ItemEffectSource getEffectSource() {
         return effectSource;
     }
 
-    /**
-     * Sets the source from where the effect is produced.
-     *
-     * @param effectSource the effect source
-     */
     public void setEffectSource(ItemEffectSource effectSource) {
         this.effectSource = effectSource;
     }
 
-    /**
-     * Gets the location where the effect was initiated.
-     *
-     * @return the effect's initiation location
-     */
     public Location getInitiationLocation() {
         return initiationLocation;
+    }
+
+    public TriggerTarget getTriggerTarget() {
+        return triggerTarget;
     }
 }

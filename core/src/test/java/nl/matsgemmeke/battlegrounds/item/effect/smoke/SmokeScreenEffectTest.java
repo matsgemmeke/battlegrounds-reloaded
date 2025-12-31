@@ -9,10 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.*;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -101,7 +98,7 @@ class SmokeScreenEffectTest {
 
         assertThat(triggerContextCaptor.getValue()).satisfies(triggerContext -> {
             assertThat(triggerContext.sourceId()).isEqualTo(DAMAGE_SOURCE_ID);
-            assertThat(triggerContext.target()).isEqualTo(CONTEXT.getEffectSource());
+            assertThat(triggerContext.target()).isEqualTo(CONTEXT.getTriggerTarget());
         });
 
         verify(triggerRun).start();
@@ -131,12 +128,14 @@ class SmokeScreenEffectTest {
     }
 
     private static ItemEffectContext createContext() {
-        ItemEffectSource source = mock(ItemEffectSource.class);
+        TriggerTarget triggerTarget = mock(TriggerTarget.class);
+
+        ItemEffectSource effectSource = mock(ItemEffectSource.class);
         Location initiationLocation = new Location(null, 1, 1, 1);
 
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(damageSource, source, initiationLocation);
+        return new ItemEffectContext(damageSource, effectSource, triggerTarget, initiationLocation);
     }
 }

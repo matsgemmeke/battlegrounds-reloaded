@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.StaticTriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -75,7 +76,9 @@ public class ArrowLauncher implements ProjectileLauncher {
         World arrowWorld = arrow.getWorld();
 
         StaticItemEffectSource effectSource = new StaticItemEffectSource(arrowLocation, arrowWorld);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, initiationLocation);
+        StaticTriggerTarget triggerTarget = new StaticTriggerTarget(arrowLocation, arrowWorld);
+
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, initiationLocation);
 
         itemEffect.startPerformance(context);
 

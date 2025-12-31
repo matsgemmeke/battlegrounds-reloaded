@@ -108,8 +108,14 @@ class ArrowLauncherTest {
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
-            assertThat(itemEffectContext.getEffectSource().getLocation()).isEqualTo(arrowLocation);
-            assertThat(itemEffectContext.getEffectSource().getWorld()).isEqualTo(world);
+            assertThat(itemEffectContext.getEffectSource()).satisfies(effectSource -> {
+                assertThat(effectSource.getLocation()).isEqualTo(arrowLocation);
+                assertThat(effectSource.getWorld()).isEqualTo(world);
+            });
+            assertThat(itemEffectContext.getTriggerTarget()).satisfies(triggerTarget -> {
+               assertThat(triggerTarget.getLocation()).isEqualTo(arrowLocation);
+               assertThat(triggerTarget.getWorld()).isEqualTo(world);
+            });
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
         });
 

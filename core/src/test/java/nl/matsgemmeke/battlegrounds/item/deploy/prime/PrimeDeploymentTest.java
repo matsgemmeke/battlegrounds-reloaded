@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.DeployerTriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -74,6 +75,7 @@ class PrimeDeploymentTest {
                 assertThat(deploymentObject.getHealth()).isZero();
                 assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
             });
+            assertThat(deploymentResult.triggerTarget()).isInstanceOf(DeployerTriggerTarget.class);
         });
 
         verify(audioEmitter).playSounds(primeSounds, deployerLocation);

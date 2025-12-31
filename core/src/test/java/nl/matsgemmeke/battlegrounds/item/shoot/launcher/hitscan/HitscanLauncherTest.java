@@ -126,9 +126,6 @@ class HitscanLauncherTest {
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Location hitLocation = new Location(world, 0.0, 0.0, 0.6, 0.0f, 0.0f);
 
-        Block hitBlock = mock(Block.class);
-        when(hitBlock.getWorld()).thenReturn(world);
-
         Schedule soundPlaySchedule = mock(Schedule.class);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(soundPlaySchedule).addTask(any(ScheduleTask.class));
 
@@ -141,7 +138,6 @@ class HitscanLauncherTest {
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false, true);
-        when(world.getBlockAt(hitLocation)).thenReturn(hitBlock);
 
         HitscanLauncher hitscanLauncher = new HitscanLauncher(audioEmitter, collisionDetector, particleEffectSpawner, scheduler, targetFinder, properties, itemEffect);
         hitscanLauncher.launch(launchContext);
@@ -151,7 +147,14 @@ class HitscanLauncherTest {
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
-            assertThat(itemEffectContext.getEffectSource().getLocation()).isEqualTo(hitLocation);
+            assertThat(itemEffectContext.getEffectSource()).satisfies(effectSource -> {
+                assertThat(effectSource.getLocation()).isEqualTo(hitLocation);
+                assertThat(effectSource.getWorld()).isEqualTo(world);
+            });
+            assertThat(itemEffectContext.getTriggerTarget()).satisfies(triggerTarget -> {
+                assertThat(triggerTarget.getLocation()).isEqualTo(hitLocation);
+                assertThat(triggerTarget.getWorld()).isEqualTo(world);
+            });
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
         });
 

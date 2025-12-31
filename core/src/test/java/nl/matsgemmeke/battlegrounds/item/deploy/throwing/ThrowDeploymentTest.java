@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.ItemTriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -91,6 +92,7 @@ class ThrowDeploymentTest {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
             });
+            assertThat(deploymentResult.triggerTarget()).isInstanceOf(ItemTriggerTarget.class);
             assertThat(deploymentResult.cooldown()).isEqualTo(COOLDOWN);
         });
 

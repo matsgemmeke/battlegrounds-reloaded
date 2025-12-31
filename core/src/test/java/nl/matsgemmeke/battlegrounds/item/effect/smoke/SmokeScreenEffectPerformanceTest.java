@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -60,6 +61,8 @@ class SmokeScreenEffectPerformanceTest {
     private ItemEffectSource effectSource;
     @Mock
     private Scheduler scheduler;
+    @Mock
+    private TriggerTarget triggerTarget;
 
     private SmokeScreenEffectPerformance performance;
 
@@ -78,7 +81,7 @@ class SmokeScreenEffectPerformanceTest {
     @Test
     void isPerformingReturnsTrueWhenPerforming() {
         Schedule cancelSchedule = mock(Schedule.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         when(repeatingSchedule.isRunning()).thenReturn(true);
@@ -95,7 +98,7 @@ class SmokeScreenEffectPerformanceTest {
     @Test
     void performCancelsRepeatingScheduleOnceSourceNoLongerExists() {
         Schedule cancelSchedule = mock(Schedule.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
@@ -115,7 +118,7 @@ class SmokeScreenEffectPerformanceTest {
         World world = mock(World.class);
         Location effectSourceOldLocation = new Location(world, 0, 0, 0);
         Location effectSourceNewLocation = new Location(world, 1, 1, 1);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
@@ -137,7 +140,7 @@ class SmokeScreenEffectPerformanceTest {
         World world = mock(World.class);
         Location effectSourceLocation = new Location(world, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
@@ -161,7 +164,7 @@ class SmokeScreenEffectPerformanceTest {
         World world = mock(World.class);
         Location effectSourceLocation = new Location(world, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
@@ -184,7 +187,7 @@ class SmokeScreenEffectPerformanceTest {
         World world = mock(World.class);
         Location effectSourceLocation = new Location(world, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
@@ -206,7 +209,7 @@ class SmokeScreenEffectPerformanceTest {
     @Test
     void performRemovesSourceAndCancelsRepeatingScheduleOnceEffectIsOver() {
         Location effectSourceLocation = new Location(null, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         when(repeatingSchedule.isRunning()).thenReturn(true);
@@ -227,7 +230,7 @@ class SmokeScreenEffectPerformanceTest {
 
     @Test
     void rollbackCancelsRepeatingSchedule() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
         Schedule cancelSchedule = mock(Schedule.class);
 
         Schedule repeatingSchedule = mock(Schedule.class);

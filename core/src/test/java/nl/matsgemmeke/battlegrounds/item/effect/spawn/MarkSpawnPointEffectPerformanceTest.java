@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.Location;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,12 +30,14 @@ class MarkSpawnPointEffectPerformanceTest {
     private ItemEffectSource effectSource;
     @Mock
     private SpawnPointRegistry spawnPointRegistry;
+    @Mock
+    private TriggerTarget triggerTarget;
     @InjectMocks
     private MarkSpawnPointEffectPerformance performance;
 
     @Test
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -44,7 +47,7 @@ class MarkSpawnPointEffectPerformanceTest {
 
     @Test
     void performCreatesNewCustomSpawnPointAndAssignsToDeployer() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
@@ -62,7 +65,7 @@ class MarkSpawnPointEffectPerformanceTest {
 
     @Test
     void rollbackResetsSpawnPointWhenHavingPerformed() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 

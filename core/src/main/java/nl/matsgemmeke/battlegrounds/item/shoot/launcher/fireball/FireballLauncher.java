@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.StaticTriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -95,7 +96,9 @@ public class FireballLauncher implements ProjectileLauncher {
         World fireballWorld = fireball.getWorld();
 
         StaticItemEffectSource effectSource = new StaticItemEffectSource(fireballLocation, fireballWorld);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, initiationLocation);
+        StaticTriggerTarget triggerTarget = new StaticTriggerTarget(fireballLocation, fireballWorld);
+
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, initiationLocation);
 
         itemEffect.startPerformance(context);
 

@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -56,6 +57,8 @@ class GunFireSimulationEffectPerformanceTest {
     private ItemEffectSource effectSource;
     @Mock
     private Scheduler scheduler;
+    @Mock
+    private TriggerTarget triggerTarget;
 
     private GunFireSimulationEffectPerformance performance;
 
@@ -68,7 +71,7 @@ class GunFireSimulationEffectPerformanceTest {
     void changeEffectSourceCreatesNewContextInstanceWithGivenEffectSource() {
         Schedule schedule = mock(Schedule.class);
         ItemEffectSource oldEffectSource = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, oldEffectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, oldEffectSource, triggerTarget, INITIATION_LOCATION);
         Location newSourceLocation = new Location(null, 1, 1, 1);
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
@@ -99,7 +102,7 @@ class GunFireSimulationEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsTrueWhenPerforming() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         when(repeatingSchedule.isRunning()).thenReturn(true);
@@ -115,7 +118,7 @@ class GunFireSimulationEffectPerformanceTest {
     @Test
     void performSimulatesGenericGunFireWhenGunInfoProviderHasNoInformationForEntity() {
         Schedule repeatingSchedule = mock(Schedule.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(effectSource.exists()).thenReturn(true);
@@ -137,7 +140,7 @@ class GunFireSimulationEffectPerformanceTest {
         int rateOfFire = 120;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(effectSource.exists()).thenReturn(false);
@@ -155,7 +158,7 @@ class GunFireSimulationEffectPerformanceTest {
     @Test
     void performSimulatesGunFireOnceAndRemovesEffectSourceWhenFinished() {
         Schedule repeatingSchedule = mock(Schedule.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 1200;

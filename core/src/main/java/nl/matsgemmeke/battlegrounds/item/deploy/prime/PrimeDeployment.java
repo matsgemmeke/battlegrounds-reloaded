@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.DeployerTriggerTarget;
 import org.bukkit.entity.Entity;
 
 import java.util.Collections;
@@ -36,7 +37,8 @@ public class PrimeDeployment implements Deployment {
         }
 
         PrimeDeploymentObject deploymentObject = new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
+        DeployerTriggerTarget triggerTarget = new DeployerTriggerTarget();
 
-        return Optional.of(new DeploymentResult(deployer, deploymentObject, 0L));
+        return Optional.of(new DeploymentResult(deployer, deploymentObject, triggerTarget, 0L));
     }
 }

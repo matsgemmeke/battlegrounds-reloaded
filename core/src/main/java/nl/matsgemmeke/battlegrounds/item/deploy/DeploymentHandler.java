@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.*;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -133,18 +134,20 @@ public class DeploymentHandler {
 
     private void processPendingDeployment(DeploymentResult deploymentResult) {
         Deployer deployer = deploymentResult.deployer();
+        TriggerTarget triggerTarget = deploymentResult.triggerTarget();
         Location initiationLocation = deploymentResult.deploymentObject().getLocation();
-        ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, triggerTarget, initiationLocation);
 
         itemEffect.startPerformance(context);
     }
 
     private void processCompletedDeployment(DeploymentResult deploymentResult) {
         Deployer deployer = deploymentResult.deployer();
+        TriggerTarget triggerTarget = deploymentResult.triggerTarget();
         Location initiationLocation = deployer.getDeployLocation();
         long cooldown = deploymentResult.cooldown();
 
-        ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, triggerTarget, initiationLocation);
 
         itemEffect.startPerformance(context);
 

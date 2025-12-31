@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -56,6 +57,8 @@ class FlashEffectPerformanceTest {
     private Scheduler scheduler;
     @Mock
     private TargetFinder targetFinder;
+    @Mock
+    private TriggerTarget triggerTarget;
 
     private FlashEffectPerformance performance;
 
@@ -67,7 +70,7 @@ class FlashEffectPerformanceTest {
     @Test
     void performPerformsEffectAndAppliesBlindnessPotionEffectToAllTargetsInsideLongRangeDistance() {
         World world = mock(World.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
         Schedule cancelSchedule = mock(Schedule.class);
         PotionEffectReceiver target = mock(PotionEffectReceiver.class);
 
@@ -106,7 +109,7 @@ class FlashEffectPerformanceTest {
     @MethodSource("potionEffectScenarios")
     void rollbackDoesNotRemovePotionEffectFromEntities(PotionEffect potionEffect) {
         World world = mock(World.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         PotionEffectReceiver target = mock(PotionEffectReceiver.class);
         when(target.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(Optional.ofNullable(potionEffect));
@@ -128,7 +131,7 @@ class FlashEffectPerformanceTest {
     @Test
     void rollbackRemovesAppliedPotionEffectsFromEntities() {
         World world = mock(World.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
         PotionEffectReceiver target = mock(PotionEffectReceiver.class);
 
         Schedule cancelSchedule = mock(Schedule.class);

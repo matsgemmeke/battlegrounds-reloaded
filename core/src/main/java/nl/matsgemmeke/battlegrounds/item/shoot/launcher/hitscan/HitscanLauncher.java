@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.StaticTriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -77,12 +78,13 @@ public class HitscanLauncher implements ProjectileLauncher {
 
         DamageSource damageSource = context.damageSource();
         Location startingLocation = context.direction();
+        World world = context.world();
         Vector direction = startingLocation.getDirection();
 
         this.scheduleSoundPlayTasks(properties.shotSounds(), context.soundLocationSupplier());
 
         do {
-            hit = this.processProjectileStep(damageSource, startingLocation, direction, steps);
+            hit = this.processProjectileStep(damageSource, startingLocation, world, direction, steps);
             steps++;
         } while (!hit && steps < MAX_STEPS);
     }
@@ -97,7 +99,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         }
     }
 
-    private boolean processProjectileStep(DamageSource damageSource, Location startingLocation, Vector direction, int steps) {
+    private boolean processProjectileStep(DamageSource damageSource, Location startingLocation, World world, Vector direction, int steps) {
         double distance = DISTANCE_START + steps * DISTANCE_STEP;
 
         Vector vector = direction.clone().multiply(distance);
@@ -113,7 +115,7 @@ public class HitscanLauncher implements ProjectileLauncher {
             Block block = projectileLocation.getBlock();
             block.getWorld().playEffect(projectileLocation, org.bukkit.Effect.STEP_SOUND, block.getType());
 
-            this.startPerformance(damageSource, projectileLocation);
+            this.startPerformance(damageSource, projectileLocation, world);
             return true;
         }
 
@@ -121,19 +123,20 @@ public class HitscanLauncher implements ProjectileLauncher {
         TargetQuery query = this.createTargetQuery(sourceId, projectileLocation);
 
         if (targetFinder.containsTargets(query)) {
-            this.startPerformance(damageSource, projectileLocation);
+            Location location = projectileLocation.clone();
+
+            this.startPerformance(damageSource, location, world);
             return true;
         }
 
         return false;
     }
 
-    private void startPerformance(DamageSource damageSource, Location projectileLocation) {
-        Location sourceLocation = projectileLocation.clone();
-        World world = projectileLocation.getBlock().getWorld();
-        StaticItemEffectSource source = new StaticItemEffectSource(sourceLocation, world);
+    private void startPerformance(DamageSource damageSource, Location initiationLocation, World world) {
+        StaticItemEffectSource source = new StaticItemEffectSource(initiationLocation, world);
+        StaticTriggerTarget triggerTarget = new StaticTriggerTarget(initiationLocation, world);
 
-        ItemEffectContext context = new ItemEffectContext(damageSource, source, projectileLocation);
+        ItemEffectContext context = new ItemEffectContext(damageSource, source, triggerTarget, initiationLocation);
 
         itemEffect.startPerformance(context);
     }

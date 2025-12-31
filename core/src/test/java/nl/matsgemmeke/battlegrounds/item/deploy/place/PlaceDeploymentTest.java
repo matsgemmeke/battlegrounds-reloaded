@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.BlockTriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -181,6 +182,7 @@ class PlaceDeploymentTest {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
             });
+            assertThat(deploymentResult.triggerTarget()).isInstanceOf(BlockTriggerTarget.class);
             assertThat(deploymentResult.cooldown()).isEqualTo(COOLDOWN);
         });
 

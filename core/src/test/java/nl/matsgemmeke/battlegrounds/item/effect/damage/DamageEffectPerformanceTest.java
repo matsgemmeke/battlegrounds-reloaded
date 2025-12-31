@@ -14,6 +14,7 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +48,8 @@ class DamageEffectPerformanceTest {
     private ItemEffectSource effectSource;
     @Mock
     private TargetFinder targetFinder;
+    @Mock
+    private TriggerTarget triggerTarget;
 
     private DamageEffectPerformance damageEffectPerformance;
 
@@ -68,7 +71,7 @@ class DamageEffectPerformanceTest {
         Location initiationLocation = new Location(world, 1, 0, 0);
         Location effectSourceLocation = new Location(world, 2, 0, 0);
         Location targetLocation = new Location(world, 2, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, initiationLocation);
 
         Hitbox hitbox = mock(Hitbox.class);
         when(hitbox.getIntersectedHitboxComponent(effectSourceLocation)).thenReturn(Optional.empty());
@@ -103,7 +106,7 @@ class DamageEffectPerformanceTest {
         Location effectSourceLocation = new Location(world, 2, 0, 0);
         Location targetLocation = new Location(world, 2, 0, 0);
         HitboxComponent hitboxComponent = new HitboxComponent(hitboxComponentType, 0, 0, 0, 0, 0, 0);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, initiationLocation);
 
         Hitbox hitbox = mock(Hitbox.class);
         when(hitbox.getIntersectedHitboxComponent(effectSourceLocation)).thenReturn(Optional.of(hitboxComponent));
