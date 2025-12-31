@@ -1,5 +1,6 @@
-package nl.matsgemmeke.battlegrounds.item.trigger;
+package nl.matsgemmeke.battlegrounds.item.trigger.tracking;
 
+import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;

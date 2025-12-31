@@ -55,7 +55,7 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
             Location targetLocation = target.getLocation();
 
             Damage damage = this.createDamage(target, effectSourceLocation, targetLocation);
-            DamageContext damageContext = new DamageContext(null, target, damage);
+            DamageContext damageContext = new DamageContext(damageSource, target, damage);
 
             damageProcessor.processDamage(damageContext);
         }

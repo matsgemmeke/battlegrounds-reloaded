@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.trigger.floor;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.block.Block;
 
 public class FloorHitTrigger implements Trigger {

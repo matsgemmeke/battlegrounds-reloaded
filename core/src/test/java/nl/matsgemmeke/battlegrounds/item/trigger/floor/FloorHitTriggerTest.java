@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.floor;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;

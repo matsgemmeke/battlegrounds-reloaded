@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 
 /**
  * Describes the result of a deployment performance.

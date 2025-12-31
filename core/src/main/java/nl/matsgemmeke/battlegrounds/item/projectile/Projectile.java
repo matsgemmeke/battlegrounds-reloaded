@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.projectile;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.util.Vector;
 
 public interface Projectile extends TriggerTarget {

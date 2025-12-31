@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

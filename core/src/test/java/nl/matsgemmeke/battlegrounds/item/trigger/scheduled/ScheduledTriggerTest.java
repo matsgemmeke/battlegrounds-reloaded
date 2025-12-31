@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.scheduled;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
