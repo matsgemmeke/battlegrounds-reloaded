@@ -5,24 +5,16 @@ import com.google.inject.TypeLiteral;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public abstract class ComponentRouterProvider<T> implements Provider<T> {
 
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
     private final Map<GameContextType, Provider<T>> implementations;
-    @NotNull
     private final TypeLiteral<T> typeLiteral;
 
-    public ComponentRouterProvider(
-            @NotNull GameScope gameScope,
-            @NotNull Map<GameContextType, Provider<T>> implementations,
-            @NotNull TypeLiteral<T> typeLiteral
-    ) {
+    public ComponentRouterProvider(GameScope gameScope, Map<GameContextType, Provider<T>> implementations, TypeLiteral<T> typeLiteral) {
         this.gameScope = gameScope;
         this.implementations = implementations;
         this.typeLiteral = typeLiteral;

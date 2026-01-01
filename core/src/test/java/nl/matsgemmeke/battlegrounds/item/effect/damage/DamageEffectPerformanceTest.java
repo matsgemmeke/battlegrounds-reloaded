@@ -89,7 +89,7 @@ class DamageEffectPerformanceTest {
         verify(damageProcessor).processDamage(damageContextCaptor.capture());
 
         assertThat(damageContextCaptor.getValue()).satisfies(damageContext -> {
-            assertThat(damageContext.source()).isNull();
+            assertThat(damageContext.source()).isEqualTo(damageSource);
             assertThat(damageContext.target()).isEqualTo(target);
             assertThat(damageContext.damage()).satisfies(damage -> {
                 assertThat(damage.amount()).isZero();
@@ -125,7 +125,7 @@ class DamageEffectPerformanceTest {
 
         assertThat(damageContextCaptor.getAllValues()).satisfiesExactly(
                 damageContext -> {
-                    assertThat(damageContext.source()).isNull();
+                    assertThat(damageContext.source()).isEqualTo(damageSource);
                     assertThat(damageContext.target()).isEqualTo(target);
                     assertThat(damageContext.damage()).satisfies(damage -> {
                         assertThat(damage.amount()).isEqualTo(expectedDamage);
