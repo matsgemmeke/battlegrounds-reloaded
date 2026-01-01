@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component;
+package nl.matsgemmeke.battlegrounds.game.component.targeting;
 
 public enum TargetType {
 

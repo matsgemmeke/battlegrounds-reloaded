@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component;
+package nl.matsgemmeke.battlegrounds.game.component.targeting;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;

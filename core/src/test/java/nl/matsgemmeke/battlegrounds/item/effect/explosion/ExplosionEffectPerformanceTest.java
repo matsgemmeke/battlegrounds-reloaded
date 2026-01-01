@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;

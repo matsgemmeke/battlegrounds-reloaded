@@ -6,6 +6,8 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
