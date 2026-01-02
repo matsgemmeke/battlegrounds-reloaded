@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component.targeting.area;
+package nl.matsgemmeke.battlegrounds.game.component.targeting.condition;
 
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import org.bukkit.Location;
@@ -11,25 +11,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class PointTargetAreaTest {
+class HitboxTargetConditionTest {
 
     private static final Location LOCATION = new Location(null, 1, 1, 1);
 
-    private PointTargetArea targetArea;
+    private HitboxTargetCondition condition;
 
     @BeforeEach
     void setUp() {
-        targetArea = new PointTargetArea();
+        condition = new HitboxTargetCondition();
     }
 
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
-    void containsReturnsWhetherTargetHitboxIntersectsGivenLocation(boolean intersects, boolean shouldContain) {
+    void testReturnsWhetherTargetHitboxIntersectsGivenLocation(boolean intersects, boolean expectedResult) {
         DamageTarget damageTarget = mock(DamageTarget.class, Mockito.RETURNS_DEEP_STUBS);
         when(damageTarget.getHitbox().intersects(LOCATION)).thenReturn(intersects);
 
-        boolean contains = targetArea.contains(damageTarget, LOCATION);
+        boolean result = condition.test(damageTarget, LOCATION);
 
-        assertThat(contains).isEqualTo(shouldContain);
+        assertThat(result).isEqualTo(expectedResult);
     }
 }
