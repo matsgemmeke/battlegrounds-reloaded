@@ -29,6 +29,7 @@ shooting:
     effect:
       effect-type: DAMAGE
       damage-type: ARROW_DAMAGE
+      radius: 0.1
       range:
         short-range:
           damage: 100.0

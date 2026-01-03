@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ItemEffectFactory {
 
@@ -110,11 +111,12 @@ public class ItemEffectFactory {
             case DAMAGE -> {
                 DamageEffectSpec spec = (DamageEffectSpec) itemEffectSpec;
 
-                HitboxMultiplierProfile hitboxMultiplierProfile = hitboxMultiplierProfileMapper.map(spec.hitboxMultipliers);
-                RangeProfile rangeProfile = rangeProfileMapper.map(spec.range);
                 DamageType damageType = DamageType.valueOf(spec.damageType);
+                RangeProfile rangeProfile = rangeProfileMapper.map(spec.range);
+                HitboxMultiplierProfile hitboxMultiplierProfile = hitboxMultiplierProfileMapper.map(spec.hitboxMultipliers);
+                double radius = Optional.ofNullable(spec.radius).orElse(0.0);
 
-                DamageProperties properties = new DamageProperties(hitboxMultiplierProfile, rangeProfile, damageType);
+                DamageProperties properties = new DamageProperties(damageType, rangeProfile, hitboxMultiplierProfile, radius);
 
                 DamageEffect damageEffect = damageEffectProvider.get();
                 damageEffect.setProperties(properties);

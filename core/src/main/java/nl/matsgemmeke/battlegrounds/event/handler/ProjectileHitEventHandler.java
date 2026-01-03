@@ -10,32 +10,30 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.projectiles.ProjectileSource;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class ProjectileHitEventHandler implements EventHandler<ProjectileHitEvent> {
 
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
     private final Provider<ProjectileHitActionRegistry> projectileHitActionRegistryProvider;
 
     @Inject
-    public ProjectileHitEventHandler(@NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope, @NotNull Provider<ProjectileHitActionRegistry> projectileHitActionRegistryProvider) {
+    public ProjectileHitEventHandler(GameContextProvider gameContextProvider, GameScope gameScope, Provider<ProjectileHitActionRegistry> projectileHitActionRegistryProvider) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.projectileHitActionRegistryProvider = projectileHitActionRegistryProvider;
     }
 
-    public void handle(@NotNull ProjectileHitEvent event) {
+    public void handle(ProjectileHitEvent event) {
         Projectile projectile = event.getEntity();
         ProjectileSource projectileSource = projectile.getShooter();
 
@@ -53,13 +51,32 @@ public class ProjectileHitEventHandler implements EventHandler<ProjectileHitEven
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
                 .orElseThrow(() -> new EventHandlingException("Unable to process ProjectileHitEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
-        gameScope.runInScope(gameContext, () -> this.performProjectileAction(projectile));
+        Location hitLocation = this.getHitLocation(event);
+
+        gameScope.runInScope(gameContext, () -> this.performProjectileAction(projectile, hitLocation));
     }
 
-    private void performProjectileAction(Projectile projectile) {
-        ProjectileHitActionRegistry projectileHitActionRegistry = projectileHitActionRegistryProvider.get();
+    private Location getHitLocation(ProjectileHitEvent event) {
+        Entity hitEntity = event.getHitEntity();
+        Block hitBlock = event.getHitBlock();
 
-        Optional<ProjectileHitAction> projectileHitAction = projectileHitActionRegistry.getProjectileHitAction(projectile);
-        projectileHitAction.ifPresent(ProjectileHitAction::onProjectileHit);
+        if (hitEntity != null) {
+            return hitEntity.getLocation();
+        } else if (hitBlock != null) {
+            return hitBlock.getLocation();
+        } else {
+            return event.getEntity().getLocation();
+        }
+    }
+
+    private void performProjectileAction(Projectile projectile, Location hitLocation) {
+        ProjectileHitActionRegistry projectileHitActionRegistry = projectileHitActionRegistryProvider.get();
+        ProjectileHitAction projectileHitAction = projectileHitActionRegistry.getProjectileHitAction(projectile).orElse(null);
+
+        if (projectileHitAction == null) {
+            return;
+        }
+
+        projectileHitAction.onProjectileHit(hitLocation);
     }
 }

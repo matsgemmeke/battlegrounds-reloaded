@@ -1,22 +1,30 @@
 package nl.matsgemmeke.battlegrounds.game.component.targeting;
 
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.TargetCondition;
 import org.bukkit.Location;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class TargetQuery {
 
-    private final Map<TargetType, Double> ranges;
     private boolean enemiesOnly;
+    private Collection<TargetCondition> conditions;
     private Location location;
     private UUID uniqueId;
 
     public TargetQuery() {
-        this.ranges = new EnumMap<>(TargetType.class);
+        this.conditions = Collections.emptySet();
         this.enemiesOnly = false;
+    }
+
+    public TargetQuery conditions(TargetCondition... conditions) {
+        this.conditions = Set.of(conditions);
+        return this;
+    }
+
+    public TargetQuery conditions(Collection<TargetCondition> conditions) {
+        this.conditions = conditions;
+        return this;
     }
 
     public TargetQuery enemiesOnly(boolean enemiesOnly) {
@@ -29,22 +37,17 @@ public class TargetQuery {
         return this;
     }
 
-    public TargetQuery range(TargetType type, double value) {
-        ranges.put(type, value);
-        return this;
-    }
-
     public TargetQuery uniqueId(UUID uniqueId) {
         this.uniqueId = uniqueId;
         return this;
     }
 
-    public Optional<Location> getLocation() {
-        return Optional.ofNullable(location);
+    public Collection<TargetCondition> getConditions() {
+        return conditions;
     }
 
-    public Optional<Double> getRange(TargetType type) {
-        return Optional.ofNullable(ranges.get(type));
+    public Optional<Location> getLocation() {
+        return Optional.ofNullable(location);
     }
 
     public Optional<UUID> getUniqueId() {

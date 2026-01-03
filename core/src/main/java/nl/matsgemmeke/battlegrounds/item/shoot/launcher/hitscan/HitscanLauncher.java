@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetType;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -148,8 +148,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         return new TargetQuery()
                 .uniqueId(uniqueId)
                 .location(location)
-                .range(TargetType.ENTITY, FINDING_RANGE_ENTITIES)
-                .range(TargetType.DEPLOYMENT_OBJECT, FINDING_RANGE_DEPLOYMENT_OBJECTS)
+                .conditions(new HitboxTargetCondition())
                 .enemiesOnly(true);
     }
 }

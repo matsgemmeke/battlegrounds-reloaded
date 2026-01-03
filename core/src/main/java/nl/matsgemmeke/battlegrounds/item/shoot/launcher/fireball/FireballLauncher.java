@@ -78,7 +78,7 @@ public class FireballLauncher implements ProjectileLauncher {
         schedule.addTask(() -> this.displayParticleEffect(fireball));
         schedule.start();
 
-        projectileHitActionRegistry.registerProjectileHitAction(fireball, () -> this.onHit(damageSource, initiationLocation, fireball, schedule));
+        projectileHitActionRegistry.registerProjectileHitAction(fireball, hitLocation -> this.onHit(damageSource, initiationLocation, fireball, schedule));
 
         this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);
     }

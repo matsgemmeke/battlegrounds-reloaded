@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow;
 
+import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
@@ -24,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static nl.matsgemmeke.battlegrounds.MockUtils.RUN_PROJECTILE_HIT_ACTION;
 import static nl.matsgemmeke.battlegrounds.MockUtils.RUN_SCHEDULE_TASK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -78,11 +78,10 @@ class ArrowLauncherTest {
     @Test
     void launchLaunchesArrowProjectile() {
         World world = mock(World.class);
-        Location arrowLocation = new Location(world, 10.0, 10.0, 10.0);
+        Location hitLocation = new Location(world, 11.0, 11.0, 11.0);
         Location direction = new Location(world, 1.0, 1.0, 1.0, 0.0F, 0.0F);
 
         Arrow arrow = mock(Arrow.class);
-        when(arrow.getLocation()).thenReturn(arrowLocation);
         when(arrow.getWorld()).thenReturn(world);
 
         Schedule soundPlaySchedule = mock(Schedule.class);
@@ -98,7 +97,7 @@ class ArrowLauncherTest {
         LaunchContext launchContext = new LaunchContext(damageSource, source, direction, () -> LAUNCH_DIRECTION, world);
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
-        doAnswer(RUN_PROJECTILE_HIT_ACTION).when(projectileHitActionRegistry).registerProjectileHitAction(eq(arrow), any(ProjectileHitAction.class));
+        doAnswer(MockUtils.answerRunProjectileHitAction(hitLocation)).when(projectileHitActionRegistry).registerProjectileHitAction(eq(arrow), any(ProjectileHitAction.class));
 
         ArrowLauncher launcher = new ArrowLauncher(audioEmitter, projectileHitActionRegistry, scheduler, properties, itemEffect);
         launcher.launch(launchContext);
@@ -109,11 +108,11 @@ class ArrowLauncherTest {
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
             assertThat(itemEffectContext.getEffectSource()).satisfies(effectSource -> {
-                assertThat(effectSource.getLocation()).isEqualTo(arrowLocation);
+                assertThat(effectSource.getLocation()).isEqualTo(hitLocation);
                 assertThat(effectSource.getWorld()).isEqualTo(world);
             });
             assertThat(itemEffectContext.getTriggerTarget()).satisfies(triggerTarget -> {
-               assertThat(triggerTarget.getLocation()).isEqualTo(arrowLocation);
+               assertThat(triggerTarget.getLocation()).isEqualTo(hitLocation);
                assertThat(triggerTarget.getWorld()).isEqualTo(world);
             });
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);

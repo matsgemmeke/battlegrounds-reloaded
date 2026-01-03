@@ -7,19 +7,20 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetType;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.ProximityTargetCondition;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.TargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
 
+import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public class DamageEffectPerformance extends BaseItemEffectPerformance {
-
-    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.2;
-    private static final double ENTITY_FINDING_RANGE = 0.1;
 
     private final DamageProcessor damageProcessor;
     private final DamageProperties properties;
@@ -43,12 +44,12 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         DamageSource damageSource = context.getDamageSource();
         UUID damageSourceUniqueId = damageSource.getUniqueId();
         Location effectSourceLocation = context.getEffectSource().getLocation();
+        Collection<TargetCondition> targetConditions = this.getTargetConditions();
 
         TargetQuery query = new TargetQuery()
                 .uniqueId(damageSourceUniqueId)
                 .location(effectSourceLocation)
-                .range(TargetType.ENTITY, ENTITY_FINDING_RANGE)
-                .range(TargetType.DEPLOYMENT_OBJECT, DEPLOYMENT_OBJECT_FINDING_RANGE)
+                .conditions(targetConditions)
                 .enemiesOnly(true);
 
         for (DamageTarget target : targetFinder.findTargets(query)) {
@@ -85,5 +86,15 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
             case TORSO -> Optional.of(properties.hitboxMultiplierProfile().bodyDamageMultiplier());
             case LIMBS -> Optional.of(properties.hitboxMultiplierProfile().legsDamageMultiplier());
         };
+    }
+
+    private Collection<TargetCondition> getTargetConditions() {
+        double radius = properties.radius();
+
+        if (radius > 0.0) {
+            return Set.of(new ProximityTargetCondition(radius));
+        } else {
+            return Set.of(new HitboxTargetCondition());
+        }
     }
 }

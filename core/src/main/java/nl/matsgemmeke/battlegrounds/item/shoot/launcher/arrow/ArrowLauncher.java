@@ -66,17 +66,16 @@ public class ArrowLauncher implements ProjectileLauncher {
         Arrow arrow = projectileSource.launchProjectile(Arrow.class, velocity);
         arrow.setVelocity(velocity);
 
-        projectileHitActionRegistry.registerProjectileHitAction(arrow, () -> this.onHit(damageSource, initiationLocation, arrow));
+        projectileHitActionRegistry.registerProjectileHitAction(arrow, hitLocation -> this.onHit(damageSource, arrow, initiationLocation, hitLocation));
 
         this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);
     }
 
-    private void onHit(DamageSource damageSource, Location initiationLocation, Arrow arrow) {
-        Location arrowLocation = arrow.getLocation();
-        World arrowWorld = arrow.getWorld();
+    private void onHit(DamageSource damageSource, Arrow arrow, Location initiationLocation, Location hitLocation) {
+        World world = arrow.getWorld();
 
-        StaticItemEffectSource effectSource = new StaticItemEffectSource(arrowLocation, arrowWorld);
-        StaticTriggerTarget triggerTarget = new StaticTriggerTarget(arrowLocation, arrowWorld);
+        StaticItemEffectSource effectSource = new StaticItemEffectSource(hitLocation, world);
+        StaticTriggerTarget triggerTarget = new StaticTriggerTarget(hitLocation, world);
 
         ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, initiationLocation);
 

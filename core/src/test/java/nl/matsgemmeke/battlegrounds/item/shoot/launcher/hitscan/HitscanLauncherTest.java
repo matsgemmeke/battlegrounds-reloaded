@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -28,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -38,6 +40,7 @@ class HitscanLauncherTest {
     private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
     private static final long GAME_SOUND_DELAY = 5L;
     private static final ParticleEffect TRAJECTORY_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0.0, 0.0, 0.0, 0.0, null, null);
+    private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
     @Mock
     private AudioEmitter audioEmitter;
@@ -136,6 +139,7 @@ class HitscanLauncherTest {
         LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
+        when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
         when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false, true);
 
@@ -156,6 +160,17 @@ class HitscanLauncherTest {
                 assertThat(triggerTarget.getWorld()).isEqualTo(world);
             });
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
+        });
+
+        ArgumentCaptor<TargetQuery> targetQueryCaptor = ArgumentCaptor.forClass(TargetQuery.class);
+        verify(targetFinder, times(2)).containsTargets(targetQueryCaptor.capture());
+
+        assertThat(targetQueryCaptor.getValue()).satisfies(query -> {
+            assertThat(query.getUniqueId()).hasValue(DAMAGE_SOURCE_ID);
+            assertThat(query.getLocation()).hasValue(hitLocation);
+            assertThat(query.getConditions()).satisfiesExactly(condition -> {
+                assertThat(condition).isInstanceOf(HitboxTargetCondition.class);
+            });
         });
 
         verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);

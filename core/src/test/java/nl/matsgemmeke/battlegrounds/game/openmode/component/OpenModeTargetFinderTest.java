@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider
 import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetType;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
@@ -191,7 +190,6 @@ class OpenModeTargetFinderTest {
         TargetQuery targetQuery = new TargetQuery()
                 .uniqueId(playerUniqueId)
                 .location(findingLocation)
-                .range(TargetType.ENTITY, Double.MAX_VALUE)
                 .enemiesOnly(true);
 
         List<DamageTarget> targets = targetFinder.findTargets(targetQuery);
@@ -213,7 +211,6 @@ class OpenModeTargetFinderTest {
         TargetQuery targetQuery = new TargetQuery()
                 .uniqueId(deploymentObjectUniqueId)
                 .location(findingLocation)
-                .range(TargetType.DEPLOYMENT_OBJECT, Double.MAX_VALUE)
                 .enemiesOnly(true);
 
         List<DamageTarget> targets = targetFinder.findTargets(targetQuery);

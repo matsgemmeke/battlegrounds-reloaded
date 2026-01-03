@@ -11,6 +11,8 @@ public class DamageEffectSpec extends ItemEffectSpec {
     @EnumValue(type = DamageType.class)
     public String damageType;
 
+    public Double radius;
+
     @Required
     public HitboxMultiplierSpec hitboxMultipliers;
 

@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetType;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.TargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class OpenModeTargetFinder implements TargetFinder {
+
+    private static final double ENTITY_FINDING_RANGE = 1.0;
 
     private final DeploymentInfoProvider deploymentInfoProvider;
     private final HitboxResolver hitboxResolver;
@@ -111,29 +113,25 @@ public class OpenModeTargetFinder implements TargetFinder {
         World world = Optional.ofNullable(location.getWorld()).orElseThrow(() -> new IllegalArgumentException("Provided location has no world"));
 
         Optional<UUID> uniqueId = query.getUniqueId();
-        Optional<Double> entityFindingRange = query.getRange(TargetType.ENTITY);
-        Optional<Double> deploymentObjectFindingRange = query.getRange(TargetType.DEPLOYMENT_OBJECT);
+        Collection<TargetCondition> conditions = query.getConditions();
         boolean enemiesOnly = query.isEnemiesOnly();
 
-        entityFindingRange.ifPresent(range -> {
-            playerRegistry.getAll().stream()
-                    .filter(gamePlayer -> !enemiesOnly || uniqueId.map(id -> !id.equals(gamePlayer.getUniqueId())).orElse(true))
-                    .filter(gamePlayer -> gamePlayer.getHitbox().intersects(location))
-                    .forEach(targets::add);
+        playerRegistry.getAll().stream()
+                .filter(gamePlayer -> !enemiesOnly || uniqueId.map(id -> !id.equals(gamePlayer.getUniqueId())).orElse(true))
+                .filter(gamePlayer -> conditions.stream().allMatch(condition -> condition.test(gamePlayer, location)))
+                .forEach(targets::add);
 
-            world.getNearbyEntities(location, range, range, range).stream()
-                    .filter(entity -> entity.getType() != EntityType.PLAYER)
-                    .filter(LivingEntity.class::isInstance)
-                    .map(entity -> mobRegistry.register((LivingEntity) entity))
-                    .filter(gameEntity -> gameEntity.getHitbox().intersects(location))
-                    .forEach(targets::add);
-        });
-        deploymentObjectFindingRange.ifPresent(range -> {
-            deploymentInfoProvider.getAllDeploymentObjects().stream()
-                    .filter(deploymentObject -> !enemiesOnly || uniqueId.map(id -> !id.equals(deploymentObject.getUniqueId())).orElse(true))
-                    .filter(deploymentObject -> deploymentObject.getHitbox().intersects(location))
-                    .forEach(targets::add);
-        });
+        world.getNearbyEntities(location, ENTITY_FINDING_RANGE, ENTITY_FINDING_RANGE, ENTITY_FINDING_RANGE).stream()
+                .filter(entity -> entity.getType() != EntityType.PLAYER)
+                .filter(LivingEntity.class::isInstance)
+                .map(entity -> mobRegistry.register((LivingEntity) entity))
+                .filter(gameMob -> conditions.stream().allMatch(condition -> condition.test(gameMob, location)))
+                .forEach(targets::add);
+
+        deploymentInfoProvider.getAllDeploymentObjects().stream()
+                .filter(deploymentObject -> !enemiesOnly || uniqueId.map(id -> !id.equals(deploymentObject.getUniqueId())).orElse(true))
+                .filter(deploymentObject -> conditions.stream().allMatch(condition -> condition.test(deploymentObject, location)))
+                .forEach(targets::add);
 
         return targets;
     }

@@ -3,10 +3,12 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.simulation.GunFireSimulationEffect;
@@ -25,6 +27,10 @@ import org.bukkit.Particle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -120,8 +126,9 @@ class ItemEffectFactoryTest {
         assertThat(itemEffect).isEqualTo(combustionEffect);
     }
 
-    @Test
-    void createInstanceForDamageEffectType() {
+    @ParameterizedTest
+    @CsvSource(value = { "0.5,0.5", "null,0.0" }, nullValues = "null")
+    void createInstanceForDamageEffectType(Double radius, double expectedRadiusProperty) {
         DamageEffect damageEffect = mock(DamageEffect.class);
         HitboxMultiplierSpec hitboxMultiplierSpec = this.createHitboxMultiplierSpec();
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
@@ -132,11 +139,33 @@ class ItemEffectFactoryTest {
         spec.hitboxMultipliers = hitboxMultiplierSpec;
         spec.range = rangeProfileSpec;
         spec.damageType = "BULLET_DAMAGE";
+        spec.radius = radius;
 
         when(damageEffectProvider.get()).thenReturn(damageEffect);
         when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
+
+        ArgumentCaptor<DamageProperties> propertiesCaptor = ArgumentCaptor.forClass(DamageProperties.class);
+        verify(damageEffect).setProperties(propertiesCaptor.capture());
+
+        assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.damageType()).isEqualTo(DamageType.BULLET_DAMAGE);
+            assertThat(properties.rangeProfile()).satisfies(rangeProfile -> {
+               assertThat(rangeProfile.shortRangeDamage()).isEqualTo(30.0);
+               assertThat(rangeProfile.shortRangeDistance()).isEqualTo(0.5);
+               assertThat(rangeProfile.mediumRangeDamage()).isEqualTo(20.0);
+               assertThat(rangeProfile.mediumRangeDistance()).isEqualTo(1.0);
+               assertThat(rangeProfile.longRangeDamage()).isEqualTo(10.0);
+               assertThat(rangeProfile.longRangeDistance()).isEqualTo(1.5);
+            });
+            assertThat(properties.hitboxMultiplierProfile()).satisfies(hitboxMultiplierProfile -> {
+                assertThat(hitboxMultiplierProfile.headshotDamageMultiplier()).isEqualTo(1.5);
+                assertThat(hitboxMultiplierProfile.bodyDamageMultiplier()).isEqualTo(1.0);
+                assertThat(hitboxMultiplierProfile.legsDamageMultiplier()).isEqualTo(0.5);
+            });
+            assertThat(properties.radius()).isEqualTo(expectedRadiusProperty);
+        });
 
         assertThat(itemEffect).isEqualTo(damageEffect);
     }
