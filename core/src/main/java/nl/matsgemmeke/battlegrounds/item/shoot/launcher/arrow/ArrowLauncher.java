@@ -17,6 +17,7 @@ import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.AbstractArrow.PickupStatus;
 import org.bukkit.entity.Arrow;
 import org.bukkit.util.Vector;
 
@@ -64,6 +65,7 @@ public class ArrowLauncher implements ProjectileLauncher {
         Supplier<Location> soundLocationSupplier = context.soundLocationSupplier();
 
         Arrow arrow = projectileSource.launchProjectile(Arrow.class, velocity);
+        arrow.setPickupStatus(PickupStatus.DISALLOWED);
         arrow.setVelocity(velocity);
 
         projectileHitActionRegistry.registerProjectileHitAction(arrow, hitLocation -> this.onHit(damageSource, arrow, initiationLocation, hitLocation));

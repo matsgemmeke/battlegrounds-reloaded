@@ -22,6 +22,9 @@ import java.util.UUID;
 
 public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
+    // We use this multiplier when we try to damage a target, but the origin location falls outside the target's hitbox
+    private static final double DEFAULT_DAMAGE_MULTIPLIER = 1.0;
+
     private final DamageProcessor damageProcessor;
     private final DamageProperties properties;
     private final TargetFinder targetFinder;
@@ -64,7 +67,7 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
     private Damage createDamage(DamageTarget target, Location effectSourceLocation, Location targetLocation) {
         Hitbox hitbox = target.getHitbox();
-        double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, effectSourceLocation).orElse(0.0);
+        double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, effectSourceLocation).orElse(DEFAULT_DAMAGE_MULTIPLIER);
         double distance = effectSourceLocation.distance(targetLocation);
         double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
         double totalDamageAmount = distanceDamageAmount * damageMultiplier;

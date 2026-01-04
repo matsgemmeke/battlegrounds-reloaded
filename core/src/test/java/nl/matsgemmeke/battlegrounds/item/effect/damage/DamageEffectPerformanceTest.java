@@ -60,7 +60,7 @@ class DamageEffectPerformanceTest {
     }
 
     @Test
-    void performCausesZeroDamageToNearbyEntitiesWhenHitboxWasNotHit() {
+    void performCausesDefaultDamageToNearbyEntitiesWhenHitboxWasNotHit() {
         World world = mock(World.class);
         Location initiationLocation = new Location(world, 1, 0, 0);
         Location effectSourceLocation = new Location(world, 2, 0, 0);
@@ -87,7 +87,7 @@ class DamageEffectPerformanceTest {
             assertThat(damageContext.source()).isEqualTo(damageSource);
             assertThat(damageContext.target()).isEqualTo(target);
             assertThat(damageContext.damage()).satisfies(damage -> {
-                assertThat(damage.amount()).isZero();
+                assertThat(damage.amount()).isEqualTo(10.0);
                 assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
             });
         });

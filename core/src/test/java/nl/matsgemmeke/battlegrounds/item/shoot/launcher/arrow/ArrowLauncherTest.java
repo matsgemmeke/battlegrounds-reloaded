@@ -15,6 +15,7 @@ import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.AbstractArrow.PickupStatus;
 import org.bukkit.entity.Arrow;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.Test;
@@ -118,6 +119,7 @@ class ArrowLauncherTest {
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
         });
 
+        verify(arrow).setPickupStatus(PickupStatus.DISALLOWED);
         verify(arrow).setVelocity(new Vector(0, 0, 3.0));
         verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
         verify(projectileHitActionRegistry).removeProjectileHitAction(arrow);
