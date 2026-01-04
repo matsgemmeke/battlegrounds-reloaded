@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Optional;
 
@@ -120,28 +122,17 @@ class DefaultEquipmentTest {
         assertThat(awaitingDeployment).isFalse();
     }
 
-    @Test
-    void isDeployedReturnsFalseWhenDeploymentHandlerIsNotPerforming() {
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    void isDeployedReturnsWhetherDeploymentHandlerHasDeployedState(boolean deployed, boolean expectedDeployed) {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isPerforming()).thenReturn(false);
+        when(deploymentHandler.isDeployed()).thenReturn(deployed);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDeploymentHandler(deploymentHandler);
-        boolean deployed = equipment.isDeployed();
+        boolean result = equipment.isDeployed();
 
-        assertThat(deployed).isFalse();
-    }
-
-    @Test
-    void isDeployedReturnsTrueWhenDeploymentHandlerIsPerforming() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isPerforming()).thenReturn(true);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDeploymentHandler(deploymentHandler);
-        boolean deployed = equipment.isDeployed();
-
-        assertThat(deployed).isTrue();
+        assertThat(result).isEqualTo(expectedDeployed);
     }
 
     @Test

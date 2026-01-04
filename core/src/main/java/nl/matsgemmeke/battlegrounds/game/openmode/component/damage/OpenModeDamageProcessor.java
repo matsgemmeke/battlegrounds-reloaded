@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
@@ -39,29 +38,6 @@ public class OpenModeDamageProcessor implements DamageProcessor {
     public boolean isDamageAllowedWithoutContext() {
         // Entities in open mode are always allowed to damage entities outside game contexts
         return true;
-    }
-
-    @NotNull
-    public DamageEvent processDamage(@NotNull DamageEvent event) {
-        for (DamageModifier damageModifier : damageModifiers) {
-            damageModifier.apply(event);
-        }
-
-        return event;
-    }
-
-    @Override
-    public EntityDamageEvent processDamage(EntityDamageEvent entityDamageEvent) {
-        for (DamageModifier damageModifier : damageModifiers) {
-            entityDamageEvent = damageModifier.apply(entityDamageEvent);
-        }
-
-        GameEntity victim = entityDamageEvent.victim();
-        DamageNew damage = entityDamageEvent.damage();
-
-//        victim.damage(damage);
-
-        return entityDamageEvent;
     }
 
     @Override

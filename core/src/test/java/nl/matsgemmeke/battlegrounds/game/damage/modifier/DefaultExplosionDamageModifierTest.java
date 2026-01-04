@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game.damage.modifier;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,23 +13,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class DefaultExplosionDamageModifierTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final double DAMAGE = 100.0;
 
     @Mock
-    private GameEntity damager;
+    private DamageSource source;
     @Mock
-    private GameEntity entity;
+    private DamageTarget target;
     @InjectMocks
     private DefaultExplosionDamageModifier modifier;
 
     @ParameterizedTest
     @CsvSource({ "BULLET_DAMAGE,100.0", "EXPLOSIVE_DAMAGE,0.0" })
-    void applyReturnsDamageEventWithModifiedDamageDependingOnDamageType(DamageType damageType, double expectedDamageAmount) {
-        DamageNew damage = new DamageNew(DAMAGE, damageType);
-        EntityDamageEvent entityDamageEvent = new EntityDamageEvent(entity, damager, damage);
+    void applyReturnsDamageContextWithModifiedDamageDependingOnDamageType(DamageType damageType, double expectedDamageAmount) {
+        Damage damage = new Damage(DAMAGE, damageType);
+        DamageContext damageContext = new DamageContext(source, target, damage);
 
-        EntityDamageEvent result = modifier.apply(entityDamageEvent);
+        DamageContext result = modifier.apply(damageContext);
 
         assertThat(result.damage().amount()).isEqualTo(expectedDamageAmount);
     }

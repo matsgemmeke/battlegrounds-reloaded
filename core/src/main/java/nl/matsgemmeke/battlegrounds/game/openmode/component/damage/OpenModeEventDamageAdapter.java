@@ -9,9 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageResult;
 import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageNew;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.game.damage.EntityDamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -32,11 +30,11 @@ public class OpenModeEventDamageAdapter implements EventDamageAdapter {
         this.playerRegistry = playerRegistry;
     }
 
-    public EventDamageResult processMeleeDamage(Entity victim, Entity damager, double damageAmount) {
-        GameEntity victimGameEntity = this.findGameEntity(victim);
+    public EventDamageResult processMeleeDamage(Entity damager, Entity victim, double damageAmount) {
         GamePlayer damagerGamePlayer = playerRegistry.findByUniqueId(damager.getUniqueId()).orElse(null);
+        GameEntity victimGameEntity = this.findGameEntity(victim);
 
-        if (victimGameEntity == null || damagerGamePlayer == null) {
+        if (damagerGamePlayer == null || victimGameEntity == null) {
             return new EventDamageResult(damageAmount);
         }
 
@@ -49,10 +47,10 @@ public class OpenModeEventDamageAdapter implements EventDamageAdapter {
 
         double meleeDamageAmount = meleeWeapon.getAttackDamage() * damagerGamePlayer.getAttackStrength();
 
-        DamageNew damage = new DamageNew(meleeDamageAmount, DamageType.MELEE_DAMAGE);
-        EntityDamageEvent entityDamageEvent = new EntityDamageEvent(victimGameEntity, damagerGamePlayer, damage);
+        Damage damage = new Damage(meleeDamageAmount, DamageType.MELEE_DAMAGE);
+        DamageContext damageContext = new DamageContext(damagerGamePlayer, victimGameEntity, damage);
 
-        damageProcessor.processDamage(entityDamageEvent);
+        damageProcessor.processDamage(damageContext);
 
         return new EventDamageResult(0);
     }
