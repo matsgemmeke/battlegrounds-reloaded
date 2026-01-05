@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -36,6 +37,7 @@ public class FireballLauncher implements ProjectileLauncher {
     private final ItemEffect itemEffect;
     private final ParticleEffectSpawner particleEffectSpawner;
     private final ProjectileHitActionRegistry projectileHitActionRegistry;
+    private final ProjectileRegistry projectileRegistry;
     private final Scheduler scheduler;
     private final Set<Schedule> soundPlaySchedules;
 
@@ -44,6 +46,7 @@ public class FireballLauncher implements ProjectileLauncher {
             AudioEmitter audioEmitter,
             ParticleEffectSpawner particleEffectSpawner,
             ProjectileHitActionRegistry projectileHitActionRegistry,
+            ProjectileRegistry projectileRegistry,
             Scheduler scheduler,
             @Assisted FireballProperties properties,
             @Assisted ItemEffect itemEffect
@@ -52,6 +55,7 @@ public class FireballLauncher implements ProjectileLauncher {
         this.audioEmitter = audioEmitter;
         this.particleEffectSpawner = particleEffectSpawner;
         this.projectileHitActionRegistry = projectileHitActionRegistry;
+        this.projectileRegistry = projectileRegistry;
         this.scheduler = scheduler;
         this.properties = properties;
         this.soundPlaySchedules = new HashSet<>();
@@ -78,6 +82,7 @@ public class FireballLauncher implements ProjectileLauncher {
         schedule.addTask(() -> this.displayParticleEffect(fireball));
         schedule.start();
 
+        projectileRegistry.register(fireball.getUniqueId());
         projectileHitActionRegistry.registerProjectileHitAction(fireball, hitLocation -> this.onHit(damageSource, initiationLocation, fireball, schedule));
 
         this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);

@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -32,6 +33,7 @@ public class ArrowLauncher implements ProjectileLauncher {
     private final AudioEmitter audioEmitter;
     private final ItemEffect itemEffect;
     private final ProjectileHitActionRegistry projectileHitActionRegistry;
+    private final ProjectileRegistry projectileRegistry;
     private final Scheduler scheduler;
     private final Set<Schedule> soundPlaySchedules;
 
@@ -39,12 +41,14 @@ public class ArrowLauncher implements ProjectileLauncher {
     public ArrowLauncher(
             AudioEmitter audioEmitter,
             ProjectileHitActionRegistry projectileHitActionRegistry,
+            ProjectileRegistry projectileRegistry,
             Scheduler scheduler,
             @Assisted ArrowProperties properties,
             @Assisted ItemEffect itemEffect
     ) {
         this.audioEmitter = audioEmitter;
         this.projectileHitActionRegistry = projectileHitActionRegistry;
+        this.projectileRegistry = projectileRegistry;
         this.scheduler = scheduler;
         this.properties = properties;
         this.itemEffect = itemEffect;
@@ -68,6 +72,7 @@ public class ArrowLauncher implements ProjectileLauncher {
         arrow.setPickupStatus(PickupStatus.DISALLOWED);
         arrow.setVelocity(velocity);
 
+        projectileRegistry.register(arrow.getUniqueId());
         projectileHitActionRegistry.registerProjectileHitAction(arrow, hitLocation -> this.onHit(damageSource, arrow, initiationLocation, hitLocation));
 
         this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);
