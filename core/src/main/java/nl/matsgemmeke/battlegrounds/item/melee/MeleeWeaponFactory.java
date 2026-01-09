@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControlsFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
@@ -21,11 +22,13 @@ public class MeleeWeaponFactory {
     private static final String ACTION_EXECUTOR_ID_VALUE = "melee-weapon";
     private static final String TEMPLATE_ID_KEY = "template-id";
 
+    private final MeleeWeaponControlsFactory controlsFactory;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
     private final NamespacedKeyCreator namespacedKeyCreator;
 
     @Inject
-    public MeleeWeaponFactory(MeleeWeaponRegistry meleeWeaponRegistry, NamespacedKeyCreator namespacedKeyCreator) {
+    public MeleeWeaponFactory(MeleeWeaponControlsFactory controlsFactory, MeleeWeaponRegistry meleeWeaponRegistry, NamespacedKeyCreator namespacedKeyCreator) {
+        this.controlsFactory = controlsFactory;
         this.meleeWeaponRegistry = meleeWeaponRegistry;
         this.namespacedKeyCreator = namespacedKeyCreator;
     }
@@ -51,7 +54,7 @@ public class MeleeWeaponFactory {
         DefaultMeleeWeapon meleeWeapon = new DefaultMeleeWeapon(new ItemControls<>());
         meleeWeapon.setName(spec.name);
         meleeWeapon.setDescription(spec.description);
-        meleeWeapon.setAttackDamage(spec.damage.damageAmount);
+        meleeWeapon.setAttackDamage(spec.damage.meleeDamage);
 
         ItemTemplate displayItemTemplate = this.createDisplayItemTemplate(spec.items.displayItem);
         meleeWeapon.setDisplayItemTemplate(displayItemTemplate);

@@ -72,7 +72,7 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
         double damageAmount = event.getDamage();
 
         EventDamageAdapter eventDamageAdapter = gameScope.supplyInScope(gameContext, eventDamageAdapterProvider::get);
-        EventDamageResult eventDamageResult = eventDamageAdapter.processMeleeDamage(entity, damager, damageAmount);
+        EventDamageResult eventDamageResult = eventDamageAdapter.processMeleeDamage(damager, entity, damageAmount);
 
         event.setDamage(eventDamageResult.damageAmount());
     }

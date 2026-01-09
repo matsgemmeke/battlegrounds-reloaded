@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.controls;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,9 +11,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class ItemControls<T extends ItemHolder> {
 
-    @NotNull
     private ConcurrentMap<Action, List<ItemFunction<T>>> controls;
-    @NotNull
     private Set<ItemFunction<T>> performingFunctions;
 
     public ItemControls() {
@@ -22,7 +19,7 @@ public class ItemControls<T extends ItemHolder> {
         this.performingFunctions = new HashSet<>();
     }
 
-    public void addControl(@NotNull Action action, @NotNull ItemFunction<T> function) {
+    public void addControl(Action action, ItemFunction<T> function) {
         controls.putIfAbsent(action, new ArrayList<>());
         controls.get(action).add(function);
 
@@ -37,7 +34,7 @@ public class ItemControls<T extends ItemHolder> {
         }
     }
 
-    public void performAction(@NotNull Action action, @NotNull T holder) {
+    public void performAction(Action action, T holder) {
         if (this.isPerformingBlockingFunction()) {
             return;
         }

@@ -5,8 +5,7 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class DamageSpec {
 
     @Required
-    public Double damageAmount;
+    public Double meleeDamage;
 
-    @Required
-    public Boolean throwable;
+    public Double throwingDamage;
 }

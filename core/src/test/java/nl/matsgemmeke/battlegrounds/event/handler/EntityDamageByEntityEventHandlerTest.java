@@ -93,7 +93,7 @@ class EntityDamageByEntityEventHandlerTest {
         EventDamageResult eventDamageResult = new EventDamageResult(ADAPTER_DAMAGE);
 
         EventDamageAdapter eventDamageAdapter = mock(EventDamageAdapter.class);
-        when(eventDamageAdapter.processMeleeDamage(entity, damager, EVENT_DAMAGE)).thenReturn(eventDamageResult);
+        when(eventDamageAdapter.processMeleeDamage(damager, entity, EVENT_DAMAGE)).thenReturn(eventDamageResult);
 
         when(gameContextProvider.getGameKeyByEntityId(DAMAGER_UNIQUE_ID)).thenReturn(Optional.of(DAMAGER_GAME_KEY));
         when(gameContextProvider.getGameContext(DAMAGER_GAME_KEY)).thenReturn(Optional.of(gameContext));

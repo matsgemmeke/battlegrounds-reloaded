@@ -54,6 +54,7 @@ import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEvent
 import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
@@ -74,6 +75,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPer
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPerformanceFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
@@ -110,6 +112,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public class BattlegroundsModule implements Module {
@@ -145,6 +148,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(Scheduler.class).in(Singleton.class);
         binder.bind(TaskRunner.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
+        binder.bind(new TypeLiteral<Supplier<ItemControls<MeleeWeaponHolder>>>() {}).toInstance(ItemControls::new);
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
