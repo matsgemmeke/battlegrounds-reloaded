@@ -75,6 +75,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPer
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPerformanceFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
@@ -211,6 +212,10 @@ public class BattlegroundsModule implements Module {
         binder.bind(ActionExecutor.class)
                 .annotatedWith(Names.named("Gun"))
                 .to(GunActionExecutor.class)
+                .in(GameScoped.class);
+        binder.bind(ActionExecutor.class)
+                .annotatedWith(Names.named("MeleeWeapon"))
+                .to(MeleeWeaponActionExecutor.class)
                 .in(GameScoped.class);
 
         // Factory bindings

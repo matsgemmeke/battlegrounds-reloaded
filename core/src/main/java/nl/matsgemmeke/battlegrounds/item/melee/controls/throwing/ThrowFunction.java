@@ -14,12 +14,12 @@ public class ThrowFunction implements ItemFunction<MeleeWeaponHolder> {
 
     @Override
     public boolean isAvailable() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isBlocking() {
-        return false;
+        return true;
     }
 
     @Override
@@ -34,6 +34,7 @@ public class ThrowFunction implements ItemFunction<MeleeWeaponHolder> {
 
     @Override
     public boolean perform(MeleeWeaponHolder holder) {
+        System.out.println("perform " + meleeWeapon);
         return false;
     }
 }

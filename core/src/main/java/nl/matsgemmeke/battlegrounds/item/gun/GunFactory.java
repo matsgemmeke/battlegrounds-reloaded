@@ -39,7 +39,6 @@ public class GunFactory {
     private static final String ACTION_EXECUTOR_ID_KEY = "action-executor-id";
     private static final String ACTION_EXECUTOR_ID_VALUE = "gun";
     private static final String TEMPLATE_ID_KEY = "template-id";
-    private static final double DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER = 1.0;
 
     private final BattlegroundsConfiguration config;
     private final GunControlsFactory controlsFactory;

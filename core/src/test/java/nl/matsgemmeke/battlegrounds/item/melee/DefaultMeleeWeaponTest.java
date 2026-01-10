@@ -5,13 +5,13 @@ import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -29,10 +29,15 @@ class DefaultMeleeWeaponTest {
     private ItemControls<MeleeWeaponHolder> controls;
     @Mock
     private MeleeWeaponHolder holder;
-    @InjectMocks
-    private DefaultMeleeWeapon meleeWeapon;
     @Captor
     private ArgumentCaptor<Map<String, Object>> templateValuesCaptor;
+
+    private DefaultMeleeWeapon meleeWeapon;
+
+    @BeforeEach
+    void setUp() {
+        meleeWeapon = new DefaultMeleeWeapon();
+    }
 
     @Test
     void isMatchingReturnsFalseWhenDisplayItemTemplateIsNull() {
@@ -59,6 +64,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onChangeFromDoesNotPerformActionWhenHolderIsNull() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.onChangeFrom();
 
         verifyNoInteractions(controls);
@@ -66,6 +72,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onChangeFromPerformsChangeFromActionOnControls() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.setHolder(holder);
         meleeWeapon.onChangeFrom();
 
@@ -74,6 +81,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onChangeToDoesNotPerformActionWhenHolderIsNull() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.onChangeTo();
 
         verifyNoInteractions(controls);
@@ -81,6 +89,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onChangeToPerformsChangeToActionOnControls() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.setHolder(holder);
         meleeWeapon.onChangeTo();
 
@@ -89,6 +98,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onDropDoesNotPerformActionWhenHolderIsNull() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.onDrop();
 
         verifyNoInteractions(controls);
@@ -96,6 +106,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onDropPerformsDropActionOnControlsAndCancelsOtherFunctions() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.setHolder(holder);
         meleeWeapon.onDrop();
 
@@ -107,6 +118,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onLeftClickDoesNotPerformActionWhenHolderIsNull() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.onLeftClick();
 
         verifyNoInteractions(controls);
@@ -114,6 +126,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onLeftClickPerformsLeftClickActionOnControls() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.setHolder(holder);
         meleeWeapon.onLeftClick();
 
@@ -122,6 +135,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onPickupPerformsPickupActionOnControlsAndSetsHolder() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.onPickUp(holder);
 
         assertThat(meleeWeapon.getHolder()).hasValue(holder);
@@ -131,6 +145,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onRightClickDoesNotPerformActionWhenHolderIsNull() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.onRightClick();
 
         verifyNoInteractions(controls);
@@ -138,6 +153,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onRightClickPerformsRightClickActionOnControls() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.setHolder(holder);
         meleeWeapon.onRightClick();
 
@@ -146,6 +162,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onSwapFromDoesNotPerformActionWhenHolderIsNull() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.onSwapFrom();
 
         verifyNoInteractions(controls);
@@ -153,6 +170,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onSwapFromPerformsSwapFromActionOnControls() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.setHolder(holder);
         meleeWeapon.onSwapFrom();
 
@@ -161,6 +179,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onSwapToDoesNotPerformActionWhenHolderIsNull() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.onSwapTo();
 
         verifyNoInteractions(controls);
@@ -168,6 +187,7 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void onSwapToPerformsSwapToActionOnControls() {
+        meleeWeapon.setControls(controls);
         meleeWeapon.setHolder(holder);
         meleeWeapon.onSwapTo();
 

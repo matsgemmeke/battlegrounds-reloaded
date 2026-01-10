@@ -51,7 +51,7 @@ public class MeleeWeaponFactory {
     }
 
     private MeleeWeapon createInstance(MeleeWeaponSpec spec) {
-        DefaultMeleeWeapon meleeWeapon = new DefaultMeleeWeapon(new ItemControls<>());
+        DefaultMeleeWeapon meleeWeapon = new DefaultMeleeWeapon();
         meleeWeapon.setName(spec.name);
         meleeWeapon.setDescription(spec.description);
         meleeWeapon.setAttackDamage(spec.damage.meleeDamage);
@@ -59,6 +59,16 @@ public class MeleeWeaponFactory {
         ItemTemplate displayItemTemplate = this.createDisplayItemTemplate(spec.items.displayItem);
         meleeWeapon.setDisplayItemTemplate(displayItemTemplate);
         meleeWeapon.update();
+
+        ItemControls<MeleeWeaponHolder> controls;
+
+        if (spec.controls != null) {
+            controls = controlsFactory.create(spec.controls, meleeWeapon);
+        } else {
+            controls = new ItemControls<>();
+        }
+
+        meleeWeapon.setControls(controls);
 
         return meleeWeapon;
     }

@@ -1,9 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.melee;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.melee.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControlsFactory;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -27,6 +30,8 @@ import static org.mockito.Mockito.mockStatic;
 @ExtendWith(MockitoExtension.class)
 class MeleeWeaponFactoryTest {
 
+    @Mock
+    private MeleeWeaponControlsFactory controlsFactory;
     @Mock
     private MeleeWeaponRegistry meleeWeaponRegistry;
     @Mock
@@ -58,6 +63,28 @@ class MeleeWeaponFactoryTest {
     @Test
     void createReturnsMeleeWeaponWithoutAssignedHolder() {
         MeleeWeaponSpec spec = this.createMeleeWeaponSpec();
+
+        MeleeWeapon meleeWeapon = meleeWeaponFactory.create(spec);
+
+        assertThat(meleeWeapon.getName()).isEqualTo("Combat Knife");
+        assertThat(meleeWeapon.getDescription()).isEqualTo("Standard issue military knife. Fast, quiet and deadly.");
+        assertThat(meleeWeapon.getHolder()).isEmpty();
+        assertThat(meleeWeapon.getAttackDamage()).isEqualTo(75.0);
+
+        verify(meleeWeaponRegistry).register(meleeWeapon);
+    }
+
+    @Test
+    void createReturnsMeleeWeaponWithControls() {
+        ItemControls<MeleeWeaponHolder> controls = new ItemControls<>();
+
+        ControlsSpec controlsSpec = new ControlsSpec();
+        controlsSpec.throwing = "RIGHT_CLICK";
+
+        MeleeWeaponSpec spec = this.createMeleeWeaponSpec();
+        spec.controls = controlsSpec;
+
+        when(controlsFactory.create(eq(controlsSpec), any(MeleeWeapon.class))).thenReturn(controls);
 
         MeleeWeapon meleeWeapon = meleeWeaponFactory.create(spec);
 

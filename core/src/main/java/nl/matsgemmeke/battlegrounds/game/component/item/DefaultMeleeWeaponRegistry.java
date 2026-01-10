@@ -22,6 +22,28 @@ public class DefaultMeleeWeaponRegistry implements MeleeWeaponRegistry {
     }
 
     @Override
+    public void assign(MeleeWeapon meleeWeapon, MeleeWeaponHolder holder) {
+        if (!unassignedMeleeWeapons.contains(meleeWeapon)) {
+            return;
+        }
+
+        unassignedMeleeWeapons.remove(meleeWeapon);
+        assignedMeleeWeapons.computeIfAbsent(holder, h -> new ArrayList<>()).add(meleeWeapon);
+    }
+
+    @Override
+    public void unassign(MeleeWeapon meleeWeapon) {
+        MeleeWeaponHolder holder = meleeWeapon.getHolder().orElse(null);
+
+        if (holder == null || !assignedMeleeWeapons.containsKey(holder)) {
+            return;
+        }
+
+        assignedMeleeWeapons.get(holder).remove(meleeWeapon);
+        unassignedMeleeWeapons.add(meleeWeapon);
+    }
+
+    @Override
     public Optional<MeleeWeapon> getAssignedMeleeWeapon(MeleeWeaponHolder holder, ItemStack itemStack) {
         if (!assignedMeleeWeapons.containsKey(holder)) {
             return Optional.empty();

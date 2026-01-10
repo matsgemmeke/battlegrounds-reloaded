@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Object that handles interactions performed on items and initiates behavior.
@@ -16,7 +15,7 @@ public interface ActionExecutor {
      * @param changedItem the item stack that the player is changing from
      * @return whether the action should be performed
      */
-    boolean handleChangeFromAction(@NotNull Player player, @NotNull ItemStack changedItem);
+    boolean handleChangeFromAction(Player player, ItemStack changedItem);
 
     /**
      * Handles logic for when a player changes its held item from another item to the given item.
@@ -25,7 +24,7 @@ public interface ActionExecutor {
      * @param changedItem the item stack that the player is changing from
      * @return whether the action should be performed
      */
-    boolean handleChangeToAction(@NotNull Player player, @NotNull ItemStack changedItem);
+    boolean handleChangeToAction(Player player, ItemStack changedItem);
 
     /**
      * Handles logic for when a player drops an item.
@@ -34,7 +33,7 @@ public interface ActionExecutor {
      * @param droppedItem the item stack that was dropped
      * @return whether the action should be performed
      */
-    boolean handleDropItemAction(@NotNull Player player, @NotNull ItemStack droppedItem);
+    boolean handleDropItemAction(Player player, ItemStack droppedItem);
 
     /**
      * Handles logic for when a player left-clicks an item.
@@ -43,7 +42,7 @@ public interface ActionExecutor {
      * @param clickedItem the item stack that was clicked
      * @return whether the action should be performed
      */
-    boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem);
+    boolean handleLeftClickAction(Player player, ItemStack clickedItem);
 
     /**
      * Handles logic for when a player picks up an item.
@@ -52,7 +51,7 @@ public interface ActionExecutor {
      * @param pickupItem the item stack that was picked up
      * @return whether the action should be performed
      */
-    boolean handlePickupItemAction(@NotNull Player player, @NotNull ItemStack pickupItem);
+    boolean handlePickupItemAction(Player player, ItemStack pickupItem);
 
     /**
      * Handles logic for when a player right-clicks an item.
@@ -61,7 +60,7 @@ public interface ActionExecutor {
      * @param clickedItem the item stack that was clicked
      * @return whether the action should be performed
      */
-    boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem);
+    boolean handleRightClickAction(Player player, ItemStack clickedItem);
 
     /**
      * Handles logic for when a player swaps an item away.
@@ -70,7 +69,7 @@ public interface ActionExecutor {
      * @param swappedItem the item stack that is being swapped from
      * @return whether the action should be performed
      */
-    boolean handleSwapFromAction(@NotNull Player player, @NotNull ItemStack swappedItem);
+    boolean handleSwapFromAction(Player player, ItemStack swappedItem);
 
     /**
      * Handles logic for when a player swaps to an item.
@@ -79,5 +78,5 @@ public interface ActionExecutor {
      * @param swappedItem the item stack that is being swapped to
      * @return whether the action should be performed
      */
-    boolean handleSwapToAction(@NotNull Player player, @NotNull ItemStack swappedItem);
+    boolean handleSwapToAction(Player player, ItemStack swappedItem);
 }
