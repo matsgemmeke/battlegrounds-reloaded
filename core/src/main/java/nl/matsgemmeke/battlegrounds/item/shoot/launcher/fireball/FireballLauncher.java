@@ -85,7 +85,7 @@ public class FireballLauncher implements ProjectileLauncher {
         projectileRegistry.register(fireball.getUniqueId());
         projectileHitActionRegistry.registerProjectileHitAction(fireball, hitLocation -> this.onHit(damageSource, initiationLocation, fireball, schedule));
 
-        this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);
+        this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
 
     private void displayParticleEffect(Fireball fireball) {

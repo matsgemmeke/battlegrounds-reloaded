@@ -75,7 +75,7 @@ public class ArrowLauncher implements ProjectileLauncher {
         projectileRegistry.register(arrow.getUniqueId());
         projectileHitActionRegistry.registerProjectileHitAction(arrow, hitLocation -> this.onHit(damageSource, arrow, initiationLocation, hitLocation));
 
-        this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);
+        this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
 
     private void onHit(DamageSource damageSource, Arrow arrow, Location initiationLocation, Location hitLocation) {

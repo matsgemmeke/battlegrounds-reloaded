@@ -87,7 +87,7 @@ public class ItemLauncher implements ProjectileLauncher {
             triggerRun.start();
         }
 
-        this.scheduleSoundPlayTasks(properties.shotSounds(), soundLocationSupplier);
+        this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
 
     private void startItemEffect(DamageSource damageSource, ItemProjectile projectile, ItemTriggerTarget triggerTarget, Location initiationLocation) {

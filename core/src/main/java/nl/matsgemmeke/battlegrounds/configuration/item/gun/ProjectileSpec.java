@@ -27,7 +27,7 @@ public class ProjectileSpec {
 
     public ParticleEffectSpec trajectoryParticleEffect;
 
-    public String shotSounds;
+    public String launchSounds;
 
     public Map<String, TriggerSpec> triggers;
 

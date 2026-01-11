@@ -69,26 +69,26 @@ public class ProjectileLauncherFactory {
 
         switch (projectileLauncherType) {
             case ARROW -> {
-                List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);
+                List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
                 double velocity = this.validateSpecVar(spec.velocity, "velocity", projectileLauncherType);
 
-                ArrowProperties properties = new ArrowProperties(shotSounds, velocity);
+                ArrowProperties properties = new ArrowProperties(launchSounds, velocity);
                 ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
                 return arrowLauncherFactory.create(properties, itemEffect);
             }
             case FIREBALL -> {
-                List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);
+                List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
                 ParticleEffect trajectoryParticleEffect = this.createParticleEffect(spec.trajectoryParticleEffect);
                 double velocity = this.validateSpecVar(spec.velocity, "velocity", projectileLauncherType);
 
-                FireballProperties properties = new FireballProperties(shotSounds, trajectoryParticleEffect, velocity);
+                FireballProperties properties = new FireballProperties(launchSounds, trajectoryParticleEffect, velocity);
                 ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
                 return fireballLauncherFactory.create(properties, itemEffect);
             }
             case HITSCAN -> {
-                List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);
+                List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
                 ParticleEffect trajectoryParticleEffect = null;
                 ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect;
 
@@ -96,7 +96,7 @@ public class ProjectileLauncherFactory {
                     trajectoryParticleEffect = particleEffectMapper.map(trajectoryParticleEffectSpec);
                 }
 
-                HitscanProperties properties = new HitscanProperties(shotSounds, trajectoryParticleEffect);
+                HitscanProperties properties = new HitscanProperties(launchSounds, trajectoryParticleEffect);
                 ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
                 return hitscanLauncherFactory.create(properties, itemEffect);
@@ -111,7 +111,7 @@ public class ProjectileLauncherFactory {
     private ProjectileLauncher createItemLauncher(ProjectileSpec spec) {
         double velocity = this.validateSpecVar(spec.velocity, "velocity", "ITEM");
         ItemSpec itemSpec = this.validateSpecVar(spec.item, "material", "ITEM");
-        List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shotSounds);
+        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
 
         NamespacedKey templateKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
         UUID templateId = UUID.randomUUID();
@@ -120,7 +120,7 @@ public class ProjectileLauncherFactory {
         ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
         itemTemplate.setDamage(itemSpec.damage);
 
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, shotSounds, velocity);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSounds, velocity);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         ItemLauncher itemLauncher = itemLauncherFactory.create(properties, itemEffect);

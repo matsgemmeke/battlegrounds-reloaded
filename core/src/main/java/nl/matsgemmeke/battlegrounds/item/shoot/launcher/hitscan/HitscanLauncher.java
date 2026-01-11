@@ -84,7 +84,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         World world = context.world();
         Vector direction = startingLocation.getDirection();
 
-        this.scheduleSoundPlayTasks(properties.shotSounds(), context.soundLocationSupplier());
+        this.scheduleSoundPlayTasks(properties.launchSounds(), context.soundLocationSupplier());
 
         do {
             hit = this.processProjectileStep(damageSource, startingLocation, world, direction, steps);

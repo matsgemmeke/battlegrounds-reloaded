@@ -166,7 +166,7 @@ public class GunFactory {
     private void registerGunFireSimulationInfo(Gun gun, GunSpec spec) {
         UUID gunId = gun.getId();
 
-        List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shooting.projectile.shotSounds);
+        List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shooting.projectile.launchSounds);
         int rateOfFire = gun.getRateOfFire();
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 

@@ -21,7 +21,7 @@ throwing:
       material: IRON_SWORD
       damage: 3
     velocity: 2.5
-    shot-sounds: ENTITY_ARROW_SHOOT-1-1.2-0
+    launch-sounds: ENTITY_ARROW_SHOOT-1-1.2-0
     effect:
       effect-type: DAMAGE
       damage-type: MELEE_DAMAGE

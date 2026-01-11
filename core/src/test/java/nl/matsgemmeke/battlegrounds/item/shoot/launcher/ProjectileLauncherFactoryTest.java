@@ -83,7 +83,7 @@ class ProjectileLauncherFactoryTest {
         verify(arrowLauncherFactory).create(arrowPropertiesCaptor.capture(), eq(itemEffect));
 
         ArrowProperties arrowProperties = arrowPropertiesCaptor.getValue();
-        assertThat(arrowProperties.shotSounds()).isEmpty();
+        assertThat(arrowProperties.launchSounds()).isEmpty();
         assertThat(arrowProperties.velocity()).isEqualTo(VELOCITY);
     }
 
@@ -102,7 +102,7 @@ class ProjectileLauncherFactoryTest {
         verify(fireballLauncherFactory).create(fireballPropertiesCaptor.capture(), eq(itemEffect));
 
         FireballProperties fireballProperties = fireballPropertiesCaptor.getValue();
-        assertThat(fireballProperties.shotSounds()).isEmpty();
+        assertThat(fireballProperties.launchSounds()).isEmpty();
         assertThat(fireballProperties.trajectoryParticleEffect()).satisfies(particleEffect -> {
             assertThat(particleEffect.particle()).isEqualTo(Particle.FLAME);
             assertThat(particleEffect.count()).isEqualTo(1);
@@ -141,7 +141,7 @@ class ProjectileLauncherFactoryTest {
         verify(hitscanLauncherFactory).create(hitscanPropertiesCaptor.capture(), eq(itemEffect));
         
         HitscanProperties hitscanProperties = hitscanPropertiesCaptor.getValue();
-        assertThat(hitscanProperties.shotSounds()).isEmpty();
+        assertThat(hitscanProperties.launchSounds()).isEmpty();
         assertThat(hitscanProperties.trajectoryParticleEffect()).satisfies(particleEffect -> {
             assertThat(particleEffect.particle()).isEqualTo(Particle.FLAME);
             assertThat(particleEffect.count()).isEqualTo(1);
@@ -177,7 +177,7 @@ class ProjectileLauncherFactoryTest {
         verify(itemLauncherFactory).create(propertiesCaptor.capture(), eq(itemEffect));
 
         ItemLaunchProperties properties = propertiesCaptor.getValue();
-        assertThat(properties.shotSounds()).isEmpty();
+        assertThat(properties.launchSounds()).isEmpty();
         assertThat(properties.velocity()).isEqualTo(VELOCITY);
 
         assertThat(createdProjectileLauncher).isEqualTo(itemLauncher);

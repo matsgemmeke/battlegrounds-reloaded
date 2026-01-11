@@ -4,5 +4,5 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 
 import java.util.List;
 
-public record ArrowProperties(List<GameSound> shotSounds, double velocity) {
+public record ArrowProperties(List<GameSound> launchSounds, double velocity) {
 }
