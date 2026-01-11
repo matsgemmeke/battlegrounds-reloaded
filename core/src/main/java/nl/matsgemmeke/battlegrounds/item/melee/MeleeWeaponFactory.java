@@ -3,11 +3,16 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.melee.ThrowingSpec;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControlsFactory;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
+import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
+import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
+import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandlerFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
@@ -25,12 +30,19 @@ public class MeleeWeaponFactory {
     private final MeleeWeaponControlsFactory controlsFactory;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
     private final NamespacedKeyCreator namespacedKeyCreator;
+    private final ThrowHandlerFactory throwHandlerFactory;
 
     @Inject
-    public MeleeWeaponFactory(MeleeWeaponControlsFactory controlsFactory, MeleeWeaponRegistry meleeWeaponRegistry, NamespacedKeyCreator namespacedKeyCreator) {
+    public MeleeWeaponFactory(
+            MeleeWeaponControlsFactory controlsFactory,
+            MeleeWeaponRegistry meleeWeaponRegistry,
+            NamespacedKeyCreator namespacedKeyCreator,
+            ThrowHandlerFactory throwHandlerFactory
+    ) {
         this.controlsFactory = controlsFactory;
         this.meleeWeaponRegistry = meleeWeaponRegistry;
         this.namespacedKeyCreator = namespacedKeyCreator;
+        this.throwHandlerFactory = throwHandlerFactory;
     }
 
     public MeleeWeapon create(MeleeWeaponSpec spec) {
@@ -60,6 +72,9 @@ public class MeleeWeaponFactory {
         meleeWeapon.setDisplayItemTemplate(displayItemTemplate);
         meleeWeapon.update();
 
+        ItemRepresentation itemRepresentation = new ItemRepresentation(displayItemTemplate);
+        itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, spec.name);
+
         ItemControls<MeleeWeaponHolder> controls;
 
         if (spec.controls != null) {
@@ -69,6 +84,14 @@ public class MeleeWeaponFactory {
         }
 
         meleeWeapon.setControls(controls);
+
+        ThrowingSpec throwingSpec = spec.throwing;
+
+        if (throwingSpec != null) {
+            ThrowHandler throwHandler = throwHandlerFactory.create(throwingSpec, itemRepresentation);
+
+            meleeWeapon.configureThrowHandler(throwHandler);
+        }
 
         return meleeWeapon;
     }

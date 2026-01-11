@@ -20,12 +20,12 @@ public class DamageEffectSpec extends ItemEffectSpec {
     public RangeProfileSpec range;
 
     private enum DamageType {
-        ATTACK_DAMAGE,
         BULLET_DAMAGE,
         ENVIRONMENTAL_DAMAGE,
         EXPLOSIVE_DAMAGE,
         EXPLOSIVE_ITEM_DAMAGE,
         FIRE_DAMAGE,
+        MELEE_DAMAGE,
         PROJECTILE_DAMAGE
     }
 }

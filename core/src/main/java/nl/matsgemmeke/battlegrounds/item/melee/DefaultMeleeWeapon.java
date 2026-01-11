@@ -4,6 +4,8 @@ import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
+import nl.matsgemmeke.battlegrounds.item.throwing.ThrowPerformer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +24,8 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     private ItemTemplate throwItemTemplate;
     @Nullable
     private MeleeWeaponHolder holder;
+    @Nullable
+    private ThrowHandler throwHandler;
 
     public DefaultMeleeWeapon() {
         this.controls = new ItemControls<>();
@@ -60,6 +64,10 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     @Override
     public void setHolder(@Nullable MeleeWeaponHolder holder) {
         this.holder = holder;
+    }
+
+    public void configureThrowHandler(ThrowHandler throwHandler) {
+        this.throwHandler = throwHandler;
     }
 
     @Override
@@ -121,6 +129,15 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         }
 
         controls.performAction(action, holder);
+    }
+
+    @Override
+    public void performThrow(ThrowPerformer performer) {
+        if (throwHandler == null) {
+            return;
+        }
+
+        throwHandler.performThrow(performer);
     }
 
     @Override

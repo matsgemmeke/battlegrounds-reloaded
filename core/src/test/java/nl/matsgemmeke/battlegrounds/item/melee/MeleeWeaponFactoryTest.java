@@ -7,6 +7,9 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControlsFactory;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
+import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
+import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandlerFactory;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -36,6 +39,8 @@ class MeleeWeaponFactoryTest {
     private MeleeWeaponRegistry meleeWeaponRegistry;
     @Mock
     private NamespacedKeyCreator namespacedKeyCreator;
+    @Mock
+    private ThrowHandlerFactory throwHandlerFactory;
     @InjectMocks
     private MeleeWeaponFactory meleeWeaponFactory;
 
@@ -62,7 +67,7 @@ class MeleeWeaponFactoryTest {
 
     @Test
     void createReturnsMeleeWeaponWithoutAssignedHolder() {
-        MeleeWeaponSpec spec = this.createMeleeWeaponSpec();
+        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("combat_knife");
 
         MeleeWeapon meleeWeapon = meleeWeaponFactory.create(spec);
 
@@ -81,7 +86,7 @@ class MeleeWeaponFactoryTest {
         ControlsSpec controlsSpec = new ControlsSpec();
         controlsSpec.throwing = "RIGHT_CLICK";
 
-        MeleeWeaponSpec spec = this.createMeleeWeaponSpec();
+        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("combat_knife");
         spec.controls = controlsSpec;
 
         when(controlsFactory.create(eq(controlsSpec), any(MeleeWeapon.class))).thenReturn(controls);
@@ -97,8 +102,25 @@ class MeleeWeaponFactoryTest {
     }
 
     @Test
+    void createReturnsMeleeWeaponWithThrowing() {
+        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("tomahawk");
+        ThrowHandler throwHandler = mock(ThrowHandler.class);
+
+        when(throwHandlerFactory.create(eq(spec.throwing), any(ItemRepresentation.class))).thenReturn(throwHandler);
+
+        MeleeWeapon meleeWeapon = meleeWeaponFactory.create(spec);
+
+        assertThat(meleeWeapon.getName()).isEqualTo("Tomahawk");
+        assertThat(meleeWeapon.getDescription()).isEqualTo("Retrievable throwing hatchet that causes instant death on impact.");
+        assertThat(meleeWeapon.getHolder()).isEmpty();
+        assertThat(meleeWeapon.getAttackDamage()).isEqualTo(50.0);
+
+        verify(meleeWeaponRegistry).register(meleeWeapon);
+    }
+
+    @Test
     void createReturnsMeleeWeaponWithAssignedHolder() {
-        MeleeWeaponSpec spec = this.createMeleeWeaponSpec();
+        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("combat_knife");
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = meleeWeaponFactory.create(spec, gamePlayer);
@@ -111,8 +133,8 @@ class MeleeWeaponFactoryTest {
         verify(meleeWeaponRegistry).register(meleeWeapon, gamePlayer);
     }
 
-    private MeleeWeaponSpec createMeleeWeaponSpec() {
-        File file = new File("src/main/resources/items/melee_weapons/combat_knife.yml");
+    private MeleeWeaponSpec createMeleeWeaponSpec(String fileName) {
+        File file = new File("src/main/resources/items/melee_weapons/" + fileName + ".yml");
 
         SpecDeserializer specDeserializer = new SpecDeserializer();
         return specDeserializer.deserializeSpec(file, MeleeWeaponSpec.class);

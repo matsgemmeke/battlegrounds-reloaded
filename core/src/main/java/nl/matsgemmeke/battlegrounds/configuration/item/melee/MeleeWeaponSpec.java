@@ -16,4 +16,6 @@ public class MeleeWeaponSpec {
 
     @Required
     public MeleeWeaponItemSpec items;
+
+    public ThrowingSpec throwing;
 }

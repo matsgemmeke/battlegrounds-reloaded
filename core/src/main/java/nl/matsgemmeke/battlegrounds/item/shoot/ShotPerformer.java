@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.item.ItemReceiver;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilReceiver;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
 
 public interface ShotPerformer extends DamageSource, ItemReceiver, ProjectileLaunchSource, RecoilReceiver {
 
@@ -14,6 +13,5 @@ public interface ShotPerformer extends DamageSource, ItemReceiver, ProjectileLau
      *
      * @return the entity's shooting direction
      */
-    @NotNull
     Location getShootingDirection();
 }

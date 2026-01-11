@@ -2,10 +2,11 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.throwing.ThrowableItem;
 
 import java.util.Optional;
 
-public interface MeleeWeapon extends Weapon, Interactable<MeleeWeaponHolder> {
+public interface MeleeWeapon extends Weapon, ThrowableItem, Interactable<MeleeWeaponHolder> {
 
     double getAttackDamage();
 

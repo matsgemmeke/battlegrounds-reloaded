@@ -9,8 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ThrowFunctionTest {
@@ -52,6 +52,8 @@ class ThrowFunctionTest {
     void performDoesSomething() {
         MeleeWeaponHolder holder = mock(MeleeWeaponHolder.class);
 
-        assertThatCode(() -> function.perform(holder)).doesNotThrowAnyException();
+        function.perform(holder);
+
+        verify(meleeWeapon).performThrow(holder);
     }
 }

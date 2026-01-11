@@ -219,11 +219,6 @@ public class DefaultGamePlayer implements GamePlayer {
         return player.getLastTwoTargetBlocks(null, maxDistance);
     }
 
-    @NotNull
-    public Location getShootingDirection() {
-        return player.getEyeLocation().subtract(0, 0.25, 0);
-    }
-
     public float getRelativeAccuracy() {
         if (player.isSneaking()) {
             return SNEAKING_ACCURACY;
@@ -234,6 +229,16 @@ public class DefaultGamePlayer implements GamePlayer {
         }
 
         return NORMAL_ACCURACY;
+    }
+
+    @Override
+    public Location getShootingDirection() {
+        return player.getEyeLocation().subtract(0, 0.25, 0);
+    }
+
+    @Override
+    public Location getThrowDirection() {
+        return player.getEyeLocation();
     }
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {

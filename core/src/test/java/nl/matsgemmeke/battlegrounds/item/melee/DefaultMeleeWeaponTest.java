@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -192,6 +194,21 @@ class DefaultMeleeWeaponTest {
         meleeWeapon.onSwapTo();
 
         verify(controls).performAction(Action.SWAP_TO, holder);
+    }
+
+    @Test
+    void performThrowDoesNothingWhenThrowHandlerIsNull() {
+        assertThatCode(() -> meleeWeapon.performThrow(holder)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void performThrowDelegatesToThrowHandler() {
+        ThrowHandler throwHandler = mock(ThrowHandler.class);
+
+        meleeWeapon.configureThrowHandler(throwHandler);
+        meleeWeapon.performThrow(holder);
+
+        verify(throwHandler).performThrow(holder);
     }
 
     @Test

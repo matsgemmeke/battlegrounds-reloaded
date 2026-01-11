@@ -13,3 +13,39 @@ items:
     display-name: '&f%name%'
     amount: 1
     damage: 3
+throwing:
+  throws-amount: 1
+  projectile:
+    type: ITEM
+    item:
+      material: IRON_SWORD
+      damage: 3
+    velocity: 2.5
+    shot-sounds: ENTITY_ARROW_SHOOT-1-1.2-0
+    effect:
+      effect-type: DAMAGE
+      damage-type: MELEE_DAMAGE
+      range:
+        short-range:
+          damage: 150.0
+          distance: 1.0
+        medium-range:
+          damage: 150.0
+          distance: 1.0
+        long-range:
+          damage: 150.0
+          distance: 1.0
+      hitbox-multipliers:
+        head: 1.0
+        body: 1.0
+        legs: 1.0
+    triggers:
+      enemy-proximity:
+        type: ENEMY_PROXIMITY
+        delay: 0
+        interval: 1
+        range: 0.1
+      impact:
+        type: IMPACT
+        delay: 0
+        interval: 1

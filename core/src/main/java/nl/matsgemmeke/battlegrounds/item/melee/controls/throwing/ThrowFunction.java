@@ -34,7 +34,7 @@ public class ThrowFunction implements ItemFunction<MeleeWeaponHolder> {
 
     @Override
     public boolean perform(MeleeWeaponHolder holder) {
-        System.out.println("perform " + meleeWeapon);
-        return false;
+        meleeWeapon.performThrow(holder);
+        return true;
     }
 }

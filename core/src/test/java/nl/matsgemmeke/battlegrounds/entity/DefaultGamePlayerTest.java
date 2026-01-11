@@ -320,6 +320,17 @@ class DefaultGamePlayerTest {
     }
 
     @Test
+    void getThrowDirectionReturnsPlayerEyeLocation() {
+        Location eyeLocation = new Location(null, 1, 1, 1, 0.0f, 0.0f);
+
+        when(player.getEyeLocation()).thenReturn(eyeLocation);
+
+        Location throwDirection = gamePlayer.getThrowDirection();
+
+        assertThat(throwDirection).isEqualTo(eyeLocation);
+    }
+
+    @Test
     void applyReloadingStateSetsFoodLevel() {
         gamePlayer.applyReloadingState();
 

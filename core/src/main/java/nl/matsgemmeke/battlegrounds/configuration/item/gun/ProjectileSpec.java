@@ -15,15 +15,20 @@ public class ProjectileSpec {
     @Required
     @EnumValue(type = ProjectileType.class)
     public String type;
+
     @Required
     public ItemEffectSpec effect;
+
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "ITEM")
     public ItemSpec item;
+
     @ConditionalRequired(conditionalFieldName = "type", matchValues = { "ARROW", "FIREBALL", "ITEM" })
     public Double velocity;
+
     public ParticleEffectSpec trajectoryParticleEffect;
+
     public String shotSounds;
-    public String suppressedShotSounds;
+
     public Map<String, TriggerSpec> triggers;
 
     private enum ProjectileType {
