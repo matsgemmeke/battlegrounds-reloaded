@@ -61,6 +61,6 @@ projectile-effects:
     stick-sounds: ITEM_FLINTANDSTEEL_USE-0.5-2-0
     triggers:
       impact:
-        type: IMPACT
+        type: BLOCK_IMPACT
         delay: 0
         interval: 1

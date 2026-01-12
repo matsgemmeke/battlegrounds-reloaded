@@ -40,12 +40,7 @@ throwing:
         body: 1.0
         legs: 1.0
     triggers:
-      enemy-proximity:
-        type: ENEMY_PROXIMITY
-        delay: 0
-        interval: 1
-        range: 0.1
       impact:
-        type: IMPACT
+        type: BLOCK_IMPACT
         delay: 0
         interval: 1

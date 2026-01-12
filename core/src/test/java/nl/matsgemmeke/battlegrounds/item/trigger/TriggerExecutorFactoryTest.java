@@ -45,6 +45,8 @@ class TriggerExecutorFactoryTest {
 
     static Stream<Arguments> invalidTriggerSpecCases() {
         return Stream.of(
+                arguments("BLOCK_IMPACT", null, INTERVAL, null, null, "delay"),
+                arguments("BLOCK_IMPACT", DELAY, null, null, null, "interval"),
                 arguments("ENEMY_HIT", null, INTERVAL, null, RANGE, "delay"),
                 arguments("ENEMY_HIT", DELAY, null, null, RANGE, "interval"),
                 arguments("ENEMY_PROXIMITY", null, INTERVAL, null, RANGE, "delay"),
@@ -52,8 +54,6 @@ class TriggerExecutorFactoryTest {
                 arguments("ENEMY_PROXIMITY", DELAY, INTERVAL, null, null, "range"),
                 arguments("FLOOR_HIT", null, INTERVAL, null, null, "delay"),
                 arguments("FLOOR_HIT", DELAY, null, null, null, "interval"),
-                arguments("IMPACT", null, INTERVAL, null, null, "delay"),
-                arguments("IMPACT", DELAY, null, null, null, "interval"),
                 arguments("SCHEDULED", null, null, null, null, "offsetDelays")
         );
     }
@@ -73,6 +73,18 @@ class TriggerExecutorFactoryTest {
         assertThatThrownBy(() -> factory.create(spec))
                 .isInstanceOf(TriggerCreationException.class)
                 .hasMessage(expectedErrorMessage);
+    }
+
+    @Test
+    void createReturnsTriggerExecutorWithBlockImpactTriggerInstanceWhenTriggerTypeEqualsBlockImpact() {
+        TriggerSpec spec = new TriggerSpec();
+        spec.type = "BLOCK_IMPACT";
+        spec.delay = DELAY;
+        spec.interval = INTERVAL;
+
+        TriggerExecutor triggerExecutor = factory.create(spec);
+
+        assertThat(triggerExecutor.isRepeating()).isFalse();
     }
 
     @Test
@@ -117,18 +129,6 @@ class TriggerExecutorFactoryTest {
         spec.delay = DELAY;
         spec.interval = INTERVAL;
         spec.range = RANGE;
-
-        TriggerExecutor triggerExecutor = factory.create(spec);
-
-        assertThat(triggerExecutor.isRepeating()).isFalse();
-    }
-
-    @Test
-    void createReturnsTriggerExecutorWithImpactTriggerInstanceWhenTriggerTypeEqualsImpact() {
-        TriggerSpec spec = new TriggerSpec();
-        spec.type = "IMPACT";
-        spec.delay = DELAY;
-        spec.interval = INTERVAL;
 
         TriggerExecutor triggerExecutor = factory.create(spec);
 

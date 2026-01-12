@@ -199,7 +199,7 @@ class ProjectileLauncherFactoryTest {
         itemSpec.damage = 1;
 
         TriggerSpec triggerSpec = new TriggerSpec();
-        triggerSpec.type = "IMPACT";
+        triggerSpec.type = "BLOCK_IMPACT";
         triggerSpec.delay = 5L;
         triggerSpec.interval = 1L;
 

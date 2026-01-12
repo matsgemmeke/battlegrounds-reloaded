@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.trigger;
 
 public enum TriggerType {
 
+    BLOCK_IMPACT,
     ENEMY_HIT,
     ENEMY_PROXIMITY,
-    IMPACT,
     FLOOR_HIT,
     SCHEDULED
 }

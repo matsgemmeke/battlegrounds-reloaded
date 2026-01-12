@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.trigger.impact;
+package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
@@ -9,7 +9,10 @@ import org.bukkit.World;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-public class ImpactTrigger implements Trigger {
+/**
+ * Trigger that activates when the target is about to hit a block.
+ */
+public class BlockImpactTrigger implements Trigger {
 
     @Override
     public boolean activates(TriggerContext context) {

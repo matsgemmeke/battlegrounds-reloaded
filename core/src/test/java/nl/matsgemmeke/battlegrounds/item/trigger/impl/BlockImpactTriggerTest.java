@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.trigger.impact;
+package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -22,19 +21,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ImpactTriggerTest {
+class BlockImpactTriggerTest {
 
     private static final UUID SOURCE_ID = UUID.randomUUID();
 
     @Mock
     private TriggerTarget target;
 
-    private ImpactTrigger trigger;
-
-    @BeforeEach
-    void setUp() {
-        trigger = new ImpactTrigger();
-    }
+    private final BlockImpactTrigger trigger = new BlockImpactTrigger();
 
     @Test
     void activatesReturnsFalseWhenTargetDoesNotExist() {

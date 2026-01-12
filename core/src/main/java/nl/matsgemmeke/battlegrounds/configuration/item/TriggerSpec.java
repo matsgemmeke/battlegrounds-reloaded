@@ -12,10 +12,10 @@ public class TriggerSpec {
     @EnumValue(type = TriggerType.class)
     public String type;
 
-    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT" })
+    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "BLOCK_IMPACT", "ENEMY_PROXIMITY", "FLOOR_HIT" })
     public Long delay;
 
-    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "ENEMY_PROXIMITY", "FLOOR_HIT", "IMPACT" })
+    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "BLOCK_IMPACT", "ENEMY_PROXIMITY", "FLOOR_HIT" })
     public Long interval;
 
     @ConditionalRequired(conditionalFieldName = "type", matchValues = "SCHEDULED")
@@ -27,6 +27,6 @@ public class TriggerSpec {
     public Boolean repeating;
 
     private enum TriggerType {
-        ENEMY_PROXIMITY, FLOOR_HIT, IMPACT, SCHEDULED
+        BLOCK_IMPACT, ENEMY_PROXIMITY, FLOOR_HIT, SCHEDULED
     }
 }

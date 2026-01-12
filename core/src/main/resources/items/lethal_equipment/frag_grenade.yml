@@ -56,6 +56,6 @@ projectile-effects:
     vertical-friction: 2.0
     triggers:
       impact:
-        type: IMPACT
+        type: BLOCK_IMPACT
         delay: 0
         interval: 1

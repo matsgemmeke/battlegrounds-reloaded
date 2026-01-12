@@ -5,7 +5,7 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.impact.ImpactTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.impl.BlockImpactTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impl.EnemyHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.scheduled.ScheduledTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -32,6 +32,15 @@ public class TriggerExecutorFactory {
         TriggerType triggerType = TriggerType.valueOf(spec.type);
 
         TriggerExecutor triggerExecutor = switch (triggerType) {
+            case BLOCK_IMPACT -> {
+                Long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
+                Long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
+
+                BlockImpactTrigger trigger = new BlockImpactTrigger();
+                Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
+
+                yield new TriggerExecutor(trigger, scheduleSupplier);
+            }
             case ENEMY_HIT -> {
                 long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
                 long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
@@ -58,15 +67,6 @@ public class TriggerExecutorFactory {
                 long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
 
                 FloorHitTrigger trigger = new FloorHitTrigger();
-                Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
-
-                yield new TriggerExecutor(trigger, scheduleSupplier);
-            }
-            case IMPACT -> {
-                Long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
-                Long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
-
-                ImpactTrigger trigger = new ImpactTrigger();
                 Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
 
                 yield new TriggerExecutor(trigger, scheduleSupplier);
