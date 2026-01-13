@@ -52,6 +52,8 @@ class TriggerExecutorFactoryTest {
                 arguments("ENEMY_PROXIMITY", null, INTERVAL, null, RANGE, "delay"),
                 arguments("ENEMY_PROXIMITY", DELAY, null, null, RANGE, "interval"),
                 arguments("ENEMY_PROXIMITY", DELAY, INTERVAL, null, null, "range"),
+                arguments("ENTITY_IMPACT", null, INTERVAL, null, null, "delay"),
+                arguments("ENTITY_IMPACT", DELAY, null, null, null, "interval"),
                 arguments("FLOOR_HIT", null, INTERVAL, null, null, "delay"),
                 arguments("FLOOR_HIT", DELAY, null, null, null, "interval"),
                 arguments("SCHEDULED", null, null, null, null, "offsetDelays")
@@ -120,6 +122,18 @@ class TriggerExecutorFactoryTest {
         assertThat(triggerExecutor.isRepeating()).isTrue();
 
         verify(trigger).setCheckingRange(RANGE);
+    }
+
+    @Test
+    void createReturnsTriggerExecutorWithEntityImpactTriggerInstanceWhenTriggerTypeEqualsEntityImpact() {
+        TriggerSpec spec = new TriggerSpec();
+        spec.type = "ENTITY_IMPACT";
+        spec.delay = DELAY;
+        spec.interval = INTERVAL;
+
+        TriggerExecutor triggerExecutor = factory.create(spec);
+
+        assertThat(triggerExecutor.isRepeating()).isFalse();
     }
 
     @Test

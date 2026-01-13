@@ -41,6 +41,6 @@ throwing:
         legs: 1.0
     triggers:
       impact:
-        type: BLOCK_IMPACT
+        type: ENTITY_IMPACT
         delay: 0
         interval: 1

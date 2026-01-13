@@ -5,6 +5,7 @@ public enum TriggerType {
     BLOCK_IMPACT,
     ENEMY_HIT,
     ENEMY_PROXIMITY,
+    ENTITY_IMPACT,
     FLOOR_HIT,
     SCHEDULED
 }

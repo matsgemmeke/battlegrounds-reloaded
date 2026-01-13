@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.floor.FloorHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impl.BlockImpactTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impl.EnemyHitTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.impl.EntityImpactTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.scheduled.ScheduledTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -58,6 +59,15 @@ public class TriggerExecutorFactory {
                 EnemyProximityTrigger trigger = enemyProximityTriggerProvider.get();
                 trigger.setCheckingRange(range);
 
+                Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
+
+                yield new TriggerExecutor(trigger, scheduleSupplier);
+            }
+            case ENTITY_IMPACT -> {
+                long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
+                long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
+
+                EntityImpactTrigger trigger = new EntityImpactTrigger();
                 Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
 
                 yield new TriggerExecutor(trigger, scheduleSupplier);
