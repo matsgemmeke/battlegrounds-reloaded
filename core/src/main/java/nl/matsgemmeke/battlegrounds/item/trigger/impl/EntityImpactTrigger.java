@@ -32,9 +32,10 @@ public class EntityImpactTrigger implements Trigger {
             return false;
         }
 
-        double rayDistance = velocity.length();
         World world = target.getWorld();
-        RayTraceResult rayTraceResult = world.rayTraceEntities(projectileLocation, velocity, rayDistance, RAY_SIZE, null);
+        double rayDistance = velocity.length();
+        HitEntityFilter entityFilter = new HitEntityFilter(context);
+        RayTraceResult rayTraceResult = world.rayTraceEntities(projectileLocation, velocity, rayDistance, RAY_SIZE, entityFilter);
 
         if (rayTraceResult == null) {
             return false;

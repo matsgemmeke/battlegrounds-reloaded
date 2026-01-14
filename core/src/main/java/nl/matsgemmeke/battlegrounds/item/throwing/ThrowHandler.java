@@ -22,8 +22,6 @@ public class ThrowHandler {
     }
 
     public void performThrow(ThrowPerformer performer) {
-        System.out.println(throwsAmount);
-
         if (throwsAmount <= 0) {
             return;
         }

@@ -17,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +63,7 @@ class EntityImpactTriggerTest {
         TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
 
         World world = mock(World.class);
-        when(world.rayTraceEntities(targetLocation, velocity, 1.0, 1.0, null)).thenReturn(null);
+        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(1.0), any(HitEntityFilter.class))).thenReturn(null);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -81,7 +83,7 @@ class EntityImpactTriggerTest {
         TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
 
         World world = mock(World.class);
-        when(world.rayTraceEntities(targetLocation, velocity, 1.0, 1.0, null)).thenReturn(rayTraceResult);
+        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(1.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -106,7 +108,7 @@ class EntityImpactTriggerTest {
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), entity);
 
         World world = mock(World.class);
-        when(world.rayTraceEntities(targetLocation, velocity, 1.0, 1.0, null)).thenReturn(rayTraceResult);
+        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(1.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
