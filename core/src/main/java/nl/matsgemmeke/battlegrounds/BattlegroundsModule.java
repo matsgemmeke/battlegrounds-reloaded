@@ -106,6 +106,7 @@ import nl.matsgemmeke.battlegrounds.storage.state.gun.sqlite.SqliteGunStateRepos
 import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.sqlite.SqliteMeleeWeaponStateRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -138,8 +139,10 @@ public class BattlegroundsModule implements Module {
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
+        binder.bind(new TypeLiteral<Supplier<ItemControls<MeleeWeaponHolder>>>() {}).toInstance(ItemControls::new);
 
         // Singleton bindings
+        binder.bind(BukkitEntityFinder.class).in(Singleton.class);
         binder.bind(EventDispatcher.class).in(Singleton.class);
         binder.bind(GameContextProvider.class).in(Singleton.class);
         binder.bind(HitboxResolver.class).in(Singleton.class);
@@ -149,7 +152,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(Scheduler.class).in(Singleton.class);
         binder.bind(TaskRunner.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
-        binder.bind(new TypeLiteral<Supplier<ItemControls<MeleeWeaponHolder>>>() {}).toInstance(ItemControls::new);
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
