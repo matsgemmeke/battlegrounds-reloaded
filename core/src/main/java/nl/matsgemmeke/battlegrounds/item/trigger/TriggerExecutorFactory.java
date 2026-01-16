@@ -20,12 +20,19 @@ public class TriggerExecutorFactory {
 
     private final Provider<EnemyHitTrigger> enemyHitTriggerProvider;
     private final Provider<EnemyProximityTrigger> enemyProximityTriggerProvider;
+    private final Provider<EntityImpactTrigger> entityImpactTriggerProvider;
     private final Scheduler scheduler;
 
     @Inject
-    public TriggerExecutorFactory(Provider<EnemyHitTrigger> enemyHitTriggerProvider, Provider<EnemyProximityTrigger> enemyProximityTriggerProvider, Scheduler scheduler) {
+    public TriggerExecutorFactory(
+            Provider<EnemyHitTrigger> enemyHitTriggerProvider,
+            Provider<EnemyProximityTrigger> enemyProximityTriggerProvider,
+            Provider<EntityImpactTrigger> entityImpactTriggerProvider,
+            Scheduler scheduler
+    ) {
         this.enemyHitTriggerProvider = enemyHitTriggerProvider;
         this.enemyProximityTriggerProvider = enemyProximityTriggerProvider;
+        this.entityImpactTriggerProvider = entityImpactTriggerProvider;
         this.scheduler = scheduler;
     }
 
@@ -67,7 +74,7 @@ public class TriggerExecutorFactory {
                 long delay = this.validateSpecVar(spec.delay, "delay", triggerType);
                 long interval = this.validateSpecVar(spec.interval, "interval", triggerType);
 
-                EntityImpactTrigger trigger = new EntityImpactTrigger();
+                EntityImpactTrigger trigger = entityImpactTriggerProvider.get();
                 Supplier<Schedule> scheduleSupplier = () -> scheduler.createRepeatingSchedule(delay, interval);
 
                 yield new TriggerExecutor(trigger, scheduleSupplier);

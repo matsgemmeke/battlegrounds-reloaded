@@ -1,5 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 
+import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
+import nl.matsgemmeke.battlegrounds.item.trigger.CheckResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
@@ -9,58 +12,60 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EntityImpactTriggerTest {
 
-    private static final UUID SOURCE_ID = UUID.fromString("f0fe1496-cdbe-44f1-ad94-fb5c986e3f00");;
+    private static final UUID SOURCE_UNIQUE_ID = UUID.randomUUID();
+    private static final UUID ENTITY_UNIQUE_ID = UUID.randomUUID();
 
     @Mock
+    private GameEntityFinder gameEntityFinder;
+    @Mock
     private TriggerTarget target;
-
-    private final EntityImpactTrigger trigger = new EntityImpactTrigger();
+    @InjectMocks
+    private EntityImpactTrigger trigger;
 
     @Test
-    void activatesReturnFalseWhenTriggerTargetDoesNotExist() {
-        TriggerContext context = new TriggerContext(SOURCE_ID, target);
+    void checkReturnsEmptyOptionalWhenTriggerTargetDoesNotExist() {
+        TriggerContext context = new TriggerContext(SOURCE_UNIQUE_ID, target);
 
         when(target.exists()).thenReturn(false);
 
-        boolean activates = trigger.activates(context);
+        Optional<CheckResult> checkResultOptional = trigger.check(context);
 
-        assertThat(activates).isFalse();
+        assertThat(checkResultOptional).isEmpty();
     }
 
     @Test
-    void activatesReturnsFalseWhenTargetVelocityIsZero() {
+    void checkReturnsEmptyOptionalWhenTargetVelocityIsZero() {
         Vector velocity = new Vector();
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_UNIQUE_ID, target);
 
         when(target.exists()).thenReturn(true);
         when(target.getVelocity()).thenReturn(velocity);
 
-        boolean activates = trigger.activates(triggerContext);
+        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
 
-        assertThat(activates).isFalse();
+        assertThat(checkResultOptional).isEmpty();
     }
 
     @Test
-    void activatesReturnsFalseWhenCastRayTraceResultIsNull() {
+    void checkReturnsEmptyOptionalWhenCastRayTraceResultIsNull() {
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, 0, 0);
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_UNIQUE_ID, target);
 
         World world = mock(World.class);
         when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(1.0), any(HitEntityFilter.class))).thenReturn(null);
@@ -70,17 +75,17 @@ class EntityImpactTriggerTest {
         when(target.getVelocity()).thenReturn(velocity);
         when(target.getWorld()).thenReturn(world);
 
-        boolean activates = trigger.activates(triggerContext);
+        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
 
-        assertThat(activates).isFalse();
+        assertThat(checkResultOptional).isEmpty();
     }
 
     @Test
-    void activatesReturnsFalseWhenHitEntityIsNull() {
+    void checkReturnsEmptyOptionalWhenHitEntityIsNull() {
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, 0, 0);
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), (Entity) null);
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_UNIQUE_ID, target);
 
         World world = mock(World.class);
         when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(1.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
@@ -90,20 +95,19 @@ class EntityImpactTriggerTest {
         when(target.getVelocity()).thenReturn(velocity);
         when(target.getWorld()).thenReturn(world);
 
-        boolean activates = trigger.activates(triggerContext);
+        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
 
-        assertThat(activates).isFalse();
+        assertThat(checkResultOptional).isEmpty();
     }
 
-    @ParameterizedTest
-    @CsvSource({ "f0fe1496-cdbe-44f1-ad94-fb5c986e3f00,false", "00000000-0000-0000-0000-000000000001,true" })
-    void activatesReturnsWhetherHitEntityUniqueIdDoesNotMatchSourceId(UUID entityUniqueId, boolean expectedResult) {
+    @Test
+    void checkReturnsEmptyOptionalWhenHitEntityIsNoRegisteredEntity() {
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, 0, 0);
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_UNIQUE_ID, target);
 
         Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityUniqueId);
+        when(entity.getUniqueId()).thenReturn(ENTITY_UNIQUE_ID);
 
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), entity);
 
@@ -114,9 +118,41 @@ class EntityImpactTriggerTest {
         when(target.getLocation()).thenReturn(targetLocation);
         when(target.getVelocity()).thenReturn(velocity);
         when(target.getWorld()).thenReturn(world);
+        when(gameEntityFinder.findGameEntityByUniqueId(ENTITY_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        boolean activates = trigger.activates(triggerContext);
+        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
 
-        assertThat(activates).isEqualTo(expectedResult);
+        assertThat(checkResultOptional).isEmpty();
+    }
+
+    @Test
+    void checkReturnsOptionalWithCheckResultWhenHitEntityIsRegistered() {
+        GameEntity gameEntity = mock(GameEntity.class);
+        Location targetLocation = new Location(null, 1, 1, 1);
+        Vector hitPosition = new Vector(1.5, 0.5, 0.5);
+        Vector velocity = new Vector(1, 1, 1);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_UNIQUE_ID, target);
+
+        Entity entity = mock(Entity.class);
+        when(entity.getUniqueId()).thenReturn(ENTITY_UNIQUE_ID);
+
+        RayTraceResult rayTraceResult = new RayTraceResult(hitPosition, entity);
+
+        World world = mock(World.class);
+        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), anyDouble(), eq(1.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
+
+        when(target.exists()).thenReturn(true);
+        when(target.getLocation()).thenReturn(targetLocation);
+        when(target.getVelocity()).thenReturn(velocity);
+        when(target.getWorld()).thenReturn(world);
+        when(gameEntityFinder.findGameEntityByUniqueId(ENTITY_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
+
+        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
+
+        assertThat(checkResultOptional).hasValueSatisfying(checkResult -> {
+           assertThat(checkResult.hitTarget()).isEqualTo(gameEntity);
+           assertThat(checkResult.hitBlock()).isNull();
+           assertThat(checkResult.hitLocation()).isEqualTo(new Location(world, 1.5, 0.5, 0.5));
+        });
     }
 }

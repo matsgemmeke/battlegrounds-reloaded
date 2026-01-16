@@ -26,7 +26,7 @@ import java.util.*;
 
 public class OpenModeTargetFinder implements TargetFinder {
 
-    private static final double ENTITY_FINDING_RANGE = 1.0;
+    private static final double ENTITY_FINDING_RANGE = 10.0;
 
     private final DeploymentInfoProvider deploymentInfoProvider;
     private final HitboxResolver hitboxResolver;

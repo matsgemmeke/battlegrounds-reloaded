@@ -3,11 +3,13 @@ package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 import jakarta.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.trigger.CheckResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -40,5 +42,10 @@ public class EnemyHitTrigger implements Trigger {
                 .filter(hitbox -> hitbox.intersects(targetLocation))
                 .toList()
                 .isEmpty();
+    }
+
+    @Override
+    public Optional<CheckResult> check(TriggerContext context) {
+        return Optional.empty();
     }
 }

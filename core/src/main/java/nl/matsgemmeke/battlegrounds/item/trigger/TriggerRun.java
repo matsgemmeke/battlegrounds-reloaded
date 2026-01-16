@@ -56,7 +56,9 @@ public class TriggerRun {
     }
 
     private void performTriggerCheck() {
-        if (!trigger.activates(context)) {
+        CheckResult checkResult = trigger.check(context).orElse(null);
+
+        if (checkResult == null) {
             return;
         }
 

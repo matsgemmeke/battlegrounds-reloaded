@@ -4,6 +4,7 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impl.EnemyHitTrigger;
+import nl.matsgemmeke.battlegrounds.item.trigger.impl.EntityImpactTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,13 +35,15 @@ class TriggerExecutorFactoryTest {
     @Mock
     private Provider<EnemyProximityTrigger> enemyProximityTriggerProvider;
     @Mock
+    private Provider<EntityImpactTrigger> entityImpactTriggerProvider;
+    @Mock
     private Scheduler scheduler;
 
     private TriggerExecutorFactory factory;
 
     @BeforeEach
     void setUp() {
-        factory = new TriggerExecutorFactory(enemyHitTriggerProvider, enemyProximityTriggerProvider, scheduler);
+        factory = new TriggerExecutorFactory(enemyHitTriggerProvider, enemyProximityTriggerProvider, entityImpactTriggerProvider, scheduler);
     }
 
     static Stream<Arguments> invalidTriggerSpecCases() {
