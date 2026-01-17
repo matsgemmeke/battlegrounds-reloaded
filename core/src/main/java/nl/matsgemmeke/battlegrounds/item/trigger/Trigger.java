@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
-import java.util.Optional;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 
 public interface Trigger {
 
     boolean activates(TriggerContext context);
 
-    Optional<CheckResult> check(TriggerContext context);
+    TriggerResult check(TriggerContext context);
 }

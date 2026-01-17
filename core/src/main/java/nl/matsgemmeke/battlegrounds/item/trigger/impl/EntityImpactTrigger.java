@@ -3,9 +3,11 @@ package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
-import nl.matsgemmeke.battlegrounds.item.trigger.CheckResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.DamageTargetTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,7 +15,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -36,11 +37,11 @@ public class EntityImpactTrigger implements Trigger {
     }
 
     @Override
-    public Optional<CheckResult> check(TriggerContext context) {
+    public TriggerResult check(TriggerContext context) {
         TriggerTarget target = context.target();
 
         if (!target.exists()) {
-            return Optional.empty();
+            return SimpleTriggerResult.NOT_ACTIVATES;
         }
 
         Vector velocity = target.getVelocity();
@@ -48,7 +49,7 @@ public class EntityImpactTrigger implements Trigger {
 
         // Stop the current check if the projectile does not move, because we cannot cast a ray trace with zero magnitude
         if (velocity.isZero()) {
-            return Optional.empty();
+            return SimpleTriggerResult.NOT_ACTIVATES;
         }
 
         World world = target.getWorld();
@@ -57,25 +58,25 @@ public class EntityImpactTrigger implements Trigger {
         RayTraceResult rayTraceResult = world.rayTraceEntities(projectileLocation, velocity, rayDistance, RAY_SIZE, entityFilter);
 
         if (rayTraceResult == null) {
-            return Optional.empty();
+            return SimpleTriggerResult.NOT_ACTIVATES;
         }
 
         Entity hitEntity = rayTraceResult.getHitEntity();
 
         if (hitEntity == null) {
-            return Optional.empty();
+            return SimpleTriggerResult.NOT_ACTIVATES;
         }
 
         UUID uniqueId = hitEntity.getUniqueId();
         GameEntity gameEntity = gameEntityFinder.findGameEntityByUniqueId(uniqueId).orElse(null);
 
         if (gameEntity == null) {
-            return Optional.empty();
+            return SimpleTriggerResult.NOT_ACTIVATES;
         }
 
         Vector hitPosition = rayTraceResult.getHitPosition();
         Location hitLocation = hitPosition.toLocation(world);
 
-        return Optional.of(new CheckResult(gameEntity, null, hitLocation));
+        return new DamageTargetTriggerResult(gameEntity, hitLocation);
     }
 }

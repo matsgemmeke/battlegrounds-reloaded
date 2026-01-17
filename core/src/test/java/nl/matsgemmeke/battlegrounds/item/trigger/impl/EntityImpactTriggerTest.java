@@ -2,8 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
-import nl.matsgemmeke.battlegrounds.item.trigger.CheckResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.DamageTargetTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -39,13 +40,13 @@ class EntityImpactTriggerTest {
 
     @Test
     void checkReturnsEmptyOptionalWhenTriggerTargetDoesNotExist() {
-        TriggerContext context = new TriggerContext(SOURCE_UNIQUE_ID, target);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_UNIQUE_ID, target);
 
         when(target.exists()).thenReturn(false);
 
-        Optional<CheckResult> checkResultOptional = trigger.check(context);
+        TriggerResult result = trigger.check(triggerContext);
 
-        assertThat(checkResultOptional).isEmpty();
+        assertThat(result.activates()).isFalse();
     }
 
     @Test
@@ -56,9 +57,9 @@ class EntityImpactTriggerTest {
         when(target.exists()).thenReturn(true);
         when(target.getVelocity()).thenReturn(velocity);
 
-        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
+        TriggerResult result = trigger.check(triggerContext);
 
-        assertThat(checkResultOptional).isEmpty();
+        assertThat(result.activates()).isFalse();
     }
 
     @Test
@@ -75,9 +76,9 @@ class EntityImpactTriggerTest {
         when(target.getVelocity()).thenReturn(velocity);
         when(target.getWorld()).thenReturn(world);
 
-        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
+        TriggerResult result = trigger.check(triggerContext);
 
-        assertThat(checkResultOptional).isEmpty();
+        assertThat(result.activates()).isFalse();
     }
 
     @Test
@@ -95,9 +96,9 @@ class EntityImpactTriggerTest {
         when(target.getVelocity()).thenReturn(velocity);
         when(target.getWorld()).thenReturn(world);
 
-        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
+        TriggerResult result = trigger.check(triggerContext);
 
-        assertThat(checkResultOptional).isEmpty();
+        assertThat(result.activates()).isFalse();
     }
 
     @Test
@@ -120,9 +121,9 @@ class EntityImpactTriggerTest {
         when(target.getWorld()).thenReturn(world);
         when(gameEntityFinder.findGameEntityByUniqueId(ENTITY_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
+        TriggerResult result = trigger.check(triggerContext);
 
-        assertThat(checkResultOptional).isEmpty();
+        assertThat(result.activates()).isFalse();
     }
 
     @Test
@@ -147,12 +148,11 @@ class EntityImpactTriggerTest {
         when(target.getWorld()).thenReturn(world);
         when(gameEntityFinder.findGameEntityByUniqueId(ENTITY_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
 
-        Optional<CheckResult> checkResultOptional = trigger.check(triggerContext);
+        TriggerResult result = trigger.check(triggerContext);
 
-        assertThat(checkResultOptional).hasValueSatisfying(checkResult -> {
-           assertThat(checkResult.hitTarget()).isEqualTo(gameEntity);
-           assertThat(checkResult.hitBlock()).isNull();
-           assertThat(checkResult.hitLocation()).isEqualTo(new Location(world, 1.5, 0.5, 0.5));
+        assertThat(result).isInstanceOfSatisfying(DamageTargetTriggerResult.class, damageTargetTriggerResult -> {
+            assertThat(damageTargetTriggerResult.getDamageTarget()).isEqualTo(gameEntity);
+            assertThat(damageTargetTriggerResult.getHitLocation()).isEqualTo(new Location(world, 1.5, 0.5, 0.5));
         });
     }
 }

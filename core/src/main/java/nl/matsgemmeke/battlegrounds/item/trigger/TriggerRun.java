@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 
 import java.util.HashSet;
@@ -56,9 +57,9 @@ public class TriggerRun {
     }
 
     private void performTriggerCheck() {
-        CheckResult checkResult = trigger.check(context).orElse(null);
+        TriggerResult result = trigger.check(context);
 
-        if (checkResult == null) {
+        if (!result.activates()) {
             return;
         }
 

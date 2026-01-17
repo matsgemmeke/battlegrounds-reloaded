@@ -1,12 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.floor;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.CheckResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.block.Block;
-
-import java.util.Optional;
 
 public class FloorHitTrigger implements Trigger {
 
@@ -27,7 +26,7 @@ public class FloorHitTrigger implements Trigger {
     }
 
     @Override
-    public Optional<CheckResult> check(TriggerContext context) {
-        return Optional.empty();
+    public TriggerResult check(TriggerContext context) {
+        return SimpleTriggerResult.NOT_ACTIVATES;
     }
 }

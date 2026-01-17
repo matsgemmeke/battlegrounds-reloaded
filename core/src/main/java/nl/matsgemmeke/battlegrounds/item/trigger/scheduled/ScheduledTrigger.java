@@ -1,10 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.scheduled;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.CheckResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
-
-import java.util.Optional;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 
 public class ScheduledTrigger implements Trigger {
 
@@ -14,7 +13,7 @@ public class ScheduledTrigger implements Trigger {
     }
 
     @Override
-    public Optional<CheckResult> check(TriggerContext context) {
-        return Optional.empty();
+    public TriggerResult check(TriggerContext context) {
+        return SimpleTriggerResult.NOT_ACTIVATES;
     }
 }

@@ -3,13 +3,13 @@ package nl.matsgemmeke.battlegrounds.item.trigger.enemy;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
-import nl.matsgemmeke.battlegrounds.item.trigger.CheckResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 
 import java.util.List;
-import java.util.Optional;
 
 public class EnemyProximityTrigger implements Trigger {
 
@@ -38,7 +38,7 @@ public class EnemyProximityTrigger implements Trigger {
     }
 
     @Override
-    public Optional<CheckResult> check(TriggerContext context) {
-        return Optional.empty();
+    public TriggerResult check(TriggerContext context) {
+        return SimpleTriggerResult.NOT_ACTIVATES;
     }
 }
