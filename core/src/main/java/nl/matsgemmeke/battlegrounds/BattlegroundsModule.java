@@ -30,6 +30,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapterProv
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.*;
+import nl.matsgemmeke.battlegrounds.game.component.entity.openmode.OpenModeGameEntityFinder;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.*;
@@ -172,6 +173,9 @@ public class BattlegroundsModule implements Module {
         MapBinder<GameContextType, EventDamageAdapter> eventDamageAdapterMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, EventDamageAdapter.class);
         eventDamageAdapterMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeEventDamageAdapter.class);
 
+        MapBinder<GameContextType, GameEntityFinder> gameEntityFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, GameEntityFinder.class);
+        gameEntityFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeGameEntityFinder.class);
+
         MapBinder<GameContextType, MobRegistry> mobRegistryMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, MobRegistry.class);
         mobRegistryMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeMobRegistry.class);
 
@@ -189,7 +193,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(DeploymentInfoProvider.class).to(DefaultDeploymentInfoProvider.class).in(GameScoped.class);
         binder.bind(EquipmentRegistry.class).to(DefaultEquipmentRegistry.class).in(GameScoped.class);
         binder.bind(EventDamageAdapter.class).toProvider(EventDamageAdapterProvider.class).in(GameScoped.class);
-        binder.bind(GameEntityFinder.class).in(GameScoped.class);
+        binder.bind(GameEntityFinder.class).toProvider(GameEntityFinderProvider.class).in(GameScoped.class);
         binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
         binder.bind(GunInfoProvider.class).to(DefaultGunInfoProvider.class).in(GameScoped.class);
         binder.bind(GunRegistry.class).to(DefaultGunRegistry.class).in(GameScoped.class);
