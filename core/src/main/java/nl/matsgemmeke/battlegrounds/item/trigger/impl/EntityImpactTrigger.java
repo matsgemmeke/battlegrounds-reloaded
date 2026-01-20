@@ -22,7 +22,7 @@ import java.util.UUID;
  */
 public class EntityImpactTrigger implements Trigger {
 
-    private static final double RAY_SIZE = 1.0;
+    private static final double RAY_SIZE = 0.0;
 
     private final GameEntityFinder gameEntityFinder;
 

@@ -69,7 +69,7 @@ class EntityImpactTriggerTest {
         TriggerContext triggerContext = new TriggerContext(SOURCE_UNIQUE_ID, target);
 
         World world = mock(World.class);
-        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(1.0), any(HitEntityFilter.class))).thenReturn(null);
+        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(0.0), any(HitEntityFilter.class))).thenReturn(null);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -89,7 +89,7 @@ class EntityImpactTriggerTest {
         TriggerContext triggerContext = new TriggerContext(SOURCE_UNIQUE_ID, target);
 
         World world = mock(World.class);
-        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(1.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
+        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(0.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -113,7 +113,7 @@ class EntityImpactTriggerTest {
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), entity);
 
         World world = mock(World.class);
-        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(1.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
+        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), eq(1.0), eq(0.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -140,7 +140,7 @@ class EntityImpactTriggerTest {
         RayTraceResult rayTraceResult = new RayTraceResult(hitPosition, entity);
 
         World world = mock(World.class);
-        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), anyDouble(), eq(1.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
+        when(world.rayTraceEntities(eq(targetLocation), eq(velocity), anyDouble(), eq(0.0), any(HitEntityFilter.class))).thenReturn(rayTraceResult);
 
         when(target.exists()).thenReturn(true);
         when(target.getLocation()).thenReturn(targetLocation);
