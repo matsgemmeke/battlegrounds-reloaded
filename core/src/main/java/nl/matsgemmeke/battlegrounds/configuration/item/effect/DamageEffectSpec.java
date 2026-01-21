@@ -11,13 +11,11 @@ public class DamageEffectSpec extends ItemEffectSpec {
     @EnumValue(type = DamageType.class)
     public String damageType;
 
-    public Double radius;
+    @Required
+    public RangeProfileSpec range;
 
     @Required
     public HitboxMultiplierSpec hitboxMultipliers;
-
-    @Required
-    public RangeProfileSpec range;
 
     private enum DamageType {
         BULLET_DAMAGE,

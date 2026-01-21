@@ -63,7 +63,7 @@ public class TriggerRun {
             return;
         }
 
-        observers.forEach(TriggerObserver::onActivate);
+        observers.forEach(observer -> observer.onActivate(result));
 
         if (!repeating) {
             schedule.stop();

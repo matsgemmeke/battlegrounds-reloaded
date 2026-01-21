@@ -9,6 +9,7 @@ public class ItemEffectContext {
 
     private final DamageSource damageSource;
     private final Location initiationLocation;
+    private CollisionResult collisionResult;
     private ItemEffectSource effectSource;
     private TriggerTarget triggerTarget;
 
@@ -17,6 +18,18 @@ public class ItemEffectContext {
         this.effectSource = effectSource;
         this.triggerTarget = triggerTarget;
         this.initiationLocation = initiationLocation;
+    }
+
+    public ItemEffectContext(CollisionResult collisionResult, DamageSource damageSource, ItemEffectSource effectSource, TriggerTarget triggerTarget, Location initiationLocation) {
+        this.collisionResult = collisionResult;
+        this.damageSource = damageSource;
+        this.effectSource = effectSource;
+        this.triggerTarget = triggerTarget;
+        this.initiationLocation = initiationLocation;
+    }
+
+    public CollisionResult getCollisionResult() {
+        return collisionResult;
     }
 
     public DamageSource getDamageSource() {

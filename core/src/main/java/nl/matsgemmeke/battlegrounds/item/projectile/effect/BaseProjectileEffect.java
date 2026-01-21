@@ -36,7 +36,7 @@ public abstract class BaseProjectileEffect implements ProjectileEffect {
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(context);
-            triggerRun.addObserver(() -> this.verifyAndPerformEffect(projectile));
+            triggerRun.addObserver(triggerResult -> this.verifyAndPerformEffect(projectile));
             triggerRun.start();
 
             triggerRuns.add(triggerRun);

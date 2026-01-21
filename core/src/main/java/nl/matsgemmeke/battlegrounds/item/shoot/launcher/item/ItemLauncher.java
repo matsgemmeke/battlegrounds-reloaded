@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.projectile.ItemProjectile;
@@ -13,7 +14,10 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.DamageTargetTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.ItemTriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -83,16 +87,23 @@ public class ItemLauncher implements ProjectileLauncher {
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-            triggerRun.addObserver(() -> this.startItemEffect(damageSource, projectile, triggerTarget, dropLocation));
+            triggerRun.addObserver(triggerResult -> this.processTriggerResult(triggerResult, damageSource, projectile, triggerTarget, dropLocation));
             triggerRun.start();
         }
 
         this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
 
-    private void startItemEffect(DamageSource damageSource, ItemProjectile projectile, ItemTriggerTarget triggerTarget, Location initiationLocation) {
-        ItemEffectContext effectContext = new ItemEffectContext(damageSource, projectile, triggerTarget, initiationLocation);
+    private void processTriggerResult(TriggerResult triggerResult, DamageSource damageSource, ItemProjectile projectile, TriggerTarget triggerTarget, Location dropLocation) {
+        CollisionResult collisionResult;
 
+        if (triggerResult instanceof DamageTargetTriggerResult result) {
+            collisionResult = new CollisionResult(null, result.getDamageTarget(), result.getHitLocation());
+        } else {
+            collisionResult = new CollisionResult(null, null, null);
+        }
+
+        ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, projectile, triggerTarget, dropLocation);
         itemEffect.startPerformance(effectContext);
     }
 

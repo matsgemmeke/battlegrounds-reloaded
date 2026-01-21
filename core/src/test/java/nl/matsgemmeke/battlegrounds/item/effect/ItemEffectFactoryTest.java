@@ -27,10 +27,6 @@ import org.bukkit.Particle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -126,9 +122,8 @@ class ItemEffectFactoryTest {
         assertThat(itemEffect).isEqualTo(combustionEffect);
     }
 
-    @ParameterizedTest
-    @CsvSource(value = { "0.5,0.5", "null,0.0" }, nullValues = "null")
-    void createInstanceForDamageEffectType(Double radius, double expectedRadiusProperty) {
+    @Test
+    void createInstanceForDamageEffectType() {
         DamageEffect damageEffect = mock(DamageEffect.class);
         HitboxMultiplierSpec hitboxMultiplierSpec = this.createHitboxMultiplierSpec();
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
@@ -136,10 +131,9 @@ class ItemEffectFactoryTest {
         DamageEffectSpec spec = new DamageEffectSpec();
         spec.effectType = "DAMAGE";
         spec.triggers = Map.of("timed", TRIGGER_SPEC);
-        spec.hitboxMultipliers = hitboxMultiplierSpec;
         spec.range = rangeProfileSpec;
+        spec.hitboxMultipliers = hitboxMultiplierSpec;
         spec.damageType = "BULLET_DAMAGE";
-        spec.radius = radius;
 
         when(damageEffectProvider.get()).thenReturn(damageEffect);
         when(triggerExecutorFactory.create(TRIGGER_SPEC)).thenReturn(mock(TriggerExecutor.class));
@@ -164,7 +158,6 @@ class ItemEffectFactoryTest {
                 assertThat(hitboxMultiplierProfile.bodyDamageMultiplier()).isEqualTo(1.0);
                 assertThat(hitboxMultiplierProfile.legsDamageMultiplier()).isEqualTo(0.5);
             });
-            assertThat(properties.radius()).isEqualTo(expectedRadiusProperty);
         });
 
         assertThat(itemEffect).isEqualTo(damageEffect);

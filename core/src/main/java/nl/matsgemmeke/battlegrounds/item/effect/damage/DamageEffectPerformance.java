@@ -5,20 +5,11 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.ProximityTargetCondition;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.TargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
-
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
@@ -27,12 +18,10 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
     private final DamageProcessor damageProcessor;
     private final DamageProperties properties;
-    private final TargetFinder targetFinder;
 
     @Inject
-    public DamageEffectPerformance(DamageProcessor damageProcessor, TargetFinder targetFinder, @Assisted DamageProperties properties) {
+    public DamageEffectPerformance(DamageProcessor damageProcessor, @Assisted DamageProperties properties) {
         this.damageProcessor = damageProcessor;
-        this.targetFinder = targetFinder;
         this.properties = properties;
     }
 
@@ -44,31 +33,26 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        DamageSource damageSource = context.getDamageSource();
-        UUID damageSourceUniqueId = damageSource.getUniqueId();
-        Location effectSourceLocation = context.getEffectSource().getLocation();
-        Collection<TargetCondition> targetConditions = this.getTargetConditions();
+        CollisionResult collisionResult = context.getCollisionResult();
+        DamageTarget hitTarget = collisionResult.getHitTarget().orElse(null);
+        Location hitLocation = collisionResult.getHitLocation().orElse(null);
 
-        TargetQuery query = new TargetQuery()
-                .uniqueId(damageSourceUniqueId)
-                .location(effectSourceLocation)
-                .conditions(targetConditions)
-                .enemiesOnly(true);
-
-        for (DamageTarget target : targetFinder.findTargets(query)) {
-            Location targetLocation = target.getLocation();
-
-            Damage damage = this.createDamage(target, effectSourceLocation, targetLocation);
-            DamageContext damageContext = new DamageContext(damageSource, target, damage);
-
-            damageProcessor.processDamage(damageContext);
+        if (hitTarget == null || hitLocation == null) {
+            return;
         }
+
+        Location initiationLocation = context.getInitiationLocation();
+        DamageSource damageSource = context.getDamageSource();
+        Damage damage = this.createDamage(hitTarget, hitLocation, initiationLocation);
+        DamageContext damageContext = new DamageContext(damageSource, hitTarget, damage);
+
+        damageProcessor.processDamage(damageContext);
     }
 
-    private Damage createDamage(DamageTarget target, Location effectSourceLocation, Location targetLocation) {
+    private Damage createDamage(DamageTarget target, Location hitLocation, Location initiationLocation) {
         Hitbox hitbox = target.getHitbox();
-        double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, effectSourceLocation).orElse(DEFAULT_DAMAGE_MULTIPLIER);
-        double distance = effectSourceLocation.distance(targetLocation);
+        double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, hitLocation);
+        double distance = hitLocation.distance(initiationLocation);
         double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
         double totalDamageAmount = distanceDamageAmount * damageMultiplier;
 
@@ -77,27 +61,17 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         return new Damage(totalDamageAmount, damageType);
     }
 
-    private Optional<Double> getHitboxDamageMultiplier(Hitbox hitbox, Location hitLocation) {
+    private double getHitboxDamageMultiplier(Hitbox hitbox, Location hitLocation) {
         HitboxComponent hitboxComponent = hitbox.getIntersectedHitboxComponent(hitLocation).orElse(null);
 
         if (hitboxComponent == null) {
-            return Optional.empty();
+            return DEFAULT_DAMAGE_MULTIPLIER;
         }
 
         return switch (hitboxComponent.type()) {
-            case HEAD -> Optional.of(properties.hitboxMultiplierProfile().headshotDamageMultiplier());
-            case TORSO -> Optional.of(properties.hitboxMultiplierProfile().bodyDamageMultiplier());
-            case LIMBS -> Optional.of(properties.hitboxMultiplierProfile().legsDamageMultiplier());
+            case HEAD -> properties.hitboxMultiplierProfile().headshotDamageMultiplier();
+            case TORSO -> properties.hitboxMultiplierProfile().bodyDamageMultiplier();
+            case LIMBS -> properties.hitboxMultiplierProfile().legsDamageMultiplier();
         };
-    }
-
-    private Collection<TargetCondition> getTargetConditions() {
-        double radius = properties.radius();
-
-        if (radius > 0.0) {
-            return Set.of(new ProximityTargetCondition(radius));
-        } else {
-            return Set.of(new HitboxTargetCondition());
-        }
     }
 }

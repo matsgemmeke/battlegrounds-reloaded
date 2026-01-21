@@ -27,14 +27,14 @@ throwing:
       damage-type: MELEE_DAMAGE
       range:
         short-range:
-          damage: 150.0
-          distance: 1.0
+          damage: 120.0
+          distance: 50.0
         medium-range:
-          damage: 150.0
-          distance: 1.0
+          damage: 135.0
+          distance: 10.0
         long-range:
           damage: 150.0
-          distance: 1.0
+          distance: 5.0
       hitbox-multipliers:
         head: 1.0
         body: 1.0

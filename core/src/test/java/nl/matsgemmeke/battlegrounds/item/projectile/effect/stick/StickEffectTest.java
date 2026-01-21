@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.trigger.*;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,8 @@ class StickEffectTest {
     @Mock
     private TriggerExecutor triggerExecutor;
     @Mock
+    private TriggerResult triggerResult;
+    @Mock
     private TriggerRun triggerRun;
 
     private StickEffect effect;
@@ -53,7 +56,7 @@ class StickEffectTest {
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        triggerObserverCaptor.getValue().onActivate();
+        triggerObserverCaptor.getValue().onActivate(triggerResult);
 
         verify(triggerRun).cancel();
         verify(projectile, never()).setGravity(anyBoolean());
@@ -73,7 +76,7 @@ class StickEffectTest {
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        triggerObserverCaptor.getValue().onActivate();
+        triggerObserverCaptor.getValue().onActivate(triggerResult);
 
         verify(audioEmitter).playSounds(STICK_SOUNDS, projectileLocation);
         verify(projectile).setGravity(false);

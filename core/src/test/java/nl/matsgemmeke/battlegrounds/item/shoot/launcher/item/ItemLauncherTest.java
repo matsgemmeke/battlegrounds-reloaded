@@ -14,6 +14,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -84,6 +85,7 @@ class ItemLauncherTest {
     void launchDropItemAndStartTriggerRunsThatActivateItemEffect() {
         Item item = mock(Item.class);
         Location direction = new Location(null, 0, 0, 0, 100.0f, 0);
+        TriggerResult triggerResult = mock(TriggerResult.class);
 
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack()).thenReturn(ITEM_STACK);
@@ -92,7 +94,7 @@ class ItemLauncherTest {
         when(world.dropItem(direction, ITEM_STACK)).thenReturn(item);
 
         TriggerRun triggerRun = mock(TriggerRun.class);
-        doAnswer(MockUtils.RUN_TRIGGER_OBSERVER).when(triggerRun).addObserver(any(TriggerObserver.class));
+        doAnswer(MockUtils.answerNotifyTriggerObserver(triggerResult)).when(triggerRun).addObserver(any(TriggerObserver.class));
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);

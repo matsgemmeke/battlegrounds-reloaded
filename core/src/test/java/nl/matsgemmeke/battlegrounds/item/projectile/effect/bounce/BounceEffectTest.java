@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -46,6 +47,8 @@ class BounceEffectTest {
     @Mock
     private TriggerExecutor triggerExecutor;
     @Mock
+    private TriggerResult triggerResult;
+    @Mock
     private TriggerRun triggerRun;
 
     private BounceEffect effect;
@@ -76,7 +79,7 @@ class BounceEffectTest {
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        assertThatThrownBy(() -> triggerObserverCaptor.getValue().onActivate())
+        assertThatThrownBy(() -> triggerObserverCaptor.getValue().onActivate(triggerResult))
                 .isInstanceOf(ProjectileEffectPerformanceException.class)
                 .hasMessage("Expected the projectile to hit a block, but the ray trace is null");
 
@@ -105,7 +108,7 @@ class BounceEffectTest {
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        assertThatThrownBy(() -> triggerObserverCaptor.getValue().onActivate())
+        assertThatThrownBy(() -> triggerObserverCaptor.getValue().onActivate(triggerResult))
                 .isInstanceOf(ProjectileEffectPerformanceException.class)
                 .hasMessage("Expected the projectile to hit a block, but the hit block face is null");
 
@@ -123,7 +126,7 @@ class BounceEffectTest {
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        triggerObserverCaptor.getValue().onActivate();
+        triggerObserverCaptor.getValue().onActivate(triggerResult);
 
         verify(triggerRun).cancel();
         verify(projectile, never()).setGravity(anyBoolean());
@@ -163,7 +166,7 @@ class BounceEffectTest {
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        triggerObserverCaptor.getValue().onActivate();
+        triggerObserverCaptor.getValue().onActivate(triggerResult);
 
         verify(projectile).setVelocity(reflection);
         verify(triggerRun).cancel();

@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.*;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,6 +76,7 @@ class SmokeScreenEffectTest {
         SmokeScreenEffectPerformance performance = mock(SmokeScreenEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
+        TriggerResult triggerResult = mock(TriggerResult.class);
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
@@ -95,7 +97,7 @@ class SmokeScreenEffectTest {
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
-        triggerObserverCaptor.getValue().onActivate();
+        triggerObserverCaptor.getValue().onActivate(triggerResult);
 
         assertThat(triggerContextCaptor.getValue()).satisfies(triggerContext -> {
             assertThat(triggerContext.sourceId()).isEqualTo(DAMAGE_SOURCE_ID);

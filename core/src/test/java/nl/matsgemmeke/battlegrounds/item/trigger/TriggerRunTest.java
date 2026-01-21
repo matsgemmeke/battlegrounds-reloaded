@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
@@ -71,7 +72,11 @@ class TriggerRunTest {
     void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivatesAndStopsItselfWhenRepeatingIsFalse() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
+        TriggerResult triggerResult = mock(TriggerResult.class);
+        when(triggerResult.activates()).thenReturn(true);
+
         when(trigger.activates(context)).thenReturn(true);
+        when(trigger.check(context)).thenReturn(triggerResult);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
         triggerRun.addObserver(observer);
@@ -79,14 +84,18 @@ class TriggerRunTest {
 
         verify(schedule).start();
         verify(schedule).stop();
-        verify(observer).onActivate();
+        verify(observer).onActivate(triggerResult);
     }
 
     @Test
     void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivatesAndContinuesWhenRepeatingIsTrue() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
+        TriggerResult triggerResult = mock(TriggerResult.class);
+        when(triggerResult.activates()).thenReturn(true);
+
         when(trigger.activates(context)).thenReturn(true);
+        when(trigger.check(context)).thenReturn(triggerResult);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
         triggerRun.addObserver(observer);
@@ -95,6 +104,6 @@ class TriggerRunTest {
 
         verify(schedule).start();
         verify(schedule, never()).stop();
-        verify(observer).onActivate();
+        verify(observer).onActivate(triggerResult);
     }
 }

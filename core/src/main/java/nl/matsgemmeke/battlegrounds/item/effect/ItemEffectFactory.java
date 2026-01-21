@@ -114,9 +114,8 @@ public class ItemEffectFactory {
                 DamageType damageType = DamageType.valueOf(spec.damageType);
                 RangeProfile rangeProfile = rangeProfileMapper.map(spec.range);
                 HitboxMultiplierProfile hitboxMultiplierProfile = hitboxMultiplierProfileMapper.map(spec.hitboxMultipliers);
-                double radius = Optional.ofNullable(spec.radius).orElse(0.0);
 
-                DamageProperties properties = new DamageProperties(damageType, rangeProfile, hitboxMultiplierProfile, radius);
+                DamageProperties properties = new DamageProperties(damageType, rangeProfile, hitboxMultiplierProfile);
 
                 DamageEffect damageEffect = damageEffectProvider.get();
                 damageEffect.setProperties(properties);

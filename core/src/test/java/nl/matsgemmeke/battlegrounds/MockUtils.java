@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds;
 
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import org.bukkit.Location;
 import org.mockito.stubbing.Answer;
@@ -17,14 +18,13 @@ public final class MockUtils {
         return null;
     };
 
-    /**
-     * Answer stub that immediately runs a trigger observer when they are added to a trigger run.
-     */
-    public static final Answer<Void> RUN_TRIGGER_OBSERVER = invocation -> {
-        TriggerObserver triggerObserver = invocation.getArgument(0);
-        triggerObserver.onActivate();
-        return null;
-    };
+    public static Answer<Void> answerNotifyTriggerObserver(TriggerResult triggerResult) {
+        return invocation -> {
+            TriggerObserver triggerObserver = invocation.getArgument(0);
+            triggerObserver.onActivate(triggerResult);
+            return null;
+        };
+    }
 
     public static Answer<Void> answerRunGameScopeRunnable() {
         return invocation -> {

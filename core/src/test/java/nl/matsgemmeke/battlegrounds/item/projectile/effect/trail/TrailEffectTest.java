@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.trigger.*;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -32,6 +33,8 @@ class TrailEffectTest {
     @Mock
     private TriggerExecutor triggerExecutor;
     @Mock
+    private TriggerResult triggerResult;
+    @Mock
     private TriggerRun triggerRun;
 
     private TrailEffect effect;
@@ -53,7 +56,7 @@ class TrailEffectTest {
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        triggerObserverCaptor.getValue().onActivate();
+        triggerObserverCaptor.getValue().onActivate(triggerResult);
 
         verify(triggerRun).cancel();
         verify(particleEffectSpawner, never()).spawnParticleEffect(any(ParticleEffect.class), any(Location.class));
@@ -72,7 +75,7 @@ class TrailEffectTest {
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        triggerObserverCaptor.getValue().onActivate();
+        triggerObserverCaptor.getValue().onActivate(triggerResult);
 
         verify(particleEffectSpawner).spawnParticleEffect(PARTICLE_EFFECT, projectileLocation);
     }

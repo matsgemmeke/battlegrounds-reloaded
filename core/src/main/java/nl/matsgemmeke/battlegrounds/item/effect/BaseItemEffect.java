@@ -9,9 +9,8 @@ import java.util.*;
 
 public abstract class BaseItemEffect implements ItemEffect {
 
-    protected final List<ItemEffectPerformance> performances;
-    protected final Set<TriggerExecutor> triggerExecutors;
-    protected ItemEffectContext context;
+    private final List<ItemEffectPerformance> performances;
+    private final Set<TriggerExecutor> triggerExecutors;
 
     public BaseItemEffect() {
         this.performances = new ArrayList<>();
@@ -45,7 +44,7 @@ public abstract class BaseItemEffect implements ItemEffect {
                 TriggerContext triggerContext = new TriggerContext(uniqueId, triggerTarget);
 
                 TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-                triggerRun.addObserver(performance::start);
+                triggerRun.addObserver(triggerResult -> performance.start());
                 triggerRun.start();
 
                 performance.addTriggerRun(triggerRun);
