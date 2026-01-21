@@ -8,13 +8,14 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.projectile.ItemProjectile;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultMapper;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.DamageTargetTriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -45,6 +47,8 @@ class ItemLauncherTest {
 
     @Mock
     private AudioEmitter audioEmitter;
+    @Spy
+    private CollisionResultMapper collisionResultMapper = new CollisionResultMapper();
     @Mock
     private DamageSource damageSource;
     @Mock
@@ -74,7 +78,7 @@ class ItemLauncherTest {
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY);
         LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
-        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, scheduler, itemEffect, properties);
+        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultMapper, scheduler, itemEffect, properties);
         itemLauncher.launch(launchContext);
         itemLauncher.cancel();
 
@@ -85,7 +89,7 @@ class ItemLauncherTest {
     void launchDropItemAndStartTriggerRunsThatActivateItemEffect() {
         Item item = mock(Item.class);
         Location direction = new Location(null, 0, 0, 0, 100.0f, 0);
-        TriggerResult triggerResult = mock(TriggerResult.class);
+        DamageTargetTriggerResult triggerResult = mock(DamageTargetTriggerResult.class);
 
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack()).thenReturn(ITEM_STACK);
@@ -110,7 +114,7 @@ class ItemLauncherTest {
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
-        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, scheduler, itemEffect, properties);
+        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultMapper, scheduler, itemEffect, properties);
         itemLauncher.addTriggerExecutor(triggerExecutor);
         itemLauncher.launch(launchContext);
 

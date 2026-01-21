@@ -8,11 +8,11 @@ import org.bukkit.Location;
  */
 public class DamageTargetTriggerResult implements TriggerResult {
 
-    private final DamageTarget damageTarget;
+    private final DamageTarget hitTarget;
     private final Location hitLocation;
 
-    public DamageTargetTriggerResult(DamageTarget damageTarget, Location hitLocation) {
-        this.damageTarget = damageTarget;
+    public DamageTargetTriggerResult(DamageTarget hitTarget, Location hitLocation) {
+        this.hitTarget = hitTarget;
         this.hitLocation = hitLocation;
     }
 
@@ -21,8 +21,8 @@ public class DamageTargetTriggerResult implements TriggerResult {
         return true;
     }
 
-    public DamageTarget getDamageTarget() {
-        return damageTarget;
+    public DamageTarget getHitTarget() {
+        return hitTarget;
     }
 
     public Location getHitLocation() {

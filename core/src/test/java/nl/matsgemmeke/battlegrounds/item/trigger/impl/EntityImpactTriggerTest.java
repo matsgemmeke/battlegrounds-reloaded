@@ -151,7 +151,7 @@ class EntityImpactTriggerTest {
         TriggerResult result = trigger.check(triggerContext);
 
         assertThat(result).isInstanceOfSatisfying(DamageTargetTriggerResult.class, damageTargetTriggerResult -> {
-            assertThat(damageTargetTriggerResult.getDamageTarget()).isEqualTo(gameEntity);
+            assertThat(damageTargetTriggerResult.getHitTarget()).isEqualTo(gameEntity);
             assertThat(damageTargetTriggerResult.getHitLocation()).isEqualTo(new Location(world, 1.5, 0.5, 0.5));
         });
     }
