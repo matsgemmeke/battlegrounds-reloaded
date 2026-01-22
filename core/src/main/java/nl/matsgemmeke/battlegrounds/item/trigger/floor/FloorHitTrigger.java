@@ -13,11 +13,6 @@ public class FloorHitTrigger implements Trigger {
     private static final double Y_SUBTRACTION = 0.01;
 
     @Override
-    public boolean activates(TriggerContext context) {
-        return false;
-    }
-
-    @Override
     public TriggerResult check(TriggerContext context) {
         TriggerTarget target = context.target();
 

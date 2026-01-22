@@ -19,11 +19,6 @@ import org.bukkit.util.Vector;
 public class BlockImpactTrigger implements Trigger {
 
     @Override
-    public boolean activates(TriggerContext context) {
-        return false;
-    }
-
-    @Override
     public TriggerResult check(TriggerContext context) {
         TriggerTarget target = context.target();
 

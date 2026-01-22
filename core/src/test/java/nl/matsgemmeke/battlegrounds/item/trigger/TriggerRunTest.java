@@ -55,10 +55,13 @@ class TriggerRunTest {
     }
 
     @Test
-    void startStartsScheduleWithTaskThatDoesNotNotifyObserversWhenTriggerDoesNotActivate() {
+    void startStartsScheduleWithTaskThatDoesNotNotifyObserversWhenTriggerResultDoesNotActivate() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
-        when(trigger.activates(context)).thenReturn(false);
+        TriggerResult triggerResult = mock(TriggerResult.class);
+        when(triggerResult.activates()).thenReturn(false);
+
+        when(trigger.check(context)).thenReturn(triggerResult);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
         triggerRun.addObserver(observer);
@@ -75,7 +78,6 @@ class TriggerRunTest {
         TriggerResult triggerResult = mock(TriggerResult.class);
         when(triggerResult.activates()).thenReturn(true);
 
-        when(trigger.activates(context)).thenReturn(true);
         when(trigger.check(context)).thenReturn(triggerResult);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
@@ -94,7 +96,6 @@ class TriggerRunTest {
         TriggerResult triggerResult = mock(TriggerResult.class);
         when(triggerResult.activates()).thenReturn(true);
 
-        when(trigger.activates(context)).thenReturn(true);
         when(trigger.check(context)).thenReturn(triggerResult);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
