@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.trigger;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
-import nl.matsgemmeke.battlegrounds.item.trigger.impl.EnemyHitTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impl.EntityImpactTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +30,6 @@ class TriggerExecutorFactoryTest {
     private static final long INTERVAL = 2L;
 
     @Mock
-    private Provider<EnemyHitTrigger> enemyHitTriggerProvider;
-    @Mock
     private Provider<EnemyProximityTrigger> enemyProximityTriggerProvider;
     @Mock
     private Provider<EntityImpactTrigger> entityImpactTriggerProvider;
@@ -43,15 +40,13 @@ class TriggerExecutorFactoryTest {
 
     @BeforeEach
     void setUp() {
-        factory = new TriggerExecutorFactory(enemyHitTriggerProvider, enemyProximityTriggerProvider, entityImpactTriggerProvider, scheduler);
+        factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, entityImpactTriggerProvider, scheduler);
     }
 
     static Stream<Arguments> invalidTriggerSpecCases() {
         return Stream.of(
                 arguments("BLOCK_IMPACT", null, INTERVAL, null, null, "delay"),
                 arguments("BLOCK_IMPACT", DELAY, null, null, null, "interval"),
-                arguments("ENEMY_HIT", null, INTERVAL, null, RANGE, "delay"),
-                arguments("ENEMY_HIT", DELAY, null, null, RANGE, "interval"),
                 arguments("ENEMY_PROXIMITY", null, INTERVAL, null, RANGE, "delay"),
                 arguments("ENEMY_PROXIMITY", DELAY, null, null, RANGE, "interval"),
                 arguments("ENEMY_PROXIMITY", DELAY, INTERVAL, null, null, "range"),
@@ -90,22 +85,6 @@ class TriggerExecutorFactoryTest {
         TriggerExecutor triggerExecutor = factory.create(spec);
 
         assertThat(triggerExecutor.isRepeating()).isFalse();
-    }
-
-    @Test
-    void createReturnsTriggerExecutorWithEnemyHitTriggerWhenTriggerTypeEqualsEnemyHit() {
-        TriggerSpec spec = new TriggerSpec();
-        spec.type = "ENEMY_HIT";
-        spec.delay = DELAY;
-        spec.interval = INTERVAL;
-        spec.repeating = true;
-
-        EnemyHitTrigger trigger = mock(EnemyHitTrigger.class);
-        when(enemyHitTriggerProvider.get()).thenReturn(trigger);
-
-        TriggerExecutor triggerExecutor = factory.create(spec);
-
-        assertThat(triggerExecutor.isRepeating()).isTrue();
     }
 
     @Test
