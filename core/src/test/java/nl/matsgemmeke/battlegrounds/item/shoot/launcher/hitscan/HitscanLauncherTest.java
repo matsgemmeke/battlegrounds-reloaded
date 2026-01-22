@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -103,7 +104,7 @@ class HitscanLauncherTest {
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.producesBlockCollisionAt(hitLocation)).thenReturn(true);
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
-        when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false);
+        when(targetFinder.findTargets(any(TargetQuery.class))).thenReturn(List.of());
         when(world.getBlockAt(hitLocation)).thenReturn(hitBlock);
 
         HitscanLauncher hitscanLauncher = new HitscanLauncher(audioEmitter, collisionDetector, particleEffectSpawner, scheduler, targetFinder, properties, itemEffect);
@@ -113,6 +114,11 @@ class HitscanLauncherTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getCollisionResult()).satisfies(collisionResult -> {
+               assertThat(collisionResult.getHitBlock()).hasValue(hitBlock);
+               assertThat(collisionResult.getHitTarget()).isEmpty();
+               assertThat(collisionResult.getHitLocation()).hasValue(hitLocation);
+            });
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
             assertThat(itemEffectContext.getEffectSource().getLocation()).isEqualTo(hitLocation);
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
@@ -128,6 +134,7 @@ class HitscanLauncherTest {
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Location hitLocation = new Location(world, 0.0, 0.0, 0.6, 0.0f, 0.0f);
+        DamageTarget hitTarget = mock(DamageTarget.class);
 
         Schedule soundPlaySchedule = mock(Schedule.class);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(soundPlaySchedule).addTask(any(ScheduleTask.class));
@@ -141,7 +148,7 @@ class HitscanLauncherTest {
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
-        when(targetFinder.containsTargets(any(TargetQuery.class))).thenReturn(false, true);
+        when(targetFinder.findTargets(any(TargetQuery.class))).thenReturn(List.of()).thenReturn(List.of(hitTarget));
 
         HitscanLauncher hitscanLauncher = new HitscanLauncher(audioEmitter, collisionDetector, particleEffectSpawner, scheduler, targetFinder, properties, itemEffect);
         hitscanLauncher.launch(launchContext);
@@ -150,6 +157,11 @@ class HitscanLauncherTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getCollisionResult()).satisfies(collisionResult -> {
+               assertThat(collisionResult.getHitBlock()).isEmpty();
+               assertThat(collisionResult.getHitTarget()).hasValue(hitTarget);
+               assertThat(collisionResult.getHitLocation()).hasValue(hitLocation);
+            });
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
             assertThat(itemEffectContext.getEffectSource()).satisfies(effectSource -> {
                 assertThat(effectSource.getLocation()).isEqualTo(hitLocation);
@@ -163,7 +175,7 @@ class HitscanLauncherTest {
         });
 
         ArgumentCaptor<TargetQuery> targetQueryCaptor = ArgumentCaptor.forClass(TargetQuery.class);
-        verify(targetFinder, times(2)).containsTargets(targetQueryCaptor.capture());
+        verify(targetFinder, times(2)).findTargets(targetQueryCaptor.capture());
 
         assertThat(targetQueryCaptor.getValue()).satisfies(query -> {
             assertThat(query.getUniqueId()).hasValue(DAMAGE_SOURCE_ID);

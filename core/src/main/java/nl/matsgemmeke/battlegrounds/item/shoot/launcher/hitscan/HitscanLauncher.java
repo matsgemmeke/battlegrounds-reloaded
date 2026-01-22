@@ -9,7 +9,9 @@ import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
@@ -118,28 +120,34 @@ public class HitscanLauncher implements ProjectileLauncher {
             Block block = projectileLocation.getBlock();
             block.getWorld().playEffect(projectileLocation, org.bukkit.Effect.STEP_SOUND, block.getType());
 
-            this.startPerformance(damageSource, projectileLocation, world);
+            Location hitLocation = projectileLocation.clone();
+            CollisionResult collisionResult = new CollisionResult(block, null, hitLocation);
+
+            this.startPerformance(collisionResult, damageSource, projectileLocation, world);
             return true;
         }
 
         UUID sourceId = damageSource.getUniqueId();
         TargetQuery query = this.createTargetQuery(sourceId, projectileLocation);
+        List<DamageTarget> targets = targetFinder.findTargets(query);
 
-        if (targetFinder.containsTargets(query)) {
-            Location location = projectileLocation.clone();
+        if (!targets.isEmpty()) {
+            DamageTarget hitTarget = targets.get(0);
+            Location hitLocation = projectileLocation.clone();
+            CollisionResult collisionResult = new CollisionResult(null, hitTarget, hitLocation);
 
-            this.startPerformance(damageSource, location, world);
+            this.startPerformance(collisionResult, damageSource, hitLocation, world);
             return true;
         }
 
         return false;
     }
 
-    private void startPerformance(DamageSource damageSource, Location initiationLocation, World world) {
+    private void startPerformance(CollisionResult collisionResult, DamageSource damageSource, Location initiationLocation, World world) {
         StaticItemEffectSource source = new StaticItemEffectSource(initiationLocation, world);
         StaticTriggerTarget triggerTarget = new StaticTriggerTarget(initiationLocation, world);
 
-        ItemEffectContext context = new ItemEffectContext(damageSource, source, triggerTarget, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, source, triggerTarget, initiationLocation);
 
         itemEffect.startPerformance(context);
     }
