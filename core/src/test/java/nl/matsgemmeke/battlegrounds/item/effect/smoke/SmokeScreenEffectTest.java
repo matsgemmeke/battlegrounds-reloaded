@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
@@ -131,14 +132,14 @@ class SmokeScreenEffectTest {
     }
 
     private static ItemEffectContext createContext() {
-        TriggerTarget triggerTarget = mock(TriggerTarget.class);
-
+        CollisionResult collisionResult = new CollisionResult(null, null, null);
         ItemEffectSource effectSource = mock(ItemEffectSource.class);
+        TriggerTarget triggerTarget = mock(TriggerTarget.class);
         Location initiationLocation = new Location(null, 1, 1, 1);
 
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(damageSource, effectSource, triggerTarget, initiationLocation);
+        return new ItemEffectContext(collisionResult, damageSource, effectSource, triggerTarget, initiationLocation);
     }
 }
