@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.BlockTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -31,31 +33,31 @@ class BlockImpactTriggerTest {
     private final BlockImpactTrigger trigger = new BlockImpactTrigger();
 
     @Test
-    void activatesReturnsFalseWhenTargetDoesNotExist() {
+    void checkReturnsTriggerResultThatDoesNotActivateWhenTargetDoesNotExist() {
         TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
 
         when(target.exists()).thenReturn(false);
 
-        boolean activates = trigger.activates(triggerContext);
+        TriggerResult triggerResult = trigger.check(triggerContext);
 
-        assertThat(activates).isFalse();
+        assertThat(triggerResult.activates()).isFalse();
     }
 
     @Test
-    void activatesReturnsFalseWhenTargetVelocityIsZero() {
+    void checkReturnsTriggerResultThatDoesNotActivateWhenTargetVelocityIsZero() {
         Vector velocity = new Vector();
         TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
 
         when(target.exists()).thenReturn(true);
         when(target.getVelocity()).thenReturn(velocity);
 
-        boolean activates = trigger.activates(triggerContext);
+        TriggerResult triggerResult = trigger.check(triggerContext);
 
-        assertThat(activates).isFalse();
+        assertThat(triggerResult.activates()).isFalse();
     }
 
     @Test
-    void activatesReturnsFalseWhenCastRayTraceResultIsNull() {
+    void checkReturnsTriggerResultThatDoesNotActivateWhenCastRayTraceResultIsNull() {
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
         TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
@@ -68,13 +70,13 @@ class BlockImpactTriggerTest {
         when(target.getVelocity()).thenReturn(velocity);
         when(target.getWorld()).thenReturn(world);
 
-        boolean activates = trigger.activates(triggerContext);
+        TriggerResult triggerResult = trigger.check(triggerContext);
 
-        assertThat(activates).isFalse();
+        assertThat(triggerResult.activates()).isFalse();
     }
 
     @Test
-    void activatesReturnsFalseWhenCastRayTraceResultHasNoHitBlock() {
+    void checkReturnsTriggerResultThatDoesNotActivateWhenCastRayTraceResultHasNoHitBlock() {
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), (Block) null, null);
@@ -88,18 +90,21 @@ class BlockImpactTriggerTest {
         when(target.getVelocity()).thenReturn(velocity);
         when(target.getWorld()).thenReturn(world);
 
-        boolean activates = trigger.activates(triggerContext);
+        TriggerResult triggerResult = trigger.check(triggerContext);
 
-        assertThat(activates).isFalse();
+        assertThat(triggerResult.activates()).isFalse();
     }
 
     @Test
-    void activatesReturnsFalseWhenCastRayTraceResultHasNoHitBlockFace() {
+    void checkReturnsTriggerResultThatDoesNotActivateWhenHitBlockTypeIsNotSolid() {
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+
         Block hitBlock = mock(Block.class);
+        when(hitBlock.getType()).thenReturn(Material.WATER);
+
         RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), hitBlock, null);
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
 
         World world = mock(World.class);
         when(world.rayTraceBlocks(targetLocation, velocity, 3.0, FluidCollisionMode.NEVER, true)).thenReturn(rayTraceResult);
@@ -109,45 +114,22 @@ class BlockImpactTriggerTest {
         when(target.getVelocity()).thenReturn(velocity);
         when(target.getWorld()).thenReturn(world);
 
-        boolean activates = trigger.activates(triggerContext);
+        TriggerResult triggerResult = trigger.check(triggerContext);
 
-        assertThat(activates).isFalse();
+        assertThat(triggerResult.activates()).isFalse();
     }
 
     @Test
-    void activatesReturnsFalseWhenCastRayTraceResultHitsBlockThatIsNotSolid() {
+    void checkReturnsBlockTriggerResultWhenCastRayTraceResultHitsSolidBlock() {
         Location targetLocation = new Location(null, 1, 1, 1);
         Vector velocity = new Vector(1, -1, 1);
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
-
-        Block hitBlock = mock(Block.class);
-        when(hitBlock.getType()).thenReturn(Material.AIR);
-
-        RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), hitBlock, BlockFace.NORTH);
-
-        World world = mock(World.class);
-        when(world.rayTraceBlocks(targetLocation, velocity, 3.0, FluidCollisionMode.NEVER, true)).thenReturn(rayTraceResult);
-
-        when(target.exists()).thenReturn(true);
-        when(target.getLocation()).thenReturn(targetLocation);
-        when(target.getVelocity()).thenReturn(velocity);
-        when(target.getWorld()).thenReturn(world);
-
-        boolean activates = trigger.activates(triggerContext);
-
-        assertThat(activates).isFalse();
-    }
-
-    @Test
-    void activatesReturnsTrueWhenCastRayTraceResultHitsSolidBlock() {
-        Location targetLocation = new Location(null, 1, 1, 1);
-        Vector velocity = new Vector(1, -1, 1);
+        Vector hitPosition = new Vector(2, 2, 2);
         TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
 
         Block hitBlock = mock(Block.class);
         when(hitBlock.getType()).thenReturn(Material.STONE);
 
-        RayTraceResult rayTraceResult = new RayTraceResult(new Vector(), hitBlock, BlockFace.NORTH);
+        RayTraceResult rayTraceResult = new RayTraceResult(hitPosition, hitBlock, BlockFace.NORTH);
 
         World world = mock(World.class);
         when(world.rayTraceBlocks(targetLocation, velocity, 3.0, FluidCollisionMode.NEVER, true)).thenReturn(rayTraceResult);
@@ -157,8 +139,12 @@ class BlockImpactTriggerTest {
         when(target.getVelocity()).thenReturn(velocity);
         when(target.getWorld()).thenReturn(world);
 
-        boolean activates = trigger.activates(triggerContext);
+        TriggerResult triggerResult = trigger.check(triggerContext);
 
-        assertThat(activates).isTrue();
+        assertThat(triggerResult.activates()).isTrue();
+        assertThat(triggerResult).isInstanceOfSatisfying(BlockTriggerResult.class, blockTriggerResult -> {
+           assertThat(blockTriggerResult.getHitBlock()).isEqualTo(hitBlock);
+           assertThat(blockTriggerResult.getHitLocation()).isEqualTo(new Location(world, 2.0, 2.0, 2.0));
+        });
     }
 }
