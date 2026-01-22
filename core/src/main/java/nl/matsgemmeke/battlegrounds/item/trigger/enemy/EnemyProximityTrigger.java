@@ -27,18 +27,23 @@ public class EnemyProximityTrigger implements Trigger {
 
     @Override
     public boolean activates(TriggerContext context) {
-        TriggerTarget target = context.target();
-
-        if (!target.exists()) {
-            return false;
-        }
-
-        List<GameEntity> targets = targetFinder.findEnemyTargets(context.sourceId(), target.getLocation(), checkingRange);
-        return !targets.isEmpty();
+        return false;
     }
 
     @Override
     public TriggerResult check(TriggerContext context) {
-        return SimpleTriggerResult.NOT_ACTIVATES;
+        TriggerTarget target = context.target();
+
+        if (!target.exists()) {
+            return SimpleTriggerResult.NOT_ACTIVATES;
+        }
+
+        List<GameEntity> targets = targetFinder.findEnemyTargets(context.sourceId(), target.getLocation(), checkingRange);
+
+        if (targets.isEmpty()) {
+            return SimpleTriggerResult.NOT_ACTIVATES;
+        }
+
+        return SimpleTriggerResult.ACTIVATES;
     }
 }
