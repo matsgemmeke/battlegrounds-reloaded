@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.scheduled;
 
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +13,12 @@ import static org.mockito.Mockito.mock;
 class ScheduledTriggerTest {
 
     @Test
-    void activatesAlwaysReturnsTrue() {
+    void checkAlwaysReturnTriggerResultThatActivates() {
         TriggerContext context = new TriggerContext(UUID.randomUUID(), mock(TriggerTarget.class));
 
         ScheduledTrigger trigger = new ScheduledTrigger();
-        boolean activates = trigger.activates(context);
+        TriggerResult triggerResult = trigger.check(context);
 
-        assertThat(activates).isTrue();
+        assertThat(triggerResult.activates()).isTrue();
     }
 }

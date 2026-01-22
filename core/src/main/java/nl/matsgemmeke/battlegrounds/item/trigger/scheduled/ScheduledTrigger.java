@@ -8,12 +8,12 @@ import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 public class ScheduledTrigger implements Trigger {
 
     public boolean activates(TriggerContext context) {
-        // Scheduled triggers have no conditions and always activate when the schedule performs its tasks
         return true;
     }
 
     @Override
     public TriggerResult check(TriggerContext context) {
-        return SimpleTriggerResult.NOT_ACTIVATES;
+        // Scheduled triggers have no conditions and always activate when the schedule performs its tasks
+        return SimpleTriggerResult.ACTIVATES;
     }
 }
