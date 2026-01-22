@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 class DamageTargetTriggerResultAdapterTest {
 
     @Test
-    void adaptReturnsCollisionResultWithValuesFromGivenTriggerResult() {
+    void adaptReturnsCollisionResultWithValuesFromGivenDamageTargetTriggerResult() {
         DamageTarget hitTarget = mock(DamageTarget.class);
         Location hitLocation = new Location(null, 1, 1, 1);
         DamageTargetTriggerResult triggerResult = new DamageTargetTriggerResult(hitTarget, hitLocation);

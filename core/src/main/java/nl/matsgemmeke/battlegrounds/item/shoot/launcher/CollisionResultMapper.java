@@ -1,9 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.adapter.BlockTriggerResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.adapter.DamageTargetTriggerResultAdapter;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.adapter.SimpleTriggerResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.adapter.TriggerResultAdapter;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.BlockTriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.DamageTargetTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 
 import java.util.HashMap;
@@ -17,6 +21,8 @@ public class CollisionResultMapper {
     private static final Map<Class<? extends TriggerResult>, TriggerResultAdapter<?>> ADAPTERS = new HashMap<>();
 
     static {
+        ADAPTERS.put(SimpleTriggerResult.class, new SimpleTriggerResultAdapter());
+        ADAPTERS.put(BlockTriggerResult.class, new BlockTriggerResultAdapter());
         ADAPTERS.put(DamageTargetTriggerResult.class, new DamageTargetTriggerResultAdapter());
     }
 
