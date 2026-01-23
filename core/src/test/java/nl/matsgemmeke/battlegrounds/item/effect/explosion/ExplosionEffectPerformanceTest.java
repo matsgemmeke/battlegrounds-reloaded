@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
@@ -44,6 +45,7 @@ class ExplosionEffectPerformanceTest {
     private static final ExplosionProperties PROPERTIES = new ExplosionProperties(RANGE_PROFILE, POWER, SET_FIRE, BREAK_BLOCKS);
 
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
+    private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
 
     @Mock
     private DamageProcessor damageProcessor;
@@ -66,7 +68,7 @@ class ExplosionEffectPerformanceTest {
         ItemEffectSource effectSource = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
         when(effectSource.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -89,7 +91,7 @@ class ExplosionEffectPerformanceTest {
         when(effectSource.getLocation()).thenReturn(sourceLocation);
         when(effectSource.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
 
         GameEntity deployerEntity = mock(GameEntity.class);
         when(deployerEntity.getLocation()).thenReturn(sourceLocation);

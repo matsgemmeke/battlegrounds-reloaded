@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
@@ -44,10 +45,12 @@ class FlashEffectPerformanceTest {
     private static final float EXPLOSION_POWER = 1.0f;
     private static final int POTION_EFFECT_AMPLIFIER = 0;
     private static final int POTION_EFFECT_DURATION = 100;
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
     private static final Location EFFECT_SOURCE_LOCATION = new Location(null, 1, 1, 1);
     private static final PotionEffectProperties POTION_EFFECT_PROPERTIES = new PotionEffectProperties(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
     private static final FlashProperties FLASH_PROPERTIES = new FlashProperties(POTION_EFFECT_PROPERTIES, RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
+
+    private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
+    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
 
     @Mock
     private DamageSource damageSource;
@@ -70,7 +73,7 @@ class FlashEffectPerformanceTest {
     @Test
     void performPerformsEffectAndAppliesBlindnessPotionEffectToAllTargetsInsideLongRangeDistance() {
         World world = mock(World.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
         Schedule cancelSchedule = mock(Schedule.class);
         PotionEffectReceiver target = mock(PotionEffectReceiver.class);
 
@@ -109,7 +112,7 @@ class FlashEffectPerformanceTest {
     @MethodSource("potionEffectScenarios")
     void rollbackDoesNotRemovePotionEffectFromEntities(PotionEffect potionEffect) {
         World world = mock(World.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         PotionEffectReceiver target = mock(PotionEffectReceiver.class);
         when(target.getPotionEffect(PotionEffectType.BLINDNESS)).thenReturn(Optional.ofNullable(potionEffect));
@@ -131,7 +134,7 @@ class FlashEffectPerformanceTest {
     @Test
     void rollbackRemovesAppliedPotionEffectsFromEntities() {
         World world = mock(World.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
         PotionEffectReceiver target = mock(PotionEffectReceiver.class);
 
         Schedule cancelSchedule = mock(Schedule.class);
@@ -153,5 +156,9 @@ class FlashEffectPerformanceTest {
 
         verify(target).removePotionEffect(PotionEffectType.BLINDNESS);
         verify(cancelSchedule).stop();
+    }
+
+    private ItemEffectContext createItemEffectContext() {
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
     }
 }

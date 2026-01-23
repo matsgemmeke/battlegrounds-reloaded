@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
@@ -62,6 +63,7 @@ class CombustionEffectPerformanceTest {
     private static final CombustionProperties PROPERTIES = new CombustionProperties(COMBUSTION_SOUNDS, RANGE_PROFILE, MIN_SIZE, MAX_SIZE, GROWTH, GROWTH_INTERVAL, MIN_DURATION, MAX_DURATION, BURN_BLOCKS, SPREAD_FIRE);
 
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
+    private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
 
     @Mock
     private AudioEmitter audioEmitter;
@@ -96,7 +98,7 @@ class CombustionEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsTrueWhenPerforming() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
         Schedule cancelSchedule = mock(Schedule.class);
 
         Schedule repeatingSchedule = mock(Schedule.class);
@@ -113,7 +115,7 @@ class CombustionEffectPerformanceTest {
 
     @Test
     void performCreatesFireCircleAtSourceLocationAndResetsEffectAfterMaxDuration() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
         Schedule cancelSchedule = mock(Schedule.class);
         Schedule repeatingSchedule = mock(Schedule.class);
 
@@ -215,7 +217,7 @@ class CombustionEffectPerformanceTest {
 
     @Test
     void rollbackResetsAffectedBlocksAndTriggerRuns() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
         Location blockLocation = new Location(null, 0, 0, 0);
         Location effectSourceLocation = new Location(null, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
@@ -242,5 +244,9 @@ class CombustionEffectPerformanceTest {
         verify(block).setType(Material.AIR);
         verify(metadataValueEditor).removeMetadata(block, "burn-blocks");
         verify(metadataValueEditor).removeMetadata(block, "spread-fire");
+    }
+
+    private ItemEffectContext createItemEffectContext() {
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
     }
 }

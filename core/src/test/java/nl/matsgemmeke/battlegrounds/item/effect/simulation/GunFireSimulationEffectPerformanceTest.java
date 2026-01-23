@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
@@ -46,6 +47,7 @@ class GunFireSimulationEffectPerformanceTest {
     private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(GENERIC_SHOTS_SOUNDS, BURST_INTERVAL, MIN_BURST_DURATION, MAX_BURST_DURATION, MIN_DELAY_DURATION, MAX_DELAY_DURATION, MIN_TOTAL_DURATION, MAX_TOTAL_DURATION);
 
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
+    private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
 
     @Mock
     private AudioEmitter audioEmitter;
@@ -71,7 +73,7 @@ class GunFireSimulationEffectPerformanceTest {
     void changeEffectSourceCreatesNewContextInstanceWithGivenEffectSource() {
         Schedule schedule = mock(Schedule.class);
         ItemEffectSource oldEffectSource = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, oldEffectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, oldEffectSource, triggerTarget, INITIATION_LOCATION);
         Location newSourceLocation = new Location(null, 1, 1, 1);
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
@@ -102,7 +104,7 @@ class GunFireSimulationEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsTrueWhenPerforming() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         Schedule repeatingSchedule = mock(Schedule.class);
         when(repeatingSchedule.isRunning()).thenReturn(true);
@@ -118,7 +120,7 @@ class GunFireSimulationEffectPerformanceTest {
     @Test
     void performSimulatesGenericGunFireWhenGunInfoProviderHasNoInformationForEntity() {
         Schedule repeatingSchedule = mock(Schedule.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(effectSource.exists()).thenReturn(true);
@@ -139,8 +141,7 @@ class GunFireSimulationEffectPerformanceTest {
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 120;
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
-
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(effectSource.exists()).thenReturn(false);
@@ -158,7 +159,7 @@ class GunFireSimulationEffectPerformanceTest {
     @Test
     void performSimulatesGunFireOnceAndRemovesEffectSourceWhenFinished() {
         Schedule repeatingSchedule = mock(Schedule.class);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 1200;
@@ -181,5 +182,9 @@ class GunFireSimulationEffectPerformanceTest {
         verify(repeatingSchedule, atMost(10)).stop();
         verify((Removable) effectSource, atLeast(1)).remove();
         verify((Removable) effectSource, atMost(10)).remove();
+    }
+
+    private ItemEffectContext createItemEffectContext() {
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
     }
 }

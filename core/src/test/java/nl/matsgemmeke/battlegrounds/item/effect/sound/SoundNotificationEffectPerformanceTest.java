@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SoundNotificationEffectPerformanceTest {
 
+    private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
     private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
@@ -51,7 +53,7 @@ class SoundNotificationEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -71,7 +73,7 @@ class SoundNotificationEffectPerformanceTest {
 
     @Test
     void performDoesNothingWhenDamageSourceIsNoPlayer() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(playerRegistry.findByUniqueId(DAMAGE_SOURCE_ID)).thenReturn(Optional.empty());
@@ -82,7 +84,7 @@ class SoundNotificationEffectPerformanceTest {
     @Test
     void performPlaysNotificationSoundsWhenDamageSourceIsPlayer() {
         Location playerLocation = new Location(null, 1, 1, 1);
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getLocation()).thenReturn(playerLocation);
@@ -93,5 +95,9 @@ class SoundNotificationEffectPerformanceTest {
         performance.perform(context);
 
         verify(gamePlayer).playSound(playerLocation, sound);
+    }
+
+    private ItemEffectContext createItemEffectContext() {
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
     }
 }

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MarkSpawnPointEffectPerformanceTest {
 
+    private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
     private static final Location INITIATION_LOCATION = new Location(null, 1, 1, 1, 1.0f, 1.0f);
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
@@ -37,7 +39,7 @@ class MarkSpawnPointEffectPerformanceTest {
 
     @Test
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -47,7 +49,7 @@ class MarkSpawnPointEffectPerformanceTest {
 
     @Test
     void performCreatesNewCustomSpawnPointAndAssignsToDeployer() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
@@ -65,7 +67,7 @@ class MarkSpawnPointEffectPerformanceTest {
 
     @Test
     void rollbackResetsSpawnPointWhenHavingPerformed() {
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
@@ -73,5 +75,9 @@ class MarkSpawnPointEffectPerformanceTest {
         performance.rollback();
 
         verify(spawnPointRegistry).setCustomSpawnPoint(DAMAGE_SOURCE_ID, null);
+    }
+
+    private ItemEffectContext createItemEffectContext() {
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
     }
 }
