@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,15 +26,15 @@ class HitEntityFilterTest {
     private static final UUID SOURCE_ID = UUID.randomUUID();
 
     @Mock
-    private Entity entity;
+    private Actor actor;
     @Mock
-    private TriggerTarget triggerTarget;
+    private Entity entity;
 
     private HitEntityFilter filter;
 
     @BeforeEach
     void setUp() {
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, triggerTarget);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
         filter = new HitEntityFilter(triggerContext);
     }
@@ -48,7 +48,7 @@ class HitEntityFilterTest {
         assertThat(result).isFalse();
     }
 
-    static List<Arguments> entityAndTargetLocationCases() {
+    static List<Arguments> entityAndActorLocationCases() {
         return List.of(
                 arguments(new Location(null, 1, 1, 1), new Location(null, 1, 1, 1), false),
                 arguments(new Location(null, 2, 2, 2), new Location(null, 1, 1, 1), true)
@@ -56,11 +56,11 @@ class HitEntityFilterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("entityAndTargetLocationCases")
-    void testReturnsWhetherEntityLocationDoesNotEqualTargetLocation(Location entityLocation, Location targetLocation, boolean expectedResult) {
+    @MethodSource("entityAndActorLocationCases")
+    void testReturnsWhetherEntityLocationDoesNotEqualActorLocation(Location entityLocation, Location actorLocation, boolean expectedResult) {
+        when(actor.getLocation()).thenReturn(actorLocation);
         when(entity.getUniqueId()).thenReturn(UUID.randomUUID());
         when(entity.getLocation()).thenReturn(entityLocation);
-        when(triggerTarget.getLocation()).thenReturn(targetLocation);
 
         boolean result = filter.test(entity);
 

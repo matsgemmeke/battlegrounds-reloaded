@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.floor;
 
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.BlockTriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -25,7 +25,7 @@ class FloorHitTriggerTest {
     private static final UUID SOURCE_ID = UUID.randomUUID();
 
     @Mock
-    private TriggerTarget target;
+    private Actor actor;
 
     private FloorHitTrigger trigger;
 
@@ -35,10 +35,10 @@ class FloorHitTriggerTest {
     }
 
     @Test
-    void checkReturnsTriggerResultThatDoesNotActivateWhenTargetDoesNotExist() {
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+    void checkReturnsTriggerResultThatDoesNotActivateWhenActorNotExist() {
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
-        when(target.exists()).thenReturn(false);
+        when(actor.exists()).thenReturn(false);
 
         TriggerResult triggerResult = trigger.check(triggerContext);
 
@@ -46,17 +46,17 @@ class FloorHitTriggerTest {
     }
 
     @Test
-    void checkReturnsTriggerResultThatDoesNotActivateWhenBlockBelowTargetIsPassable() {
+    void checkReturnsTriggerResultThatDoesNotActivateWhenBlockBelowActorIsPassable() {
         World world = mock(World.class);
-        Location targetLocation = new Location(world, 1, 1, 1);
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+        Location actorLocation = new Location(world, 1, 1, 1);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
         Block blockBelowObject = mock(Block.class);
         when(blockBelowObject.isPassable()).thenReturn(true);
         when(world.getBlockAt(any(Location.class))).thenReturn(blockBelowObject);
 
-        when(target.exists()).thenReturn(true);
-        when(target.getLocation()).thenReturn(targetLocation);
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorLocation);
 
         TriggerResult triggerResult = trigger.check(triggerContext);
 
@@ -64,24 +64,24 @@ class FloorHitTriggerTest {
     }
 
     @Test
-    void checkReturnsBlockTriggerResultWhenBlockBelowTargetIsNotPassable() {
+    void checkReturnsBlockTriggerResultWhenBlockBelowActorIsNotPassable() {
         World world = mock(World.class);
-        Location targetLocation = new Location(world, 1, 1, 1);
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+        Location actorLocation = new Location(world, 1, 1, 1);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
         Block blockBelowObject = mock(Block.class);
         when(blockBelowObject.isPassable()).thenReturn(false);
         when(world.getBlockAt(any(Location.class))).thenReturn(blockBelowObject);
 
-        when(target.exists()).thenReturn(true);
-        when(target.getLocation()).thenReturn(targetLocation);
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorLocation);
 
         TriggerResult triggerResult = trigger.check(triggerContext);
 
         assertThat(triggerResult.activates()).isTrue();
         assertThat(triggerResult).isInstanceOfSatisfying(BlockTriggerResult.class, blockTriggerResult -> {
            assertThat(blockTriggerResult.getHitBlock()).isEqualTo(blockBelowObject);
-           assertThat(blockTriggerResult.getHitLocation()).isEqualTo(targetLocation);
+           assertThat(blockTriggerResult.getHitLocation()).isEqualTo(actorLocation);
         });
     }
 }

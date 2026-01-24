@@ -3,12 +3,12 @@ package nl.matsgemmeke.battlegrounds.item.trigger.impl;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.DamageTargetTriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -33,24 +33,24 @@ public class EntityImpactTrigger implements Trigger {
 
     @Override
     public TriggerResult check(TriggerContext context) {
-        TriggerTarget target = context.target();
+        Actor actor = context.actor();
 
-        if (!target.exists()) {
+        if (!actor.exists()) {
             return SimpleTriggerResult.NOT_ACTIVATES;
         }
 
-        Vector velocity = target.getVelocity();
-        Location projectileLocation = target.getLocation();
+        Vector velocity = actor.getVelocity();
+        Location actorLocation = actor.getLocation();
 
-        // Stop the current check if the projectile does not move, because we cannot cast a ray trace with zero magnitude
+        // Stop the current check if the actor does not move, because we cannot cast a ray trace with zero magnitude
         if (velocity.isZero()) {
             return SimpleTriggerResult.NOT_ACTIVATES;
         }
 
-        World world = target.getWorld();
+        World world = actor.getWorld();
         double rayDistance = velocity.length();
         HitEntityFilter entityFilter = new HitEntityFilter(context);
-        RayTraceResult rayTraceResult = world.rayTraceEntities(projectileLocation, velocity, rayDistance, RAY_SIZE, entityFilter);
+        RayTraceResult rayTraceResult = world.rayTraceEntities(actorLocation, velocity, rayDistance, RAY_SIZE, entityFilter);
 
         if (rayTraceResult == null) {
             return SimpleTriggerResult.NOT_ACTIVATES;

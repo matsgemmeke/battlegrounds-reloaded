@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.tracking;
 
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,7 +12,7 @@ import org.bukkit.util.Vector;
  * A {@code TriggerTarget} provides a condition or state that a {@link Trigger} checks to determine whether it should
  * activate.
  */
-public interface TriggerTarget {
+public interface TriggerTarget extends Actor {
 
     /**
      * Gets whether the target exists.

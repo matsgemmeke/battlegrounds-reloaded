@@ -101,7 +101,7 @@ class SoundNotificationEffectTest {
 
         assertThat(triggerContextCaptor.getValue()).satisfies(triggerContext -> {
             assertThat(triggerContext.sourceId()).isEqualTo(DAMAGE_SOURCE_ID);
-            assertThat(triggerContext.target()).isEqualTo(CONTEXT.getTriggerTarget());
+            assertThat(triggerContext.actor()).isEqualTo(CONTEXT.getTriggerTarget());
         });
 
         verify(triggerRun).start();

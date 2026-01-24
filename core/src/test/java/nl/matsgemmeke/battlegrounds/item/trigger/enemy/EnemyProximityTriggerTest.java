@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.trigger.enemy;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,17 +26,17 @@ class EnemyProximityTriggerTest {
     private static final double CHECKING_RANGE = 2.5;
 
     @Mock
-    private TargetFinder targetFinder;
+    private Actor actor;
     @Mock
-    private TriggerTarget target;
+    private TargetFinder targetFinder;
     @InjectMocks
     private EnemyProximityTrigger trigger;
 
     @Test
-    void checkReturnsTriggerResultThatDoesNotActivateWhenTriggerTargetDoesNotExist() {
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+    void checkReturnsTriggerResultThatDoesNotActivateWhenActorDoesNotExist() {
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
-        when(target.exists()).thenReturn(false);
+        when(actor.exists()).thenReturn(false);
 
         trigger.setCheckingRange(CHECKING_RANGE);
         TriggerResult triggerResult = trigger.check(triggerContext);
@@ -46,12 +46,12 @@ class EnemyProximityTriggerTest {
 
     @Test
     void checkReturnsTriggerResultThatDoesNotActivateWhenThereAreNoNearbyEnemyTargets() {
-        Location targetLocation = new Location(null, 1, 1, 1);
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+        Location actorLocation = new Location(null, 1, 1, 1);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
-        when(target.exists()).thenReturn(true);
-        when(target.getLocation()).thenReturn(targetLocation);
-        when(targetFinder.findEnemyTargets(SOURCE_ID, targetLocation, CHECKING_RANGE)).thenReturn(Collections.emptyList());
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorLocation);
+        when(targetFinder.findEnemyTargets(SOURCE_ID, actorLocation, CHECKING_RANGE)).thenReturn(Collections.emptyList());
 
         trigger.setCheckingRange(CHECKING_RANGE);
         TriggerResult triggerResult = trigger.check(triggerContext);
@@ -61,12 +61,12 @@ class EnemyProximityTriggerTest {
 
     @Test
     void checkReturnsTriggerResultThatActivatesWhenThereAreNearbyEnemyTargets() {
-        Location targetLocation = new Location(null, 1, 1, 1);
-        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, target);
+        Location actorLocation = new Location(null, 1, 1, 1);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
-        when(target.exists()).thenReturn(true);
-        when(target.getLocation()).thenReturn(targetLocation);
-        when(targetFinder.findEnemyTargets(SOURCE_ID, targetLocation, CHECKING_RANGE)).thenReturn(List.of(mock(GameEntity.class)));
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorLocation);
+        when(targetFinder.findEnemyTargets(SOURCE_ID, actorLocation, CHECKING_RANGE)).thenReturn(List.of(mock(GameEntity.class)));
 
         trigger.setCheckingRange(CHECKING_RANGE);
         TriggerResult triggerResult = trigger.check(triggerContext);
