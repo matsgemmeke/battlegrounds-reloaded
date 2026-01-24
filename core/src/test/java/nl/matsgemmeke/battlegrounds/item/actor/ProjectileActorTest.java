@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.trigger.tracking;
+package nl.matsgemmeke.battlegrounds.item.actor;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,19 +17,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ProjectileTriggerTargetTest {
+class ProjectileActorTest {
 
     @Mock
     private Projectile projectile;
     @InjectMocks
-    private ProjectileTriggerTarget triggerTarget;
+    private ProjectileActor actor;
 
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
     void existsReturnsWhetherProjectileIsValid(boolean valid, boolean shouldExist) {
         when(projectile.isValid()).thenReturn(valid);
 
-        boolean exists = triggerTarget.exists();
+        boolean exists = actor.exists();
 
         assertThat(exists).isEqualTo(shouldExist);
     }
@@ -40,7 +40,7 @@ class ProjectileTriggerTargetTest {
 
         when(projectile.getLocation()).thenReturn(projectileLocation);
 
-        Location triggerTargetLocation = triggerTarget.getLocation();
+        Location triggerTargetLocation = actor.getLocation();
 
         assertThat(triggerTargetLocation).isEqualTo(projectileLocation);
     }
@@ -51,7 +51,7 @@ class ProjectileTriggerTargetTest {
 
         when(projectile.getVelocity()).thenReturn(projectileVelocity);
 
-        Vector triggerTargetVelocity = triggerTarget.getVelocity();
+        Vector triggerTargetVelocity = actor.getVelocity();
 
         assertThat(triggerTargetVelocity).isEqualTo(projectileVelocity);
     }
@@ -62,7 +62,7 @@ class ProjectileTriggerTargetTest {
 
         when(projectile.getWorld()).thenReturn(projectileWorld);
 
-        World triggerTargetWorld = triggerTarget.getWorld();
+        World triggerTargetWorld = actor.getWorld();
 
         assertThat(triggerTargetWorld).isEqualTo(projectileWorld);
     }

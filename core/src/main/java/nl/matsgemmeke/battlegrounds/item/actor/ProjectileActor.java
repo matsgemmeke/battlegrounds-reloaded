@@ -1,15 +1,15 @@
-package nl.matsgemmeke.battlegrounds.item.trigger.tracking;
+package nl.matsgemmeke.battlegrounds.item.actor;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
-public class ProjectileTriggerTarget implements TriggerTarget {
+public class ProjectileActor implements Actor {
 
     private final Projectile projectile;
 
-    public ProjectileTriggerTarget(Projectile projectile) {
+    public ProjectileActor(Projectile projectile) {
         this.projectile = projectile;
     }
 
