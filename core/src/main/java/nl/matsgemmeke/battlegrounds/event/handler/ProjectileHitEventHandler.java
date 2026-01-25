@@ -10,7 +10,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
-import org.bukkit.Location;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -51,25 +51,10 @@ public class ProjectileHitEventHandler implements EventHandler<ProjectileHitEven
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
                 .orElseThrow(() -> new EventHandlingException("Unable to process ProjectileHitEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
-        Location hitLocation = this.getHitLocation(event);
-
-        gameScope.runInScope(gameContext, () -> this.performProjectileAction(projectile, hitLocation));
+        gameScope.runInScope(gameContext, () -> this.performProjectileAction(projectile, event));
     }
 
-    private Location getHitLocation(ProjectileHitEvent event) {
-        Entity hitEntity = event.getHitEntity();
-        Block hitBlock = event.getHitBlock();
-
-        if (hitEntity != null) {
-            return hitEntity.getLocation();
-        } else if (hitBlock != null) {
-            return hitBlock.getLocation();
-        } else {
-            return event.getEntity().getLocation();
-        }
-    }
-
-    private void performProjectileAction(Projectile projectile, Location hitLocation) {
+    private void performProjectileAction(Projectile projectile, ProjectileHitEvent event) {
         ProjectileHitActionRegistry projectileHitActionRegistry = projectileHitActionRegistryProvider.get();
         ProjectileHitAction projectileHitAction = projectileHitActionRegistry.getProjectileHitAction(projectile).orElse(null);
 
@@ -77,6 +62,14 @@ public class ProjectileHitEventHandler implements EventHandler<ProjectileHitEven
             return;
         }
 
-        projectileHitAction.onProjectileHit(hitLocation);
+        ProjectileHitResult result = this.getProjectileHitResult(event);
+        projectileHitAction.onProjectileHit(result);
+    }
+
+    private ProjectileHitResult getProjectileHitResult(ProjectileHitEvent event) {
+        Block hitBlock = event.getHitBlock();
+        Entity hitEntity = event.getHitEntity();
+
+        return new ProjectileHitResult(hitBlock, hitEntity);
     }
 }

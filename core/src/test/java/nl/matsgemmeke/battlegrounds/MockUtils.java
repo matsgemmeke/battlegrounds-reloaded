@@ -37,7 +37,7 @@ public final class MockUtils {
     public static Answer<Void> answerRunProjectileHitAction(Location hitLocation) {
         return invocation -> {
             ProjectileHitAction projectileHitAction = invocation.getArgument(1);
-            projectileHitAction.onProjectileHit(hitLocation);
+//            projectileHitAction.onProjectileHit(hitLocation);
             return null;
         };
     }

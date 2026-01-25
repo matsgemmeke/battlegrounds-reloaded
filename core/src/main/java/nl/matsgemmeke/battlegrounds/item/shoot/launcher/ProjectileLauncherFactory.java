@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball.FireballLauncherFactory;
@@ -69,13 +70,7 @@ public class ProjectileLauncherFactory {
 
         switch (projectileLauncherType) {
             case ARROW -> {
-                List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
-                double velocity = this.validateSpecVar(spec.velocity, "velocity", projectileLauncherType);
-
-                ArrowProperties properties = new ArrowProperties(launchSounds, velocity);
-                ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
-
-                return arrowLauncherFactory.create(properties, itemEffect);
+                return this.createArrowLauncher(spec);
             }
             case FIREBALL -> {
                 List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
@@ -106,6 +101,26 @@ public class ProjectileLauncherFactory {
             }
             default -> throw new ProjectileLauncherCreationException("Invalid projectile launcher type '%s'".formatted(projectileLauncherType));
         }
+    }
+
+    private ProjectileLauncher createArrowLauncher(ProjectileSpec spec) {
+        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
+        double velocity = this.validateSpecVar(spec.velocity, "velocity", "ARROW");
+
+        ArrowProperties properties = new ArrowProperties(launchSounds, velocity);
+        ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
+
+        ArrowLauncher arrowLauncher = arrowLauncherFactory.create(properties, itemEffect);
+
+        if (spec.triggers != null) {
+            for (TriggerSpec triggerSpec : spec.triggers.values()) {
+                TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
+
+                arrowLauncher.addTriggerExecutor(triggerExecutor);
+            }
+        }
+
+        return arrowLauncher;
     }
 
     private ProjectileLauncher createItemLauncher(ProjectileSpec spec) {
