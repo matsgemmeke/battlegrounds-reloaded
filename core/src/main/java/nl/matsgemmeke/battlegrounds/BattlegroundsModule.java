@@ -87,7 +87,6 @@ import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultMapper;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncherFactory;
@@ -142,7 +141,6 @@ public class BattlegroundsModule implements Module {
 
         // Singleton bindings
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);
-        binder.bind(CollisionResultMapper.class).in(Singleton.class);
         binder.bind(EventDispatcher.class).in(Singleton.class);
         binder.bind(GameContextProvider.class).in(Singleton.class);
         binder.bind(HitboxResolver.class).in(Singleton.class);

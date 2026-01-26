@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds;
 
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
@@ -38,6 +39,14 @@ public final class MockUtils {
         return invocation -> {
             ProjectileHitAction projectileHitAction = invocation.getArgument(1);
 //            projectileHitAction.onProjectileHit(hitLocation);
+            return null;
+        };
+    }
+
+    public static Answer<Void> answerRunProjectileHitAction(ProjectileHitResult projectileHitResult) {
+        return invocation -> {
+            ProjectileHitAction projectileHitAction = invocation.getArgument(1);
+            projectileHitAction.onProjectileHit(projectileHitResult);
             return null;
         };
     }

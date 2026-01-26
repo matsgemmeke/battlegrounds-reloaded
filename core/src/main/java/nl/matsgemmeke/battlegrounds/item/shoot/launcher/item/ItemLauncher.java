@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.projectile.ItemProjectile;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultMapper;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
@@ -40,7 +40,7 @@ public class ItemLauncher implements ProjectileLauncher {
     private static final int ITEM_PICKUP_DELAY = 10000;
 
     private final AudioEmitter audioEmitter;
-    private final CollisionResultMapper collisionResultMapper;
+    private final CollisionResultAdapter collisionResultAdapter;
     private final ItemEffect itemEffect;
     private final ItemLaunchProperties properties;
     private final Scheduler scheduler;
@@ -48,9 +48,9 @@ public class ItemLauncher implements ProjectileLauncher {
     private final Set<TriggerExecutor> triggerExecutors;
 
     @Inject
-    public ItemLauncher(AudioEmitter audioEmitter, CollisionResultMapper collisionResultMapper, Scheduler scheduler, @Assisted ItemEffect itemEffect, @Assisted ItemLaunchProperties properties) {
+    public ItemLauncher(AudioEmitter audioEmitter, CollisionResultAdapter collisionResultAdapter, Scheduler scheduler, @Assisted ItemEffect itemEffect, @Assisted ItemLaunchProperties properties) {
         this.audioEmitter = audioEmitter;
-        this.collisionResultMapper = collisionResultMapper;
+        this.collisionResultAdapter = collisionResultAdapter;
         this.scheduler = scheduler;
         this.itemEffect = itemEffect;
         this.properties = properties;
@@ -97,7 +97,7 @@ public class ItemLauncher implements ProjectileLauncher {
     }
 
     private void processTriggerResult(TriggerResult triggerResult, DamageSource damageSource, ItemProjectile projectile, TriggerTarget triggerTarget, Location dropLocation) {
-        CollisionResult collisionResult = collisionResultMapper.map(triggerResult);
+        CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
 
         ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, projectile, triggerTarget, dropLocation);
         itemEffect.startPerformance(effectContext);

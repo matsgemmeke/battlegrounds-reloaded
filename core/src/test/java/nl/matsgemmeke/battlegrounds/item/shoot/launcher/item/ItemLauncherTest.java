@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.projectile.ItemProjectile;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultMapper;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
@@ -47,8 +47,8 @@ class ItemLauncherTest {
 
     @Mock
     private AudioEmitter audioEmitter;
-    @Spy
-    private CollisionResultMapper collisionResultMapper = new CollisionResultMapper();
+    @Mock
+    private CollisionResultAdapter collisionResultAdapter;
     @Mock
     private DamageSource damageSource;
     @Mock
@@ -78,7 +78,7 @@ class ItemLauncherTest {
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY);
         LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
-        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultMapper, scheduler, itemEffect, properties);
+        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultAdapter, scheduler, itemEffect, properties);
         itemLauncher.launch(launchContext);
         itemLauncher.cancel();
 
@@ -114,7 +114,7 @@ class ItemLauncherTest {
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
-        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultMapper, scheduler, itemEffect, properties);
+        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultAdapter, scheduler, itemEffect, properties);
         itemLauncher.addTriggerExecutor(triggerExecutor);
         itemLauncher.launch(launchContext);
 

@@ -4,18 +4,16 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.ProjectileActor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultMapper;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
@@ -26,12 +24,8 @@ import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractArrow.PickupStatus;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.util.BoundingBox;
-import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
@@ -42,13 +36,9 @@ import java.util.function.Supplier;
 
 public class ArrowLauncher implements ProjectileLauncher {
 
-    private static final double RAY_TRACE_LENGTH_MULTIPLIER = 2.0;
-    private static final double BLOCK_CENTER_OFFSET = 0.5;
-
     private final ArrowProperties properties;
     private final AudioEmitter audioEmitter;
-    private final CollisionResultMapper collisionResultMapper;
-    private final GameEntityFinder gameEntityFinder;
+    private final CollisionResultAdapter collisionResultAdapter;
     private final ItemEffect itemEffect;
     private final ProjectileHitActionRegistry projectileHitActionRegistry;
     private final ProjectileRegistry projectileRegistry;
@@ -59,8 +49,7 @@ public class ArrowLauncher implements ProjectileLauncher {
     @Inject
     public ArrowLauncher(
             AudioEmitter audioEmitter,
-            CollisionResultMapper collisionResultMapper,
-            GameEntityFinder gameEntityFinder,
+            CollisionResultAdapter collisionResultAdapter,
             ProjectileHitActionRegistry projectileHitActionRegistry,
             ProjectileRegistry projectileRegistry,
             Scheduler scheduler,
@@ -68,8 +57,7 @@ public class ArrowLauncher implements ProjectileLauncher {
             @Assisted ItemEffect itemEffect
     ) {
         this.audioEmitter = audioEmitter;
-        this.collisionResultMapper = collisionResultMapper;
-        this.gameEntityFinder = gameEntityFinder;
+        this.collisionResultAdapter = collisionResultAdapter;
         this.projectileHitActionRegistry = projectileHitActionRegistry;
         this.projectileRegistry = projectileRegistry;
         this.scheduler = scheduler;
@@ -118,7 +106,7 @@ public class ArrowLauncher implements ProjectileLauncher {
     }
 
     private void processTriggerResult(TriggerResult triggerResult, Arrow arrow, Actor actor, DamageSource damageSource, Location startingLocation) {
-        CollisionResult collisionResult = collisionResultMapper.map(triggerResult);
+        CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
         ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
 
         itemEffect.startPerformance(context);
@@ -131,10 +119,8 @@ public class ArrowLauncher implements ProjectileLauncher {
     }
 
     private void processProjectileHit(ProjectileHitResult projectileHitResult, Arrow arrow, Actor actor, DamageSource damageSource, Location startingLocation) {
-        CollisionResult collisionResult = this.convertToCollisionResult(projectileHitResult, arrow);
+        CollisionResult collisionResult = collisionResultAdapter.adapt(projectileHitResult, arrow);
         ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
-
-        arrow.getWorld().spawnParticle(Particle.HEART, collisionResult.getHitLocation().get(), 1);
 
         itemEffect.startPerformance(context);
         projectileRegistry.unregister(arrow.getUniqueId());
@@ -142,44 +128,6 @@ public class ArrowLauncher implements ProjectileLauncher {
 
         if (collisionResult.getHitTarget().isPresent()) {
             arrow.remove();
-        }
-    }
-
-    private CollisionResult convertToCollisionResult(ProjectileHitResult projectileHitResult, Arrow arrow) {
-        Block hitBlock = projectileHitResult.hitBlock();
-        Entity hitEntity = projectileHitResult.hitEntity();
-
-        Location arrowLocation = arrow.getLocation();
-        Vector arrowVelocity = arrow.getVelocity();
-        double length = arrowVelocity.length() * RAY_TRACE_LENGTH_MULTIPLIER;
-        World world = arrow.getWorld();
-
-        if (hitEntity != null) {
-            DamageTarget hitTarget = gameEntityFinder.findGameEntityByUniqueId(hitEntity.getUniqueId()).orElse(null);
-            RayTraceResult rayTraceResult = world.rayTraceEntities(arrowLocation, arrowVelocity, length);
-
-            if (rayTraceResult == null || rayTraceResult.getHitEntity() != hitEntity) {
-                // When the ray trace cannot find a hit location, take the center of the hit entity
-                BoundingBox boundingBox = hitEntity.getBoundingBox();
-                Location hitLocation = hitEntity.getLocation().add(0, boundingBox.getMaxY() / 2, 0);
-
-                return new CollisionResult(null, hitTarget, hitLocation);
-            }
-
-            Location hitLocation = rayTraceResult.getHitPosition().toLocation(world);
-            return new CollisionResult(hitBlock, hitTarget, hitLocation);
-        } else {
-            RayTraceResult rayTraceResult = world.rayTraceBlocks(arrowLocation, arrowVelocity, length, FluidCollisionMode.NEVER);
-
-            if (rayTraceResult == null || rayTraceResult.getHitBlock() != hitBlock) {
-                // When the ray trace cannot find a hit location, take the center of the hit entity
-                Location hitLocation = hitBlock.getLocation().add(BLOCK_CENTER_OFFSET, BLOCK_CENTER_OFFSET, BLOCK_CENTER_OFFSET);
-
-                return new CollisionResult(hitBlock, null, hitLocation);
-            }
-
-            Location hitLocation = rayTraceResult.getHitPosition().toLocation(world);
-            return new CollisionResult(hitBlock, null, hitLocation);
         }
     }
 
