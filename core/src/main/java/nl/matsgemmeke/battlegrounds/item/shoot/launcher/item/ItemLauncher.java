@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.projectile.ItemProjectile;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
@@ -17,8 +16,6 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.ItemTriggerTarget;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -83,9 +80,7 @@ public class ItemLauncher implements ProjectileLauncher {
         item.setPickupDelay(ITEM_PICKUP_DELAY);
         item.setVelocity(velocity);
 
-        ItemProjectile projectile = new ItemProjectile(item);
         ItemActor actor = new ItemActor(item);
-
         TriggerContext triggerContext = new TriggerContext(damageSourceId, actor);
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {

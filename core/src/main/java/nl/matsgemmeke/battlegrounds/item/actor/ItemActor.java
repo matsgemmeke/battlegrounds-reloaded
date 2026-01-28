@@ -5,7 +5,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
 
-public class ItemActor implements Actor {
+public class ItemActor implements Actor, Removable {
 
     private final Item item;
 
@@ -31,5 +31,10 @@ public class ItemActor implements Actor {
     @Override
     public World getWorld() {
         return item.getWorld();
+    }
+
+    @Override
+    public void remove() {
+        item.remove();
     }
 }

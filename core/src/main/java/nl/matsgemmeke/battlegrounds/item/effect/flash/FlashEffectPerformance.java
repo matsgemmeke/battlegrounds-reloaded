@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -40,24 +40,24 @@ public class FlashEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void perform(ItemEffectContext context) {
-        ItemEffectSource effectSource = context.getEffectSource();
+        Actor actor = context.getActor();
 
-        this.createExplosionEffect(effectSource);
-        this.applyPotionEffectToTargets(effectSource.getLocation());
+        this.createExplosionEffect(actor);
+        this.applyPotionEffectToTargets(actor.getLocation());
         this.startCancelSchedule();
 
-        if (effectSource instanceof Removable removableSource) {
-            removableSource.remove();
+        if (actor instanceof Removable removableActor) {
+            removableActor.remove();
         }
     }
 
-    private void createExplosionEffect(ItemEffectSource source) {
+    private void createExplosionEffect(Actor actor) {
         float power = properties.power();
         boolean setFire = properties.setFire();
         boolean breakBlocks = properties.breakBlocks();
 
-        World world = source.getWorld();
-        Location location = source.getLocation();
+        World world = actor.getWorld();
+        Location location = actor.getLocation();
 
         world.createExplosion(location, power, setFire, breakBlocks);
     }
