@@ -23,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -61,7 +62,8 @@ class HitscanLauncherTest {
     private TargetFinder targetFinder;
 
     @Test
-    void cancelStopsOngoingSoundPlaySchedules() {
+    @DisplayName("cancel stops ongoing sound play schedules")
+    void cancel_stopsSoundPlay() {
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Schedule soundPlaySchedule = mock(Schedule.class);
@@ -82,7 +84,8 @@ class HitscanLauncherTest {
     }
 
     @Test
-    void launchProducesProjectileStepUntilCollisionIsDetected() {
+    @DisplayName("launch produces projectile steps and starts item effect when collision is detected")
+    void launch_startsItemEffectOnCollision() {
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Location hitLocation = new Location(world, 0.0, 0.0, 0.6, 0.0f, 0.0f);
@@ -114,13 +117,16 @@ class HitscanLauncherTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getActor()).satisfies(actor -> {
+                assertThat(actor.getLocation()).isEqualTo(hitLocation);
+                assertThat(actor.getWorld()).isEqualTo(world);
+            });
             assertThat(itemEffectContext.getCollisionResult()).satisfies(collisionResult -> {
                assertThat(collisionResult.getHitBlock()).hasValue(hitBlock);
                assertThat(collisionResult.getHitTarget()).isEmpty();
                assertThat(collisionResult.getHitLocation()).hasValue(hitLocation);
             });
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
-            assertThat(itemEffectContext.getEffectSource().getLocation()).isEqualTo(hitLocation);
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
         });
 
@@ -130,7 +136,8 @@ class HitscanLauncherTest {
     }
 
     @Test
-    void launchProducesProjectileStepUntilTargetsAreFound() {
+    @DisplayName("launch produces projectile steps and starts item effect when a damage target is hit")
+    void launch_startsItemEffectOnDamageTargetHit() {
         World world = mock(World.class);
         Location direction = new Location(world, 0.0, 0.0, 0.0, 0.0f, 0.0f);
         Location hitLocation = new Location(world, 0.0, 0.0, 0.6, 0.0f, 0.0f);
@@ -157,20 +164,16 @@ class HitscanLauncherTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getActor()).satisfies(actor -> {
+               assertThat(actor.getLocation()).isEqualTo(hitLocation);
+               assertThat(actor.getWorld()).isEqualTo(world);
+            });
             assertThat(itemEffectContext.getCollisionResult()).satisfies(collisionResult -> {
                assertThat(collisionResult.getHitBlock()).isEmpty();
                assertThat(collisionResult.getHitTarget()).hasValue(hitTarget);
                assertThat(collisionResult.getHitLocation()).hasValue(hitLocation);
             });
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
-            assertThat(itemEffectContext.getEffectSource()).satisfies(effectSource -> {
-                assertThat(effectSource.getLocation()).isEqualTo(hitLocation);
-                assertThat(effectSource.getWorld()).isEqualTo(world);
-            });
-            assertThat(itemEffectContext.getTriggerTarget()).satisfies(triggerTarget -> {
-                assertThat(triggerTarget.getLocation()).isEqualTo(hitLocation);
-                assertThat(triggerTarget.getWorld()).isEqualTo(world);
-            });
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
         });
 

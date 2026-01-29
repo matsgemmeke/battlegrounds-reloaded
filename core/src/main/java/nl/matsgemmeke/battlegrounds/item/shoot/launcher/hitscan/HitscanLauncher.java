@@ -10,14 +10,13 @@ import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.item.actor.StaticActor;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.StaticTriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -143,11 +142,9 @@ public class HitscanLauncher implements ProjectileLauncher {
         return false;
     }
 
-    private void startPerformance(CollisionResult collisionResult, DamageSource damageSource, Location initiationLocation, World world) {
-        StaticItemEffectSource source = new StaticItemEffectSource(initiationLocation, world);
-        StaticTriggerTarget triggerTarget = new StaticTriggerTarget(initiationLocation, world);
-
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, source, triggerTarget, initiationLocation);
+    private void startPerformance(CollisionResult collisionResult, DamageSource damageSource, Location startingLocation, World world) {
+        StaticActor actor = new StaticActor(startingLocation, world);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
 
         itemEffect.startPerformance(context);
     }
