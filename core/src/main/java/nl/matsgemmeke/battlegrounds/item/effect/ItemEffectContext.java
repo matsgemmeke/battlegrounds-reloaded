@@ -34,6 +34,10 @@ public class ItemEffectContext {
         return actor;
     }
 
+    public void setActor(Actor actor) {
+        this.actor = actor;
+    }
+
     public CollisionResult getCollisionResult() {
         return collisionResult;
     }

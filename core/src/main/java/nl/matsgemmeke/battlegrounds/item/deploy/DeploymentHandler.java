@@ -7,12 +7,16 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.*;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class DeploymentHandler {
 
@@ -21,6 +25,7 @@ public class DeploymentHandler {
     private final ItemEffect itemEffect;
     private final ParticleEffectSpawner particleEffectSpawner;
     private final Scheduler scheduler;
+    private final Set<TriggerExecutor> triggerExecutors;
     @Nullable
     private Activator activator;
     private boolean performing;
@@ -40,6 +45,7 @@ public class DeploymentHandler {
         this.scheduler = scheduler;
         this.deploymentProperties = deploymentProperties;
         this.itemEffect = itemEffect;
+        this.triggerExecutors = new HashSet<>();
         this.performing = false;
     }
 
@@ -63,6 +69,10 @@ public class DeploymentHandler {
         Schedule delaySchedule = scheduler.createSingleRunSchedule(deploymentProperties.manualActivationDelay());
         delaySchedule.addTask(itemEffect::activatePerformances);
         delaySchedule.start();
+    }
+
+    public void addTriggerExecutor(TriggerExecutor triggerExecutor) {
+        triggerExecutors.add(triggerExecutor);
     }
 
     public void cleanupDeployment() {
@@ -121,7 +131,7 @@ public class DeploymentHandler {
         ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
 
         if (latestPerformance != null) {
-            latestPerformance.changeEffectSource(deploymentObject);
+            latestPerformance.changeActor(deploymentObject);
             return;
         }
 

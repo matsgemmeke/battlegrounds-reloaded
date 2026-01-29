@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 
@@ -21,8 +22,8 @@ public abstract class BaseItemEffectPerformance implements ItemEffectPerformance
     }
 
     @Override
-    public void changeEffectSource(ItemEffectSource effectSource) {
-        context.setEffectSource(effectSource);
+    public void changeActor(Actor actor) {
+        context.setActor(actor);
     }
 
     @Override

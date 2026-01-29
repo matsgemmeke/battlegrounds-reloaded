@@ -6,10 +6,10 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 
@@ -78,10 +78,10 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
     }
 
     private void handleScheduleTick(ItemEffectContext context, List<GameSound> sounds, long interval) {
-        ItemEffectSource effectSource = context.getEffectSource();
+        Actor actor = context.getActor();
 
         // Stop simulation when source no longer exists
-        if (!effectSource.exists()) {
+        if (!actor.exists()) {
             repeatingSchedule.stop();
             return;
         }
@@ -101,14 +101,14 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
         }
 
         if (playingSounds && remainingTicks % interval == 0) {
-            audioEmitter.playSounds(sounds, effectSource.getLocation());
+            audioEmitter.playSounds(sounds, actor.getLocation());
         }
 
         if (elapsedTicks > totalDuration) {
             repeatingSchedule.stop();
 
-            if (effectSource instanceof Removable removableSource) {
-                removableSource.remove();
+            if (actor instanceof Removable removableActor) {
+                removableActor.remove();
             }
         }
     }

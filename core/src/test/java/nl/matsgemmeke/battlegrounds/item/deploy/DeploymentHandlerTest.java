@@ -358,7 +358,7 @@ class DeploymentHandlerTest {
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
 
-        verify(effectPerformance).changeEffectSource(deploymentObject);
+        verify(effectPerformance).changeActor(deploymentObject);
     }
 
     @Test
