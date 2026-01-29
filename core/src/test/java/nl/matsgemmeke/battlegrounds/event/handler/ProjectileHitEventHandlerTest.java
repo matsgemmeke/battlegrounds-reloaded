@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -14,8 +15,10 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -23,8 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +46,8 @@ class ProjectileHitEventHandlerTest {
     private ProjectileHitEventHandler eventHandler;
 
     @Test
-    void handleDoesNothingWhenProjectileSourceIsNoInstanceOfPlayer() {
+    @DisplayName("handle does nothing when ProjectileSource is no instance of Player")
+    void handle_doesNothing_whenProjectileSourceIsNoPlayer() {
         ProjectileSource projectileSource = mock(BlockProjectileSource.class);
 
         Projectile projectile = mock(Projectile.class);
@@ -59,7 +62,8 @@ class ProjectileHitEventHandlerTest {
     }
 
     @Test
-    void handleDoesNothingWhenNoGameKeyCanBeFoundForPlayer() {
+    @DisplayName("handle does nothing when no GameKey can be found for the player")
+    void handle_doesNothing_whenGameKeyNotFound() {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
@@ -76,7 +80,8 @@ class ProjectileHitEventHandlerTest {
     }
 
     @Test
-    void handleThrowsEventHandlingExceptionWhenGameContextCannotBeFoundForGameKey() {
+    @DisplayName("handle throws EventHandlingException when GameContext cannot be found for GameKey")
+    void handle_throwsEventHandlingException_whenGameContextNotFound() {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
@@ -96,7 +101,8 @@ class ProjectileHitEventHandlerTest {
     }
 
     @Test
-    void handleDoesNothingWhenNoProjectileHitActionWasFound() {
+    @DisplayName("handle does nothing when no corresponding ProjectileHitAction was found")
+    void handle_doesNothing_whenProjectileHitActionNotFound() {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
@@ -117,18 +123,16 @@ class ProjectileHitEventHandlerTest {
     }
 
     @Test
-    void handleCallsProjectileHitActionWithHitEntityLocation() {
+    @DisplayName("handle calls corresponding ProjectileHitAction with a ProjectileHitResult containing the hit entity")
+    void handle_callsProjectileHitAction_withHitEntity() {
+        Entity entity = mock(Entity.class);
         ProjectileHitAction projectileHitAction = mock(ProjectileHitAction.class);
-        Location entityLocation = new Location(null, 1, 1, 1);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
         Projectile projectile = mock(Projectile.class);
         when(projectile.getShooter()).thenReturn(player);
-
-        Entity entity = mock(Entity.class);
-        when(entity.getLocation()).thenReturn(entityLocation);
 
         ProjectileHitEvent event = new ProjectileHitEvent(projectile, entity);
 
@@ -142,23 +146,26 @@ class ProjectileHitEventHandlerTest {
 
         eventHandler.handle(event);
 
-        // TODO fix
-//        verify(projectileHitAction).onProjectileHit(entityLocation);
+        ArgumentCaptor<ProjectileHitResult> projectileHitResultCaptor = ArgumentCaptor.forClass(ProjectileHitResult.class);
+        verify(projectileHitAction).onProjectileHit(projectileHitResultCaptor.capture());
+
+        assertThat(projectileHitResultCaptor.getValue()).satisfies(projectileHitResult -> {
+           assertThat(projectileHitResult.hitBlock()).isNull();
+           assertThat(projectileHitResult.hitEntity()).isEqualTo(entity);
+        });
     }
 
     @Test
-    void handleCallsProjectileHitActionWithHitBlockLocation() {
+    @DisplayName("handle calls corresponding ProjectileHitAction with a ProjectileHitResult containing the hit block")
+    void handle_callsProjectileHitAction_withHitBlock() {
         ProjectileHitAction projectileHitAction = mock(ProjectileHitAction.class);
-        Location blockLocation = new Location(null, 1, 1, 1);
+        Block block = mock(Block.class);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
         Projectile projectile = mock(Projectile.class);
         when(projectile.getShooter()).thenReturn(player);
-
-        Block block = mock(Block.class);
-        when(block.getLocation()).thenReturn(blockLocation);
 
         ProjectileHitEvent event = new ProjectileHitEvent(projectile, block);
 
@@ -172,35 +179,12 @@ class ProjectileHitEventHandlerTest {
 
         eventHandler.handle(event);
 
-        // TODO fix
-//        verify(projectileHitAction).onProjectileHit(blockLocation);
-    }
+        ArgumentCaptor<ProjectileHitResult> projectileHitResultCaptor = ArgumentCaptor.forClass(ProjectileHitResult.class);
+        verify(projectileHitAction).onProjectileHit(projectileHitResultCaptor.capture());
 
-    @Test
-    void handleCallsProjectileHitActionWithProjectileLocation() {
-        ProjectileHitAction projectileHitAction = mock(ProjectileHitAction.class);
-        Location projectileLocation = new Location(null, 1, 1, 1);
-
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-
-        Projectile projectile = mock(Projectile.class);
-        when(projectile.getLocation()).thenReturn(projectileLocation);
-        when(projectile.getShooter()).thenReturn(player);
-
-        ProjectileHitEvent event = new ProjectileHitEvent(projectile);
-
-        ProjectileHitActionRegistry projectileHitActionRegistry = mock(ProjectileHitActionRegistry.class);
-        when(projectileHitActionRegistry.getProjectileHitAction(projectile)).thenReturn(Optional.of(projectileHitAction));
-
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(projectileHitActionRegistryProvider.get()).thenReturn(projectileHitActionRegistry);
-        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
-
-        eventHandler.handle(event);
-
-        // TODO fix
-//        verify(projectileHitAction).onProjectileHit(projectileLocation);
+        assertThat(projectileHitResultCaptor.getValue()).satisfies(projectileHitResult -> {
+            assertThat(projectileHitResult.hitBlock()).isEqualTo(block);
+            assertThat(projectileHitResult.hitEntity()).isNull();
+        });
     }
 }
