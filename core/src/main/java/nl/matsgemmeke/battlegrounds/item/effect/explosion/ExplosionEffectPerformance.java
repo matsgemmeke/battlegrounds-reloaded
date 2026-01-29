@@ -7,11 +7,11 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -39,34 +39,34 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
     @Override
     public void perform(ItemEffectContext context) {
         UUID uniqueId = context.getDamageSource().getUniqueId();
-        ItemEffectSource effectSource = context.getEffectSource();
-        Location effectSourceLocation = effectSource.getLocation();
-        World world = effectSource.getWorld();
+        Actor actor = context.getActor();
+        Location actorLocation = actor.getLocation();
+        World world = actor.getWorld();
 
         double range = properties.rangeProfile().longRangeDistance();
 
-        for (GameEntity target : targetFinder.findTargets(uniqueId, effectSourceLocation, range)) {
+        for (GameEntity target : targetFinder.findTargets(uniqueId, actorLocation, range)) {
             Location targetLocation = target.getLocation();
-            Damage damage = this.getDamageForTargetLocation(effectSourceLocation, targetLocation);
+            Damage damage = this.getDamageForTargetLocation(actorLocation, targetLocation);
 
             target.damage(damage);
         }
 
-        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(uniqueId, effectSourceLocation, range)) {
-            if (deploymentObject != effectSource) {
+        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(uniqueId, actorLocation, range)) {
+            if (deploymentObject != actor) {
                 Location objectLocation = deploymentObject.getLocation();
-                Damage damage = this.getDamageForTargetLocation(effectSourceLocation, objectLocation);
+                Damage damage = this.getDamageForTargetLocation(actorLocation, objectLocation);
 
                 damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
             }
         }
 
         // Remove the source before creating the explosion to prevent calling an extra EntityDamageByEntityEvent
-        if (effectSource instanceof Removable removableSource) {
-            removableSource.remove();
+        if (actor instanceof Removable removableActor) {
+            removableActor.remove();
         }
 
-        world.createExplosion(effectSourceLocation, properties.power(), properties.setFire(), properties.breakBlocks());
+        world.createExplosion(actorLocation, properties.power(), properties.setFire(), properties.breakBlocks());
     }
 
     private Damage getDamageForTargetLocation(Location sourceLocation, Location targetLocation) {

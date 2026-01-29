@@ -7,16 +7,16 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -60,15 +60,15 @@ class ExplosionEffectPerformanceTest {
     }
 
     @Test
-    void isPerformingReturnsFalseEvenAfterStartingPerformance() {
+    @DisplayName("isPerforming returns false even after starting performance")
+    void isPerforming_returnsFalse() {
         DamageSource damageSource = mock(DamageSource.class);
-        TriggerTarget triggerTarget = mock(TriggerTarget.class);
         World world = mock(World.class);
 
-        ItemEffectSource effectSource = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
-        when(effectSource.getWorld()).thenReturn(world);
+        Actor actor = mock(Actor.class, withSettings().extraInterfaces(Removable.class));
+        when(actor.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, null, INITIATION_LOCATION);
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -77,24 +77,24 @@ class ExplosionEffectPerformanceTest {
     }
 
     @Test
-    void performCreatesExplosionAtSourceLocationAndDamagesAllEntitiesInsideTheLongRangeDistance() {
+    @DisplayName("perform creates explosion at actor location and damage all entities inside the long range")
+    void perform_createsExplosionAndDamagesEntities() {
         World world = mock(World.class);
         Location objectLocation = new Location(world, 2, 1, 1);
-        Location sourceLocation = new Location(world, 1, 1, 1);
+        Location actorLocation = new Location(world, 1, 1, 1);
         Location targetLocation = new Location(world, 8, 1, 1);
-        TriggerTarget triggerTarget = mock(TriggerTarget.class);
 
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        ItemEffectSource effectSource = mock(ItemEffectSource.class, withSettings().extraInterfaces(Removable.class));
-        when(effectSource.getLocation()).thenReturn(sourceLocation);
-        when(effectSource.getWorld()).thenReturn(world);
+        Actor actor = mock(Actor.class, withSettings().extraInterfaces(Removable.class));
+        when(actor.getLocation()).thenReturn(actorLocation);
+        when(actor.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, null, INITIATION_LOCATION);
 
         GameEntity deployerEntity = mock(GameEntity.class);
-        when(deployerEntity.getLocation()).thenReturn(sourceLocation);
+        when(deployerEntity.getLocation()).thenReturn(actorLocation);
 
         GameEntity target = mock(GameEntity.class);
         when(target.getLocation()).thenReturn(targetLocation);
@@ -102,20 +102,21 @@ class ExplosionEffectPerformanceTest {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         when(deploymentObject.getLocation()).thenReturn(objectLocation);
 
-        when(targetFinder.findDeploymentObjects(DAMAGE_SOURCE_ID, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deploymentObject));
-        when(targetFinder.findTargets(DAMAGE_SOURCE_ID, sourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deployerEntity, target));
+        when(targetFinder.findDeploymentObjects(DAMAGE_SOURCE_ID, actorLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deploymentObject));
+        when(targetFinder.findTargets(DAMAGE_SOURCE_ID, actorLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deployerEntity, target));
 
         performance.perform(context);
 
         verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, new Damage(SHORT_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
         verify(deployerEntity).damage(new Damage(SHORT_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
         verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
-        verify(world).createExplosion(sourceLocation, POWER, SET_FIRE, BREAK_BLOCKS);
-        verify((Removable) effectSource).remove();
+        verify(world).createExplosion(actorLocation, POWER, SET_FIRE, BREAK_BLOCKS);
+        verify((Removable) actor).remove();
     }
 
     @Test
-    void cancelCancelsAllTriggerRuns() {
+    @DisplayName("cancel cancels all trigger runs")
+    void cancel_cancelsTriggerRuns() {
         TriggerRun triggerRun = mock(TriggerRun.class);
 
         performance.addTriggerRun(triggerRun);
