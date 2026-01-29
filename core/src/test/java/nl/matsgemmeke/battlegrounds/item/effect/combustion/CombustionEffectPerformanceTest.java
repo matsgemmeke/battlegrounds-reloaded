@@ -9,10 +9,10 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
@@ -65,14 +65,14 @@ class CombustionEffectPerformanceTest {
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
 
+    @Mock(extraInterfaces = Removable.class)
+    private Actor actor;
     @Mock
     private AudioEmitter audioEmitter;
     @Mock
     private CollisionDetector collisionDetector;
     @Mock
     private DamageSource damageSource;
-    @Mock(extraInterfaces = Removable.class)
-    private ItemEffectSource effectSource;
     @Mock
     private MetadataValueEditor metadataValueEditor;
     @Mock
@@ -122,7 +122,7 @@ class CombustionEffectPerformanceTest {
         World world = mock(World.class);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(mock(Block.class));
 
-        Location effectSourceLocation = new Location(world, 0, 0, 0);
+        Location actorLocation = new Location(world, 0, 0, 0);
         Location targetLocation = new Location(world, 6, 0, 0);
 
         GameEntity target = mock(GameEntity.class);
@@ -152,13 +152,13 @@ class CombustionEffectPerformanceTest {
         when(lowerBlock.getType()).thenReturn(Material.STONE).thenReturn(Material.FIRE);
         when(world.getBlockAt(0, 0, 1)).thenReturn(lowerBlock);
 
+        when(actor.getLocation()).thenReturn(actorLocation);
+        when(actor.getWorld()).thenReturn(world);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
-        when(effectSource.getLocation()).thenReturn(effectSourceLocation);
-        when(effectSource.getWorld()).thenReturn(world);
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(duration -> duration >= MIN_DURATION && duration <= MAX_DURATION))).thenReturn(cancelSchedule);
-        when(targetFinder.findTargets(DAMAGE_SOURCE_ID, effectSourceLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(target));
+        when(targetFinder.findTargets(DAMAGE_SOURCE_ID, actorLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(target));
 
         performance.perform(context);
 
@@ -209,17 +209,17 @@ class CombustionEffectPerformanceTest {
         verify(metadataValueEditor, never()).addFixedMetadataValue(eq(lowerBlock), anyString(), any());
         verify(metadataValueEditor, never()).removeMetadata(eq(lowerBlock), anyString());
 
-        verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, effectSourceLocation);
+        verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, actorLocation);
         verify(repeatingSchedule, times(2)).stop();
         verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));
-        verify((Removable) effectSource).remove();
+        verify((Removable) actor).remove();
     }
 
     @Test
     void rollbackResetsAffectedBlocksAndTriggerRuns() {
         ItemEffectContext context = this.createItemEffectContext();
         Location blockLocation = new Location(null, 0, 0, 0);
-        Location effectSourceLocation = new Location(null, 0, 0, 0);
+        Location actorLocation = new Location(null, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
 
         Block block = mock(Block.class);
@@ -232,9 +232,9 @@ class CombustionEffectPerformanceTest {
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        when(collisionDetector.hasLineOfSight(blockLocation, effectSourceLocation)).thenReturn(true);
-        when(effectSource.getLocation()).thenReturn(effectSourceLocation);
-        when(effectSource.getWorld()).thenReturn(world);
+        when(actor.getLocation()).thenReturn(actorLocation);
+        when(actor.getWorld()).thenReturn(world);
+        when(collisionDetector.hasLineOfSight(blockLocation, actorLocation)).thenReturn(true);
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(duration -> duration >= MIN_DURATION && duration <= MAX_DURATION))).thenReturn(cancelSchedule);
 
@@ -247,6 +247,6 @@ class CombustionEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, triggerTarget, INITIATION_LOCATION);
     }
 }
