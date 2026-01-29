@@ -4,11 +4,11 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
@@ -54,14 +54,14 @@ class SmokeScreenEffectPerformanceTest {
 
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
 
+    @Mock(extraInterfaces = Removable.class)
+    private Actor actor;
     @Mock
     private AudioEmitter audioEmitter;
     @Mock
     private CollisionDetector collisionDetector;
     @Mock
     private DamageSource damageSource;
-    @Mock(extraInterfaces = Removable.class)
-    private ItemEffectSource effectSource;
     @Mock
     private Scheduler scheduler;
     @Mock
@@ -106,7 +106,7 @@ class SmokeScreenEffectPerformanceTest {
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        when(effectSource.exists()).thenReturn(false);
+        when(actor.exists()).thenReturn(false);
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
@@ -119,99 +119,99 @@ class SmokeScreenEffectPerformanceTest {
     void performDisplaysTraceParticleWhenSourceHasMoved() {
         Schedule cancelSchedule = mock(Schedule.class);
         World world = mock(World.class);
-        Location effectSourceOldLocation = new Location(world, 0, 0, 0);
-        Location effectSourceNewLocation = new Location(world, 1, 1, 1);
+        Location actorOldLocation = new Location(world, 0, 0, 0);
+        Location actorNewLocation = new Location(world, 1, 1, 1);
         ItemEffectContext context = this.createItemEffectContext();
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        when(effectSource.exists()).thenReturn(true);
-        when(effectSource.getLocation()).thenReturn(effectSourceOldLocation, effectSourceNewLocation);
-        when(effectSource.getWorld()).thenReturn(world);
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorOldLocation, actorNewLocation);
+        when(actor.getWorld()).thenReturn(world);
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
         performance.perform(context);
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, effectSourceOldLocation);
-        verify(world).spawnParticle(PARTICLE_TYPE, effectSourceNewLocation, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorOldLocation);
+        verify(world).spawnParticle(PARTICLE_TYPE, actorNewLocation, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
     }
 
     @Test
     void performDisplaysSphereParticlesWhenSourceIsNotMoving() {
         World world = mock(World.class);
-        Location effectSourceLocation = new Location(world, 0, 0, 0);
+        Location actorLocation = new Location(world, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
         ItemEffectContext context = this.createItemEffectContext();
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorLocation);
+        when(actor.getWorld()).thenReturn(world);
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(true);
-        when(effectSource.exists()).thenReturn(true);
-        when(effectSource.getLocation()).thenReturn(effectSourceLocation);
-        when(effectSource.getWorld()).thenReturn(world);
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
         performance.perform(context);
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, effectSourceLocation);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
         verify(world, times(3)).spawnParticle(eq(PARTICLE_TYPE), any(Location.class), eq(0), anyDouble(), anyDouble(), anyDouble(), eq(PARTICLE_EXTRA), eq(PARTICLE_BLOCK_DATA), eq(true));
     }
 
     @Test
     void performDoesNotDisplaySphereParticleIfTheParticleLocationCausesCollision() {
         World world = mock(World.class);
-        Location effectSourceLocation = new Location(world, 0, 0, 0);
+        Location actorLocation = new Location(world, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
         ItemEffectContext context = this.createItemEffectContext();
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorLocation);
+        when(actor.getWorld()).thenReturn(world);
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(true);
-        when(effectSource.exists()).thenReturn(true);
-        when(effectSource.getLocation()).thenReturn(effectSourceLocation);
-        when(effectSource.getWorld()).thenReturn(world);
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
         performance.perform(context);
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, effectSourceLocation);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
         verifyNoInteractions(world);
     }
 
     @Test
     void performDoesNotDisplaySphereParticleIfTheParticleLocationHasNoLineOfSightToSource() {
         World world = mock(World.class);
-        Location effectSourceLocation = new Location(world, 0, 0, 0);
+        Location actorLocation = new Location(world, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
         ItemEffectContext context = this.createItemEffectContext();
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorLocation);
+        when(actor.getWorld()).thenReturn(world);
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
         when(collisionDetector.hasLineOfSight(any(Location.class), any(Location.class))).thenReturn(false);
-        when(effectSource.exists()).thenReturn(true);
-        when(effectSource.getLocation()).thenReturn(effectSourceLocation);
-        when(effectSource.getWorld()).thenReturn(world);
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
         performance.perform(context);
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, effectSourceLocation);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
         verifyNoInteractions(world);
     }
 
     @Test
     void performRemovesSourceAndCancelsRepeatingScheduleOnceEffectIsOver() {
-        Location effectSourceLocation = new Location(null, 0, 0, 0);
+        Location actorLocation = new Location(null, 0, 0, 0);
         ItemEffectContext context = this.createItemEffectContext();
 
         Schedule repeatingSchedule = mock(Schedule.class);
@@ -220,15 +220,15 @@ class SmokeScreenEffectPerformanceTest {
         Schedule cancelSchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(cancelSchedule).addTask(any(ScheduleTask.class));
 
-        when(effectSource.getLocation()).thenReturn(effectSourceLocation);
+        when(actor.getLocation()).thenReturn(actorLocation);
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
         performance.perform(context);
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, effectSourceLocation);
+        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
         verify(repeatingSchedule).stop();
-        verify((Removable) effectSource).remove();
+        verify((Removable) actor).remove();
     }
 
     @Test
@@ -249,6 +249,6 @@ class SmokeScreenEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, triggerTarget, INITIATION_LOCATION);
     }
 }

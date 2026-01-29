@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.effect.source.Removable;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -46,8 +46,10 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(@NotNull ItemEffectContext context) {
-        currentLocation = context.getEffectSource().getLocation();
+    public void perform(ItemEffectContext context) {
+        Actor actor = context.getActor();
+
+        currentLocation = actor.getLocation();
         currentRadius = properties.minSize();
 
         audioEmitter.playSounds(properties.activationSounds(), currentLocation);
@@ -55,7 +57,7 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         long totalDuration = this.getTotalDuration(properties.minDuration(), properties.maxDuration());
 
         repeatingSchedule = scheduler.createRepeatingSchedule(SCHEDULER_DELAY, properties.growthInterval());
-        repeatingSchedule.addTask(() -> this.handleGrowth(context));
+        repeatingSchedule.addTask(() -> this.handleGrowth(actor));
         repeatingSchedule.start();
 
         Schedule cancelSchedule = scheduler.createSingleRunSchedule(totalDuration);
@@ -63,15 +65,13 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         cancelSchedule.start();
     }
 
-    private void handleGrowth(ItemEffectContext context) {
-        ItemEffectSource effectSource = context.getEffectSource();
-
-        if (!effectSource.exists()) {
+    private void handleGrowth(Actor actor) {
+        if (!actor.exists()) {
             repeatingSchedule.stop();
             return;
         }
 
-        this.createSmokeEffect(effectSource.getLocation(), effectSource.getWorld());
+        this.createSmokeEffect(actor.getLocation(), actor.getWorld());
     }
 
     private long getTotalDuration(long minDuration, long maxDuration) {
@@ -151,8 +151,8 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
     private void expire(ItemEffectContext context) {
         this.rollback();
 
-        if (context.getEffectSource() instanceof Removable removableSource) {
-            removableSource.remove();
+        if (context.getActor() instanceof Removable removableActor) {
+            removableActor.remove();
         }
     }
 
