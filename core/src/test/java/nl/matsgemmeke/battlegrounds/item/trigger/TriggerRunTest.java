@@ -1,10 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,15 +21,30 @@ import static org.mockito.Mockito.*;
 class TriggerRunTest {
 
     @Mock
+    private Actor actor;
+    @Mock
     private Schedule schedule;
     @Mock
     private Trigger trigger;
-    @Mock
-    private TriggerTarget target;
     @Spy
-    private TriggerContext context = new TriggerContext(UUID.randomUUID(), target);
+    private TriggerContext context = new TriggerContext(UUID.randomUUID(), actor);
     @InjectMocks
     private TriggerRun triggerRun;
+
+    @Test
+    @DisplayName("replaceActor sets new context with replaced actor")
+    void replaceActor_setsNewContext() {
+        Actor newActor = mock(Actor.class);
+        TriggerResult triggerResult = mock(TriggerResult.class);
+
+        when(trigger.check(any(TriggerContext.class))).thenReturn(triggerResult);
+        doAnswer(MockUtils.answerRunScheduleTask()).when(schedule).addTask(any(ScheduleTask.class));
+
+        triggerRun.replaceActor(newActor);
+        triggerRun.start();
+
+        verify(trigger).check(argThat(context -> context.actor() == newActor));
+    }
 
     @Test
     void cancelDoesNotStopScheduleWhenNotStarted() {

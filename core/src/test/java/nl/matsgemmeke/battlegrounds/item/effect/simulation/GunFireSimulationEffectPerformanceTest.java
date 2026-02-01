@@ -170,7 +170,7 @@ class GunFireSimulationEffectPerformanceTest {
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(gunInfoProvider.getGunFireSimulationInfo(DAMAGE_SOURCE_ID)).thenReturn(Optional.of(gunFireSimulationInfo));
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
-        doAnswer(MockUtils.answerScheduleTaskRun(MAX_TOTAL_DURATION)).when(repeatingSchedule).addTask(any(ScheduleTask.class));
+        doAnswer(MockUtils.answerRunScheduleTask(MAX_TOTAL_DURATION)).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
         performance.setContext(context);
         performance.start();

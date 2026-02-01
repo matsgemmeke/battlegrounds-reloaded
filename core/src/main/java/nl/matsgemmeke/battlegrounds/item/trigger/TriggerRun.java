@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 
@@ -11,9 +12,9 @@ public class TriggerRun {
     private final Schedule schedule;
     private final Set<TriggerObserver> observers;
     private final Trigger trigger;
-    private final TriggerContext context;
     private boolean repeating;
     private boolean started;
+    private TriggerContext context;
 
     public TriggerRun(Schedule schedule, Trigger trigger, TriggerContext context) {
         this.schedule = schedule;
@@ -34,6 +35,10 @@ public class TriggerRun {
 
     public void addObserver(TriggerObserver observer) {
         observers.add(observer);
+    }
+
+    public void replaceActor(Actor actor) {
+        context = context.withActor(actor);
     }
 
     public void cancel() {

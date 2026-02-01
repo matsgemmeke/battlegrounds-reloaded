@@ -51,7 +51,15 @@ public final class MockUtils {
         };
     }
 
-    public static Answer<Void> answerScheduleTaskRun(Number times) {
+    public static Answer<Void> answerRunScheduleTask() {
+        return invocation -> {
+            ScheduleTask task = invocation.getArgument(0);
+            task.run();
+            return null;
+        };
+    }
+
+    public static Answer<Void> answerRunScheduleTask(Number times) {
         return invocation -> {
             ScheduleTask task = invocation.getArgument(0);
 

@@ -11,4 +11,8 @@ import java.util.UUID;
  * @param actor    the actor which the trigger is monitoring
  */
 public record TriggerContext(UUID sourceId, Actor actor) {
+
+    public TriggerContext withActor(Actor actor) {
+        return new TriggerContext(sourceId, actor);
+    }
 }

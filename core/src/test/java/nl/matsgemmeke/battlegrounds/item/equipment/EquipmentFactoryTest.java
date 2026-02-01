@@ -13,6 +13,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -21,43 +22,47 @@ import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class EquipmentFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class EquipmentFactoryTest {
 
     private static final String TEMPLATE_ID_KEY = "template-id";
 
+    @Mock
     private DeploymentHandlerFactory deploymentHandlerFactory;
+    @Mock
     private EquipmentControlsFactory controlsFactory;
+    @Mock
     private EquipmentRegistry equipmentRegistry;
+    @Mock
     private ItemEffectFactory itemEffectFactory;
+    @Mock
     private ItemFactory itemFactory;
-    private MockedStatic<Bukkit> bukkit;
+    @Mock
     private NamespacedKeyCreator keyCreator;
-    private ParticleEffectMapper particleEffectMapper;
+    @Spy
+    private ParticleEffectMapper particleEffectMapper = new ParticleEffectMapper();
+    @Mock
+    private TriggerExecutorFactory triggerExecutorFactory;
+    @InjectMocks
+    private EquipmentFactory equipmentFactory;
+
+    private MockedStatic<Bukkit> bukkit;
 
     @BeforeEach
-    public void setUp() {
-        deploymentHandlerFactory = mock(DeploymentHandlerFactory.class);
-        controlsFactory = mock(EquipmentControlsFactory.class);
-        equipmentRegistry = mock(EquipmentRegistry.class);
-        itemEffectFactory = mock(ItemEffectFactory.class);
-        itemFactory = mock(ItemFactory.class);
-        keyCreator = mock(NamespacedKeyCreator.class);
-        particleEffectMapper = new ParticleEffectMapper();
-
+    void setUp() {
         Plugin plugin = mock(Plugin.class);
-        Mockito.when(plugin.getName()).thenReturn("Battlegrounds");
+        when(plugin.getName()).thenReturn("Battlegrounds");
 
         NamespacedKey key = new NamespacedKey(plugin, TEMPLATE_ID_KEY);
-
-        keyCreator = mock(NamespacedKeyCreator.class);
         when(keyCreator.create(TEMPLATE_ID_KEY)).thenReturn(key);
 
         bukkit = mockStatic(Bukkit.class);
@@ -65,12 +70,12 @@ public class EquipmentFactoryTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         bukkit.close();
     }
 
     @Test
-    public void createReturnsEquipmentWithPlayerHolder() {
+    void createReturnsEquipmentWithPlayerHolder() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
@@ -83,8 +88,7 @@ public class EquipmentFactoryTest {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, controlsFactory, equipmentRegistry, itemEffectFactory, keyCreator, particleEffectMapper);
-        Equipment equipment = factory.create(spec, gamePlayer);
+        Equipment equipment = equipmentFactory.create(spec, gamePlayer);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getName()).isEqualTo("Frag Grenade");
@@ -93,7 +97,7 @@ public class EquipmentFactoryTest {
     }
 
     @Test
-    public void createMakesEquipmentWithActivator() {
+    void createMakesEquipmentWithActivator() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
 
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
@@ -105,8 +109,7 @@ public class EquipmentFactoryTest {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
 
-        EquipmentFactory factory = new EquipmentFactory(deploymentHandlerFactory, controlsFactory, equipmentRegistry, itemEffectFactory, keyCreator, particleEffectMapper);
-        Equipment equipment = factory.create(spec);
+        Equipment equipment = equipmentFactory.create(spec);
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getActivator()).isNotNull();

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
@@ -23,6 +24,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
@@ -46,6 +49,7 @@ public class EquipmentFactory {
     private final ItemEffectFactory itemEffectFactory;
     private final NamespacedKeyCreator namespacedKeyCreator;
     private final ParticleEffectMapper particleEffectMapper;
+    private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
     public EquipmentFactory(
@@ -54,7 +58,8 @@ public class EquipmentFactory {
             EquipmentRegistry equipmentRegistry,
             ItemEffectFactory itemEffectFactory,
             NamespacedKeyCreator namespacedKeyCreator,
-            ParticleEffectMapper particleEffectMapper
+            ParticleEffectMapper particleEffectMapper,
+            TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.controlsFactory = controlsFactory;
@@ -62,6 +67,7 @@ public class EquipmentFactory {
         this.itemEffectFactory = itemEffectFactory;
         this.namespacedKeyCreator = namespacedKeyCreator;
         this.particleEffectMapper = particleEffectMapper;
+        this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
     public Equipment create(EquipmentSpec spec) {
@@ -176,6 +182,12 @@ public class EquipmentFactory {
 
         DeploymentHandler deploymentHandler = deploymentHandlerFactory.create(deploymentProperties, itemEffect);
         deploymentHandler.setActivator(activator);
+
+        for (TriggerSpec triggerSpec : deploymentSpec.triggers.values()) {
+            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
+
+            deploymentHandler.addTriggerExecutor(triggerExecutor);
+        }
 
         return deploymentHandler;
     }

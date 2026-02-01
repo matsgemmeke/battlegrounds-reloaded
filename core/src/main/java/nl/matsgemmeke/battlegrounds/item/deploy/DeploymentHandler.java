@@ -3,12 +3,17 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.*;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultAdapter;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -17,17 +22,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class DeploymentHandler {
 
     private final AudioEmitter audioEmitter;
+    private final CollisionResultAdapter collisionResultAdapter;
     private final DeploymentProperties deploymentProperties;
     private final ItemEffect itemEffect;
     private final ParticleEffectSpawner particleEffectSpawner;
     private final Scheduler scheduler;
     private final Set<TriggerExecutor> triggerExecutors;
+    private final Set<TriggerRun> triggerRuns;
     @Nullable
     private Activator activator;
+    private boolean pending;
     private boolean performing;
     @Nullable
     private DeploymentObject deploymentObject;
@@ -35,17 +44,21 @@ public class DeploymentHandler {
     @Inject
     public DeploymentHandler(
             AudioEmitter audioEmitter,
+            CollisionResultAdapter collisionResultAdapter,
             ParticleEffectSpawner particleEffectSpawner,
             Scheduler scheduler,
             @Assisted DeploymentProperties deploymentProperties,
             @Assisted ItemEffect itemEffect
     ) {
         this.audioEmitter = audioEmitter;
+        this.collisionResultAdapter = collisionResultAdapter;
         this.particleEffectSpawner = particleEffectSpawner;
         this.scheduler = scheduler;
         this.deploymentProperties = deploymentProperties;
         this.itemEffect = itemEffect;
         this.triggerExecutors = new HashSet<>();
+        this.triggerRuns = new HashSet<>();
+        this.pending = false;
         this.performing = false;
     }
 
@@ -128,47 +141,56 @@ public class DeploymentHandler {
         performing = true;
         deploymentObject = deploymentResult.deploymentObject();
 
-        ItemEffectPerformance latestPerformance = itemEffect.getLatestPerformance().orElse(null);
+        if (pending) {
+            Actor actor = deploymentResult.triggerTarget();
 
-        if (latestPerformance != null) {
-            latestPerformance.changeActor(deploymentObject);
+            itemEffect.getLatestPerformance().ifPresent(latestPerformance -> latestPerformance.changeActor(actor));
+            triggerRuns.forEach(triggerRun -> triggerRun.replaceActor(actor));
             return;
         }
 
-        if (!deploymentObject.isPhysical()) {
-            this.processPendingDeployment(deploymentResult);
+        DamageSource damageSource = deploymentResult.deployer();
+        UUID sourceId = damageSource.getUniqueId();
+        Actor actor = deploymentResult.triggerTarget();
+        TriggerContext triggerContext = new TriggerContext(sourceId, actor);
+        Location startingLocation = actor.getLocation();
+
+        for (TriggerExecutor triggerExecutor : triggerExecutors) {
+            TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
+            triggerRun.addObserver(triggerResult -> this.activateEffect(triggerResult, damageSource, actor, startingLocation));
+            triggerRun.start();
+
+            if (!deploymentObject.isPhysical()) {
+                triggerRuns.add(triggerRun);
+            }
+        }
+
+        if (deploymentObject.isPhysical()) {
+            pending = false;
+
+            Deployer deployer = deploymentResult.deployer();
+            long cooldown = deploymentResult.cooldown();
+
+            deployer.setCanDeploy(false);
+
+            Schedule delaySchedule = scheduler.createSingleRunSchedule(cooldown);
+            delaySchedule.addTask(() -> deployer.setCanDeploy(true));
+            delaySchedule.start();
+
+            if (activator != null) {
+                activator.prepare(deployer);
+            }
         } else {
-            this.processCompletedDeployment(deploymentResult);
+            pending = true;
         }
     }
 
-    private void processPendingDeployment(DeploymentResult deploymentResult) {
-        Deployer deployer = deploymentResult.deployer();
-        TriggerTarget triggerTarget = deploymentResult.triggerTarget();
-        Location initiationLocation = deploymentResult.deploymentObject().getLocation();
-        ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, triggerTarget, initiationLocation);
+    private void activateEffect(TriggerResult triggerResult, DamageSource damageSource, Actor actor, Location startingLocation) {
+        CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
+        ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
 
-        itemEffect.startPerformance(context);
-    }
-
-    private void processCompletedDeployment(DeploymentResult deploymentResult) {
-        Deployer deployer = deploymentResult.deployer();
-        TriggerTarget triggerTarget = deploymentResult.triggerTarget();
-        Location initiationLocation = deployer.getDeployLocation();
-        long cooldown = deploymentResult.cooldown();
-
-        ItemEffectContext context = new ItemEffectContext(deployer, deploymentObject, triggerTarget, initiationLocation);
-
-        itemEffect.startPerformance(context);
-
-        deployer.setCanDeploy(false);
-
-        Schedule delaySchedule = scheduler.createSingleRunSchedule(cooldown);
-        delaySchedule.addTask(() -> deployer.setCanDeploy(true));
-        delaySchedule.start();
-
-        if (activator != null) {
-            activator.prepare(deployer);
-        }
+        itemEffect.startPerformance(effectContext);
+        triggerRuns.forEach(TriggerRun::cancel);
+        triggerRuns.clear();
     }
 }
