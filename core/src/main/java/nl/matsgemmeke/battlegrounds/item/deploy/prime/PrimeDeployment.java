@@ -1,15 +1,18 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.prime;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
+import nl.matsgemmeke.battlegrounds.item.actor.DeployerActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.DeployerTriggerTarget;
 import org.bukkit.entity.Entity;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * A deployment system that creates a {@link DeploymentObject}, representing the deployable item in a primed state
@@ -18,11 +21,13 @@ import java.util.Optional;
 public class PrimeDeployment implements Deployment {
 
     private final AudioEmitter audioEmitter;
+    private final GameEntityFinder gameEntityFinder;
     private List<GameSound> primeSounds;
 
     @Inject
-    public PrimeDeployment(AudioEmitter audioEmitter) {
+    public PrimeDeployment(AudioEmitter audioEmitter, GameEntityFinder gameEntityFinder) {
         this.audioEmitter = audioEmitter;
+        this.gameEntityFinder = gameEntityFinder;
         this.primeSounds = Collections.emptyList();
     }
 
@@ -32,13 +37,20 @@ public class PrimeDeployment implements Deployment {
 
     @Override
     public Optional<DeploymentResult> perform(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
+        UUID deployerUniqueId = deployer.getUniqueId();
+        GameEntity gameEntity = gameEntityFinder.findGameEntityByUniqueId(deployerUniqueId).orElse(null);
+
+        if (gameEntity == null) {
+            return Optional.empty();
+        }
+
         if (!primeSounds.isEmpty()) {
             audioEmitter.playSounds(primeSounds, deployerEntity.getLocation());
         }
 
         PrimeDeploymentObject deploymentObject = new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
-        DeployerTriggerTarget triggerTarget = new DeployerTriggerTarget();
+        DeployerActor actor = new DeployerActor(gameEntity);
 
-        return Optional.of(new DeploymentResult(deployer, deploymentObject, triggerTarget, 0L));
+        return Optional.of(new DeploymentResult(deployer, deploymentObject, actor, 0L));
     }
 }

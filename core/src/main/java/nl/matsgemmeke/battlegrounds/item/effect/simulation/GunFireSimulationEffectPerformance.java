@@ -73,7 +73,7 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
         playingSounds = true;
 
         repeatingSchedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, SCHEDULE_INTERVAL);
-        repeatingSchedule.addTask(() -> this.handleScheduleTick(context, sounds, interval));
+        repeatingSchedule.addTask(() -> this.handleScheduleTick(currentContext, sounds, interval));
         repeatingSchedule.start();
     }
 

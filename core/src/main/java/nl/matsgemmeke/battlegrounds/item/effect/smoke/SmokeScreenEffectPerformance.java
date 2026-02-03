@@ -49,6 +49,7 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
     public void perform(ItemEffectContext context) {
         Actor actor = context.getActor();
 
+        currentContext = context;
         currentLocation = actor.getLocation();
         currentRadius = properties.minSize();
 
@@ -57,15 +58,17 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         long totalDuration = this.getTotalDuration(properties.minDuration(), properties.maxDuration());
 
         repeatingSchedule = scheduler.createRepeatingSchedule(SCHEDULER_DELAY, properties.growthInterval());
-        repeatingSchedule.addTask(() -> this.handleGrowth(actor));
+        repeatingSchedule.addTask(this::handleGrowth);
         repeatingSchedule.start();
 
         Schedule cancelSchedule = scheduler.createSingleRunSchedule(totalDuration);
-        cancelSchedule.addTask(() -> this.expire(context));
+        cancelSchedule.addTask(this::expire);
         cancelSchedule.start();
     }
 
-    private void handleGrowth(Actor actor) {
+    private void handleGrowth() {
+        Actor actor = currentContext.getActor();
+
         if (!actor.exists()) {
             repeatingSchedule.stop();
             return;
@@ -148,10 +151,10 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         }
     }
 
-    private void expire(ItemEffectContext context) {
+    private void expire() {
         this.rollback();
 
-        if (context.getActor() instanceof Removable removableActor) {
+        if (currentContext.getActor() instanceof Removable removableActor) {
             removableActor.remove();
         }
     }

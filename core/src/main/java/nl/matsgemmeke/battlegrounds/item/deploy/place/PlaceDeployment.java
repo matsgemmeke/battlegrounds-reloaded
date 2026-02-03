@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.actor.BlockActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.BlockTriggerTarget;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -66,14 +66,14 @@ public class PlaceDeployment implements Deployment {
         deploymentObject.setHealth(properties.health());
         deploymentObject.setResistances(properties.resistances());
 
-        BlockTriggerTarget triggerTarget = new BlockTriggerTarget(adjacentBlock, properties.material());
+        BlockActor actor = new BlockActor(adjacentBlock, properties.material());
         long cooldown = properties.cooldown();
 
         audioEmitter.playSounds(properties.placeSounds(), adjacentBlock.getLocation());
 
         deployer.setHeldItem(null);
 
-        return Optional.of(new DeploymentResult(deployer, deploymentObject, triggerTarget, cooldown));
+        return Optional.of(new DeploymentResult(deployer, deploymentObject, actor, cooldown));
     }
 
     private void placeBlock(Block block, BlockFace blockFace, Material material) {

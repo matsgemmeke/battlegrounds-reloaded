@@ -7,11 +7,14 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -52,6 +55,29 @@ class OpenModeEntityTest {
         Damage lastDamage = openModeEntity.getLastDamage();
 
         assertThat(lastDamage).isEqualTo(damage);
+    }
+
+    @Test
+    @DisplayName("getVelocity returns entity's velocity")
+    void getVelocity_returnsEntityVelocity() {
+        Vector entityVelocity = new Vector();
+
+        when(entity.getVelocity()).thenReturn(entityVelocity);
+
+        Vector openModeEntityVelocity = openModeEntity.getVelocity();
+
+        assertThat(openModeEntityVelocity).isEqualTo(entityVelocity);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isValid returns whether entity is valid")
+    void isValid_returnsEntityValid(boolean entityValid, boolean expected) {
+        when(entity.isValid()).thenReturn(entityValid);
+
+        boolean valid = openModeEntity.isValid();
+
+        assertThat(valid).isEqualTo(expected);
     }
 
     @Test

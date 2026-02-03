@@ -94,6 +94,11 @@ public class DefaultGamePlayer implements GamePlayer {
         return player.getUniqueId();
     }
 
+    @Override
+    public Vector getVelocity() {
+        return player.getVelocity();
+    }
+
     @NotNull
     public World getWorld() {
         return player.getWorld();
@@ -105,6 +110,11 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public void setPassive(boolean passive) {
         this.passive = passive;
+    }
+
+    @Override
+    public boolean isValid() {
+        return player.isValid();
     }
 
     @Override

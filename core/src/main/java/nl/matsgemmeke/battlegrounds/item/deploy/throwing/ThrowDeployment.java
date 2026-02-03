@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.ItemTriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -61,7 +61,7 @@ public class ThrowDeployment implements Deployment {
         deploymentObject.setHealth(properties.health());
         deploymentObject.setResistances(properties.resistances());
 
-        ItemTriggerTarget triggerTarget = new ItemTriggerTarget(item);
+        ItemActor actor = new ItemActor(item);
         long cooldown = properties.cooldown();
 
         properties.projectileEffects().forEach(effect -> effect.onLaunch(deployer, deploymentObject));
@@ -70,6 +70,6 @@ public class ThrowDeployment implements Deployment {
 
         deployer.setHeldItem(null);
 
-        return Optional.of(new DeploymentResult(deployer, deploymentObject, triggerTarget, cooldown));
+        return Optional.of(new DeploymentResult(deployer, deploymentObject, actor, cooldown));
     }
 }

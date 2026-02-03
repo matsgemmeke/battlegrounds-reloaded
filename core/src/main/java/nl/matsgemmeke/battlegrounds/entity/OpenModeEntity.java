@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,9 +55,19 @@ public class OpenModeEntity implements GameMob {
         return entity.getUniqueId();
     }
 
+    @Override
+    public Vector getVelocity() {
+        return entity.getVelocity();
+    }
+
     @NotNull
     public World getWorld() {
         return entity.getWorld();
+    }
+
+    @Override
+    public boolean isValid() {
+        return entity.isValid();
     }
 
     @Override

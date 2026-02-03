@@ -142,7 +142,7 @@ public class DeploymentHandler {
         deploymentObject = deploymentResult.deploymentObject();
 
         if (pending) {
-            Actor actor = deploymentResult.triggerTarget();
+            Actor actor = deploymentResult.actor();
 
             itemEffect.getLatestPerformance().ifPresent(latestPerformance -> latestPerformance.changeActor(actor));
             triggerRuns.forEach(triggerRun -> triggerRun.replaceActor(actor));
@@ -151,7 +151,7 @@ public class DeploymentHandler {
 
         DamageSource damageSource = deploymentResult.deployer();
         UUID sourceId = damageSource.getUniqueId();
-        Actor actor = deploymentResult.triggerTarget();
+        Actor actor = deploymentResult.actor();
         TriggerContext triggerContext = new TriggerContext(sourceId, actor);
         Location startingLocation = actor.getLocation();
 

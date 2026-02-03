@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.util.Vector;
 
 import java.util.UUID;
 
@@ -43,9 +44,23 @@ public interface GameEntity extends Target, DamageTarget {
     UUID getUniqueId();
 
     /**
+     * Gets this entity's current velocity
+     *
+     * @return the current traveling velocity of the entity
+     */
+    Vector getVelocity();
+
+    /**
      * Gets the world the game entity is located in.
      *
      * @return the game entity world
      */
     World getWorld();
+
+    /**
+     * Returns whether the entity has died or been despawned for some other reason.
+     *
+     * @return whether the entity is valid
+     */
+    boolean isValid();
 }

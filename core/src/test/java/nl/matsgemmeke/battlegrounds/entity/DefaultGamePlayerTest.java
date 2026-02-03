@@ -18,10 +18,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
@@ -77,6 +79,29 @@ class DefaultGamePlayerTest {
         UUID uniqueId = gamePlayer.getUniqueId();
 
         assertThat(uniqueId).isEqualTo(playerUniqueId);
+    }
+
+    @Test
+    @DisplayName("getVelocity returns player's velocity")
+    void getVelocity_returnsPlayerVelocity() {
+        Vector playerVelocity = new Vector();
+
+        when(player.getVelocity()).thenReturn(playerVelocity);
+
+        Vector gamePlayerVelocity = gamePlayer.getVelocity();
+
+        assertThat(gamePlayerVelocity).isEqualTo(playerVelocity);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isValid returns whether player is valid")
+    void isValid_returnsWhetherPlayerIsValid(boolean playerValid, boolean expected) {
+        when(player.isValid()).thenReturn(playerValid);
+
+        boolean valid = gamePlayer.isValid();
+
+        assertThat(valid).isEqualTo(expected);
     }
 
     @Test
