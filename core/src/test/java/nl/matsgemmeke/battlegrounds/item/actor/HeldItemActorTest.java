@@ -1,8 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.actor;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,16 +16,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class DeployerActorTest {
+class HeldItemActorTest {
 
     @Mock
+    private Deployer deployer;
+    @Mock
     private GameEntity gameEntity;
+    @Mock
+    private ItemStack itemStack;
     @InjectMocks
-    private DeployerActor actor;
+    private HeldItemActor actor;
 
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
@@ -72,5 +77,13 @@ class DeployerActorTest {
         World actorWorld = actor.getWorld();
 
         assertThat(actorWorld).isEqualTo(gameEntityWorld);
+    }
+
+    @Test
+    @DisplayName("remove removes ItemStack from deployer")
+    void remove_removesItemStack() {
+        actor.remove();
+
+        verify(deployer).removeItem(itemStack);
     }
 }

@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.actor.DeployerActor;
+import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
@@ -107,7 +107,7 @@ class PrimeDeploymentTest {
                 assertThat(deploymentObject.getHealth()).isZero();
                 assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
             });
-            assertThat(deploymentResult.actor()).isInstanceOf(DeployerActor.class);
+            assertThat(deploymentResult.actor()).isInstanceOf(HeldItemActor.class);
         });
 
         verify(audioEmitter).playSounds(primeSounds, deployerLocation);

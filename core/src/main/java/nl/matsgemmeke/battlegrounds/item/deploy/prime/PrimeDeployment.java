@@ -5,9 +5,10 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
-import nl.matsgemmeke.battlegrounds.item.actor.DeployerActor;
+import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,8 +49,9 @@ public class PrimeDeployment implements Deployment {
             audioEmitter.playSounds(primeSounds, deployerEntity.getLocation());
         }
 
+        ItemStack heldItemStack = deployer.getHeldItem();
         PrimeDeploymentObject deploymentObject = new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
-        DeployerActor actor = new DeployerActor(gameEntity);
+        HeldItemActor actor = new HeldItemActor(deployer, gameEntity, heldItemStack);
 
         return Optional.of(new DeploymentResult(deployer, deploymentObject, actor, 0L));
     }
