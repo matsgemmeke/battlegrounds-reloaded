@@ -40,13 +40,13 @@ class WeaponCreatorProviderTest {
     private SpecDeserializer specDeserializer = new SpecDeserializer();
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         // Activate garbage collector to release file lock
         System.gc();
     }
 
     @Test
-    public void getThrowsIllegalStateExceptionWhenResourceLocationIsInvalidURI() throws URISyntaxException {
+    void getThrowsIllegalStateExceptionWhenResourceLocationIsInvalidURI() throws URISyntaxException {
         File itemsFolder = new File(tempDirectory.getPath() + "/items");
 
         WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger));
@@ -56,7 +56,7 @@ class WeaponCreatorProviderTest {
     }
 
     @Test
-    public void getLogsWarningsMessageWhenDirectoryDoesNotContainAnyFiles() {
+    void getLogsWarningsMessageWhenDirectoryDoesNotContainAnyFiles() {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_empty_directory");
         itemsFolder.mkdirs();
 
@@ -67,7 +67,7 @@ class WeaponCreatorProviderTest {
     }
 
     @Test
-    public void getLogsErrorMessageWhenSubfolderDoesNotContainAnyFiles() {
+    void getLogsErrorMessageWhenSubfolderDoesNotContainAnyFiles() {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_empty_subfolders");
 
         File itemsSubfolder = new File("src/test/resources/weapon_creator_provider/items_empty_subfolders/submachine_guns");
@@ -80,7 +80,7 @@ class WeaponCreatorProviderTest {
     }
 
     @Test
-    public void getLogsErrorMessageWhenItemFileFailsToLoad() {
+    void getLogsErrorMessageWhenItemFileFailsToLoad() {
         File itemsFolder = new File(tempDirectory.getPath() + "/items");
 
         MockedStatic<YamlConfiguration> yamlConfiguration = mockStatic(YamlConfiguration.class);
@@ -96,7 +96,7 @@ class WeaponCreatorProviderTest {
     }
 
     @Test
-    public void getLogsErrorMessageWhenItemFileDoesNotContainIdValue() {
+    void getLogsErrorMessageWhenItemFileDoesNotContainIdValue() {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_without_name");
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
@@ -110,7 +110,7 @@ class WeaponCreatorProviderTest {
     }
 
     @Test
-    public void getLogsErrorMessageWhenItemFileContainsErrorInItsSpecification() {
+    void getLogsErrorMessageWhenItemFileContainsErrorInItsSpecification() {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_invalid");
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
@@ -124,7 +124,7 @@ class WeaponCreatorProviderTest {
     }
 
     @Test
-    public void getLogsErrorMessagesWhenItemFileContainsNoItemTypeSpecification() {
+    void getLogsErrorMessagesWhenItemFileContainsNoItemTypeSpecification() {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_without_type");
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
@@ -136,7 +136,7 @@ class WeaponCreatorProviderTest {
     }
 
     @Test
-    public void getCopiesResourcesFilesIfItemsDirectoryDoesNotYetExist() {
+    void getCopiesResourcesFilesIfItemsDirectoryDoesNotYetExist() {
         File itemsFolder = new File(tempDirectory.getPath() + "/items");
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
@@ -150,7 +150,7 @@ class WeaponCreatorProviderTest {
     }
 
     @Test
-    public void getLoadsItemsFilesAndCreatesItemSpecifications() {
+    void getLoadsItemsFilesAndCreatesItemSpecifications() {
         File itemsFolder = new File("src/main/resources/items");
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
@@ -161,7 +161,7 @@ class WeaponCreatorProviderTest {
     }
 
     @Test
-    public void getLoadsItemsFilesWithoutSubfoldersAndCreatesItemSpecifications() {
+    void getLoadsItemsFilesWithoutSubfoldersAndCreatesItemSpecifications() {
         File itemsFolder = new File("src/main/resources/items/submachine_guns");
 
         WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);

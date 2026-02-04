@@ -30,13 +30,10 @@ import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.HitboxMultiplierProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ItemEffectFactory {
 
@@ -51,7 +48,6 @@ public class ItemEffectFactory {
     private final Provider<SmokeScreenEffect> smokeScreenEffectProvider;
     private final Provider<SoundNotificationEffect> soundNotificationEffectProvider;
     private final RangeProfileMapper rangeProfileMapper;
-    private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
     public ItemEffectFactory(
@@ -65,8 +61,7 @@ public class ItemEffectFactory {
             Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
             Provider<SmokeScreenEffect> smokeScreenEffectProvider,
             Provider<SoundNotificationEffect> soundNotificationEffectProvider,
-            RangeProfileMapper rangeProfileMapper,
-            TriggerExecutorFactory triggerExecutorFactory
+            RangeProfileMapper rangeProfileMapper
     ) {
         this.hitboxMultiplierProfileMapper = hitboxMultiplierProfileMapper;
         this.particleEffectMapper = particleEffectMapper;
@@ -79,7 +74,6 @@ public class ItemEffectFactory {
         this.smokeScreenEffectProvider = smokeScreenEffectProvider;
         this.soundNotificationEffectProvider = soundNotificationEffectProvider;
         this.rangeProfileMapper = rangeProfileMapper;
-        this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
     public ItemEffect create(ItemEffectSpec itemEffectSpec) {
@@ -203,12 +197,6 @@ public class ItemEffectFactory {
                 yield soundNotificationEffect;
             }
         };
-
-        for (TriggerSpec triggerSpec : itemEffectSpec.triggers.values()) {
-            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
-
-            itemEffect.addTriggerExecutor(triggerExecutor);
-        }
 
         return itemEffect;
     }

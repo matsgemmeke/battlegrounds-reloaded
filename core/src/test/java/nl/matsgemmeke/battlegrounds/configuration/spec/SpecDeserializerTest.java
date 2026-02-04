@@ -60,7 +60,6 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.shooting.projectile.type).isEqualTo("HITSCAN");
 
         assertThat(gunSpec.shooting.projectile.effect.effectType).isEqualTo("DAMAGE");
-        assertThat(gunSpec.shooting.projectile.effect.triggers).isEmpty();
 
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.particle).isEqualTo("REDSTONE");
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.count).isEqualTo(1);
