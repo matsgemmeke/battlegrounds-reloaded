@@ -5,6 +5,11 @@ controls:
   throwing: LEFT_CLICK
 deploy:
   health: 10.0
+  triggers:
+    floor-hit:
+      type: FLOOR_HIT
+      delay: 0
+      interval: 2
   on-destruction:
     activate-effect: true
     remove-deployment: true
@@ -43,11 +48,6 @@ effect:
     short-range:
       damage: 30.0
       distance: 0.5
-  triggers:
-    floor-hit:
-      type: FLOOR_HIT
-      delay: 0
-      interval: 2
 items:
   display-item:
     material: SHEARS

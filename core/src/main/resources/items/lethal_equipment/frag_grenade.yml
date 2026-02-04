@@ -6,6 +6,10 @@ controls:
   cook: RIGHT_CLICK
 deploy:
   health: 50.0
+  triggers:
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [ 80 ]
   on-destruction:
     activate-effect: true
     remove-deployment: true
@@ -35,10 +39,6 @@ effect:
     short-range:
       damage: 150.0
       distance: 2.5
-  triggers:
-    scheduled:
-      type: SCHEDULED
-      offset-delays: [80]
 items:
   display-item:
     material: SHEARS

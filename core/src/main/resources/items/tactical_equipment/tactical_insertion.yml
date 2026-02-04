@@ -5,6 +5,10 @@ controls:
   throwing: LEFT_CLICK
 deploy:
   health: 50.0
+  triggers:
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [ 1 ]
   on-destruction:
     activate-effect: false
     remove-deployment: true
@@ -25,10 +29,6 @@ deploy:
     velocity: 0.0
 effect:
   effect-type: MARK_SPAWN_POINT
-  triggers:
-    scheduled:
-      type: SCHEDULED
-      offset-delays: [1]
 items:
   display-item:
     material: SHEARS

@@ -6,6 +6,10 @@ controls:
   cook: RIGHT_CLICK
 deploy:
   health: 50.0
+  triggers:
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [ 60 ]
   on-destruction:
     activate-effect: false
     remove-deployment: true
@@ -31,10 +35,6 @@ effect:
   max-burst-duration: 100
   min-delay-duration: 20
   max-delay-duration: 60
-  triggers:
-    scheduled:
-      type: SCHEDULED
-      offset-delays: [60]
 items:
   display-item:
     material: SHEARS
