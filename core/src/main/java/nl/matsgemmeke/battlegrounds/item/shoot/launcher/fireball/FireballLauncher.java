@@ -5,15 +5,17 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.actor.StaticActor;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.StaticItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.StaticTriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
@@ -33,6 +35,7 @@ public class FireballLauncher implements ProjectileLauncher {
     private static final long SCHEDULE_INTERVAL = 1L;
 
     private final AudioEmitter audioEmitter;
+    private final CollisionResultAdapter collisionResultAdapter;
     private final FireballProperties properties;
     private final ItemEffect itemEffect;
     private final ParticleEffectSpawner particleEffectSpawner;
@@ -44,6 +47,7 @@ public class FireballLauncher implements ProjectileLauncher {
     @Inject
     public FireballLauncher(
             AudioEmitter audioEmitter,
+            CollisionResultAdapter collisionResultAdapter,
             ParticleEffectSpawner particleEffectSpawner,
             ProjectileHitActionRegistry projectileHitActionRegistry,
             ProjectileRegistry projectileRegistry,
@@ -51,13 +55,14 @@ public class FireballLauncher implements ProjectileLauncher {
             @Assisted FireballProperties properties,
             @Assisted ItemEffect itemEffect
     ) {
-        this.itemEffect = itemEffect;
         this.audioEmitter = audioEmitter;
+        this.collisionResultAdapter = collisionResultAdapter;
         this.particleEffectSpawner = particleEffectSpawner;
         this.projectileHitActionRegistry = projectileHitActionRegistry;
         this.projectileRegistry = projectileRegistry;
         this.scheduler = scheduler;
         this.properties = properties;
+        this.itemEffect = itemEffect;
         this.soundPlaySchedules = new HashSet<>();
     }
 
@@ -69,7 +74,7 @@ public class FireballLauncher implements ProjectileLauncher {
     @Override
     public void launch(LaunchContext context) {
         DamageSource damageSource = context.damageSource();
-        Location initiationLocation = context.direction();
+        Location startingLocation = context.direction();
         Vector velocity = context.direction().getDirection().multiply(properties.velocity());
         ProjectileLaunchSource projectileSource = context.projectileSource();
         Supplier<Location> soundLocationSupplier = context.soundLocationSupplier();
@@ -83,7 +88,7 @@ public class FireballLauncher implements ProjectileLauncher {
         schedule.start();
 
         projectileRegistry.register(fireball.getUniqueId());
-        projectileHitActionRegistry.registerProjectileHitAction(fireball, hitLocation -> this.onHit(damageSource, initiationLocation, fireball, schedule));
+        projectileHitActionRegistry.registerProjectileHitAction(fireball, projectileHitResult -> this.onHit(projectileHitResult, damageSource, startingLocation, fireball, schedule));
 
         this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
@@ -96,14 +101,13 @@ public class FireballLauncher implements ProjectileLauncher {
         });
     }
 
-    private void onHit(DamageSource damageSource, Location initiationLocation, Fireball fireball, Schedule schedule) {
+    private void onHit(ProjectileHitResult projectileHitResult, DamageSource damageSource, Location startingLocation, Fireball fireball, Schedule schedule) {
+        CollisionResult collisionResult = collisionResultAdapter.adapt(projectileHitResult, fireball);
         Location fireballLocation = fireball.getLocation();
         World fireballWorld = fireball.getWorld();
 
-        StaticItemEffectSource effectSource = new StaticItemEffectSource(fireballLocation, fireballWorld);
-        StaticTriggerTarget triggerTarget = new StaticTriggerTarget(fireballLocation, fireballWorld);
-
-        ItemEffectContext context = new ItemEffectContext(damageSource, effectSource, triggerTarget, initiationLocation);
+        StaticActor actor = new StaticActor(fireballLocation, fireballWorld);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
 
         itemEffect.startPerformance(context);
 
