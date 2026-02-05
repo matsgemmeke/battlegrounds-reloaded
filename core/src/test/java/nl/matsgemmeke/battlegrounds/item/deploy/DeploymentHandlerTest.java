@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.effect.*;
@@ -14,7 +15,6 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -54,6 +54,8 @@ class DeploymentHandlerTest {
     private static final DeploymentProperties PROPERTIES = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, MANUAL_ACTIVATION_DELAY);
 
     @Mock
+    private Actor actor;
+    @Mock
     private AudioEmitter audioEmitter;
     @Mock
     private CollisionResultAdapter collisionResultAdapter;
@@ -67,8 +69,6 @@ class DeploymentHandlerTest {
     private ParticleEffectSpawner particleEffectSpawner;
     @Mock
     private Scheduler scheduler;
-    @Mock
-    private TriggerTarget triggerTarget;
 
     @Test
     void activateDeploymentActivatesEffectAfterActivationDelay() {
@@ -92,7 +92,7 @@ class DeploymentHandlerTest {
 
     @Test
     void cleanupDeploymentDoesNotRemoveDeploymentObjectWhenDeployedAndRemoveDeploymentOnCleanupIsFalse() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         DeploymentProperties properties = new DeploymentProperties(List.of(), null, true, true, true, false, 0L);
         Schedule delaySchedule = mock(Schedule.class);
 
@@ -110,7 +110,7 @@ class DeploymentHandlerTest {
 
     @Test
     void cleanupDeploymentRemovesDeploymentObjectWhenDeployedAndRemoveDeploymentOnCleanupIsTrue() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.isPhysical()).thenReturn(true);
@@ -135,7 +135,7 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDoesNotActivateEffectWhenActivateEffectOnDestructionPropertyIsFalse() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         DeploymentProperties properties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, false, false, false, false, MANUAL_ACTIVATION_DELAY);
         Schedule delaySchedule = mock(Schedule.class);
 
@@ -153,7 +153,7 @@ class DeploymentHandlerTest {
     @Test
     void destroyDeploymentDoesNotActivateEffectWhenDeploymentObjectLastDamageTypeIsEnvironmentalDamage() {
         Damage lastDamage = new Damage(10, DamageType.ENVIRONMENTAL_DAMAGE);
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
@@ -170,7 +170,7 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentActivatesEffectWhenDeploymentObjectLastDamageIsNull() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.getLastDamage()).thenReturn(null);
@@ -188,7 +188,7 @@ class DeploymentHandlerTest {
     @Test
     void destroyDeploymentActivatesEffectWhenDeploymentObjectLastDamageTypeIsNotEnvironmentalDamage() {
         Damage lastDamage = new Damage(10, DamageType.BULLET_DAMAGE);
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
@@ -205,7 +205,7 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDoesNotRemoveDeploymentObjectWhenRemoveDeploymentOnDestructionPropertyIsFalse() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         DeploymentProperties properties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, false, false, false, false, MANUAL_ACTIVATION_DELAY);
         Schedule delaySchedule = mock(Schedule.class);
 
@@ -222,7 +222,7 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentRemovesDeploymentObjectWhenRemoveDeploymentOnDestructionPropertyIsTrue() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.isPhysical()).thenReturn(true);
@@ -238,7 +238,7 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDoesNotResetEffectWhenResetEffectOnDestructionPropertyIsFalse() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         DeploymentProperties properties = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, false, false, false, false, MANUAL_ACTIVATION_DELAY);
         Schedule delaySchedule = mock(Schedule.class);
 
@@ -255,7 +255,7 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentUndoesEffectWhenResetEffectOnDestructionPropertyIsTrue() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.isPhysical()).thenReturn(true);
@@ -271,7 +271,7 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDoesNotDisplayParticleEffectWhenDestructionParticleEffectPropertyIsNull() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         DeploymentProperties properties = new DeploymentProperties(ACTIVATION_SOUNDS, null, false, false, false, false, MANUAL_ACTIVATION_DELAY);
         Schedule delaySchedule = mock(Schedule.class);
 
@@ -288,7 +288,7 @@ class DeploymentHandlerTest {
 
     @Test
     void destroyDeploymentDisplaysParticleEffectWhenDestructionParticleEffectPropertyIsNotNull() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Location objectLocation = new Location(null, 1, 1, 1);
         Schedule delaySchedule = mock(Schedule.class);
 
@@ -314,7 +314,7 @@ class DeploymentHandlerTest {
 
     @Test
     void isAwaitingDeploymentReturnsFalseWhenCompleteDeploymentIsPerformed() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
         when(deploymentObject.isPhysical()).thenReturn(true);
@@ -329,7 +329,7 @@ class DeploymentHandlerTest {
 
     @Test
     void isAwaitingDeploymentReturnsFalseWhenPendingDeploymentIsPerformed() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
 
         when(deploymentObject.isPhysical()).thenReturn(false);
 
@@ -350,7 +350,7 @@ class DeploymentHandlerTest {
 
     @Test
     void isPerformingReturnsTrueWhenAnyDeploymentIsPerformed() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
 
         when(deploymentObject.isPhysical()).thenReturn(false);
 
@@ -364,7 +364,7 @@ class DeploymentHandlerTest {
     @Test
     @DisplayName("processDeploymentResult changes trigger and effect actor when pending")
     void processDeployment_whenPending() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         ItemEffectPerformance effectPerformance = mock(ItemEffectPerformance.class);
         TriggerRun triggerRun = mock(TriggerRun.class);
 
@@ -379,8 +379,8 @@ class DeploymentHandlerTest {
         deploymentHandler.processDeploymentResult(deploymentResult);
         deploymentHandler.processDeploymentResult(deploymentResult);
 
-        verify(triggerRun).replaceActor(triggerTarget);
-        verify(effectPerformance).changeActor(triggerTarget);
+        verify(triggerRun).replaceActor(actor);
+        verify(effectPerformance).changeActor(actor);
     }
 
     @Test
@@ -388,7 +388,7 @@ class DeploymentHandlerTest {
     void processDeploymentResult_completeDeployment() {
         Activator activator = mock(Activator.class);
         Location deployLocation = new Location(null, 1, 1, 1);
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, triggerTarget, COOLDOWN);
+        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         TriggerResult triggerResult = mock(TriggerResult.class);
         CollisionResult collisionResult = new CollisionResult(null, null, null);
 
@@ -401,11 +401,11 @@ class DeploymentHandlerTest {
         Schedule delaySchedule = mock(Schedule.class);
         doAnswer(RUN_SCHEDULE_TASK).when(delaySchedule).addTask(any(ScheduleTask.class));
 
+        when(actor.getLocation()).thenReturn(deployLocation);
         when(collisionResultAdapter.adapt(triggerResult)).thenReturn(collisionResult);
         when(deployer.getUniqueId()).thenReturn(DEPLOYER_UNIQUE_ID);
         when(deploymentObject.isPhysical()).thenReturn(true);
         when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(delaySchedule);
-        when(triggerTarget.getLocation()).thenReturn(deployLocation);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.addTriggerExecutor(triggerExecutor);
@@ -420,11 +420,11 @@ class DeploymentHandlerTest {
 
         assertThat(triggerContextCaptor.getValue()).satisfies(triggerContext -> {
             assertThat(triggerContext.sourceId()).isEqualTo(DEPLOYER_UNIQUE_ID);
-            assertThat(triggerContext.actor()).isEqualTo(triggerTarget);
+            assertThat(triggerContext.actor()).isEqualTo(actor);
         });
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
-            assertThat(itemEffectContext.getActor()).isEqualTo(triggerTarget);
+            assertThat(itemEffectContext.getActor()).isEqualTo(actor);
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(deployer);
             assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(deployLocation);
         });

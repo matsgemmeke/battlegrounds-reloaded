@@ -1,11 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.projectile;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import org.bukkit.util.Vector;
 
-public interface Projectile extends TriggerTarget {
-
-    Vector getVelocity();
+public interface Projectile extends Actor {
 
     void setVelocity(Vector velocity);
 

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,8 +35,8 @@ class TriggerExecutorTest {
 
     @Test
     void createTriggerRunReturnsTriggerRunWithStartedScheduleThatDoesNotifyObservers() {
-        TriggerTarget target = mock(TriggerTarget.class);
-        TriggerContext context = new TriggerContext(SOURCE_ID, target);
+        Actor actor = mock(Actor.class);
+        TriggerContext context = new TriggerContext(SOURCE_ID, actor);
 
         triggerExecutor.setRepeating(true);
 
