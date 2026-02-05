@@ -29,7 +29,7 @@ public class MarkSpawnPointEffectPerformance extends BaseItemEffectPerformance {
         uniqueId = context.getDamageSource().getUniqueId();
         Location startingLocation = context.getStartingLocation();
 
-        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getEffectSource(), startingLocation.getYaw());
+        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getActor(), startingLocation.getYaw());
 
         spawnPointRegistry.setCustomSpawnPoint(uniqueId, spawnPoint);
     }

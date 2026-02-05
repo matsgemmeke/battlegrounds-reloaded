@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -19,7 +18,7 @@ import java.util.UUID;
 /**
  * Represents an item that is primed but held by the deployer and not yet deployed.
  */
-public class PrimeDeploymentObject implements DeploymentObject, ItemEffectSource {
+public class PrimeDeploymentObject implements DeploymentObject {
 
     private static final double HAND_HEIGHT_OFFSET = 1.0;
 

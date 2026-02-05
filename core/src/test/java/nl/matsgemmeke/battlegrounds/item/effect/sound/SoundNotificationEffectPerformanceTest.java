@@ -4,9 +4,9 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,11 +30,11 @@ class SoundNotificationEffectPerformanceTest {
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
     @Mock
+    private Actor actor;
+    @Mock
     private DamageSource damageSource;
     @Mock
     private GameSound sound;
-    @Mock
-    private ItemEffectSource effectSource;
     @Mock
     private PlayerRegistry playerRegistry;
 
@@ -84,6 +84,6 @@ class SoundNotificationEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, STARTING_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
     }
 }

@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 
 public class ItemEffectContext {
@@ -11,7 +10,6 @@ public class ItemEffectContext {
     private final DamageSource damageSource;
     private final Location startingLocation;
     private Actor actor;
-    private ItemEffectSource effectSource;
 
     public ItemEffectContext(CollisionResult collisionResult, DamageSource damageSource, Actor actor, Location startingLocation) {
         this.collisionResult = collisionResult;
@@ -34,14 +32,6 @@ public class ItemEffectContext {
 
     public DamageSource getDamageSource() {
         return damageSource;
-    }
-
-    public ItemEffectSource getEffectSource() {
-        return effectSource;
-    }
-
-    public void setEffectSource(ItemEffectSource effectSource) {
-        this.effectSource = effectSource;
     }
 
     public Location getStartingLocation() {

@@ -3,9 +3,9 @@ package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,9 +26,9 @@ class MarkSpawnPointEffectPerformanceTest {
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
     @Mock
-    private DamageSource damageSource;
+    private Actor actor;
     @Mock
-    private ItemEffectSource effectSource;
+    private DamageSource damageSource;
     @Mock
     private SpawnPointRegistry spawnPointRegistry;
     @InjectMocks
@@ -75,6 +75,6 @@ class MarkSpawnPointEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, STARTING_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
     }
 }

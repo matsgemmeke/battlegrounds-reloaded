@@ -9,9 +9,9 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,11 +37,11 @@ class DamageEffectPerformanceTest {
     private static final DamageProperties PROPERTIES = new DamageProperties(DAMAGE_TYPE, RANGE_PROFILE, HITBOX_MULTIPLIER_PROFILE);
 
     @Mock
+    private Actor actor;
+    @Mock
     private DamageProcessor damageProcessor;
     @Mock
     private DamageSource damageSource;
-    @Mock
-    private ItemEffectSource effectSource;
 
     private DamageEffectPerformance effectPerformance;
 
@@ -60,7 +60,7 @@ class DamageEffectPerformanceTest {
     @Test
     void performCausesNoDamageWhenHitDamageTargetIsNull() {
         CollisionResult collisionResult = new CollisionResult(null, null, null);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, null);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
 
         effectPerformance.perform(context);
 
@@ -71,7 +71,7 @@ class DamageEffectPerformanceTest {
     void performCausesNoDamageWhenHitLocationIsNull() {
         DamageTarget hitTarget = mock(DamageTarget.class);
         CollisionResult collisionResult = new CollisionResult(null, hitTarget, null);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, null);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
 
         effectPerformance.perform(context);
 
@@ -93,7 +93,7 @@ class DamageEffectPerformanceTest {
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
         effectPerformance.perform(context);
 
@@ -123,7 +123,7 @@ class DamageEffectPerformanceTest {
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
         effectPerformance.perform(context);
 
