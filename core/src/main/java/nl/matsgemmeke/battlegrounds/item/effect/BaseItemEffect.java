@@ -1,25 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
-
 import java.util.*;
 
 public abstract class BaseItemEffect implements ItemEffect {
 
     private final List<ItemEffectPerformance> performances;
-    private final Set<TriggerExecutor> triggerExecutors;
 
     public BaseItemEffect() {
         this.performances = new ArrayList<>();
-        this.triggerExecutors = new HashSet<>();
-    }
-
-    @Override
-    public void addTriggerExecutor(TriggerExecutor triggerExecutor) {
-        triggerExecutors.add(triggerExecutor);
     }
 
     @Override
@@ -35,23 +23,7 @@ public abstract class BaseItemEffect implements ItemEffect {
         performances.add(performance);
 
         performance.setContext(context);
-
-        if (!triggerExecutors.isEmpty()) {
-            UUID uniqueId = context.getDamageSource().getUniqueId();
-            TriggerTarget triggerTarget = context.getTriggerTarget();
-
-            for (TriggerExecutor triggerExecutor : triggerExecutors) {
-                TriggerContext triggerContext = new TriggerContext(uniqueId, triggerTarget);
-
-                TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-                triggerRun.addObserver(triggerResult -> performance.start());
-                triggerRun.start();
-
-                performance.addTriggerRun(triggerRun);
-            }
-        } else {
-            performance.start();
-        }
+        performance.start();
     }
 
     @Override

@@ -10,14 +10,12 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.*;
-import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -54,13 +52,15 @@ class DamageEffectTest {
     }
 
     @Test
-    void getLatestPerformanceReturnsEmptyOptionalWhenNoPerformancesHaveStarted() {
+    @DisplayName("getLatestPerformance returns empty optional when no performacnes have been started")
+    void getLatestPerformance_withoutStartedPerformances() {
         Optional<ItemEffectPerformance> performanceOptional = damageEffect.getLatestPerformance();
 
         assertThat(performanceOptional).isEmpty();
     }
 
     @Test
+    @DisplayName("getLatestPerformance returns optional with most recently started ItemEffectPerformance")
     void getLatestPerformanceReturnsOptionalWithLatestStartedItemEffectPerformance() {
         DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
@@ -80,14 +80,16 @@ class DamageEffectTest {
     }
 
     @Test
-    void startPerformanceThrowsItemEffectPerformanceExceptionWhenPropertiesAreNotSet() {
+    @DisplayName("startPerformance throws ItemEffectPerformanceException when properties are not set")
+    void startPerformance_withoutSetProperties() {
         assertThatThrownBy(() -> damageEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
                 .hasMessage("Unable to perform damage effect: properties not set");
     }
 
     @Test
-    void startPerformanceThrowsItemEffectPerformanceExceptionWhenThereIsNoGameContext() {
+    @DisplayName("startPerformance throws ItemEffectPerformanceException when there is no game context")
+    void startPerformance_withoutGameContext() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         damageEffect.setProperties(PROPERTIES);
@@ -98,46 +100,8 @@ class DamageEffectTest {
     }
 
     @Test
-    void startPerformanceCreatesAndStartsTriggerRunsWithObserversThatStartsPerformance() {
-        DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
-        GameContext gameContext = mock(GameContext.class);
-        TriggerRun triggerRun = mock(TriggerRun.class);
-        TriggerResult triggerResult = mock(TriggerResult.class);
-
-        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
-        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
-
-        when(damageEffectPerformanceFactory.create(any(DamageProperties.class))).thenReturn(performance);
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
-        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
-            Supplier<ItemEffectPerformance> performanceSupplier = invocation.getArgument(1);
-            return performanceSupplier.get();
-        });
-
-        damageEffect.addTriggerExecutor(triggerExecutor);
-        damageEffect.setProperties(PROPERTIES);
-        damageEffect.startPerformance(CONTEXT);
-
-        ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);
-        verify(triggerExecutor).createTriggerRun(triggerContextCaptor.capture());
-
-        ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
-        verify(triggerRun).addObserver(triggerObserverCaptor.capture());
-        triggerObserverCaptor.getValue().onActivate(triggerResult);
-
-        assertThat(triggerContextCaptor.getValue()).satisfies(triggerContext -> {
-            assertThat(triggerContext.sourceId()).isEqualTo(DAMAGE_SOURCE_ID);
-            assertThat(triggerContext.actor()).isEqualTo(CONTEXT.getTriggerTarget());
-        });
-
-        verify(triggerRun).start();
-        verify(performance).addTriggerRun(triggerRun);
-        verify(performance).setContext(CONTEXT);
-        verify(performance).start();
-    }
-
-    @Test
-    void startPerformanceCreatesAndStartsPerformanceWhenNoTriggerExecutorsAreAdded() {
+    @DisplayName("startPerformance creates and starts performance")
+    void startPerformance_successful() {
         DamageEffectPerformance performance = mock(DamageEffectPerformance.class);
         GameContext gameContext = mock(GameContext.class);
 
@@ -151,16 +115,13 @@ class DamageEffectTest {
         damageEffect.setProperties(PROPERTIES);
         damageEffect.startPerformance(CONTEXT);
 
-        ArgumentCaptor<DamageProperties> damagePropertiesCaptor = ArgumentCaptor.forClass(DamageProperties.class);
-        verify(damageEffectPerformanceFactory).create(damagePropertiesCaptor.capture());
-
-        verify(performance, never()).addTriggerRun(any(TriggerRun.class));
         verify(performance).setContext(CONTEXT);
         verify(performance).start();
     }
 
     @Test
-    void rollbackCancelsOngoingPerformances() {
+    @DisplayName("rollback cancels ongoing performances")
+    void rollback_cancelsPerformances() {
         GameContext gameContext = mock(GameContext.class);
 
         DamageEffectPerformance performancePerforming = mock(DamageEffectPerformance.class);
