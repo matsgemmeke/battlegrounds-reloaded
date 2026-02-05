@@ -426,7 +426,7 @@ class DeploymentHandlerTest {
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
             assertThat(itemEffectContext.getActor()).isEqualTo(actor);
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(deployer);
-            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(deployLocation);
+            assertThat(itemEffectContext.getStartingLocation()).isEqualTo(deployLocation);
         });
 
         verify(activator).prepare(deployer);

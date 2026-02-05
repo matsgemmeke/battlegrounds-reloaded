@@ -137,7 +137,7 @@ class FireballLauncherTest {
                 assertThat(actor.getLocation()).isEqualTo(fireballLocation);
                 assertThat(actor.getWorld()).isEqualTo(world);
             });
-            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+            assertThat(itemEffectContext.getStartingLocation()).isEqualTo(direction);
         });
 
         verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);

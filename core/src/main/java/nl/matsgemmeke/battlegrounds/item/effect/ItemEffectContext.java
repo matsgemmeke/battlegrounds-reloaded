@@ -9,15 +9,15 @@ public class ItemEffectContext {
 
     private final CollisionResult collisionResult;
     private final DamageSource damageSource;
-    private final Location initiationLocation;
+    private final Location startingLocation;
     private Actor actor;
     private ItemEffectSource effectSource;
 
-    public ItemEffectContext(CollisionResult collisionResult, DamageSource damageSource, Actor actor, Location initiationLocation) {
+    public ItemEffectContext(CollisionResult collisionResult, DamageSource damageSource, Actor actor, Location startingLocation) {
         this.collisionResult = collisionResult;
         this.damageSource = damageSource;
         this.actor = actor;
-        this.initiationLocation = initiationLocation;
+        this.startingLocation = startingLocation;
     }
 
     public Actor getActor() {
@@ -44,7 +44,7 @@ public class ItemEffectContext {
         this.effectSource = effectSource;
     }
 
-    public Location getInitiationLocation() {
-        return initiationLocation;
+    public Location getStartingLocation() {
+        return startingLocation;
     }
 }

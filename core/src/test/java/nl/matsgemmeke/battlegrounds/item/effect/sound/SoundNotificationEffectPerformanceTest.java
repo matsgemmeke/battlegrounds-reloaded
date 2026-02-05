@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class SoundNotificationEffectPerformanceTest {
 
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
     @Mock
@@ -84,6 +84,6 @@ class SoundNotificationEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, STARTING_LOCATION);
     }
 }

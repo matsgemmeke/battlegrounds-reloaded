@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class MarkSpawnPointEffectPerformanceTest {
 
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
-    private static final Location INITIATION_LOCATION = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+    private static final Location STARTING_LOCATION = new Location(null, 1, 1, 1, 1.0f, 1.0f);
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
     @Mock
@@ -75,6 +75,6 @@ class MarkSpawnPointEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, STARTING_LOCATION);
     }
 }

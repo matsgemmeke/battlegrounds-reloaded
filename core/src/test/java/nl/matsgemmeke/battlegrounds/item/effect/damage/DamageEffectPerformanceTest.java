@@ -82,7 +82,7 @@ class DamageEffectPerformanceTest {
     @CsvSource(value = { "HEAD,20.0", "TORSO,10.0", "LIMBS,5.0" })
     void performCausesDamageToHitDamageTargetByHitHitboxComponentType(HitboxComponentType hitboxComponentType, double expectedDamage) {
         World world = mock(World.class);
-        Location initiationLocation = new Location(world, 1, 0, 0);
+        Location startingLocation = new Location(world, 1, 0, 0);
         Location hitLocation = new Location(world, 2, 0, 0);
         HitboxComponent hitboxComponent = new HitboxComponent(hitboxComponentType, 0, 0, 0, 0, 0, 0);
 
@@ -93,7 +93,7 @@ class DamageEffectPerformanceTest {
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, startingLocation);
 
         effectPerformance.perform(context);
 
@@ -113,7 +113,7 @@ class DamageEffectPerformanceTest {
     @Test
     void performCausesDefaultDamageToHitDamageTargetWhenNoHitboxComponentWasHit() {
         World world = mock(World.class);
-        Location initiationLocation = new Location(world, 1, 0, 0);
+        Location startingLocation = new Location(world, 1, 0, 0);
         Location hitLocation = new Location(world, 2, 0, 0);
 
         Hitbox hitbox = mock(Hitbox.class);
@@ -123,7 +123,7 @@ class DamageEffectPerformanceTest {
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, startingLocation);
 
         effectPerformance.perform(context);
 

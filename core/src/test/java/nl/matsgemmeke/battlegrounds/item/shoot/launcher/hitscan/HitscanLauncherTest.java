@@ -127,7 +127,7 @@ class HitscanLauncherTest {
                assertThat(collisionResult.getHitLocation()).hasValue(hitLocation);
             });
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
-            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
+            assertThat(itemEffectContext.getStartingLocation()).isEqualTo(hitLocation);
         });
 
         verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
@@ -174,7 +174,7 @@ class HitscanLauncherTest {
                assertThat(collisionResult.getHitLocation()).hasValue(hitLocation);
             });
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
-            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(hitLocation);
+            assertThat(itemEffectContext.getStartingLocation()).isEqualTo(hitLocation);
         });
 
         ArgumentCaptor<TargetQuery> targetQueryCaptor = ArgumentCaptor.forClass(TargetQuery.class);

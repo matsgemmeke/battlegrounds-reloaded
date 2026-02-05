@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GunFireSimulationEffectPerformanceTest {
 
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final Location ACTOR_LOCATION = new Location(null, 1, 1, 1);
     private static final long BURST_INTERVAL = 1L;
     private static final long MAX_BURST_DURATION = 10L;
@@ -70,7 +70,7 @@ class GunFireSimulationEffectPerformanceTest {
     void changeActorCreatesNewContextInstanceWithGivenActor() {
         Schedule schedule = mock(Schedule.class);
         Actor oldActor = mock(Actor.class);
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, oldActor, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, oldActor, STARTING_LOCATION);
         Location newActorLocation = new Location(null, 1, 1, 1);
 
         when(actor.exists()).thenReturn(true);
@@ -182,6 +182,6 @@ class GunFireSimulationEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
     }
 }

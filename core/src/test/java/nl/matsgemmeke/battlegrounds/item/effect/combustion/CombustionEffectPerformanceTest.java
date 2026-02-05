@@ -54,7 +54,7 @@ class CombustionEffectPerformanceTest {
     private static final double SHORT_RANGE_DAMAGE = 150.0;
     private static final double SHORT_RANGE_DISTANCE = 2.5;
     private static final List<GameSound> COMBUSTION_SOUNDS = Collections.emptyList();
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final long GROWTH_INTERVAL = 5L;
     private static final long MIN_DURATION = 500L;
     private static final long MAX_DURATION = 600L;
@@ -244,6 +244,6 @@ class CombustionEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
     }
 }

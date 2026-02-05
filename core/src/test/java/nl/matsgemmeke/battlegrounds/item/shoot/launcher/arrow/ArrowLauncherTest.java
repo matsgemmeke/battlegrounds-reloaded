@@ -142,7 +142,7 @@ class ArrowLauncherTest {
                 assertThat(result.getHitLocation()).hasValue(hitLocation);
             });
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
-            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+            assertThat(itemEffectContext.getStartingLocation()).isEqualTo(direction);
         });
 
         verify(arrow).remove();
@@ -195,7 +195,7 @@ class ArrowLauncherTest {
                 assertThat(result.getHitLocation()).hasValue(hitLocation);
             });
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
-            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+            assertThat(itemEffectContext.getStartingLocation()).isEqualTo(direction);
         });
 
         verify(arrow).remove();

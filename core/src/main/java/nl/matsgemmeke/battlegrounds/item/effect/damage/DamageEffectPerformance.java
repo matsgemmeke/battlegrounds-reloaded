@@ -41,18 +41,18 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
             return;
         }
 
-        Location initiationLocation = context.getInitiationLocation();
+        Location startingLocation = context.getStartingLocation();
         DamageSource damageSource = context.getDamageSource();
-        Damage damage = this.createDamage(hitTarget, hitLocation, initiationLocation);
+        Damage damage = this.createDamage(hitTarget, hitLocation, startingLocation);
         DamageContext damageContext = new DamageContext(damageSource, hitTarget, damage);
 
         damageProcessor.processDamage(damageContext);
     }
 
-    private Damage createDamage(DamageTarget target, Location hitLocation, Location initiationLocation) {
+    private Damage createDamage(DamageTarget target, Location hitLocation, Location startingLocation) {
         Hitbox hitbox = target.getHitbox();
         double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, hitLocation);
-        double distance = hitLocation.distance(initiationLocation);
+        double distance = hitLocation.distance(startingLocation);
         double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
         double totalDamageAmount = distanceDamageAmount * damageMultiplier;
 

@@ -49,7 +49,7 @@ class FlashEffectPerformanceTest {
     private static final FlashProperties FLASH_PROPERTIES = new FlashProperties(POTION_EFFECT_PROPERTIES, RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
 
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
 
     @Mock(extraInterfaces = Removable.class)
     private Actor actor;
@@ -156,6 +156,6 @@ class FlashEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
     }
 }

@@ -43,7 +43,7 @@ class SmokeScreenEffectPerformanceTest {
     private static final ParticleEffect PARTICLE_EFFECT = new ParticleEffect(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA, PARTICLE_BLOCK_DATA, null);
 
     private static final List<GameSound> ACTIVATION_SOUNDS = Collections.emptyList();
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final long MIN_DURATION = 10L;
     private static final long MAX_DURATION = 20L;
     private static final long GROWTH_INTERVAL = 1L;
@@ -246,6 +246,6 @@ class SmokeScreenEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
     }
 }

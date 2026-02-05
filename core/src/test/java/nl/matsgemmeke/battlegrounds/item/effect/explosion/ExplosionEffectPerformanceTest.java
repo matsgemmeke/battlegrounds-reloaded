@@ -39,7 +39,7 @@ class ExplosionEffectPerformanceTest {
     private static final double SHORT_RANGE_DAMAGE = 150.0;
     private static final double SHORT_RANGE_DISTANCE = 2.5;
     private static final float POWER = 1.0F;
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
+    private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final RangeProfile RANGE_PROFILE = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
     private static final ExplosionProperties PROPERTIES = new ExplosionProperties(RANGE_PROFILE, POWER, SET_FIRE, BREAK_BLOCKS);
 
@@ -67,7 +67,7 @@ class ExplosionEffectPerformanceTest {
         Actor actor = mock(Actor.class, withSettings().extraInterfaces(Removable.class));
         when(actor.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -90,7 +90,7 @@ class ExplosionEffectPerformanceTest {
         when(actor.getLocation()).thenReturn(actorLocation);
         when(actor.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
 
         GameEntity deployerEntity = mock(GameEntity.class);
         when(deployerEntity.getLocation()).thenReturn(actorLocation);

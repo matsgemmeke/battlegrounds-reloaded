@@ -93,11 +93,11 @@ class ExplosionEffectTest {
     private static ItemEffectContext createContext() {
         CollisionResult collisionResult = new CollisionResult(null, null, null);
         ItemEffectSource source = mock(ItemEffectSource.class);
-        Location initiationLocation = new Location(null, 1, 1, 1);
+        Location startingLocation = new Location(null, 1, 1, 1);
 
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, source, initiationLocation);
+        return new ItemEffectContext(collisionResult, damageSource, source, startingLocation);
     }
 }

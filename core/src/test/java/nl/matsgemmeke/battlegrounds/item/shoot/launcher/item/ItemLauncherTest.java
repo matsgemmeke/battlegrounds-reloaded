@@ -123,7 +123,7 @@ class ItemLauncherTest {
         assertThat(effectContextCaptor.getValue()).satisfies(itemEffectContext -> {
             assertThat(itemEffectContext.getActor()).isInstanceOf(ItemActor.class);
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
-            assertThat(itemEffectContext.getInitiationLocation()).isEqualTo(direction);
+            assertThat(itemEffectContext.getStartingLocation()).isEqualTo(direction);
         });
 
         verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
