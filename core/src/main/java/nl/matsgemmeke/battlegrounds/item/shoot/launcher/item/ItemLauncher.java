@@ -95,7 +95,7 @@ public class ItemLauncher implements ProjectileLauncher {
     private void processTriggerResult(TriggerResult triggerResult, DamageSource damageSource, ItemActor actor, Location dropLocation) {
         CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
 
-        ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, actor, null, dropLocation);
+        ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, actor, dropLocation);
         itemEffect.startPerformance(effectContext);
     }
 

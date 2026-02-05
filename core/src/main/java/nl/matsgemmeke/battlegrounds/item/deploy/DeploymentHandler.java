@@ -187,7 +187,7 @@ public class DeploymentHandler {
 
     private void activateEffect(TriggerResult triggerResult, DamageSource damageSource, Actor actor, Location startingLocation) {
         CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
-        ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
+        ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
         itemEffect.startPerformance(effectContext);
         triggerRuns.forEach(TriggerRun::cancel);

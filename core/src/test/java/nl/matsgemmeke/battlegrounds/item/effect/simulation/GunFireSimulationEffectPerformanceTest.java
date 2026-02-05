@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -59,8 +58,6 @@ class GunFireSimulationEffectPerformanceTest {
     private GunInfoProvider gunInfoProvider;
     @Mock
     private Scheduler scheduler;
-    @Mock
-    private TriggerTarget triggerTarget;
 
     private GunFireSimulationEffectPerformance performance;
 
@@ -73,7 +70,7 @@ class GunFireSimulationEffectPerformanceTest {
     void changeActorCreatesNewContextInstanceWithGivenActor() {
         Schedule schedule = mock(Schedule.class);
         Actor oldActor = mock(Actor.class);
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, oldActor, triggerTarget, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, oldActor, INITIATION_LOCATION);
         Location newActorLocation = new Location(null, 1, 1, 1);
 
         when(actor.exists()).thenReturn(true);
@@ -185,6 +182,6 @@ class GunFireSimulationEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, triggerTarget, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
     }
 }

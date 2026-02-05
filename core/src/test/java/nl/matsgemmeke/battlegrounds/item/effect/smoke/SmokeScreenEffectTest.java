@@ -98,6 +98,6 @@ class SmokeScreenEffectTest {
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, effectSource, null, initiationLocation);
+        return new ItemEffectContext(collisionResult, damageSource, effectSource, initiationLocation);
     }
 }

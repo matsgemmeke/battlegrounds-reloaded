@@ -144,7 +144,7 @@ public class HitscanLauncher implements ProjectileLauncher {
 
     private void startPerformance(CollisionResult collisionResult, DamageSource damageSource, Location startingLocation, World world) {
         StaticActor actor = new StaticActor(startingLocation, world);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
         itemEffect.startPerformance(context);
     }

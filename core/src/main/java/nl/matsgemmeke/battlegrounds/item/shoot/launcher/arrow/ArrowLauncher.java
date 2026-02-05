@@ -107,7 +107,7 @@ public class ArrowLauncher implements ProjectileLauncher {
 
     private void processTriggerResult(TriggerResult triggerResult, Arrow arrow, Actor actor, DamageSource damageSource, Location startingLocation) {
         CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
         itemEffect.startPerformance(context);
         projectileRegistry.unregister(arrow.getUniqueId());
@@ -120,7 +120,7 @@ public class ArrowLauncher implements ProjectileLauncher {
 
     private void processProjectileHit(ProjectileHitResult projectileHitResult, Arrow arrow, Actor actor, DamageSource damageSource, Location startingLocation) {
         CollisionResult collisionResult = collisionResultAdapter.adapt(projectileHitResult, arrow);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
         itemEffect.startPerformance(context);
         projectileRegistry.unregister(arrow.getUniqueId());

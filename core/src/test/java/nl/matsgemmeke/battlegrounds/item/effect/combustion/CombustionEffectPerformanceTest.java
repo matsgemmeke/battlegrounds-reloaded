@@ -13,7 +13,6 @@ import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -79,8 +78,6 @@ class CombustionEffectPerformanceTest {
     private Scheduler scheduler;
     @Mock
     private TargetFinder targetFinder;
-    @Mock
-    private TriggerTarget triggerTarget;
 
     private CombustionEffectPerformance performance;
 
@@ -247,6 +244,6 @@ class CombustionEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, triggerTarget, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
     }
 }

@@ -7,8 +7,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,8 +37,6 @@ class SoundNotificationEffectPerformanceTest {
     private ItemEffectSource effectSource;
     @Mock
     private PlayerRegistry playerRegistry;
-    @Mock
-    private TriggerTarget triggerTarget;
 
     private SoundNotificationEffectPerformance performance;
 
@@ -59,16 +55,6 @@ class SoundNotificationEffectPerformanceTest {
         boolean performing = performance.isPerforming();
 
         assertThat(performing).isFalse();
-    }
-
-    @Test
-    void cancelCancelsAllTriggerRuns() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
-
-        performance.addTriggerRun(triggerRun);
-        performance.cancel();
-
-        verify(triggerRun).cancel();
     }
 
     @Test
@@ -98,6 +84,6 @@ class SoundNotificationEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, INITIATION_LOCATION);
     }
 }

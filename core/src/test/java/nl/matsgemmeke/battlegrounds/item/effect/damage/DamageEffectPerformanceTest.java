@@ -12,8 +12,6 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,8 +42,6 @@ class DamageEffectPerformanceTest {
     private DamageSource damageSource;
     @Mock
     private ItemEffectSource effectSource;
-    @Mock
-    private TriggerTarget triggerTarget;
 
     private DamageEffectPerformance effectPerformance;
 
@@ -64,7 +60,7 @@ class DamageEffectPerformanceTest {
     @Test
     void performCausesNoDamageWhenHitDamageTargetIsNull() {
         CollisionResult collisionResult = new CollisionResult(null, null, null);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, triggerTarget, null);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, null);
 
         effectPerformance.perform(context);
 
@@ -75,7 +71,7 @@ class DamageEffectPerformanceTest {
     void performCausesNoDamageWhenHitLocationIsNull() {
         DamageTarget hitTarget = mock(DamageTarget.class);
         CollisionResult collisionResult = new CollisionResult(null, hitTarget, null);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, triggerTarget, null);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, null);
 
         effectPerformance.perform(context);
 
@@ -97,7 +93,7 @@ class DamageEffectPerformanceTest {
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, triggerTarget, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, initiationLocation);
 
         effectPerformance.perform(context);
 
@@ -127,7 +123,7 @@ class DamageEffectPerformanceTest {
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, triggerTarget, initiationLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, effectSource, initiationLocation);
 
         effectPerformance.perform(context);
 
@@ -142,15 +138,5 @@ class DamageEffectPerformanceTest {
                 assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
             });
         });
-    }
-
-    @Test
-    void cancelCancelsAllTriggerRuns() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
-
-        effectPerformance.addTriggerRun(triggerRun);
-        effectPerformance.cancel();
-
-        verify(triggerRun).cancel();
     }
 }

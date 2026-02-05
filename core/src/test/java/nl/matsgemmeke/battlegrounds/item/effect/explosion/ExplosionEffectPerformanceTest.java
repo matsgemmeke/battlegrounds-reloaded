@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +67,7 @@ class ExplosionEffectPerformanceTest {
         Actor actor = mock(Actor.class, withSettings().extraInterfaces(Removable.class));
         when(actor.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, null, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
 
         performance.perform(context);
         boolean performing = performance.isPerforming();
@@ -91,7 +90,7 @@ class ExplosionEffectPerformanceTest {
         when(actor.getLocation()).thenReturn(actorLocation);
         when(actor.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, null, INITIATION_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, INITIATION_LOCATION);
 
         GameEntity deployerEntity = mock(GameEntity.class);
         when(deployerEntity.getLocation()).thenReturn(actorLocation);
@@ -112,16 +111,5 @@ class ExplosionEffectPerformanceTest {
         verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
         verify(world).createExplosion(actorLocation, POWER, SET_FIRE, BREAK_BLOCKS);
         verify((Removable) actor).remove();
-    }
-
-    @Test
-    @DisplayName("cancel cancels all trigger runs")
-    void cancel_cancelsTriggerRuns() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
-
-        performance.addTriggerRun(triggerRun);
-        performance.cancel();
-
-        verify(triggerRun).cancel();
     }
 }

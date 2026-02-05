@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -94,12 +93,11 @@ class GunFireSimulationEffectTest {
     private static ItemEffectContext createContext() {
         CollisionResult collisionResult = new CollisionResult(null, null, null);
         ItemEffectSource effectSource = mock(ItemEffectSource.class);
-        TriggerTarget triggerTarget = mock(TriggerTarget.class);
         Location initiationLocation = new Location(null, 1, 1, 1);
 
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, effectSource, triggerTarget, initiationLocation);
+        return new ItemEffectContext(collisionResult, damageSource, effectSource, initiationLocation);
     }
 }

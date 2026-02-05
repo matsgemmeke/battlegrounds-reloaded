@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.item.effect.source.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.tracking.TriggerTarget;
 import org.bukkit.Location;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,8 +31,6 @@ class MarkSpawnPointEffectPerformanceTest {
     private ItemEffectSource effectSource;
     @Mock
     private SpawnPointRegistry spawnPointRegistry;
-    @Mock
-    private TriggerTarget triggerTarget;
     @InjectMocks
     private MarkSpawnPointEffectPerformance performance;
 
@@ -78,6 +75,6 @@ class MarkSpawnPointEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, triggerTarget, INITIATION_LOCATION);
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, effectSource, INITIATION_LOCATION);
     }
 }

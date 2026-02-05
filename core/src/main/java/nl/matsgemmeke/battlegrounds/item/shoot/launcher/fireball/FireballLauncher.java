@@ -107,7 +107,7 @@ public class FireballLauncher implements ProjectileLauncher {
         World fireballWorld = fireball.getWorld();
 
         StaticActor actor = new StaticActor(fireballLocation, fireballWorld);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
         itemEffect.startPerformance(context);
 
