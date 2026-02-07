@@ -12,8 +12,8 @@ deploy:
       type: SCHEDULED
       offset-delays: [ 100000 ]
   manual-activation:
+    activation-sounds: UI_BUTTON_CLICK-1-1.5-0
     delay: 5
-    sounds: UI_BUTTON_CLICK-1-1.5-0
   on-destruction:
     activate-effect: false
     remove-deployment: true
