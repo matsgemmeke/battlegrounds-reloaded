@@ -105,7 +105,6 @@ public class DeploymentHandler {
         }
 
         performing = false;
-        itemEffect.cancelPerformances();
 
         if (deploymentProperties.activateEffectOnDestruction()
                 && (deploymentObject.getLastDamage() == null || deploymentObject.getLastDamage().type() != DamageType.ENVIRONMENTAL_DAMAGE)) {
@@ -191,7 +190,5 @@ public class DeploymentHandler {
         ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
         itemEffect.startPerformance(effectContext);
-        triggerRuns.forEach(TriggerRun::cancel);
-        triggerRuns.clear();
     }
 }

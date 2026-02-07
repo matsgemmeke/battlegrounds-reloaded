@@ -1,19 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public abstract class BaseItemEffectPerformance implements ItemEffectPerformance {
 
-    protected final Set<TriggerRun> triggerRuns;
     protected ItemEffectContext currentContext;
-
-    public BaseItemEffectPerformance() {
-        this.triggerRuns = new HashSet<>();
-    }
 
     @Override
     public void changeActor(Actor actor) {
@@ -23,12 +14,6 @@ public abstract class BaseItemEffectPerformance implements ItemEffectPerformance
     @Override
     public void setContext(ItemEffectContext context) {
         this.currentContext = context;
-    }
-
-    @Override
-    public void cancel() {
-        triggerRuns.forEach(TriggerRun::cancel);
-        triggerRuns.clear();
     }
 
     /**

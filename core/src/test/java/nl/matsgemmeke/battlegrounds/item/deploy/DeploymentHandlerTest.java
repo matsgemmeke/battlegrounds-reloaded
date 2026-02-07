@@ -87,7 +87,6 @@ class DeploymentHandlerTest {
 
         verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, DEPLOYMENT_LOCATION);
         verify(deployer).setHeldItem(null);
-        verify(itemEffect).activatePerformances();
     }
 
     @Test
@@ -146,7 +145,6 @@ class DeploymentHandlerTest {
         deploymentHandler.processDeploymentResult(deploymentResult);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelPerformances();
         verify(itemEffect, never()).activatePerformances();
     }
 
@@ -164,7 +162,6 @@ class DeploymentHandlerTest {
         deploymentHandler.processDeploymentResult(deploymentResult);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelPerformances();
         verify(itemEffect, never()).activatePerformances();
     }
 
@@ -181,7 +178,6 @@ class DeploymentHandlerTest {
         deploymentHandler.processDeploymentResult(deploymentResult);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelPerformances();
         verify(itemEffect).activatePerformances();
     }
 
@@ -199,7 +195,6 @@ class DeploymentHandlerTest {
         deploymentHandler.processDeploymentResult(deploymentResult);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelPerformances();
         verify(itemEffect).activatePerformances();
     }
 
@@ -217,7 +212,6 @@ class DeploymentHandlerTest {
         deploymentHandler.destroyDeployment();
 
         verify(deploymentObject, never()).remove();
-        verify(itemEffect).cancelPerformances();
     }
 
     @Test
@@ -233,7 +227,6 @@ class DeploymentHandlerTest {
         deploymentHandler.destroyDeployment();
 
         verify(deploymentObject).remove();
-        verify(itemEffect).cancelPerformances();
     }
 
     @Test
@@ -249,7 +242,6 @@ class DeploymentHandlerTest {
         deploymentHandler.processDeploymentResult(deploymentResult);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelPerformances();
         verify(itemEffect, never()).rollbackPerformances();
     }
 
@@ -265,7 +257,6 @@ class DeploymentHandlerTest {
         deploymentHandler.processDeploymentResult(deploymentResult);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelPerformances();
         verify(itemEffect).rollbackPerformances();
     }
 
@@ -282,7 +273,6 @@ class DeploymentHandlerTest {
         deploymentHandler.processDeploymentResult(deploymentResult);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelPerformances();
         verifyNoInteractions(particleEffectSpawner);
     }
 
@@ -300,7 +290,6 @@ class DeploymentHandlerTest {
         deploymentHandler.processDeploymentResult(deploymentResult);
         deploymentHandler.destroyDeployment();
 
-        verify(itemEffect).cancelPerformances();
         verify(particleEffectSpawner).spawnParticleEffect(DESTRUCTION_PARTICLE_EFFECT, objectLocation);
     }
 

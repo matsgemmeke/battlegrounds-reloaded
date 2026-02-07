@@ -12,7 +12,5 @@ public interface ItemEffectPerformance {
 
     void start();
 
-    void cancel();
-
     void rollback();
 }

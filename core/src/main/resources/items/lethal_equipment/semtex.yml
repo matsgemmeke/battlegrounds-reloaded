@@ -56,6 +56,7 @@ projectile-effects:
       scheduled:
         type: SCHEDULED
         offset-delays: [ 10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58 ]
+        repeating: true
   stick:
     type: STICK
     stick-sounds: ITEM_FLINTANDSTEEL_USE-0.5-2-0

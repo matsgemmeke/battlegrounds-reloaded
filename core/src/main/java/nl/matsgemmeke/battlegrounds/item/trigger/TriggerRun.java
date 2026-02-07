@@ -57,9 +57,9 @@ public class TriggerRun {
             return;
         }
 
+        started = false;
         schedule.stop();
         schedule.clearTasks();
-        started = false;
     }
 
     public void start() {
@@ -67,9 +67,9 @@ public class TriggerRun {
             return;
         }
 
+        started = true;
         schedule.addTask(this::performTriggerCheck);
         schedule.start();
-        started = true;
     }
 
     private void performTriggerCheck() {

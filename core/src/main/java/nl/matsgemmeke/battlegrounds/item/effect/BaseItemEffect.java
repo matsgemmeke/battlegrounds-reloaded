@@ -30,19 +30,7 @@ public abstract class BaseItemEffect implements ItemEffect {
     public void activatePerformances() {
         for (ItemEffectPerformance performance : performances) {
             if (!performance.isPerforming()) {
-                performance.cancel();
                 performance.start();
-            }
-        }
-
-        performances.clear();
-    }
-
-    @Override
-    public void cancelPerformances() {
-        for (ItemEffectPerformance performance : performances) {
-            if (!performance.isPerforming()) {
-                performance.cancel();
             }
         }
 
