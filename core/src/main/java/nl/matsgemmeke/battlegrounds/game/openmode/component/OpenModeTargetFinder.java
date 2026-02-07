@@ -90,18 +90,20 @@ public class OpenModeTargetFinder implements TargetFinder {
 
     @Override
     public List<PotionEffectReceiver> findPotionEffectReceivers(Location location, double range) {
+        double rangeSquared = range * range;
+
         List<PotionEffectReceiver> targets = new ArrayList<>();
         World world = Optional.ofNullable(location.getWorld()).orElseThrow(() -> new IllegalArgumentException("Provided location has no world"));
 
         playerRegistry.getAll().stream()
-                .filter(gamePlayer -> gamePlayer.getLocation().distance(location) <= range)
+                .filter(gamePlayer -> gamePlayer.getLocation().distanceSquared(location) <= rangeSquared)
                 .forEach(targets::add);
 
         world.getNearbyEntities(location, range, range, range).stream()
                 .filter(entity -> entity.getType() != EntityType.PLAYER)
                 .filter(LivingEntity.class::isInstance)
                 .map(entity -> mobRegistry.register((LivingEntity) entity))
-                .filter(gameMob -> gameMob.getHitbox().intersects(location))
+                .filter(gameMob -> gameMob.getLocation().distanceSquared(location) <= rangeSquared)
                 .forEach(targets::add);
 
         return targets;
