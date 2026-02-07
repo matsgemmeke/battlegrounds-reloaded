@@ -15,8 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BlockActorTest {
@@ -75,5 +74,13 @@ class BlockActorTest {
         World result = actor.getWorld();
 
         assertThat(result).isEqualTo(world);
+    }
+
+    @Test
+    @DisplayName("remove resets block to air")
+    void remove_resetsBlock() {
+        actor.remove();
+
+        verify(block).setType(Material.AIR);
     }
 }

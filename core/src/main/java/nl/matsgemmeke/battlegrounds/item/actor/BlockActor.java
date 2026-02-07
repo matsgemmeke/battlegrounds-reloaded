@@ -6,7 +6,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
-public class BlockActor implements Actor {
+public class BlockActor implements Actor, Removable {
 
     private static final double BLOCK_CENTER_OFFSET = 0.5;
     private static final Vector ZERO = new Vector();
@@ -38,5 +38,10 @@ public class BlockActor implements Actor {
     @Override
     public World getWorld() {
         return block.getWorld();
+    }
+
+    @Override
+    public void remove() {
+        block.setType(Material.AIR);
     }
 }
