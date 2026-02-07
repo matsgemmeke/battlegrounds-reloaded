@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 
@@ -8,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TriggerRun {
+
+    private final static TriggerResult MANUAL_NOTIFY_TRIGGER_RESULT = SimpleTriggerResult.ACTIVATES;
 
     private final Schedule schedule;
     private final Set<TriggerObserver> observers;
@@ -35,6 +38,14 @@ public class TriggerRun {
 
     public void addObserver(TriggerObserver observer) {
         observers.add(observer);
+    }
+
+    public void notifyObservers() {
+        if (!started) {
+            return;
+        }
+
+        observers.forEach(observer -> observer.onActivate(MANUAL_NOTIFY_TRIGGER_RESULT));
     }
 
     public void replaceActor(Actor actor) {

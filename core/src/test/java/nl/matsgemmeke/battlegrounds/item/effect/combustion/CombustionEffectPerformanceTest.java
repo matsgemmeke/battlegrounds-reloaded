@@ -104,7 +104,8 @@ class CombustionEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         boolean performing = performance.isPerforming();
 
         assertThat(performing).isTrue();
@@ -157,7 +158,8 @@ class CombustionEffectPerformanceTest {
         when(scheduler.createSingleRunSchedule(longThat(duration -> duration >= MIN_DURATION && duration <= MAX_DURATION))).thenReturn(cancelSchedule);
         when(targetFinder.findTargets(DAMAGE_SOURCE_ID, actorLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(target));
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
         verify(repeatingSchedule).addTask(scheduleTaskCaptor.capture());
@@ -235,7 +237,8 @@ class CombustionEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(duration -> duration >= MIN_DURATION && duration <= MAX_DURATION))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         performance.rollback();
 
         verify(block).setType(Material.AIR);

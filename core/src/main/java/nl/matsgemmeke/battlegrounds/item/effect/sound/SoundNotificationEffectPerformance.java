@@ -27,8 +27,8 @@ public class SoundNotificationEffectPerformance extends BaseItemEffectPerformanc
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        UUID damageSourceUniqueId = context.getDamageSource().getUniqueId();
+    public void start() {
+        UUID damageSourceUniqueId = currentContext.getDamageSource().getUniqueId();
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(damageSourceUniqueId).orElse(null);
 
         if (gamePlayer == null) {

@@ -108,7 +108,8 @@ class GunFireSimulationEffectPerformanceTest {
 
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         boolean performing = performance.isPerforming();
 
         assertThat(performing).isTrue();

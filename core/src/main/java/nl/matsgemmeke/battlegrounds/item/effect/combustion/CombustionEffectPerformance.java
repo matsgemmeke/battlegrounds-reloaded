@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
@@ -65,9 +64,9 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        UUID uniqueId = context.getDamageSource().getUniqueId();
-        Actor actor = context.getActor();
+    public void start() {
+        UUID uniqueId = currentContext.getDamageSource().getUniqueId();
+        Actor actor = currentContext.getActor();
         Location actorLocation = actor.getLocation();
         World world = actor.getWorld();
 

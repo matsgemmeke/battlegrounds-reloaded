@@ -62,7 +62,8 @@ class DamageEffectPerformanceTest {
         CollisionResult collisionResult = new CollisionResult(null, null, null);
         ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
 
-        effectPerformance.perform(context);
+        effectPerformance.setContext(context);
+        effectPerformance.start();
 
         verifyNoInteractions(damageProcessor);
     }
@@ -73,7 +74,8 @@ class DamageEffectPerformanceTest {
         CollisionResult collisionResult = new CollisionResult(null, hitTarget, null);
         ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
 
-        effectPerformance.perform(context);
+        effectPerformance.setContext(context);
+        effectPerformance.start();
 
         verifyNoInteractions(damageProcessor);
     }
@@ -95,7 +97,8 @@ class DamageEffectPerformanceTest {
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
         ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
-        effectPerformance.perform(context);
+        effectPerformance.setContext(context);
+        effectPerformance.start();
 
         ArgumentCaptor<DamageContext> damageContextCaptor = ArgumentCaptor.forClass(DamageContext.class);
         verify(damageProcessor).processDamage(damageContextCaptor.capture());
@@ -125,7 +128,8 @@ class DamageEffectPerformanceTest {
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
         ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
-        effectPerformance.perform(context);
+        effectPerformance.setContext(context);
+        effectPerformance.start();
 
         ArgumentCaptor<DamageContext> damageContextCaptor = ArgumentCaptor.forClass(DamageContext.class);
         verify(damageProcessor).processDamage(damageContextCaptor.capture());

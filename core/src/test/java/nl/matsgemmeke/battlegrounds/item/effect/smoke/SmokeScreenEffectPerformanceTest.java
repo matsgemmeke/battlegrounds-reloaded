@@ -89,7 +89,8 @@ class SmokeScreenEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         boolean performing = performance.isPerforming();
 
         assertThat(performing).isTrue();
@@ -107,7 +108,8 @@ class SmokeScreenEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         verify(repeatingSchedule).stop();
     }
@@ -129,7 +131,8 @@ class SmokeScreenEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorOldLocation);
         verify(world).spawnParticle(PARTICLE_TYPE, actorNewLocation, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
@@ -153,7 +156,8 @@ class SmokeScreenEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
         verify(world, times(3)).spawnParticle(eq(PARTICLE_TYPE), any(Location.class), eq(0), anyDouble(), anyDouble(), anyDouble(), eq(PARTICLE_EXTRA), eq(PARTICLE_BLOCK_DATA), eq(true));
@@ -176,7 +180,8 @@ class SmokeScreenEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
         verifyNoInteractions(world);
@@ -200,7 +205,8 @@ class SmokeScreenEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
         verifyNoInteractions(world);
@@ -221,7 +227,8 @@ class SmokeScreenEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
         verify(repeatingSchedule).stop();
@@ -239,7 +246,8 @@ class SmokeScreenEffectPerformanceTest {
         when(scheduler.createRepeatingSchedule(0L, GROWTH_INTERVAL)).thenReturn(repeatingSchedule);
         when(scheduler.createSingleRunSchedule(longThat(isBetween(MIN_DURATION, MAX_DURATION)))).thenReturn(cancelSchedule);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         performance.rollback();
 
         verify(repeatingSchedule).stop();

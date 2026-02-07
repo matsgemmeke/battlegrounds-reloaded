@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
 
 import java.util.UUID;
@@ -25,11 +24,11 @@ public class MarkSpawnPointEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        uniqueId = context.getDamageSource().getUniqueId();
-        Location startingLocation = context.getStartingLocation();
+    public void start() {
+        uniqueId = currentContext.getDamageSource().getUniqueId();
+        Location startingLocation = currentContext.getStartingLocation();
 
-        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getActor(), startingLocation.getYaw());
+        SpawnPoint spawnPoint = new MarkedSpawnPoint(currentContext.getActor(), startingLocation.getYaw());
 
         spawnPointRegistry.setCustomSpawnPoint(uniqueId, spawnPoint);
     }

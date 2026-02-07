@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -39,8 +38,8 @@ public class FlashEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        Actor actor = context.getActor();
+    public void start() {
+        Actor actor = currentContext.getActor();
 
         this.createExplosionEffect(actor);
         this.applyPotionEffectToTargets(actor.getLocation());
@@ -100,7 +99,7 @@ public class FlashEffectPerformance extends BaseItemEffectPerformance {
     private void removePotionEffect(PotionEffectReceiver potionEffectReceiver) {
         PotionEffect potionEffect = potionEffectReceiver.getPotionEffect(PotionEffectType.BLINDNESS).orElse(null);
 
-        // Only remove the potion effect is it's the same instance that the flash effect caused
+        // Only remove the potion effect if it's the same instance that the flash effect caused
         if (potionEffect != null && potionEffect == appliedPotionEffects.get(potionEffectReceiver)) {
             potionEffectReceiver.removePotionEffect(PotionEffectType.BLINDNESS);
         }

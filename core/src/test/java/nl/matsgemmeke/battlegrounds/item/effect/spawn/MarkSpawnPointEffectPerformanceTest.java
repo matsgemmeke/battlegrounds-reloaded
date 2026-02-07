@@ -38,7 +38,8 @@ class MarkSpawnPointEffectPerformanceTest {
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
         ItemEffectContext context = this.createItemEffectContext();
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         boolean performing = performance.isPerforming();
 
         assertThat(performing).isFalse();
@@ -50,7 +51,8 @@ class MarkSpawnPointEffectPerformanceTest {
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         verify(spawnPointRegistry).setCustomSpawnPoint(eq(DAMAGE_SOURCE_ID), any(SpawnPoint.class));
     }
@@ -68,7 +70,8 @@ class MarkSpawnPointEffectPerformanceTest {
 
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         performance.rollback();
 
         verify(spawnPointRegistry).setCustomSpawnPoint(DAMAGE_SOURCE_ID, null);

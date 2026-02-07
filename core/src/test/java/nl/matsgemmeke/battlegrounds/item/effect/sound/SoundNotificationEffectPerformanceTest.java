@@ -51,7 +51,8 @@ class SoundNotificationEffectPerformanceTest {
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
         ItemEffectContext context = this.createItemEffectContext();
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         boolean performing = performance.isPerforming();
 
         assertThat(performing).isFalse();
@@ -64,7 +65,10 @@ class SoundNotificationEffectPerformanceTest {
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(playerRegistry.findByUniqueId(DAMAGE_SOURCE_ID)).thenReturn(Optional.empty());
 
-        assertThatCode(() -> performance.perform(context)).doesNotThrowAnyException();
+        assertThatCode(() -> {
+            performance.setContext(context);
+            performance.start();
+        }).doesNotThrowAnyException();
     }
 
     @Test
@@ -78,7 +82,8 @@ class SoundNotificationEffectPerformanceTest {
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
         when(playerRegistry.findByUniqueId(DAMAGE_SOURCE_ID)).thenReturn(Optional.of(gamePlayer));
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         verify(gamePlayer).playSound(playerLocation, sound);
     }

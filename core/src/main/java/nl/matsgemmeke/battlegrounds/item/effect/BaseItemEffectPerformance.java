@@ -16,11 +16,6 @@ public abstract class BaseItemEffectPerformance implements ItemEffectPerformance
     }
 
     @Override
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
-    }
-
-    @Override
     public void changeActor(Actor actor) {
         currentContext.setActor(actor);
     }
@@ -29,13 +24,6 @@ public abstract class BaseItemEffectPerformance implements ItemEffectPerformance
     public void setContext(ItemEffectContext context) {
         this.currentContext = context;
     }
-
-    @Override
-    public void start() {
-        this.perform(currentContext);
-    }
-
-    public abstract void perform(ItemEffectContext context);
 
     @Override
     public void cancel() {

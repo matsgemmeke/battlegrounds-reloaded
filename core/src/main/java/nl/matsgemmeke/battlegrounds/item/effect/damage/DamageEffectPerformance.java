@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
 
 public class DamageEffectPerformance extends BaseItemEffectPerformance {
@@ -32,8 +31,8 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        CollisionResult collisionResult = context.getCollisionResult();
+    public void start() {
+        CollisionResult collisionResult = currentContext.getCollisionResult();
         DamageTarget hitTarget = collisionResult.getHitTarget().orElse(null);
         Location hitLocation = collisionResult.getHitLocation().orElse(null);
 
@@ -41,8 +40,8 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
             return;
         }
 
-        Location startingLocation = context.getStartingLocation();
-        DamageSource damageSource = context.getDamageSource();
+        Location startingLocation = currentContext.getStartingLocation();
+        DamageSource damageSource = currentContext.getDamageSource();
         Damage damage = this.createDamage(hitTarget, hitLocation, startingLocation);
         DamageContext damageContext = new DamageContext(damageSource, hitTarget, damage);
 

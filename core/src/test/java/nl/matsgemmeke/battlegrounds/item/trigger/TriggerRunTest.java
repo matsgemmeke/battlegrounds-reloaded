@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
@@ -32,6 +33,29 @@ class TriggerRunTest {
     private TriggerRun triggerRun;
 
     @Test
+    @DisplayName("notifyObservers does not notify observers when not started")
+    void notifyObservers_whenNotStarted() {
+        TriggerObserver triggerObserver = mock(TriggerObserver.class);
+
+        triggerRun.addObserver(triggerObserver);
+        triggerRun.notifyObservers();
+
+        verifyNoInteractions(triggerObserver);
+    }
+
+    @Test
+    @DisplayName("notifyObservers notifies observers with a SimpleTriggerResult")
+    void notifyObservers_whenStarted() {
+        TriggerObserver triggerObserver = mock(TriggerObserver.class);
+
+        triggerRun.addObserver(triggerObserver);
+        triggerRun.start();
+        triggerRun.notifyObservers();
+
+        verify(triggerObserver).onActivate(SimpleTriggerResult.ACTIVATES);
+    }
+
+    @Test
     @DisplayName("replaceActor sets new context with replaced actor")
     void replaceActor_setsNewContext() {
         Actor newActor = mock(Actor.class);
@@ -47,14 +71,16 @@ class TriggerRunTest {
     }
 
     @Test
-    void cancelDoesNotStopScheduleWhenNotStarted() {
+    @DisplayName("cancel does not stop schedule when not started")
+    void cancel_whenNotStarted() {
         triggerRun.cancel();
 
         verify(schedule, never()).stop();
     }
 
     @Test
-    void cancelStopsScheduleWhenStarted() {
+    @DisplayName("cancel stops schedule when started")
+    void cancel_whenStarted() {
         triggerRun.start();
         triggerRun.cancel();
 
@@ -62,7 +88,8 @@ class TriggerRunTest {
     }
 
     @Test
-    void startDoesNotStartScheduleWhenAlreadyStarted() {
+    @DisplayName("start does not start schedule when already started")
+    void start_whenAlreadyStarted() {
         triggerRun.start();
         triggerRun.start();
 
@@ -71,7 +98,8 @@ class TriggerRunTest {
     }
 
     @Test
-    void startStartsScheduleWithTaskThatDoesNotNotifyObserversWhenTriggerResultDoesNotActivate() {
+    @DisplayName("start starts schedule with task that does not notify observers when TriggerResult does not activate")
+    void start_whenTriggerResultDoesNotActivate() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
         TriggerResult triggerResult = mock(TriggerResult.class);
@@ -88,7 +116,8 @@ class TriggerRunTest {
     }
 
     @Test
-    void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivatesAndStopsItselfWhenRepeatingIsFalse() {
+    @DisplayName("start starts schedule with task that stops itself when TriggerResult activates")
+    void start_withNonRepeatingSchedule() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
         TriggerResult triggerResult = mock(TriggerResult.class);
@@ -106,7 +135,8 @@ class TriggerRunTest {
     }
 
     @Test
-    void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivatesAndContinuesWhenRepeatingIsTrue() {
+    @DisplayName("start starts schedule with task that continues when TriggerResult activates")
+    void start_withRepeatingSchedule() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
         TriggerResult triggerResult = mock(TriggerResult.class);

@@ -15,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -68,7 +69,8 @@ class FlashEffectPerformanceTest {
     }
 
     @Test
-    void performPerformsEffectAndAppliesBlindnessPotionEffectToAllTargetsInsideLongRangeDistance() {
+    @DisplayName("start performs effect and applies blindness potion effect to all targets inside the long range distance")
+    void start_performsEffect() {
         World world = mock(World.class);
         ItemEffectContext context = this.createItemEffectContext();
         Schedule cancelSchedule = mock(Schedule.class);
@@ -79,7 +81,8 @@ class FlashEffectPerformanceTest {
         when(scheduler.createSingleRunSchedule(POTION_EFFECT_DURATION)).thenReturn(cancelSchedule);
         when(targetFinder.findPotionEffectReceivers(ACTOR_LOCATION, RANGE)).thenReturn(List.of(target));
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
         verify(target).addPotionEffect(potionEffectCaptor.capture());
@@ -107,7 +110,8 @@ class FlashEffectPerformanceTest {
 
     @ParameterizedTest
     @MethodSource("potionEffectScenarios")
-    void rollbackDoesNotRemovePotionEffectFromEntities(PotionEffect potionEffect) {
+    @DisplayName("rollback does not remove potion effects when current active potion effect does not equal the effect's applied potion effect")
+    void rollback_doesNothingForNonPlayerEntities(PotionEffect potionEffect) {
         World world = mock(World.class);
         ItemEffectContext context = this.createItemEffectContext();
 
@@ -122,13 +126,15 @@ class FlashEffectPerformanceTest {
         when(scheduler.createSingleRunSchedule(POTION_EFFECT_DURATION)).thenReturn(cancelSchedule);
         when(targetFinder.findPotionEffectReceivers(ACTOR_LOCATION, RANGE)).thenReturn(List.of(target));
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         performance.rollback();
 
         verify(target, never()).removePotionEffect(any(PotionEffectType.class));
     }
 
     @Test
+    @DisplayName("rollback removes potion effects when current active potion effect equals the effect's applied potion effect")
     void rollbackRemovesAppliedPotionEffectsFromEntities() {
         World world = mock(World.class);
         ItemEffectContext context = this.createItemEffectContext();
@@ -142,7 +148,8 @@ class FlashEffectPerformanceTest {
         when(scheduler.createSingleRunSchedule(POTION_EFFECT_DURATION)).thenReturn(cancelSchedule);
         when(targetFinder.findPotionEffectReceivers(ACTOR_LOCATION, RANGE)).thenReturn(List.of(target));
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
 
         ArgumentCaptor<PotionEffect> potionEffectCaptor = ArgumentCaptor.forClass(PotionEffect.class);
         verify(target).addPotionEffect(potionEffectCaptor.capture());

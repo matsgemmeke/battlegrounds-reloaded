@@ -36,6 +36,8 @@ public class DeploymentHandler {
     private final Set<TriggerRun> triggerRuns;
     @Nullable
     private Activator activator;
+    @Nullable
+    private Actor currentActor;
     private boolean pending;
     private boolean performing;
     @Nullable
@@ -80,7 +82,7 @@ public class DeploymentHandler {
         deployer.setHeldItem(null);
 
         Schedule delaySchedule = scheduler.createSingleRunSchedule(deploymentProperties.manualActivationDelay());
-        delaySchedule.addTask(itemEffect::activatePerformances);
+        delaySchedule.addTask(() -> triggerRuns.forEach(TriggerRun::notifyObservers));
         delaySchedule.start();
     }
 
@@ -142,27 +144,26 @@ public class DeploymentHandler {
         deploymentObject = deploymentResult.deploymentObject();
 
         if (pending) {
-            Actor actor = deploymentResult.actor();
+            currentActor = deploymentResult.actor();
 
-            itemEffect.getLatestPerformance().ifPresent(latestPerformance -> latestPerformance.changeActor(actor));
-            triggerRuns.forEach(triggerRun -> triggerRun.replaceActor(actor));
+            itemEffect.getLatestPerformance().ifPresent(latestPerformance -> latestPerformance.changeActor(currentActor));
+            triggerRuns.forEach(triggerRun -> triggerRun.replaceActor(currentActor));
             return;
         }
 
+        currentActor = deploymentResult.actor();
+
         DamageSource damageSource = deploymentResult.deployer();
         UUID sourceId = damageSource.getUniqueId();
-        Actor actor = deploymentResult.actor();
-        TriggerContext triggerContext = new TriggerContext(sourceId, actor);
-        Location startingLocation = actor.getLocation();
+        TriggerContext triggerContext = new TriggerContext(sourceId, currentActor);
+        Location startingLocation = currentActor.getLocation();
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-            triggerRun.addObserver(triggerResult -> this.activateEffect(triggerResult, damageSource, actor, startingLocation));
+            triggerRun.addObserver(triggerResult -> this.activateEffect(triggerResult, damageSource, currentActor, startingLocation));
             triggerRun.start();
 
-            if (!deploymentObject.isPhysical()) {
-                triggerRuns.add(triggerRun);
-            }
+            triggerRuns.add(triggerRun);
         }
 
         if (deploymentObject.isPhysical()) {

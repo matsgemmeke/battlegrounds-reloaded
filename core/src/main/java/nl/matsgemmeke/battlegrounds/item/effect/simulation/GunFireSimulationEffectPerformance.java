@@ -47,8 +47,8 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        UUID damageSourceId = context.getDamageSource().getUniqueId();
+    public void start() {
+        UUID damageSourceId = currentContext.getDamageSource().getUniqueId();
         GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(damageSourceId).orElse(null);
 
         if (gunFireSimulationInfo == null) {

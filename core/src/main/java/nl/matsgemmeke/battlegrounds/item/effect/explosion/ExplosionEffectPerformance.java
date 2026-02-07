@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -37,9 +36,9 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        UUID uniqueId = context.getDamageSource().getUniqueId();
-        Actor actor = context.getActor();
+    public void start() {
+        UUID uniqueId = currentContext.getDamageSource().getUniqueId();
+        Actor actor = currentContext.getActor();
         Location actorLocation = actor.getLocation();
         World world = actor.getWorld();
 
