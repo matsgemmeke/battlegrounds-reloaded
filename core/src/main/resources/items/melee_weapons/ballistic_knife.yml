@@ -1,27 +1,27 @@
-name: Tomahawk
-description: Retrievable throwing hatchet that causes instant death on impact.
-level-unlocked: 39
-price: 1000
+name: Ballistic Knife
+description: Spring-action knife launcher. Can fire the blade as a projectile.
+level-unlocked: 15
+price: 200
 controls:
   throwing: RIGHT_CLICK
 ammo:
-  default-amount: 1
-  max-amount: 2
+  default-amount: 2
+  max-amount: 4
 damage:
-  melee-damage: 50.0
-  throwing-damage: 150.0
+  melee-damage: 60.0
+  throwing-damage: 120.0
 items:
   display-item:
     material: IRON_SWORD
     display-name: '&f%name%'
     amount: 1
-    damage: 3
+    damage: 2
 throwing:
   projectile:
     type: ITEM
     item:
       material: IRON_SWORD
-      damage: 3
+      damage: 2
     velocity: 2.5
     launch-sounds: ENTITY_ARROW_SHOOT-1-1.2-0
     effect:
@@ -29,13 +29,13 @@ throwing:
       damage-type: MELEE_DAMAGE
       range:
         short-range:
-          damage: 120.0
+          damage: 80.0
           distance: 50.0
         medium-range:
-          damage: 135.0
+          damage: 100.0
           distance: 10.0
         long-range:
-          damage: 150.0
+          damage: 120.0
           distance: 5.0
       hitbox-multipliers:
         head: 1.0

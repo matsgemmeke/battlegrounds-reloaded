@@ -12,6 +12,9 @@ public class MeleeWeaponSpec {
     public ControlsSpec controls;
 
     @Required
+    public AmmoSpec ammo;
+
+    @Required
     public DamageSpec damage;
 
     @Required
