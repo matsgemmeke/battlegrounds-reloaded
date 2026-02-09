@@ -1,51 +1,50 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ReloadingSpec;
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class ReloadSystemFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class ReloadSystemFactoryTest {
 
-    private AmmunitionStorage ammunitionStorage;
-    private Gun gun;
+    private static final ResourceContainer RESOURCE_CONTAINER = new ResourceContainer(30, 30, 90, 300);
+
+    @Mock
     private MagazineReloadSystemFactory magazineReloadSystemFactory;
+    @Mock
     private ManualInsertionReloadSystemFactory manualInsertionReloadSystemFactory;
-
-    @BeforeEach
-    public void setUp() {
-        ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
-        magazineReloadSystemFactory = mock(MagazineReloadSystemFactory.class);
-        manualInsertionReloadSystemFactory = mock(ManualInsertionReloadSystemFactory.class);
-
-        gun = mock(Gun.class);
-        when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
-    }
+    @InjectMocks
+    private ReloadSystemFactory reloadSystemFactory;
 
     @Test
-    public void createMakesReloadSystemInstanceForMagazineReload() {
+    @DisplayName("create returns ReloadSystem instance for magazine reload")
+    void create_magazineReload() {
         ReloadingSpec spec = new ReloadingSpec();
         spec.type = "MAGAZINE";
         spec.duration = 50L;
 
         MagazineReloadSystem reloadSystem = mock(MagazineReloadSystem.class);
-        when(magazineReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage))).thenReturn(reloadSystem);
+        when(magazineReloadSystemFactory.create(any(ReloadProperties.class), eq(RESOURCE_CONTAINER))).thenReturn(reloadSystem);
 
         ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
-        ReloadSystem result = factory.create(spec, gun);
+        ReloadSystem result = factory.create(spec, RESOURCE_CONTAINER);
 
         ArgumentCaptor<ReloadProperties> propertiesCaptor = ArgumentCaptor.forClass(ReloadProperties.class);
-        verify(magazineReloadSystemFactory).create(propertiesCaptor.capture(), eq(ammunitionStorage));
+        verify(magazineReloadSystemFactory).create(propertiesCaptor.capture(), eq(RESOURCE_CONTAINER));
 
         ReloadProperties properties = propertiesCaptor.getValue();
         assertThat(properties.duration()).isEqualTo(50L);
@@ -54,19 +53,20 @@ public class ReloadSystemFactoryTest {
     }
 
     @Test
-    public void createMakesReloadSystemInstanceForManualInsertionReload() {
+    @DisplayName("create returns ReloadSystem for manual insertion reload")
+    void create_manualInsertionReload() {
         ReloadingSpec spec = new ReloadingSpec();
         spec.type = "MANUAL_INSERTION";
         spec.duration = 50L;
 
         ManualInsertionReloadSystem reloadSystem = mock(ManualInsertionReloadSystem.class);
-        when(manualInsertionReloadSystemFactory.create(any(ReloadProperties.class), eq(ammunitionStorage))).thenReturn(reloadSystem);
+        when(manualInsertionReloadSystemFactory.create(any(ReloadProperties.class), eq(RESOURCE_CONTAINER))).thenReturn(reloadSystem);
 
         ReloadSystemFactory factory = new ReloadSystemFactory(magazineReloadSystemFactory, manualInsertionReloadSystemFactory);
-        ReloadSystem result = factory.create(spec, gun);
+        ReloadSystem result = factory.create(spec, RESOURCE_CONTAINER);
 
         ArgumentCaptor<ReloadProperties> propertiesCaptor = ArgumentCaptor.forClass(ReloadProperties.class);
-        verify(manualInsertionReloadSystemFactory).create(propertiesCaptor.capture(), eq(ammunitionStorage));
+        verify(manualInsertionReloadSystemFactory).create(propertiesCaptor.capture(), eq(RESOURCE_CONTAINER));
 
         ReloadProperties properties = propertiesCaptor.getValue();
         assertThat(properties.duration()).isEqualTo(50L);

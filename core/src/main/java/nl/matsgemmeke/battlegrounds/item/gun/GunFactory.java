@@ -19,6 +19,7 @@ import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
@@ -115,7 +116,9 @@ public class GunFactory {
         AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
         gun.setAmmunitionStorage(ammunitionStorage);
 
-        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, gun);
+        ResourceContainer resourceContainer = new ResourceContainer(magazineSize, magazineSize, reserveAmmo, maxAmmo);
+
+        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
         gun.setReloadSystem(reloadSystem);
 
         ItemControls<GunHolder> controls = controlsFactory.create(spec.controls, gun);

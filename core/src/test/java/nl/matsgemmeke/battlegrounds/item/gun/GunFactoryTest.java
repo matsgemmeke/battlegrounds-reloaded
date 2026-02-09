@@ -11,10 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.GunControlsFactory;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
-import nl.matsgemmeke.battlegrounds.item.reload.Reloadable;
+import nl.matsgemmeke.battlegrounds.item.reload.*;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
@@ -101,7 +98,7 @@ public class GunFactoryTest {
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
 
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
@@ -147,7 +144,7 @@ public class GunFactoryTest {
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
 
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
@@ -173,7 +170,7 @@ public class GunFactoryTest {
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
 
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);

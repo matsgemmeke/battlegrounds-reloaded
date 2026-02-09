@@ -2,16 +2,12 @@ package nl.matsgemmeke.battlegrounds.item.reload.magazine;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadProperties;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.reload.*;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
-import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -19,50 +15,47 @@ import java.util.List;
 
 public class MagazineReloadSystem implements ReloadSystem {
 
-    @NotNull
-    private final AmmunitionStorage ammunitionStorage;
-    @NotNull
     private final AudioEmitter audioEmitter;
-    @NotNull
-    private final List<BukkitTask> currentTasks;
+    private final List<Schedule> schedules;
+    private final ReloadProperties properties;
+    private final ResourceContainer resourceContainer;
+    private final Scheduler scheduler;
     @Nullable
     private ReloadPerformer currentPerformer;
-    @NotNull
-    private final ReloadProperties properties;
-    @NotNull
-    private final TaskRunner taskRunner;
 
     @Inject
-    public MagazineReloadSystem(
-            @NotNull AudioEmitter audioEmitter,
-            @NotNull TaskRunner taskRunner,
-            @Assisted @NotNull ReloadProperties properties,
-            @Assisted @NotNull AmmunitionStorage ammunitionStorage
-    ) {
+    public MagazineReloadSystem(AudioEmitter audioEmitter, Scheduler scheduler, @Assisted ReloadProperties properties, @Assisted ResourceContainer resourceContainer) {
         this.audioEmitter = audioEmitter;
-        this.taskRunner = taskRunner;
-        this.ammunitionStorage = ammunitionStorage;
+        this.scheduler = scheduler;
+        this.resourceContainer = resourceContainer;
         this.properties = properties;
-        this.currentTasks = new ArrayList<>();
+        this.schedules = new ArrayList<>();
     }
 
     public boolean isPerforming() {
         return currentPerformer != null;
     }
 
-    public boolean performReload(@NotNull ReloadPerformer performer, @NotNull Procedure callback) {
+    public boolean performReload(ReloadPerformer performer, Procedure callback) {
         currentPerformer = performer;
         performer.applyReloadingState();
 
         for (GameSound sound : properties.reloadSounds()) {
-            currentTasks.add(taskRunner.runTaskLater(() -> audioEmitter.playSound(sound, performer.getLocation()), sound.getDelay()));
+            Schedule soundPlaySchedule = scheduler.createSingleRunSchedule(sound.getDelay());
+            soundPlaySchedule.addTask(() -> audioEmitter.playSound(sound, performer.getLocation()));
+            soundPlaySchedule.start();
+
+            schedules.add(soundPlaySchedule);
         }
 
-        currentTasks.add(taskRunner.runTaskLater(() -> {
+        Schedule reloadFinishSchedule = scheduler.createSingleRunSchedule(properties.duration());
+        reloadFinishSchedule.addTask(() -> {
             this.finalizeReload(performer);
             callback.apply();
-        }, properties.duration()));
+        });
+        reloadFinishSchedule.start();
 
+        schedules.add(reloadFinishSchedule);
         return true;
     }
 
@@ -71,29 +64,25 @@ public class MagazineReloadSystem implements ReloadSystem {
             return false;
         }
 
-        for (BukkitTask task : currentTasks) {
-            task.cancel();
-        }
-
+        schedules.forEach(Schedule::stop);
+        schedules.clear();
         currentPerformer.resetReloadingState();
         currentPerformer = null;
-        currentTasks.clear();
         return true;
     }
 
-    private void finalizeReload(@NotNull ReloadPerformer performer) {
-        int magazineAmmo = ammunitionStorage.getMagazineAmmo();
-        int magazineSize = ammunitionStorage.getMagazineSize();
-        int magazineSpace = magazineSize - magazineAmmo;
-        int reserveAmmo = ammunitionStorage.getReserveAmmo();
+    private void finalizeReload(ReloadPerformer performer) {
+        int loadedAmount = resourceContainer.getLoadedAmount();
+        int capacity = resourceContainer.getCapacity();
+        int reserveAmount = resourceContainer.getReserveAmount();
+        int remainingCapacity = capacity - loadedAmount;
 
-        if (reserveAmmo > magazineSpace) {
-            ammunitionStorage.setReserveAmmo(reserveAmmo - magazineSpace);
-            ammunitionStorage.setMagazineAmmo(magazineSize);
+        if (reserveAmount > remainingCapacity) {
+            resourceContainer.setReserveAmount(reserveAmount - remainingCapacity);
+            resourceContainer.setLoadedAmount(capacity);
         } else {
-            // In case the magazine cannot be filled completely, use the remaining ammo
-            ammunitionStorage.setMagazineAmmo(magazineAmmo + reserveAmmo);
-            ammunitionStorage.setReserveAmmo(0);
+            resourceContainer.setLoadedAmount(loadedAmount + reserveAmount);
+            resourceContainer.setReserveAmount(0);
         }
 
         performer.resetReloadingState();
