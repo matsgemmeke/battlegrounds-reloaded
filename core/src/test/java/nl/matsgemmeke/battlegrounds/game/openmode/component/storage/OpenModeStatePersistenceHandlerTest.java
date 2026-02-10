@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
@@ -70,7 +70,7 @@ class OpenModeStatePersistenceHandlerTest {
         EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_NAME, EQUIPMENT_ITEM_SLOT);
         MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, MELEE_WEAPON_NAME, MELEE_WEAPON_ITEM_SLOT);
         PlayerState gamePlayerState = new PlayerState(PLAYER_UUID, List.of(gunState), List.of(equipmentState), List.of(meleeWeaponState));
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(0, 0, 0, 0);
+        ResourceContainer resourceContainer = new ResourceContainer(0, 0, 0, 0);
         ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
         ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
         ItemStack meleeWeaponItemStack = new ItemStack(Material.IRON_SWORD);
@@ -81,7 +81,7 @@ class OpenModeStatePersistenceHandlerTest {
         when(gamePlayer.getEntity().getInventory()).thenReturn(inventory);
 
         Gun gun = mock(Gun.class);
-        when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
+        when(gun.getResourceContainer()).thenReturn(resourceContainer);
         when(gun.getItemStack()).thenReturn(gunItemStack);
 
         Equipment equipment = mock(Equipment.class);
@@ -100,8 +100,8 @@ class OpenModeStatePersistenceHandlerTest {
 
         statePersistenceHandler.loadPlayerState(gamePlayer);
 
-        assertThat(ammunitionStorage.getMagazineAmmo()).isEqualTo(GUN_MAGAZINE_AMMO);
-        assertThat(ammunitionStorage.getReserveAmmo()).isEqualTo(GUN_RESERVE_AMMO);
+        assertThat(resourceContainer.getLoadedAmount()).isEqualTo(GUN_MAGAZINE_AMMO);
+        assertThat(resourceContainer.getReserveAmount()).isEqualTo(GUN_RESERVE_AMMO);
 
         verify(inventory).setItem(GUN_ITEM_SLOT, gunItemStack);
         verify(inventory).setItem(EQUIPMENT_ITEM_SLOT, equipmentItemStack);
@@ -136,15 +136,15 @@ class OpenModeStatePersistenceHandlerTest {
 
     @Test
     void savePlayerStateLogsErrorWhenSavingCollectedDataWithItemsWithoutItemStack() {
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
+        ResourceContainer resourceContainer = new ResourceContainer(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
 
         Gun gun = mock(Gun.class);
         when(gun.getName()).thenReturn(GUN_NAME);
-        when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
         when(gun.getItemStack()).thenReturn(null);
+        when(gun.getResourceContainer()).thenReturn(resourceContainer);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.getName()).thenReturn(EQUIPMENT_NAME);
@@ -173,15 +173,15 @@ class OpenModeStatePersistenceHandlerTest {
 
     @Test
     void saveStateSavesCollectedDataWithCorrespondingItemSlotsToStateStorage() {
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
+        ResourceContainer resourceContainer = new ResourceContainer(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
         ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
         ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
         ItemStack meleeWeaponItemStack = new ItemStack(Material.IRON_SWORD);
 
         Gun gun = mock(Gun.class);
         when(gun.getName()).thenReturn(GUN_NAME);
-        when(gun.getAmmunitionStorage()).thenReturn(ammunitionStorage);
         when(gun.getItemStack()).thenReturn(gunItemStack);
+        when(gun.getResourceContainer()).thenReturn(resourceContainer);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.getName()).thenReturn(EQUIPMENT_NAME);

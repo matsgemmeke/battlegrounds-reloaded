@@ -6,9 +6,9 @@ import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
@@ -22,7 +22,6 @@ import java.util.Map;
 public class DefaultGun extends BaseWeapon implements Gun {
 
     private double damageAmplifier;
-    private AmmunitionStorage ammunitionStorage;
     @Nullable
     private GunHolder holder;
     private ItemControls<GunHolder> controls;
@@ -32,6 +31,7 @@ public class DefaultGun extends BaseWeapon implements Gun {
     @Nullable
     private Recoil recoil;
     private ReloadSystem reloadSystem;
+    private ResourceContainer resourceContainer;
     @Nullable
     private ScopeAttachment scopeAttachment;
     private ShootHandler shootHandler;
@@ -40,13 +40,14 @@ public class DefaultGun extends BaseWeapon implements Gun {
         this.controls = new ItemControls<>();
     }
 
-    @NotNull
-    public AmmunitionStorage getAmmunitionStorage() {
-        return ammunitionStorage;
+    @Override
+    public ResourceContainer getResourceContainer() {
+        return resourceContainer;
     }
 
-    public void setAmmunitionStorage(@NotNull AmmunitionStorage ammunitionStorage) {
-        this.ammunitionStorage = ammunitionStorage;
+    @Override
+    public void setResourceContainer(ResourceContainer resourceContainer) {
+        this.resourceContainer = resourceContainer;
     }
 
     @NotNull
@@ -133,7 +134,7 @@ public class DefaultGun extends BaseWeapon implements Gun {
     }
 
     public boolean canShoot() {
-        return ammunitionStorage.getMagazineAmmo() > 0;
+        return resourceContainer.getLoadedAmount() > 0;
     }
 
     public boolean cancelReload() {
@@ -162,8 +163,8 @@ public class DefaultGun extends BaseWeapon implements Gun {
 
     public boolean isReloadAvailable() {
         return !reloadSystem.isPerforming()
-                && ammunitionStorage.getMagazineAmmo() < ammunitionStorage.getMagazineSize()
-                && ammunitionStorage.getReserveAmmo() > 0;
+                && resourceContainer.getLoadedAmount() < resourceContainer.getCapacity()
+                && resourceContainer.getReserveAmount() > 0;
     }
 
     public boolean isReloading() {
@@ -265,12 +266,11 @@ public class DefaultGun extends BaseWeapon implements Gun {
         return true;
     }
 
-    @NotNull
     private Map<String, Object> getTemplateValues() {
         return Map.of(
                 "name", name,
-                "magazine_ammo", ammunitionStorage.getMagazineAmmo(),
-                "reserve_ammo", ammunitionStorage.getReserveAmmo()
+                "magazine_ammo", resourceContainer.getLoadedAmount(),
+                "reserve_ammo", resourceContainer.getReserveAmount()
         );
     }
 }

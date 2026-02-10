@@ -120,10 +120,10 @@ public class GunFactoryTest {
         assertThat(gun.getName()).isEqualTo("MP5");
         assertThat(gun.getItemStack()).isNotNull();
         assertThat(gun.getItemStack().getType()).isEqualTo(Material.IRON_HOE);
-        assertThat(gun.getAmmunitionStorage().getMagazineAmmo()).isEqualTo(30);
-        assertThat(gun.getAmmunitionStorage().getMagazineSize()).isEqualTo(30);
-        assertThat(gun.getAmmunitionStorage().getMaxAmmo()).isEqualTo(240);
-        assertThat(gun.getAmmunitionStorage().getReserveAmmo()).isEqualTo(90);
+        assertThat(gun.getResourceContainer().getCapacity()).isEqualTo(30);
+        assertThat(gun.getResourceContainer().getLoadedAmount()).isEqualTo(30);
+        assertThat(gun.getResourceContainer().getReserveAmount()).isEqualTo(90);
+        assertThat(gun.getResourceContainer().getMaxReserveAmount()).isEqualTo(240);
 
         verify(gunRegistry).register(gun);
         verify(itemMeta).setDamage(8);

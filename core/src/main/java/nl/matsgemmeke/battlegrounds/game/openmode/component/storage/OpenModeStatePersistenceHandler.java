@@ -73,8 +73,8 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         }
 
         Gun gun = weaponCreator.createGun(gunName, gamePlayer);
-        gun.getAmmunitionStorage().setMagazineAmmo(gunState.magazineAmmo());
-        gun.getAmmunitionStorage().setReserveAmmo(gunState.reserveAmmo());
+        gun.getResourceContainer().setLoadedAmount(gunState.magazineAmmo());
+        gun.getResourceContainer().setReserveAmount(gunState.reserveAmmo());
         gun.update();
 
         Player player = gamePlayer.getEntity();
@@ -156,8 +156,8 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     private Optional<GunState> convertToGunState(GamePlayer gamePlayer, Gun gun) {
         UUID uniqueId = gamePlayer.getUniqueId();
         String gunName = gun.getName();
-        int magazineAmmo = gun.getAmmunitionStorage().getMagazineAmmo();
-        int reserveAmmo = gun.getAmmunitionStorage().getReserveAmmo();
+        int magazineAmmo = gun.getResourceContainer().getLoadedAmount();
+        int reserveAmmo = gun.getResourceContainer().getReserveAmount();
         ItemStack itemStack = gun.getItemStack();
 
         if (itemStack == null) {

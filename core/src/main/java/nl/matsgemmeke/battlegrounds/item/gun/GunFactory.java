@@ -13,7 +13,6 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
@@ -113,10 +112,8 @@ public class GunFactory {
         int reserveAmmo = spec.ammo.defaultMagazineAmount * magazineSize;
         int maxAmmo = spec.ammo.maxMagazineAmount * magazineSize;
 
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
-        gun.setAmmunitionStorage(ammunitionStorage);
-
         ResourceContainer resourceContainer = new ResourceContainer(magazineSize, magazineSize, reserveAmmo, maxAmmo);
+        gun.setResourceContainer(resourceContainer);
 
         ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
         gun.setReloadSystem(reloadSystem);
