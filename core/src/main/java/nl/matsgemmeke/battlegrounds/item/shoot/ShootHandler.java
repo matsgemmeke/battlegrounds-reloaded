@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
@@ -18,12 +18,12 @@ import java.util.function.Supplier;
 
 public class ShootHandler {
 
-    private final AmmunitionStorage ammunitionStorage;
     private final FireMode fireMode;
     private final ItemRepresentation itemRepresentation;
     private final ProjectileLauncher projectileLauncher;
     @Nullable
     private final Recoil recoil;
+    private final ResourceContainer resourceContainer;
     private final SpreadPattern spreadPattern;
     private ShotPerformer performer;
 
@@ -31,7 +31,7 @@ public class ShootHandler {
             FireMode fireMode,
             ProjectileLauncher projectileLauncher,
             SpreadPattern spreadPattern,
-            AmmunitionStorage ammunitionStorage,
+            ResourceContainer resourceContainer,
             ItemRepresentation itemRepresentation,
             @Nullable Recoil recoil
     ) {
@@ -39,7 +39,7 @@ public class ShootHandler {
         this.projectileLauncher = projectileLauncher;
         this.recoil = recoil;
         this.spreadPattern = spreadPattern;
-        this.ammunitionStorage = ammunitionStorage;
+        this.resourceContainer = resourceContainer;
         this.itemRepresentation = itemRepresentation;
     }
 
@@ -48,16 +48,16 @@ public class ShootHandler {
     }
 
     private void onShotActivate() {
-        int magazineAmmo = ammunitionStorage.getMagazineAmmo();
+        int loadedAmount = resourceContainer.getLoadedAmount();
 
-        if (performer == null || magazineAmmo <= 0) {
+        if (performer == null || loadedAmount <= 0) {
             return;
         }
 
-        ammunitionStorage.setMagazineAmmo(magazineAmmo - 1);
-        itemRepresentation.setPlaceholder(Placeholder.MAGAZINE_AMMO, String.valueOf(ammunitionStorage.getMagazineAmmo()));
+        resourceContainer.setLoadedAmount(loadedAmount - 1);
+        itemRepresentation.setPlaceholder(Placeholder.MAGAZINE_AMMO, String.valueOf(resourceContainer.getLoadedAmount()));
         // TODO: Remove this once reloading uses the ItemRepresentation
-        itemRepresentation.setPlaceholder(Placeholder.RESERVE_AMMO, String.valueOf(ammunitionStorage.getReserveAmmo()));
+        itemRepresentation.setPlaceholder(Placeholder.RESERVE_AMMO, String.valueOf(resourceContainer.getReserveAmount()));
 
         Location shootingDirection = performer.getShootingDirection();
         World world = shootingDirection.getWorld();

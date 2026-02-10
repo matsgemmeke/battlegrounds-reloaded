@@ -104,7 +104,7 @@ public class GunFactoryTest {
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
         when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
-        when(shootHandlerFactory.create(eq(spec.shooting), any(AmmunitionStorage.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
+        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
         GunFactory gunFactory = new GunFactory(config, controlsFactory, gunInfoProvider, gunRegistry, keyCreator, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Gun gun = gunFactory.create(spec);
@@ -150,7 +150,7 @@ public class GunFactoryTest {
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
         when(scopeAttachmentProvider.get()).thenReturn(scopeAttachment);
-        when(shootHandlerFactory.create(eq(spec.shooting), any(AmmunitionStorage.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
+        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
         GunFactory gunFactory = new GunFactory(config, controlsFactory, gunInfoProvider, gunRegistry, keyCreator, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Gun gun = gunFactory.create(spec);
@@ -175,7 +175,7 @@ public class GunFactoryTest {
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
-        when(shootHandlerFactory.create(eq(spec.shooting), any(AmmunitionStorage.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
+        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
         GunFactory gunFactory = new GunFactory(config, controlsFactory, gunInfoProvider, gunRegistry, keyCreator, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Gun gun = gunFactory.create(spec, gamePlayer);
