@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.throwing;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.ThrowingSpec;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncherFactory;
@@ -15,11 +16,9 @@ public class ThrowHandlerFactory {
         this.projectileLauncherFactory = projectileLauncherFactory;
     }
 
-    public ThrowHandler create(ThrowingSpec spec, ItemRepresentation itemRepresentation) {
+    public ThrowHandler create(ThrowingSpec spec, ItemRepresentation itemRepresentation, ResourceContainer resourceContainer) {
         ProjectileLauncher projectileLauncher = projectileLauncherFactory.create(spec.projectile);
 
-        int throwsAmount = spec.throwsAmount;
-
-        return new ThrowHandler(itemRepresentation, projectileLauncher, throwsAmount);
+        return new ThrowHandler(itemRepresentation, projectileLauncher, resourceContainer);
     }
 }

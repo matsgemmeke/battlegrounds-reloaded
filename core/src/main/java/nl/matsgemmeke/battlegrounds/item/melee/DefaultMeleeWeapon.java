@@ -4,6 +4,9 @@ import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowPerformer;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +27,8 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     private ItemTemplate throwItemTemplate;
     @Nullable
     private MeleeWeaponHolder holder;
+    private ReloadSystem reloadSystem;
+    private ResourceContainer resourceContainer;
     @Nullable
     private ThrowHandler throwHandler;
 
@@ -64,6 +69,24 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     @Override
     public void setHolder(@Nullable MeleeWeaponHolder holder) {
         this.holder = holder;
+    }
+
+    public ReloadSystem getReloadSystem() {
+        return reloadSystem;
+    }
+
+    public void setReloadSystem(ReloadSystem reloadSystem) {
+        this.reloadSystem = reloadSystem;
+    }
+
+    @Override
+    public ResourceContainer getResourceContainer() {
+        return resourceContainer;
+    }
+
+    @Override
+    public void setResourceContainer(ResourceContainer resourceContainer) {
+        this.resourceContainer = resourceContainer;
     }
 
     public void configureThrowHandler(ThrowHandler throwHandler) {
@@ -132,6 +155,31 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     }
 
     @Override
+    public boolean cancelReload() {
+        return reloadSystem.cancelReload();
+    }
+
+    @Override
+    public boolean isReloadAvailable() {
+        return !reloadSystem.isPerforming()
+                && resourceContainer.getLoadedAmount() < resourceContainer.getCapacity()
+                && resourceContainer.getReserveAmount() > 0;
+    }
+
+    @Override
+    public boolean isReloading() {
+        return reloadSystem.isPerforming();
+    }
+
+    @Override
+    public void reload(ReloadPerformer performer) {
+        reloadSystem.performReload(performer, () -> {
+            this.update();
+            performer.setHeldItem(itemStack);
+        });
+    }
+
+    @Override
     public void performThrow(ThrowPerformer performer) {
         if (throwHandler == null) {
             return;
@@ -156,6 +204,8 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
         if (name != null) {
             values.put("name", name);
+            values.put("loaded_amount", resourceContainer.getLoadedAmount());
+            values.put("reserve_amount", resourceContainer.getReserveAmount());
         }
 
         return values;

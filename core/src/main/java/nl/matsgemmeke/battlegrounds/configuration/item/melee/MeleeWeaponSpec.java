@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.melee;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.ReloadingSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 
 public class MeleeWeaponSpec {
@@ -19,6 +20,8 @@ public class MeleeWeaponSpec {
 
     @Required
     public MeleeWeaponItemSpec items;
+
+    public ReloadingSpec reloading;
 
     public ThrowingSpec throwing;
 }

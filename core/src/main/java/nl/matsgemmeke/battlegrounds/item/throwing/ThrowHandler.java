@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.throwing;
 
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
@@ -13,20 +14,23 @@ public class ThrowHandler {
 
     private final ItemRepresentation itemRepresentation;
     private final ProjectileLauncher projectileLauncher;
-    private int throwsAmount;
+    private final ResourceContainer resourceContainer;
 
-    public ThrowHandler(ItemRepresentation itemRepresentation, ProjectileLauncher projectileLauncher, int throwsAmount) {
+    public ThrowHandler(ItemRepresentation itemRepresentation, ProjectileLauncher projectileLauncher, ResourceContainer resourceContainer) {
         this.itemRepresentation = itemRepresentation;
         this.projectileLauncher = projectileLauncher;
-        this.throwsAmount = throwsAmount;
+        this.resourceContainer = resourceContainer;
     }
 
     public void performThrow(ThrowPerformer performer) {
-        if (throwsAmount <= 0) {
+        int loadedAmount = resourceContainer.getLoadedAmount();
+
+        if (loadedAmount <= 0) {
             return;
         }
 
-        throwsAmount --;
+        int updatedLoadedAmount = loadedAmount - 1;
+        resourceContainer.setLoadedAmount(updatedLoadedAmount);
 
         Location direction = performer.getThrowDirection();
         Supplier<Location> soundLocationSupplier = performer::getThrowDirection;
@@ -34,6 +38,10 @@ public class ThrowHandler {
         LaunchContext launchContext = new LaunchContext(performer, performer, direction, soundLocationSupplier, world);
 
         projectileLauncher.launch(launchContext);
+
+        if (updatedLoadedAmount > 1) {
+            itemRepresentation.setAmount(updatedLoadedAmount);
+        }
 
         ItemStack itemStack = itemRepresentation.update();
         performer.setHeldItem(itemStack);

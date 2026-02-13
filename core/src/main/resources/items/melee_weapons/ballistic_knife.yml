@@ -5,17 +5,23 @@ price: 200
 controls:
   throwing: RIGHT_CLICK
 ammo:
-  default-amount: 2
-  max-amount: 4
+  loaded-amount: 1
+  max-loaded-amount: 1
+  default-reserve-amount: 1
+  max-reserve-amount: 3
 damage:
   melee-damage: 60.0
   throwing-damage: 120.0
 items:
   display-item:
     material: IRON_SWORD
-    display-name: '&f%name%'
+    display-name: '&f%name% %loaded_amount%/%reserve_amount%'
     amount: 1
     damage: 2
+reloading:
+  type: MAGAZINE
+  duration: 20
+  reload-sounds: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5
 throwing:
   projectile:
     type: ITEM

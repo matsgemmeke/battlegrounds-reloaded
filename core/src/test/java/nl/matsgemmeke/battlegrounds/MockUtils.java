@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResul
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
 import org.mockito.stubbing.Answer;
 
@@ -18,6 +19,14 @@ public final class MockUtils {
         task.run();
         return null;
     };
+
+    public static Answer<Void> answerApplyReloadProcedure() {
+        return invocation -> {
+            Procedure procedure = invocation.getArgument(1);
+            procedure.apply();
+            return null;
+        };
+    }
 
     public static Answer<Void> answerNotifyTriggerObserver(TriggerResult triggerResult) {
         return invocation -> {

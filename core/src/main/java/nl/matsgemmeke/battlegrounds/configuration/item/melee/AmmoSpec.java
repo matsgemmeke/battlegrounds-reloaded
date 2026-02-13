@@ -5,8 +5,14 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class AmmoSpec {
 
     @Required
-    public Integer defaultAmount;
+    public Integer loadedAmount;
 
     @Required
-    public Integer maxAmount;
+    public Integer maxLoadedAmount;
+
+    @Required
+    public Integer defaultReserveAmount;
+
+    @Required
+    public Integer maxReserveAmount;
 }

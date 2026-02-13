@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.throwing;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.ThrowingSpec;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncherFactory;
@@ -18,6 +19,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ThrowHandlerFactoryTest {
 
+    private static final ResourceContainer RESOURCE_CONTAINER = new ResourceContainer(1, 1, 2, 2);
+
     @Mock
     private ItemRepresentation itemRepresentation;
     @Mock
@@ -32,7 +35,7 @@ class ThrowHandlerFactoryTest {
 
         when(projectileLauncherFactory.create(spec.projectile)).thenReturn(projectileLauncher);
 
-        ThrowHandler throwHandler = throwHandlerFactory.create(spec, itemRepresentation);
+        ThrowHandler throwHandler = throwHandlerFactory.create(spec, itemRepresentation, RESOURCE_CONTAINER);
 
         assertThat(throwHandler).isNotNull();
     }
@@ -41,7 +44,6 @@ class ThrowHandlerFactoryTest {
         ProjectileSpec projectileSpec = new ProjectileSpec();
 
         ThrowingSpec throwingSpec = new ThrowingSpec();
-        throwingSpec.throwsAmount = 1;
         throwingSpec.projectile = projectileSpec;
         return throwingSpec;
     }

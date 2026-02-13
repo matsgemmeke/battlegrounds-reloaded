@@ -1,12 +1,18 @@
 package nl.matsgemmeke.battlegrounds.item.melee;
 
+import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
+import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +37,8 @@ class DefaultMeleeWeaponTest {
     private ItemControls<MeleeWeaponHolder> controls;
     @Mock
     private MeleeWeaponHolder holder;
+    @Mock
+    private ReloadSystem reloadSystem;
     @Captor
     private ArgumentCaptor<Map<String, Object>> templateValuesCaptor;
 
@@ -197,6 +205,85 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
+    @DisplayName("cancelReload cancels reload system")
+    void cancelReload_cancelsReload() {
+        meleeWeapon.setReloadSystem(reloadSystem);
+        meleeWeapon.cancelReload();
+
+        verify(reloadSystem).cancelReload();
+    }
+
+    @Test
+    @DisplayName("isReloadAvailable returns false when reload system is already performing")
+    void isReloadAvailable_whenReloading() {
+        when(reloadSystem.isPerforming()).thenReturn(true);
+
+        meleeWeapon.setReloadSystem(reloadSystem);
+        boolean reloadAvailable = meleeWeapon.isReloadAvailable();
+
+        assertThat(reloadAvailable).isFalse();
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "1,0", "0,0" })
+    @DisplayName("isReloadAvailable returns false when ResourceContainer does not contain sufficient resources")
+    void isReloadAvailable_whenCapacityIsFull(int loadedAmount, int reserveAmount) {
+        ResourceContainer resourceContainer = new ResourceContainer(1, loadedAmount, reserveAmount, 0);
+
+        when(reloadSystem.isPerforming()).thenReturn(false);
+
+        meleeWeapon.setReloadSystem(reloadSystem);
+        meleeWeapon.setResourceContainer(resourceContainer);
+        boolean reloadAvailable = meleeWeapon.isReloadAvailable();
+
+        assertThat(reloadAvailable).isFalse();
+    }
+
+    @Test
+    @DisplayName("isReloadAvailable returns true when not reloading and ResourceContainer has sufficient resources")
+    void isReloadAvailable_notReloadingAndSufficientResources() {
+        ResourceContainer resourceContainer = new ResourceContainer(1, 0, 1, 1);
+
+        when(reloadSystem.isPerforming()).thenReturn(false);
+
+        meleeWeapon.setReloadSystem(reloadSystem);
+        meleeWeapon.setResourceContainer(resourceContainer);
+        boolean reloadAvailable = meleeWeapon.isReloadAvailable();
+
+        assertThat(reloadAvailable).isTrue();
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isReloading returns whether reload system is reloading")
+    void isReloading_returnsReloadSystemReloadingState(boolean reloadSystemReload, boolean expectedResult) {
+        when(reloadSystem.isPerforming()).thenReturn(reloadSystemReload);
+
+        meleeWeapon.setReloadSystem(reloadSystem);
+        boolean reloading = meleeWeapon.isReloading();
+
+        assertThat(reloading).isEqualTo(expectedResult);
+    }
+
+    @Test
+    @DisplayName("reload start reload system performance that updates the item stack")
+    void reload_performsReload() {
+        ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
+        ReloadPerformer performer = mock(ReloadPerformer.class);
+
+        ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
+        when(displayItemTemplate.createItemStack(any())).thenReturn(itemStack);
+
+        doAnswer(MockUtils.answerApplyReloadProcedure()).when(reloadSystem).performReload(eq(performer), any(Procedure.class));
+
+        meleeWeapon.setDisplayItemTemplate(displayItemTemplate);
+        meleeWeapon.setReloadSystem(reloadSystem);
+        meleeWeapon.reload(performer);
+
+        verify(performer).setHeldItem(itemStack);
+    }
+
+    @Test
     void performThrowDoesNothingWhenThrowHandlerIsNull() {
         assertThatCode(() -> meleeWeapon.performThrow(holder)).doesNotThrowAnyException();
     }
@@ -221,20 +308,24 @@ class DefaultMeleeWeaponTest {
     @Test
     void updateReturnsTrueAndCreatesNewItemStack() {
         ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
+        ResourceContainer resourceContainer = new ResourceContainer(1, 1, 2, 2);
 
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(itemStack);
 
         meleeWeapon.setName(NAME);
         meleeWeapon.setDisplayItemTemplate(displayItemTemplate);
+        meleeWeapon.setResourceContainer(resourceContainer);
         boolean updated = meleeWeapon.update();
 
         assertThat(updated).isTrue();
 
         verify(displayItemTemplate).createItemStack(templateValuesCaptor.capture());
 
-        assertThat(templateValuesCaptor.getValue()).satisfies(values -> {
-            assertThat(values.get("name")).isEqualTo(NAME);
-        });
+        assertThat(templateValuesCaptor.getValue()).isEqualTo(Map.of(
+                "name", NAME,
+                "loaded_amount", 1,
+                "reserve_amount", 2
+        ));
     }
 }

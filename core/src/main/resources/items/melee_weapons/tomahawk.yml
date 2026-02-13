@@ -5,8 +5,10 @@ price: 1000
 controls:
   throwing: RIGHT_CLICK
 ammo:
-  default-amount: 1
-  max-amount: 2
+  loaded-amount: 1
+  max-loaded-amount: 2
+  default-reserve-amount: 0
+  max-reserve-amount: 0
 damage:
   melee-damage: 50.0
   throwing-damage: 150.0

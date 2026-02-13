@@ -6,8 +6,5 @@ import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 public class ThrowingSpec {
 
     @Required
-    public Integer throwsAmount;
-
-    @Required
     public ProjectileSpec projectile;
 }

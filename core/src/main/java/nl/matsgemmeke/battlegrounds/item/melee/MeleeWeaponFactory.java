@@ -9,6 +9,9 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControlsFactory;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
@@ -30,6 +33,7 @@ public class MeleeWeaponFactory {
     private final MeleeWeaponControlsFactory controlsFactory;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
     private final NamespacedKeyCreator namespacedKeyCreator;
+    private final ReloadSystemFactory reloadSystemFactory;
     private final ThrowHandlerFactory throwHandlerFactory;
 
     @Inject
@@ -37,11 +41,13 @@ public class MeleeWeaponFactory {
             MeleeWeaponControlsFactory controlsFactory,
             MeleeWeaponRegistry meleeWeaponRegistry,
             NamespacedKeyCreator namespacedKeyCreator,
+            ReloadSystemFactory reloadSystemFactory,
             ThrowHandlerFactory throwHandlerFactory
     ) {
         this.controlsFactory = controlsFactory;
         this.meleeWeaponRegistry = meleeWeaponRegistry;
         this.namespacedKeyCreator = namespacedKeyCreator;
+        this.reloadSystemFactory = reloadSystemFactory;
         this.throwHandlerFactory = throwHandlerFactory;
     }
 
@@ -70,10 +76,20 @@ public class MeleeWeaponFactory {
 
         ItemTemplate displayItemTemplate = this.createDisplayItemTemplate(spec.items.displayItem);
         meleeWeapon.setDisplayItemTemplate(displayItemTemplate);
-        meleeWeapon.update();
 
         ItemRepresentation itemRepresentation = new ItemRepresentation(displayItemTemplate);
         itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, spec.name);
+
+        int loadedAmount = spec.ammo.loadedAmount;
+        int maxLoadedAmount = spec.ammo.maxLoadedAmount;
+        int defaultReserveAmount = spec.ammo.defaultReserveAmount;
+        int maxReserveAmount = spec.ammo.maxReserveAmount;
+
+        ResourceContainer resourceContainer = new ResourceContainer(maxLoadedAmount, loadedAmount, defaultReserveAmount, maxReserveAmount);
+        meleeWeapon.setResourceContainer(resourceContainer);
+
+        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
+        meleeWeapon.setReloadSystem(reloadSystem);
 
         ItemControls<MeleeWeaponHolder> controls;
 
@@ -88,11 +104,12 @@ public class MeleeWeaponFactory {
         ThrowingSpec throwingSpec = spec.throwing;
 
         if (throwingSpec != null) {
-            ThrowHandler throwHandler = throwHandlerFactory.create(throwingSpec, itemRepresentation);
+            ThrowHandler throwHandler = throwHandlerFactory.create(throwingSpec, itemRepresentation, resourceContainer);
 
             meleeWeapon.configureThrowHandler(throwHandler);
         }
 
+        meleeWeapon.update();
         return meleeWeapon;
     }
 
