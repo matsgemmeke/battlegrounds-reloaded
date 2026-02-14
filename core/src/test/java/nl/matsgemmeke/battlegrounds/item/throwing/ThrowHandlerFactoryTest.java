@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.throwing;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.ThrowingSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;

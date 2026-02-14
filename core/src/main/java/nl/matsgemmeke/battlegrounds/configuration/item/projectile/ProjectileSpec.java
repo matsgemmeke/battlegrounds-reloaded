@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.item.gun;
+package nl.matsgemmeke.battlegrounds.configuration.item.projectile;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;

@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.gun;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 
 public class ShootingSpec {
