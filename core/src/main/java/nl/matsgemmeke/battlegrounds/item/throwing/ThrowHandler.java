@@ -13,6 +13,8 @@ import java.util.function.Supplier;
 
 public class ThrowHandler {
 
+    private static final int DEFAULT_ITEM_AMOUNT = 1;
+
     private final ItemRepresentation itemRepresentation;
     private final ProjectileLauncher projectileLauncher;
     private final ResourceContainer resourceContainer;
@@ -43,8 +45,11 @@ public class ThrowHandler {
         itemRepresentation.setPlaceholder(Placeholder.LOADED_AMOUNT, String.valueOf(updatedLoadedAmount));
         itemRepresentation.setPlaceholder(Placeholder.RESERVE_AMOUNT, String.valueOf(resourceContainer.getReserveAmount()));
 
-        if (updatedLoadedAmount > 0) {
-            itemRepresentation.setAmount(updatedLoadedAmount);
+        if (updatedLoadedAmount == 0 && resourceContainer.getReserveAmount() == 0) {
+            itemRepresentation.setAmount(0);
+        } else {
+            int amount = Math.max(updatedLoadedAmount, DEFAULT_ITEM_AMOUNT);
+            itemRepresentation.setAmount(amount);
         }
 
         ItemStack itemStack = itemRepresentation.update();

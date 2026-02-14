@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -50,14 +52,16 @@ class ThrowHandlerTest {
         verifyNoInteractions(projectileLauncher);
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource({ "3,0,2", "1,1,1", "1,0,0" })
     @DisplayName("performThrow starts projectile launcher and updates item representation")
-    void performThrow_withLoadedAmount() {
+    void performThrow_withLoadedAmount(int loadedAmount, int reserveAmount, int expectedItemStackAmount) {
         World world = mock(World.class);
         Location throwDirection = new Location(world, 1, 1, 1, 0.0f, 0.0f);
         ItemStack updatedItemStack = new ItemStack(Material.IRON_SWORD);
 
-        resourceContainer.setLoadedAmount(2);
+        resourceContainer.setLoadedAmount(loadedAmount);
+        resourceContainer.setReserveAmount(reserveAmount);
 
         when(itemRepresentation.update()).thenReturn(updatedItemStack);
         when(performer.getThrowDirection()).thenReturn(throwDirection);
@@ -74,11 +78,11 @@ class ThrowHandlerTest {
             assertThat(launchContext.world()).isEqualTo(world);
         });
 
-        assertThat(resourceContainer.getLoadedAmount()).isOne();
+        assertThat(resourceContainer.getLoadedAmount()).isEqualTo(loadedAmount - 1);
 
-        verify(itemRepresentation).setPlaceholder(Placeholder.LOADED_AMOUNT, "1");
-        verify(itemRepresentation).setPlaceholder(Placeholder.RESERVE_AMOUNT, "0");
-        verify(itemRepresentation).setAmount(1);
+        verify(itemRepresentation).setPlaceholder(Placeholder.LOADED_AMOUNT, String.valueOf(loadedAmount - 1));
+        verify(itemRepresentation).setPlaceholder(Placeholder.RESERVE_AMOUNT, String.valueOf(reserveAmount));
+        verify(itemRepresentation).setAmount(expectedItemStackAmount);
         verify(performer).setHeldItem(updatedItemStack);
     }
 }
