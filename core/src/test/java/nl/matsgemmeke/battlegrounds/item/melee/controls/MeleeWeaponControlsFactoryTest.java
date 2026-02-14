@@ -5,8 +5,10 @@ import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.controls.reload.ReloadFunction;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.throwing.ThrowFunction;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,18 +38,21 @@ class MeleeWeaponControlsFactoryTest {
     }
 
     @Test
-    void createReturnsEmptyInstanceWhenThrowingActionValueIsNull() {
+    @DisplayName("creates returns item controls with reload control")
+    void create_withReloadControl() {
         ControlsSpec spec = new ControlsSpec();
+        spec.reload = "LEFT_CLICK";
 
         ItemControls<MeleeWeaponHolder> result = controlsFactory.create(spec, meleeWeapon);
 
         assertThat(result).isEqualTo(controls);
 
-        verifyNoInteractions(controls);
+        verify(controls).addControl(eq(Action.LEFT_CLICK), any(ReloadFunction.class));
     }
 
     @Test
-    void createReturnsItemControlsWithThrowingControl() {
+    @DisplayName("creates returns item controls with throwing control")
+    void create_withThrowingControl() {
         ControlsSpec spec = new ControlsSpec();
         spec.throwing = "RIGHT_CLICK";
 

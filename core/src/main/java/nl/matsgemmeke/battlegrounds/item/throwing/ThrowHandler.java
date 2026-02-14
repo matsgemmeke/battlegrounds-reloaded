@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.throwing;
 
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
+import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import org.bukkit.Location;
@@ -39,7 +40,10 @@ public class ThrowHandler {
 
         projectileLauncher.launch(launchContext);
 
-        if (updatedLoadedAmount > 1) {
+        itemRepresentation.setPlaceholder(Placeholder.LOADED_AMOUNT, String.valueOf(updatedLoadedAmount));
+        itemRepresentation.setPlaceholder(Placeholder.RESERVE_AMOUNT, String.valueOf(resourceContainer.getReserveAmount()));
+
+        if (updatedLoadedAmount > 0) {
             itemRepresentation.setAmount(updatedLoadedAmount);
         }
 

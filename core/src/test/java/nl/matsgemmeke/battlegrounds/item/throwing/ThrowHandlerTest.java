@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.throwing;
 
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
+import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import org.bukkit.Location;
@@ -73,8 +74,11 @@ class ThrowHandlerTest {
             assertThat(launchContext.world()).isEqualTo(world);
         });
 
-        assertThat(resourceContainer.getLoadedAmount()).isZero();
+        assertThat(resourceContainer.getLoadedAmount()).isOne();
 
+        verify(itemRepresentation).setPlaceholder(Placeholder.LOADED_AMOUNT, "1");
+        verify(itemRepresentation).setPlaceholder(Placeholder.RESERVE_AMOUNT, "0");
+        verify(itemRepresentation).setAmount(1);
         verify(performer).setHeldItem(updatedItemStack);
     }
 }

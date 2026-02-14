@@ -88,9 +88,6 @@ public class MeleeWeaponFactory {
         ResourceContainer resourceContainer = new ResourceContainer(maxLoadedAmount, loadedAmount, defaultReserveAmount, maxReserveAmount);
         meleeWeapon.setResourceContainer(resourceContainer);
 
-        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
-        meleeWeapon.setReloadSystem(reloadSystem);
-
         ItemControls<MeleeWeaponHolder> controls;
 
         if (spec.controls != null) {
@@ -101,11 +98,13 @@ public class MeleeWeaponFactory {
 
         meleeWeapon.setControls(controls);
 
-        ThrowingSpec throwingSpec = spec.throwing;
+        if (spec.reloading != null) {
+            ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
+            meleeWeapon.setReloadSystem(reloadSystem);
+        }
 
-        if (throwingSpec != null) {
-            ThrowHandler throwHandler = throwHandlerFactory.create(throwingSpec, itemRepresentation, resourceContainer);
-
+        if (spec.throwing != null) {
+            ThrowHandler throwHandler = throwHandlerFactory.create(spec.throwing, itemRepresentation, resourceContainer);
             meleeWeapon.configureThrowHandler(throwHandler);
         }
 

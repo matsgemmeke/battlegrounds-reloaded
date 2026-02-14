@@ -3,6 +3,7 @@ description: Spring-action knife launcher. Can fire the blade as a projectile.
 level-unlocked: 15
 price: 200
 controls:
+  reload: LEFT_CLICK
   throwing: RIGHT_CLICK
 ammo:
   loaded-amount: 1
