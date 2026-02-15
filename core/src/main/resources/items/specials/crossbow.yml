@@ -27,7 +27,7 @@ shooting:
     velocity: 3.0
     launch-sounds: BLOCK_WOODEN_DOOR_CLOSE-2-2-0, ENTITY_ARROW_SHOOT-2-1-1
     effect:
-      effect-type: DAMAGE
+      type: DAMAGE
       damage-type: PROJECTILE_DAMAGE
       radius: 0.1
       range:

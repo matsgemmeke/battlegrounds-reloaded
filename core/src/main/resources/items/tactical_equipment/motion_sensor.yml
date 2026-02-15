@@ -31,7 +31,7 @@ deploy:
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 0.5
 effect:
-  effect-type: SOUND_NOTIFICATION
+  type: SOUND_NOTIFICATION
   notification-sounds: BLOCK_NOTE_BLOCK_BIT-1-2-0
 items:
   display-item:

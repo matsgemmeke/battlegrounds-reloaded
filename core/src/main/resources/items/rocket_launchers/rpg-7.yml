@@ -27,7 +27,7 @@ shooting:
     velocity: 2.0
     launch-sounds: BLOCK_FIRE_EXTINGUISH-2-1-0, ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR-2-0-0
     effect:
-      effect-type: EXPLOSION
+      type: EXPLOSION
       power: 2.0
       spread-fire: false
       damage-blocks: false

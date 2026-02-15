@@ -28,7 +28,7 @@ deploy:
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 0.0
 effect:
-  effect-type: MARK_SPAWN_POINT
+  type: MARK_SPAWN_POINT
 items:
   display-item:
     material: SHEARS

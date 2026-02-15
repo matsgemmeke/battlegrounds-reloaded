@@ -32,7 +32,7 @@ throwing:
     velocity: 2.5
     launch-sounds: ENTITY_ARROW_SHOOT-1-1.2-0
     effect:
-      effect-type: DAMAGE
+      type: DAMAGE
       damage-type: MELEE_DAMAGE
       range:
         short-range:

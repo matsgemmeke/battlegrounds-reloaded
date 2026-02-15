@@ -26,7 +26,7 @@ deploy:
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
 effect:
-  effect-type: GUN_FIRE_SIMULATION
+  type: GUN_FIRE_SIMULATION
   activation-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
   min-duration: 200
   max-duration: 300
