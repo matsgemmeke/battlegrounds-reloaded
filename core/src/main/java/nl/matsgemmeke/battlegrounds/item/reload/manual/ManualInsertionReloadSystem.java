@@ -41,11 +41,9 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
         performer.applyReloadingState();
 
         for (GameSound sound : properties.reloadSounds()) {
-            var a = sound.getDelay();
-            var b = properties.duration();
-
             Schedule soundPlaySchedule = scheduler.createRepeatingSchedule(sound.getDelay(), properties.duration());
             soundPlaySchedule.addTask(() -> audioEmitter.playSound(sound, performer.getLocation()));
+            soundPlaySchedule.start();
 
             schedules.add(soundPlaySchedule);
         }
@@ -55,6 +53,7 @@ public class ManualInsertionReloadSystem implements ReloadSystem {
             this.addSingleAmmunition();
             callback.apply();
         });
+        reloadFinishSchedule.start();
 
         schedules.add(reloadFinishSchedule);
         return true;

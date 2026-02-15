@@ -105,6 +105,8 @@ class ManualInsertionReloadSystemTest {
         verify(callback).apply();
         verify(performer).applyReloadingState();
         verify(performer).resetReloadingState();
+        verify(soundPlaySchedule).start();
+        verify(reloadFinishSchedule).start();
     }
 
     @Test
