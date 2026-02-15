@@ -30,6 +30,7 @@ throwing:
       material: IRON_SWORD
       damage: 2
     velocity: 2.5
+    pickup-delay: 20
     launch-sounds: ENTITY_ARROW_SHOOT-1-1.2-0
     effect:
       type: DAMAGE

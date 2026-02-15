@@ -77,7 +77,7 @@ public class ItemEffectFactory {
     }
 
     public ItemEffect create(ItemEffectSpec itemEffectSpec) {
-        ItemEffectType itemEffectType = ItemEffectType.valueOf(itemEffectSpec.effectType);
+        ItemEffectType itemEffectType = ItemEffectType.valueOf(itemEffectSpec.type);
 
         ItemEffect itemEffect = switch (itemEffectType) {
             case COMBUSTION -> {

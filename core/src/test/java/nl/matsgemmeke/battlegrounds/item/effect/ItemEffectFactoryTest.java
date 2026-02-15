@@ -73,7 +73,7 @@ class ItemEffectFactoryTest {
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
 
         CombustionEffectSpec spec = new CombustionEffectSpec();
-        spec.effectType = "COMBUSTION";
+        spec.type = "COMBUSTION";
         spec.range = rangeProfileSpec;
         spec.minSize = 2.5;
         spec.maxSize = 5.0;
@@ -119,7 +119,7 @@ class ItemEffectFactoryTest {
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
 
         DamageEffectSpec spec = new DamageEffectSpec();
-        spec.effectType = "DAMAGE";
+        spec.type = "DAMAGE";
         spec.range = rangeProfileSpec;
         spec.hitboxMultipliers = hitboxMultiplierSpec;
         spec.damageType = "BULLET_DAMAGE";
@@ -157,7 +157,7 @@ class ItemEffectFactoryTest {
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
 
         ExplosionEffectSpec spec = new ExplosionEffectSpec();
-        spec.effectType = "EXPLOSION";
+        spec.type = "EXPLOSION";
         spec.range = rangeProfileSpec;
         spec.power = 2.0f;
         spec.damageBlocks = true;
@@ -176,7 +176,7 @@ class ItemEffectFactoryTest {
         PotionEffectSpec potionEffectSpec = this.createPotionEffectSpec();
 
         FlashEffectSpec spec = new FlashEffectSpec();
-        spec.effectType = "FLASH";
+        spec.type = "FLASH";
         spec.range = 5.0;
         spec.power = 2.0f;
         spec.damageBlocks = true;
@@ -195,7 +195,7 @@ class ItemEffectFactoryTest {
         GunFireSimulationEffect gunFireSimulationEffect = mock(GunFireSimulationEffect.class);
 
         GunFireSimulationEffectSpec spec = new GunFireSimulationEffectSpec();
-        spec.effectType = "GUN_FIRE_SIMULATION";
+        spec.type = "GUN_FIRE_SIMULATION";
         spec.minDuration = 100L;
         spec.maxDuration = 200L;
         spec.burstInterval = 2L;
@@ -228,7 +228,7 @@ class ItemEffectFactoryTest {
         MarkSpawnPointEffect markSpawnPointEffect = mock(MarkSpawnPointEffect.class);
 
         MarkSpawnPointEffectSpec spec = new MarkSpawnPointEffectSpec();
-        spec.effectType = "MARK_SPAWN_POINT";
+        spec.type = "MARK_SPAWN_POINT";
 
         when(markSpawnPointEffectProvider.get()).thenReturn(markSpawnPointEffect);
 
@@ -243,7 +243,7 @@ class ItemEffectFactoryTest {
         ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec();
 
         SmokeScreenEffectSpec spec = new SmokeScreenEffectSpec();
-        spec.effectType = "SMOKE_SCREEN";
+        spec.type = "SMOKE_SCREEN";
         spec.minSize = 2.5;
         spec.maxSize = 5.0;
         spec.density = 5.0;
@@ -283,7 +283,7 @@ class ItemEffectFactoryTest {
         SoundNotificationEffect soundNotificationEffect = mock(SoundNotificationEffect.class);
 
         SoundNotificationEffectSpec spec = new SoundNotificationEffectSpec();
-        spec.effectType = "SOUND_NOTIFICATION";
+        spec.type = "SOUND_NOTIFICATION";
         spec.notificationSounds = "AMBIENT_CAVE-1-1-0";
 
         when(soundNotificationEffectProvider.get()).thenReturn(soundNotificationEffect);
@@ -303,7 +303,7 @@ class ItemEffectFactoryTest {
     @Test
     void createThrowsItemEffectCreationExceptionWhenRequiredSpecValueIsNull() {
         ExplosionEffectSpec spec = new ExplosionEffectSpec();
-        spec.effectType = "EXPLOSION";
+        spec.type = "EXPLOSION";
 
         assertThatThrownBy(() -> itemEffectFactory.create(spec))
                 .isInstanceOf(ItemEffectCreationException.class)

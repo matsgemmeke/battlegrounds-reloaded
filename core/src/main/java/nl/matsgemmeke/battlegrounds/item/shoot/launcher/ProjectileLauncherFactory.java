@@ -1,10 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
@@ -70,42 +69,24 @@ public class ProjectileLauncherFactory {
 
         switch (projectileLauncherType) {
             case ARROW -> {
-                return this.createArrowLauncher(spec);
+                return this.createArrowLauncher((ArrowProjectileSpec) spec);
             }
             case FIREBALL -> {
-                List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
-                ParticleEffect trajectoryParticleEffect = this.createParticleEffect(spec.trajectoryParticleEffect);
-                double velocity = this.validateSpecVar(spec.velocity, "velocity", projectileLauncherType);
-
-                FireballProperties properties = new FireballProperties(launchSounds, trajectoryParticleEffect, velocity);
-                ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
-
-                return fireballLauncherFactory.create(properties, itemEffect);
+                return this.createFireballLauncher((FireballProjectileSpec) spec);
             }
             case HITSCAN -> {
-                List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
-                ParticleEffect trajectoryParticleEffect = null;
-                ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect;
-
-                if (trajectoryParticleEffectSpec != null) {
-                    trajectoryParticleEffect = particleEffectMapper.map(trajectoryParticleEffectSpec);
-                }
-
-                HitscanProperties properties = new HitscanProperties(launchSounds, trajectoryParticleEffect);
-                ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
-
-                return hitscanLauncherFactory.create(properties, itemEffect);
+                return this.createHitscanLauncher((HitscanProjectileSpec) spec);
             }
             case ITEM -> {
-                return this.createItemLauncher(spec);
+                return this.createItemLauncher((ItemProjectileSpec) spec);
             }
             default -> throw new ProjectileLauncherCreationException("Invalid projectile launcher type '%s'".formatted(projectileLauncherType));
         }
     }
 
-    private ProjectileLauncher createArrowLauncher(ProjectileSpec spec) {
+    private ProjectileLauncher createArrowLauncher(ArrowProjectileSpec spec) {
         List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
-        double velocity = this.validateSpecVar(spec.velocity, "velocity", "ARROW");
+        double velocity = spec.velocity;
 
         ArrowProperties properties = new ArrowProperties(launchSounds, velocity);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
@@ -123,17 +104,42 @@ public class ProjectileLauncherFactory {
         return arrowLauncher;
     }
 
-    private ProjectileLauncher createItemLauncher(ProjectileSpec spec) {
-        double velocity = this.validateSpecVar(spec.velocity, "velocity", "ITEM");
-        ItemSpec itemSpec = this.validateSpecVar(spec.item, "material", "ITEM");
+    private ProjectileLauncher createFireballLauncher(FireballProjectileSpec spec) {
+        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
+        ParticleEffect trajectoryParticleEffect = this.createParticleEffect(spec.trajectoryParticleEffect);
+        double velocity = spec.velocity;
+
+        FireballProperties properties = new FireballProperties(launchSounds, trajectoryParticleEffect, velocity);
+        ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
+
+        return fireballLauncherFactory.create(properties, itemEffect);
+    }
+
+    private ProjectileLauncher createHitscanLauncher(HitscanProjectileSpec spec) {
+        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
+        ParticleEffect trajectoryParticleEffect = null;
+        ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect;
+
+        if (trajectoryParticleEffectSpec != null) {
+            trajectoryParticleEffect = particleEffectMapper.map(trajectoryParticleEffectSpec);
+        }
+
+        HitscanProperties properties = new HitscanProperties(launchSounds, trajectoryParticleEffect);
+        ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
+
+        return hitscanLauncherFactory.create(properties, itemEffect);
+    }
+
+    private ProjectileLauncher createItemLauncher(ItemProjectileSpec spec) {
+        double velocity = spec.velocity;
         List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
 
         NamespacedKey templateKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
         UUID templateId = UUID.randomUUID();
-        Material material = Material.valueOf(itemSpec.material);
+        Material material = Material.valueOf(spec.item.material);
 
         ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
-        itemTemplate.setDamage(itemSpec.damage);
+        itemTemplate.setDamage(spec.item.damage);
 
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSounds, velocity);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
@@ -149,14 +155,6 @@ public class ProjectileLauncherFactory {
         }
 
         return itemLauncher;
-    }
-
-    private <T> T validateSpecVar(T value, String valueName, Object projectileLauncherType) {
-        if (value == null) {
-            throw new ProjectileLauncherCreationException("Cannot create projectile launcher for type %s because of invalid spec: Required '%s' value is missing".formatted(projectileLauncherType, valueName));
-        }
-
-        return value;
     }
 
     private ParticleEffect createParticleEffect(ParticleEffectSpec spec) {

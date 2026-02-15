@@ -1,16 +1,14 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.projectile;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.validation.ConditionalRequired;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 
 import java.util.Map;
 
-public class ProjectileSpec {
+public abstract class ProjectileSpec {
 
     @Required
     @EnumValue(type = ProjectileType.class)
@@ -18,12 +16,6 @@ public class ProjectileSpec {
 
     @Required
     public ItemEffectSpec effect;
-
-    @ConditionalRequired(conditionalFieldName = "type", matchValues = "ITEM")
-    public ItemSpec item;
-
-    @ConditionalRequired(conditionalFieldName = "type", matchValues = { "ARROW", "FIREBALL", "ITEM" })
-    public Double velocity;
 
     public ParticleEffectSpec trajectoryParticleEffect;
 

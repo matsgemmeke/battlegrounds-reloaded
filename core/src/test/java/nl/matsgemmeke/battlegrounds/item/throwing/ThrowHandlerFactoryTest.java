@@ -41,7 +41,7 @@ class ThrowHandlerFactoryTest {
     }
 
     private ThrowingSpec createSpec() {
-        ProjectileSpec projectileSpec = new ProjectileSpec();
+        ProjectileSpec projectileSpec = mock(ProjectileSpec.class);
 
         ThrowingSpec throwingSpec = new ThrowingSpec();
         throwingSpec.projectile = projectileSpec;
