@@ -53,7 +53,7 @@ class ThrowHandlerTest {
     }
 
     @ParameterizedTest
-    @CsvSource({ "3,0,2", "1,1,1", "1,0,0" })
+    @CsvSource({ "3,0,1", "1,1,1", "1,0,0" })
     @DisplayName("performThrow starts projectile launcher and updates item representation")
     void performThrow_withLoadedAmount(int loadedAmount, int reserveAmount, int expectedItemStackAmount) {
         World world = mock(World.class);

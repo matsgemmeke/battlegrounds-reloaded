@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 public class ThrowHandler {
 
-    private static final int DEFAULT_ITEM_AMOUNT = 1;
+    private static final int DEFAULT_ITEM_STACK_AMOUNT = 1;
 
     private final ItemRepresentation itemRepresentation;
     private final ProjectileLauncher projectileLauncher;
@@ -42,15 +42,13 @@ public class ThrowHandler {
 
         projectileLauncher.launch(launchContext);
 
-        itemRepresentation.setPlaceholder(Placeholder.LOADED_AMOUNT, String.valueOf(updatedLoadedAmount));
-        itemRepresentation.setPlaceholder(Placeholder.RESERVE_AMOUNT, String.valueOf(resourceContainer.getReserveAmount()));
+        int reserveAmount = resourceContainer.getReserveAmount();
+        // Set the amount to zero when the melee weapon has neither loaded nor reserve resources left
+        int itemStackAmount = Math.min(updatedLoadedAmount + reserveAmount, DEFAULT_ITEM_STACK_AMOUNT);
 
-        if (updatedLoadedAmount == 0 && resourceContainer.getReserveAmount() == 0) {
-            itemRepresentation.setAmount(0);
-        } else {
-            int amount = Math.max(updatedLoadedAmount, DEFAULT_ITEM_AMOUNT);
-            itemRepresentation.setAmount(amount);
-        }
+        itemRepresentation.setAmount(itemStackAmount);
+        itemRepresentation.setPlaceholder(Placeholder.LOADED_AMOUNT, String.valueOf(updatedLoadedAmount));
+        itemRepresentation.setPlaceholder(Placeholder.RESERVE_AMOUNT, String.valueOf(reserveAmount));
 
         ItemStack itemStack = itemRepresentation.update();
         performer.setHeldItem(itemStack);

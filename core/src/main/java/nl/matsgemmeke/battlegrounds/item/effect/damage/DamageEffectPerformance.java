@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import org.bukkit.Location;
@@ -46,6 +47,10 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         DamageContext damageContext = new DamageContext(damageSource, hitTarget, damage);
 
         damageProcessor.processDamage(damageContext);
+
+        if (currentContext.getActor() instanceof Removable removableActor) {
+            removableActor.remove();
+        }
     }
 
     private Damage createDamage(DamageTarget target, Location hitLocation, Location startingLocation) {

@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
@@ -36,7 +37,7 @@ class DamageEffectPerformanceTest {
     private static final HitboxMultiplierProfile HITBOX_MULTIPLIER_PROFILE = new HitboxMultiplierProfile(2.0, 1.0, 0.5);
     private static final DamageProperties PROPERTIES = new DamageProperties(DAMAGE_TYPE, RANGE_PROFILE, HITBOX_MULTIPLIER_PROFILE);
 
-    @Mock
+    @Mock(extraInterfaces = Removable.class)
     private Actor actor;
     @Mock
     private DamageProcessor damageProcessor;
@@ -111,6 +112,8 @@ class DamageEffectPerformanceTest {
                         assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
                     });
         });
+
+        verify((Removable) actor).remove();
     }
 
     @Test
@@ -142,5 +145,7 @@ class DamageEffectPerformanceTest {
                 assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
             });
         });
+
+        verify((Removable) actor).remove();
     }
 }
