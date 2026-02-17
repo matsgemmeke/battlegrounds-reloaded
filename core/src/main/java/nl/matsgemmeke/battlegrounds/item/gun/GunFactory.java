@@ -32,6 +32,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class GunFactory {
@@ -152,15 +153,17 @@ public class GunFactory {
         Material material = Material.valueOf(spec.material);
         String displayName = spec.displayName;
         int damage = spec.damage;
+        boolean unbreakable = spec.unbreakable;
 
         NamespacedKey actionExecutorIdKey = keyCreator.create(ACTION_EXECUTOR_ID_KEY);
         PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
 
-        ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
-        itemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
-        itemTemplate.setDamage(damage);
-        itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
-        return itemTemplate;
+        return ItemTemplate.builder(templateKey, templateId, material)
+                .dataEntries(Set.of(actionExecutorIdDataEntry))
+                .damage(damage)
+                .displayNameTemplate(new TextTemplate(displayName))
+                .unbreakable(unbreakable)
+                .build();
     }
 
     private void registerGunFireSimulationInfo(Gun gun, GunSpec spec) {

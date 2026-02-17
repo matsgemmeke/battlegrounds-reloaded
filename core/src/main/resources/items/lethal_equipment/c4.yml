@@ -52,10 +52,12 @@ items:
     material: SHEARS
     display-name: '&f%name%'
     damage: 2
+    unbreakable: true
   activator-item:
     material: SHEARS
     display-name: '&fDetonator'
     damage: 3
+    unbreakable: true
   throw-item:
     material: SHEARS
     display-name: '&f%name%'

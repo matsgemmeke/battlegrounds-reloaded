@@ -53,6 +53,7 @@ items:
     material: SHEARS
     display-name: '&f%name%'
     damage: 4
+    unbreakable: true
   throw-item:
     material: SHEARS
     display-name: '&f%name%'

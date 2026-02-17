@@ -17,6 +17,7 @@ item:
   material: IRON_HOE
   display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   damage: 32
+  unbreakable: true
 reloading:
   type: MAGAZINE
   duration: 60

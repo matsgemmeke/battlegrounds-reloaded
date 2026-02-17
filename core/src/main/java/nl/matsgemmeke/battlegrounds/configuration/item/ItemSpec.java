@@ -14,4 +14,6 @@ public class ItemSpec {
 
     @Required
     public Integer damage;
+
+    public Boolean unbreakable = false;
 }

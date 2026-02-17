@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.melee.ThrowingSpec;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
@@ -22,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Set;
 import java.util.UUID;
 
 public class MeleeWeaponFactory {
@@ -118,14 +118,16 @@ public class MeleeWeaponFactory {
         Material material = Material.valueOf(spec.material);
         String displayName = spec.displayName;
         int damage = spec.damage;
+        boolean unbreakable = spec.unbreakable;
 
         NamespacedKey actionExecutorIdKey = namespacedKeyCreator.create(ACTION_EXECUTOR_ID_KEY);
         PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
 
-        ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
-        itemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
-        itemTemplate.setDamage(damage);
-        itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
-        return itemTemplate;
+        return ItemTemplate.builder(templateKey, templateId, material)
+                .dataEntries(Set.of(actionExecutorIdDataEntry))
+                .damage(damage)
+                .displayNameTemplate(new TextTemplate(displayName))
+                .unbreakable(unbreakable)
+                .build();
     }
 }

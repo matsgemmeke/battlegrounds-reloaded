@@ -14,6 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -22,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,13 +34,13 @@ class ItemTemplateTest {
 
     private static final UUID TEMPLATE_ID = UUID.randomUUID();
     private static final Material MATERIAL = Material.IRON_HOE;
+    private static final int DAMAGE = 10;
 
     @Mock
     private ItemFactory itemFactory;
     @Mock
     private Plugin plugin;
 
-    private ItemTemplate itemTemplate;
     private MockedStatic<Bukkit> bukkit;
     private NamespacedKey templateKey;
 
@@ -50,7 +52,6 @@ class ItemTemplateTest {
         when(plugin.getName()).thenReturn("battlegrounds");
 
         templateKey = new NamespacedKey(plugin, "test-key");
-        itemTemplate = new ItemTemplate(templateKey, TEMPLATE_ID, MATERIAL);
 
         bukkit = mockStatic(Bukkit.class);
         bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
@@ -62,9 +63,11 @@ class ItemTemplateTest {
     }
 
     @Test
-    void createItemStackWithoutItemMeta() {
+    @DisplayName("createItemStack returns ItemStack without ItemMeta when given material does not have item metas")
+    void createItemStack_withoutItemMeta() {
         when(itemFactory.getItemMeta(MATERIAL)).thenReturn(null);
 
+        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, TEMPLATE_ID, MATERIAL).build();
         ItemStack itemStack = itemTemplate.createItemStack(new HashMap<>());
 
         assertThat(itemStack.getType()).isEqualTo(MATERIAL);
@@ -72,27 +75,29 @@ class ItemTemplateTest {
     }
 
     @Test
-    void createItemStackWithDamage() {
-        int damage = 10;
-
+    @DisplayName("createItemStack returns ItemStack with damage when ItemMeta is damageable")
+    void createItemStack_withDamage() {
         PersistentDataContainer dataContainer = mock(PersistentDataContainer.class);
 
         Damageable itemMeta = mock(Damageable.class);
         when(itemMeta.getPersistentDataContainer()).thenReturn(dataContainer);
         when(itemFactory.getItemMeta(MATERIAL)).thenReturn(itemMeta);
 
-        itemTemplate.setDamage(damage);
+        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, TEMPLATE_ID, MATERIAL)
+                .damage(DAMAGE)
+                .build();
         ItemStack itemStack = itemTemplate.createItemStack(new HashMap<>());
 
         assertThat(itemStack.getItemMeta()).isEqualTo(itemMeta);
         assertThat(itemStack.getType()).isEqualTo(MATERIAL);
 
         verify(dataContainer).set(eq(templateKey), any(UUIDDataType.class), any(UUID.class));
-        verify(itemMeta).setDamage(damage);
+        verify(itemMeta).setDamage(DAMAGE);
     }
 
     @Test
-    void createItemStackWithDisplayNamesWithPlaceholders() {
+    @DisplayName("createItemStack returns ItemStack with placeholders in the display name")
+    void createItemStack_withDisplayNamePlaceholders() {
         Map<String, Object> values = Map.of("item", "test item");
         TextTemplate displayNameTemplate = new TextTemplate("&fThis is a %item%");
 
@@ -102,7 +107,9 @@ class ItemTemplateTest {
         when(itemMeta.getPersistentDataContainer()).thenReturn(dataContainer);
         when(itemFactory.getItemMeta(MATERIAL)).thenReturn(itemMeta);
 
-        itemTemplate.setDisplayNameTemplate(displayNameTemplate);
+        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, TEMPLATE_ID, MATERIAL)
+                .displayNameTemplate(displayNameTemplate)
+                .build();
         ItemStack itemStack = itemTemplate.createItemStack(values);
 
         assertThat(itemStack.getType()).isEqualTo(MATERIAL);
@@ -112,7 +119,8 @@ class ItemTemplateTest {
     }
 
     @Test
-    void createItemStackWithDataEntries() {
+    @DisplayName("createItemStack returns ItemStack with persistent data entries")
+    void createItemStack_withDataEntries() {
         PersistentDataContainer persistentDataContainer = mock(PersistentDataContainer.class);
         NamespacedKey namespacedKey = new NamespacedKey(plugin, "my-text-value");
         PersistentDataEntry<String, String> dataEntry = new PersistentDataEntry<>(namespacedKey, PersistentDataType.STRING, "a cool text");
@@ -122,7 +130,9 @@ class ItemTemplateTest {
 
         when(itemFactory.getItemMeta(MATERIAL)).thenReturn(itemMeta);
 
-        itemTemplate.addPersistentDataEntry(dataEntry);
+        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, TEMPLATE_ID, MATERIAL)
+                .dataEntries(Set.of(dataEntry))
+                .build();
         ItemStack itemStack = itemTemplate.createItemStack();
 
         assertThat(itemStack.getItemMeta()).isEqualTo(itemMeta);
@@ -132,7 +142,8 @@ class ItemTemplateTest {
     }
 
     @Test
-    void matchesTemplateReturnsTrueWhenKeyInItemMetaEqualsTemplateId() {
+    @DisplayName("matchesTemplate returns true when key in ItemMeta equals template id")
+    void matchesTemplate_keyInItemMetaEqualsTemplateId() {
         ItemStack itemStack = new ItemStack(MATERIAL);
 
         PersistentDataContainer dataContainer = mock(PersistentDataContainer.class);
@@ -143,24 +154,28 @@ class ItemTemplateTest {
 
         when(itemFactory.getItemMeta(MATERIAL)).thenReturn(itemMeta);
 
+        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, TEMPLATE_ID, MATERIAL).build();
         boolean matches = itemTemplate.matchesTemplate(itemStack);
 
         assertThat(matches).isTrue();
     }
 
     @Test
-    void matchesTemplateReturnsFalseWhenItemMetaIsNull() {
+    @DisplayName("matchesTemplate returns false when ItemMeta is null")
+    void matchesTemplate_itemMetaIsNull() {
         ItemStack itemStack = new ItemStack(MATERIAL);
 
         when(itemFactory.getItemMeta(MATERIAL)).thenReturn(null);
 
+        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, TEMPLATE_ID, MATERIAL).build();
         boolean matches = itemTemplate.matchesTemplate(itemStack);
 
         assertThat(matches).isFalse();
     }
 
     @Test
-    void matchesTemplateReturnsFalseWhenKeyInItemMetaIsNull() {
+    @DisplayName("matchesTemplate returns false when key in ItemMeta is null")
+    void matchesTemplate_keyInItemMetaIsNull() {
         ItemStack itemStack = new ItemStack(MATERIAL);
 
         PersistentDataContainer dataContainer = mock(PersistentDataContainer.class);
@@ -171,13 +186,15 @@ class ItemTemplateTest {
 
         when(itemFactory.getItemMeta(MATERIAL)).thenReturn(itemMeta);
 
+        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, TEMPLATE_ID, MATERIAL).build();
         boolean matches = itemTemplate.matchesTemplate(itemStack);
 
         assertThat(matches).isFalse();
     }
 
     @Test
-    void matchesTemplateReturnsFalseWhenValueInKeyDoesNotEqualTemplateId() {
+    @DisplayName("matchesTemplate returns false when value in ItemMeta key does not equal template id")
+    void matchesTemplate_valueInKeyDoesNotEqualTemplateId() {
         ItemStack itemStack = new ItemStack(MATERIAL);
         UUID otherTemplateId = UUID.randomUUID();
 
@@ -189,6 +206,7 @@ class ItemTemplateTest {
 
         when(itemFactory.getItemMeta(MATERIAL)).thenReturn(itemMeta);
 
+        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, TEMPLATE_ID, MATERIAL).build();
         boolean matches = itemTemplate.matchesTemplate(itemStack);
 
         assertThat(matches).isFalse();

@@ -17,8 +17,8 @@ items:
   display-item:
     material: IRON_SWORD
     display-name: '&f%name% %loaded_amount%/%reserve_amount%'
-    amount: 1
     damage: 2
+    unbreakable: true
 reloading:
   type: MAGAZINE
   duration: 20

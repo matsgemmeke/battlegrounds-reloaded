@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class EquipmentFactory {
@@ -109,10 +110,12 @@ public class EquipmentFactory {
             NamespacedKey actionExecutorIdKey = namespacedKeyCreator.create(ACTION_EXECUTOR_ID_KEY);
             PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
 
-            ItemTemplate activatorItemTemplate = new ItemTemplate(activatorTemplateKey, activatorTemplateId, activatorItemMaterial);
-            activatorItemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
-            activatorItemTemplate.setDamage(activatorItemSpec.damage);
-            activatorItemTemplate.setDisplayNameTemplate(new TextTemplate(activatorItemSpec.displayName));
+            ItemTemplate activatorItemTemplate = ItemTemplate.builder(activatorTemplateKey, activatorTemplateId, activatorItemMaterial)
+                    .dataEntries(Set.of(actionExecutorIdDataEntry))
+                    .damage(activatorItemSpec.damage)
+                    .displayNameTemplate(new TextTemplate(activatorItemSpec.displayName))
+                    .unbreakable(activatorItemSpec.unbreakable)
+                    .build();
 
             activator = new DefaultActivator(activatorItemTemplate);
             equipment.setActivator(activator);
@@ -123,9 +126,11 @@ public class EquipmentFactory {
             UUID throwItemTemplateId = UUID.randomUUID();
             Material throwItemMaterial = Material.valueOf(throwItemSpec.material);
 
-            ItemTemplate throwItemTemplate = new ItemTemplate(throwItemTemplateKey, throwItemTemplateId, throwItemMaterial);
-            throwItemTemplate.setDamage(throwItemSpec.damage);
-            throwItemTemplate.setDisplayNameTemplate(new TextTemplate(throwItemSpec.displayName));
+            ItemTemplate throwItemTemplate = ItemTemplate.builder(throwItemTemplateKey, throwItemTemplateId, throwItemMaterial)
+                    .damage(throwItemSpec.damage)
+                    .displayNameTemplate(new TextTemplate(throwItemSpec.displayName))
+                    .unbreakable(throwItemSpec.unbreakable)
+                    .build();
 
             equipment.setThrowItemTemplate(throwItemTemplate);
         }
@@ -145,15 +150,17 @@ public class EquipmentFactory {
         Material material = Material.valueOf(spec.material);
         String displayName = spec.displayName;
         int damage = spec.damage;
+        boolean unbreakable = spec.unbreakable;
 
         NamespacedKey actionExecutorIdKey = namespacedKeyCreator.create(ACTION_EXECUTOR_ID_KEY);
         PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
 
-        ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
-        itemTemplate.addPersistentDataEntry(actionExecutorIdDataEntry);
-        itemTemplate.setDamage(damage);
-        itemTemplate.setDisplayNameTemplate(new TextTemplate(displayName));
-        return itemTemplate;
+        return ItemTemplate.builder(templateKey, templateId, material)
+                .dataEntries(Set.of(actionExecutorIdDataEntry))
+                .damage(damage)
+                .displayNameTemplate(new TextTemplate(displayName))
+                .unbreakable(unbreakable)
+                .build();
     }
 
     private DeploymentHandler setUpDeploymentHandler(DeploymentSpec deploymentSpec, ItemEffectSpec effectSpec, @Nullable Activator activator) {
