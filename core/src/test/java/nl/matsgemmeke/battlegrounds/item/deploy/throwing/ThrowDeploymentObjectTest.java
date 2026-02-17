@@ -1,179 +1,171 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.throwing;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
+import org.assertj.core.data.Offset;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
-public class ThrowDeploymentObjectTest {
+@ExtendWith(MockitoExtension.class)
+class ThrowDeploymentObjectTest {
 
+    @Mock
+    private DestructionListener destructionListener;
+    @Mock
+    private HitboxProvider<StaticBoundingBox> hitboxProvider;
+    @Mock
     private Item item;
+    @InjectMocks
+    private ThrowDeploymentObject deploymentObject;
 
-    @BeforeEach
-    public void setUp() {
-        item = mock(Item.class);
+    @ParameterizedTest
+    @CsvSource({ "false,true", "true,false" })
+    void existsReturnsWhetherItemExists(boolean dead, boolean expectedExists) {
+        when(item.isDead()).thenReturn(dead);
+
+        boolean exists = deploymentObject.exists();
+
+        assertThat(exists).isEqualTo(expectedExists);
     }
 
     @Test
-    public void existsReturnsTrueIfItemIsIntact() {
-        when(item.isDead()).thenReturn(false);
+    void getLastDamageReturnsNullWhenItemHasNotTakenDamage() {
+        Damage lastDamage = deploymentObject.getLastDamage();
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        boolean exists = object.exists();
-
-        assertTrue(exists);
+        assertThat(lastDamage).isNull();
     }
 
     @Test
-    public void existsReturnsFalseIfItemDoesNotExist() {
-        when(item.isDead()).thenReturn(true);
-
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        boolean exists = object.exists();
-
-        assertFalse(exists);
-    }
-
-    @Test
-    public void getLastDamageReturnsNullIfItemHasNotTakenDamage() {
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        Damage lastDamage = object.getLastDamage();
-
-        assertNull(lastDamage);
-    }
-
-    @Test
-    public void getLastDamageReturnsLastDamageDealtToItem() {
+    void getLastDamageReturnsLastDamageDealtToItem() {
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(true);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.damage(damage);
-        Damage lastDamage = object.getLastDamage();
+        deploymentObject.setHealth(20.0);
+        deploymentObject.damage(damage);
+        Damage lastDamage = deploymentObject.getLastDamage();
 
-        assertEquals(damage, lastDamage);
+        assertThat(lastDamage).isEqualTo(damage);
     }
 
     @Test
-    public void getLocationReturnsSameLocationAsItem() {
+    void getLocationReturnsSameLocationAsItem() {
         Location itemLocation = new Location(null, 1, 1, 1);
         when(item.getLocation()).thenReturn(itemLocation);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        Location objectLocation = object.getLocation();
+        Location deploymentObjectLocation = deploymentObject.getLocation();
 
-        assertEquals(itemLocation, objectLocation);
+        assertThat(deploymentObjectLocation).isEqualTo(itemLocation);
     }
 
     @Test
-    public void getVelocityReturnsItemVelocity() {
+    void getVelocityReturnsItemVelocity() {
         Vector velocity = new Vector(1, 1, 1);
         when(item.getVelocity()).thenReturn(velocity);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        Vector result = object.getVelocity();
+        Vector result = deploymentObject.getVelocity();
 
-        assertEquals(velocity, result);
+        assertThat(result).isEqualTo(velocity);
     }
 
     @Test
-    public void setVelocitySetsItemVelocity() {
+    void setVelocitySetsItemVelocity() {
         Vector velocity = new Vector(1, 1, 1);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.setVelocity(velocity);
+        deploymentObject.setVelocity(velocity);
 
         verify(item).setVelocity(velocity);
     }
 
     @Test
-    public void getWorldReturnItemWorld() {
+    void getWorldReturnItemWorld() {
         World itemWorld = mock(World.class);
         when(item.getWorld()).thenReturn(itemWorld);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        World objectWorld = object.getWorld();
+        World deploymentObjectWorld = deploymentObject.getWorld();
 
-        assertEquals(itemWorld, objectWorld);
+        assertThat(deploymentObjectWorld).isEqualTo(itemWorld);
     }
 
     @Test
-    public void hasGravityReturnsTrueWhenItemHasGravity() {
+    void hasGravityReturnsTrueWhenItemHasGravity() {
         when(item.hasGravity()).thenReturn(true);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        boolean gravity = object.hasGravity();
+        boolean gravity = deploymentObject.hasGravity();
 
         assertThat(gravity).isTrue();
     }
 
     @Test
-    public void setGravitySetsItemGravity() {
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.setGravity(true);
+    void setGravitySetsItemGravity() {
+        deploymentObject.setGravity(true);
 
         verify(item).setGravity(true);
     }
 
     @Test
-    public void damageReturnsZeroIfItemDoesNotExist() {
+    void damageReturnsZeroWhenItemDoesNotExist() {
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
         when(item.isDead()).thenReturn(true);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        double damageDealt = object.damage(damage);
+        double damageDealt = deploymentObject.damage(damage);
 
-        assertEquals(0.0, damageDealt);
+        assertThat(damageDealt).isZero();
     }
 
     @Test
-    public void damageReturnsZeroIfItemIsNotValid() {
+    void damageReturnsZeroWhenItemIsNotValid() {
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(false);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        double damageDealt = object.damage(damage);
+        double damageDealt = deploymentObject.damage(damage);
 
-        assertEquals(0.0, damageDealt);
+        assertThat(damageDealt).isZero();
     }
 
-    @NotNull
-    private static Stream<Arguments> damageScenarios() {
+    static Stream<Arguments> nonLethalDamageScenarios() {
         return Stream.of(
                 arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, null),
                 arguments(10.0, 5.0, 100.0, 95.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.BULLET_DAMAGE, 0.5)),
                 arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.5)),
-                arguments(1000.0, 1000.0, 100.0, 0.0, DamageType.BULLET_DAMAGE, null),
-                arguments(1.0, 1.0, 100.0, 100.0, DamageType.ENVIRONMENTAL_DAMAGE, null),
-                arguments(4.0, 4.0, 100.0, 0.0, DamageType.ENVIRONMENTAL_DAMAGE, null)
+                arguments(1.0, 1.0, 100.0, 100.0, DamageType.ENVIRONMENTAL_DAMAGE, null)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("damageScenarios")
-    public void damageReturnsDealtDamageAndLowersHealth(
+    @MethodSource("nonLethalDamageScenarios")
+    void damageReturnsDealtDamageAndLowersHealth(
             double damageAmount,
             double expectedDamageDealt,
             double health,
@@ -186,87 +178,117 @@ public class ThrowDeploymentObjectTest {
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(true);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.setHealth(health);
-        object.setResistances(resistances);
-
-        double damageDealt = object.damage(damage);
+        deploymentObject.setHealth(health);
+        deploymentObject.setResistances(resistances);
+        double damageDealt = deploymentObject.damage(damage);
 
         assertThat(expectedDamageDealt).isEqualTo(damageDealt);
-        assertThat(expectedHealth).isEqualTo(object.getHealth());
+        assertThat(expectedHealth).isEqualTo(deploymentObject.getHealth());
+    }
+
+    static Stream<Arguments> lethalDamageScenarios() {
+        return Stream.of(
+                arguments(1000.0, 1000.0, 100.0, 0.0, DamageType.BULLET_DAMAGE, null),
+                arguments(4.0, 4.0, 100.0, 0.0, DamageType.ENVIRONMENTAL_DAMAGE, null)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("lethalDamageScenarios")
+    void damageReturnsDealtDamageAndDestructsWhenHealthIsBelowZero(
+            double damageAmount,
+            double expectedDamageDealt,
+            double health,
+            double expectedHealth,
+            DamageType damageType,
+            Map<DamageType, Double> resistances
+    ) {
+        Damage damage = new Damage(damageAmount, damageType);
+
+        when(item.isDead()).thenReturn(false);
+        when(item.isValid()).thenReturn(true);
+
+        deploymentObject.setHealth(health);
+        deploymentObject.setResistances(resistances);
+        double damageDealt = deploymentObject.damage(damage);
+
+        assertThat(expectedDamageDealt).isEqualTo(damageDealt);
+        assertThat(expectedHealth).isEqualTo(deploymentObject.getHealth());
+
+        verify(destructionListener).onDestroyed();
     }
 
     @Test
-    public void isDeployedAlwaysReturnsTrue() {
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        boolean deployed = object.isDeployed();
+    void getHitboxReturnsHitboxFromCurrentBoundingBox() {
+        Location itemLocation = new Location(null, 1, 2, 3);
+        BoundingBox boundingBox = BoundingBox.of(itemLocation, 0.1, 0.1, 0.1);
+        Hitbox hitbox = new Hitbox(null, null);
 
-        assertTrue(deployed);
+        when(hitboxProvider.provideHitbox(any(StaticBoundingBox.class))).thenReturn(hitbox);
+        when(item.getBoundingBox()).thenReturn(boundingBox);
+        when(item.getLocation()).thenReturn(itemLocation);
+
+        Hitbox result = deploymentObject.getHitbox();
+
+        ArgumentCaptor<StaticBoundingBox> staticBoundingBoxCaptor = ArgumentCaptor.forClass(StaticBoundingBox.class);
+        verify(hitboxProvider).provideHitbox(staticBoundingBoxCaptor.capture());
+
+        assertThat(staticBoundingBoxCaptor.getValue()).satisfies(staticBoundingBox -> {
+            assertThat(staticBoundingBox.baseLocation()).isEqualTo(itemLocation);
+            assertThat(staticBoundingBox.widthX()).isEqualTo(0.2, Offset.offset(0.000001));
+            assertThat(staticBoundingBox.height()).isEqualTo(0.2, Offset.offset(0.000001));
+            assertThat(staticBoundingBox.widthZ()).isEqualTo(0.2, Offset.offset(0.000001));
+        });
+
+        assertThat(result).isEqualTo(hitbox);
+    }
+
+    static List<Arguments> resistances() {
+        return List.of(
+                arguments(Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.0)),
+                arguments(Map.of(DamageType.BULLET_DAMAGE, 0.5))
+        );
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @MethodSource("resistances")
+    void isImmuneReturnsFalseWhenResistancesDoesNotContainEntryForGivenDamageTypeWhichEqualsZero(Map<DamageType, Double> resistances) {
+        deploymentObject.setResistances(resistances);
+        boolean immune = deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE);
+
+        assertThat(immune).isFalse();
     }
 
     @Test
-    public void isImmuneReturnsFalseIfResistancesIsNull() {
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        boolean immune = object.isImmuneTo(DamageType.BULLET_DAMAGE);
-
-        assertFalse(immune);
-    }
-
-    @Test
-    public void isImmuneReturnsFalseIfResistancesDoesNotContainEntryForDamageType() {
-        Map<DamageType, Double> resistances = Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.0);
-
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.setResistances(resistances);
-        boolean immune = object.isImmuneTo(DamageType.BULLET_DAMAGE);
-
-        assertFalse(immune);
-    }
-
-    @Test
-    public void isImmuneReturnsFalseIfResistanceToDamageTypeIsLargerThanZero() {
-        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
-
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.setResistances(resistances);
-        boolean immune = object.isImmuneTo(DamageType.BULLET_DAMAGE);
-
-        assertFalse(immune);
-    }
-
-    @Test
-    public void isImmuneReturnsTrueIfResistanceToDamageTypeEqualsOrIsLowerThanZero() {
+    void isImmuneReturnsTrueWhenResistanceToGivenDamageTypeEqualsOrIsLowerThanZero() {
         Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.0);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.setResistances(resistances);
-        boolean immune = object.isImmuneTo(DamageType.BULLET_DAMAGE);
+        deploymentObject.setResistances(resistances);
+        boolean immune = deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE);
 
-        assertTrue(immune);
+        assertThat(immune).isTrue();
     }
 
     @Test
-    public void matchesEntityReturnsTrueIfGivenEntityEqualsItem() {
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        boolean matches = object.matchesEntity(item);
+    void matchesEntityReturnsTrueWhenGivenEntityEqualsItem() {
+        boolean matches = deploymentObject.matchesEntity(item);
 
-        assertTrue(matches);
+        assertThat(matches).isTrue();
     }
 
     @Test
-    public void matchesEntityReturnsFalseIfGivenEntityDoesNotEqualItem() {
+    void matchesEntityReturnsFalseWhenGivenEntityDoesNotEqualItem() {
         Entity entity = mock(Entity.class);
 
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        boolean matches = object.matchesEntity(entity);
+        boolean matches = deploymentObject.matchesEntity(entity);
 
-        assertFalse(matches);
+        assertThat(matches).isFalse();
     }
 
     @Test
-    public void removeRemovesItem() {
-        ThrowDeploymentObject object = new ThrowDeploymentObject(item);
-        object.remove();
+    void removeRemovesItem() {
+        deploymentObject.remove();
 
         verify(item).remove();
     }

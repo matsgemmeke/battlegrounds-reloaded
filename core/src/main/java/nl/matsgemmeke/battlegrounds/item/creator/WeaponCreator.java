@@ -3,12 +3,15 @@ package nl.matsgemmeke.battlegrounds.item.creator;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponFactory;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -20,14 +23,18 @@ public class WeaponCreator {
 
     private final Map<String, EquipmentSpec> equipmentSpecs;
     private final Map<String, GunSpec> gunSpecs;
+    private final Map<String, MeleeWeaponSpec> meleeWeaponSpecs;
     private final Provider<EquipmentFactory> equipmentFactoryProvider;
     private final Provider<GunFactory> gunFactoryProvider;
+    private final Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider;
 
-    public WeaponCreator(Provider<EquipmentFactory> equipmentFactoryProvider, Provider<GunFactory> gunFactoryProvider) {
+    public WeaponCreator(Provider<EquipmentFactory> equipmentFactoryProvider, Provider<GunFactory> gunFactoryProvider, Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider) {
         this.equipmentFactoryProvider = equipmentFactoryProvider;
         this.gunFactoryProvider = gunFactoryProvider;
+        this.meleeWeaponFactoryProvider = meleeWeaponFactoryProvider;
         this.equipmentSpecs = new HashMap<>();
         this.gunSpecs = new HashMap<>();
+        this.meleeWeaponSpecs = new HashMap<>();
     }
 
     public void addEquipmentSpec(String id, EquipmentSpec equipmentSpec) {
@@ -36,6 +43,10 @@ public class WeaponCreator {
 
     public void addGunSpec(String id, GunSpec spec) {
         gunSpecs.put(id.toUpperCase(), spec);
+    }
+
+    public void addMeleeWeaponSpec(String id, MeleeWeaponSpec spec) {
+        meleeWeaponSpecs.put(id.toUpperCase(), spec);
     }
 
     /**
@@ -83,6 +94,29 @@ public class WeaponCreator {
     }
 
     /**
+     * Creates a {@link MeleeWeapon} for a given player. The newly created melee weapon will automatically be assigned
+     * to this player.
+     *
+     * @param meleeWeaponName          the melee weapon name
+     * @param gamePlayer               the player to which the melee weapon will be assigned to
+     * @throws WeaponNotFoundException when the weapon creator does not contain a specification for the given melee
+     *                                 weapon name
+     * @return                         a melee weapon instance that is created based of the given melee weapon name
+     */
+    public MeleeWeapon createMeleeWeapon(String meleeWeaponName, GamePlayer gamePlayer) {
+        String upperCaseName = meleeWeaponName.toUpperCase();
+
+        if (!meleeWeaponSpecs.containsKey(upperCaseName)) {
+            throw new WeaponNotFoundException("The weapon creator does not contain a specification for a melee weapon by the name '%s'".formatted(meleeWeaponName));
+        }
+
+        MeleeWeaponFactory meleeWeaponFactory = meleeWeaponFactoryProvider.get();
+        MeleeWeaponSpec meleeWeaponSpec = meleeWeaponSpecs.get(upperCaseName);
+
+        return meleeWeaponFactory.create(meleeWeaponSpec, gamePlayer);
+    }
+
+    /**
      * Attempts to create a {@link Weapon} for a given player. This newly created weapon will automatically be assigned
      * to the player
      *
@@ -100,6 +134,10 @@ public class WeaponCreator {
             return this.createGun(weaponName, gamePlayer);
         }
 
+        if (this.meleeWeaponExists(weaponName)) {
+            return this.createMeleeWeapon(weaponName, gamePlayer);
+        }
+
         throw new WeaponNotFoundException("The weapon creator does not contain a specification for the weapon '%s'".formatted(weaponName));
     }
 
@@ -114,7 +152,7 @@ public class WeaponCreator {
     }
 
     private List<String> getNameList() {
-        return Stream.of(equipmentSpecs.keySet(), gunSpecs.keySet())
+        return Stream.of(equipmentSpecs.keySet(), gunSpecs.keySet(), meleeWeaponSpecs.keySet())
                 .flatMap(Collection::stream)
                 .toList();
     }
@@ -137,5 +175,15 @@ public class WeaponCreator {
      */
     public boolean gunExists(String gunName) {
         return gunSpecs.containsKey(gunName.toUpperCase());
+    }
+
+    /**
+     * Gets whether a melee weapon specification is loaded with a specific name.
+     *
+     * @param meleeWeaponName the melee weapon name
+     * @return                whether a melee weapon specification with the given name exists
+     */
+    public boolean meleeWeaponExists(String meleeWeaponName) {
+        return meleeWeaponSpecs.containsKey(meleeWeaponName.toUpperCase());
     }
 }

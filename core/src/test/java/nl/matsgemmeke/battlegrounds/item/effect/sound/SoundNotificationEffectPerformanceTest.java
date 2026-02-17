@@ -1,90 +1,94 @@
 package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SoundNotificationEffectPerformanceTest {
 
-    private static final Location INITIATION_LOCATION = new Location(null, 0, 0, 0);
-    private static final Sound SOUND = Sound.AMBIENT_CAVE;
-    private static final float VOLUME = 1.0f;
-    private static final float PITCH = 2.0f;
+    private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
+    private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
+    private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
+    @Mock
+    private Actor actor;
+    @Mock
+    private DamageSource damageSource;
+    @Mock
     private GameSound sound;
+    @Mock
+    private PlayerRegistry playerRegistry;
+
     private SoundNotificationEffectPerformance performance;
 
     @BeforeEach
     void setUp() {
-        sound = mock(GameSound.class);
-        performance = new SoundNotificationEffectPerformance(List.of(sound));
+        SoundNotificationProperties properties = new SoundNotificationProperties(List.of(sound));
+
+        performance = new SoundNotificationEffectPerformance(playerRegistry, properties);
     }
 
     @Test
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
-        Entity entity = mock(Entity.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(entity, source, INITIATION_LOCATION);
+        ItemEffectContext context = this.createItemEffectContext();
 
-        performance.perform(context);
+        performance.setContext(context);
+        performance.start();
         boolean performing = performance.isPerforming();
 
         assertThat(performing).isFalse();
     }
 
     @Test
-    void performPlaysNoSoundsWhenEntityIsNoPlayer() {
-        Zombie zombie = mock(Zombie.class);
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        ItemEffectContext context = new ItemEffectContext(zombie, source, INITIATION_LOCATION);
+    void performDoesNothingWhenDamageSourceIsNoPlayer() {
+        ItemEffectContext context = this.createItemEffectContext();
 
-        performance.perform(context);
+        when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
+        when(playerRegistry.findByUniqueId(DAMAGE_SOURCE_ID)).thenReturn(Optional.empty());
 
-        verifyNoInteractions(sound);
+        assertThatCode(() -> {
+            performance.setContext(context);
+            performance.start();
+        }).doesNotThrowAnyException();
     }
 
     @Test
-    void performPlaysSoundsOnlyForPlayerEntity() {
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        Location playerLocation = new Location(null, 0, 0, 0);
+    void performPlaysNotificationSoundsWhenDamageSourceIsPlayer() {
+        Location playerLocation = new Location(null, 1, 1, 1);
+        ItemEffectContext context = this.createItemEffectContext();
 
-        Player player = mock(Player.class);
-        when(player.getLocation()).thenReturn(playerLocation);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getLocation()).thenReturn(playerLocation);
 
-        ItemEffectContext context = new ItemEffectContext(player, source, INITIATION_LOCATION);
+        when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
+        when(playerRegistry.findByUniqueId(DAMAGE_SOURCE_ID)).thenReturn(Optional.of(gamePlayer));
 
-        when(sound.getSound()).thenReturn(SOUND);
-        when(sound.getVolume()).thenReturn(VOLUME);
-        when(sound.getPitch()).thenReturn(PITCH);
+        performance.setContext(context);
+        performance.start();
 
-        performance.perform(context);
-
-        verify(player).playSound(playerLocation, SOUND, VOLUME, PITCH);
+        verify(gamePlayer).playSound(playerLocation, sound);
     }
 
-    @Test
-    void cancelCancelsAllTriggerRuns() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
-
-        performance.addTriggerRun(triggerRun);
-        performance.cancel();
-
-        verify(triggerRun).cancel();
+    private ItemEffectContext createItemEffectContext() {
+        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
     }
 }

@@ -5,6 +5,13 @@ controls:
   throwing: LEFT_CLICK
 deploy:
   health: 50.0
+  triggers:
+    enemy-proximity:
+      type: ENEMY_PROXIMITY
+      delay: 10
+      interval: 10
+      range: 2.5
+      repeating: true
   on-destruction:
     activate-effect: false
     remove-deployment: true
@@ -24,15 +31,8 @@ deploy:
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 0.5
 effect:
-  effect-type: SOUND_NOTIFICATION
+  type: SOUND_NOTIFICATION
   notification-sounds: BLOCK_NOTE_BLOCK_BIT-1-2-0
-  triggers:
-    enemy-proximity:
-      type: ENEMY_PROXIMITY
-      delay: 10
-      interval: 10
-      range: 2.5
-      repeating: true
 items:
   display-item:
     material: SHEARS

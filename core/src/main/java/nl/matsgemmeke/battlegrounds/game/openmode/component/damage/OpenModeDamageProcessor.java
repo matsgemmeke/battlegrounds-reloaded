@@ -4,8 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
@@ -41,13 +40,18 @@ public class OpenModeDamageProcessor implements DamageProcessor {
         return true;
     }
 
-    @NotNull
-    public DamageEvent processDamage(@NotNull DamageEvent event) {
+    @Override
+    public void processDamage(DamageContext damageContext) {
         for (DamageModifier damageModifier : damageModifiers) {
-            damageModifier.apply(event);
+            damageContext = damageModifier.apply(damageContext);
         }
 
-        return event;
+        System.out.println("processing damage " + damageContext.damage());
+
+        DamageTarget target = damageContext.target();
+        Damage damage = damageContext.damage();
+
+        target.damage(damage);
     }
 
     public void processDeploymentObjectDamage(@NotNull DeploymentObject deploymentObject, @NotNull Damage damage) {

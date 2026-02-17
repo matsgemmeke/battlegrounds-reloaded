@@ -5,39 +5,42 @@ import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentState;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunStateRepository;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponState;
+import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponStateRepository;
 
 import java.util.List;
 import java.util.UUID;
 
 public class PlayerStateStorage {
 
-    @NotNull
     private final EquipmentStateRepository equipmentStateRepository;
-    @NotNull
     private final GunStateRepository gunStateRepository;
+    private final MeleeWeaponStateRepository meleeWeaponStateRepository;
 
     @Inject
-    public PlayerStateStorage(@NotNull EquipmentStateRepository equipmentStateRepository, @NotNull GunStateRepository gunStateRepository) {
+    public PlayerStateStorage(EquipmentStateRepository equipmentStateRepository, GunStateRepository gunStateRepository, MeleeWeaponStateRepository meleeWeaponStateRepository) {
         this.equipmentStateRepository = equipmentStateRepository;
         this.gunStateRepository = gunStateRepository;
+        this.meleeWeaponStateRepository = meleeWeaponStateRepository;
     }
 
-    public void deletePlayerState(@NotNull UUID playerUuid) {
+    public void deletePlayerState(UUID playerUuid) {
         gunStateRepository.deleteByPlayerUuid(playerUuid);
         equipmentStateRepository.deleteByPlayerUuid(playerUuid);
+        meleeWeaponStateRepository.deleteByPlayerUuid(playerUuid);
     }
 
-    @NotNull
-    public PlayerState getPlayerState(@NotNull UUID playerUuid) {
+    public PlayerState getPlayerState(UUID playerUuid) {
         List<GunState> gunStates = gunStateRepository.findByPlayerUuid(playerUuid);
         List<EquipmentState> equipmentStates = equipmentStateRepository.findByPlayerUuid(playerUuid);
+        List<MeleeWeaponState> meleeWeaponStates = meleeWeaponStateRepository.findByPlayerUuid(playerUuid);
 
-        return new PlayerState(playerUuid, gunStates, equipmentStates);
+        return new PlayerState(playerUuid, gunStates, equipmentStates, meleeWeaponStates);
     }
 
-    public void savePlayerState(@NotNull PlayerState playerState) {
+    public void savePlayerState(PlayerState playerState) {
         gunStateRepository.save(playerState.gunStates());
         equipmentStateRepository.save(playerState.equipmentStates());
+        meleeWeaponStateRepository.save(playerState.meleeWeaponStates());
     }
 }

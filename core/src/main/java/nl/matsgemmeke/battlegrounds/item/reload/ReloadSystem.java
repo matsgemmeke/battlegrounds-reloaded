@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
 import nl.matsgemmeke.battlegrounds.util.Procedure;
-import org.jetbrains.annotations.NotNull;
 
 public interface ReloadSystem {
 
@@ -27,5 +26,5 @@ public interface ReloadSystem {
      * @param onReload the callback function for when a reload has been performed
      * @return whether an operation is performed
      */
-    boolean performReload(@NotNull ReloadPerformer performer, @NotNull Procedure onReload);
+    boolean performReload(ReloadPerformer performer, Procedure onReload);
 }

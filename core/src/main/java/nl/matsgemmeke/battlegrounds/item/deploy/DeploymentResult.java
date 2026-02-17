@@ -1,12 +1,14 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
-public record DeploymentResult(DeploymentObject object, boolean success) {
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 
-    public static DeploymentResult success(DeploymentObject object) {
-        return new DeploymentResult(object, true);
-    }
-
-    public static DeploymentResult failure() {
-        return new DeploymentResult(null, false);
-    }
+/**
+ * Describes the result of a deployment performance.
+ *
+ * @param deployer         the deployer
+ * @param deploymentObject the produced deployment object
+ * @param actor            the actor used for activating triggers and effects
+ * @param cooldown         the cooldown the deployer should not be able to perform another deployment
+ */
+public record DeploymentResult(Deployer deployer, DeploymentObject deploymentObject, Actor actor, long cooldown) {
 }

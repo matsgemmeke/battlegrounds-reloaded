@@ -1,5 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 
 import java.util.HashSet;
@@ -7,12 +10,14 @@ import java.util.Set;
 
 public class TriggerRun {
 
+    private final static TriggerResult MANUAL_NOTIFY_TRIGGER_RESULT = SimpleTriggerResult.ACTIVATES;
+
     private final Schedule schedule;
     private final Set<TriggerObserver> observers;
     private final Trigger trigger;
-    private final TriggerContext context;
     private boolean repeating;
     private boolean started;
+    private TriggerContext context;
 
     public TriggerRun(Schedule schedule, Trigger trigger, TriggerContext context) {
         this.schedule = schedule;
@@ -35,14 +40,26 @@ public class TriggerRun {
         observers.add(observer);
     }
 
+    public void notifyObservers() {
+        if (!started) {
+            return;
+        }
+
+        observers.forEach(observer -> observer.onActivate(MANUAL_NOTIFY_TRIGGER_RESULT));
+    }
+
+    public void replaceActor(Actor actor) {
+        context = context.withActor(actor);
+    }
+
     public void cancel() {
         if (!started) {
             return;
         }
 
+        started = false;
         schedule.stop();
         schedule.clearTasks();
-        started = false;
     }
 
     public void start() {
@@ -50,17 +67,19 @@ public class TriggerRun {
             return;
         }
 
+        started = true;
         schedule.addTask(this::performTriggerCheck);
         schedule.start();
-        started = true;
     }
 
     private void performTriggerCheck() {
-        if (!trigger.activates(context)) {
+        TriggerResult result = trigger.check(context);
+
+        if (!result.activates()) {
             return;
         }
 
-        observers.forEach(TriggerObserver::onActivate);
+        observers.forEach(observer -> observer.onActivate(result));
 
         if (!repeating) {
             schedule.stop();

@@ -1,30 +1,37 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class MarkedSpawnPointTest {
+@ExtendWith(MockitoExtension.class)
+class MarkedSpawnPointTest {
 
     private static final float YAW = 1.0f;
 
-    private ItemEffectSource source;
+    @Mock(extraInterfaces = Removable.class)
+    private Actor actor;
+
+    private MarkedSpawnPoint spawnPoint;
 
     @BeforeEach
-    public void setUp() {
-        source = mock(ItemEffectSource.class);
+    void setUp() {
+        spawnPoint = new MarkedSpawnPoint(actor, YAW);
     }
 
     @Test
-    public void getLocationReturnsEffectSourceLocationWithGivenYawRotation() {
-        Location sourceLocation = new Location(null, 1, 1, 1);
-        when(source.getLocation()).thenReturn(sourceLocation);
+    void getLocationReturnsEffectSourceLocationWithGivenYawRotation() {
+        Location actorLocation = new Location(null, 1, 1, 1);
+        when(actor.getLocation()).thenReturn(actorLocation);
 
-        MarkedSpawnPoint spawnPoint = new MarkedSpawnPoint(source, YAW);
         Location spawnPointLocation = spawnPoint.getLocation();
 
         assertEquals(YAW, spawnPointLocation.getYaw());
@@ -34,22 +41,20 @@ public class MarkedSpawnPointTest {
     }
 
     @Test
-    public void onSpawnRemovesEffectSourceIfItExists() {
-        when(source.exists()).thenReturn(true);
+    void onSpawnRemovesEffectSourceWhenItExists() {
+        when(actor.exists()).thenReturn(true);
 
-        MarkedSpawnPoint spawnPoint = new MarkedSpawnPoint(source, YAW);
         spawnPoint.onSpawn();
 
-        verify(source).remove();
+        verify((Removable) actor).remove();
     }
 
     @Test
-    public void onSpawnDoesNotRemoveEffectSourceIfItDoesNotExist() {
-        when(source.exists()).thenReturn(false);
+    void onSpawnDoesNotRemoveEffectSourceWhenItDoesNotExist() {
+        when(actor.exists()).thenReturn(false);
 
-        MarkedSpawnPoint spawnPoint = new MarkedSpawnPoint(source, YAW);
         spawnPoint.onSpawn();
 
-        verify(source, never()).remove();
+        verify((Removable) actor, never()).remove();
     }
 }

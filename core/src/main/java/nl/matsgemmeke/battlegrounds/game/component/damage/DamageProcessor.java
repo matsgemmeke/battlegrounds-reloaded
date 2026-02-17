@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.jetbrains.annotations.NotNull;
@@ -33,13 +33,11 @@ public interface DamageProcessor {
     boolean isDamageAllowedWithoutContext();
 
     /**
-     * Process the damage produced in an event where an entity directly damages another entity.
+     * Process the damage produced in the context of a damage event.
      *
-     * @param event the produced damage event
-     * @return the processed damage event
+     * @param damageContext the damage context
      */
-    @NotNull
-    DamageEvent processDamage(@NotNull DamageEvent event);
+    void processDamage(DamageContext damageContext);
 
     /**
      * Processes damage to be caused to a {@link DeploymentObject}.

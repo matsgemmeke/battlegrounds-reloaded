@@ -1,21 +1,20 @@
 package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +24,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -35,121 +32,120 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DamageEffectPerformanceTest {
 
-    private static final RangeProfile RANGE_PROFILE = new RangeProfile(10.0, 1.0, 5.0, 2.0, 2.5, 3.0);
     private static final DamageType DAMAGE_TYPE = DamageType.BULLET_DAMAGE;
+    private static final RangeProfile RANGE_PROFILE = new RangeProfile(10.0, 1.0, 5.0, 2.0, 2.5, 3.0);
     private static final HitboxMultiplierProfile HITBOX_MULTIPLIER_PROFILE = new HitboxMultiplierProfile(2.0, 1.0, 0.5);
-    private static final DamageProperties PROPERTIES = new DamageProperties(HITBOX_MULTIPLIER_PROFILE, RANGE_PROFILE, DAMAGE_TYPE);
+    private static final DamageProperties PROPERTIES = new DamageProperties(DAMAGE_TYPE, RANGE_PROFILE, HITBOX_MULTIPLIER_PROFILE);
 
+    @Mock(extraInterfaces = Removable.class)
+    private Actor actor;
     @Mock
     private DamageProcessor damageProcessor;
     @Mock
-    private TargetFinder targetFinder;
+    private DamageSource damageSource;
 
-    private DamageEffectPerformance damageEffectPerformance;
+    private DamageEffectPerformance effectPerformance;
 
     @BeforeEach
     void setUp() {
-        damageEffectPerformance = new DamageEffectPerformance(damageProcessor, targetFinder, PROPERTIES);
+        effectPerformance = new DamageEffectPerformance(damageProcessor, PROPERTIES);
     }
 
     @Test
     void isPerformingAlwaysReturnsFalse() {
-        boolean performing = damageEffectPerformance.isPerforming();
+        boolean performing = effectPerformance.isPerforming();
 
         assertThat(performing).isFalse();
     }
 
     @Test
-    void performCausesZeroDamageToNearbyEntitiesWhenHitboxWasNotHit() {
-        World world = mock(World.class);
-        Location initiationLocation = new Location(world, 1, 0, 0);
-        Location sourceLocation = new Location(world, 2, 0, 0);
-        Location targetLocation = new Location(world, 2, 0, 0);
-        UUID entityId = UUID.randomUUID();
+    void performCausesNoDamageWhenHitDamageTargetIsNull() {
+        CollisionResult collisionResult = new CollisionResult(null, null, null);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
 
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityId);
+        effectPerformance.setContext(context);
+        effectPerformance.start();
 
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.getLocation()).thenReturn(sourceLocation);
-
-        ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
-
-        Hitbox hitbox = mock(Hitbox.class);
-        when(hitbox.getIntersectedHitboxComponent(sourceLocation)).thenReturn(Optional.empty());
-
-        GamePlayer target = mock(GamePlayer.class);
-        when(target.getHitbox()).thenReturn(hitbox);
-        when(target.getLocation()).thenReturn(targetLocation);
-
-        when(targetFinder.findEnemyTargets(entityId, sourceLocation, 0.1)).thenReturn(List.of(target));
-        when(targetFinder.findDeploymentObjects(entityId, sourceLocation, 0.3)).thenReturn(List.of());
-
-        damageEffectPerformance.perform(context);
-
-        ArgumentCaptor<Damage> targetDamageCaptor = ArgumentCaptor.forClass(Damage.class);
-        verify(target).damage(targetDamageCaptor.capture());
-
-        Damage targetDamage = targetDamageCaptor.getValue();
-        assertThat(targetDamage.amount()).isZero();
-        assertThat(targetDamage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
-    }
-
-    @ParameterizedTest
-    @CsvSource({ "HEAD,20.0,10.0", "TORSO,10.0,10.0", "LIMBS,5.0,10.0" })
-    void performCausesDamageToNearbyEntitiesAndObjects(HitboxComponentType hitboxComponentType, double expectedEntityDamage, double expectedDeploymentObjectDamage) {
-        World world = mock(World.class);
-        Location initiationLocation = new Location(world, 1, 0, 0);
-        Location sourceLocation = new Location(world, 2, 0, 0);
-        Location targetLocation = new Location(world, 2, 0, 0);
-        HitboxComponent hitboxComponent = new HitboxComponent(hitboxComponentType, 0, 0, 0, 0, 0, 0);
-        Location deploymentObjectLocation = new Location(world, 2, 0, 0);
-        UUID entityId = UUID.randomUUID();
-
-        Entity entity = mock(Entity.class);
-        when(entity.getUniqueId()).thenReturn(entityId);
-
-        ItemEffectSource source = mock(ItemEffectSource.class);
-        when(source.getLocation()).thenReturn(sourceLocation);
-
-        ItemEffectContext context = new ItemEffectContext(entity, source, initiationLocation);
-
-        Hitbox hitbox = mock(Hitbox.class);
-        when(hitbox.getIntersectedHitboxComponent(sourceLocation)).thenReturn(Optional.of(hitboxComponent));
-
-        GamePlayer target = mock(GamePlayer.class);
-        when(target.getHitbox()).thenReturn(hitbox);
-        when(target.getLocation()).thenReturn(targetLocation);
-
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
-        when(deploymentObject.getLocation()).thenReturn(deploymentObjectLocation);
-
-        when(targetFinder.findEnemyTargets(entityId, sourceLocation, 0.1)).thenReturn(List.of(target));
-        when(targetFinder.findDeploymentObjects(entityId, sourceLocation, 0.3)).thenReturn(List.of(deploymentObject));
-
-        damageEffectPerformance.perform(context);
-
-        ArgumentCaptor<Damage> targetDamageCaptor = ArgumentCaptor.forClass(Damage.class);
-        ArgumentCaptor<Damage> deploymentObjectDamageCaptor = ArgumentCaptor.forClass(Damage.class);
-        verify(target).damage(targetDamageCaptor.capture());
-        verify(damageProcessor).processDeploymentObjectDamage(eq(deploymentObject), deploymentObjectDamageCaptor.capture());
-
-        Damage targetDamage = targetDamageCaptor.getValue();
-        assertThat(targetDamage.amount()).isEqualTo(expectedEntityDamage);
-        assertThat(targetDamage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
-
-        Damage deploymentObjectDamage = deploymentObjectDamageCaptor.getValue();
-        assertThat(deploymentObjectDamage.amount()).isEqualTo(expectedDeploymentObjectDamage);
-        assertThat(deploymentObjectDamage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
+        verifyNoInteractions(damageProcessor);
     }
 
     @Test
-    void cancelCancelsAllTriggerRuns() {
-        TriggerRun triggerRun = mock(TriggerRun.class);
+    void performCausesNoDamageWhenHitLocationIsNull() {
+        DamageTarget hitTarget = mock(DamageTarget.class);
+        CollisionResult collisionResult = new CollisionResult(null, hitTarget, null);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
 
-        damageEffectPerformance.addTriggerRun(triggerRun);
-        damageEffectPerformance.cancel();
+        effectPerformance.setContext(context);
+        effectPerformance.start();
 
-        verify(triggerRun).cancel();
+        verifyNoInteractions(damageProcessor);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = { "HEAD,20.0", "TORSO,10.0", "LIMBS,5.0" })
+    void performCausesDamageToHitDamageTargetByHitHitboxComponentType(HitboxComponentType hitboxComponentType, double expectedDamage) {
+        World world = mock(World.class);
+        Location startingLocation = new Location(world, 1, 0, 0);
+        Location hitLocation = new Location(world, 2, 0, 0);
+        HitboxComponent hitboxComponent = new HitboxComponent(hitboxComponentType, 0, 0, 0, 0, 0, 0);
+
+        Hitbox hitbox = mock(Hitbox.class);
+        when(hitbox.getIntersectedHitboxComponent(hitLocation)).thenReturn(Optional.of(hitboxComponent));
+
+        DamageTarget target = mock(DamageTarget.class);
+        when(target.getHitbox()).thenReturn(hitbox);
+
+        CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+
+        effectPerformance.setContext(context);
+        effectPerformance.start();
+
+        ArgumentCaptor<DamageContext> damageContextCaptor = ArgumentCaptor.forClass(DamageContext.class);
+        verify(damageProcessor).processDamage(damageContextCaptor.capture());
+
+        assertThat(damageContextCaptor.getAllValues()).satisfiesExactly(damageContext -> {
+                    assertThat(damageContext.source()).isEqualTo(damageSource);
+                    assertThat(damageContext.target()).isEqualTo(target);
+                    assertThat(damageContext.damage()).satisfies(damage -> {
+                        assertThat(damage.amount()).isEqualTo(expectedDamage);
+                        assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
+                    });
+        });
+
+        verify((Removable) actor).remove();
+    }
+
+    @Test
+    void performCausesDefaultDamageToHitDamageTargetWhenNoHitboxComponentWasHit() {
+        World world = mock(World.class);
+        Location startingLocation = new Location(world, 1, 0, 0);
+        Location hitLocation = new Location(world, 2, 0, 0);
+
+        Hitbox hitbox = mock(Hitbox.class);
+        when(hitbox.getIntersectedHitboxComponent(hitLocation)).thenReturn(Optional.empty());
+
+        DamageTarget target = mock(DamageTarget.class);
+        when(target.getHitbox()).thenReturn(hitbox);
+
+        CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
+        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+
+        effectPerformance.setContext(context);
+        effectPerformance.start();
+
+        ArgumentCaptor<DamageContext> damageContextCaptor = ArgumentCaptor.forClass(DamageContext.class);
+        verify(damageProcessor).processDamage(damageContextCaptor.capture());
+
+        assertThat(damageContextCaptor.getAllValues()).satisfiesExactly(damageContext -> {
+            assertThat(damageContext.source()).isEqualTo(damageSource);
+            assertThat(damageContext.target()).isEqualTo(target);
+            assertThat(damageContext.damage()).satisfies(damage -> {
+                assertThat(damage.amount()).isEqualTo(10.0);
+                assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
+            });
+        });
+
+        verify((Removable) actor).remove();
     }
 }

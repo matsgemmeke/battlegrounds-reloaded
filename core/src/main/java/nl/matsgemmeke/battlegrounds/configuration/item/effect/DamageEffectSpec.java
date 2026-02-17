@@ -12,12 +12,18 @@ public class DamageEffectSpec extends ItemEffectSpec {
     public String damageType;
 
     @Required
-    public HitboxMultiplierSpec hitboxMultipliers;
-
-    @Required
     public RangeProfileSpec range;
 
+    @Required
+    public HitboxMultiplierSpec hitboxMultipliers;
+
     private enum DamageType {
-        ATTACK_DAMAGE, BULLET_DAMAGE, ENVIRONMENTAL_DAMAGE, EXPLOSIVE_DAMAGE, EXPLOSIVE_ITEM_DAMAGE, FIRE_DAMAGE
+        BULLET_DAMAGE,
+        ENVIRONMENTAL_DAMAGE,
+        EXPLOSIVE_DAMAGE,
+        EXPLOSIVE_ITEM_DAMAGE,
+        FIRE_DAMAGE,
+        MELEE_DAMAGE,
+        PROJECTILE_DAMAGE
     }
 }

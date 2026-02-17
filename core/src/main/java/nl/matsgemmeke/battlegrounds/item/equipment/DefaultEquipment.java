@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
-import nl.matsgemmeke.battlegrounds.item.effect.Activator;
+import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -106,8 +106,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.throwItemTemplate = throwItemTemplate;
     }
 
-    public void activateDeployment(@NotNull EquipmentHolder holder) {
-        deploymentHandler.activateDeployment(holder, holder.getEntity());
+    public void activateDeployment(EquipmentHolder holder) {
+        deploymentHandler.activateDeployment(holder);
     }
 
     public void cleanup() {
@@ -176,7 +176,14 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder) {
-        deploymentHandler.handleDeployment(deployment, holder, holder.getEntity());
+        DestructionListener destructionListener = () -> deploymentHandler.destroyDeployment();
+        DeploymentResult deploymentResult = deployment.perform(holder, holder.getEntity(), destructionListener).orElse(null);
+
+        if (deploymentResult == null) {
+            return;
+        }
+
+        deploymentHandler.processDeploymentResult(deploymentResult);
     }
 
     public boolean update() {

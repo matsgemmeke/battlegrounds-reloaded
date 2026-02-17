@@ -14,12 +14,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
@@ -41,7 +45,7 @@ class DefaultGamePlayerTest {
     @Mock
     private InternalsProvider internals;
     @Mock
-    private HitboxProvider hitboxProvider;
+    private HitboxProvider<Player> hitboxProvider;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private Player player;
     @InjectMocks
@@ -75,6 +79,65 @@ class DefaultGamePlayerTest {
         UUID uniqueId = gamePlayer.getUniqueId();
 
         assertThat(uniqueId).isEqualTo(playerUniqueId);
+    }
+
+    @Test
+    @DisplayName("getVelocity returns player's velocity")
+    void getVelocity_returnsPlayerVelocity() {
+        Vector playerVelocity = new Vector();
+
+        when(player.getVelocity()).thenReturn(playerVelocity);
+
+        Vector gamePlayerVelocity = gamePlayer.getVelocity();
+
+        assertThat(gamePlayerVelocity).isEqualTo(playerVelocity);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isValid returns whether player is valid")
+    void isValid_returnsWhetherPlayerIsValid(boolean playerValid, boolean expected) {
+        when(player.isValid()).thenReturn(playerValid);
+
+        boolean valid = gamePlayer.isValid();
+
+        assertThat(valid).isEqualTo(expected);
+    }
+
+    @Test
+    void addPotionEffectAddsPotionEffectToPlayer() {
+        PotionEffect potionEffect = mock(PotionEffect.class);
+
+        gamePlayer.addPotionEffect(potionEffect);
+
+        verify(player).addPotionEffect(potionEffect);
+    }
+
+    @Test
+    void getPotionEffectReturnsEmptyOptionalWhenPlayerDoesNotHaveGivenPotionEffectType() {
+        when(player.getPotionEffect(PotionEffectType.SPEED)).thenReturn(null);
+
+        Optional<PotionEffect> potionEffectOptional = gamePlayer.getPotionEffect(PotionEffectType.SPEED);
+
+        assertThat(potionEffectOptional).isEmpty();
+    }
+
+    @Test
+    void getPotionEffectReturnsOptionalWithActivePotionEffectOnPlayer() {
+        PotionEffect potionEffect = mock(PotionEffect.class);
+
+        when(player.getPotionEffect(PotionEffectType.SPEED)).thenReturn(potionEffect);
+
+        Optional<PotionEffect> potionEffectOptional = gamePlayer.getPotionEffect(PotionEffectType.SPEED);
+
+        assertThat(potionEffectOptional).hasValue(potionEffect);
+    }
+
+    @Test
+    void removePotionEffectRemovesPotionEffectFromPlayer() {
+        gamePlayer.removePotionEffect(PotionEffectType.SPEED);
+
+        verify(player).removePotionEffect(PotionEffectType.SPEED);
     }
 
     @Test
@@ -154,6 +217,17 @@ class DefaultGamePlayerTest {
         assertThat(damageDealt).isEqualTo(expectedDamageDealt);
 
         verify(player).setHealth(expectedHealth);
+    }
+
+    @Test
+    void getAttackStrengthReturnsPlayerAttackCooldown() {
+        float attackCooldown = 0.5F;
+
+        when(player.getAttackCooldown()).thenReturn(attackCooldown);
+
+        float attackStrength = gamePlayer.getAttackStrength();
+
+        assertThat(attackStrength).isEqualTo(attackCooldown);
     }
 
     @Test
@@ -268,6 +342,17 @@ class DefaultGamePlayerTest {
         float accuracy = gamePlayer.getRelativeAccuracy();
 
         assertThat(accuracy).isEqualTo(0.5f);
+    }
+
+    @Test
+    void getThrowDirectionReturnsPlayerEyeLocation() {
+        Location eyeLocation = new Location(null, 1, 1, 1, 0.0f, 0.0f);
+
+        when(player.getEyeLocation()).thenReturn(eyeLocation);
+
+        Location throwDirection = gamePlayer.getThrowDirection();
+
+        assertThat(throwDirection).isEqualTo(eyeLocation);
     }
 
     @Test

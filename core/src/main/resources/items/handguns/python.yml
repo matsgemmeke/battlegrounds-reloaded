@@ -24,10 +24,10 @@ shooting:
     cycle-cooldown: 4
   projectile:
     type: HITSCAN
-    shot-sounds: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
+    launch-sounds: ENTITY_IRON_GOLEM_HURT-4-2-0, ENTITY_ZOMBIE_ATTACK_IRON_DOOR-4-2-0
     suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
     effect:
-      effect-type: DAMAGE
+      type: DAMAGE
       damage-type: BULLET_DAMAGE
       range:
         short-range:

@@ -4,13 +4,12 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Slime;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SlimeHitboxProvider implements HitboxProvider {
+public class SlimeHitboxProvider implements HitboxProvider<Slime> {
 
     private final RelativeHitbox standingHitbox;
 
@@ -19,11 +18,7 @@ public class SlimeHitboxProvider implements HitboxProvider {
     }
 
     @Override
-    public Hitbox provideHitbox(Entity entity) {
-        if (!(entity instanceof Slime slime)) {
-            throw new HitboxProvisionException("Cannot provide a hitbox for an entity %s as it is not a slime".formatted(entity.getType()));
-        }
-
+    public Hitbox provideHitbox(Slime slime) {
         Location baseLocation = slime.getLocation();
         int size = slime.getSize();
 

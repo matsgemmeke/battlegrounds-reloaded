@@ -5,7 +5,9 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSourceType;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
@@ -16,6 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +34,7 @@ public class DefaultGamePlayer implements GamePlayer {
     private static final float SPRINTING_ACCURACY = 0.5f;
     private static final int OPERATING_FOOD_LEVEL = 6;
 
-    private final HitboxProvider hitboxProvider;
+    private final HitboxProvider<Player> hitboxProvider;
     private final InternalsProvider internals;
     private final Player player;
     private final Set<ItemEffect> effects;
@@ -41,7 +45,7 @@ public class DefaultGamePlayer implements GamePlayer {
     private int previousFoodLevel;
 
     @Inject
-    public DefaultGamePlayer(InternalsProvider internals, @Assisted Player player, @Assisted HitboxProvider hitboxProvider) {
+    public DefaultGamePlayer(InternalsProvider internals, @Assisted Player player, @Assisted HitboxProvider<Player> hitboxProvider) {
         this.player = player;
         this.hitboxProvider = hitboxProvider;
         this.internals = internals;
@@ -90,6 +94,11 @@ public class DefaultGamePlayer implements GamePlayer {
         return player.getUniqueId();
     }
 
+    @Override
+    public Vector getVelocity() {
+        return player.getVelocity();
+    }
+
     @NotNull
     public World getWorld() {
         return player.getWorld();
@@ -101,6 +110,26 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public void setPassive(boolean passive) {
         this.passive = passive;
+    }
+
+    @Override
+    public boolean isValid() {
+        return player.isValid();
+    }
+
+    @Override
+    public void addPotionEffect(PotionEffect potionEffect) {
+        player.addPotionEffect(potionEffect);
+    }
+
+    @Override
+    public Optional<PotionEffect> getPotionEffect(PotionEffectType potionEffectType) {
+        return Optional.ofNullable(player.getPotionEffect(potionEffectType));
+    }
+
+    @Override
+    public void removePotionEffect(PotionEffectType potionEffectType) {
+        player.removePotionEffect(potionEffectType);
     }
 
     public boolean addEffect(@NotNull ItemEffect effect) {
@@ -146,9 +175,19 @@ public class DefaultGamePlayer implements GamePlayer {
         return damage.amount();
     }
 
+    @Override
+    public float getAttackStrength() {
+        return player.getAttackCooldown();
+    }
+
     @NotNull
     public Location getAudioPlayLocation() {
         return player.getLocation();
+    }
+
+    @Override
+    public DamageSourceType getDamageSourceType() {
+        return DamageSourceType.PLAYER;
     }
 
     @NotNull
@@ -190,11 +229,6 @@ public class DefaultGamePlayer implements GamePlayer {
         return player.getLastTwoTargetBlocks(null, maxDistance);
     }
 
-    @NotNull
-    public Location getShootingDirection() {
-        return player.getEyeLocation().subtract(0, 0.25, 0);
-    }
-
     public float getRelativeAccuracy() {
         if (player.isSneaking()) {
             return SNEAKING_ACCURACY;
@@ -207,6 +241,16 @@ public class DefaultGamePlayer implements GamePlayer {
         return NORMAL_ACCURACY;
     }
 
+    @Override
+    public Location getShootingDirection() {
+        return player.getEyeLocation().subtract(0, 0.25, 0);
+    }
+
+    @Override
+    public Location getThrowDirection() {
+        return player.getEyeLocation();
+    }
+
     public boolean isImmuneTo(@NotNull DamageType damageType) {
         return false;
     }
@@ -217,6 +261,11 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public void modifyCameraRotation(float yaw, float pitch) {
         internals.setPlayerRotation(player, yaw, pitch);
+    }
+
+    @Override
+    public void playSound(Location location, GameSound sound) {
+        player.playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
     }
 
     public void removeItem(@NotNull ItemStack itemStack) {

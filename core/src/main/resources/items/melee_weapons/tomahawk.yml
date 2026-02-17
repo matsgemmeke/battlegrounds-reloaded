@@ -1,0 +1,51 @@
+name: Tomahawk
+description: Retrievable throwing hatchet that causes instant death on impact.
+level-unlocked: 39
+price: 1000
+controls:
+  throwing: RIGHT_CLICK
+ammo:
+  loaded-amount: 1
+  max-loaded-amount: 2
+  default-reserve-amount: 0
+  max-reserve-amount: 0
+damage:
+  melee-damage: 50.0
+  throwing-damage: 150.0
+items:
+  display-item:
+    material: IRON_SWORD
+    display-name: '&f%name%'
+    amount: 1
+    damage: 3
+throwing:
+  projectile:
+    type: ITEM
+    item:
+      material: IRON_SWORD
+      damage: 3
+    velocity: 2.5
+    pickup-delay: 20
+    launch-sounds: ENTITY_ARROW_SHOOT-1-1.2-0
+    effect:
+      type: DAMAGE
+      damage-type: MELEE_DAMAGE
+      range:
+        short-range:
+          damage: 120.0
+          distance: 50.0
+        medium-range:
+          damage: 135.0
+          distance: 10.0
+        long-range:
+          damage: 150.0
+          distance: 5.0
+      hitbox-multipliers:
+        head: 1.0
+        body: 1.0
+        legs: 1.0
+    triggers:
+      impact:
+        type: ENTITY_IMPACT
+        delay: 0
+        interval: 1

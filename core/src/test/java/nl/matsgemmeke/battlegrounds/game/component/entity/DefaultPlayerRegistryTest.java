@@ -31,7 +31,7 @@ class DefaultPlayerRegistryTest {
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
-    private HitboxProvider hitboxProvider;
+    private HitboxProvider<Player> hitboxProvider;
     @Mock
     private HitboxResolver hitboxResolver;
 
@@ -40,39 +40,6 @@ class DefaultPlayerRegistryTest {
     @BeforeEach
     void setUp() {
         playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY, hitboxResolver);
-    }
-
-    @Test
-    void findByEntityReturnsOptionalWithMatchingEntity() {
-        Player player = mock(Player.class);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
-
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
-
-        playerRegistry.register(player);
-        Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(player);
-
-        assertThat(gamePlayerOptional).hasValue(gamePlayer);
-    }
-
-    @Test
-    void findByEntityReturnsEmptyOptionalWhereThereIsNoMatch() {
-        Player player = mock(Player.class);
-        Player otherPlayer = mock(Player.class);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
-
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
-
-        playerRegistry.register(player);
-        Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByEntity(otherPlayer);
-
-        assertThat(gamePlayerOptional).isEmpty();
     }
 
     @Test
@@ -106,22 +73,6 @@ class DefaultPlayerRegistryTest {
         Collection<GamePlayer> gamePlayers = playerRegistry.getAll();
 
         assertThat(gamePlayers).containsExactly(gamePlayer);
-    }
-
-    @Test
-    void isRegisteredReturnsTrueIfStorageContainsRecordWithCorrespondingPlayerEntity() {
-        Player player = mock(Player.class);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
-
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
-        when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
-
-        playerRegistry.register(player);
-        boolean registered = playerRegistry.isRegistered(player);
-
-        assertThat(registered).isTrue();
     }
 
     @Test

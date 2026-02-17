@@ -11,10 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.GunControlsFactory;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
-import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
-import nl.matsgemmeke.battlegrounds.item.reload.Reloadable;
+import nl.matsgemmeke.battlegrounds.item.reload.*;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
@@ -101,13 +98,13 @@ public class GunFactoryTest {
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
 
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
         when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
-        when(shootHandlerFactory.create(eq(spec.shooting), any(AmmunitionStorage.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
+        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
         GunFactory gunFactory = new GunFactory(config, controlsFactory, gunInfoProvider, gunRegistry, keyCreator, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Gun gun = gunFactory.create(spec);
@@ -123,10 +120,10 @@ public class GunFactoryTest {
         assertThat(gun.getName()).isEqualTo("MP5");
         assertThat(gun.getItemStack()).isNotNull();
         assertThat(gun.getItemStack().getType()).isEqualTo(Material.IRON_HOE);
-        assertThat(gun.getAmmunitionStorage().getMagazineAmmo()).isEqualTo(30);
-        assertThat(gun.getAmmunitionStorage().getMagazineSize()).isEqualTo(30);
-        assertThat(gun.getAmmunitionStorage().getMaxAmmo()).isEqualTo(240);
-        assertThat(gun.getAmmunitionStorage().getReserveAmmo()).isEqualTo(90);
+        assertThat(gun.getResourceContainer().getCapacity()).isEqualTo(30);
+        assertThat(gun.getResourceContainer().getLoadedAmount()).isEqualTo(30);
+        assertThat(gun.getResourceContainer().getReserveAmount()).isEqualTo(90);
+        assertThat(gun.getResourceContainer().getMaxReserveAmount()).isEqualTo(240);
 
         verify(gunRegistry).register(gun);
         verify(itemMeta).setDamage(8);
@@ -147,13 +144,13 @@ public class GunFactoryTest {
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
 
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
         when(scopeAttachmentProvider.get()).thenReturn(scopeAttachment);
-        when(shootHandlerFactory.create(eq(spec.shooting), any(AmmunitionStorage.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
+        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
         GunFactory gunFactory = new GunFactory(config, controlsFactory, gunInfoProvider, gunRegistry, keyCreator, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Gun gun = gunFactory.create(spec);
@@ -173,12 +170,12 @@ public class GunFactoryTest {
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
-        when(reloadSystemFactory.create(eq(spec.reloading), any(Reloadable.class))).thenReturn(reloadSystem);
+        when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
 
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
-        when(shootHandlerFactory.create(eq(spec.shooting), any(AmmunitionStorage.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
+        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
         GunFactory gunFactory = new GunFactory(config, controlsFactory, gunInfoProvider, gunRegistry, keyCreator, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Gun gun = gunFactory.create(spec, gamePlayer);

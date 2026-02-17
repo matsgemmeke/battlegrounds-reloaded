@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Represents an entity that is capable of deploying items.
  */
-public interface Deployer {
+public interface Deployer extends DamageSource {
 
     /**
      * Gets whether the entity is able to deploy deployable items.

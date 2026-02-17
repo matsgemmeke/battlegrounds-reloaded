@@ -8,17 +8,14 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Sign;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
-import org.bukkit.entity.Zombie;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,16 +26,6 @@ class PlayerHitboxProviderTest {
     private static final RelativeHitbox SLEEPING_HITBOX = new RelativeHitbox(Set.of(new HitboxComponent(null, 3, 3, 3, 3, 3, 3)));
 
     private final PlayerHitboxProvider hitboxProvider = new PlayerHitboxProvider(STANDING_HITBOX, SNEAKING_HITBOX, SLEEPING_HITBOX);
-
-    @Test
-    void provideHitboxThrowsHitboxProvisionExceptionWhenGivenEntityIsNoPlayer() {
-        Zombie zombie = mock(Zombie.class);
-        when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
-
-        assertThatThrownBy(() -> hitboxProvider.provideHitbox(zombie))
-                .isInstanceOf(HitboxProvisionException.class)
-                .hasMessage("Cannot provide a hitbox for an entity ZOMBIE as it is not a player");
-    }
 
     @Test
     void provideHitboxReturnsSneakingHitboxWhenPlayerIsSneaking() {

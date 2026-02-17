@@ -3,11 +3,13 @@ package nl.matsgemmeke.battlegrounds.item.representation;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
@@ -18,32 +20,33 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ItemRepresentationTest {
+class ItemRepresentationTest {
 
+    private static final int AMOUNT = 2;
+
+    @Mock
     private ItemTemplate itemTemplate;
-
     @Captor
     private ArgumentCaptor<Map<String, Object>> placeholderValuesCaptor;
-
-    @BeforeEach
-    public void setUp() {
-        itemTemplate = mock(ItemTemplate.class);
-    }
+    @InjectMocks
+    private ItemRepresentation itemRepresentation;
 
     @Test
-    public void updateReturnsNewItemStackInstanceFromItemTemplateWithPlaceholderValues() {
+    @DisplayName("update returns new ItemStack instance from item template with placeholder values")
+    void updateReturnsNewItemStackInstanceFromItemTemplateWithPlaceholderValues() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         when(itemTemplate.createItemStack(anyMap())).thenReturn(itemStack);
 
-        ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
+        itemRepresentation.setAmount(AMOUNT);
         itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, "Test");
         ItemStack result = itemRepresentation.update();
 
         verify(itemTemplate).createItemStack(placeholderValuesCaptor.capture());
         Map<String, Object> placeholderValues = placeholderValuesCaptor.getValue();
 
-        assertThat(result).isEqualTo(itemStack);
+        assertThat(result.getAmount()).isEqualTo(AMOUNT);
+        assertThat(result.getType()).isEqualTo(Material.IRON_HOE);
         assertThat(placeholderValues).containsExactly(entry("name", "Test"));
     }
 }

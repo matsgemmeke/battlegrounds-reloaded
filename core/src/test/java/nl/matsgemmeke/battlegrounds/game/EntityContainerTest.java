@@ -1,50 +1,43 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import org.bukkit.entity.Player;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class EntityContainerTest {
 
+    private static final UUID UNIQUE_ID = UUID.randomUUID();
+
+    @Mock
     private GamePlayer gamePlayer;
-    private Player player;
-    private UUID uuid;
-
-    @BeforeEach
-    void setUp() {
-        uuid = UUID.randomUUID();
-
-        player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(uuid);
-
-        gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
-    }
 
     @Test
     void addEntityAddsEntityToCollection() {
+        when(gamePlayer.getUniqueId()).thenReturn(UNIQUE_ID);
+
         EntityContainer<GamePlayer> container = new EntityContainer<>();
         container.addEntity(gamePlayer);
 
-        assertThat(container.getEntity(player)).hasValue(gamePlayer);
+        assertThat(container.getEntity(UNIQUE_ID)).hasValue(gamePlayer);
     }
 
     @Test
     void getEntityReturnsEmptyOptionalWhenThereIsNoCorrespondingEntity() {
-        GamePlayer otherPlayer = this.createNewGamePlayer();
+        when(gamePlayer.getUniqueId()).thenReturn(UNIQUE_ID);
 
         EntityContainer<GamePlayer> container = new EntityContainer<>();
-        container.addEntity(otherPlayer);
-        Optional<GamePlayer> entityOptional = container.getEntity(player);
+        container.addEntity(gamePlayer);
+        Optional<GamePlayer> entityOptional = container.getEntity(UUID.randomUUID());
 
         assertThat(entityOptional).isEmpty();
     }
@@ -58,22 +51,12 @@ class EntityContainerTest {
         assertThat(players).containsExactly(gamePlayer);
     }
 
-    private GamePlayer createNewGamePlayer() {
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(UUID.randomUUID());
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getEntity()).thenReturn(player);
-
-        return gamePlayer;
-    }
-
     @Test
     void removeEntityRemovesEntityFromCollection() {
         EntityContainer<GamePlayer> container = new EntityContainer<>();
         container.addEntity(gamePlayer);
-        container.removeEntity(uuid);
+        container.removeEntity(UNIQUE_ID);
 
-        assertThat(container.getEntity(uuid)).isEmpty();
+        assertThat(container.getEntity(UNIQUE_ID)).isEmpty();
     }
 }

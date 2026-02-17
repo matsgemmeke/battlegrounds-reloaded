@@ -1,15 +1,14 @@
 package nl.matsgemmeke.battlegrounds.entity.hitbox.provider;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import org.bukkit.entity.Entity;
 
-public interface HitboxProvider {
+public interface HitboxProvider<T> {
 
     /**
-     * Returns the hitbox corresponding with the given entity's current state and pose.
+     * Returns the hitbox corresponding with the given object.
      *
-     * @param entity the entity
+     * @param object the object
      * @return       the corresponding hitbox
      */
-    Hitbox provideHitbox(Entity entity);
+    Hitbox provideHitbox(T object);
 }

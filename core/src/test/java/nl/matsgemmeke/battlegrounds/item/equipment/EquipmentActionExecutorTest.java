@@ -8,32 +8,39 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class EquipmentActionExecutorTest {
+@ExtendWith(MockitoExtension.class)
+class EquipmentActionExecutorTest {
 
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
+    private static final UUID UNIQUE_ID = UUID.randomUUID();
 
+    @Mock
     private EquipmentRegistry equipmentRegistry;
+    @Mock
     private GamePlayer gamePlayer;
+    @Mock
     private Player player;
+    @Mock
     private PlayerRegistry playerRegistry;
 
     @BeforeEach
-    public void setUp() {
-        equipmentRegistry = mock(EquipmentRegistry.class);
-        gamePlayer = mock(GamePlayer.class);
-        player = mock(Player.class);
-        playerRegistry = mock(PlayerRegistry.class);
+    void setUp() {
+        when(player.getUniqueId()).thenReturn(UNIQUE_ID);
     }
 
     @Test
-    public void handleLeftClickActionDoesNothingWhenGivenPlayerIsNotRegistered() {
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.empty());
+    void handleLeftClickActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
 
         EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleLeftClickAction(player, ITEM_STACK);
@@ -42,8 +49,8 @@ public class EquipmentActionExecutorTest {
     }
 
     @Test
-    public void handleLeftClickActionDoesNothingWhenNoEquipmentMatchesWithGivenHolderAndItemStack() {
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+    void handleLeftClickActionDoesNothingWhenNoEquipmentMatchesWithGivenHolderAndItemStack() {
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
         EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
@@ -53,13 +60,13 @@ public class EquipmentActionExecutorTest {
     }
 
     @Test
-    public void handleLeftClickActionDoesNothingWhenEquipmentHolderDoesNotMatch() {
+    void handleLeftClickActionDoesNothingWhenEquipmentHolderDoesNotMatch() {
         EquipmentHolder otherHolder = mock(EquipmentHolder.class);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.getHolder()).thenReturn(otherHolder);
 
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
 
         EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
@@ -71,11 +78,11 @@ public class EquipmentActionExecutorTest {
     }
 
     @Test
-    public void handleLeftClickActionCallsEquipmentFunctionWhenMatchingEquipmentIsFound() {
+    void handleLeftClickActionCallsEquipmentFunctionWhenMatchingEquipmentIsFound() {
         Equipment equipment = mock(Equipment.class);
         when(equipment.getHolder()).thenReturn(gamePlayer);
 
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
 
         EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
@@ -87,8 +94,8 @@ public class EquipmentActionExecutorTest {
     }
 
     @Test
-    public void handleRightClickActionDoesNothingWhenGivenPlayerIsNotRegistered() {
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.empty());
+    void handleRightClickActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
 
         EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleRightClickAction(player, ITEM_STACK);
@@ -97,8 +104,8 @@ public class EquipmentActionExecutorTest {
     }
 
     @Test
-    public void handleRightClickActionDoesNothingWhenNoEquipmentMatchesWithGivenHolderAndItemStack() {
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+    void handleRightClickActionDoesNothingWhenNoEquipmentMatchesWithGivenHolderAndItemStack() {
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
         EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
@@ -108,13 +115,13 @@ public class EquipmentActionExecutorTest {
     }
 
     @Test
-    public void handleRightClickActionDoesNothingWhenEquipmentHolderDoesNotMatch() {
+    void handleRightClickActionDoesNothingWhenEquipmentHolderDoesNotMatch() {
         EquipmentHolder otherHolder = mock(EquipmentHolder.class);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.getHolder()).thenReturn(otherHolder);
 
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
 
         EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);
@@ -126,11 +133,11 @@ public class EquipmentActionExecutorTest {
     }
 
     @Test
-    public void handleRightClickActionCallsEquipmentFunctionWhenMatchingEquipmentIsFound() {
+    void handleRightClickActionCallsEquipmentFunctionWhenMatchingEquipmentIsFound() {
         Equipment equipment = mock(Equipment.class);
         when(equipment.getHolder()).thenReturn(gamePlayer);
 
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
 
         EquipmentActionExecutor actionExecutor = new EquipmentActionExecutor(equipmentRegistry, playerRegistry);

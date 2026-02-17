@@ -21,7 +21,7 @@ public class SpecDeserializer {
         try {
             inputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            throw new SpecDeserializationException("The given spec file at %s cannot be found".formatted(path));
+            throw new SpecDeserializationException("The given spec file at %s cannot be found".formatted(path), e);
         }
 
         SpecPropertyUtils propertyUtils = new SpecPropertyUtils();
@@ -40,7 +40,7 @@ public class SpecDeserializer {
         try {
             return yaml.loadAs(inputStream, type);
         } catch (Exception e) {
-            throw new SpecDeserializationException("An error occurred while deserializing file %s: %s".formatted(file.getName(), e.getMessage()));
+            throw new SpecDeserializationException("An error occurred while deserializing file %s".formatted(file.getName()), e);
         }
     }
 }

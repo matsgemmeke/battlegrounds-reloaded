@@ -13,12 +13,12 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
@@ -39,7 +39,6 @@ public class GunFactory {
     private static final String ACTION_EXECUTOR_ID_KEY = "action-executor-id";
     private static final String ACTION_EXECUTOR_ID_VALUE = "gun";
     private static final String TEMPLATE_ID_KEY = "template-id";
-    private static final double DEFAULT_HEADSHOT_DAMAGE_MULTIPLIER = 1.0;
 
     private final BattlegroundsConfiguration config;
     private final GunControlsFactory controlsFactory;
@@ -113,16 +112,16 @@ public class GunFactory {
         int reserveAmmo = spec.ammo.defaultMagazineAmount * magazineSize;
         int maxAmmo = spec.ammo.maxMagazineAmount * magazineSize;
 
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(magazineSize, magazineSize, reserveAmmo, maxAmmo);
-        gun.setAmmunitionStorage(ammunitionStorage);
+        ResourceContainer resourceContainer = new ResourceContainer(magazineSize, magazineSize, reserveAmmo, maxAmmo);
+        gun.setResourceContainer(resourceContainer);
 
-        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, gun);
+        ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
         gun.setReloadSystem(reloadSystem);
 
         ItemControls<GunHolder> controls = controlsFactory.create(spec.controls, gun);
         gun.setControls(controls);
 
-        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, ammunitionStorage, itemRepresentation);
+        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, resourceContainer, itemRepresentation);
         gun.setShootHandler(shootHandler);
 
         ScopeSpec scopeSpec = spec.scope;
@@ -167,7 +166,7 @@ public class GunFactory {
     private void registerGunFireSimulationInfo(Gun gun, GunSpec spec) {
         UUID gunId = gun.getId();
 
-        List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shooting.projectile.shotSounds);
+        List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shooting.projectile.launchSounds);
         int rateOfFire = gun.getRateOfFire();
         GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
 

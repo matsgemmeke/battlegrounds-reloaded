@@ -1,22 +1,16 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 
 public interface ItemEffectPerformance {
 
-    void addTriggerRun(TriggerRun triggerRun);
-
-    void changeSource(ItemEffectSource source);
+    void changeActor(Actor actor);
 
     boolean isPerforming();
-
-    boolean isReleased();
 
     void setContext(ItemEffectContext context);
 
     void start();
-
-    void cancel();
 
     void rollback();
 }

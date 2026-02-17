@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record FireballProperties(
-        List<GameSound> shotSounds,
+        List<GameSound> launchSounds,
         ParticleEffect trajectoryParticleEffect,
         double velocity
 ) {

@@ -1,25 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-
 import java.util.*;
 
 public abstract class BaseItemEffect implements ItemEffect {
 
-    protected final List<ItemEffectPerformance> performances;
-    protected final Set<TriggerExecutor> triggerExecutors;
-    protected ItemEffectContext context;
+    private final List<ItemEffectPerformance> performances;
 
     public BaseItemEffect() {
         this.performances = new ArrayList<>();
-        this.triggerExecutors = new HashSet<>();
-    }
-
-    @Override
-    public void addTriggerExecutor(TriggerExecutor triggerExecutor) {
-        triggerExecutors.add(triggerExecutor);
     }
 
     @Override
@@ -35,39 +23,14 @@ public abstract class BaseItemEffect implements ItemEffect {
         performances.add(performance);
 
         performance.setContext(context);
-
-        if (!triggerExecutors.isEmpty()) {
-            for (TriggerExecutor triggerExecutor : triggerExecutors) {
-                TriggerContext triggerContext = new TriggerContext(context.getEntity(), context.getSource());
-
-                TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-                triggerRun.addObserver(performance::start);
-                triggerRun.start();
-
-                performance.addTriggerRun(triggerRun);
-            }
-        } else {
-            performance.start();
-        }
+        performance.start();
     }
 
     @Override
     public void activatePerformances() {
         for (ItemEffectPerformance performance : performances) {
             if (!performance.isPerforming()) {
-                performance.cancel();
                 performance.start();
-            }
-        }
-
-        performances.clear();
-    }
-
-    @Override
-    public void cancelPerformances() {
-        for (ItemEffectPerformance performance : performances) {
-            if (!performance.isPerforming()) {
-                performance.cancel();
             }
         }
 

@@ -2,10 +2,12 @@ package nl.matsgemmeke.battlegrounds.item.trigger.enemy;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.trigger.Trigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 
 import java.util.List;
 
@@ -24,14 +26,19 @@ public class EnemyProximityTrigger implements Trigger {
     }
 
     @Override
-    public boolean activates(TriggerContext context) {
-        TriggerTarget target = context.target();
+    public TriggerResult check(TriggerContext context) {
+        Actor actor = context.actor();
 
-        if (!target.exists()) {
-            return false;
+        if (!actor.exists()) {
+            return SimpleTriggerResult.NOT_ACTIVATES;
         }
 
-        List<GameEntity> targets = targetFinder.findEnemyTargets(context.entity().getUniqueId(), target.getLocation(), checkingRange);
-        return !targets.isEmpty();
+        List<GameEntity> targets = targetFinder.findEnemyTargets(context.sourceId(), actor.getLocation(), checkingRange);
+
+        if (targets.isEmpty()) {
+            return SimpleTriggerResult.NOT_ACTIVATES;
+        }
+
+        return SimpleTriggerResult.ACTIVATES;
     }
 }

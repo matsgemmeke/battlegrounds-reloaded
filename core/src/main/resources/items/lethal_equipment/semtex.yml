@@ -5,6 +5,10 @@ controls:
   throwing: LEFT_CLICK
 deploy:
   health: 50.0
+  triggers:
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [ 60 ]
   on-destruction:
     activate-effect: false
     remove-deployment: true
@@ -21,7 +25,7 @@ deploy:
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
 effect:
-  effect-type: EXPLOSION
+  type: EXPLOSION
   power: 2.0
   spread-fire: false
   damage-blocks: false
@@ -35,10 +39,6 @@ effect:
     short-range:
       damage: 150.0
       distance: 2.5
-  triggers:
-    scheduled:
-      type: SCHEDULED
-      offset-delays: [60]
 items:
   display-item:
     material: SHEARS
@@ -56,11 +56,12 @@ projectile-effects:
       scheduled:
         type: SCHEDULED
         offset-delays: [ 10, 19, 27, 34, 40, 45, 49, 52, 54, 56, 58 ]
+        repeating: true
   stick:
     type: STICK
     stick-sounds: ITEM_FLINTANDSTEEL_USE-0.5-2-0
     triggers:
       impact:
-        type: IMPACT
+        type: BLOCK_IMPACT
         delay: 0
         interval: 1

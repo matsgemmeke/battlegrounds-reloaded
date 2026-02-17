@@ -7,26 +7,25 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
-public class OpenModeEntity implements GameEntity {
+public class OpenModeEntity implements GameMob {
 
-    private final HitboxProvider hitboxProvider;
+    private final HitboxProvider<LivingEntity> hitboxProvider;
     private final LivingEntity entity;
     @Nullable
     private Damage lastDamage;
 
-    public OpenModeEntity(LivingEntity entity, HitboxProvider hitboxProvider) {
+    public OpenModeEntity(LivingEntity entity, HitboxProvider<LivingEntity> hitboxProvider) {
         this.entity = entity;
         this.hitboxProvider = hitboxProvider;
-    }
-
-    @NotNull
-    public LivingEntity getEntity() {
-        return entity;
     }
 
     public double getHealth() {
@@ -56,9 +55,34 @@ public class OpenModeEntity implements GameEntity {
         return entity.getUniqueId();
     }
 
+    @Override
+    public Vector getVelocity() {
+        return entity.getVelocity();
+    }
+
     @NotNull
     public World getWorld() {
         return entity.getWorld();
+    }
+
+    @Override
+    public boolean isValid() {
+        return entity.isValid();
+    }
+
+    @Override
+    public void addPotionEffect(PotionEffect potionEffect) {
+        entity.addPotionEffect(potionEffect);
+    }
+
+    @Override
+    public Optional<PotionEffect> getPotionEffect(PotionEffectType potionEffectType) {
+        return Optional.ofNullable(entity.getPotionEffect(potionEffectType));
+    }
+
+    @Override
+    public void removePotionEffect(PotionEffectType potionEffectType) {
+        entity.removePotionEffect(potionEffectType);
     }
 
     public double damage(@NotNull Damage damage) {

@@ -1,9 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.HitscanProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ItemProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireModeFactory;
@@ -12,31 +15,35 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPatternFactory;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class ShootHandlerFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class ShootHandlerFactoryTest {
 
-    private AmmunitionStorage ammunitionStorage;
+    private static final ResourceContainer RESOURCE_CONTAINER = new ResourceContainer(30, 30, 90, 300);
+
+    @Mock
     private FireModeFactory fireModeFactory;
+    @Mock
     private ProjectileLauncherFactory projectileLauncherFactory;
+    @Mock
     private RecoilFactory recoilFactory;
+    @Mock
     private SpreadPatternFactory spreadPatternFactory;
-
-    @BeforeEach
-    public void setUp() {
-        ammunitionStorage = new AmmunitionStorage(10, 20, 10, 20);
-        fireModeFactory = mock(FireModeFactory.class);
-        projectileLauncherFactory = mock(ProjectileLauncherFactory.class);
-        recoilFactory = mock(RecoilFactory.class);
-        spreadPatternFactory = mock(SpreadPatternFactory.class);
-    }
+    @InjectMocks
+    private ShootHandlerFactory shootHandlerFactory;
 
     @Test
-    public void createReturnsNewShootHandlerInstance() {
+    @DisplayName("create returns ShootHandler instance without recoil")
+    void create_withoutRecoil() {
         FireMode fireMode = mock(FireMode.class);
         ItemRepresentation itemRepresentation = mock(ItemRepresentation.class);
         ProjectileLauncher projectileLauncher = mock(ProjectileLauncher.class);
@@ -47,14 +54,14 @@ public class ShootHandlerFactoryTest {
         when(projectileLauncherFactory.create(shootingSpec.projectile)).thenReturn(projectileLauncher);
         when(spreadPatternFactory.create(shootingSpec.spreadPattern)).thenReturn(spreadPattern);
 
-        ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(fireModeFactory, projectileLauncherFactory, recoilFactory, spreadPatternFactory);
-        shootHandlerFactory.create(shootingSpec, ammunitionStorage, itemRepresentation);
+        shootHandlerFactory.create(shootingSpec, RESOURCE_CONTAINER, itemRepresentation);
 
         verify(fireMode).addShotObserver(any(ShotObserver.class));
     }
 
     @Test
-    public void createReturnsNewShootHandlerInstanceWithRecoil() {
+    @DisplayName("create returns ShootHandler instance with recoil")
+    void create_withRecoil() {
         FireMode fireMode = mock(FireMode.class);
         ItemRepresentation itemRepresentation = mock(ItemRepresentation.class);
         ProjectileLauncher projectileLauncher = mock(ProjectileLauncher.class);
@@ -75,7 +82,7 @@ public class ShootHandlerFactoryTest {
         when(spreadPatternFactory.create(shootingSpec.spreadPattern)).thenReturn(spreadPattern);
 
         ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(fireModeFactory, projectileLauncherFactory, recoilFactory, spreadPatternFactory);
-        shootHandlerFactory.create(shootingSpec, ammunitionStorage, itemRepresentation);
+        shootHandlerFactory.create(shootingSpec, RESOURCE_CONTAINER, itemRepresentation);
 
         verify(fireMode).addShotObserver(any(ShotObserver.class));
     }
@@ -85,8 +92,8 @@ public class ShootHandlerFactoryTest {
         fireModeSpec.type = "FULLY_AUTOMATIC";
         fireModeSpec.rateOfFire = 600;
 
-        ProjectileSpec projectileSpec = new ProjectileSpec();
-        projectileSpec.type = "BULLET";
+        ProjectileSpec projectileSpec = new HitscanProjectileSpec();
+        projectileSpec.type = "HITSCAN";
 
         SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec();
         spreadPatternSpec.type = "SINGLE_PROJECTILE";

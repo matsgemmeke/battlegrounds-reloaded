@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
 
 import java.util.UUID;
@@ -12,7 +11,7 @@ import java.util.UUID;
 public class MarkSpawnPointEffectPerformance extends BaseItemEffectPerformance {
 
     private final SpawnPointRegistry spawnPointRegistry;
-    private UUID entityId;
+    private UUID uniqueId;
 
     @Inject
     public MarkSpawnPointEffectPerformance(SpawnPointRegistry spawnPointRegistry) {
@@ -25,19 +24,19 @@ public class MarkSpawnPointEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        entityId = context.getEntity().getUniqueId();
-        Location initiationLocation = context.getInitiationLocation();
+    public void start() {
+        uniqueId = currentContext.getDamageSource().getUniqueId();
+        Location startingLocation = currentContext.getStartingLocation();
 
-        SpawnPoint spawnPoint = new MarkedSpawnPoint(context.getSource(), initiationLocation.getYaw());
+        SpawnPoint spawnPoint = new MarkedSpawnPoint(currentContext.getActor(), startingLocation.getYaw());
 
-        spawnPointRegistry.setCustomSpawnPoint(entityId, spawnPoint);
+        spawnPointRegistry.setCustomSpawnPoint(uniqueId, spawnPoint);
     }
 
     @Override
     public void rollback() {
-        if (entityId != null) {
-            spawnPointRegistry.setCustomSpawnPoint(entityId, null);
+        if (uniqueId != null) {
+            spawnPointRegistry.setCustomSpawnPoint(uniqueId, null);
         }
     }
 }

@@ -6,9 +6,10 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 
@@ -46,9 +47,9 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        UUID entityId = context.getEntity().getUniqueId();
-        GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(entityId).orElse(null);
+    public void start() {
+        UUID damageSourceId = currentContext.getDamageSource().getUniqueId();
+        GunFireSimulationInfo gunFireSimulationInfo = gunInfoProvider.getGunFireSimulationInfo(damageSourceId).orElse(null);
 
         if (gunFireSimulationInfo == null) {
             this.simulateGenericGunFire();
@@ -72,15 +73,15 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
         playingSounds = true;
 
         repeatingSchedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, SCHEDULE_INTERVAL);
-        repeatingSchedule.addTask(() -> this.handleScheduleTick(context, sounds, interval));
+        repeatingSchedule.addTask(() -> this.handleScheduleTick(currentContext, sounds, interval));
         repeatingSchedule.start();
     }
 
     private void handleScheduleTick(ItemEffectContext context, List<GameSound> sounds, long interval) {
-        ItemEffectSource source = context.getSource();
+        Actor actor = context.getActor();
 
         // Stop simulation when source no longer exists
-        if (!source.exists()) {
+        if (!actor.exists()) {
             repeatingSchedule.stop();
             return;
         }
@@ -100,12 +101,15 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
         }
 
         if (playingSounds && remainingTicks % interval == 0) {
-            audioEmitter.playSounds(sounds, source.getLocation());
+            audioEmitter.playSounds(sounds, actor.getLocation());
         }
 
         if (elapsedTicks > totalDuration) {
-            source.remove();
             repeatingSchedule.stop();
+
+            if (actor instanceof Removable removableActor) {
+                removableActor.remove();
+            }
         }
     }
 

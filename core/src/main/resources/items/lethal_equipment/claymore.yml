@@ -5,6 +5,12 @@ controls:
   throwing: LEFT_CLICK
 deploy:
   health: 50.0
+  triggers:
+    enemy-proximity:
+      type: ENEMY_PROXIMITY
+      delay: 0
+      interval: 2
+      range: 2.5
   on-destruction:
     activate-effect: true
     remove-deployment: true
@@ -26,7 +32,7 @@ deploy:
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 0.0
 effect:
-  effect-type: EXPLOSION
+  type: EXPLOSION
   power: 2.0
   spread-fire: false
   damage-blocks: false
@@ -40,12 +46,6 @@ effect:
     short-range:
       damage: 150.0
       distance: 2.5
-  triggers:
-    enemy-proximity:
-      type: ENEMY_PROXIMITY
-      delay: 0
-      interval: 2
-      range: 2.5
 items:
   display-item:
     damage: 5

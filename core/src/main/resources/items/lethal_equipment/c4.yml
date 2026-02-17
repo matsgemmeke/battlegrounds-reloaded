@@ -7,9 +7,13 @@ controls:
   activate: RIGHT_CLICK
 deploy:
   health: 50.0
+  triggers:
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [ 100000 ]
   manual-activation:
+    activation-sounds: UI_BUTTON_CLICK-1-1.5-0
     delay: 5
-    sounds: UI_BUTTON_CLICK-1-1.5-0
   on-destruction:
     activate-effect: false
     remove-deployment: true
@@ -29,7 +33,7 @@ deploy:
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.0
 effect:
-  effect-type: EXPLOSION
+  type: EXPLOSION
   power: 3.0
   spread-fire: false
   damage-blocks: false
@@ -43,10 +47,6 @@ effect:
     short-range:
       damage: 300.0
       distance: 2.5
-  triggers:
-    scheduled:
-      type: SCHEDULED
-      offset-delays: [ 100000 ]
 items:
   display-item:
     material: SHEARS

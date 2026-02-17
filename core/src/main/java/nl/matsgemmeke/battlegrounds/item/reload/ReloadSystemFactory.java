@@ -6,19 +6,16 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.manual.ManualInsertionReloadSystemFactory;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class ReloadSystemFactory {
 
-    @NotNull
     private final MagazineReloadSystemFactory magazineReloadSystemFactory;
-    @NotNull
     private final ManualInsertionReloadSystemFactory manualInsertionReloadSystemFactory;
 
     @Inject
-    public ReloadSystemFactory(@NotNull MagazineReloadSystemFactory magazineReloadSystemFactory, @NotNull ManualInsertionReloadSystemFactory manualInsertionReloadSystemFactory) {
+    public ReloadSystemFactory(MagazineReloadSystemFactory magazineReloadSystemFactory, ManualInsertionReloadSystemFactory manualInsertionReloadSystemFactory) {
         this.magazineReloadSystemFactory = magazineReloadSystemFactory;
         this.manualInsertionReloadSystemFactory = manualInsertionReloadSystemFactory;
     }
@@ -26,24 +23,23 @@ public class ReloadSystemFactory {
     /**
      * Creates a new {@link ReloadSystem} instance based on configuration values.
      *
-     * @param spec the reload specification
-     * @param item the associated item
-     * @return a new {@link ReloadSystem} instance
+     * @param spec              the reloading specification
+     * @param resourceContainer the resource container the reload system will utilize
+     * @return                  a new {@link ReloadSystem} instance
      */
-    public ReloadSystem create(ReloadingSpec spec, Reloadable item) {
+    public ReloadSystem create(ReloadingSpec spec, ResourceContainer resourceContainer) {
         ReloadSystemType reloadSystemType = ReloadSystemType.valueOf(spec.type);
         List<GameSound> reloadSounds = DefaultGameSound.parseSounds(spec.reloadSounds);
         long duration = spec.duration;
 
         ReloadProperties properties = new ReloadProperties(reloadSounds, duration);
-        AmmunitionStorage ammunitionStorage = item.getAmmunitionStorage();
 
         switch (reloadSystemType) {
             case MAGAZINE -> {
-                return magazineReloadSystemFactory.create(properties, ammunitionStorage);
+                return magazineReloadSystemFactory.create(properties, resourceContainer);
             }
             case MANUAL_INSERTION -> {
-                return manualInsertionReloadSystemFactory.create(properties, ammunitionStorage);
+                return manualInsertionReloadSystemFactory.create(properties, resourceContainer);
             }
         }
 

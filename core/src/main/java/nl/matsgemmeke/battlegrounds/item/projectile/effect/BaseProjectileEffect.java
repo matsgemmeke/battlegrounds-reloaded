@@ -1,20 +1,18 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public abstract class BaseProjectileEffect implements ProjectileEffect {
 
-    @NotNull
     private final Set<TriggerExecutor> triggerExecutors;
-    @NotNull
     private final Set<TriggerRun> triggerRuns;
 
     public BaseProjectileEffect() {
@@ -31,12 +29,14 @@ public abstract class BaseProjectileEffect implements ProjectileEffect {
         triggerRuns.clear();
     }
 
-    public void onLaunch(@NotNull Entity deployerEntity, @NotNull Projectile projectile) {
-        TriggerContext context = new TriggerContext(deployerEntity, projectile);
+    @Override
+    public void onLaunch(DamageSource damageSource, Projectile projectile) {
+        UUID damageSourceId = damageSource.getUniqueId();
+        TriggerContext context = new TriggerContext(damageSourceId, projectile);
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(context);
-            triggerRun.addObserver(() -> this.verifyAndPerformEffect(projectile));
+            triggerRun.addObserver(triggerResult -> this.verifyAndPerformEffect(projectile));
             triggerRun.start();
 
             triggerRuns.add(triggerRun);

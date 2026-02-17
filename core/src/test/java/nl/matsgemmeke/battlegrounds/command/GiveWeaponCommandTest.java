@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -29,6 +30,7 @@ class GiveWeaponCommandTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final String[] ARGS = { "test", "weapon" };
+    private static final UUID UNIQUE_ID = UUID.randomUUID();
 
     @Mock
     private GameContextProvider gameContextProvider;
@@ -80,11 +82,12 @@ class GiveWeaponCommandTest {
         GameContext gameContext = mock(GameContext.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.empty());
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(player.getName()).thenReturn("TestPlayer");
+        when(player.getUniqueId()).thenReturn(UNIQUE_ID);
         when(weaponCreator.exists("test weapon")).thenReturn(true);
 
         doAnswer(invocation -> {
@@ -109,13 +112,14 @@ class GiveWeaponCommandTest {
         when(player.getInventory()).thenReturn(inventory);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        when(playerRegistry.findByEntity(player)).thenReturn(Optional.of(gamePlayer));
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
 
         Weapon weapon = mock(Weapon.class);
         when(weapon.getItemStack()).thenReturn(itemStack);
         when(weapon.getName()).thenReturn("test");
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(player.getUniqueId()).thenReturn(UNIQUE_ID);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
         when(weaponCreator.exists("test weapon")).thenReturn(true);

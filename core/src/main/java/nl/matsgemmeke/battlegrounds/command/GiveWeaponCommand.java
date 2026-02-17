@@ -52,7 +52,7 @@ public class GiveWeaponCommand extends CommandSource {
 
         gameScope.runInScope(gameContext, () -> {
             PlayerRegistry playerRegistry = playerRegistryProvider.get();
-            GamePlayer gamePlayer = playerRegistry.findByEntity(player)
+            GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId())
                     .orElseThrow(() -> new IllegalStateException("Unable to find GamePlayer instance for player %s despite being registered".formatted(player.getName())));
             Weapon weapon = weaponCreator.createWeapon(gamePlayer, weaponName);
 

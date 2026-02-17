@@ -6,6 +6,10 @@ controls:
   cook: RIGHT_CLICK
 deploy:
   health: 50.0
+  triggers:
+    scheduled:
+      type: SCHEDULED
+      offset-delays: [ 60 ]
   on-destruction:
     activate-effect: false
     remove-deployment: true
@@ -22,7 +26,7 @@ deploy:
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
 effect:
-  effect-type: GUN_FIRE_SIMULATION
+  type: GUN_FIRE_SIMULATION
   activation-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
   min-duration: 200
   max-duration: 300
@@ -31,10 +35,6 @@ effect:
   max-burst-duration: 100
   min-delay-duration: 20
   max-delay-duration: 60
-  triggers:
-    scheduled:
-      type: SCHEDULED
-      offset-delays: [60]
 items:
   display-item:
     material: SHEARS
@@ -52,6 +52,6 @@ projectile-effects:
     vertical-friction: 2.0
     triggers:
       impact:
-        type: IMPACT
+        type: BLOCK_IMPACT
         delay: 0
         interval: 1

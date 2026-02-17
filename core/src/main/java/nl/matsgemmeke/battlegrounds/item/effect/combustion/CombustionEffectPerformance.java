@@ -4,14 +4,14 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
@@ -64,19 +64,20 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        ItemEffectSource source = context.getSource();
-        Location location = source.getLocation();
-        World world = source.getWorld();
+    public void start() {
+        UUID uniqueId = currentContext.getDamageSource().getUniqueId();
+        Actor actor = currentContext.getActor();
+        Location actorLocation = actor.getLocation();
+        World world = actor.getWorld();
 
-        audioEmitter.playSounds(properties.combustionSounds(), location);
+        audioEmitter.playSounds(properties.combustionSounds(), actorLocation);
 
         currentRadius = properties.minSize();
 
-        this.inflictDamage(context.getEntity().getUniqueId(), location);
+        this.inflictDamage(uniqueId, actorLocation);
 
         schedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, properties.growthInterval());
-        schedule.addTask(() -> this.increaseFireCircleRadius(location, world));
+        schedule.addTask(() -> this.increaseFireCircleRadius(actorLocation, world));
         schedule.start();
 
         long duration = this.getRandomDuration(properties.minDuration(), properties.maxDuration());
@@ -85,7 +86,9 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
         cancelSchedule.addTask(this::rollback);
         cancelSchedule.start();
 
-        source.remove();
+        if (actor instanceof Removable removableActor) {
+            removableActor.remove();
+        }
     }
 
     private void inflictDamage(UUID entityId, Location location) {

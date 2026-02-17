@@ -1,19 +1,23 @@
 package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
-import java.util.List;
+import java.util.UUID;
 
 public class SoundNotificationEffectPerformance extends BaseItemEffectPerformance {
 
-    private final List<GameSound> notificationSounds;
+    private final PlayerRegistry playerRegistry;
+    private final SoundNotificationProperties properties;
 
-    public SoundNotificationEffectPerformance(List<GameSound> notificationSounds) {
-        this.notificationSounds = notificationSounds;
+    @Inject
+    public SoundNotificationEffectPerformance(PlayerRegistry playerRegistry, @Assisted SoundNotificationProperties properties) {
+        this.playerRegistry = playerRegistry;
+        this.properties = properties;
     }
 
     @Override
@@ -23,16 +27,14 @@ public class SoundNotificationEffectPerformance extends BaseItemEffectPerformanc
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        Entity entity = context.getEntity();
+    public void start() {
+        UUID damageSourceUniqueId = currentContext.getDamageSource().getUniqueId();
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(damageSourceUniqueId).orElse(null);
 
-        // Playing sounds is only possible for players
-        if (!(entity instanceof Player player)) {
+        if (gamePlayer == null) {
             return;
         }
 
-        for (GameSound sound : notificationSounds) {
-            player.playSound(player.getLocation(), sound.getSound(), sound.getVolume(), sound.getPitch());
-        }
+        properties.notificationSounds().forEach(sound -> gamePlayer.playSound(gamePlayer.getLocation(), sound));
     }
 }

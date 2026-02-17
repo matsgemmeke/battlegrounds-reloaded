@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.controls;
 
 import nl.matsgemmeke.battlegrounds.item.ItemHolder;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a functional link between a performed action on an item and a specific feature of that item.
@@ -49,5 +48,5 @@ public interface ItemFunction<T extends ItemHolder> {
      * @param holder the required item holder
      * @return whether the function performance has started
      */
-    boolean perform(@NotNull T holder);
+    boolean perform(T holder);
 }

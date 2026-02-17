@@ -66,7 +66,7 @@ public class ShowHitboxesTool {
         World world = player.getWorld();
 
         for (Entity entity : world.getNearbyEntities(playerLocation, range, range, range)) {
-            HitboxProvider hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
+            HitboxProvider<Entity> hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
             Hitbox hitbox = hitboxProvider.provideHitbox(entity);
 
             for (HitboxComponent component : hitbox.getComponents()) {

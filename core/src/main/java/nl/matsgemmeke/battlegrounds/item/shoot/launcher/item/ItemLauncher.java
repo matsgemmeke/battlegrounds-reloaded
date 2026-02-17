@@ -4,19 +4,22 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
-import nl.matsgemmeke.battlegrounds.item.projectile.ItemProjectile;
+import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -24,15 +27,16 @@ import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Implementation of {@link ProjectileLauncher} that uses {@link Item} entities in their launch.
  */
 public class ItemLauncher implements ProjectileLauncher {
 
-    private static final int ITEM_PICKUP_DELAY = 10000;
-
     private final AudioEmitter audioEmitter;
+    private final CollisionResultAdapter collisionResultAdapter;
     private final ItemEffect itemEffect;
     private final ItemLaunchProperties properties;
     private final Scheduler scheduler;
@@ -40,8 +44,9 @@ public class ItemLauncher implements ProjectileLauncher {
     private final Set<TriggerExecutor> triggerExecutors;
 
     @Inject
-    public ItemLauncher(AudioEmitter audioEmitter, Scheduler scheduler, @Assisted ItemEffect itemEffect, @Assisted ItemLaunchProperties properties) {
+    public ItemLauncher(AudioEmitter audioEmitter, CollisionResultAdapter collisionResultAdapter, Scheduler scheduler, @Assisted ItemEffect itemEffect, @Assisted ItemLaunchProperties properties) {
         this.audioEmitter = audioEmitter;
+        this.collisionResultAdapter = collisionResultAdapter;
         this.scheduler = scheduler;
         this.itemEffect = itemEffect;
         this.properties = properties;
@@ -60,39 +65,43 @@ public class ItemLauncher implements ProjectileLauncher {
 
     @Override
     public void launch(LaunchContext context) {
-        Entity entity = context.entity();
+        DamageSource damageSource = context.damageSource();
+        UUID damageSourceId = damageSource.getUniqueId();
         World world = context.world();
         Location dropLocation = context.direction();
-        Vector velocity = context.direction().getDirection().multiply(properties.velocity());
+        Supplier<Location> soundLocationSupplier = context.soundLocationSupplier();
 
         ItemStack itemStack = properties.itemTemplate().createItemStack();
+        int pickupDelay = properties.pickupDelay();
+        Vector velocity = context.direction().getDirection().multiply(properties.velocity());
 
         Item item = world.dropItem(dropLocation, itemStack);
-        item.setPickupDelay(ITEM_PICKUP_DELAY);
+        item.setPickupDelay(pickupDelay);
         item.setVelocity(velocity);
 
-        ItemProjectile projectile = new ItemProjectile(item);
-        TriggerContext triggerContext = new TriggerContext(entity, projectile);
+        ItemActor actor = new ItemActor(item);
+        TriggerContext triggerContext = new TriggerContext(damageSourceId, actor);
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-            triggerRun.addObserver(() -> this.startItemEffect(entity, projectile, dropLocation));
+            triggerRun.addObserver(triggerResult -> this.processTriggerResult(triggerResult, damageSource, actor, dropLocation));
             triggerRun.start();
         }
 
-        this.scheduleSoundPlayTasks(properties.shotSounds(), entity);
+        this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
 
-    private void startItemEffect(Entity entity, ItemProjectile projectile, Location initiationLocation) {
-        ItemEffectContext effectContext = new ItemEffectContext(entity, projectile, initiationLocation);
+    private void processTriggerResult(TriggerResult triggerResult, DamageSource damageSource, ItemActor actor, Location dropLocation) {
+        CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
 
+        ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, actor, dropLocation);
         itemEffect.startPerformance(effectContext);
     }
 
-    private void scheduleSoundPlayTasks(List<GameSound> sounds, Entity entity) {
+    private void scheduleSoundPlayTasks(List<GameSound> sounds, Supplier<Location> locationSupplier) {
         for (GameSound sound : sounds) {
             Schedule schedule = scheduler.createSingleRunSchedule(sound.getDelay());
-            schedule.addTask(() -> audioEmitter.playSound(sound, entity.getLocation()));
+            schedule.addTask(() -> audioEmitter.playSound(sound, locationSupplier.get()));
             schedule.start();
 
             soundPlaySchedules.add(schedule);

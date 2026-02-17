@@ -5,16 +5,22 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +31,7 @@ import static org.mockito.Mockito.*;
 class OpenModeEntityTest {
 
     @Mock
-    private HitboxProvider hitboxProvider;
+    private HitboxProvider<LivingEntity> hitboxProvider;
     @Mock
     private LivingEntity entity;
     @InjectMocks
@@ -49,6 +55,65 @@ class OpenModeEntityTest {
         Damage lastDamage = openModeEntity.getLastDamage();
 
         assertThat(lastDamage).isEqualTo(damage);
+    }
+
+    @Test
+    @DisplayName("getVelocity returns entity's velocity")
+    void getVelocity_returnsEntityVelocity() {
+        Vector entityVelocity = new Vector();
+
+        when(entity.getVelocity()).thenReturn(entityVelocity);
+
+        Vector openModeEntityVelocity = openModeEntity.getVelocity();
+
+        assertThat(openModeEntityVelocity).isEqualTo(entityVelocity);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isValid returns whether entity is valid")
+    void isValid_returnsEntityValid(boolean entityValid, boolean expected) {
+        when(entity.isValid()).thenReturn(entityValid);
+
+        boolean valid = openModeEntity.isValid();
+
+        assertThat(valid).isEqualTo(expected);
+    }
+
+    @Test
+    void addPotionEffectAddsPotionEffectToEntity() {
+        PotionEffect potionEffect = mock(PotionEffect.class);
+
+        openModeEntity.addPotionEffect(potionEffect);
+
+        verify(entity).addPotionEffect(potionEffect);
+    }
+
+    @Test
+    void getPotionEffectReturnsEmptyOptionalWhenEntityDoesNotHaveGivenPotionEffectType() {
+        when(entity.getPotionEffect(PotionEffectType.SPEED)).thenReturn(null);
+
+        Optional<PotionEffect> potionEffectOptional = openModeEntity.getPotionEffect(PotionEffectType.SPEED);
+
+        assertThat(potionEffectOptional).isEmpty();
+    }
+
+    @Test
+    void getPotionEffectReturnsOptionalWithActivePotionEffectOnEntity() {
+        PotionEffect potionEffect = mock(PotionEffect.class);
+
+        when(entity.getPotionEffect(PotionEffectType.SPEED)).thenReturn(potionEffect);
+
+        Optional<PotionEffect> potionEffectOptional = openModeEntity.getPotionEffect(PotionEffectType.SPEED);
+
+        assertThat(potionEffectOptional).hasValue(potionEffect);
+    }
+
+    @Test
+    void removePotionEffectRemovesPotionEffectFromEntity() {
+        openModeEntity.removePotionEffect(PotionEffectType.SPEED);
+
+        verify(entity).removePotionEffect(PotionEffectType.SPEED);
     }
 
     @NotNull

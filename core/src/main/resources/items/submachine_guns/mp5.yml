@@ -24,10 +24,10 @@ shooting:
     rate-of-fire: 600
   projectile:
     type: HITSCAN
-    shot-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+    launch-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
     suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ITEM_BREAK-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
     effect:
-      effect-type: DAMAGE
+      type: DAMAGE
       damage-type: BULLET_DAMAGE
       range:
         short-range:

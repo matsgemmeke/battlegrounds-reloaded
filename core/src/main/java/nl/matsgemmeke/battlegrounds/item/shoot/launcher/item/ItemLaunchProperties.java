@@ -5,5 +5,5 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 
 import java.util.List;
 
-public record ItemLaunchProperties(ItemTemplate itemTemplate, List<GameSound> shotSounds, double velocity) {
+public record ItemLaunchProperties(ItemTemplate itemTemplate, List<GameSound> launchSounds, double velocity, int pickupDelay) {
 }

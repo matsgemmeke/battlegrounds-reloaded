@@ -1,7 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.place;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.item.actor.BlockActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -10,31 +14,32 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PlaceDeployment implements Deployment {
 
     private static final int TARGET_BLOCK_SCAN_DISTANCE = 4;
 
-    @NotNull
     private final AudioEmitter audioEmitter;
+    private final HitboxResolver hitboxResolver;
     @Nullable
     private PlaceDeploymentProperties properties;
 
     @Inject
-    public PlaceDeployment(@NotNull AudioEmitter audioEmitter) {
+    public PlaceDeployment(AudioEmitter audioEmitter, HitboxResolver hitboxResolver) {
         this.audioEmitter = audioEmitter;
+        this.hitboxResolver = hitboxResolver;
     }
 
     public void configureProperties(PlaceDeploymentProperties properties) {
         this.properties = properties;
     }
 
-    @NotNull
-    public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+    @Override
+    public Optional<DeploymentResult> perform(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
@@ -42,7 +47,7 @@ public class PlaceDeployment implements Deployment {
         List<Block> targetBlocks = deployer.getLastTwoTargetBlocks(TARGET_BLOCK_SCAN_DISTANCE);
 
         if (targetBlocks.size() != 2 || !targetBlocks.get(1).getType().isOccluding()) {
-            return DeploymentResult.failure();
+            return Optional.empty();
         }
 
         Block targetBlock = targetBlocks.get(1);
@@ -50,21 +55,25 @@ public class PlaceDeployment implements Deployment {
         BlockFace targetBlockFace = targetBlock.getFace(adjacentBlock);
 
         if (targetBlockFace == null) {
-            return DeploymentResult.failure();
+            return Optional.empty();
         }
 
         this.placeBlock(adjacentBlock, targetBlockFace, properties.material());
 
-        PlaceDeploymentObject object = new PlaceDeploymentObject(adjacentBlock, properties.material());
-        object.setCooldown(properties.cooldown());
-        object.setHealth(properties.health());
-        object.setResistances(properties.resistances());
+        HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
+
+        PlaceDeploymentObject deploymentObject = new PlaceDeploymentObject(adjacentBlock, properties.material(), hitboxProvider, destructionListener);
+        deploymentObject.setHealth(properties.health());
+        deploymentObject.setResistances(properties.resistances());
+
+        BlockActor actor = new BlockActor(adjacentBlock, properties.material());
+        long cooldown = properties.cooldown();
 
         audioEmitter.playSounds(properties.placeSounds(), adjacentBlock.getLocation());
 
         deployer.setHeldItem(null);
 
-        return DeploymentResult.success(object);
+        return Optional.of(new DeploymentResult(deployer, deploymentObject, actor, cooldown));
     }
 
     private void placeBlock(Block block, BlockFace blockFace, Material material) {
@@ -88,8 +97,7 @@ public class PlaceDeployment implements Deployment {
         placedBlockState.update(true, true);
     }
 
-    @NotNull
-    private FaceAttachable.AttachedFace getCorrespondingAttachedFace(@NotNull BlockFace blockFace) {
+    private FaceAttachable.AttachedFace getCorrespondingAttachedFace(BlockFace blockFace) {
         switch (blockFace) {
             case UP -> {
                 return FaceAttachable.AttachedFace.FLOOR;

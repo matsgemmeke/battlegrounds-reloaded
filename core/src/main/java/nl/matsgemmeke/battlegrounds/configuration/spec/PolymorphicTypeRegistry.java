@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,30 +9,33 @@ import java.util.Optional;
 
 public final class PolymorphicTypeRegistry {
 
-    private static final Map<String, Map<String, Class<?>>> rules = new HashMap<>();
+    private static final Map<Class<?>, PolymorphicDefinition> definitions = new HashMap<>();
 
     static {
-        register("effect-type", "COMBUSTION", CombustionEffectSpec.class);
-        register("effect-type", "DAMAGE", DamageEffectSpec.class);
-        register("effect-type", "EXPLOSION", ExplosionEffectSpec.class);
-        register("effect-type", "FLASH", FlashEffectSpec.class);
-        register("effect-type", "GUN_FIRE_SIMULATION", GunFireSimulationEffectSpec.class);
-        register("effect-type", "MARK_SPAWN_POINT", MarkSpawnPointEffectSpec.class);
-        register("effect-type", "SMOKE_SCREEN", SmokeScreenEffectSpec.class);
-        register("effect-type", "SOUND_NOTIFICATION", SoundNotificationEffectSpec.class);
+        register(ItemEffectSpec.class, "type", Map.of(
+                "COMBUSTION", CombustionEffectSpec.class,
+                "DAMAGE", DamageEffectSpec.class,
+                "EXPLOSION", ExplosionEffectSpec.class,
+                "FLASH", FlashEffectSpec.class,
+                "GUN_FIRE_SIMULATION", GunFireSimulationEffectSpec.class,
+                "MARK_SPAWN_POINT", MarkSpawnPointEffectSpec.class,
+                "SMOKE_SCREEN", SmokeScreenEffectSpec.class,
+                "SOUND_NOTIFICATION", SoundNotificationEffectSpec.class
+        ));
+
+        register(ProjectileSpec.class, "type", Map.of(
+                "ARROW", ArrowProjectileSpec.class,
+                "FIREBALL", FireballProjectileSpec.class,
+                "HITSCAN", HitscanProjectileSpec.class,
+                "ITEM", ItemProjectileSpec.class
+        ));
     }
 
-    public static void register(String keyName, String valueName, Class<?> targetClass) {
-        rules.computeIfAbsent(keyName.toLowerCase(), k -> new HashMap<>()).put(valueName.toUpperCase(), targetClass);
+    public static void register(Class<?> baseClass, String discriminator, Map<String, Class<?>> mappings) {
+        definitions.put(baseClass, new PolymorphicDefinition(discriminator, mappings));
     }
 
-    public static Optional<Class<?>> resolve(String keyName, String valueName) {
-        if (!rules.containsKey(keyName)) {
-            return Optional.empty();
-        }
-
-        Map<String, Class<?>> map = rules.get(keyName);
-
-        return Optional.ofNullable(map.get(valueName.toUpperCase()));
+    public static Optional<PolymorphicDefinition> get(Class<?> baseType) {
+        return Optional.ofNullable(definitions.get(baseType));
     }
 }

@@ -37,7 +37,7 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
     }
 
     public void handlePlayerJoin(Player player) {
-        if (playerRegistry.isRegistered(player)) {
+        if (playerRegistry.isRegistered(player.getUniqueId())) {
             return;
         }
 

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.effect.DamageEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,23 +14,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PolymorphicTypeRegistryTest {
 
     @Test
-    void resolveReturnsEmptyOptionalWhenNoRuleForGivenKeyNameIsRegistered() {
-        Optional<Class<?>> type = PolymorphicTypeRegistry.resolve("unregistered-type", "DAMAGE");
+    @DisplayName("get returns empty optional when base type is not registered")
+    void resolve_baseTypeNotRegistered() {
+        Optional<PolymorphicDefinition> definitionOptional = PolymorphicTypeRegistry.get(Object.class);
 
-        assertThat(type).isEmpty();
+        assertThat(definitionOptional).isEmpty();
     }
 
     @Test
-    void resolveReturnsEmptyOptionalWhenNoRuleForGivenValueNameIsRegistered() {
-        Optional<Class<?>> type = PolymorphicTypeRegistry.resolve("effect-type", "UNKNOWN");
+    @DisplayName("get returns optional with polymorphic definition when base type is registered")
+    void resolve_baseTypeRegistered() {
+        Optional<PolymorphicDefinition> definitionOptional = PolymorphicTypeRegistry.get(ItemEffectSpec.class);
 
-        assertThat(type).isEmpty();
-    }
-
-    @Test
-    void resolveReturnsOptionalWithPolymorphicTypeRegisteredForGivenKeyNameAndValueName() {
-        Optional<Class<?>> type = PolymorphicTypeRegistry.resolve("effect-type", "DAMAGE");
-
-        assertThat(type).hasValue(DamageEffectSpec.class);
+        assertThat(definitionOptional).isNotEmpty();
     }
 }

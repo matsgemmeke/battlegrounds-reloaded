@@ -1,53 +1,40 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 
 public class ItemEffectContext {
 
-    private final Entity entity;
-    private final Location initiationLocation;
-    private ItemEffectSource source;
+    private final CollisionResult collisionResult;
+    private final DamageSource damageSource;
+    private final Location startingLocation;
+    private Actor actor;
 
-    public ItemEffectContext(Entity entity, ItemEffectSource source, Location initiationLocation) {
-        this.entity = entity;
-        this.source = source;
-        this.initiationLocation = initiationLocation;
+    public ItemEffectContext(CollisionResult collisionResult, DamageSource damageSource, Actor actor, Location startingLocation) {
+        this.collisionResult = collisionResult;
+        this.damageSource = damageSource;
+        this.actor = actor;
+        this.startingLocation = startingLocation;
     }
 
-    /**
-     * Gets the entity that initiated the effect.
-     *
-     * @return the initiator entity
-     */
-    public Entity getEntity() {
-        return entity;
+    public Actor getActor() {
+        return actor;
     }
 
-    /**
-     * Gets the location where the effect was initiated.
-     *
-     * @return the effect's initiation location
-     */
-    public Location getInitiationLocation() {
-        return initiationLocation;
+    public void setActor(Actor actor) {
+        this.actor = actor;
     }
 
-    /**
-     * Gets the source from where the effect is produced.
-     *
-     * @return the effect source
-     */
-    public ItemEffectSource getSource() {
-        return source;
+    public CollisionResult getCollisionResult() {
+        return collisionResult;
     }
 
-    /**
-     * Sets the source from where the effect is produced.
-     *
-     * @param source the effect source
-     */
-    public void setSource(ItemEffectSource source) {
-        this.source = source;
+    public DamageSource getDamageSource() {
+        return damageSource;
+    }
+
+    public Location getStartingLocation() {
+        return startingLocation;
     }
 }

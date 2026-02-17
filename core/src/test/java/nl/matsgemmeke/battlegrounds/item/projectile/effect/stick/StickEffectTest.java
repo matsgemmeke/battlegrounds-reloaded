@@ -2,52 +2,61 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect.stick;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.trigger.*;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class StickEffectTest {
+@ExtendWith(MockitoExtension.class)
+class StickEffectTest {
 
+    private static final List<GameSound> STICK_SOUNDS = List.of(mock(GameSound.class));
+
+    @Mock
     private AudioEmitter audioEmitter;
-    private Entity deployerEntity;
-    private List<GameSound> stickSounds;
+    @Mock
+    private DamageSource damageSource;
+    @Mock
     private Projectile projectile;
+    @Mock
     private TriggerExecutor triggerExecutor;
+    @Mock
+    private TriggerResult triggerResult;
+    @Mock
     private TriggerRun triggerRun;
 
-    @BeforeEach
-    public void setUp() {
-        audioEmitter = mock(AudioEmitter.class);
-        deployerEntity = mock(Entity.class);
-        stickSounds = List.of(mock(GameSound.class));
-        projectile = mock(Projectile.class);
-        triggerRun = mock(TriggerRun.class);
+    private StickEffect effect;
 
-        triggerExecutor = mock(TriggerExecutor.class);
+    @BeforeEach
+    void setUp() {
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
+
+        effect = new StickEffect(audioEmitter, STICK_SOUNDS);
     }
 
     @Test
-    public void onLaunchStartsTriggerRunThatCancelWhenProjectileNoLongerExists() {
+    void onLaunchStartsTriggerRunThatCancelWhenProjectileNoLongerExists() {
         when(projectile.exists()).thenReturn(false);
 
-        StickEffect effect = new StickEffect(audioEmitter, stickSounds);
         effect.addTriggerExecutor(triggerExecutor);
-        effect.onLaunch(deployerEntity, projectile);
+        effect.onLaunch(damageSource, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        triggerObserverCaptor.getValue().onActivate();
+        triggerObserverCaptor.getValue().onActivate(triggerResult);
 
         verify(triggerRun).cancel();
         verify(projectile, never()).setGravity(anyBoolean());
@@ -55,22 +64,21 @@ public class StickEffectTest {
     }
 
     @Test
-    public void onLaunchStartsTriggerWithObserverThatSetsProjectileVelocityToZero() {
+    void onLaunchStartsTriggerWithObserverThatSetsProjectileVelocityToZero() {
         Location projectileLocation = new Location(null, 1, 1, 1);
 
         when(projectile.exists()).thenReturn(true);
         when(projectile.getLocation()).thenReturn(projectileLocation);
 
-        StickEffect effect = new StickEffect(audioEmitter, stickSounds);
         effect.addTriggerExecutor(triggerExecutor);
-        effect.onLaunch(deployerEntity, projectile);
+        effect.onLaunch(damageSource, projectile);
 
         ArgumentCaptor<TriggerObserver> triggerObserverCaptor = ArgumentCaptor.forClass(TriggerObserver.class);
         verify(triggerRun).addObserver(triggerObserverCaptor.capture());
 
-        triggerObserverCaptor.getValue().onActivate();
+        triggerObserverCaptor.getValue().onActivate(triggerResult);
 
-        verify(audioEmitter).playSounds(stickSounds, projectileLocation);
+        verify(audioEmitter).playSounds(STICK_SOUNDS, projectileLocation);
         verify(projectile).setGravity(false);
         verify(projectile).setVelocity(new Vector(0, 0, 0));
     }

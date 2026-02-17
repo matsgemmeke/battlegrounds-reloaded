@@ -1,148 +1,170 @@
 package nl.matsgemmeke.battlegrounds.item.reload.magazine;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
+import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadProperties;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
+import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class MagazineReloadSystemTest {
+@ExtendWith(MockitoExtension.class)
+class MagazineReloadSystemTest {
 
-    private static final List<GameSound> RELOAD_SOUNDS = Collections.emptyList();
+    private static final long GAME_SOUND_DELAY = 20L;
     private static final long DURATION = 50L;
 
+    private ResourceContainer resourceContainer;
+
+    @Mock
     private AudioEmitter audioEmitter;
-    private AmmunitionStorage ammunitionStorage;
-    private ReloadProperties properties;
-    private TaskRunner taskRunner;
+    @Mock
+    private GameSound gameSound;
+    @Mock
+    private Scheduler scheduler;
+
+    private MagazineReloadSystem reloadSystem;
 
     @BeforeEach
-    public void setUp() {
-        ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
-        audioEmitter = mock(AudioEmitter.class);
-        properties = new ReloadProperties(RELOAD_SOUNDS, DURATION);
-        taskRunner = mock(TaskRunner.class);
+    void setUp() {
+        ReloadProperties properties = new ReloadProperties(List.of(gameSound), DURATION);
+        resourceContainer = new ResourceContainer(30, 30, 90, 300);
+
+        reloadSystem = new MagazineReloadSystem(audioEmitter, scheduler, properties, resourceContainer);
     }
 
     @Test
-    public void isPerformingReturnsFalseIfReloadWasNotActivated() {
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
+    @DisplayName("isPerforming returns false when reload is not activated")
+    void isPerforming_notReloading() {
         boolean performing = reloadSystem.isPerforming();
 
-        assertFalse(performing);
+        assertThat(performing).isFalse();
     }
 
     @Test
-    public void isPerformingReturnsTrueIfReloadWasActivated() {
+    @DisplayName("isPerforming returns true when reload is activated")
+    void isPerforming_reloading() {
+        Schedule soundPlaySchedule = mock(Schedule.class);
+        Schedule reloadFinishSchedule = mock(Schedule.class);
         ReloadPerformer performer = mock(ReloadPerformer.class);
 
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
+        when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
+        when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
+        when(scheduler.createSingleRunSchedule(DURATION)).thenReturn(reloadFinishSchedule);
+
         reloadSystem.performReload(performer, () -> {});
         boolean performing = reloadSystem.isPerforming();
 
-        assertTrue(performing);
+        assertThat(performing).isTrue();
     }
 
     @Test
-    public void performReloadSchedulesDelayedTaskAndRefillsMagazineWhenEnoughAmmoIsAvailable() {
+    @DisplayName("performReload creates single run schedules that play sounds and add full capacity when enough reserve resources are available")
+    void performReload_fullCapacity() {
         Location performerLocation = new Location(null, 1, 1, 1);
-        long soundDelay = 20L;
         Procedure callback = mock(Procedure.class);
-
-        GameSound sound = mock(GameSound.class);
-        when(sound.getDelay()).thenReturn(soundDelay);
 
         ReloadPerformer performer = mock(ReloadPerformer.class);
         when(performer.getLocation()).thenReturn(performerLocation);
 
-        ReloadProperties properties = new ReloadProperties(List.of(sound), DURATION);
+        Schedule soundPlaySchedule = mock(Schedule.class);
+        doAnswer(MockUtils.answerRunScheduleTask()).when(soundPlaySchedule).addTask(any(ScheduleTask.class));
 
-        ammunitionStorage.setMagazineAmmo(0);
+        Schedule reloadFinishSchedule = mock(Schedule.class);
+        doAnswer(MockUtils.answerRunScheduleTask()).when(reloadFinishSchedule).addTask(any(ScheduleTask.class));
 
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
+        resourceContainer.setLoadedAmount(0);
+
+        when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
+        when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
+        when(scheduler.createSingleRunSchedule(DURATION)).thenReturn(reloadFinishSchedule);
+
         boolean performed = reloadSystem.performReload(performer, callback);
 
-        ArgumentCaptor<Runnable> soundRunnable = ArgumentCaptor.forClass(Runnable.class);
-        ArgumentCaptor<Runnable> reloadRunnable = ArgumentCaptor.forClass(Runnable.class);
+        assertThat(performed).isTrue();
+        assertThat(resourceContainer.getLoadedAmount()).isEqualTo(30);
+        assertThat(resourceContainer.getReserveAmount()).isEqualTo(60);
 
-        verify(taskRunner).runTaskLater(soundRunnable.capture(), eq(soundDelay));
-        verify(taskRunner).runTaskLater(reloadRunnable.capture(), eq(DURATION));
-
-        soundRunnable.getValue().run();
-        reloadRunnable.getValue().run();
-
-        assertTrue(performed);
-        assertEquals(30, ammunitionStorage.getMagazineAmmo());
-        assertEquals(60, ammunitionStorage.getReserveAmmo());
-
-        verify(audioEmitter).playSound(sound, performerLocation);
+        verify(audioEmitter).playSound(gameSound, performerLocation);
         verify(callback).apply();
         verify(performer).applyReloadingState();
         verify(performer).resetReloadingState();
     }
 
     @Test
-    public void performReloadSchedulesDelayedTaskAndPartiallyFillsMagazineWhenNotEnoughAmmoIsAvailable() {
-        ReloadPerformer performer = mock(ReloadPerformer.class);
+    @DisplayName("performReload creates single run schedules that play sounds and add partial capacity when not enough reserve resources are available")
+    void performReload_partialCapacity() {
+        Location performerLocation = new Location(null, 1, 1, 1);
         Procedure callback = mock(Procedure.class);
 
-        ammunitionStorage.setMagazineAmmo(0);
-        ammunitionStorage.setReserveAmmo(10);
+        ReloadPerformer performer = mock(ReloadPerformer.class);
+        when(performer.getLocation()).thenReturn(performerLocation);
 
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
+        Schedule soundPlaySchedule = mock(Schedule.class);
+        doAnswer(MockUtils.answerRunScheduleTask()).when(soundPlaySchedule).addTask(any(ScheduleTask.class));
+
+        Schedule reloadFinishSchedule = mock(Schedule.class);
+        doAnswer(MockUtils.answerRunScheduleTask()).when(reloadFinishSchedule).addTask(any(ScheduleTask.class));
+
+        resourceContainer.setLoadedAmount(0);
+        resourceContainer.setReserveAmount(10);
+
+        when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
+        when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
+        when(scheduler.createSingleRunSchedule(DURATION)).thenReturn(reloadFinishSchedule);
+
         boolean performed = reloadSystem.performReload(performer, callback);
 
-        ArgumentCaptor<Runnable> reloadRunnable = ArgumentCaptor.forClass(Runnable.class);
-        verify(taskRunner).runTaskLater(reloadRunnable.capture(), eq(DURATION));
+        assertThat(performed).isTrue();
+        assertThat(resourceContainer.getLoadedAmount()).isEqualTo(10);
+        assertThat(resourceContainer.getReserveAmount()).isZero();
 
-        reloadRunnable.getValue().run();
-
-        assertTrue(performed);
-        assertEquals(10, ammunitionStorage.getMagazineAmmo());
-        assertEquals(0, ammunitionStorage.getReserveAmmo());
-
-        verify(audioEmitter, never()).playSound(any(GameSound.class), any(Location.class));
+        verify(audioEmitter).playSound(gameSound, performerLocation);
         verify(callback).apply();
         verify(performer).applyReloadingState();
         verify(performer).resetReloadingState();
     }
 
     @Test
-    public void cancelReloadDoesNotCancelIfItHasNoPerformer() {
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
+    @DisplayName("cancelReload does not cancel when not performing")
+    void cancelReload_whenNotPerforming() {
         boolean cancelled = reloadSystem.cancelReload();
 
-        assertFalse(cancelled);
+        assertThat(cancelled).isFalse();
     }
 
     @Test
-    public void cancelReloadResetsPerformerStateAndCancelsRunningTasks() {
-        BukkitTask task = mock(BukkitTask.class);
+    @DisplayName("cancelReload resets performer state and cancels schedules")
+    void cancelReload_whenPerforming() {
+        Schedule soundPlaySchedule = mock(Schedule.class);
+        Schedule reloadFinishSchedule = mock(Schedule.class);
         ReloadPerformer performer = mock(ReloadPerformer.class);
 
-        when(taskRunner.runTaskLater(any(Runnable.class), anyLong())).thenReturn(task);
+        when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
+        when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
+        when(scheduler.createSingleRunSchedule(DURATION)).thenReturn(reloadFinishSchedule);
 
-        MagazineReloadSystem reloadSystem = new MagazineReloadSystem(audioEmitter, taskRunner, properties, ammunitionStorage);
         reloadSystem.performReload(performer, () -> {});
-
         boolean cancelled = reloadSystem.cancelReload();
 
-        assertTrue(cancelled);
+        assertThat(cancelled).isTrue();
 
         verify(performer).resetReloadingState();
-        verify(task).cancel();
+        verify(reloadFinishSchedule).stop();
     }
 }

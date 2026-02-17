@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -181,12 +180,12 @@ class DefaultGunTest {
 
     @Test
     void isReloadAvailableReturnsFalseWhenMagazineAmmoEqualsMagazineSize() {
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        ResourceContainer resourceContainer = new ResourceContainer(30, 30, 90, 300);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystem.isPerforming()).thenReturn(false);
 
-        gun.setAmmunitionStorage(ammunitionStorage);
+        gun.setResourceContainer(resourceContainer);
         gun.setReloadSystem(reloadSystem);
         boolean reloadAvailable = gun.isReloadAvailable();
 
@@ -195,12 +194,12 @@ class DefaultGunTest {
 
     @Test
     void isReloadAvailableReturnsFalseWhenNoReserveAmmoIsAvailable() {
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(0, 30, 0, 300);
+        ResourceContainer resourceContainer = new ResourceContainer(0, 30, 0, 300);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystem.isPerforming()).thenReturn(false);
 
-        gun.setAmmunitionStorage(ammunitionStorage);
+        gun.setResourceContainer(resourceContainer);
         gun.setReloadSystem(reloadSystem);
         boolean reloadAvailable = gun.isReloadAvailable();
 
@@ -383,7 +382,7 @@ class DefaultGunTest {
 
     @Test
     void reloadActivatesReloadSystemWithGivenPerformerAndUpdatesItem() {
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        ResourceContainer resourceContainer = new ResourceContainer(30, 30, 90, 300);
         GunHolder holder = mock(GunHolder.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
@@ -392,11 +391,11 @@ class DefaultGunTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
-        gun.setAmmunitionStorage(ammunitionStorage);
         gun.setHolder(holder);
         gun.setItemTemplate(itemTemplate);
         gun.setName("test");
         gun.setReloadSystem(reloadSystem);
+        gun.setResourceContainer(resourceContainer);
         gun.reload(performer);
 
         ArgumentCaptor<Procedure> procedureCaptor = ArgumentCaptor.forClass(Procedure.class);
@@ -411,9 +410,9 @@ class DefaultGunTest {
 
     @Test
     void canShootReturnsTrueWhenMagazineHasAmmo() {
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(30, 30, 90, 300);
+        ResourceContainer resourceContainer = new ResourceContainer(30, 30, 90, 300);
 
-        gun.setAmmunitionStorage(ammunitionStorage);
+        gun.setResourceContainer(resourceContainer);
         boolean canShoot = gun.canShoot();
 
         assertThat(canShoot).isTrue();
@@ -421,9 +420,9 @@ class DefaultGunTest {
 
     @Test
     void canShootReturnsFalseWhenMagazineHasNoAmmo() {
-        AmmunitionStorage ammunitionStorage = new AmmunitionStorage(0, 30, 90, 300);
+        ResourceContainer resourceContainer = new ResourceContainer(30, 0, 90, 300);
 
-        gun.setAmmunitionStorage(ammunitionStorage);
+        gun.setResourceContainer(resourceContainer);
         boolean canShoot = gun.canShoot();
 
         assertThat(canShoot).isFalse();

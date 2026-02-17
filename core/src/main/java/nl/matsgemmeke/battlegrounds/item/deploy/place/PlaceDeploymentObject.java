@@ -1,8 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.place;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -21,31 +25,25 @@ import java.util.UUID;
 public class PlaceDeploymentObject implements DeploymentObject {
 
     private static final double BLOCK_CENTER_OFFSET = 0.5;
+    private static final double BOUNDING_BOX_SIZE = 0.2;
 
+    private final Block block;
+    private final DestructionListener destructionListener;
+    private final HitboxProvider<StaticBoundingBox> hitboxProvider;
+    private final Material material;
     private final UUID uniqueId;
-    @NotNull
-    private Block block;
     @Nullable
     private Damage lastDamage;
     private double health;
-    private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
-    @NotNull
-    private Material material;
 
-    public PlaceDeploymentObject(@NotNull Block block, @NotNull Material material) {
+    public PlaceDeploymentObject(Block block, Material material, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
         this.block = block;
         this.material = material;
+        this.hitboxProvider = hitboxProvider;
+        this.destructionListener = destructionListener;
         this.uniqueId = UUID.randomUUID();
-    }
-
-    public long getCooldown() {
-        return cooldown;
-    }
-
-    public void setCooldown(long cooldown) {
-        this.cooldown = cooldown;
     }
 
     public double getHealth() {
@@ -89,15 +87,7 @@ public class PlaceDeploymentObject implements DeploymentObject {
         return block.getWorld();
     }
 
-    public boolean isDeployed() {
-        return true;
-    }
-
     @Override
-    public boolean isReleased() {
-        return true;
-    }
-
     public double damage(@NotNull Damage damage) {
         lastDamage = damage;
 
@@ -109,6 +99,10 @@ public class PlaceDeploymentObject implements DeploymentObject {
 
         health = Math.max(health - damageAmount, 0);
 
+        if (health <= 0.0) {
+            destructionListener.onDestroyed();
+        }
+
         return damageAmount;
     }
 
@@ -116,8 +110,21 @@ public class PlaceDeploymentObject implements DeploymentObject {
         return block.getType() == material;
     }
 
+    @Override
+    public Hitbox getHitbox() {
+        Location baseLocation = block.getLocation();
+        StaticBoundingBox boundingBox = new StaticBoundingBox(baseLocation, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE, BOUNDING_BOX_SIZE);
+
+        return hitboxProvider.provideHitbox(boundingBox);
+    }
+
     public boolean isImmuneTo(@NotNull DamageType damageType) {
         return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) == 0;
+    }
+
+    @Override
+    public boolean isPhysical() {
+        return true;
     }
 
     public boolean matchesEntity(@NotNull Entity entity) {

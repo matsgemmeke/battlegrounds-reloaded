@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
-import nl.matsgemmeke.battlegrounds.item.reload.AmmunitionStorage;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.shoot.firemode.FireMode;
@@ -11,9 +11,9 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -39,17 +39,18 @@ class ShootHandlerTest {
     @Mock
     private SpreadPattern spreadPattern;
 
-    private AmmunitionStorage ammunitionStorage;
+    private ResourceContainer resourceContainer;
     private ShootHandler shootHandler;
 
     @BeforeEach
     void setUp() {
-        ammunitionStorage = new AmmunitionStorage(10, 20, 10, 20);
-        shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, ammunitionStorage, itemRepresentation, recoil);
+        resourceContainer = new ResourceContainer(20, 10, 10, 20);
+        shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, resourceContainer, itemRepresentation, recoil);
     }
 
     @Test
-    void cancelCancelsFireModeAndProjectileLauncher() {
+    @DisplayName("cancel cancels fire mode and projectile launcher")
+    void cancel_cancelsShooting() {
         shootHandler.cancel();
 
         verify(fireMode).cancelCycle();
@@ -57,13 +58,12 @@ class ShootHandlerTest {
     }
 
     @Test
-    void shootStartsFireModeThatActivatesShot() {
-        Entity entity = mock(Entity.class);
+    @DisplayName("shoot starts fire mode with observers that activate shots")
+    void shoot_startsFireMode() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         Location shootingDirection = new Location(null, 1, 1, 1, 90.0f, 0.0f);
 
         ShotPerformer performer = mock(ShotPerformer.class);
-        when(performer.getEntity()).thenReturn(entity);
         when(performer.getShootingDirection()).thenReturn(shootingDirection);
 
         when(itemRepresentation.update()).thenReturn(itemStack);
@@ -80,9 +80,10 @@ class ShootHandlerTest {
         ArgumentCaptor<LaunchContext> launchContextCaptor = ArgumentCaptor.forClass(LaunchContext.class);
         verify(projectileLauncher).launch(launchContextCaptor.capture());
 
-        LaunchContext launchContext = launchContextCaptor.getValue();
-        assertThat(launchContext.entity()).isEqualTo(entity);
-        assertThat(launchContext.direction()).isEqualTo(shootingDirection);
+        assertThat(launchContextCaptor.getValue()).satisfies(launchContext -> {
+            assertThat(launchContext.damageSource()).isEqualTo(performer);
+            assertThat(launchContext.direction()).isEqualTo(shootingDirection);
+        });
 
         verify(fireMode).startCycle();
         verify(itemRepresentation).setPlaceholder(Placeholder.MAGAZINE_AMMO, "9");
@@ -94,7 +95,7 @@ class ShootHandlerTest {
     void shootStartsFireModeThatDoesNotActivateShotWhenMagazineIsEmpty() {
         ShotPerformer performer = mock(ShotPerformer.class);
 
-        ammunitionStorage.setMagazineAmmo(0);
+        resourceContainer.setLoadedAmount(0);
 
         shootHandler.registerObservers();
         shootHandler.shoot(performer);

@@ -1,9 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.SimpleTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
-import org.bukkit.entity.Entity;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,31 +14,73 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TriggerRunTest {
 
     @Mock
+    private Actor actor;
+    @Mock
     private Schedule schedule;
     @Mock
     private Trigger trigger;
-    @Mock
-    private TriggerTarget target;
     @Spy
-    private TriggerContext context = new TriggerContext(mock(Entity.class), target);
+    private TriggerContext context = new TriggerContext(UUID.randomUUID(), actor);
     @InjectMocks
     private TriggerRun triggerRun;
 
     @Test
-    void cancelDoesNotStopScheduleWhenNotStarted() {
+    @DisplayName("notifyObservers does not notify observers when not started")
+    void notifyObservers_whenNotStarted() {
+        TriggerObserver triggerObserver = mock(TriggerObserver.class);
+
+        triggerRun.addObserver(triggerObserver);
+        triggerRun.notifyObservers();
+
+        verifyNoInteractions(triggerObserver);
+    }
+
+    @Test
+    @DisplayName("notifyObservers notifies observers with a SimpleTriggerResult")
+    void notifyObservers_whenStarted() {
+        TriggerObserver triggerObserver = mock(TriggerObserver.class);
+
+        triggerRun.addObserver(triggerObserver);
+        triggerRun.start();
+        triggerRun.notifyObservers();
+
+        verify(triggerObserver).onActivate(SimpleTriggerResult.ACTIVATES);
+    }
+
+    @Test
+    @DisplayName("replaceActor sets new context with replaced actor")
+    void replaceActor_setsNewContext() {
+        Actor newActor = mock(Actor.class);
+        TriggerResult triggerResult = mock(TriggerResult.class);
+
+        when(trigger.check(any(TriggerContext.class))).thenReturn(triggerResult);
+        doAnswer(MockUtils.answerRunScheduleTask()).when(schedule).addTask(any(ScheduleTask.class));
+
+        triggerRun.replaceActor(newActor);
+        triggerRun.start();
+
+        verify(trigger).check(argThat(context -> context.actor() == newActor));
+    }
+
+    @Test
+    @DisplayName("cancel does not stop schedule when not started")
+    void cancel_whenNotStarted() {
         triggerRun.cancel();
 
         verify(schedule, never()).stop();
     }
 
     @Test
-    void cancelStopsScheduleWhenStarted() {
+    @DisplayName("cancel stops schedule when started")
+    void cancel_whenStarted() {
         triggerRun.start();
         triggerRun.cancel();
 
@@ -43,7 +88,8 @@ class TriggerRunTest {
     }
 
     @Test
-    void startDoesNotStartScheduleWhenAlreadyStarted() {
+    @DisplayName("start does not start schedule when already started")
+    void start_whenAlreadyStarted() {
         triggerRun.start();
         triggerRun.start();
 
@@ -52,10 +98,14 @@ class TriggerRunTest {
     }
 
     @Test
-    void startStartsScheduleWithTaskThatDoesNotNotifyObserversWhenTriggerDoesNotActivate() {
+    @DisplayName("start starts schedule with task that does not notify observers when TriggerResult does not activate")
+    void start_whenTriggerResultDoesNotActivate() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
-        when(trigger.activates(context)).thenReturn(false);
+        TriggerResult triggerResult = mock(TriggerResult.class);
+        when(triggerResult.activates()).thenReturn(false);
+
+        when(trigger.check(context)).thenReturn(triggerResult);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
         triggerRun.addObserver(observer);
@@ -66,10 +116,14 @@ class TriggerRunTest {
     }
 
     @Test
-    void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivatesAndStopsItselfWhenRepeatingIsFalse() {
+    @DisplayName("start starts schedule with task that stops itself when TriggerResult activates")
+    void start_withNonRepeatingSchedule() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
-        when(trigger.activates(context)).thenReturn(true);
+        TriggerResult triggerResult = mock(TriggerResult.class);
+        when(triggerResult.activates()).thenReturn(true);
+
+        when(trigger.check(context)).thenReturn(triggerResult);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
         triggerRun.addObserver(observer);
@@ -77,14 +131,18 @@ class TriggerRunTest {
 
         verify(schedule).start();
         verify(schedule).stop();
-        verify(observer).onActivate();
+        verify(observer).onActivate(triggerResult);
     }
 
     @Test
-    void startStartsScheduleWithTaskThatNotifiesObserversWhenTriggerActivatesAndContinuesWhenRepeatingIsTrue() {
+    @DisplayName("start starts schedule with task that continues when TriggerResult activates")
+    void start_withRepeatingSchedule() {
         TriggerObserver observer = mock(TriggerObserver.class);
 
-        when(trigger.activates(context)).thenReturn(true);
+        TriggerResult triggerResult = mock(TriggerResult.class);
+        when(triggerResult.activates()).thenReturn(true);
+
+        when(trigger.check(context)).thenReturn(triggerResult);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(schedule).addTask(any(ScheduleTask.class));
 
         triggerRun.addObserver(observer);
@@ -93,6 +151,6 @@ class TriggerRunTest {
 
         verify(schedule).start();
         verify(schedule, never()).stop();
-        verify(observer).onActivate();
+        verify(observer).onActivate(triggerResult);
     }
 }

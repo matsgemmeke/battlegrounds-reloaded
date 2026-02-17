@@ -2,35 +2,26 @@ package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
-import nl.matsgemmeke.battlegrounds.game.component.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.game.damage.*;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-
-import java.util.Optional;
-import java.util.UUID;
 
 public class DamageEffectPerformance extends BaseItemEffectPerformance {
 
-    private static final double DEPLOYMENT_OBJECT_FINDING_RANGE = 0.3;
-    private static final double ENTITY_FINDING_RANGE = 0.1;
+    // We use this multiplier when we try to damage a target, but the origin location falls outside the target's hitbox
+    private static final double DEFAULT_DAMAGE_MULTIPLIER = 1.0;
 
     private final DamageProcessor damageProcessor;
     private final DamageProperties properties;
-    private final TargetFinder targetFinder;
 
     @Inject
-    public DamageEffectPerformance(DamageProcessor damageProcessor, TargetFinder targetFinder, @Assisted DamageProperties properties) {
+    public DamageEffectPerformance(DamageProcessor damageProcessor, @Assisted DamageProperties properties) {
         this.damageProcessor = damageProcessor;
-        this.targetFinder = targetFinder;
         this.properties = properties;
     }
 
@@ -41,29 +32,31 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
     }
 
     @Override
-    public void perform(ItemEffectContext context) {
-        Entity entity = context.getEntity();
-        UUID entityId = entity.getUniqueId();
-        Location sourceLocation = context.getSource().getLocation();
+    public void start() {
+        CollisionResult collisionResult = currentContext.getCollisionResult();
+        DamageTarget hitTarget = collisionResult.getHitTarget().orElse(null);
+        Location hitLocation = collisionResult.getHitLocation().orElse(null);
 
-        for (GameEntity target : targetFinder.findEnemyTargets(entityId, sourceLocation, ENTITY_FINDING_RANGE)) {
-            Location targetLocation = target.getLocation();
-
-            Damage damage = this.createDamage(target, sourceLocation, targetLocation);
-            target.damage(damage);
+        if (hitTarget == null || hitLocation == null) {
+            return;
         }
 
-        for (DeploymentObject deploymentObject : targetFinder.findDeploymentObjects(entityId, sourceLocation, DEPLOYMENT_OBJECT_FINDING_RANGE)) {
-            Location objectLocation = deploymentObject.getLocation();
+        Location startingLocation = currentContext.getStartingLocation();
+        DamageSource damageSource = currentContext.getDamageSource();
+        Damage damage = this.createDamage(hitTarget, hitLocation, startingLocation);
+        DamageContext damageContext = new DamageContext(damageSource, hitTarget, damage);
 
-            Damage damage = this.createDamage(sourceLocation, objectLocation);
-            damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
+        damageProcessor.processDamage(damageContext);
+
+        if (currentContext.getActor() instanceof Removable removableActor) {
+            removableActor.remove();
         }
     }
 
-    private Damage createDamage(GameEntity target, Location sourceLocation, Location targetLocation) {
-        double damageMultiplier = this.getHitboxDamageMultiplier(target, sourceLocation).orElse(0.0);
-        double distance = sourceLocation.distance(targetLocation);
+    private Damage createDamage(DamageTarget target, Location hitLocation, Location startingLocation) {
+        Hitbox hitbox = target.getHitbox();
+        double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, hitLocation);
+        double distance = hitLocation.distance(startingLocation);
         double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
         double totalDamageAmount = distanceDamageAmount * damageMultiplier;
 
@@ -72,26 +65,17 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         return new Damage(totalDamageAmount, damageType);
     }
 
-    private Damage createDamage(Location initiationLocation, Location targetLocation) {
-        double distance = initiationLocation.distance(targetLocation);
-        double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
-        DamageType damageType = properties.damageType();
-
-        return new Damage(damageAmount, damageType);
-    }
-
-    private Optional<Double> getHitboxDamageMultiplier(GameEntity target, Location hitLocation) {
-        Hitbox hitbox = target.getHitbox();
+    private double getHitboxDamageMultiplier(Hitbox hitbox, Location hitLocation) {
         HitboxComponent hitboxComponent = hitbox.getIntersectedHitboxComponent(hitLocation).orElse(null);
 
         if (hitboxComponent == null) {
-            return Optional.empty();
+            return DEFAULT_DAMAGE_MULTIPLIER;
         }
 
         return switch (hitboxComponent.type()) {
-            case HEAD -> Optional.of(properties.hitboxMultiplierProfile().headshotDamageMultiplier());
-            case TORSO -> Optional.of(properties.hitboxMultiplierProfile().bodyDamageMultiplier());
-            case LIMBS -> Optional.of(properties.hitboxMultiplierProfile().legsDamageMultiplier());
+            case HEAD -> properties.hitboxMultiplierProfile().headshotDamageMultiplier();
+            case TORSO -> properties.hitboxMultiplierProfile().bodyDamageMultiplier();
+            case LIMBS -> properties.hitboxMultiplierProfile().legsDamageMultiplier();
         };
     }
 }

@@ -67,7 +67,7 @@ class ShowHitboxesToolTest {
         when(player.getLocation()).thenReturn(playerLocation);
         when(player.getWorld()).thenReturn(world);
 
-        HitboxProvider hitboxProvider = mock(HitboxProvider.class);
+        HitboxProvider<Entity> hitboxProvider = mock();
         when(hitboxProvider.provideHitbox(entity)).thenReturn(hitbox);
 
         when(hitboxResolver.resolveHitboxProvider(entity)).thenReturn(hitboxProvider);

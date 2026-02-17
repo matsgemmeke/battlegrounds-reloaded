@@ -1,32 +1,43 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.place;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.item.actor.BlockActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.block.data.FaceAttachable.AttachedFace;
+import org.bukkit.block.data.type.Switch;
 import org.bukkit.entity.Entity;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
-public class PlaceDeploymentTest {
+@ExtendWith(MockitoExtension.class)
+class PlaceDeploymentTest {
 
     private static final double HEALTH = 20.0;
     private static final List<GameSound> PLACE_SOUNDS = Collections.emptyList();
@@ -34,59 +45,57 @@ public class PlaceDeploymentTest {
     private static final Map<DamageType, Double> RESISTANCES = Collections.emptyMap();
     private static final Material MATERIAL = Material.WARPED_BUTTON;
 
-    private AudioEmitter audioEmitter;
-    private Deployer deployer;
-    private Entity deployerEntity;
-    private PlaceDeploymentProperties properties;
+    private static final PlaceDeploymentProperties PROPERTIES = new PlaceDeploymentProperties(PLACE_SOUNDS, RESISTANCES, MATERIAL, HEALTH, COOLDOWN);
 
-    @BeforeEach
-    public void setUp() {
-        audioEmitter = mock(AudioEmitter.class);
-        deployer = mock(Deployer.class);
-        deployerEntity = mock(Entity.class);
-        properties = new PlaceDeploymentProperties(PLACE_SOUNDS, RESISTANCES, MATERIAL, HEALTH, COOLDOWN);
-    }
+    @Mock
+    private AudioEmitter audioEmitter;
+    @Mock
+    private Deployer deployer;
+    @Mock
+    private DestructionListener destructionListener;
+    @Mock
+    private Entity deployerEntity;
+    @Mock
+    private HitboxResolver hitboxResolver;
+    @InjectMocks
+    private PlaceDeployment deployment;
 
     @Test
-    public void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
-        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
-
-        assertThatThrownBy(() -> deployment.perform(deployer, deployerEntity))
+    void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
+        assertThatThrownBy(() -> deployment.perform(deployer, deployerEntity, destructionListener))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
 
     @Test
-    public void performReturnsFailureResultIfDeployerDoesNotReturnTwoTargetBlocks() {
+    void performReturnsEmptyOptionalWhenDeployerDoesNotReturnTwoTargetBlocks() {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
-        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
-        deployment.configureProperties(properties);
-        DeploymentResult result = deployment.perform(deployer, deployerEntity);
+        deployment.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(result.success()).isFalse();
+        assertThat(deploymentResultOptional).isEmpty();
 
         verifyNoInteractions(audioEmitter);
     }
 
     @Test
-    public void performReturnsFailureResultIfDeployerIsTargetingOccludingBlock() {
+    void performReturnsEmptyOptionalWhenDeployerIsTargetingOccludingBlock() {
         Block targetBlock = mock(Block.class);
         when(targetBlock.getType()).thenReturn(Material.OAK_FENCE);
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
-        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
-        deployment.configureProperties(properties);
-        DeploymentResult result = deployment.perform(deployer, deployerEntity);
+        deployment.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(result.success()).isFalse();
+        assertThat(deploymentResultOptional).isEmpty();
 
         verifyNoInteractions(audioEmitter);
     }
 
     @Test
-    public void performReturnsFailureResultIfAdjacentBlockIsNotConnectedToTargetBlock() {
+    void performReturnsEmptyOptionalWhenAdjacentBlockIsNotConnectedToTargetBlock() {
         Block adjacentBlock = mock(Block.class);
 
         Block targetBlock = mock(Block.class);
@@ -95,24 +104,30 @@ public class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
-        deployment.configureProperties(properties);
-        DeploymentResult result = deployment.perform(deployer, deployerEntity);
+        deployment.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(result.success()).isFalse();
+        assertThat(deploymentResultOptional).isEmpty();
 
         verifyNoInteractions(audioEmitter);
     }
 
-    @Test
-    public void performReturnsSuccessResultWhenPlacingBlockAgainstCeiling() {
-        BlockFace targetBlockFace = BlockFace.DOWN;
+    static List<Arguments> placeBlockArguments() {
+        return List.of(
+                arguments(BlockFace.DOWN, AttachedFace.CEILING),
+                arguments(BlockFace.UP, AttachedFace.FLOOR)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("placeBlockArguments")
+    void performReturnsOptionalWithDeploymentContextWhenPlacingBlockVertically(BlockFace targetBlockFace, AttachedFace expectedAttachedFace) {
         BlockState adjacentBlockState = mock(BlockState.class);
-        FaceAttachable faceAttachable = mock(FaceAttachable.class);
+        Switch switchBlockData = mock(Switch.class);
         Location adjacentBlockLocation = new Location(null, 1, 1, 1);
 
         Block adjacentBlock = mock(Block.class);
-        when(adjacentBlock.getBlockData()).thenReturn(faceAttachable);
+        when(adjacentBlock.getBlockData()).thenReturn(switchBlockData);
         when(adjacentBlock.getLocation()).thenReturn(adjacentBlockLocation);
         when(adjacentBlock.getState()).thenReturn(adjacentBlockState);
 
@@ -122,64 +137,33 @@ public class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
-        deployment.configureProperties(properties);
-        DeploymentResult result = deployment.perform(deployer, deployerEntity);
+        deployment.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(result.success()).isTrue();
-        assertThat(result.object().getCooldown()).isEqualTo(COOLDOWN);
-        assertThat(result.object().getHealth()).isEqualTo(HEALTH);
-        assertThat(result.object().getLocation()).isEqualTo(adjacentBlockLocation);
+        assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
+            assertThat(deploymentResult.deployer()).isEqualTo(deployer);
+            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
+                assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
+                assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
+            });
+            assertThat(deploymentResult.cooldown()).isEqualTo(COOLDOWN);
+        });
 
-        verify(adjacentBlockState).setBlockData(faceAttachable);
+        verify(adjacentBlockState).setBlockData(switchBlockData);
         verify(audioEmitter).playSounds(PLACE_SOUNDS, adjacentBlockLocation);
         verify(deployer).setHeldItem(null);
-        verify(faceAttachable).setAttachedFace(AttachedFace.CEILING);
+        verify(switchBlockData).setAttachedFace(expectedAttachedFace);
     }
 
     @Test
-    public void performReturnsSuccessResultWhenDeployingBlockAgainstFloor() {
-        BlockFace targetBlockFace = BlockFace.UP;
-        BlockState adjacentBlockState = mock(BlockState.class);
-        FaceAttachable faceAttachable = mock(FaceAttachable.class);
-        Location adjacentBlockLocation = new Location(null, 1, 1, 1);
-
-        Block adjacentBlock = mock(Block.class);
-        when(adjacentBlock.getBlockData()).thenReturn(faceAttachable);
-        when(adjacentBlock.getLocation()).thenReturn(adjacentBlockLocation);
-        when(adjacentBlock.getState()).thenReturn(adjacentBlockState);
-
-        Block targetBlock = mock(Block.class);
-        when(targetBlock.getFace(adjacentBlock)).thenReturn(targetBlockFace);
-        when(targetBlock.getType()).thenReturn(Material.OAK_LOG);
-
-        when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
-
-        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
-        deployment.configureProperties(properties);
-        DeploymentResult result = deployment.perform(deployer, deployerEntity);
-
-        assertThat(result.success()).isTrue();
-        assertThat(result.object().getCooldown()).isEqualTo(COOLDOWN);
-        assertThat(result.object().getHealth()).isEqualTo(HEALTH);
-        assertThat(result.object().getLocation()).isEqualTo(adjacentBlockLocation);
-
-        verify(adjacentBlockState).setBlockData(faceAttachable);
-        verify(audioEmitter).playSounds(PLACE_SOUNDS, adjacentBlockLocation);
-        verify(deployer).setHeldItem(null);
-        verify(faceAttachable).setAttachedFace(AttachedFace.FLOOR);
-    }
-
-    @Test
-    public void performReturnsTrueWhenPlacingBlockAgainstWall() {
+    void performReturnsOptionalWithDeploymentContextWhenPlacingBlockHorizontally() {
         BlockFace targetBlockFace = BlockFace.NORTH;
         BlockState adjacentBlockState = mock(BlockState.class);
-        Directional directional = mock(Directional.class);
-        FaceAttachable faceAttachable = mock(FaceAttachable.class);
+        Switch switchBlockData = mock(Switch.class);
         Location adjacentBlockLocation = new Location(null, 1, 1, 1);
 
         Block adjacentBlock = mock(Block.class);
-        when(adjacentBlock.getBlockData()).thenReturn(faceAttachable).thenReturn(directional);
+        when(adjacentBlock.getBlockData()).thenReturn(switchBlockData);
         when(adjacentBlock.getLocation()).thenReturn(adjacentBlockLocation);
         when(adjacentBlock.getState()).thenReturn(adjacentBlockState);
 
@@ -189,20 +173,23 @@ public class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        PlaceDeployment deployment = new PlaceDeployment(audioEmitter);
-        deployment.configureProperties(properties);
-        DeploymentResult result = deployment.perform(deployer, deployerEntity);
+        deployment.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
 
-        assertThat(result.success()).isTrue();
-        assertThat(result.object().getCooldown()).isEqualTo(COOLDOWN);
-        assertThat(result.object().getHealth()).isEqualTo(HEALTH);
-        assertThat(result.object().getLocation()).isEqualTo(adjacentBlockLocation);
+        assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
+            assertThat(deploymentResult.deployer()).isEqualTo(deployer);
+            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
+                assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
+                assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
+            });
+            assertThat(deploymentResult.actor()).isInstanceOf(BlockActor.class);
+            assertThat(deploymentResult.cooldown()).isEqualTo(COOLDOWN);
+        });
 
-        verify(adjacentBlockState).setBlockData(faceAttachable);
-        verify(adjacentBlockState).setBlockData(directional);
+        verify(adjacentBlockState, times(2)).setBlockData(switchBlockData);
         verify(audioEmitter).playSounds(PLACE_SOUNDS, adjacentBlockLocation);
         verify(deployer).setHeldItem(null);
-        verify(directional).setFacing(targetBlockFace);
-        verify(faceAttachable).setAttachedFace(AttachedFace.WALL);
+        verify(switchBlockData).setFacing(targetBlockFace);
+        verify(switchBlockData).setAttachedFace(AttachedFace.WALL);
     }
 }

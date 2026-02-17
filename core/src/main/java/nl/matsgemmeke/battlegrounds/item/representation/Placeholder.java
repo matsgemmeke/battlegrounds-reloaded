@@ -1,21 +1,19 @@
 package nl.matsgemmeke.battlegrounds.item.representation;
 
-import org.jetbrains.annotations.NotNull;
-
 public enum Placeholder {
 
     ITEM_NAME("name"),
+    LOADED_AMOUNT("loaded_amount"),
     MAGAZINE_AMMO("magazine_ammo"),
-    RESERVE_AMMO("reserve_ammo");
+    RESERVE_AMMO("reserve_ammo"),
+    RESERVE_AMOUNT("reserve_amount");
 
-    @NotNull
     private final String key;
 
-    Placeholder(@NotNull String key) {
+    Placeholder(String key) {
         this.key = key;
     }
 
-    @NotNull
     public String getKey() {
         return key;
     }

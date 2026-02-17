@@ -1,0 +1,27 @@
+package nl.matsgemmeke.battlegrounds.configuration.item.melee;
+
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.ReloadingSpec;
+import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+
+public class MeleeWeaponSpec {
+
+    @Required
+    public String name;
+
+    public String description;
+
+    public ControlsSpec controls;
+
+    @Required
+    public AmmoSpec ammo;
+
+    @Required
+    public DamageSpec damage;
+
+    @Required
+    public MeleeWeaponItemSpec items;
+
+    public ReloadingSpec reloading;
+
+    public ThrowingSpec throwing;
+}

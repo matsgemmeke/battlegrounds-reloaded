@@ -1,12 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
-
 import java.util.Optional;
 
 public interface ItemEffect {
-
-    void addTriggerExecutor(TriggerExecutor triggerExecutor);
 
     Optional<ItemEffectPerformance> getLatestPerformance();
 
@@ -19,14 +15,6 @@ public interface ItemEffect {
      * are already active will continue as usual.
      */
     void activatePerformances();
-
-    /**
-     * Cancels all pending or scheduled {@link ItemEffectPerformance} activations.
-     * <p>
-     * After this call, no new performances will start until reinitialized or reactivated. Active performances will not
-     * be interrupted, but those awaiting triggers will be discarded.
-     */
-    void cancelPerformances();
 
     /**
      * Reverts all side effects produced by the current {@link ItemEffectPerformance} instances.

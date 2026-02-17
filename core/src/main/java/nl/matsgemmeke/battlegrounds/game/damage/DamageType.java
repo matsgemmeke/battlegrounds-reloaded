@@ -8,10 +8,6 @@ import java.util.Optional;
 public enum DamageType {
 
     /**
-     * Damage caused by an entity physically attacking another
-     */
-    ATTACK_DAMAGE,
-    /**
      * Damage caused by direct impact from a bullet projectile.
      */
     BULLET_DAMAGE,
@@ -30,12 +26,20 @@ public enum DamageType {
     /**
      * Damages caused by fire created by items.
      */
-    FIRE_DAMAGE;
+    FIRE_DAMAGE,
+    /**
+     * Damage caused by an entity physically attacking another
+     */
+    MELEE_DAMAGE,
+    /**
+     * Damage caused by a projectile.
+     */
+    PROJECTILE_DAMAGE;
 
     public static Optional<DamageType> map(@NotNull EntityDamageEvent.DamageCause cause) {
         switch (cause) {
             case ENTITY_ATTACK -> {
-                return Optional.of(ATTACK_DAMAGE);
+                return Optional.of(MELEE_DAMAGE);
             }
             case ENTITY_EXPLOSION -> {
                 return Optional.of(EXPLOSIVE_DAMAGE);

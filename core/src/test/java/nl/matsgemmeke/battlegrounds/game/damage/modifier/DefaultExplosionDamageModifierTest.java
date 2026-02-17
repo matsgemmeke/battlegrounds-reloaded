@@ -1,11 +1,9 @@
 package nl.matsgemmeke.battlegrounds.game.damage.modifier;
 
-import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageEvent;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import org.bukkit.entity.Entity;
-import org.junit.jupiter.api.Test;
+import nl.matsgemmeke.battlegrounds.game.damage.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,31 +13,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class DefaultExplosionDamageModifierTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final double DAMAGE = 100.0;
 
     @Mock
-    private Entity damager;
+    private DamageSource source;
     @Mock
-    private Entity entity;
+    private DamageTarget target;
     @InjectMocks
     private DefaultExplosionDamageModifier modifier;
 
-    @Test
-    void shouldNotAlterDamageForEventsWithoutDefaultExplosionDamageCause() {
-        DamageEvent event = new DamageEvent(damager, GAME_KEY, entity, GAME_KEY, DamageType.BULLET_DAMAGE, DAMAGE);
+    @ParameterizedTest
+    @CsvSource({ "BULLET_DAMAGE,100.0", "EXPLOSIVE_DAMAGE,0.0" })
+    void applyReturnsDamageContextWithModifiedDamageDependingOnDamageType(DamageType damageType, double expectedDamageAmount) {
+        Damage damage = new Damage(DAMAGE, damageType);
+        DamageContext damageContext = new DamageContext(source, target, damage);
 
-        modifier.apply(event);
+        DamageContext result = modifier.apply(damageContext);
 
-        assertThat(event.getDamage()).isEqualTo(DAMAGE);
-    }
-
-    @Test
-    void negateExplosionDamageForEventsWithDefaultExplosionDamageCause() {
-        DamageEvent event = new DamageEvent(damager, GAME_KEY, entity, GAME_KEY, DamageType.EXPLOSIVE_DAMAGE, DAMAGE);
-
-        modifier.apply(event);
-
-        assertThat(event.getDamage()).isEqualTo(0.0);
+        assertThat(result.damage().amount()).isEqualTo(expectedDamageAmount);
     }
 }

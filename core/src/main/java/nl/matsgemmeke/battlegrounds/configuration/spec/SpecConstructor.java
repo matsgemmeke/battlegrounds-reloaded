@@ -14,10 +14,19 @@ public class SpecConstructor extends Constructor {
     @Override
     public Object constructObject(Node node) {
         if (node instanceof MappingNode mappingNode) {
-            Class<?> polymorphicType = this.getRegisteredPolymorphicType(mappingNode);
+            Class<?> baseType = mappingNode.getType();
+            PolymorphicDefinition definition = PolymorphicTypeRegistry.get(baseType).orElse(null);
 
-            if (polymorphicType != null) {
-                node.setType(polymorphicType);
+            // Check if the node type is registered as a polymorphic type
+            if (definition != null) {
+                String discriminatorValue = this.readDiscriminatorValue(mappingNode, definition.discriminator());
+
+                if (discriminatorValue != null) {
+                    // Find the corresponding polymorphic type by looking up the discriminator
+                    Class<?> resolved = definition.mappings().get(discriminatorValue);
+
+                    node.setType(resolved);
+                }
             }
         }
 
@@ -25,16 +34,17 @@ public class SpecConstructor extends Constructor {
     }
 
     @Nullable
-    private Class<?> getRegisteredPolymorphicType(MappingNode node) {
+    private String readDiscriminatorValue(MappingNode node, String discriminatorKey) {
         for (NodeTuple tuple : node.getValue()) {
-            if (tuple.getKeyNode() instanceof ScalarNode keyNode && tuple.getValueNode() instanceof ScalarNode valueNode) {
-                String keyName = keyNode.getValue();
-                String valueName = valueNode.getValue();
+            Node keyNode = tuple.getKeyNode();
 
-                Class<?> type = PolymorphicTypeRegistry.resolve(keyName, valueName).orElse(null);
+            if (keyNode instanceof ScalarNode scalarKey) {
+                if (discriminatorKey.equals(scalarKey.getValue())) {
+                    Node valueNode = tuple.getValueNode();
 
-                if (type != null) {
-                    return type;
+                    if (valueNode instanceof ScalarNode scalarValue) {
+                        return scalarValue.getValue();
+                    }
                 }
             }
         }

@@ -1,17 +1,19 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.prime;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
+import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
+import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
+import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * A deployment system that creates a {@link DeploymentObject}, representing the deployable item in a primed state
@@ -19,14 +21,14 @@ import java.util.List;
  */
 public class PrimeDeployment implements Deployment {
 
-    @NotNull
     private final AudioEmitter audioEmitter;
-    @NotNull
+    private final GameEntityFinder gameEntityFinder;
     private List<GameSound> primeSounds;
 
     @Inject
-    public PrimeDeployment(@NotNull AudioEmitter audioEmitter) {
+    public PrimeDeployment(AudioEmitter audioEmitter, GameEntityFinder gameEntityFinder) {
         this.audioEmitter = audioEmitter;
+        this.gameEntityFinder = gameEntityFinder;
         this.primeSounds = Collections.emptyList();
     }
 
@@ -34,14 +36,23 @@ public class PrimeDeployment implements Deployment {
         this.primeSounds = primeSounds;
     }
 
-    @NotNull
-    public DeploymentResult perform(@NotNull Deployer deployer, @NotNull Entity deployerEntity) {
+    @Override
+    public Optional<DeploymentResult> perform(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
+        UUID deployerUniqueId = deployer.getUniqueId();
+        GameEntity gameEntity = gameEntityFinder.findGameEntityByUniqueId(deployerUniqueId).orElse(null);
+
+        if (gameEntity == null) {
+            return Optional.empty();
+        }
+
         if (!primeSounds.isEmpty()) {
             audioEmitter.playSounds(primeSounds, deployerEntity.getLocation());
         }
 
-        PrimeDeploymentObject object = new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
+        ItemStack heldItemStack = deployer.getHeldItem();
+        PrimeDeploymentObject deploymentObject = new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
+        HeldItemActor actor = new HeldItemActor(deployer, gameEntity, heldItemStack);
 
-        return DeploymentResult.success(object);
+        return Optional.of(new DeploymentResult(deployer, deploymentObject, actor, 0L));
     }
 }

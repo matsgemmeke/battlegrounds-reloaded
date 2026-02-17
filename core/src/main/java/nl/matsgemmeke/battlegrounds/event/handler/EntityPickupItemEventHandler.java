@@ -13,31 +13,23 @@ import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class EntityPickupItemEventHandler implements EventHandler<EntityPickupItemEvent> {
 
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
     private final Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
 
     @Inject
-    public EntityPickupItemEventHandler(
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameScope gameScope,
-            @NotNull Provider<ActionExecutorRegistry> actionExecutorRegistryProvider
-    ) {
+    public EntityPickupItemEventHandler(GameContextProvider gameContextProvider, GameScope gameScope, Provider<ActionExecutorRegistry> actionExecutorRegistryProvider) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.actionExecutorRegistryProvider = actionExecutorRegistryProvider;
     }
 
-    public void handle(@NotNull EntityPickupItemEvent event) {
+    public void handle(EntityPickupItemEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }

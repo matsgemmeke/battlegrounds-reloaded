@@ -1,31 +1,31 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectSource;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkedSpawnPoint implements SpawnPoint {
 
-    private float yaw;
-    @NotNull
-    private ItemEffectSource source;
+    private final Actor actor;
+    private final float yaw;
 
-    public MarkedSpawnPoint(@NotNull ItemEffectSource source, float yaw) {
-        this.source = source;
+    public MarkedSpawnPoint(Actor actor, float yaw) {
+        this.actor = actor;
         this.yaw = yaw;
     }
 
     @NotNull
     public Location getLocation() {
-        Location location = source.getLocation();
+        Location location = actor.getLocation();
         location.setYaw(yaw);
         return location;
     }
 
     public void onSpawn() {
-        if (source.exists()) {
-            source.remove();
+        if (actor.exists() && actor instanceof Removable removableActor) {
+            removableActor.remove();
         }
     }
 }

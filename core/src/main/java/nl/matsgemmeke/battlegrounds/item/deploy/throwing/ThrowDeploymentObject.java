@@ -1,13 +1,18 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.throwing;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,29 +28,23 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
     // An item entity is no living entity, but it has 4 health before getting destroyed
     private static final double ENTITY_HEALTH = 4.0;
 
+    private final DestructionListener destructionListener;
+    private final HitboxProvider<StaticBoundingBox> hitboxProvider;
+    private final Item item;
     private final UUID uniqueId;
     @Nullable
     private Damage lastDamage;
     private double entityHealth;
     private double health;
-    @NotNull
-    private final Item item;
-    private long cooldown;
     @Nullable
     private Map<DamageType, Double> resistances;
 
-    public ThrowDeploymentObject(@NotNull Item item) {
+    public ThrowDeploymentObject(Item item, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
         this.item = item;
+        this.hitboxProvider = hitboxProvider;
+        this.destructionListener = destructionListener;
         this.entityHealth = ENTITY_HEALTH;
         this.uniqueId = UUID.randomUUID();
-    }
-
-    public long getCooldown() {
-        return cooldown;
-    }
-
-    public void setCooldown(long cooldown) {
-        this.cooldown = cooldown;
     }
 
     public double getHealth() {
@@ -97,6 +96,11 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         return item.hasGravity();
     }
 
+    @Override
+    public boolean isPhysical() {
+        return true;
+    }
+
     public void setGravity(boolean gravity) {
         item.setGravity(gravity);
     }
@@ -120,12 +124,17 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
 
             if (entityHealth <= 0) {
                 health = 0;
+                destructionListener.onDestroyed();
             }
 
             return damageAmount;
         }
 
-        health = Math.max(health - damageAmount, 0);
+        health = Math.max(health - damageAmount, 0.0);
+
+        if (health <= 0.0) {
+            destructionListener.onDestroyed();
+        }
 
         return damageAmount;
     }
@@ -134,13 +143,13 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         return !item.isDead();
     }
 
-    public boolean isDeployed() {
-        return true;
-    }
-
     @Override
-    public boolean isReleased() {
-        return true;
+    public Hitbox getHitbox() {
+        Location baseLocation = item.getLocation();
+        BoundingBox boundingBox = item.getBoundingBox();
+        StaticBoundingBox staticBoundingBox = new StaticBoundingBox(baseLocation, boundingBox.getWidthX(), boundingBox.getHeight(), boundingBox.getWidthZ());
+
+        return hitboxProvider.provideHitbox(staticBoundingBox);
     }
 
     public boolean isImmuneTo(@NotNull DamageType damageType) {

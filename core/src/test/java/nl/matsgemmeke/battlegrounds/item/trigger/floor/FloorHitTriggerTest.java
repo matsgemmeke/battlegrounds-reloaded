@@ -1,72 +1,87 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.floor;
 
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerTarget;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.BlockTriggerResult;
+import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-public class FloorHitTriggerTest {
+@ExtendWith(MockitoExtension.class)
+class FloorHitTriggerTest {
 
-    private TriggerContext context;
-    private TriggerTarget target;
+    private static final UUID SOURCE_ID = UUID.randomUUID();
+
+    @Mock
+    private Actor actor;
+
+    private FloorHitTrigger trigger;
 
     @BeforeEach
-    public void setUp() {
-        target = mock(TriggerTarget.class);
-        context = new TriggerContext(mock(Entity.class), target);
+    void setUp() {
+        trigger = new FloorHitTrigger();
     }
 
     @Test
-    public void activatesReturnsFalseWhenTargetDoesNotExists() {
-        when(target.exists()).thenReturn(false);
+    void checkReturnsTriggerResultThatDoesNotActivateWhenActorNotExist() {
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
-        FloorHitTrigger trigger = new FloorHitTrigger();
-        boolean activates = trigger.activates(context);
+        when(actor.exists()).thenReturn(false);
 
-        assertThat(activates).isFalse();
+        TriggerResult triggerResult = trigger.check(triggerContext);
+
+        assertThat(triggerResult.activates()).isFalse();
     }
 
     @Test
-    public void activatesReturnsFalseWhenBlockBelowTargetIsPassable() {
+    void checkReturnsTriggerResultThatDoesNotActivateWhenBlockBelowActorIsPassable() {
         World world = mock(World.class);
-        Location targetLocation = new Location(world, 1, 1, 1);
+        Location actorLocation = new Location(world, 1, 1, 1);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
         Block blockBelowObject = mock(Block.class);
         when(blockBelowObject.isPassable()).thenReturn(true);
         when(world.getBlockAt(any(Location.class))).thenReturn(blockBelowObject);
 
-        when(target.exists()).thenReturn(true);
-        when(target.getLocation()).thenReturn(targetLocation);
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorLocation);
 
-        FloorHitTrigger trigger = new FloorHitTrigger();
-        boolean activates = trigger.activates(context);
+        TriggerResult triggerResult = trigger.check(triggerContext);
 
-        assertThat(activates).isFalse();
+        assertThat(triggerResult.activates()).isFalse();
     }
 
     @Test
-    public void activatesReturnsTrueWhenBlockBelowTargetIsNotPassable() {
+    void checkReturnsBlockTriggerResultWhenBlockBelowActorIsNotPassable() {
         World world = mock(World.class);
-        Location targetLocation = new Location(world, 1, 1, 1);
+        Location actorLocation = new Location(world, 1, 1, 1);
+        TriggerContext triggerContext = new TriggerContext(SOURCE_ID, actor);
 
         Block blockBelowObject = mock(Block.class);
         when(blockBelowObject.isPassable()).thenReturn(false);
         when(world.getBlockAt(any(Location.class))).thenReturn(blockBelowObject);
 
-        when(target.exists()).thenReturn(true);
-        when(target.getLocation()).thenReturn(targetLocation);
+        when(actor.exists()).thenReturn(true);
+        when(actor.getLocation()).thenReturn(actorLocation);
 
-        FloorHitTrigger trigger = new FloorHitTrigger();
-        boolean activates = trigger.activates(context);
+        TriggerResult triggerResult = trigger.check(triggerContext);
 
-        assertThat(activates).isTrue();
+        assertThat(triggerResult.activates()).isTrue();
+        assertThat(triggerResult).isInstanceOfSatisfying(BlockTriggerResult.class, blockTriggerResult -> {
+           assertThat(blockTriggerResult.getHitBlock()).isEqualTo(blockBelowObject);
+           assertThat(blockTriggerResult.getHitLocation()).isEqualTo(actorLocation);
+        });
     }
 }

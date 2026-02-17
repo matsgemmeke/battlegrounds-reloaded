@@ -1,50 +1,19 @@
 package nl.matsgemmeke.battlegrounds.item.effect;
 
-import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-
-import java.util.HashSet;
-import java.util.Set;
+import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 
 public abstract class BaseItemEffectPerformance implements ItemEffectPerformance {
 
-    protected final Set<TriggerRun> triggerRuns;
-    protected ItemEffectContext context;
-
-    public BaseItemEffectPerformance() {
-        this.triggerRuns = new HashSet<>();
-    }
+    protected ItemEffectContext currentContext;
 
     @Override
-    public void addTriggerRun(TriggerRun triggerRun) {
-        triggerRuns.add(triggerRun);
-    }
-
-    @Override
-    public void changeSource(ItemEffectSource source) {
-        context.setSource(source);
-    }
-
-    @Override
-    public boolean isReleased() {
-        return context != null && context.getSource().isReleased();
+    public void changeActor(Actor actor) {
+        currentContext.setActor(actor);
     }
 
     @Override
     public void setContext(ItemEffectContext context) {
-        this.context = context;
-    }
-
-    @Override
-    public void start() {
-        this.perform(context);
-    }
-
-    public abstract void perform(ItemEffectContext context);
-
-    @Override
-    public void cancel() {
-        triggerRuns.forEach(TriggerRun::cancel);
-        triggerRuns.clear();
+        this.currentContext = context;
     }
 
     /**
