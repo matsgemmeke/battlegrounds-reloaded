@@ -40,6 +40,7 @@ import static org.mockito.Mockito.*;
 class ItemLauncherTest {
 
     private static final double VELOCITY = 2.0;
+    private static final int PICKUP_DELAY = 100;
     private static final ItemStack ITEM_STACK = new ItemStack(Material.STICK);
     private static final long GAME_SOUND_DELAY = 5L;
     private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
@@ -74,7 +75,7 @@ class ItemLauncherTest {
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY, PICKUP_DELAY);
         LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultAdapter, scheduler, itemEffect, properties);
@@ -108,7 +109,7 @@ class ItemLauncherTest {
         GameSound gameSound = mock(GameSound.class);
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY, PICKUP_DELAY);
         LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
@@ -127,7 +128,7 @@ class ItemLauncherTest {
         });
 
         verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
-        verify(item).setPickupDelay(10000);
+        verify(item).setPickupDelay(PICKUP_DELAY);
         verify(item).setVelocity(new Vector(-1.969615506024416,-0.0,-0.3472963553338606));
     }
 }

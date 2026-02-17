@@ -35,8 +35,6 @@ import java.util.function.Supplier;
  */
 public class ItemLauncher implements ProjectileLauncher {
 
-    private static final int ITEM_PICKUP_DELAY = 10000;
-
     private final AudioEmitter audioEmitter;
     private final CollisionResultAdapter collisionResultAdapter;
     private final ItemEffect itemEffect;
@@ -71,13 +69,14 @@ public class ItemLauncher implements ProjectileLauncher {
         UUID damageSourceId = damageSource.getUniqueId();
         World world = context.world();
         Location dropLocation = context.direction();
-        Vector velocity = context.direction().getDirection().multiply(properties.velocity());
         Supplier<Location> soundLocationSupplier = context.soundLocationSupplier();
 
         ItemStack itemStack = properties.itemTemplate().createItemStack();
+        int pickupDelay = properties.pickupDelay();
+        Vector velocity = context.direction().getDirection().multiply(properties.velocity());
 
         Item item = world.dropItem(dropLocation, itemStack);
-        item.setPickupDelay(ITEM_PICKUP_DELAY);
+        item.setPickupDelay(pickupDelay);
         item.setVelocity(velocity);
 
         ItemActor actor = new ItemActor(item);

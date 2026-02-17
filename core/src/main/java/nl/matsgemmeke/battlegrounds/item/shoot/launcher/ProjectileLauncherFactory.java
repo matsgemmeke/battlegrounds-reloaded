@@ -132,6 +132,7 @@ public class ProjectileLauncherFactory {
 
     private ProjectileLauncher createItemLauncher(ItemProjectileSpec spec) {
         double velocity = spec.velocity;
+        int pickupDelay = spec.pickupDelay;
         List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
 
         NamespacedKey templateKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
@@ -141,7 +142,7 @@ public class ProjectileLauncherFactory {
         ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
         itemTemplate.setDamage(spec.item.damage);
 
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSounds, velocity);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSounds, velocity, pickupDelay);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         ItemLauncher itemLauncher = itemLauncherFactory.create(properties, itemEffect);

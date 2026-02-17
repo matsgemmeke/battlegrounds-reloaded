@@ -47,6 +47,7 @@ class ProjectileLauncherFactoryTest {
 
     private static final String TEMPLATE_ID_KEY = "template-id";
     private static final double VELOCITY = 2.0;
+    private static final int PICKUP_DELAY = 100;
 
     @Mock
     private ArrowLauncherFactory arrowLauncherFactory;
@@ -168,7 +169,7 @@ class ProjectileLauncherFactoryTest {
 
     @Test
     @DisplayName("create returns instance of ItemLauncher")
-    void createReturnsInstanceOfItemLauncher() {
+    void create_itemLauncher() {
         ItemEffect itemEffect = mock(ItemEffect.class);
         ItemEffectSpec itemEffectSpec = mock(ItemEffectSpec.class);
         ItemLauncher itemLauncher = mock(ItemLauncher.class);
@@ -187,6 +188,7 @@ class ProjectileLauncherFactoryTest {
         projectileSpec.triggers = Map.of("impact", triggerSpec);
         projectileSpec.item = itemSpec;
         projectileSpec.velocity = VELOCITY;
+        projectileSpec.pickupDelay = PICKUP_DELAY;
 
         when(itemEffectFactory.create(itemEffectSpec)).thenReturn(itemEffect);
         when(itemLauncherFactory.create(any(ItemLaunchProperties.class), eq(itemEffect))).thenReturn(itemLauncher);
