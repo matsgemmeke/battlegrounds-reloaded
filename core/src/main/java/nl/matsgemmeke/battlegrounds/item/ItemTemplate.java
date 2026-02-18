@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.util.UUIDDataType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,6 +21,7 @@ public class ItemTemplate {
 
     private final boolean unbreakable;
     private final int damage;
+    private final List<ItemFlag> itemFlags;
     private final List<PersistentDataEntry<?, ?>> dataEntries;
     private final Material material;
     private final NamespacedKey templateKey;
@@ -32,6 +34,7 @@ public class ItemTemplate {
         this.templateId = builder.templateId;
         this.material = builder.material;
         this.damage = builder.damage;
+        this.itemFlags = builder.itemFlags;
         this.dataEntries = builder.dataEntries;
         this.displayNameTemplate = builder.displayNameTemplate;
         this.unbreakable = builder.unbreakable;
@@ -66,6 +69,8 @@ public class ItemTemplate {
         }
 
         itemMeta.setUnbreakable(unbreakable);
+
+        itemFlags.forEach(itemMeta::addItemFlags);
 
         if (damage > 0 && itemMeta instanceof Damageable) {
             ((Damageable) itemMeta).setDamage(damage);
@@ -114,6 +119,7 @@ public class ItemTemplate {
         private final NamespacedKey templateKey;
         private final UUID templateId;
         private final Material material;
+        private final List<ItemFlag> itemFlags;
         private final List<PersistentDataEntry<?, ?>> dataEntries;
         private boolean unbreakable;
         private int damage;
@@ -123,6 +129,7 @@ public class ItemTemplate {
             this.templateKey = templateKey;
             this.templateId = templateId;
             this.material = material;
+            this.itemFlags = new ArrayList<>();
             this.dataEntries = new ArrayList<>();
             this.damage = 0;
             this.unbreakable = false;
@@ -143,13 +150,13 @@ public class ItemTemplate {
             return this;
         }
 
-        public Builder unbreakable(boolean value) {
-            this.unbreakable = value;
+        public Builder itemFlags(Collection<ItemFlag> itemFlags) {
+            this.itemFlags.addAll(itemFlags);
             return this;
         }
 
-        public Builder addDataEntry(PersistentDataEntry<?, ?> entry) {
-            this.dataEntries.add(entry);
+        public Builder unbreakable(boolean value) {
+            this.unbreakable = value;
             return this;
         }
 

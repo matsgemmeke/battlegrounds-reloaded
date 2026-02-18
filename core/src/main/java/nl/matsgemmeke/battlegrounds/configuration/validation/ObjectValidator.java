@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.configuration.validation;
 
+import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.EnumValues;
+import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.EnumValuesValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.Size;
 import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.SizeConstraintValidator;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -15,11 +16,12 @@ import java.util.stream.Collectors;
 
 public class ObjectValidator {
 
-    private static Map<Class<? extends Annotation>, Validator<?>> validators = new HashMap<>();
+    private static final Map<Class<? extends Annotation>, Validator<?>> validators = new HashMap<>();
 
     static {
         registerValidator(Required.class, new RequiredValidator());
         registerValidator(EnumValue.class, new EnumValueValidator());
+        registerValidator(EnumValues.class, new EnumValuesValidator());
         registerValidator(Regex.class, new RegexValidator());
         registerValidator(Size.class, new SizeConstraintValidator());
         registerValidator(ConditionalRequired.class, new ConditionalRequiredValidator());
@@ -29,7 +31,7 @@ public class ObjectValidator {
         validators.put(annotation, validator);
     }
 
-    public static void validate(@NotNull Object object) {
+    public static void validate(Object object) {
         for (Field field : object.getClass().getDeclaredFields()) {
             String fieldName = field.getName();
             Object fieldValue;
