@@ -14,6 +14,9 @@ item:
   material: IRON_HOE
   display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
   damage: 33
+  item-flags:
+    - HIDE_ATTRIBUTES
+    - HIDE_UNBREAKABLE
   unbreakable: true
 reloading:
   type: MANUAL_INSERTION

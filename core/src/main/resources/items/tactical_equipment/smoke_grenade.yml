@@ -43,6 +43,9 @@ items:
     material: SHEARS
     display-name: '&f%name%'
     damage: 7
+    item-flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_UNBREAKABLE
     unbreakable: true
   throw-item:
     material: SHEARS

@@ -48,11 +48,14 @@ effect:
       distance: 2.5
 items:
   display-item:
+    material: SHEARS
     damage: 5
     display-name: '&f%name%'
-    material: SHEARS
+    item-flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_UNBREAKABLE
     unbreakable: true
   throw-item:
+    material: SHEARS
     damage: 5
     display-name: '&f%name%'
-    material: SHEARS

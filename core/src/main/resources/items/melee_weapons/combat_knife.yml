@@ -14,4 +14,7 @@ items:
     material: IRON_SWORD
     display-name: '&f%name%'
     damage: 1
+    item-flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_UNBREAKABLE
     unbreakable: true

@@ -18,6 +18,9 @@ items:
     material: IRON_SWORD
     display-name: '&f%name% %loaded_amount%/%reserve_amount%'
     damage: 2
+    item-flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_UNBREAKABLE
     unbreakable: true
 reloading:
   type: MAGAZINE
