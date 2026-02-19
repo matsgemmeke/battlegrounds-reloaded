@@ -2,8 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -12,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
-import nl.matsgemmeke.battlegrounds.item.PersistentDataEntry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
@@ -20,32 +17,24 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class GunFactory {
 
-    private static final String ACTION_EXECUTOR_ID_KEY = "action-executor-id";
     private static final String ACTION_EXECUTOR_ID_VALUE = "gun";
-    private static final String TEMPLATE_ID_KEY = "template-id";
 
-    private final BattlegroundsConfiguration config;
     private final GunControlsFactory controlsFactory;
     private final GunInfoProvider gunInfoProvider;
     private final GunRegistry gunRegistry;
-    private final NamespacedKeyCreator keyCreator;
+    private final ItemTemplateFactory itemTemplateFactory;
     private final Provider<DefaultGun> defaultGunProvider;
     private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     private final ReloadSystemFactory reloadSystemFactory;
@@ -53,21 +42,19 @@ public class GunFactory {
 
     @Inject
     public GunFactory(
-            BattlegroundsConfiguration config,
             GunControlsFactory controlsFactory,
             GunInfoProvider gunInfoProvider,
             GunRegistry gunRegistry,
-            NamespacedKeyCreator keyCreator,
+            ItemTemplateFactory itemTemplateFactory,
             Provider<DefaultGun> defaultGunProvider,
             Provider<DefaultScopeAttachment> scopeAttachmentProvider,
             ReloadSystemFactory reloadSystemFactory,
             ShootHandlerFactory shootHandlerFactory
     ) {
-        this.config = config;
         this.controlsFactory = controlsFactory;
         this.gunInfoProvider = gunInfoProvider;
         this.gunRegistry = gunRegistry;
-        this.keyCreator = keyCreator;
+        this.itemTemplateFactory = itemTemplateFactory;
         this.defaultGunProvider = defaultGunProvider;
         this.scopeAttachmentProvider = scopeAttachmentProvider;
         this.reloadSystemFactory = reloadSystemFactory;
@@ -100,14 +87,11 @@ public class GunFactory {
         gun.setName(spec.name);
         gun.setDescription(spec.description);
 
-        ItemTemplate itemTemplate = this.createItemTemplate(spec.item);
+        ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item, ACTION_EXECUTOR_ID_VALUE);
         ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
         itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, spec.name);
 
         gun.setItemTemplate(itemTemplate);
-
-        double damageAmplifier = config.getGunDamageAmplifier();
-        gun.setDamageAmplifier(damageAmplifier);
 
         int magazineSize = spec.ammo.magazineSize;
         int reserveAmmo = spec.ammo.defaultMagazineAmount * magazineSize;
@@ -145,25 +129,6 @@ public class GunFactory {
         gun.update();
 
         return gun;
-    }
-
-    private ItemTemplate createItemTemplate(ItemSpec spec) {
-        NamespacedKey templateKey = keyCreator.create(TEMPLATE_ID_KEY);
-        UUID templateId = UUID.randomUUID();
-        Material material = Material.valueOf(spec.material);
-        String displayName = spec.displayName;
-        int damage = spec.damage;
-        boolean unbreakable = spec.unbreakable;
-
-        NamespacedKey actionExecutorIdKey = keyCreator.create(ACTION_EXECUTOR_ID_KEY);
-        PersistentDataEntry<String, String> actionExecutorIdDataEntry = new PersistentDataEntry<>(actionExecutorIdKey, PersistentDataType.STRING, ACTION_EXECUTOR_ID_VALUE);
-
-        return ItemTemplate.builder(templateKey, templateId, material)
-                .dataEntries(Set.of(actionExecutorIdDataEntry))
-                .damage(damage)
-                .displayNameTemplate(new TextTemplate(displayName))
-                .unbreakable(unbreakable)
-                .build();
     }
 
     private void registerGunFireSimulationInfo(Gun gun, GunSpec spec) {

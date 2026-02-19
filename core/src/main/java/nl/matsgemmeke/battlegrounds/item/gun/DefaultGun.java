@@ -21,7 +21,6 @@ import java.util.Map;
 
 public class DefaultGun extends BaseWeapon implements Gun {
 
-    private double damageAmplifier;
     @Nullable
     private GunHolder holder;
     private ItemControls<GunHolder> controls;
@@ -57,14 +56,6 @@ public class DefaultGun extends BaseWeapon implements Gun {
 
     public void setControls(@NotNull ItemControls<GunHolder> controls) {
         this.controls = controls;
-    }
-
-    public double getDamageAmplifier() {
-        return damageAmplifier;
-    }
-
-    public void setDamageAmplifier(double damageAmplifier) {
-        this.damageAmplifier = damageAmplifier;
     }
 
     @Nullable
