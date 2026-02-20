@@ -89,12 +89,10 @@ class EquipmentFactoryTest {
         ItemControls<EquipmentHolder> controls = new ItemControls<>();
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
+        ItemTemplate activatorItemTemplate = mock(ItemTemplate.class);
 
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_DISPLAY);
-
-        ItemTemplate activatorItemTemplate = mock(ItemTemplate.class);
-        when(activatorItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_ACTIVATOR);
 
         when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
