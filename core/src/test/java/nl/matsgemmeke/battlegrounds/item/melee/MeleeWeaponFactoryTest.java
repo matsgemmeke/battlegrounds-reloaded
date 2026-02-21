@@ -5,44 +5,41 @@ import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandlerFactory;
-import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemFactory;
-import org.bukkit.plugin.Plugin;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
 class MeleeWeaponFactoryTest {
 
+    private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_SWORD);
+
+    @Mock
+    private ItemTemplateFactory itemTemplateFactory;
     @Mock
     private MeleeWeaponControlsFactory controlsFactory;
     @Mock
     private MeleeWeaponRegistry meleeWeaponRegistry;
-    @Mock
-    private NamespacedKeyCreator namespacedKeyCreator;
     @Mock
     private ReloadSystemFactory reloadSystemFactory;
     @Mock
@@ -50,31 +47,15 @@ class MeleeWeaponFactoryTest {
     @InjectMocks
     private MeleeWeaponFactory meleeWeaponFactory;
 
-    private MockedStatic<Bukkit> bukkit;
-
-    @BeforeEach
-    void setUp() {
-        Plugin plugin = mock(Plugin.class);
-        when(plugin.getName()).thenReturn("Battlegrounds");
-
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        NamespacedKey key = new NamespacedKey(plugin, "template-id");
-
-        when(namespacedKeyCreator.create("template-id")).thenReturn(key);
-
-        bukkit = mockStatic(Bukkit.class);
-        bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
-    }
-
-    @AfterEach
-    void tearDown() {
-        bukkit.close();
-    }
-
     @Test
     @DisplayName("create returns MeleeWeapon without assigned holder")
     void create_withoutHolder() {
         MeleeWeaponSpec spec = this.createMeleeWeaponSpec("combat_knife");
+
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.createItemStack(any())).thenReturn(ITEM_STACK);
+
+        when(itemTemplateFactory.create(spec.items.displayItem, "melee-weapon")).thenReturn(itemTemplate);
 
         MeleeWeapon result = meleeWeaponFactory.create(spec);
 
@@ -82,6 +63,7 @@ class MeleeWeaponFactoryTest {
             assertThat(meleeWeapon.getName()).isEqualTo("Combat Knife");
             assertThat(meleeWeapon.getDescription()).isEqualTo("Standard issue military knife. Fast, quiet and deadly.");
             assertThat(meleeWeapon.getHolder()).isEmpty();
+            assertThat(meleeWeapon.getItemStack()).isEqualTo(ITEM_STACK);
             assertThat(meleeWeapon.getAttackDamage()).isEqualTo(75.0);
             assertThat(meleeWeapon.getReloadSystem()).isNull();
             assertThat(meleeWeapon.getResourceContainer()).satisfies(resourceContainer -> {

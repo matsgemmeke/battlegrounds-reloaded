@@ -2,7 +2,12 @@ package nl.matsgemmeke.battlegrounds.configuration.item;
 
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.EnumValues;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemSpec {
 
@@ -14,4 +19,9 @@ public class ItemSpec {
 
     @Required
     public Integer damage;
+
+    @EnumValues(type = ItemFlag.class)
+    public List<String> itemFlags = new ArrayList<>();
+
+    public Boolean unbreakable = false;
 }

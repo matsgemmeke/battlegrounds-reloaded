@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
@@ -9,26 +8,24 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.GunControlsFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.*;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
-import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.plugin.Plugin;
-import org.junit.jupiter.api.AfterEach;
+import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.util.UUID;
@@ -38,61 +35,45 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class GunFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class GunFactoryTest {
 
-    private static final String TEMPLATE_ID_KEY = "template-id";
     private static final int RATE_OF_FIRE = 600;
 
-    private BattlegroundsConfiguration config;
+    @Mock
     private GunControlsFactory controlsFactory;
+    @Mock
     private GunInfoProvider gunInfoProvider;
+    @Mock
     private GunRegistry gunRegistry;
-    private ItemFactory itemFactory;
-    private MockedStatic<Bukkit> bukkit;
-    private NamespacedKeyCreator keyCreator;
+    @Mock
+    private ItemTemplateFactory itemTemplateFactory;
+    @Mock
     private Provider<DefaultGun> defaultGunProvider;
+    @Mock
     private Provider<DefaultScopeAttachment> scopeAttachmentProvider;
+    @Mock
     private ReloadSystemFactory reloadSystemFactory;
+    @Mock
     private ShootHandlerFactory shootHandlerFactory;
 
-    @BeforeEach
-    public void setUp() {
-        config = mock(BattlegroundsConfiguration.class);
-        controlsFactory = mock(GunControlsFactory.class);
-        gunInfoProvider = mock(GunInfoProvider.class);
-        gunRegistry = mock(GunRegistry.class);
-        itemFactory = mock(ItemFactory.class);
-        scopeAttachmentProvider = mock();
-        reloadSystemFactory = mock(ReloadSystemFactory.class);
-        shootHandlerFactory = mock(ShootHandlerFactory.class);
+    private GunFactory gunFactory;
 
-        defaultGunProvider = mock();
+    @BeforeEach
+    void setUp() {
         when(defaultGunProvider.get()).thenReturn(new DefaultGun());
 
-        Plugin plugin = mock(Plugin.class);
-        when(plugin.getName()).thenReturn("Battlegrounds");
-
-        NamespacedKey key = new NamespacedKey(plugin, TEMPLATE_ID_KEY);
-
-        keyCreator = mock(NamespacedKeyCreator.class);
-        when(keyCreator.create(TEMPLATE_ID_KEY)).thenReturn(key);
-
-        bukkit = mockStatic(Bukkit.class);
-        bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
-    }
-
-    @AfterEach
-    public void tearDown() {
-        bukkit.close();
+        gunFactory = new GunFactory(controlsFactory, gunInfoProvider, gunRegistry, itemTemplateFactory, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
     }
 
     @Test
-    public void createReturnsSimpleGun() {
+    @DisplayName("create returns simple Gun instance")
+    void create_simpleGun() {
         GunSpec spec = this.createGunSpec();
-        PersistentDataContainer dataContainer = mock(PersistentDataContainer.class);
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
-        Damageable itemMeta = mock(Damageable.class);
-        when(itemMeta.getPersistentDataContainer()).thenReturn(dataContainer);
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
         ItemControls<GunHolder> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
@@ -103,10 +84,9 @@ public class GunFactoryTest {
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
-        when(itemFactory.getItemMeta(Material.IRON_HOE)).thenReturn(itemMeta);
+        when(itemTemplateFactory.create(spec.item, "gun")).thenReturn(itemTemplate);
         when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
-        GunFactory gunFactory = new GunFactory(config, controlsFactory, gunInfoProvider, gunRegistry, keyCreator, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Gun gun = gunFactory.create(spec);
 
         ArgumentCaptor<GunFireSimulationInfo> gunFireSimulationInfoCaptor = ArgumentCaptor.forClass(GunFireSimulationInfo.class);
@@ -118,20 +98,18 @@ public class GunFactoryTest {
 
         assertThat(gun).isInstanceOf(DefaultGun.class);
         assertThat(gun.getName()).isEqualTo("MP5");
-        assertThat(gun.getItemStack()).isNotNull();
-        assertThat(gun.getItemStack().getType()).isEqualTo(Material.IRON_HOE);
+        assertThat(gun.getItemStack()).isEqualTo(itemStack);
         assertThat(gun.getResourceContainer().getCapacity()).isEqualTo(30);
         assertThat(gun.getResourceContainer().getLoadedAmount()).isEqualTo(30);
         assertThat(gun.getResourceContainer().getReserveAmount()).isEqualTo(90);
         assertThat(gun.getResourceContainer().getMaxReserveAmount()).isEqualTo(240);
 
         verify(gunRegistry).register(gun);
-        verify(itemMeta).setDamage(8);
-        verify(itemMeta).setDisplayName("§fMP5 30/90");
     }
 
     @Test
-    public void createMakesGunInstanceWithScopeAttachmentWhenConfigurationIsPresent() {
+    @DisplayName("creates returns Gun instance with scope attachment")
+    void create_withScopeAttachment() {
         DefaultScopeAttachment scopeAttachment = mock(DefaultScopeAttachment.class);
 
         ScopeSpec scopeSpec = new ScopeSpec();
@@ -152,7 +130,6 @@ public class GunFactoryTest {
         when(scopeAttachmentProvider.get()).thenReturn(scopeAttachment);
         when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
-        GunFactory gunFactory = new GunFactory(config, controlsFactory, gunInfoProvider, gunRegistry, keyCreator, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Gun gun = gunFactory.create(spec);
 
         assertThat(gun).isInstanceOf(DefaultGun.class);
@@ -162,7 +139,8 @@ public class GunFactoryTest {
     }
 
     @Test
-    public void createMakesGunAndAssignsPlayer() {
+    @DisplayName("create returns Gun and assigns player")
+    void create_withAssignedPlayer() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         GunSpec spec = this.createGunSpec();
 
@@ -177,7 +155,6 @@ public class GunFactoryTest {
 
         when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
-        GunFactory gunFactory = new GunFactory(config, controlsFactory, gunInfoProvider, gunRegistry, keyCreator, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
         Gun gun = gunFactory.create(spec, gamePlayer);
 
         ArgumentCaptor<GunFireSimulationInfo> gunFireSimulationInfoCaptor = ArgumentCaptor.forClass(GunFireSimulationInfo.class);

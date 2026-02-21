@@ -139,8 +139,9 @@ public class ProjectileLauncherFactory {
         UUID templateId = UUID.randomUUID();
         Material material = Material.valueOf(spec.item.material);
 
-        ItemTemplate itemTemplate = new ItemTemplate(templateKey, templateId, material);
-        itemTemplate.setDamage(spec.item.damage);
+        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, templateId, material)
+                .damage(spec.item.damage)
+                .build();
 
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSounds, velocity, pickupDelay);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
