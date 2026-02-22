@@ -17,6 +17,15 @@ item:
   item-flags:
     - HIDE_ATTRIBUTES
     - HIDE_UNBREAKABLE
+  data:
+    weapon-id:
+      key: weapon-id
+      type: STRING
+      value: Python
+    action-executor-id:
+      key: action-executor-id
+      type: STRING
+      value: gun
   unbreakable: true
 reloading:
   type: MANUAL_INSERTION

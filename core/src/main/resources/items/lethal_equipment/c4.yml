@@ -55,6 +55,15 @@ items:
     item-flags:
       - HIDE_ATTRIBUTES
       - HIDE_UNBREAKABLE
+    data:
+      weapon-id:
+        key: weapon-id
+        type: STRING
+        value: C4
+      action-executor-id:
+        key: action-executor-id
+        type: STRING
+        value: equipment
     unbreakable: true
   activator-item:
     material: SHEARS
@@ -63,6 +72,15 @@ items:
     item-flags:
       - HIDE_ATTRIBUTES
       - HIDE_UNBREAKABLE
+    data:
+      weapon-id:
+        key: weapon-id
+        type: STRING
+        value: C4
+      action-executor-id:
+        key: action-executor-id
+        type: STRING
+        value: equipment
     unbreakable: true
   throw-item:
     material: SHEARS

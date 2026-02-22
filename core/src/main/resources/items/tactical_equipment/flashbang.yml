@@ -46,6 +46,15 @@ items:
     item-flags:
       - HIDE_ATTRIBUTES
       - HIDE_UNBREAKABLE
+    data:
+      weapon-id:
+        key: weapon-id
+        type: STRING
+        value: Flashbang
+      action-executor-id:
+        key: action-executor-id
+        type: STRING
+        value: equipment
     unbreakable: true
   throw-item:
     material: SHEARS
