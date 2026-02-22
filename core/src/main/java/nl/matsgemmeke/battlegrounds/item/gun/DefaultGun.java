@@ -148,7 +148,7 @@ public class DefaultGun extends BaseWeapon implements Gun {
         return shootHandler.getRateOfFire();
     }
 
-    public boolean isMatching(@NotNull ItemStack itemStack) {
+    public boolean isMatching(ItemStack itemStack) {
         return itemTemplate != null && itemTemplate.matchesTemplate(itemStack);
     }
 

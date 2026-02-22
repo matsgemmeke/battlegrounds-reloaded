@@ -7,34 +7,35 @@ import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public class EquipmentActionExecutor implements ActionExecutor {
 
-    @NotNull
     private final EquipmentRegistry equipmentRegistry;
-    @NotNull
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public EquipmentActionExecutor(@NotNull EquipmentRegistry equipmentRegistry, @NotNull PlayerRegistry playerRegistry) {
+    public EquipmentActionExecutor(EquipmentRegistry equipmentRegistry, PlayerRegistry playerRegistry) {
         this.equipmentRegistry = equipmentRegistry;
         this.playerRegistry = playerRegistry;
     }
 
-    public boolean handleChangeFromAction(@NotNull Player player, @NotNull ItemStack changedItem) {
+    @Override
+    public boolean handleChangeFromAction(Player player, ItemStack changedItem) {
         return true;
     }
 
-    public boolean handleChangeToAction(@NotNull Player player, @NotNull ItemStack changedItem) {
+    @Override
+    public boolean handleChangeToAction(Player player, ItemStack changedItem) {
         return true;
     }
 
-    public boolean handleDropItemAction(@NotNull Player player, @NotNull ItemStack droppedItem) {
+    @Override
+    public boolean handleDropItemAction(Player player, ItemStack droppedItem) {
         return true;
     }
 
-    public boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+    @Override
+    public boolean handleLeftClickAction(Player player, ItemStack clickedItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
@@ -51,11 +52,13 @@ public class EquipmentActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handlePickupItemAction(@NotNull Player player, @NotNull ItemStack pickupItem) {
+    @Override
+    public boolean handlePickupItemAction(Player player, ItemStack pickupItem) {
         return true;
     }
 
-    public boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+    @Override
+    public boolean handleRightClickAction(Player player, ItemStack clickedItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
@@ -72,11 +75,13 @@ public class EquipmentActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handleSwapFromAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
+    @Override
+    public boolean handleSwapFromAction(Player player, ItemStack swappedItem) {
         return true;
     }
 
-    public boolean handleSwapToAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
+    @Override
+    public boolean handleSwapToAction(Player player, ItemStack swappedItem) {
         return true;
     }
 }

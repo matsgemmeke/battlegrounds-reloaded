@@ -7,22 +7,20 @@ import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public class GunActionExecutor implements ActionExecutor {
 
-    @NotNull
     private final GunRegistry gunRegistry;
-    @NotNull
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public GunActionExecutor(@NotNull GunRegistry gunRegistry, @NotNull PlayerRegistry playerRegistry) {
+    public GunActionExecutor(GunRegistry gunRegistry, PlayerRegistry playerRegistry) {
         this.gunRegistry = gunRegistry;
         this.playerRegistry = playerRegistry;
     }
 
-    public boolean handleChangeFromAction(@NotNull Player player, @NotNull ItemStack changedItem) {
+    @Override
+    public boolean handleChangeFromAction(Player player, ItemStack changedItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
@@ -39,7 +37,8 @@ public class GunActionExecutor implements ActionExecutor {
         return true;
     }
 
-    public boolean handleChangeToAction(@NotNull Player player, @NotNull ItemStack changedItem) {
+    @Override
+    public boolean handleChangeToAction(Player player, ItemStack changedItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
@@ -56,7 +55,8 @@ public class GunActionExecutor implements ActionExecutor {
         return true;
     }
 
-    public boolean handleDropItemAction(@NotNull Player player, @NotNull ItemStack droppedItem) {
+    @Override
+    public boolean handleDropItemAction(Player player, ItemStack droppedItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
@@ -69,13 +69,14 @@ public class GunActionExecutor implements ActionExecutor {
             return true;
         }
 
-        gun.onDrop();
-
         gunRegistry.unassign(gun);
+
+        gun.onDrop();
         return true;
     }
 
-    public boolean handleLeftClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+    @Override
+    public boolean handleLeftClickAction(Player player, ItemStack clickedItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
@@ -92,7 +93,8 @@ public class GunActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handlePickupItemAction(@NotNull Player player, @NotNull ItemStack pickupItem) {
+    @Override
+    public boolean handlePickupItemAction(Player player, ItemStack pickupItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
@@ -111,7 +113,8 @@ public class GunActionExecutor implements ActionExecutor {
         return true;
     }
 
-    public boolean handleRightClickAction(@NotNull Player player, @NotNull ItemStack clickedItem) {
+    @Override
+    public boolean handleRightClickAction(Player player, ItemStack clickedItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
@@ -128,7 +131,8 @@ public class GunActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handleSwapFromAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
+    @Override
+    public boolean handleSwapFromAction(Player player, ItemStack swappedItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
@@ -145,7 +149,8 @@ public class GunActionExecutor implements ActionExecutor {
         return false;
     }
 
-    public boolean handleSwapToAction(@NotNull Player player, @NotNull ItemStack swappedItem) {
+    @Override
+    public boolean handleSwapToAction(Player player, ItemStack swappedItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
