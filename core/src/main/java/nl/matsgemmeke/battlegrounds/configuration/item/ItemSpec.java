@@ -7,7 +7,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemSpec {
 
@@ -17,11 +19,12 @@ public class ItemSpec {
 
     public String displayName;
 
-    @Required
-    public Integer damage;
+    public Integer damage = 0;
 
     @EnumValues(type = ItemFlag.class)
     public List<String> itemFlags = new ArrayList<>();
+
+    public Map<String, DataSpec> data = new HashMap<>();
 
     public Boolean unbreakable = false;
 }

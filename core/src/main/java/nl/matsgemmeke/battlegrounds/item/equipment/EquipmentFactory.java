@@ -33,8 +33,6 @@ import java.util.List;
 
 public class EquipmentFactory {
 
-    private static final String ACTION_EXECUTOR_ID_VALUE = "equipment";
-
     private final DeploymentHandlerFactory deploymentHandlerFactory;
     private final EquipmentControlsFactory controlsFactory;
     private final EquipmentRegistry equipmentRegistry;
@@ -84,7 +82,7 @@ public class EquipmentFactory {
         equipment.setName(spec.name);
         equipment.setDescription(spec.description);
 
-        ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.items.displayItem, ACTION_EXECUTOR_ID_VALUE);
+        ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.items.displayItem);
 
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
@@ -94,14 +92,14 @@ public class EquipmentFactory {
         ItemSpec throwItemSpec = spec.items.throwItem;
 
         if (activatorItemSpec != null) {
-            ItemTemplate activatorItemTemplate = itemTemplateFactory.create(activatorItemSpec, ACTION_EXECUTOR_ID_VALUE);
+            ItemTemplate activatorItemTemplate = itemTemplateFactory.create(activatorItemSpec);
 
             activator = new DefaultActivator(activatorItemTemplate);
             equipment.setActivator(activator);
         }
 
         if (throwItemSpec != null) {
-            ItemTemplate throwItemTemplate = itemTemplateFactory.create(throwItemSpec, ACTION_EXECUTOR_ID_VALUE);
+            ItemTemplate throwItemTemplate = itemTemplateFactory.create(throwItemSpec);
 
             equipment.setThrowItemTemplate(throwItemTemplate);
         }

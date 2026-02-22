@@ -17,8 +17,6 @@ import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandlerFactory;
 
 public class MeleeWeaponFactory {
 
-    private static final String ACTION_EXECUTOR_ID_VALUE = "melee-weapon";
-
     private final ItemTemplateFactory itemTemplateFactory;
     private final MeleeWeaponControlsFactory controlsFactory;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
@@ -63,7 +61,7 @@ public class MeleeWeaponFactory {
         meleeWeapon.setDescription(spec.description);
         meleeWeapon.setAttackDamage(spec.damage.meleeDamage);
 
-        ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.items.displayItem, ACTION_EXECUTOR_ID_VALUE);
+        ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.items.displayItem);
         meleeWeapon.setDisplayItemTemplate(displayItemTemplate);
 
         ItemRepresentation itemRepresentation = new ItemRepresentation(displayItemTemplate);

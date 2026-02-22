@@ -81,18 +81,17 @@ public class ItemTemplate {
             itemMeta.setDisplayName(displayName);
         }
 
-        itemMeta.getPersistentDataContainer().set(templateKey, new UUIDDataType(), templateId);
+        PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
+        persistentDataContainer.set(templateKey, new UUIDDataType(), templateId);
 
-        for (PersistentDataEntry<?, ?> dataEntry : dataEntries) {
-            this.applyDataEntry(itemMeta.getPersistentDataContainer(), dataEntry);
-        }
+        dataEntries.forEach(dataEntry -> this.setDataEntry(persistentDataContainer, dataEntry));
 
         itemStack.setItemMeta(itemMeta);
 
         return itemStack;
     }
 
-    private <T, Z> void applyDataEntry(PersistentDataContainer container, PersistentDataEntry<T, Z> entry) {
+    private <T, Z> void setDataEntry(PersistentDataContainer container, PersistentDataEntry<T, Z> entry) {
         container.set(entry.key(), entry.type(), entry.value());
     }
 

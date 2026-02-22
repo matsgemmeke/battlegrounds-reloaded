@@ -29,8 +29,6 @@ import java.util.UUID;
 
 public class GunFactory {
 
-    private static final String ACTION_EXECUTOR_ID_VALUE = "gun";
-
     private final GunControlsFactory controlsFactory;
     private final GunInfoProvider gunInfoProvider;
     private final GunRegistry gunRegistry;
@@ -87,7 +85,7 @@ public class GunFactory {
         gun.setName(spec.name);
         gun.setDescription(spec.description);
 
-        ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item, ACTION_EXECUTOR_ID_VALUE);
+        ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item);
         ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
         itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, spec.name);
 

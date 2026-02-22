@@ -69,7 +69,7 @@ class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
-        when(itemTemplateFactory.create(spec.items.displayItem, "equipment")).thenReturn(displayItemTemplate);
+        when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
         when(triggerExecutorFactory.create(spec.deploy.triggers.get("scheduled"))).thenReturn(triggerExecutor);
 
         Equipment equipment = equipmentFactory.create(spec, gamePlayer);
@@ -97,8 +97,8 @@ class EquipmentFactoryTest {
         when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
         when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
-        when(itemTemplateFactory.create(spec.items.displayItem, "equipment")).thenReturn(displayItemTemplate);
-        when(itemTemplateFactory.create(spec.items.activatorItem, "equipment")).thenReturn(activatorItemTemplate);
+        when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
+        when(itemTemplateFactory.create(spec.items.activatorItem)).thenReturn(activatorItemTemplate);
 
         Equipment equipment = equipmentFactory.create(spec);
 

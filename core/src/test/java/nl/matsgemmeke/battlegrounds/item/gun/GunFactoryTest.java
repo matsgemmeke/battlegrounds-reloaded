@@ -84,7 +84,7 @@ class GunFactoryTest {
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
-        when(itemTemplateFactory.create(spec.item, "gun")).thenReturn(itemTemplate);
+        when(itemTemplateFactory.create(spec.item)).thenReturn(itemTemplate);
         when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
 
         Gun gun = gunFactory.create(spec);
