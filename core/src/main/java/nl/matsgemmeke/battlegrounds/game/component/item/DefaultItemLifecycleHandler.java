@@ -18,7 +18,7 @@ public class DefaultItemLifecycleHandler implements ItemLifecycleHandler {
     }
 
     public void cleanupItems(@NotNull GamePlayer gamePlayer) {
-        List<Equipment> equipmentList = equipmentRegistry.getAssignedEquipment(gamePlayer);
+        List<Equipment> equipmentList = equipmentRegistry.getAssignedEquipmentList(gamePlayer);
 
         equipmentList.forEach(Equipment::cleanup);
     }

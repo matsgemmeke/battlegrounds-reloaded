@@ -4,21 +4,94 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.*;
 
-public class DefaultEquipmentRegistryTest {
+class DefaultEquipmentRegistryTest {
+
+    private DefaultEquipmentRegistry equipmentRegistry;
+
+    @BeforeEach
+    void setUp() {
+        equipmentRegistry = new DefaultEquipmentRegistry();
+    }
 
     @Test
-    public void getAllEquipmentReturnsAllEquipmentItems() {
+    @DisplayName("assign does nothing when given equipment is not registered")
+    void assign_equipmentNotRegistered() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(holder);
+
+        equipmentRegistry.assign(equipment, holder);
+
+        assertThat(equipmentRegistry.getAssignedEquipmentList(holder)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("assign adds given equipment to assigned list of given holder")
+    void assign_equipmentRegistered() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(holder);
+
+        equipmentRegistry.register(equipment);
+        equipmentRegistry.assign(equipment, holder);
+
+        assertThat(equipmentRegistry.getAssignedEquipmentList(holder)).containsExactly(equipment);
+    }
+
+    @Test
+    @DisplayName("unassign does nothing when given equipment has no holder")
+    void unassign_withoutHolder() {
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(null);
+
+        assertThatCode(() -> equipmentRegistry.unassign(equipment)).doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("unassign does nothing when given equipment's holder is not registered")
+    void unassign_holderNotRegistered() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(holder);
+
+        equipmentRegistry.unassign(equipment);
+
+        assertThat(equipmentRegistry.getAssignedEquipmentList(holder)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("unassign removes given equipment from holder")
+    void unassign_registeredHolder() {
+        EquipmentHolder holder = mock(EquipmentHolder.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(holder);
+
+        equipmentRegistry.register(equipment, holder);
+        equipmentRegistry.unassign(equipment);
+
+        assertThat(equipmentRegistry.getAssignedEquipmentList(holder)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getAllEquipment returns list containing all equipment items")
+    void getAllEquipment_returnsAll() {
         Equipment equipment = mock(Equipment.class);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
         equipmentRegistry.register(equipment);
         List<Equipment> equipmentList = equipmentRegistry.getAllEquipment();
 
@@ -26,47 +99,47 @@ public class DefaultEquipmentRegistryTest {
     }
 
     @Test
-    public void getAssignedEquipmentReturnsEmptyListWhenGivenHolderIsNotRegistered() {
+    @DisplayName("getAssignedEquipment returns empty list when given holder is not registered")
+    void getAssignedEquipmentList_unregisteredHolder() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
-        List<Equipment> assignedItems = equipmentRegistry.getAssignedEquipment(holder);
+        List<Equipment> assignedItems = equipmentRegistry.getAssignedEquipmentList(holder);
 
         assertThat(assignedItems).isEmpty();
     }
 
     @Test
-    public void getAssignedEquipmentReturnsAssignedEquipmentFromGivenHolder() {
+    @DisplayName("getAssignedEquipmentList returns list of all assigned equipment to given holder")
+    void getAssignedEquipmentList_registeredHolder() {
         Equipment equipment = mock(Equipment.class);
         EquipmentHolder holder = mock(EquipmentHolder.class);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
         equipmentRegistry.register(equipment, holder);
-        List<Equipment> assignedItems = equipmentRegistry.getAssignedEquipment(holder);
+        List<Equipment> assignedItems = equipmentRegistry.getAssignedEquipmentList(holder);
 
         assertThat(assignedItems).containsExactly(equipment);
     }
 
     @Test
-    public void getAssignedEquipmentReturnsEmptyOptionalWhenGivenHolderHasNoEquipmentRegistered() {
+    @DisplayName("getAssignedEquipment returns empty optional when given holder is not registered")
+    void getAssignedEquipment_unregisteredHolder() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
         Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(holder, itemStack);
 
         assertThat(equipmentOptional).isEmpty();
     }
 
     @Test
-    public void getAssignedEquipmentReturnsEmptyOptionalWhenNoRegisteredEquipmentMatchWithGivenItemStack() {
+    @DisplayName("getAssignedEquipment returns empty optional when no equipment match with given holder and item stack")
+    void getAssignedEquipment_noMatchForGivenHolderAndItemStack() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.isMatching(itemStack)).thenReturn(false);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
         equipmentRegistry.register(equipment, holder);
         Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(holder, itemStack);
 
@@ -74,14 +147,14 @@ public class DefaultEquipmentRegistryTest {
     }
 
     @Test
-    public void getAssignedEquipmentReturnsOptionalContainingEquipmentMatchingWithGivenItemStack() {
+    @DisplayName("getAssignedEquipment returns optional containing equipment that matches with given holder and item stack")
+    void getAssignedEquipment_matchingEquipment() {
         EquipmentHolder holder = mock(EquipmentHolder.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.isMatching(itemStack)).thenReturn(true);
 
-        DefaultEquipmentRegistry equipmentRegistry = new DefaultEquipmentRegistry();
         equipmentRegistry.register(equipment, holder);
         Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(holder, itemStack);
 

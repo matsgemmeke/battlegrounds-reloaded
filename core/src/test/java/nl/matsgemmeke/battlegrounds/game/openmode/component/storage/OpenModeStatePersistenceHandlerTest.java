@@ -155,7 +155,7 @@ class OpenModeStatePersistenceHandlerTest {
         when(meleeWeapon.getItemStack()).thenReturn(null);
 
         when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer)).thenReturn(List.of(equipment));
+        when(equipmentRegistry.getAssignedEquipmentList(gamePlayer)).thenReturn(List.of(equipment));
         when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of(meleeWeapon));
 
         statePersistenceHandler.savePlayerState(gamePlayer);
@@ -199,7 +199,7 @@ class OpenModeStatePersistenceHandlerTest {
 
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));
         when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer)).thenReturn(List.of(equipment));
+        when(equipmentRegistry.getAssignedEquipmentList(gamePlayer)).thenReturn(List.of(equipment));
         when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of(meleeWeapon));
 
         statePersistenceHandler.saveState();

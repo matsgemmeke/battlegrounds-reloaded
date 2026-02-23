@@ -42,7 +42,6 @@ public class DefaultGunRegistryTest {
         assertThat(gunRegistry.getAssignedGuns(holder)).containsExactly(gun);
     }
 
-
     @Test
     public void unassignDoesNothingWhenGivenGunHasNoHolder() {
         Gun gun = mock(Gun.class);

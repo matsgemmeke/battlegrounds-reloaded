@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.game.component.item;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,9 +14,7 @@ import java.util.stream.Stream;
 
 public class DefaultEquipmentRegistry implements EquipmentRegistry {
 
-    @NotNull
     private final ConcurrentMap<EquipmentHolder, List<Equipment>> assignedEquipment;
-    @NotNull
     private final List<Equipment> unassignedEquipment;
 
     public DefaultEquipmentRegistry() {
@@ -25,6 +22,29 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
         this.unassignedEquipment = new ArrayList<>();
     }
 
+    @Override
+    public void assign(Equipment equipment, EquipmentHolder holder) {
+        if (!unassignedEquipment.contains(equipment)) {
+            return;
+        }
+
+        unassignedEquipment.remove(equipment);
+        assignedEquipment.computeIfAbsent(holder, h -> new ArrayList<>()).add(equipment);
+    }
+
+    @Override
+    public void unassign(Equipment equipment) {
+        EquipmentHolder holder = equipment.getHolder();
+
+        if (holder == null || !assignedEquipment.containsKey(holder)) {
+            return;
+        }
+
+        assignedEquipment.get(holder).remove(equipment);
+        unassignedEquipment.add(equipment);
+    }
+
+    @Override
     public List<Equipment> getAllEquipment() {
         Stream<Equipment> assignedItemsStream = assignedEquipment.values().stream().flatMap(List::stream);
         Stream<Equipment> unassignedItemsStream = unassignedEquipment.stream();
@@ -32,7 +52,8 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
         return Stream.concat(assignedItemsStream, unassignedItemsStream).toList();
     }
 
-    public List<Equipment> getAssignedEquipment(EquipmentHolder holder) {
+    @Override
+    public List<Equipment> getAssignedEquipmentList(EquipmentHolder holder) {
         if (!assignedEquipment.containsKey(holder)) {
             return Collections.emptyList();
         }
@@ -40,6 +61,7 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
         return Collections.unmodifiableList(assignedEquipment.get(holder));
     }
 
+    @Override
     public Optional<Equipment> getAssignedEquipment(EquipmentHolder holder, ItemStack itemStack) {
         if (!assignedEquipment.containsKey(holder)) {
             return Optional.empty();
@@ -54,10 +76,12 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
         return Optional.empty();
     }
 
+    @Override
     public void register(Equipment equipment) {
         unassignedEquipment.add(equipment);
     }
 
+    @Override
     public void register(Equipment equipment, EquipmentHolder holder) {
         assignedEquipment.computeIfAbsent(holder, h -> new ArrayList<>()).add(equipment);
     }

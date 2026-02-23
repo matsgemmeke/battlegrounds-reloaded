@@ -10,6 +10,23 @@ import java.util.Optional;
 public interface EquipmentRegistry {
 
     /**
+     * Assigns the given equipment to the given holder. This method will do nothing when the given equipment is not
+     * registered to the registry, or when it is already assigned.
+     *
+     * @param equipment the equipment
+     * @param holder    the holder to assign the equipment to
+     */
+    void assign(Equipment equipment, EquipmentHolder holder);
+
+    /**
+     * Removes the assigned holder from the given equipment and registers it as unassigned. This method will do nothing
+     * when the given equipment is not registered to the registry or has no assigned holder.
+     *
+     * @param equipment the equipment to be unassigned from its holder
+     */
+    void unassign(Equipment equipment);
+
+    /**
      * Gets a list containing all registered equipment items.
      *
      * @return all registered equipment items
@@ -22,7 +39,7 @@ public interface EquipmentRegistry {
      * @param holder the equipment holder
      * @return a list of all equipment items assigned to the holder
      */
-    List<Equipment> getAssignedEquipment(EquipmentHolder holder);
+    List<Equipment> getAssignedEquipmentList(EquipmentHolder holder);
 
     /**
      * Gets the equipment that is assigned to a given holder and corresponds with a given item stack. The returned

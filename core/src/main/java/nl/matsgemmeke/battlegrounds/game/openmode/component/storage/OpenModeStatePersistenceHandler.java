@@ -117,7 +117,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
                 .map(gun -> this.convertToGunState(gamePlayer, gun))
                 .flatMap(Optional::stream)
                 .toList();
-        List<EquipmentState> equipmentStates = equipmentRegistry.getAssignedEquipment(gamePlayer).stream()
+        List<EquipmentState> equipmentStates = equipmentRegistry.getAssignedEquipmentList(gamePlayer).stream()
                 .map(equipment -> this.convertToEquipmentState(gamePlayer, equipment))
                 .flatMap(Optional::stream)
                 .toList();

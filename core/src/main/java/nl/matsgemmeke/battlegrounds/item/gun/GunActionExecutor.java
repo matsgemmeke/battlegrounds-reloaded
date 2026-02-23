@@ -70,7 +70,6 @@ public class GunActionExecutor implements ActionExecutor {
         }
 
         gunRegistry.unassign(gun);
-
         gun.onDrop();
         return true;
     }
