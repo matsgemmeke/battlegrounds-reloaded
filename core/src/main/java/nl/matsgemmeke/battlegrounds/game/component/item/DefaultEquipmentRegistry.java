@@ -77,6 +77,17 @@ public class DefaultEquipmentRegistry implements EquipmentRegistry {
     }
 
     @Override
+    public Optional<Equipment> getUnassignedEquipment(ItemStack itemStack) {
+        for (Equipment equipment : unassignedEquipment) {
+            if (equipment.isMatching(itemStack)) {
+                return Optional.of(equipment);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
     public void register(Equipment equipment) {
         unassignedEquipment.add(equipment);
     }

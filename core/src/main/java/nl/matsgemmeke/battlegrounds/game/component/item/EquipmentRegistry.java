@@ -52,6 +52,15 @@ public interface EquipmentRegistry {
     Optional<Equipment> getAssignedEquipment(EquipmentHolder holder, ItemStack itemStack);
 
     /**
+     * Gets the unassigned equipment that corresponds with a given item stack. The returned optional will be empty when
+     * no matching equipment was found.
+     *
+     * @param itemStack the corresponding item stack
+     * @return          an optional containing the matching equipment or empty when not found
+     */
+    Optional<Equipment> getUnassignedEquipment(ItemStack itemStack);
+
+    /**
      * Registers an unassigned equipment item to the registry.
      *
      * @param equipment the equipment item to be registered

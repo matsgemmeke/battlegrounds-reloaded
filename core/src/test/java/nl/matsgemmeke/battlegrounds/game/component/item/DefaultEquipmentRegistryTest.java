@@ -160,4 +160,32 @@ class DefaultEquipmentRegistryTest {
 
         assertThat(equipmentOptional).hasValue(equipment);
     }
+
+    @Test
+    @DisplayName("getUnassignedEquipment returns empty optional when no unassigned equipment matches given item stack")
+    void getUnassignedEquipment_noMatch() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.isMatching(itemStack)).thenReturn(false);
+
+        equipmentRegistry.register(equipment);
+        Optional<Equipment> equipmentOptional = equipmentRegistry.getUnassignedEquipment(itemStack);
+
+        assertThat(equipmentOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getUnassignedEquipment returns optional with matching unassigned equipment")
+    void getUnassignedGunReturnsOptionalWithMatchingUnassignedGun() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.isMatching(itemStack)).thenReturn(true);
+
+        equipmentRegistry.register(equipment);
+        Optional<Equipment> equipmentOptional = equipmentRegistry.getUnassignedEquipment(itemStack);
+
+        assertThat(equipmentOptional).hasValue(equipment);
+    }
 }
