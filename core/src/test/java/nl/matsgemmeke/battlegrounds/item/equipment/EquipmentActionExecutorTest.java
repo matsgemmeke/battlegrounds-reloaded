@@ -355,4 +355,114 @@ class EquipmentActionExecutorTest {
 
         verify(equipment).onRightClick();
     }
+
+    @Test
+    @DisplayName("handleSwapFromAction does nothing and returns true when given player is no GamePlayer")
+    void handleSwapFromAction_unknownGamePlayer() {
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
+
+        boolean performAction = actionExecutor.handleSwapFromAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+    }
+
+    @Test
+    @DisplayName("handleSwapFromAction does nothing and returns true when no Equipment matches with GamePlayer and ItemStack")
+    void handleSwapFromAction_unknownEquipment() {
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
+
+        boolean performAction = actionExecutor.handleSwapFromAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+    }
+
+    @Test
+    @DisplayName("handleSwapFromAction does nothing and returns true when Equipment holder does not equal GamePlayer")
+    void handleSwapFromAction_differentHolder() {
+        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(otherHolder);
+
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+
+        boolean performAction = actionExecutor.handleSwapFromAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(equipment, never()).onSwapFrom();
+    }
+
+    @Test
+    @DisplayName("handleSwapFromAction calls change from action on Equipment and returns true")
+    void handleSwapFromAction_matchingEquipment() {
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(gamePlayer);
+
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+
+        boolean performAction = actionExecutor.handleSwapFromAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(equipment).onSwapFrom();
+    }
+
+    @Test
+    @DisplayName("handleSwapToAction does nothing and returns true when given player is no GamePlayer")
+    void handleSwapToAction_unknownGamePlayer() {
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
+
+        boolean performAction = actionExecutor.handleSwapToAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+    }
+
+    @Test
+    @DisplayName("handleSwapToAction does nothing and returns true when no Equipment matches with GamePlayer and ItemStack")
+    void handleSwapToAction_unknownEquipment() {
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
+
+        boolean performAction = actionExecutor.handleSwapToAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+    }
+
+    @Test
+    @DisplayName("handleSwapToAction does nothing and returns true when Equipment holder does not equal GamePlayer")
+    void handleSwapToAction_differentHolder() {
+        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(otherHolder);
+
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+
+        boolean performAction = actionExecutor.handleSwapToAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(equipment, never()).onSwapTo();
+    }
+
+    @Test
+    @DisplayName("handleSwapToAction calls change to action on Equipment and returns true")
+    void handleSwapToAction_matchingEquipment() {
+        Equipment equipment = mock(Equipment.class);
+        when(equipment.getHolder()).thenReturn(gamePlayer);
+
+        when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+
+        boolean performAction = actionExecutor.handleSwapToAction(player, ITEM_STACK);
+
+        assertThat(performAction).isTrue();
+
+        verify(equipment).onSwapTo();
+    }
 }

@@ -102,11 +102,25 @@ public class EquipmentActionExecutor implements ActionExecutor {
 
     @Override
     public boolean handleSwapFromAction(Player player, ItemStack swappedItem) {
+        Equipment equipment = this.getAssignedEquipment(player, swappedItem);
+
+        if (equipment == null) {
+            return true;
+        }
+
+        equipment.onSwapFrom();
         return true;
     }
 
     @Override
     public boolean handleSwapToAction(Player player, ItemStack swappedItem) {
+        Equipment equipment = this.getAssignedEquipment(player, swappedItem);
+
+        if (equipment == null) {
+            return true;
+        }
+
+        equipment.onSwapTo();
         return true;
     }
 
