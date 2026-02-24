@@ -396,7 +396,7 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handleSwapFromAction calls change from action on Equipment and returns true")
+    @DisplayName("handleSwapFromAction calls swap from action on Equipment and returns true")
     void handleSwapFromAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
         when(equipment.getHolder()).thenReturn(gamePlayer);
@@ -451,7 +451,7 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handleSwapToAction calls change to action on Equipment and returns true")
+    @DisplayName("handleSwapToAction calls swap to action on Equipment and returns true")
     void handleSwapToAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
         when(equipment.getHolder()).thenReturn(gamePlayer);

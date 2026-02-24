@@ -45,6 +45,15 @@ public interface MeleeWeaponRegistry {
     List<MeleeWeapon> getAssignedMeleeWeapons(MeleeWeaponHolder holder);
 
     /**
+     * Gets the unassigned melee weapon that corresponds with a given item stack. The returned optional will be empty
+     * when no matching melee weapon was found.
+     *
+     * @param itemStack the corresponding item stack
+     * @return          an optional containing the matching melee weapon or empty when not found
+     */
+    Optional<MeleeWeapon> getUnassignedMeleeWeapon(ItemStack itemStack);
+
+    /**
      * Registers an unassigned melee weapon to the registry.
      *
      * @param meleeWeapon the melee weapon to be registered

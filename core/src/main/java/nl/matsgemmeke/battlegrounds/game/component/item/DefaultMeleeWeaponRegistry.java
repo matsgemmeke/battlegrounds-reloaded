@@ -60,6 +60,13 @@ public class DefaultMeleeWeaponRegistry implements MeleeWeaponRegistry {
     }
 
     @Override
+    public Optional<MeleeWeapon> getUnassignedMeleeWeapon(ItemStack itemStack) {
+        return unassignedMeleeWeapons.stream()
+                .filter(meleeWeapon -> meleeWeapon.isMatching(itemStack))
+                .findFirst();
+    }
+
+    @Override
     public void register(MeleeWeapon meleeWeapon) {
         unassignedMeleeWeapons.add(meleeWeapon);
     }

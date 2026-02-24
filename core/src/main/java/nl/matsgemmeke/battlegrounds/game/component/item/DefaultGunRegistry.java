@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.game.component.item;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,9 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class DefaultGunRegistry implements GunRegistry {
 
-    @NotNull
     private final ConcurrentMap<GunHolder, List<Gun>> assignedGuns;
-    @NotNull
     private final List<Gun> unassignedGuns;
 
     public DefaultGunRegistry() {
@@ -24,6 +21,7 @@ public class DefaultGunRegistry implements GunRegistry {
         this.unassignedGuns = new ArrayList<>();
     }
 
+    @Override
     public void assign(Gun gun, GunHolder holder) {
         if (!unassignedGuns.contains(gun)) {
             return;
@@ -33,6 +31,7 @@ public class DefaultGunRegistry implements GunRegistry {
         assignedGuns.computeIfAbsent(holder, h -> new ArrayList<>()).add(gun);
     }
 
+    @Override
     public void unassign(Gun gun) {
         GunHolder holder = gun.getHolder();
 
@@ -44,6 +43,7 @@ public class DefaultGunRegistry implements GunRegistry {
         unassignedGuns.add(gun);
     }
 
+    @Override
     public Optional<Gun> getAssignedGun(GunHolder holder, ItemStack itemStack) {
         if (!assignedGuns.containsKey(holder)) {
             return Optional.empty();
@@ -58,10 +58,12 @@ public class DefaultGunRegistry implements GunRegistry {
         return Optional.empty();
     }
 
+    @Override
     public List<Gun> getAssignedGuns(GunHolder holder) {
         return assignedGuns.getOrDefault(holder, Collections.emptyList());
     }
 
+    @Override
     public Optional<Gun> getUnassignedGun(ItemStack itemStack) {
         for (Gun gun : unassignedGuns) {
             if (gun.isMatching(itemStack)) {
@@ -72,10 +74,12 @@ public class DefaultGunRegistry implements GunRegistry {
         return Optional.empty();
     }
 
+    @Override
     public void register(Gun gun) {
         unassignedGuns.add(gun);
     }
 
+    @Override
     public void register(Gun gun, GunHolder holder) {
         assignedGuns.computeIfAbsent(holder, h -> new ArrayList<>()).add(gun);
     }

@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -117,6 +118,34 @@ class DefaultMeleeWeaponRegistryTest {
 
         meleeWeaponRegistry.register(meleeWeapon, holder);
         Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getAssignedMeleeWeapon(holder, itemStack);
+
+        assertThat(meleeWeaponOptional).hasValue(meleeWeapon);
+    }
+
+    @Test
+    @DisplayName("getUnassignedMeleeWeapon returns empty optional when no unassigned melee weapon matches given item stack")
+    void getUnassignedMeleeWeapon_noMatchingMeleeWeapon() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
+        when(meleeWeapon.isMatching(itemStack)).thenReturn(false);
+
+        meleeWeaponRegistry.register(meleeWeapon);
+        Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack);
+
+        assertThat(meleeWeaponOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getUnassignedMeleeWeapon returns optional with matching unassigned melee weapon")
+    void getUnassignedMeleeWeapon_matchingMeleeWeapon() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+
+        MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
+        when(meleeWeapon.isMatching(itemStack)).thenReturn(true);
+
+        meleeWeaponRegistry.register(meleeWeapon);
+        Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack);
 
         assertThat(meleeWeaponOptional).hasValue(meleeWeapon);
     }

@@ -163,7 +163,7 @@ class DefaultEquipmentRegistryTest {
 
     @Test
     @DisplayName("getUnassignedEquipment returns empty optional when no unassigned equipment matches given item stack")
-    void getUnassignedEquipment_noMatch() {
+    void getUnassignedEquipment_noMatchingEquipment() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Equipment equipment = mock(Equipment.class);
@@ -177,7 +177,7 @@ class DefaultEquipmentRegistryTest {
 
     @Test
     @DisplayName("getUnassignedEquipment returns optional with matching unassigned equipment")
-    void getUnassignedGunReturnsOptionalWithMatchingUnassignedGun() {
+    void getUnassignedEquipment_matchingEquipment() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Equipment equipment = mock(Equipment.class);
