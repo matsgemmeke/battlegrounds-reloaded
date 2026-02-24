@@ -18,8 +18,8 @@ items:
       - HIDE_ATTRIBUTES
       - HIDE_UNBREAKABLE
     data:
-      weapon-id:
-        key: weapon-id
+      weapon-name:
+        key: weapon-name
         type: STRING
         value: Combat Knife
       action-executor-id:

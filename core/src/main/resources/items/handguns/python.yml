@@ -18,8 +18,8 @@ item:
     - HIDE_ATTRIBUTES
     - HIDE_UNBREAKABLE
   data:
-    weapon-id:
-      key: weapon-id
+    weapon-name:
+      key: weapon-name
       type: STRING
       value: Python
     action-executor-id:
