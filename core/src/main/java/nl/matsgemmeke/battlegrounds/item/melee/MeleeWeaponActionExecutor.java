@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class MeleeWeaponActionExecutor implements ActionExecutor {
 
+    private static final String WEAPON_NAME_KEY = "weapon-name";
+
     private final MeleeWeaponRegistry meleeWeaponRegistry;
     private final PlayerRegistry playerRegistry;
 
@@ -52,8 +54,8 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
             return true;
         }
 
-        meleeWeapon.onDrop();
         meleeWeaponRegistry.unassign(meleeWeapon);
+        meleeWeapon.onDrop();
         return true;
     }
 
@@ -77,15 +79,34 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
             return true;
         }
 
-        MeleeWeapon meleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, pickupItem).orElse(null);
+        MeleeWeapon meleeWeapon = meleeWeaponRegistry.getUnassignedMeleeWeapon(pickupItem).orElse(null);
 
-        if (meleeWeapon == null || meleeWeapon.getHolder().orElse(null) != gamePlayer) {
-            return true;
+        // Check if the picked up item is a complete melee weapon, or a single projectile
+        if (meleeWeapon != null) {
+            System.out.println("item stack is picked up, belongs to an unassigned melee weapon");
+            this.handlePickupItemCompleteMeleeWeapon(gamePlayer, meleeWeapon);
+        } else {
+
         }
 
-        meleeWeapon.onPickUp(gamePlayer);
-        meleeWeaponRegistry.assign(meleeWeapon, gamePlayer);
         return true;
+    }
+
+    private void handlePickupItemCompleteMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
+        MeleeWeapon existingMeleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer).stream()
+                .filter(m -> m.getName().equals(meleeWeapon.getName()))
+                .findFirst()
+                .orElse(null);
+
+        if (existingMeleeWeapon != null) {
+            int totalResourceAmount = meleeWeapon.getResourceContainer().getLoadedAmount() + meleeWeapon.getResourceContainer().getReserveAmount();
+            int existingWeaponReserveAmount = existingMeleeWeapon.getResourceContainer().getReserveAmount();
+
+            existingMeleeWeapon.getResourceContainer().setReserveAmount(existingWeaponReserveAmount + totalResourceAmount);
+            existingMeleeWeapon.update();
+        } else {
+
+        }
     }
 
     @Override

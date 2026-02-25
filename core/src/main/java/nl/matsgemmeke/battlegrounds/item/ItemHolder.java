@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item;
 
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +9,7 @@ import java.util.Optional;
 /**
  * Represents an entity that is capable of holding and operating a {@link Item}.
  */
-public interface ItemHolder extends GameEntity {
+public interface ItemHolder {
 
     /**
      * Gets the {@link ItemStack} that the item holder is holding.
