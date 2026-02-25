@@ -30,13 +30,6 @@ public interface ItemHolder extends GameEntity {
     Optional<Integer> getItemSlot(@NotNull Matchable item);
 
     /**
-     * Removes an {@link ItemStack} from the holder.
-     *
-     * @param itemStack the item stack to remove
-     */
-    void removeItem(@NotNull ItemStack itemStack);
-
-    /**
      * Sets the {@link ItemStack} that the item holder is holding.
      *
      * @param itemStack the item stack
