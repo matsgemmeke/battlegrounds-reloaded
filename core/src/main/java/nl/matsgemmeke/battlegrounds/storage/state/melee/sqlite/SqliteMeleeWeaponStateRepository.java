@@ -60,13 +60,15 @@ public class SqliteMeleeWeaponStateRepository implements MeleeWeaponStateReposit
     private MeleeWeaponState convertMeleeWeaponToMeleeWeaponState(MeleeWeapon meleeWeapon) {
         UUID playerUuid = UUID.fromString(meleeWeapon.getPlayerUuid());
 
-        return new MeleeWeaponState(playerUuid, meleeWeapon.getMeleeWeaponName(), meleeWeapon.getItemSlot());
+        return new MeleeWeaponState(playerUuid, meleeWeapon.getMeleeWeaponName(), meleeWeapon.getLoadedAmount(), meleeWeapon.getReserveAmount(), meleeWeapon.getItemSlot());
     }
 
     private MeleeWeapon convertMeleeWeaponStateToMeleeWeapon(MeleeWeaponState meleeWeaponState) {
         MeleeWeapon meleeWeapon = new MeleeWeapon();
         meleeWeapon.setPlayerUuid(meleeWeaponState.playerUuid().toString());
         meleeWeapon.setMeleeWeaponName(meleeWeaponState.meleeWeaponName());
+        meleeWeapon.setLoadedAmount(meleeWeaponState.loadedAmount());
+        meleeWeapon.setReserveAmount(meleeWeaponState.reserveAmount());
         meleeWeapon.setItemSlot(meleeWeaponState.itemSlot());
         return meleeWeapon;
     }

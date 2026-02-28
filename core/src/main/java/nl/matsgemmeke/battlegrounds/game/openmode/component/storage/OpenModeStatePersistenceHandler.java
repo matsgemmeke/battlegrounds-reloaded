@@ -154,43 +154,48 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     }
 
     private Optional<GunState> convertToGunState(GamePlayer gamePlayer, Gun gun) {
-        UUID uniqueId = gamePlayer.getUniqueId();
-        String gunName = gun.getName();
-        int magazineAmmo = gun.getResourceContainer().getLoadedAmount();
-        int reserveAmmo = gun.getResourceContainer().getReserveAmount();
         ItemStack itemStack = gun.getItemStack();
 
         if (itemStack == null) {
             return Optional.empty();
         }
 
+        UUID uniqueId = gamePlayer.getUniqueId();
+        String gunName = gun.getName();
+        int magazineAmmo = gun.getResourceContainer().getLoadedAmount();
+        int reserveAmmo = gun.getResourceContainer().getReserveAmount();
+
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(gun);
         return itemSlot.map(itemSlotValue -> new GunState(uniqueId, gunName, magazineAmmo, reserveAmmo, itemSlotValue));
     }
 
     private Optional<EquipmentState> convertToEquipmentState(GamePlayer gamePlayer, Equipment equipment) {
-        UUID uniqueId = gamePlayer.getUniqueId();
-        String equipmentName = equipment.getName();
         ItemStack itemStack = equipment.getItemStack();
 
         if (itemStack == null) {
             return Optional.empty();
         }
 
+        UUID uniqueId = gamePlayer.getUniqueId();
+        String equipmentName = equipment.getName();
+
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(equipment);
         return itemSlot.map(integer -> new EquipmentState(uniqueId, equipmentName, integer));
     }
 
     private Optional<MeleeWeaponState> convertToMeleeWeaponState(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
-        UUID uniqueId = gamePlayer.getUniqueId();
-        String equipmentName = meleeWeapon.getName();
         ItemStack itemStack = meleeWeapon.getItemStack();
 
         if (itemStack == null) {
             return Optional.empty();
         }
 
+        UUID uniqueId = gamePlayer.getUniqueId();
+        String equipmentName = meleeWeapon.getName();
+        int loadedAmount = meleeWeapon.getResourceContainer().getLoadedAmount();
+        int reserveAmount = meleeWeapon.getResourceContainer().getReserveAmount();
+
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(meleeWeapon);
-        return itemSlot.map(integer -> new MeleeWeaponState(uniqueId, equipmentName, integer));
+        return itemSlot.map(itemSlotValue -> new MeleeWeaponState(uniqueId, equipmentName, loadedAmount, reserveAmount, itemSlotValue));
     }
 }

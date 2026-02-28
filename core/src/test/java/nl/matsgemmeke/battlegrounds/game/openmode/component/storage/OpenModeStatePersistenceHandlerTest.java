@@ -19,6 +19,7 @@ import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponState;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -38,13 +39,18 @@ import static org.mockito.Mockito.*;
 class OpenModeStatePersistenceHandlerTest {
 
     private static final UUID PLAYER_UUID = UUID.randomUUID();
+
     private static final String GUN_NAME = "Test Gun";
     private static final int GUN_MAGAZINE_AMMO = 10;
     private static final int GUN_RESERVE_AMMO = 20;
     private static final int GUN_ITEM_SLOT = 5;
+
     private static final String EQUIPMENT_NAME = "Test Equipment";
     private static final int EQUIPMENT_ITEM_SLOT = 6;
+
     private static final String MELEE_WEAPON_NAME = "Test Melee Weapon";
+    private static final int MELEE_WEAPON_LOADED_AMOUNT = 1;
+    private static final int MELEE_WEAPON_RESERVE_AMOUNT = 2;
     private static final int MELEE_WEAPON_ITEM_SLOT = 7;
 
     @Mock
@@ -65,10 +71,11 @@ class OpenModeStatePersistenceHandlerTest {
     private OpenModeStatePersistenceHandler statePersistenceHandler;
 
     @Test
-    void loadPlayerStateAssignsItemsToGamePlayerBasedOnSavedState() {
+    @DisplayName("loadPlayerState assigns items to GamePlayer based on saved state")
+    void loadPlayerState_successful() {
         GunState gunState = new GunState(PLAYER_UUID, GUN_NAME, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_NAME, EQUIPMENT_ITEM_SLOT);
-        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, MELEE_WEAPON_NAME, MELEE_WEAPON_ITEM_SLOT);
+        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, MELEE_WEAPON_NAME, MELEE_WEAPON_LOADED_AMOUNT, MELEE_WEAPON_RESERVE_AMOUNT, MELEE_WEAPON_ITEM_SLOT);
         PlayerState gamePlayerState = new PlayerState(PLAYER_UUID, List.of(gunState), List.of(equipmentState), List.of(meleeWeaponState));
         ResourceContainer resourceContainer = new ResourceContainer(0, 0, 0, 0);
         ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
@@ -112,10 +119,11 @@ class OpenModeStatePersistenceHandlerTest {
     }
 
     @Test
-    void loadPlayerStateLogsErrorMessagesWhenLoadingStatesWhoseItemNamesDoNotExist() {
+    @DisplayName("loadPlayerState logs error when loading states whose item names do not exist")
+    void loadPlayerState_itemNamesDoNotExist() {
         GunState gunState = new GunState(PLAYER_UUID, GUN_NAME, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, GUN_ITEM_SLOT);
         EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_NAME, EQUIPMENT_ITEM_SLOT);
-        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, MELEE_WEAPON_NAME, MELEE_WEAPON_ITEM_SLOT);
+        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, MELEE_WEAPON_NAME, MELEE_WEAPON_LOADED_AMOUNT, MELEE_WEAPON_RESERVE_AMOUNT, MELEE_WEAPON_ITEM_SLOT);
         PlayerState playerState = new PlayerState(PLAYER_UUID, List.of(gunState), List.of(equipmentState), List.of(meleeWeaponState));
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
@@ -135,24 +143,14 @@ class OpenModeStatePersistenceHandlerTest {
     }
 
     @Test
-    void savePlayerStateLogsErrorWhenSavingCollectedDataWithItemsWithoutItemStack() {
-        ResourceContainer resourceContainer = new ResourceContainer(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
+    @DisplayName("savePlayerState does not save collected data for items without item stack")
+    void savePlayerState_itemsWithoutItemStack() {
+        Gun gun = mock(Gun.class);
+        Equipment equipment = mock(Equipment.class);
+        MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
-
-        Gun gun = mock(Gun.class);
-        when(gun.getName()).thenReturn(GUN_NAME);
-        when(gun.getItemStack()).thenReturn(null);
-        when(gun.getResourceContainer()).thenReturn(resourceContainer);
-
-        Equipment equipment = mock(Equipment.class);
-        when(equipment.getName()).thenReturn(EQUIPMENT_NAME);
-        when(equipment.getItemStack()).thenReturn(null);
-
-        MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getName()).thenReturn(MELEE_WEAPON_NAME);
-        when(meleeWeapon.getItemStack()).thenReturn(null);
 
         when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of(gun));
         when(equipmentRegistry.getAssignedEquipmentList(gamePlayer)).thenReturn(List.of(equipment));
@@ -172,8 +170,10 @@ class OpenModeStatePersistenceHandlerTest {
     }
 
     @Test
-    void saveStateSavesCollectedDataWithCorrespondingItemSlotsToStateStorage() {
-        ResourceContainer resourceContainer = new ResourceContainer(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
+    @DisplayName("saveState saves collected data with corresponding item slots to state storage")
+    void saveState_itemsWithItemStack() {
+        ResourceContainer gunResourceContainer = new ResourceContainer(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
+        ResourceContainer meleeWeaponResourceContainer = new ResourceContainer(MELEE_WEAPON_LOADED_AMOUNT, MELEE_WEAPON_LOADED_AMOUNT, MELEE_WEAPON_RESERVE_AMOUNT, Integer.MAX_VALUE);
         ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
         ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
         ItemStack meleeWeaponItemStack = new ItemStack(Material.IRON_SWORD);
@@ -181,7 +181,7 @@ class OpenModeStatePersistenceHandlerTest {
         Gun gun = mock(Gun.class);
         when(gun.getName()).thenReturn(GUN_NAME);
         when(gun.getItemStack()).thenReturn(gunItemStack);
-        when(gun.getResourceContainer()).thenReturn(resourceContainer);
+        when(gun.getResourceContainer()).thenReturn(gunResourceContainer);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.getName()).thenReturn(EQUIPMENT_NAME);
@@ -190,6 +190,7 @@ class OpenModeStatePersistenceHandlerTest {
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
         when(meleeWeapon.getName()).thenReturn(MELEE_WEAPON_NAME);
         when(meleeWeapon.getItemStack()).thenReturn(meleeWeaponItemStack);
+        when(meleeWeapon.getResourceContainer()).thenReturn(meleeWeaponResourceContainer);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
@@ -227,7 +228,8 @@ class OpenModeStatePersistenceHandlerTest {
     }
 
     @Test
-    void saveStateLogsErrorMessageWhenFailingToSaveAnyPlayerState() {
+    @DisplayName("saveState logs error message when failing to save any player state")
+    void saveState_error() {
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
         when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
 

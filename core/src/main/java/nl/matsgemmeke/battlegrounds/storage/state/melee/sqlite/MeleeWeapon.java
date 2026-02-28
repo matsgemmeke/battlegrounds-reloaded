@@ -12,6 +12,10 @@ public class MeleeWeapon {
     private String playerUuid;
     @DatabaseField(columnName = "melee_weapon_name", canBeNull = false)
     private String meleeWeaponName;
+    @DatabaseField(columnName = "loaded_amount", canBeNull = false, defaultValue = "0")
+    private int loadedAmount;
+    @DatabaseField(columnName = "reserve_amount", canBeNull = false, defaultValue = "0")
+    private int reserveAmount;
     @DatabaseField(columnName = "item_slot", canBeNull = false, defaultValue = "0")
     private int itemSlot;
 
@@ -40,6 +44,22 @@ public class MeleeWeapon {
 
     public void setMeleeWeaponName(String meleeWeaponName) {
         this.meleeWeaponName = meleeWeaponName;
+    }
+
+    public int getLoadedAmount() {
+        return loadedAmount;
+    }
+
+    public void setLoadedAmount(int loadedAmount) {
+        this.loadedAmount = loadedAmount;
+    }
+
+    public int getReserveAmount() {
+        return reserveAmount;
+    }
+
+    public void setReserveAmount(int reserveAmount) {
+        this.reserveAmount = reserveAmount;
     }
 
     public int getItemSlot() {

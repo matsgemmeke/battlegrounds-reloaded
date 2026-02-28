@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponState;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponStateRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,7 +34,8 @@ class PlayerStateStorageTest {
     private PlayerStateStorage playerStateStorage;
 
     @Test
-    void deletePlayerStateDeletesPlayerDataFromRepositories() {
+    @DisplayName("deletePlayerState delete player data from repositories")
+    void deletePlayerState_deletesData() {
         playerStateStorage.deletePlayerState(PLAYER_UUID);
 
         verify(gunStateRepository).deleteByPlayerUuid(PLAYER_UUID);
@@ -42,10 +44,11 @@ class PlayerStateStorageTest {
     }
 
     @Test
-    void getPlayerStateReturnsPlayerStateWithDataFromRepositories() {
+    @DisplayName("getPlayerState returns PlayerState with data from repositories")
+    void getPlayerState_returnsPlayerState() {
         GunState gunState = new GunState(PLAYER_UUID, "TEST_GUN", 10, 20, 5);
         EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, "TEST_EQUIPMENT", 6);
-        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, "TEST_MELEE_WEAPON", 7);
+        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, "TEST_MELEE_WEAPON", 1, 2, 7);
 
         when(gunStateRepository.findByPlayerUuid(PLAYER_UUID)).thenReturn(List.of(gunState));
         when(equipmentStateRepository.findByPlayerUuid(PLAYER_UUID)).thenReturn(List.of(equipmentState));
@@ -59,12 +62,13 @@ class PlayerStateStorageTest {
     }
 
     @Test
-    void savePlayerStateSendsDataToCorrespondingRepositories() {
+    @DisplayName("savePlayerState sends data to corresponding repositories")
+    void savePlayerState_savesDataToRepositories() {
         GunState gunState = new GunState(PLAYER_UUID, "TEST_GUN", 10, 20, 5);
         List<GunState> gunStates = List.of(gunState);
         EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, "TEST_EQUIPMENT", 6);
         List<EquipmentState> equipmentStates = List.of(equipmentState);
-        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, "TEST_MELEE_WEAPON", 7);
+        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, "TEST_MELEE_WEAPON", 1, 2, 7);
         List<MeleeWeaponState> meleeWeaponStates = List.of(meleeWeaponState);
 
         PlayerState playerState = new PlayerState(PLAYER_UUID, gunStates, equipmentStates, meleeWeaponStates);
