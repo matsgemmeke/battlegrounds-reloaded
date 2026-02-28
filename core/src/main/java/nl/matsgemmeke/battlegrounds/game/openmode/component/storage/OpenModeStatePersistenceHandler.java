@@ -105,6 +105,8 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         }
 
         MeleeWeapon meleeWeapon = weaponCreator.createMeleeWeapon(meleeWeaponName, gamePlayer);
+        meleeWeapon.getResourceContainer().setLoadedAmount(meleeWeaponState.loadedAmount());
+        meleeWeapon.getResourceContainer().setReserveAmount(meleeWeaponState.reserveAmount());
         meleeWeapon.update();
 
         Player player = gamePlayer.getEntity();

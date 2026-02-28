@@ -77,7 +77,8 @@ class OpenModeStatePersistenceHandlerTest {
         EquipmentState equipmentState = new EquipmentState(PLAYER_UUID, EQUIPMENT_NAME, EQUIPMENT_ITEM_SLOT);
         MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, MELEE_WEAPON_NAME, MELEE_WEAPON_LOADED_AMOUNT, MELEE_WEAPON_RESERVE_AMOUNT, MELEE_WEAPON_ITEM_SLOT);
         PlayerState gamePlayerState = new PlayerState(PLAYER_UUID, List.of(gunState), List.of(equipmentState), List.of(meleeWeaponState));
-        ResourceContainer resourceContainer = new ResourceContainer(0, 0, 0, 0);
+        ResourceContainer gunResourceContainer = new ResourceContainer(0, 0, 0, 0);
+        ResourceContainer meleeWeaponResourceContainer = new ResourceContainer(0, 0, 0, 0);
         ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
         ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
         ItemStack meleeWeaponItemStack = new ItemStack(Material.IRON_SWORD);
@@ -88,13 +89,14 @@ class OpenModeStatePersistenceHandlerTest {
         when(gamePlayer.getEntity().getInventory()).thenReturn(inventory);
 
         Gun gun = mock(Gun.class);
-        when(gun.getResourceContainer()).thenReturn(resourceContainer);
+        when(gun.getResourceContainer()).thenReturn(gunResourceContainer);
         when(gun.getItemStack()).thenReturn(gunItemStack);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.getItemStack()).thenReturn(equipmentItemStack);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
+        when(meleeWeapon.getResourceContainer()).thenReturn(meleeWeaponResourceContainer);
         when(meleeWeapon.getItemStack()).thenReturn(meleeWeaponItemStack);
 
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(gamePlayerState);
@@ -107,8 +109,10 @@ class OpenModeStatePersistenceHandlerTest {
 
         statePersistenceHandler.loadPlayerState(gamePlayer);
 
-        assertThat(resourceContainer.getLoadedAmount()).isEqualTo(GUN_MAGAZINE_AMMO);
-        assertThat(resourceContainer.getReserveAmount()).isEqualTo(GUN_RESERVE_AMMO);
+        assertThat(gunResourceContainer.getLoadedAmount()).isEqualTo(GUN_MAGAZINE_AMMO);
+        assertThat(gunResourceContainer.getReserveAmount()).isEqualTo(GUN_RESERVE_AMMO);
+        assertThat(meleeWeaponResourceContainer.getLoadedAmount()).isEqualTo(MELEE_WEAPON_LOADED_AMOUNT);
+        assertThat(meleeWeaponResourceContainer.getReserveAmount()).isEqualTo(MELEE_WEAPON_RESERVE_AMOUNT);
 
         verify(inventory).setItem(GUN_ITEM_SLOT, gunItemStack);
         verify(inventory).setItem(EQUIPMENT_ITEM_SLOT, equipmentItemStack);
