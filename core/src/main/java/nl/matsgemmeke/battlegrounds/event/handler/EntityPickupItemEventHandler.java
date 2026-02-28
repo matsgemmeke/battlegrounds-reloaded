@@ -9,7 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -56,8 +57,12 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
             return;
         }
 
-        boolean performAction = actionExecutor.handlePickupItemAction(player, itemStack);
+        PickupActionResult result = actionExecutor.handlePickupAction(player, itemStack);
 
-        event.setCancelled(event.isCancelled() || !performAction);
+        if (result.removeItem()) {
+            event.getItem().remove();
+        }
+
+        event.setCancelled(event.isCancelled() || !result.performAction());
     }
 }

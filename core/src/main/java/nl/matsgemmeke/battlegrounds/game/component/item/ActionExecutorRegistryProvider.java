@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.component.item;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import jakarta.inject.Named;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 
 public class ActionExecutorRegistryProvider implements Provider<ActionExecutorRegistry> {

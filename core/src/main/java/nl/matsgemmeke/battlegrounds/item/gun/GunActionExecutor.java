@@ -4,11 +4,14 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class GunActionExecutor implements ActionExecutor {
+
+    private static final PickupActionResult DEFAULT_PICKUP_ACTION_RESULT = new PickupActionResult(true, false);
 
     private final GunRegistry gunRegistry;
     private final PlayerRegistry playerRegistry;
@@ -93,23 +96,23 @@ public class GunActionExecutor implements ActionExecutor {
     }
 
     @Override
-    public boolean handlePickupItemAction(Player player, ItemStack pickupItem) {
+    public PickupActionResult handlePickupAction(Player player, ItemStack pickupItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
-            return true;
+            return DEFAULT_PICKUP_ACTION_RESULT;
         }
 
         Gun gun = gunRegistry.getUnassignedGun(pickupItem).orElse(null);
 
         if (gun == null) {
-            return true;
+            return DEFAULT_PICKUP_ACTION_RESULT;
         }
 
+        gunRegistry.assign(gun, gamePlayer);
         gun.onPickUp(gamePlayer);
 
-        gunRegistry.assign(gun, gamePlayer);
-        return true;
+        return DEFAULT_PICKUP_ACTION_RESULT;
     }
 
     @Override

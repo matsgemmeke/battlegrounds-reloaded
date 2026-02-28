@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item;
+package nl.matsgemmeke.battlegrounds.item.action;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -47,11 +47,11 @@ public interface ActionExecutor {
     /**
      * Handles logic for when a player picks up an item.
      *
-     * @param player the player
+     * @param player     the player
      * @param pickupItem the item stack that was picked up
-     * @return whether the action should be performed
+     * @return           the pickup action result
      */
-    boolean handlePickupItemAction(Player player, ItemStack pickupItem);
+    PickupActionResult handlePickupAction(Player player, ItemStack pickupItem);
 
     /**
      * Handles logic for when a player right-clicks an item.

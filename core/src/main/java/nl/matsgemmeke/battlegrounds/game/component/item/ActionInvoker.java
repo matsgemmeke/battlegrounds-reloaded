@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
+import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -265,37 +266,40 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handlePickupItemAction does nothing and returns true when given player is no GamePlayer")
-    void handlePickupItemAction_unknownPlayer() {
+    @DisplayName("handlePickupAction does nothing and returns true when given player is no GamePlayer")
+    void handlePickupAction_unknownPlayer() {
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
 
-        boolean performAction = actionExecutor.handlePickupItemAction(player, ITEM_STACK);
+        PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
 
-        assertThat(performAction).isTrue();
+        assertThat(result.performAction()).isTrue();
+        assertThat(result.removeItem()).isFalse();
     }
 
     @Test
-    @DisplayName("handlePickupItemAction does nothing and returns true when no Equipment matches with GamePlayer and ItemStack")
-    void handlePickupItemAction_unknownEquipment() {
+    @DisplayName("handlePickupAction does nothing and returns true when no Equipment matches with GamePlayer and ItemStack")
+    void handlePickupAction_unknownEquipment() {
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getUnassignedEquipment(ITEM_STACK)).thenReturn(Optional.empty());
 
-        boolean performAction = actionExecutor.handlePickupItemAction(player, ITEM_STACK);
+        PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
 
-        assertThat(performAction).isTrue();
+        assertThat(result.performAction()).isTrue();
+        assertThat(result.removeItem()).isFalse();
     }
 
     @Test
     @DisplayName("handlePickupAction calls change to action on Equipment and returns true")
-    void handlePickupItemAction_matchingEquipment() {
+    void handlePickupAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getUnassignedEquipment(ITEM_STACK)).thenReturn(Optional.of(equipment));
 
-        boolean performAction = actionExecutor.handlePickupItemAction(player, ITEM_STACK);
+        PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
 
-        assertThat(performAction).isTrue();
+        assertThat(result.performAction()).isTrue();
+        assertThat(result.removeItem()).isFalse();
 
         verify(equipmentRegistry).assign(equipment, gamePlayer);
         verify(equipment).onPickUp(gamePlayer);

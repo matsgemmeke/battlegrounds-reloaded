@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowPerformer;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -195,7 +196,14 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         }
 
         Map<String, Object> values = this.createTemplateValues();
-        itemStack = displayItemTemplate.createItemStack(values);
+
+        if (itemStack == null) {
+            itemStack = displayItemTemplate.createItemStack(values);
+        } else {
+            ItemStack itemStack = Bukkit.getPlayer("Mats9799").getInventory().getItemInMainHand();
+            displayItemTemplate.apply(itemStack, values);
+        }
+
         return true;
     }
 

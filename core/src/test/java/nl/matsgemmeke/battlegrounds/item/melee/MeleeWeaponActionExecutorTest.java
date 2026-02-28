@@ -3,10 +3,12 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
+import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -262,28 +264,33 @@ class MeleeWeaponActionExecutorTest {
     }
 
     @Test
-    void handlePickupItemActionReturnsTrueAndDoesNotPerformActionWhenPlayerUniqueIdIsNotRegistered() {
+    @DisplayName("handlePickupAction does not perform pickup action when player is not registered")
+    void handlePickupAction_playerNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        boolean performAction = actionExecutor.handlePickupItemAction(player, ITEM_STACK);
+        PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
 
-        assertThat(performAction).isTrue();
+        assertThat(result.performAction()).isTrue();
+        assertThat(result.removeItem()).isFalse();
     }
 
     @Test
-    void handlePickupItemActionReturnsTrueAndDoesNotPerformActionWhenItemStackIsNoRegisteredMeleeWeapon() {
+    @DisplayName("handlePickupAction does not perform pickup action when item stack is not a registered melee weapon")
+    void handlePickupAction_meleeWeaponNotRegistered() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        boolean performAction = actionExecutor.handlePickupItemAction(player, ITEM_STACK);
+        PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
 
-        assertThat(performAction).isTrue();
+        assertThat(result.performAction()).isTrue();
+        assertThat(result.removeItem()).isFalse();
     }
 
     @Test
-    void handlePickupItemActionReturnsTrueAndDoesNotPerformActionWhenMeleeWeaponHolderDoesNotMatchWithGamePlayer() {
+    @DisplayName("handlePickupAction does not perform pickup action when melee weapon holder does not match with GamePlayer")
+    void handlePickupAction_holderDoesNotMatch() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
@@ -292,16 +299,18 @@ class MeleeWeaponActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
 
-        boolean performAction = actionExecutor.handlePickupItemAction(player, ITEM_STACK);
+        PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
 
-        assertThat(performAction).isTrue();
+        assertThat(result.performAction()).isTrue();
+        assertThat(result.removeItem()).isFalse();
 
         verify(meleeWeapon, never()).onPickUp(any(MeleeWeaponHolder.class));
         verify(meleeWeaponRegistry, never()).assign(any(MeleeWeapon.class), any(MeleeWeaponHolder.class));
     }
 
     @Test
-    void handlePickupItemActionReturnsTrueAndPerformsAction() {
+    @DisplayName("handlePickupAction performs pickup action")
+    void handlePickupAction_performsAction() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
@@ -310,9 +319,10 @@ class MeleeWeaponActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
 
-        boolean performAction = actionExecutor.handlePickupItemAction(player, ITEM_STACK);
+        PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
 
-        assertThat(performAction).isTrue();
+        assertThat(result.performAction()).isTrue();
+        assertThat(result.removeItem()).isFalse();
 
         verify(meleeWeapon).onPickUp(gamePlayer);
         verify(meleeWeaponRegistry).assign(meleeWeapon, gamePlayer);

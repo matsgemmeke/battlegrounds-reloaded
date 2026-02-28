@@ -4,7 +4,8 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -72,27 +73,26 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
     }
 
     @Override
-    public boolean handlePickupItemAction(Player player, ItemStack pickupItem) {
+    public PickupActionResult handlePickupAction(Player player, ItemStack pickupItem) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
-            return true;
+            return new PickupActionResult(true, false);
         }
 
         MeleeWeapon meleeWeapon = meleeWeaponRegistry.getUnassignedMeleeWeapon(pickupItem).orElse(null);
 
         // Check if the picked up item is a complete melee weapon, or a single projectile
         if (meleeWeapon != null) {
-            System.out.println("item stack is picked up, belongs to an unassigned melee weapon");
-            this.handlePickupItemCompleteMeleeWeapon(gamePlayer, meleeWeapon);
+            return this.handlePickupItemCompleteMeleeWeapon(gamePlayer, meleeWeapon);
         } else {
 
         }
 
-        return true;
+        return new PickupActionResult(true, false);
     }
 
-    private void handlePickupItemCompleteMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
+    private PickupActionResult handlePickupItemCompleteMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
         MeleeWeapon existingMeleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer).stream()
                 .filter(m -> m.getName().equals(meleeWeapon.getName()))
                 .findFirst()
@@ -104,9 +104,13 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
 
             existingMeleeWeapon.getResourceContainer().setReserveAmount(existingWeaponReserveAmount + totalResourceAmount);
             existingMeleeWeapon.update();
+
+            return new PickupActionResult(false, true);
         } else {
 
         }
+
+        return new PickupActionResult(true, false);
     }
 
     @Override
