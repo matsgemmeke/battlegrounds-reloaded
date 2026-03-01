@@ -34,4 +34,12 @@ public interface ItemHolder {
      * @param itemStack the item stack
      */
     void setHeldItem(@Nullable ItemStack itemStack);
+
+    /**
+     * Sets a given item into the holder's inventory with the given item slot.
+     *
+     * @param slot      the item slot number
+     * @param itemStack the item stack
+     */
+    void setItem(int slot, ItemStack itemStack);
 }

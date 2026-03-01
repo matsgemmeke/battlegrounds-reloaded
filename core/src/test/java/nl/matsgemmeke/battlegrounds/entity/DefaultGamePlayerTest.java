@@ -42,6 +42,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DefaultGamePlayerTest {
 
+    private static final int ITEM_SLOT = 5;
+    private static final ItemStack ITEM_STACK = new ItemStack(Material.STONE);
+
     @Mock
     private InternalsProvider internals;
     @Mock
@@ -433,5 +436,17 @@ class DefaultGamePlayerTest {
         assertThat(result.getX()).isEqualTo(eyeLocation.getX());
         assertThat(result.getY()).isNotEqualTo(eyeLocation.getY());
         assertThat(result.getZ()).isEqualTo(eyeLocation.getZ());
+    }
+
+    @Test
+    @DisplayName("setItem sets given item stack in the player's inventory at the given slot")
+    void setItem_setsItemInPlayerInventory() {
+        PlayerInventory playerInventory = mock(PlayerInventory.class);
+
+        when(player.getInventory()).thenReturn(playerInventory);
+
+        gamePlayer.setItem(ITEM_SLOT, ITEM_STACK);
+
+        verify(playerInventory).setItem(ITEM_SLOT, ITEM_STACK);
     }
 }

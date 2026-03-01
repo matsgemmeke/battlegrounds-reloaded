@@ -271,4 +271,9 @@ public class DefaultGamePlayer implements GamePlayer {
     public void removeItem(@NotNull ItemStack itemStack) {
         player.getInventory().removeItem(itemStack);
     }
+
+    @Override
+    public void setItem(int slot, ItemStack itemStack) {
+        player.getInventory().setItem(slot, itemStack);
+    }
 }

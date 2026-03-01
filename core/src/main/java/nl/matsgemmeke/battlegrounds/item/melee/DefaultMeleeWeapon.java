@@ -196,14 +196,7 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         }
 
         Map<String, Object> values = this.createTemplateValues();
-
-        if (itemStack == null) {
-            itemStack = displayItemTemplate.createItemStack(values);
-        } else {
-            ItemStack itemStack = Bukkit.getPlayer("Mats9799").getInventory().getItemInMainHand();
-            displayItemTemplate.apply(itemStack, values);
-        }
-
+        itemStack = displayItemTemplate.createItemStack(values);
         return true;
     }
 

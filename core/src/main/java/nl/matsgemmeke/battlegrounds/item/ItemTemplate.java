@@ -53,35 +53,6 @@ public class ItemTemplate {
         return this.createItemStack(Collections.emptyMap());
     }
 
-    public void apply(ItemStack itemStack, Map<String, Object> values) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        // In case the item stack does not come with an item meta, only return the item stack as is
-        if (itemMeta == null) {
-            return;
-        }
-
-        itemMeta.setUnbreakable(unbreakable);
-
-        itemFlags.forEach(itemMeta::addItemFlags);
-
-        if (damage > 0 && itemMeta instanceof Damageable) {
-            ((Damageable) itemMeta).setDamage(damage);
-        }
-
-        if (displayNameTemplate != null) {
-            String displayName = ChatColor.translateAlternateColorCodes('&', displayNameTemplate.replace(values));
-            itemMeta.setDisplayName(displayName);
-        }
-
-        PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
-        persistentDataContainer.set(templateKey, new UUIDDataType(), templateId);
-
-        dataEntries.forEach(dataEntry -> this.setDataEntry(persistentDataContainer, dataEntry));
-
-        itemStack.setItemMeta(itemMeta);
-    }
-
     /**
      * Constructs a new {@link ItemStack} instance while using template values.
      *

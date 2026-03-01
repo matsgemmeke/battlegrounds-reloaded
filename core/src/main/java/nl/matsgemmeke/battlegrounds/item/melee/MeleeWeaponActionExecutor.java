@@ -99,18 +99,34 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
                 .orElse(null);
 
         if (existingMeleeWeapon != null) {
-            int totalResourceAmount = meleeWeapon.getResourceContainer().getLoadedAmount() + meleeWeapon.getResourceContainer().getReserveAmount();
-            int existingWeaponReserveAmount = existingMeleeWeapon.getResourceContainer().getReserveAmount();
-
-            existingMeleeWeapon.getResourceContainer().setReserveAmount(existingWeaponReserveAmount + totalResourceAmount);
-            existingMeleeWeapon.update();
-
-            return new PickupActionResult(false, true);
+            return this.resupplyExistingWeapon(gamePlayer, meleeWeapon, existingMeleeWeapon);
         } else {
 
         }
 
         return new PickupActionResult(true, false);
+    }
+
+    private PickupActionResult resupplyExistingWeapon(GamePlayer gamePlayer, MeleeWeapon pickedUpMeleeWeapon, MeleeWeapon existingMeleeWeapon) {
+        Integer slot = gamePlayer.getItemSlot(existingMeleeWeapon).orElse(null);
+
+        if (slot == null) {
+            // We have already found an assigned melee weapon to the player's name, so we don't expect this scenario
+            // to happen. If it somehow does, just treat the existing melee weapon as picked up, and do perform any
+            // logic.
+            return new PickupActionResult(false, true);
+        }
+
+        int pickedUpResourceAmount = pickedUpMeleeWeapon.getResourceContainer().getLoadedAmount() + pickedUpMeleeWeapon.getResourceContainer().getReserveAmount();
+        int existingWeaponReserveAmount = existingMeleeWeapon.getResourceContainer().getReserveAmount();
+        int updatedReserveAmount = Math.min(existingWeaponReserveAmount + pickedUpResourceAmount, existingMeleeWeapon.getResourceContainer().getMaxReserveAmount());
+
+        existingMeleeWeapon.getResourceContainer().setReserveAmount(updatedReserveAmount);
+        existingMeleeWeapon.update();
+
+        gamePlayer.setItem(slot, existingMeleeWeapon.getItemStack());
+
+        return new PickupActionResult(false, true);
     }
 
     @Override
