@@ -193,7 +193,7 @@ class MeleeWeaponActionExecutorTest {
         assertThat(performAction).isTrue();
 
         verify(meleeWeapon, never()).onDrop();
-        verify(meleeWeaponRegistry, never()).unassign(any(MeleeWeapon.class));
+        verify(meleeWeapon, never()).unassign();
     }
 
     @Test
@@ -211,7 +211,7 @@ class MeleeWeaponActionExecutorTest {
         assertThat(performAction).isTrue();
 
         verify(meleeWeapon).onDrop();
-        verify(meleeWeaponRegistry).unassign(meleeWeapon);
+        verify(meleeWeapon).unassign();
     }
 
     @Test
@@ -351,6 +351,25 @@ class MeleeWeaponActionExecutorTest {
 
         verify(existingMeleeWeapon).update();
         verify(gamePlayer).setItem(ITEM_SLOT, existingItemStack);
+    }
+
+    @Test
+    @DisplayName("handlePickupAction assigns existing melee weapon to player")
+    void handlePickupAction_assignsExistingMeleeWeapon() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
+
+        when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
+        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
+        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
+
+        PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+
+        assertThat(result.performAction()).isTrue();
+        assertThat(result.removeItem()).isFalse();
+
+        verify(meleeWeapon).assign(gamePlayer);
+        verify(meleeWeapon).onPickUp(gamePlayer);
     }
 
     @Test

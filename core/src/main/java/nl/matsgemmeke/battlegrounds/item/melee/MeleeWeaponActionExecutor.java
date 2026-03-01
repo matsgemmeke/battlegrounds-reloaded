@@ -55,8 +55,8 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
             return true;
         }
 
-        meleeWeaponRegistry.unassign(meleeWeapon);
         meleeWeapon.onDrop();
+        meleeWeapon.unassign();
         return true;
     }
 
@@ -101,10 +101,8 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
         if (existingMeleeWeapon != null) {
             return this.resupplyExistingWeapon(gamePlayer, meleeWeapon, existingMeleeWeapon);
         } else {
-
+            return this.assignMeleeWeapon(gamePlayer, meleeWeapon);
         }
-
-        return new PickupActionResult(true, false);
     }
 
     private PickupActionResult resupplyExistingWeapon(GamePlayer gamePlayer, MeleeWeapon pickedUpMeleeWeapon, MeleeWeapon existingMeleeWeapon) {
@@ -127,6 +125,13 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
         gamePlayer.setItem(slot, existingMeleeWeapon.getItemStack());
 
         return new PickupActionResult(false, true);
+    }
+
+    private PickupActionResult assignMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
+        meleeWeapon.assign(gamePlayer);
+        meleeWeapon.onPickUp(gamePlayer);
+
+        return new PickupActionResult(true, false);
     }
 
     @Override
