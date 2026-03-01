@@ -27,7 +27,7 @@ public class DefaultMeleeWeaponRegistry implements MeleeWeaponRegistry {
     @Override
     public List<MeleeWeapon> getAssignedMeleeWeapons(MeleeWeaponHolder holder) {
         return meleeWeapons.stream()
-                .filter(meleeWeapon -> meleeWeapon.getHolder().map(h -> h.equals(holder)).orElse(false))
+                .filter(meleeWeapon -> meleeWeapon.getHolder().stream().anyMatch(h -> h.equals(holder) && h.hasItem(meleeWeapon)))
                 .toList();
     }
 

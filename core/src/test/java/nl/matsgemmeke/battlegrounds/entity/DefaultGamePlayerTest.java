@@ -311,6 +311,34 @@ class DefaultGamePlayerTest {
     }
 
     @Test
+    @DisplayName("hasItem returns whether player has any item stack that matches with given item")
+    void hasItem_returnsWhetherItemMatchesWithAnyItemStack() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack[] contents = new ItemStack[] { null, itemStack, null };
+
+        Matchable item = mock(Matchable.class);
+        when(item.isMatching(itemStack)).thenReturn(true);
+
+        when(player.getInventory().getContents()).thenReturn(contents);
+
+        boolean hasItem = gamePlayer.hasItem(item);
+
+        assertThat(hasItem).isTrue();
+    }
+
+    @Test
+    @DisplayName("setItem sets given item stack in the player's inventory at the given slot")
+    void setItem_setsItemInPlayerInventory() {
+        PlayerInventory playerInventory = mock(PlayerInventory.class);
+
+        when(player.getInventory()).thenReturn(playerInventory);
+
+        gamePlayer.setItem(ITEM_SLOT, ITEM_STACK);
+
+        verify(playerInventory).setItem(ITEM_SLOT, ITEM_STACK);
+    }
+
+    @Test
     void getLastTwoTargetBlocksReturnsPlayerTargetBlocks() {
         int maxDistance = 3;
         List<Block> targetBlocks = List.of(mock(Block.class), mock(Block.class));
@@ -436,17 +464,5 @@ class DefaultGamePlayerTest {
         assertThat(result.getX()).isEqualTo(eyeLocation.getX());
         assertThat(result.getY()).isNotEqualTo(eyeLocation.getY());
         assertThat(result.getZ()).isEqualTo(eyeLocation.getZ());
-    }
-
-    @Test
-    @DisplayName("setItem sets given item stack in the player's inventory at the given slot")
-    void setItem_setsItemInPlayerInventory() {
-        PlayerInventory playerInventory = mock(PlayerInventory.class);
-
-        when(player.getInventory()).thenReturn(playerInventory);
-
-        gamePlayer.setItem(ITEM_SLOT, ITEM_STACK);
-
-        verify(playerInventory).setItem(ITEM_SLOT, ITEM_STACK);
     }
 }

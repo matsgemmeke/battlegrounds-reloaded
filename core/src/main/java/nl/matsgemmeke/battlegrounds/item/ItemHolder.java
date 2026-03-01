@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item;
 
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -16,8 +14,14 @@ public interface ItemHolder {
      *
      * @return the held item stack
      */
-    @NotNull
     ItemStack getHeldItem();
+
+    /**
+     * Sets the {@link ItemStack} that the item holder is holding.
+     *
+     * @param itemStack the item stack
+     */
+    void setHeldItem(ItemStack itemStack);
 
     /**
      * Gets the item slot in which a given matchable item is located in the user's inventory.
@@ -25,15 +29,15 @@ public interface ItemHolder {
      * @param item the matchable item
      * @return     an optional containing the item slot, or an empty optional when the item cannot be found
      */
-    @NotNull
-    Optional<Integer> getItemSlot(@NotNull Matchable item);
+    Optional<Integer> getItemSlot(Matchable item);
 
     /**
-     * Sets the {@link ItemStack} that the item holder is holding.
+     * Gets whether the holder carries a given item.
      *
-     * @param itemStack the item stack
+     * @param item the item
+     * @return     whether the holder carries the item
      */
-    void setHeldItem(@Nullable ItemStack itemStack);
+    boolean hasItem(Matchable item);
 
     /**
      * Sets a given item into the holder's inventory with the given item slot.

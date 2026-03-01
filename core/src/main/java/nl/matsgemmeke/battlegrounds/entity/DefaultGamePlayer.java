@@ -204,13 +204,7 @@ public class DefaultGamePlayer implements GamePlayer {
         player.getInventory().setItemInMainHand(itemStack);
     }
 
-    @Override
-    public Hitbox getHitbox() {
-        return hitboxProvider.provideHitbox(player);
-    }
-
-    @NotNull
-    public Optional<Integer> getItemSlot(@NotNull Matchable item) {
+    public Optional<Integer> getItemSlot(Matchable item) {
         Inventory inventory = player.getInventory();
         ItemStack[] contents = inventory.getContents();
 
@@ -222,6 +216,21 @@ public class DefaultGamePlayer implements GamePlayer {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public boolean hasItem(Matchable item) {
+        return this.getItemSlot(item).isPresent();
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack itemStack) {
+        player.getInventory().setItem(slot, itemStack);
+    }
+
+    @Override
+    public Hitbox getHitbox() {
+        return hitboxProvider.provideHitbox(player);
     }
 
     @NotNull
@@ -270,10 +279,5 @@ public class DefaultGamePlayer implements GamePlayer {
 
     public void removeItem(@NotNull ItemStack itemStack) {
         player.getInventory().removeItem(itemStack);
-    }
-
-    @Override
-    public void setItem(int slot, ItemStack itemStack) {
-        player.getInventory().setItem(slot, itemStack);
     }
 }
