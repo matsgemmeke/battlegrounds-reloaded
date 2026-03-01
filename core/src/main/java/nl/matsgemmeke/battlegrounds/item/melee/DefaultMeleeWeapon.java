@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandler;
 import nl.matsgemmeke.battlegrounds.item.throwing.ThrowPerformer;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,11 +66,6 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         return Optional.ofNullable(holder);
     }
 
-    @Override
-    public void setHolder(@Nullable MeleeWeaponHolder holder) {
-        this.holder = holder;
-    }
-
     public ReloadSystem getReloadSystem() {
         return reloadSystem;
     }
@@ -92,6 +86,16 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     public void configureThrowHandler(ThrowHandler throwHandler) {
         this.throwHandler = throwHandler;
+    }
+
+    @Override
+    public void assign(MeleeWeaponHolder holder) {
+        this.holder = holder;
+    }
+
+    @Override
+    public void unassign() {
+        holder = null;
     }
 
     @Override
@@ -117,7 +121,6 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
         controls.cancelAllFunctions();
         controls.performAction(Action.DROP_ITEM, holder);
-        holder = null;
     }
 
     @Override
@@ -127,8 +130,6 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     @Override
     public void onPickUp(@NotNull MeleeWeaponHolder holder) {
-        this.holder = holder;
-
         controls.performAction(Action.PICKUP_ITEM, holder);
     }
 
@@ -187,6 +188,11 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         }
 
         throwHandler.performThrow(performer);
+
+        if (resourceContainer.getLoadedAmount() + resourceContainer.getReserveAmount() <= 0) {
+            // The melee weapon is out of resources, so we unassign the holder
+            holder = null;
+        }
     }
 
     @Override

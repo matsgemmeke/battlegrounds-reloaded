@@ -10,23 +10,6 @@ import java.util.Optional;
 public interface MeleeWeaponRegistry {
 
     /**
-     * Assigns the given melee weapon to the given holder. This method will do nothing when the given melee weapon is
-     * not registered to the registry, or when it is already assigned.
-     *
-     * @param meleeWeapon the melee weapon
-     * @param holder      the holder to assign the melee weapon to
-     */
-    void assign(MeleeWeapon meleeWeapon, MeleeWeaponHolder holder);
-
-    /**
-     * Removes the assigned holder from the given melee weapon and registers it as unassigned. This method will do
-     * nothing when the given melee weapon is not registered to the registry or has no assigned holder.
-     *
-     * @param meleeWeapon the melee weapon to be unassigned from its holder
-     */
-    void unassign(MeleeWeapon meleeWeapon);
-
-    /**
      * Gets the melee weapon that is assigned to a given holder and corresponds with a given item stack. The returned
      * optional will be empty when no matching melee weapon was found.
      *
@@ -54,17 +37,9 @@ public interface MeleeWeaponRegistry {
     Optional<MeleeWeapon> getUnassignedMeleeWeapon(ItemStack itemStack);
 
     /**
-     * Registers an unassigned melee weapon to the registry.
+     * Registers a melee weapon to the registry.
      *
      * @param meleeWeapon the melee weapon to be registered
      */
     void register(MeleeWeapon meleeWeapon);
-
-    /**
-     * Registers a melee weapon to the registry with an assigned holder.
-     *
-     * @param meleeWeapon the melee weapon to be registered
-     * @param holder      the holder associated with the melee weapon
-     */
-    void register(MeleeWeapon meleeWeapon, MeleeWeaponHolder holder);
 }

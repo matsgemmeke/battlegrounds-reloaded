@@ -5,74 +5,42 @@ import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class DefaultMeleeWeaponRegistry implements MeleeWeaponRegistry {
 
-    private final ConcurrentMap<MeleeWeaponHolder, List<MeleeWeapon>> assignedMeleeWeapons;
-    private final List<MeleeWeapon> unassignedMeleeWeapons;
+    private final List<MeleeWeapon> meleeWeapons;
 
     public DefaultMeleeWeaponRegistry() {
-        this.assignedMeleeWeapons = new ConcurrentHashMap<>();
-        this.unassignedMeleeWeapons = new ArrayList<>();
-    }
-
-    @Override
-    public void assign(MeleeWeapon meleeWeapon, MeleeWeaponHolder holder) {
-        if (!unassignedMeleeWeapons.contains(meleeWeapon)) {
-            return;
-        }
-
-        unassignedMeleeWeapons.remove(meleeWeapon);
-        assignedMeleeWeapons.computeIfAbsent(holder, h -> new ArrayList<>()).add(meleeWeapon);
-    }
-
-    @Override
-    public void unassign(MeleeWeapon meleeWeapon) {
-        MeleeWeaponHolder holder = meleeWeapon.getHolder().orElse(null);
-
-        if (holder == null || !assignedMeleeWeapons.containsKey(holder)) {
-            return;
-        }
-
-        assignedMeleeWeapons.get(holder).remove(meleeWeapon);
-        unassignedMeleeWeapons.add(meleeWeapon);
+        this.meleeWeapons = new ArrayList<>();
     }
 
     @Override
     public Optional<MeleeWeapon> getAssignedMeleeWeapon(MeleeWeaponHolder holder, ItemStack itemStack) {
-        if (!assignedMeleeWeapons.containsKey(holder)) {
-            return Optional.empty();
-        }
-
-        return assignedMeleeWeapons.get(holder).stream()
+        return meleeWeapons.stream()
+                .filter(meleeWeapon -> meleeWeapon.getHolder().map(h -> h.equals(holder)).orElse(false))
                 .filter(meleeWeapon -> meleeWeapon.isMatching(itemStack))
                 .findFirst();
     }
 
     @Override
     public List<MeleeWeapon> getAssignedMeleeWeapons(MeleeWeaponHolder holder) {
-        return assignedMeleeWeapons.getOrDefault(holder, Collections.emptyList());
+        return meleeWeapons.stream()
+                .filter(meleeWeapon -> meleeWeapon.getHolder().map(h -> h.equals(holder)).orElse(false))
+                .toList();
     }
 
     @Override
     public Optional<MeleeWeapon> getUnassignedMeleeWeapon(ItemStack itemStack) {
-        return unassignedMeleeWeapons.stream()
+        return meleeWeapons.stream()
+                .filter(meleeWeapon -> meleeWeapon.getHolder().isEmpty())
                 .filter(meleeWeapon -> meleeWeapon.isMatching(itemStack))
                 .findFirst();
     }
 
     @Override
     public void register(MeleeWeapon meleeWeapon) {
-        unassignedMeleeWeapons.add(meleeWeapon);
-    }
-
-    @Override
-    public void register(MeleeWeapon meleeWeapon, MeleeWeaponHolder holder) {
-        assignedMeleeWeapons.computeIfAbsent(holder, h -> new ArrayList<>()).add(meleeWeapon);
+        meleeWeapons.add(meleeWeapon);
     }
 }

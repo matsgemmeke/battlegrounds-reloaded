@@ -46,15 +46,6 @@ public class MeleeWeaponFactory {
         return meleeWeapon;
     }
 
-    public MeleeWeapon create(MeleeWeaponSpec spec, MeleeWeaponHolder holder) {
-        MeleeWeapon meleeWeapon = this.createInstance(spec);
-        meleeWeapon.setHolder(holder);
-
-        meleeWeaponRegistry.register(meleeWeapon, holder);
-
-        return meleeWeapon;
-    }
-
     private MeleeWeapon createInstance(MeleeWeaponSpec spec) {
         DefaultMeleeWeapon meleeWeapon = new DefaultMeleeWeapon();
         meleeWeapon.setName(spec.name);

@@ -50,6 +50,23 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
+    @DisplayName("assign sets the holder")
+    void assign_setHolder() {
+        meleeWeapon.assign(holder);
+
+        assertThat(meleeWeapon.getHolder()).hasValue(holder);
+    }
+
+    @Test
+    @DisplayName("unassign sets the holder to null")
+    void unassign_removesHolder() {
+        meleeWeapon.assign(holder);
+        meleeWeapon.unassign();
+
+        assertThat(meleeWeapon.getHolder()).isEmpty();
+    }
+
+    @Test
     void isMatchingReturnsFalseWhenDisplayItemTemplateIsNull() {
         ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
 
@@ -83,7 +100,7 @@ class DefaultMeleeWeaponTest {
     @Test
     void onChangeFromPerformsChangeFromActionOnControls() {
         meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
+        meleeWeapon.assign(holder);
         meleeWeapon.onChangeFrom();
 
         verify(controls).performAction(Action.CHANGE_FROM, holder);
@@ -100,7 +117,7 @@ class DefaultMeleeWeaponTest {
     @Test
     void onChangeToPerformsChangeToActionOnControls() {
         meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
+        meleeWeapon.assign(holder);
         meleeWeapon.onChangeTo();
 
         verify(controls).performAction(Action.CHANGE_TO, holder);
@@ -117,10 +134,8 @@ class DefaultMeleeWeaponTest {
     @Test
     void onDropPerformsDropActionOnControlsAndCancelsOtherFunctions() {
         meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
+        meleeWeapon.assign(holder);
         meleeWeapon.onDrop();
-
-        assertThat(meleeWeapon.getHolder()).isEmpty();
 
         verify(controls).cancelAllFunctions();
         verify(controls).performAction(Action.DROP_ITEM, holder);
@@ -137,7 +152,7 @@ class DefaultMeleeWeaponTest {
     @Test
     void onLeftClickPerformsLeftClickActionOnControls() {
         meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
+        meleeWeapon.assign(holder);
         meleeWeapon.onLeftClick();
 
         verify(controls).performAction(Action.LEFT_CLICK, holder);
@@ -147,8 +162,6 @@ class DefaultMeleeWeaponTest {
     void onPickupPerformsPickupActionOnControlsAndSetsHolder() {
         meleeWeapon.setControls(controls);
         meleeWeapon.onPickUp(holder);
-
-        assertThat(meleeWeapon.getHolder()).hasValue(holder);
 
         verify(controls).performAction(Action.PICKUP_ITEM, holder);
     }
@@ -164,7 +177,7 @@ class DefaultMeleeWeaponTest {
     @Test
     void onRightClickPerformsRightClickActionOnControls() {
         meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
+        meleeWeapon.assign(holder);
         meleeWeapon.onRightClick();
 
         verify(controls).performAction(Action.RIGHT_CLICK, holder);
@@ -181,7 +194,7 @@ class DefaultMeleeWeaponTest {
     @Test
     void onSwapFromPerformsSwapFromActionOnControls() {
         meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
+        meleeWeapon.assign(holder);
         meleeWeapon.onSwapFrom();
 
         verify(controls).performAction(Action.SWAP_FROM, holder);
@@ -198,7 +211,7 @@ class DefaultMeleeWeaponTest {
     @Test
     void onSwapToPerformsSwapToActionOnControls() {
         meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
+        meleeWeapon.assign(holder);
         meleeWeapon.onSwapTo();
 
         verify(controls).performAction(Action.SWAP_TO, holder);
@@ -289,11 +302,17 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void performThrowDelegatesToThrowHandler() {
+    @DisplayName("performThrow deletes to ThrowHandler and unassigns holder when no more resources are left")
+    void performThrow_delegatesToThrowHandler() {
+        ResourceContainer resourceContainer = new ResourceContainer(1, 0, 0, 1);
         ThrowHandler throwHandler = mock(ThrowHandler.class);
 
+        meleeWeapon.setResourceContainer(resourceContainer);
         meleeWeapon.configureThrowHandler(throwHandler);
+        meleeWeapon.assign(holder);
         meleeWeapon.performThrow(holder);
+
+        assertThat(meleeWeapon.getHolder()).isEmpty();
 
         verify(throwHandler).performThrow(holder);
     }

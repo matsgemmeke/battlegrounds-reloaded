@@ -113,7 +113,9 @@ public class WeaponCreator {
         MeleeWeaponFactory meleeWeaponFactory = meleeWeaponFactoryProvider.get();
         MeleeWeaponSpec meleeWeaponSpec = meleeWeaponSpecs.get(upperCaseName);
 
-        return meleeWeaponFactory.create(meleeWeaponSpec, gamePlayer);
+        MeleeWeapon meleeWeapon = meleeWeaponFactory.create(meleeWeaponSpec);
+        meleeWeapon.assign(gamePlayer);
+        return meleeWeapon;
     }
 
     /**

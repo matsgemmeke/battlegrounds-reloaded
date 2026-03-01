@@ -114,7 +114,7 @@ class WeaponCreatorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeaponFactory meleeWeaponFactory = mock(MeleeWeaponFactory.class);
-        when(meleeWeaponFactory.create(meleeWeaponSpec, gamePlayer)).thenReturn(meleeWeapon);
+        when(meleeWeaponFactory.create(meleeWeaponSpec)).thenReturn(meleeWeapon);
 
         when(meleeWeaponFactoryProvider.get()).thenReturn(meleeWeaponFactory);
 
@@ -122,6 +122,8 @@ class WeaponCreatorTest {
         MeleeWeapon result = weaponCreator.createMeleeWeapon(MELEE_WEAPON_NAME, gamePlayer);
 
         assertThat(result).isEqualTo(meleeWeapon);
+
+        verify(meleeWeapon).assign(gamePlayer);
     }
 
     @Test
@@ -165,7 +167,7 @@ class WeaponCreatorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeaponFactory meleeWeaponFactory = mock(MeleeWeaponFactory.class);
-        when(meleeWeaponFactory.create(meleeWeaponSpec, gamePlayer)).thenReturn(meleeWeapon);
+        when(meleeWeaponFactory.create(meleeWeaponSpec)).thenReturn(meleeWeapon);
 
         when(meleeWeaponFactoryProvider.get()).thenReturn(meleeWeaponFactory);
 
@@ -173,6 +175,8 @@ class WeaponCreatorTest {
         Weapon weapon = weaponCreator.createWeapon(gamePlayer, MELEE_WEAPON_NAME);
 
         assertThat(weapon).isEqualTo(meleeWeapon);
+
+        verify(meleeWeapon).assign(gamePlayer);
     }
 
     @Test

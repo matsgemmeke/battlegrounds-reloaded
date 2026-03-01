@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
@@ -145,25 +144,6 @@ class MeleeWeaponFactoryTest {
         });
 
         verify(meleeWeaponRegistry).register(result);
-    }
-
-    @Test
-    @DisplayName("create return MeleeWeapon with assigned holder")
-    void create_withHolder() {
-        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("combat_knife");
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-
-        MeleeWeapon result = meleeWeaponFactory.create(spec, gamePlayer);
-
-        assertThat(result).isInstanceOfSatisfying(DefaultMeleeWeapon.class, meleeWeapon -> {
-            assertThat(meleeWeapon.getName()).isEqualTo("Combat Knife");
-            assertThat(meleeWeapon.getDescription()).isEqualTo("Standard issue military knife. Fast, quiet and deadly.");
-            assertThat(meleeWeapon.getHolder()).hasValue(gamePlayer);
-            assertThat(meleeWeapon.getAttackDamage()).isEqualTo(75.0);
-            assertThat(meleeWeapon.getReloadSystem()).isNull();
-        });
-
-        verify(meleeWeaponRegistry).register(result, gamePlayer);
     }
 
     private MeleeWeaponSpec createMeleeWeaponSpec(String fileName) {
