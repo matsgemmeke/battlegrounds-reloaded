@@ -85,8 +85,6 @@ class EntityPickupItemEventHandlerTest {
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
-
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
                 .hasMessage("Unable to process EntityPickupItemEvent for game key OPEN-MODE, no corresponding game context was found");
@@ -113,7 +111,6 @@ class EntityPickupItemEventHandlerTest {
             return null;
         }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
@@ -152,7 +149,6 @@ class EntityPickupItemEventHandlerTest {
             return null;
         }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isEqualTo(expectedCancelled);

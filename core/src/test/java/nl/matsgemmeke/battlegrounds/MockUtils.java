@@ -7,7 +7,12 @@ import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.plugin.Plugin;
 import org.mockito.stubbing.Answer;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public final class MockUtils {
 
@@ -78,5 +83,12 @@ public final class MockUtils {
 
             return null;
         };
+    }
+
+    public static NamespacedKey createNamespacedKey(String key) {
+        Plugin plugin = mock(Plugin.class);
+        when(plugin.getName()).thenReturn("Battlegrounds");
+
+        return new NamespacedKey(plugin, key);
     }
 }

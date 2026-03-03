@@ -6,8 +6,12 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
+import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 public class MeleeWeaponActionExecutor implements ActionExecutor {
@@ -15,11 +19,13 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
     private static final String WEAPON_NAME_KEY = "weapon-name";
 
     private final MeleeWeaponRegistry meleeWeaponRegistry;
+    private final NamespacedKeyCreator namespacedKeyCreator;
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public MeleeWeaponActionExecutor(MeleeWeaponRegistry meleeWeaponRegistry, PlayerRegistry playerRegistry) {
+    public MeleeWeaponActionExecutor(MeleeWeaponRegistry meleeWeaponRegistry, NamespacedKeyCreator namespacedKeyCreator, PlayerRegistry playerRegistry) {
         this.meleeWeaponRegistry = meleeWeaponRegistry;
+        this.namespacedKeyCreator = namespacedKeyCreator;
         this.playerRegistry = playerRegistry;
     }
 
@@ -86,10 +92,8 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
         if (meleeWeapon != null) {
             return this.handlePickupItemCompleteMeleeWeapon(gamePlayer, meleeWeapon);
         } else {
-
+            return this.handlePickupItemSingleProjectile(gamePlayer, pickupItem);
         }
-
-        return new PickupActionResult(true, false);
     }
 
     private PickupActionResult handlePickupItemCompleteMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
@@ -99,13 +103,13 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
                 .orElse(null);
 
         if (existingMeleeWeapon != null) {
-            return this.resupplyExistingWeapon(gamePlayer, meleeWeapon, existingMeleeWeapon);
+            return this.resupplyExistingMeleeWeapon(gamePlayer, meleeWeapon, existingMeleeWeapon);
         } else {
             return this.assignMeleeWeapon(gamePlayer, meleeWeapon);
         }
     }
 
-    private PickupActionResult resupplyExistingWeapon(GamePlayer gamePlayer, MeleeWeapon pickedUpMeleeWeapon, MeleeWeapon existingMeleeWeapon) {
+    private PickupActionResult resupplyExistingMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon pickedUpMeleeWeapon, MeleeWeapon existingMeleeWeapon) {
         Integer slot = gamePlayer.getItemSlot(existingMeleeWeapon).orElse(null);
 
         if (slot == null) {
@@ -132,6 +136,47 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
         meleeWeapon.onPickUp(gamePlayer);
 
         return new PickupActionResult(true, false);
+    }
+
+    private PickupActionResult handlePickupItemSingleProjectile(GamePlayer gamePlayer, ItemStack itemStack) {
+        NamespacedKey weaponNameKey = namespacedKeyCreator.create(WEAPON_NAME_KEY);
+        String weaponName = itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING);
+
+        MeleeWeapon existingMeleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer).stream()
+                .filter(m -> m.getName().equals(weaponName))
+                .filter(m -> m.getResourceContainer().getReserveAmount() < m.getResourceContainer().getMaxReserveAmount())
+                .findFirst()
+                .orElse(null);
+
+        if (existingMeleeWeapon != null) {
+            return this.addSingleResourceExistingMeleeWeapon(gamePlayer, existingMeleeWeapon);
+        } else {
+            return this.createAndAssignNewMeleeWeapon(gamePlayer, weaponName);
+        }
+    }
+
+    private PickupActionResult addSingleResourceExistingMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon existingMeleeWeapon) {
+        Integer slot = gamePlayer.getItemSlot(existingMeleeWeapon).orElse(null);
+
+        if (slot == null) {
+            // We have already found an assigned melee weapon to the player's name, so we don't expect this scenario
+            // to happen. If it somehow does, just treat the existing melee weapon as picked up, and do perform any
+            // logic.
+            return new PickupActionResult(false, true);
+        }
+
+        ResourceContainer resourceContainer = existingMeleeWeapon.getResourceContainer();
+        resourceContainer.setReserveAmount(resourceContainer.getReserveAmount() + 1);
+
+        existingMeleeWeapon.update();
+
+        gamePlayer.setItem(slot, existingMeleeWeapon.getItemStack());
+
+        return new PickupActionResult(false, true);
+    }
+
+    private PickupActionResult createAndAssignNewMeleeWeapon(GamePlayer gamePlayer, String weaponName) {
+        return new PickupActionResult(false, true);
     }
 
     @Override

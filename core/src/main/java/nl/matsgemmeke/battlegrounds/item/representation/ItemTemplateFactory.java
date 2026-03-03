@@ -31,9 +31,13 @@ public class ItemTemplateFactory {
         NamespacedKey templateKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
         UUID templateId = UUID.randomUUID();
         Material material = Material.valueOf(spec.material);
-        TextTemplate displayNameTemplate = new TextTemplate(spec.displayName);
+        TextTemplate displayNameTemplate = null;
         int damage = spec.damage;
         boolean unbreakable = spec.unbreakable;
+
+        if (spec.displayName != null) {
+            displayNameTemplate = new TextTemplate(spec.displayName);
+        }
 
         Set<ItemFlag> itemFlags = spec.itemFlags.stream()
                 .map(ItemFlag::valueOf)
