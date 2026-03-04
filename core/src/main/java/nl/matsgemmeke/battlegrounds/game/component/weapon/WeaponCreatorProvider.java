@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.creator;
+package nl.matsgemmeke.battlegrounds.game.component.weapon;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

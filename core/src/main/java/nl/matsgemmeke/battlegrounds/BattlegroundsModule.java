@@ -46,6 +46,8 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
+import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
+import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
@@ -53,8 +55,6 @@ import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRe
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
-import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformance;

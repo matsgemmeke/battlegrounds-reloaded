@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
-import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
+import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
