@@ -19,11 +19,11 @@ import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -49,22 +49,13 @@ class GunFactoryTest {
     @Mock
     private ItemTemplateFactory itemTemplateFactory;
     @Mock
-    private Provider<DefaultGun> defaultGunProvider;
-    @Mock
     private Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     @Mock
     private ReloadSystemFactory reloadSystemFactory;
     @Mock
     private ShootHandlerFactory shootHandlerFactory;
-
+    @InjectMocks
     private GunFactory gunFactory;
-
-    @BeforeEach
-    void setUp() {
-        when(defaultGunProvider.get()).thenReturn(new DefaultGun());
-
-        gunFactory = new GunFactory(controlsFactory, gunInfoProvider, gunRegistry, itemTemplateFactory, defaultGunProvider, scopeAttachmentProvider, reloadSystemFactory, shootHandlerFactory);
-    }
 
     @Test
     @DisplayName("create returns simple Gun instance")

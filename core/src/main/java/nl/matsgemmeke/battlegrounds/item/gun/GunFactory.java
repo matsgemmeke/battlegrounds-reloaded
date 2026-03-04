@@ -33,7 +33,6 @@ public class GunFactory {
     private final GunInfoProvider gunInfoProvider;
     private final GunRegistry gunRegistry;
     private final ItemTemplateFactory itemTemplateFactory;
-    private final Provider<DefaultGun> defaultGunProvider;
     private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     private final ReloadSystemFactory reloadSystemFactory;
     private final ShootHandlerFactory shootHandlerFactory;
@@ -44,7 +43,6 @@ public class GunFactory {
             GunInfoProvider gunInfoProvider,
             GunRegistry gunRegistry,
             ItemTemplateFactory itemTemplateFactory,
-            Provider<DefaultGun> defaultGunProvider,
             Provider<DefaultScopeAttachment> scopeAttachmentProvider,
             ReloadSystemFactory reloadSystemFactory,
             ShootHandlerFactory shootHandlerFactory
@@ -53,7 +51,6 @@ public class GunFactory {
         this.gunInfoProvider = gunInfoProvider;
         this.gunRegistry = gunRegistry;
         this.itemTemplateFactory = itemTemplateFactory;
-        this.defaultGunProvider = defaultGunProvider;
         this.scopeAttachmentProvider = scopeAttachmentProvider;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
@@ -81,7 +78,7 @@ public class GunFactory {
     }
 
     private Gun createInstance(GunSpec spec) {
-        DefaultGun gun = defaultGunProvider.get();
+        DefaultGun gun = new DefaultGun();
         gun.setName(spec.name);
         gun.setDescription(spec.description);
 
