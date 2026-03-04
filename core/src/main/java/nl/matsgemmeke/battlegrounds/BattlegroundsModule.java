@@ -158,7 +158,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(HitboxConfiguration.class).toProvider(HitboxConfigurationProvider.class).in(Singleton.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(MeleeWeaponStateRepository.class).toProvider(SqliteMeleeWeaponStateRepositoryProvider.class).in(Singleton.class);
-        binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(Singleton.class);
 
         // Game scope bindings
         GameScope gameScope = new GameScope();
@@ -207,6 +206,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
         binder.bind(StatePersistenceHandler.class).toProvider(StatePersistenceHandlerProvider.class).in(GameScoped.class);
         binder.bind(TargetFinder.class).toProvider(TargetFinderProvider.class).in(GameScoped.class);
+        binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(GameScoped.class);
 
         binder.bind(ActionExecutor.class)
                 .annotatedWith(Names.named("Equipment"))

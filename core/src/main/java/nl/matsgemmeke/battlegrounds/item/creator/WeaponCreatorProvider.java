@@ -25,23 +25,23 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
     private final File itemsFolder;
     private final Logger logger;
-    private final Provider<EquipmentFactory> equipmentFactoryProvider;
-    private final Provider<GunFactory> gunFactoryProvider;
-    private final Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider;
+    private final EquipmentFactory equipmentFactory;
+    private final GunFactory gunFactory;
+    private final MeleeWeaponFactory meleeWeaponFactory;
     private final SpecDeserializer specDeserializer;
 
     @Inject
     public WeaponCreatorProvider(
-            Provider<EquipmentFactory> equipmentFactoryProvider,
-            Provider<GunFactory> gunFactoryProvider,
-            Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider,
+            EquipmentFactory equipmentFactory,
+            GunFactory gunFactory,
+            MeleeWeaponFactory meleeWeaponFactory,
             SpecDeserializer specDeserializer,
             @Named("ItemsFolder") File itemsFolder,
             @Named("Battlegrounds") Logger logger
     ) {
-        this.equipmentFactoryProvider = equipmentFactoryProvider;
-        this.gunFactoryProvider = gunFactoryProvider;
-        this.meleeWeaponFactoryProvider = meleeWeaponFactoryProvider;
+        this.equipmentFactory = equipmentFactory;
+        this.gunFactory = gunFactory;
+        this.meleeWeaponFactory = meleeWeaponFactory;
         this.specDeserializer = specDeserializer;
         this.itemsFolder = itemsFolder;
         this.logger = logger;
@@ -54,7 +54,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             this.copyResourcesFiles(itemsFolder);
         }
 
-        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider);
+        WeaponCreator weaponCreator = new WeaponCreator(equipmentFactory, gunFactory, meleeWeaponFactory);
         File[] itemFolderFiles = itemsFolder.listFiles();
 
         if (itemFolderFiles == null || itemFolderFiles.length == 0) {

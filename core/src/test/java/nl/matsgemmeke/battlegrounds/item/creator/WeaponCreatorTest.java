@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
-import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
@@ -13,9 +12,9 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -33,18 +32,13 @@ class WeaponCreatorTest {
     private static final String MELEE_WEAPON_NAME = "Combat Knife";
 
     @Mock
-    private Provider<EquipmentFactory> equipmentFactoryProvider;
+    private EquipmentFactory equipmentFactory;
     @Mock
-    private Provider<GunFactory> gunFactoryProvider;
+    private GunFactory gunFactory;
     @Mock
-    private Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider;
-
+    private MeleeWeaponFactory meleeWeaponFactory;
+    @InjectMocks
     private WeaponCreator weaponCreator;
-
-    @BeforeEach
-    void setUp() {
-        weaponCreator = new WeaponCreator(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider);
-    }
 
     @Test
     void createEquipmentThrowsWeaponNotFoundExceptionWhenNoEquipmentSpecsExistByGivenEquipmentName() {
@@ -61,10 +55,7 @@ class WeaponCreatorTest {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        EquipmentFactory equipmentFactory = mock(EquipmentFactory.class);
         when(equipmentFactory.create(equipmentSpec, gamePlayer)).thenReturn(equipment);
-
-        when(equipmentFactoryProvider.get()).thenReturn(equipmentFactory);
 
         weaponCreator.addEquipmentSpec(EQUIPMENT_NAME, equipmentSpec);
         Equipment createdEquipment = weaponCreator.createEquipment(EQUIPMENT_NAME, gamePlayer);
@@ -87,10 +78,7 @@ class WeaponCreatorTest {
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        GunFactory gunFactory = mock(GunFactory.class);
         when(gunFactory.create(gunSpec, gamePlayer)).thenReturn(gun);
-
-        when(gunFactoryProvider.get()).thenReturn(gunFactory);
 
         weaponCreator.addGunSpec(GUN_NAME, gunSpec);
         Gun result = weaponCreator.createGun(GUN_NAME, gamePlayer);
@@ -113,10 +101,7 @@ class WeaponCreatorTest {
         MeleeWeaponSpec meleeWeaponSpec = this.createMeleeWeaponSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        MeleeWeaponFactory meleeWeaponFactory = mock(MeleeWeaponFactory.class);
         when(meleeWeaponFactory.create(meleeWeaponSpec)).thenReturn(meleeWeapon);
-
-        when(meleeWeaponFactoryProvider.get()).thenReturn(meleeWeaponFactory);
 
         weaponCreator.addMeleeWeaponSpec(MELEE_WEAPON_NAME, meleeWeaponSpec);
         MeleeWeapon result = weaponCreator.createMeleeWeapon(MELEE_WEAPON_NAME, gamePlayer);
@@ -132,10 +117,7 @@ class WeaponCreatorTest {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        EquipmentFactory equipmentFactory = mock(EquipmentFactory.class);
         when(equipmentFactory.create(equipmentSpec, gamePlayer)).thenReturn(equipment);
-
-        when(equipmentFactoryProvider.get()).thenReturn(equipmentFactory);
 
         weaponCreator.addEquipmentSpec(EQUIPMENT_NAME, equipmentSpec);
         Weapon weapon = weaponCreator.createWeapon(gamePlayer, EQUIPMENT_NAME);
@@ -149,10 +131,7 @@ class WeaponCreatorTest {
         GunSpec gunSpec = this.createGunSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        GunFactory gunFactory = mock(GunFactory.class);
         when(gunFactory.create(gunSpec, gamePlayer)).thenReturn(gun);
-
-        when(gunFactoryProvider.get()).thenReturn(gunFactory);
 
         weaponCreator.addGunSpec(GUN_NAME, gunSpec);
         Weapon weapon = weaponCreator.createWeapon(gamePlayer, GUN_NAME);
@@ -166,10 +145,7 @@ class WeaponCreatorTest {
         MeleeWeaponSpec meleeWeaponSpec = this.createMeleeWeaponSpec();
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
-        MeleeWeaponFactory meleeWeaponFactory = mock(MeleeWeaponFactory.class);
         when(meleeWeaponFactory.create(meleeWeaponSpec)).thenReturn(meleeWeapon);
-
-        when(meleeWeaponFactoryProvider.get()).thenReturn(meleeWeaponFactory);
 
         weaponCreator.addMeleeWeaponSpec(MELEE_WEAPON_NAME, meleeWeaponSpec);
         Weapon weapon = weaponCreator.createWeapon(gamePlayer, MELEE_WEAPON_NAME);

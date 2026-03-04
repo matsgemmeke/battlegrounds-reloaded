@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
-import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
@@ -24,14 +23,14 @@ public class WeaponCreator {
     private final Map<String, EquipmentSpec> equipmentSpecs;
     private final Map<String, GunSpec> gunSpecs;
     private final Map<String, MeleeWeaponSpec> meleeWeaponSpecs;
-    private final Provider<EquipmentFactory> equipmentFactoryProvider;
-    private final Provider<GunFactory> gunFactoryProvider;
-    private final Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider;
+    private final EquipmentFactory equipmentFactory;
+    private final GunFactory gunFactory;
+    private final MeleeWeaponFactory meleeWeaponFactory;
 
-    public WeaponCreator(Provider<EquipmentFactory> equipmentFactoryProvider, Provider<GunFactory> gunFactoryProvider, Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider) {
-        this.equipmentFactoryProvider = equipmentFactoryProvider;
-        this.gunFactoryProvider = gunFactoryProvider;
-        this.meleeWeaponFactoryProvider = meleeWeaponFactoryProvider;
+    public WeaponCreator(EquipmentFactory equipmentFactory, GunFactory gunFactory, MeleeWeaponFactory meleeWeaponFactory) {
+        this.equipmentFactory = equipmentFactory;
+        this.gunFactory = gunFactory;
+        this.meleeWeaponFactory = meleeWeaponFactory;
         this.equipmentSpecs = new HashMap<>();
         this.gunSpecs = new HashMap<>();
         this.meleeWeaponSpecs = new HashMap<>();
@@ -66,7 +65,6 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for an equipment item by the name '%s'".formatted(equipmentName));
         }
 
-        EquipmentFactory equipmentFactory = equipmentFactoryProvider.get();
         EquipmentSpec equipmentSpec = equipmentSpecs.get(upperCaseName);
 
         return equipmentFactory.create(equipmentSpec, gamePlayer);
@@ -87,7 +85,6 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for a gun by the name '%s'".formatted(gunName));
         }
 
-        GunFactory gunFactory = gunFactoryProvider.get();
         GunSpec gunSpec = gunSpecs.get(upperCaseName);
 
         return gunFactory.create(gunSpec, gamePlayer);
@@ -110,7 +107,6 @@ public class WeaponCreator {
             throw new WeaponNotFoundException("The weapon creator does not contain a specification for a melee weapon by the name '%s'".formatted(meleeWeaponName));
         }
 
-        MeleeWeaponFactory meleeWeaponFactory = meleeWeaponFactoryProvider.get();
         MeleeWeaponSpec meleeWeaponSpec = meleeWeaponSpecs.get(upperCaseName);
 
         MeleeWeapon meleeWeapon = meleeWeaponFactory.create(meleeWeaponSpec);

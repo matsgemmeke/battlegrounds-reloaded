@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.creator;
 
-import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
@@ -31,11 +30,11 @@ class WeaponCreatorProviderTest {
     @Mock
     private Logger logger;
     @Mock
-    private Provider<EquipmentFactory> equipmentFactoryProvider;
+    private EquipmentFactory equipmentFactory;
     @Mock
-    private Provider<GunFactory> gunFactoryProvider;
+    private GunFactory gunFactory;
     @Mock
-    private Provider<MeleeWeaponFactory> meleeWeaponFactoryProvider;
+    private MeleeWeaponFactory meleeWeaponFactory;
     @Spy
     private SpecDeserializer specDeserializer = new SpecDeserializer();
 
@@ -49,7 +48,7 @@ class WeaponCreatorProviderTest {
     void getThrowsIllegalStateExceptionWhenResourceLocationIsInvalidURI() throws URISyntaxException {
         File itemsFolder = new File(tempDirectory.getPath() + "/items");
 
-        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger));
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         when(provider.createResourceURI()).thenThrow(new URISyntaxException("fail", "test"));
 
         assertThatThrownBy(provider::get).isInstanceOf(IllegalStateException.class);
@@ -60,7 +59,7 @@ class WeaponCreatorProviderTest {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_empty_directory");
         itemsFolder.mkdirs();
 
-        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         provider.get();
 
         verify(logger).warning("Unable to load item configuration files: directory 'src/test/resources/weapon_creator_provider/items_empty_directory' is empty. To generate the default item files, delete the directory and reload the plugin.");
@@ -73,7 +72,7 @@ class WeaponCreatorProviderTest {
         File itemsSubfolder = new File("src/test/resources/weapon_creator_provider/items_empty_subfolders/submachine_guns");
         itemsSubfolder.mkdirs();
 
-        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         provider.get();
 
         verify(logger).warning("Unable to load item configuration files in items subfolder 'src/test/resources/weapon_creator_provider/items_empty_subfolders/submachine_guns'");
@@ -86,7 +85,7 @@ class WeaponCreatorProviderTest {
         MockedStatic<YamlConfiguration> yamlConfiguration = mockStatic(YamlConfiguration.class);
         yamlConfiguration.when(() -> YamlConfiguration.loadConfiguration(any(File.class))).thenThrow(new IllegalArgumentException("An error occurred"));
 
-        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         provider.get();
 
         verify(logger).severe("Unable to load item configuration file 'olympia.yml': An error occurred");
@@ -99,7 +98,7 @@ class WeaponCreatorProviderTest {
     void getLogsErrorMessageWhenItemFileDoesNotContainIdValue() {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_without_name");
 
-        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         WeaponCreator weaponCreator = provider.get();
 
         assertThat(weaponCreator.exists("Olympia")).isFalse();
@@ -113,7 +112,7 @@ class WeaponCreatorProviderTest {
     void getLogsErrorMessageWhenItemFileContainsErrorInItsSpecification() {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_invalid");
 
-        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         WeaponCreator weaponCreator = provider.get();
 
         assertThat(weaponCreator.exists("Olympia")).isFalse();
@@ -127,7 +126,7 @@ class WeaponCreatorProviderTest {
     void getLogsErrorMessagesWhenItemFileContainsNoItemTypeSpecification() {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_without_type");
 
-        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         WeaponCreator weaponCreator = provider.get();
 
         assertThat(weaponCreator.exists("MP5")).isFalse();
@@ -139,7 +138,7 @@ class WeaponCreatorProviderTest {
     void getCopiesResourcesFilesIfItemsDirectoryDoesNotYetExist() {
         File itemsFolder = new File(tempDirectory.getPath() + "/items");
 
-        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         WeaponCreator weaponCreator = provider.get();
 
         File createdItemFile = new File(itemsFolder + "/submachine_guns/mp5.yml");
@@ -153,7 +152,7 @@ class WeaponCreatorProviderTest {
     void getLoadsItemsFilesAndCreatesItemSpecifications() {
         File itemsFolder = new File("src/main/resources/items");
 
-        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         WeaponCreator weaponCreator = provider.get();
 
         assertThat(weaponCreator.exists("Olympia")).isTrue();
@@ -164,7 +163,7 @@ class WeaponCreatorProviderTest {
     void getLoadsItemsFilesWithoutSubfoldersAndCreatesItemSpecifications() {
         File itemsFolder = new File("src/main/resources/items/submachine_guns");
 
-        WeaponCreatorProvider provider = new WeaponCreatorProvider(equipmentFactoryProvider, gunFactoryProvider, meleeWeaponFactoryProvider, specDeserializer, itemsFolder, logger);
+        WeaponCreatorProvider provider = spy(new WeaponCreatorProvider(equipmentFactory, gunFactory, meleeWeaponFactory, specDeserializer, itemsFolder, logger));
         WeaponCreator weaponCreator = provider.get();
 
         assertThat(weaponCreator.exists("MP5")).isTrue();

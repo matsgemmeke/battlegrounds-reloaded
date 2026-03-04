@@ -24,16 +24,22 @@ public class GiveWeaponCommand extends CommandSource {
     private final GameScope gameScope;
     private final Provider<PlayerRegistry> playerRegistryProvider;
     private final Translator translator;
-    private final WeaponCreator weaponCreator;
+    private final Provider<WeaponCreator> weaponCreatorProvider;
 
     @Inject
-    public GiveWeaponCommand(GameContextProvider gameContextProvider, GameScope gameScope, Provider<PlayerRegistry> playerRegistryProvider, Translator translator, WeaponCreator weaponCreator) {
+    public GiveWeaponCommand(
+            GameContextProvider gameContextProvider,
+            GameScope gameScope,
+            Translator translator,
+            Provider<PlayerRegistry> playerRegistryProvider,
+            Provider<WeaponCreator> weaponCreatorProvider
+    ) {
         super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText(), "bg giveweapon <weapon>");
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.playerRegistryProvider = playerRegistryProvider;
         this.translator = translator;
-        this.weaponCreator = weaponCreator;
+        this.playerRegistryProvider = playerRegistryProvider;
+        this.weaponCreatorProvider = weaponCreatorProvider;
     }
 
     public void execute(Player player, String[] args) {
@@ -41,6 +47,12 @@ public class GiveWeaponCommand extends CommandSource {
                 .orElseThrow(() -> new UnknownGameKeyException("No game context found game key %s".formatted(GAME_KEY)));
 
         String weaponName = String.join(" ", args);
+
+        gameScope.runInScope(gameContext, () -> this.giveWeapon(player, weaponName));
+    }
+
+    private void giveWeapon(Player player, String weaponName) {
+        WeaponCreator weaponCreator = weaponCreatorProvider.get();
 
         if (!weaponCreator.exists(weaponName)) {
             Map<String, Object> values = Map.of("bg_weapon", weaponName);
@@ -50,17 +62,15 @@ public class GiveWeaponCommand extends CommandSource {
             return;
         }
 
-        gameScope.runInScope(gameContext, () -> {
-            PlayerRegistry playerRegistry = playerRegistryProvider.get();
-            GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId())
-                    .orElseThrow(() -> new IllegalStateException("Unable to find GamePlayer instance for player %s despite being registered".formatted(player.getName())));
-            Weapon weapon = weaponCreator.createWeapon(gamePlayer, weaponName);
+        PlayerRegistry playerRegistry = playerRegistryProvider.get();
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId())
+                .orElseThrow(() -> new IllegalStateException("Unable to find GamePlayer instance for player %s despite being registered".formatted(player.getName())));
+        Weapon weapon = weaponCreator.createWeapon(gamePlayer, weaponName);
 
-            Map<String, Object> values = Map.of("bg_weapon", weapon.getName());
-            String message = translator.translate(TranslationKey.WEAPON_GIVEN.getPath()).replace(values);
+        Map<String, Object> values = Map.of("bg_weapon", weapon.getName());
+        String message = translator.translate(TranslationKey.WEAPON_GIVEN.getPath()).replace(values);
 
-            player.getInventory().addItem(weapon.getItemStack());
-            player.sendMessage(message);
-        });
+        player.getInventory().addItem(weapon.getItemStack());
+        player.sendMessage(message);
     }
 }
