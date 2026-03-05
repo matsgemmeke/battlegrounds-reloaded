@@ -234,6 +234,18 @@ class DefaultGamePlayerTest {
     }
 
     @Test
+    @DisplayName("addItem adds given item stack to player's inventory")
+    void addItem_addsItemToInventory() {
+        PlayerInventory inventory = mock(PlayerInventory.class);
+
+        when(player.getInventory()).thenReturn(inventory);
+
+        gamePlayer.addItem(ITEM_STACK);
+
+        verify(inventory).addItem(ITEM_STACK);
+    }
+
+    @Test
     void getHeldItemReturnsItemInMainHand() {
         ItemStack itemStack = new ItemStack(Material.STONE);
 

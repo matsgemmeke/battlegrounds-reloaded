@@ -195,6 +195,11 @@ public class DefaultGamePlayer implements GamePlayer {
         return player.getEyeLocation();
     }
 
+    @Override
+    public void addItem(ItemStack itemStack) {
+        player.getInventory().addItem(itemStack);
+    }
+
     @NotNull
     public ItemStack getHeldItem() {
         return player.getInventory().getItemInMainHand();

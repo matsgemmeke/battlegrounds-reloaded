@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -21,12 +22,19 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
     private final MeleeWeaponRegistry meleeWeaponRegistry;
     private final NamespacedKeyCreator namespacedKeyCreator;
     private final PlayerRegistry playerRegistry;
+    private final WeaponCreator weaponCreator;
 
     @Inject
-    public MeleeWeaponActionExecutor(MeleeWeaponRegistry meleeWeaponRegistry, NamespacedKeyCreator namespacedKeyCreator, PlayerRegistry playerRegistry) {
+    public MeleeWeaponActionExecutor(
+            MeleeWeaponRegistry meleeWeaponRegistry,
+            NamespacedKeyCreator namespacedKeyCreator,
+            PlayerRegistry playerRegistry,
+            WeaponCreator weaponCreator
+    ) {
         this.meleeWeaponRegistry = meleeWeaponRegistry;
         this.namespacedKeyCreator = namespacedKeyCreator;
         this.playerRegistry = playerRegistry;
+        this.weaponCreator = weaponCreator;
     }
 
     @Override
@@ -176,6 +184,16 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
     }
 
     private PickupActionResult createAndAssignNewMeleeWeapon(GamePlayer gamePlayer, String weaponName) {
+        MeleeWeapon meleeWeapon = weaponCreator.createMeleeWeapon(weaponName, gamePlayer);
+
+        ResourceContainer resourceContainer = meleeWeapon.getResourceContainer();
+        resourceContainer.setLoadedAmount(1);
+        resourceContainer.setReserveAmount(0);
+
+        meleeWeapon.update();
+
+        gamePlayer.addItem(meleeWeapon.getItemStack());
+
         return new PickupActionResult(false, true);
     }
 

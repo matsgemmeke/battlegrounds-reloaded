@@ -10,6 +10,13 @@ import java.util.Optional;
 public interface ItemHolder {
 
     /**
+     * Adds an item stack to the holder's inventory at the first available slot.
+     *
+     * @param itemStack the item stack to add
+     */
+    void addItem(ItemStack itemStack);
+
+    /**
      * Gets the {@link ItemStack} that the item holder is holding.
      *
      * @return the held item stack

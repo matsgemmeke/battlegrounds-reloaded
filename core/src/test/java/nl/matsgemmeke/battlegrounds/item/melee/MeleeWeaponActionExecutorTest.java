@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -46,6 +47,8 @@ class MeleeWeaponActionExecutorTest {
     private Player player;
     @Mock
     private PlayerRegistry playerRegistry;
+    @Mock
+    private WeaponCreator weaponCreator;
     @InjectMocks
     private MeleeWeaponActionExecutor actionExecutor;
 
@@ -426,6 +429,38 @@ class MeleeWeaponActionExecutorTest {
 
         verify(existingMeleeWeapon).update();
         verify(gamePlayer).setItem(ITEM_SLOT, existingItemStack);
+    }
+
+    @Test
+    @DisplayName("handlePickupAction creates a new melee weapon with 1 resource and assigns it to the player")
+    void handlePickupAction_createsNewMeleeWeaponAssignment() {
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        ItemStack newItemStack = new ItemStack(Material.IRON_SWORD);
+        NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
+        ResourceContainer resourceContainer = new ResourceContainer(1, 0, 2, 5);
+
+        ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
+        when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
+
+        MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
+        when(meleeWeapon.getResourceContainer()).thenReturn(resourceContainer);
+        when(meleeWeapon.getItemStack()).thenReturn(newItemStack);
+
+        when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
+        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
+        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack)).thenReturn(Optional.empty());
+        when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
+        when(weaponCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
+
+        PickupActionResult result = actionExecutor.handlePickupAction(player, itemStack);
+
+        assertThat(result.performAction()).isFalse();
+        assertThat(result.removeItem()).isTrue();
+        assertThat(resourceContainer.getLoadedAmount()).isOne();
+        assertThat(resourceContainer.getReserveAmount()).isZero();
+
+        verify(meleeWeapon).update();
+        verify(gamePlayer).addItem(newItemStack);
     }
 
     @Test
