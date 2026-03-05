@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class GunActionExecutor implements ActionExecutor {
 
-    private static final PickupActionResult DEFAULT_PICKUP_ACTION_RESULT = new PickupActionResult(true, false);
+    private static final PickupActionResult DEFAULT_PICKUP_ACTION_RESULT = new PickupActionResult(true);
 
     private final GunRegistry gunRegistry;
     private final PlayerRegistry playerRegistry;

@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
@@ -268,41 +269,51 @@ class EquipmentActionExecutorTest {
     @Test
     @DisplayName("handlePickupAction does nothing and returns true when given player is no GamePlayer")
     void handlePickupAction_unknownPlayer() {
+        Item item = mock(Item.class);
+
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isTrue();
-        assertThat(result.removeItem()).isFalse();
+
+        verifyNoInteractions(item);
     }
 
     @Test
     @DisplayName("handlePickupAction does nothing and returns true when no Equipment matches with GamePlayer and ItemStack")
     void handlePickupAction_unknownEquipment() {
+        Item item = mock(Item.class);
+
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getUnassignedEquipment(ITEM_STACK)).thenReturn(Optional.empty());
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isTrue();
-        assertThat(result.removeItem()).isFalse();
+
+        verifyNoInteractions(item);
     }
 
     @Test
     @DisplayName("handlePickupAction calls change to action on Equipment and returns true")
     void handlePickupAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
+        Item item = mock(Item.class);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getUnassignedEquipment(ITEM_STACK)).thenReturn(Optional.of(equipment));
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isTrue();
-        assertThat(result.removeItem()).isFalse();
 
         verify(equipmentRegistry).assign(equipment, gamePlayer);
         verify(equipment).onPickUp(gamePlayer);
+        verifyNoInteractions(item);
     }
 
     @Test

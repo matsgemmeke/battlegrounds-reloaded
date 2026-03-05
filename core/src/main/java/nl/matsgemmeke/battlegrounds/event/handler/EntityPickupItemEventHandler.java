@@ -58,10 +58,7 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
         }
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, itemStack);
-
-        if (result.removeItem()) {
-            event.getItem().remove();
-        }
+        result.itemAction().accept(event.getItem());
 
         event.setCancelled(event.isCancelled() || !result.performAction());
     }

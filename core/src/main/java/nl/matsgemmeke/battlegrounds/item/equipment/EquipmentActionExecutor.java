@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class EquipmentActionExecutor implements ActionExecutor {
 
-    private static final PickupActionResult DEFAULT_PICKUP_ACTION_RESULT = new PickupActionResult(true, false);
+    private static final PickupActionResult DEFAULT_PICKUP_ACTION_RESULT = new PickupActionResult(true);
 
     private final EquipmentRegistry equipmentRegistry;
     private final PlayerRegistry playerRegistry;

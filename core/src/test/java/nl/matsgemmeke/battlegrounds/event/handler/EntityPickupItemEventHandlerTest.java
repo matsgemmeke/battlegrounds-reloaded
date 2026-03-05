@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
@@ -23,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -124,8 +126,10 @@ class EntityPickupItemEventHandlerTest {
             "false,true,true"
     })
     @DisplayName("handle invokes action executor, removes item and cancels event based on event state and result")
+    @SuppressWarnings("unchecked")
     void handleInvokesActionExecutorAndCancelsEventAccordingToActionResult(boolean performAction, boolean eventCancelled, boolean expectedCancelled) {
-        PickupActionResult result = new PickupActionResult(performAction, true);
+        Consumer<Item> itemAction = (Consumer<Item>) mock(Consumer.class);
+        PickupActionResult result = new PickupActionResult(performAction, itemAction);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
@@ -144,15 +148,12 @@ class EntityPickupItemEventHandlerTest {
         when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
         when(item.getItemStack()).thenReturn(ITEM_STACK);
 
-        doAnswer(invocation -> {
-            ((Runnable) invocation.getArgument(1)).run();
-            return null;
-        }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isEqualTo(expectedCancelled);
 
-        verify(item).remove();
+        verify(itemAction).accept(item);
     }
 }

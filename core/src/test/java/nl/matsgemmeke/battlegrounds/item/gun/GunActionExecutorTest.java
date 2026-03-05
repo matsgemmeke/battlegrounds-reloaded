@@ -5,12 +5,14 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -34,6 +36,8 @@ class GunActionExecutorTest {
     private Player player;
     @Mock
     private PlayerRegistry playerRegistry;
+    @InjectMocks
+    private GunActionExecutor actionExecutor;
 
     @BeforeEach
     void setUp() {
@@ -44,7 +48,6 @@ class GunActionExecutorTest {
     void handleChangeFromActionDoesNothingWhenGivenPlayerIsNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleChangeFromAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -55,7 +58,6 @@ class GunActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleChangeFromAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -71,7 +73,6 @@ class GunActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleChangeFromAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -87,7 +88,6 @@ class GunActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleChangeFromAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -99,7 +99,6 @@ class GunActionExecutorTest {
     void handleChangeToActionDoesNothingWhenGivenPlayerIsNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleChangeToAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -110,7 +109,6 @@ class GunActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleChangeToAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -126,7 +124,6 @@ class GunActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleChangeToAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -142,7 +139,6 @@ class GunActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleChangeToAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -154,7 +150,6 @@ class GunActionExecutorTest {
     void handleDropItemActionDoesNothingWhenGivenPlayerIsNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleDropItemAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -165,7 +160,6 @@ class GunActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleDropItemAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -183,7 +177,6 @@ class GunActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleDropItemAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -200,7 +193,6 @@ class GunActionExecutorTest {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         boolean performAction = actionExecutor.handleDropItemAction(player, ITEM_STACK);
 
         assertThat(performAction).isTrue();
@@ -212,46 +204,52 @@ class GunActionExecutorTest {
     @Test
     @DisplayName("handlePickupAction does not perform pickup action when player is not registered")
     void handlePickupAction_playerNotRegistered() {
+        Item item = mock(Item.class);
+
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isTrue();
-        assertThat(result.removeItem()).isFalse();
+
+        verifyNoInteractions(item);
     }
 
     @Test
     @DisplayName("handlePickupAction does not perform pickup action when item stack is not a registered gun")
     void handlePickupAction_itemStackNotRegistered() {
+        Item item = mock(Item.class);
+
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getUnassignedGun(ITEM_STACK)).thenReturn(Optional.empty());
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isTrue();
-        assertThat(result.removeItem()).isFalse();
 
         verify(gunRegistry, never()).assign(any(Gun.class), any(GamePlayer.class));
+        verifyNoInteractions(item);
     }
 
     @Test
     @DisplayName("handlePickupAction performs pickup action")
     void handlePickupAction_performsAction() {
         Gun gun = mock(Gun.class);
+        Item item = mock(Item.class);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getUnassignedGun(ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isTrue();
-        assertThat(result.removeItem()).isFalse();
 
         verify(gun).onPickUp(gamePlayer);
         verify(gunRegistry).assign(gun, gamePlayer);
+        verifyNoInteractions(item);
     }
 
     @Test

@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -91,7 +92,7 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
-            return new PickupActionResult(true, false);
+            return new PickupActionResult(true);
         }
 
         MeleeWeapon meleeWeapon = meleeWeaponRegistry.getUnassignedMeleeWeapon(pickupItem).orElse(null);
@@ -124,7 +125,7 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
             // We have already found an assigned melee weapon to the player's name, so we don't expect this scenario
             // to happen. If it somehow does, just treat the existing melee weapon as picked up, and do perform any
             // logic.
-            return new PickupActionResult(false, true);
+            return new PickupActionResult(false, Entity::remove);
         }
 
         int pickedUpResourceAmount = pickedUpMeleeWeapon.getResourceContainer().getLoadedAmount() + pickedUpMeleeWeapon.getResourceContainer().getReserveAmount();
@@ -136,14 +137,14 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
 
         gamePlayer.setItem(slot, existingMeleeWeapon.getItemStack());
 
-        return new PickupActionResult(false, true);
+        return new PickupActionResult(false, Entity::remove);
     }
 
     private PickupActionResult assignMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
         meleeWeapon.assign(gamePlayer);
         meleeWeapon.onPickUp(gamePlayer);
 
-        return new PickupActionResult(true, false);
+        return new PickupActionResult(true, Entity::remove);
     }
 
     private PickupActionResult handlePickupItemSingleProjectile(GamePlayer gamePlayer, ItemStack itemStack) {
@@ -170,7 +171,7 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
             // We have already found an assigned melee weapon to the player's name, so we don't expect this scenario
             // to happen. If it somehow does, just treat the existing melee weapon as picked up, and do perform any
             // logic.
-            return new PickupActionResult(false, true);
+            return new PickupActionResult(false, Entity::remove);
         }
 
         ResourceContainer resourceContainer = existingMeleeWeapon.getResourceContainer();
@@ -180,7 +181,7 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
 
         gamePlayer.setItem(slot, existingMeleeWeapon.getItemStack());
 
-        return new PickupActionResult(false, true);
+        return new PickupActionResult(false, Entity::remove);
     }
 
     private PickupActionResult createAndAssignNewMeleeWeapon(GamePlayer gamePlayer, String weaponName) {
@@ -194,7 +195,7 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
 
         gamePlayer.addItem(meleeWeapon.getItemStack());
 
-        return new PickupActionResult(false, true);
+        return new PickupActionResult(false, Entity::remove);
     }
 
     @Override

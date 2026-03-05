@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -282,17 +283,23 @@ class MeleeWeaponActionExecutorTest {
     @Test
     @DisplayName("handlePickupAction does not perform pickup action when player is not registered")
     void handlePickupAction_playerNotRegistered() {
+        Item item = mock(Item.class);
+
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isTrue();
-        assertThat(result.removeItem()).isFalse();
+
+        verifyNoInteractions(item);
     }
 
     @Test
     @DisplayName("handlePickupAction does not resupply existing melee weapon when unable to find item slot for existing melee weapon")
     void handlePickupAction_resupplyExistingMeleeWeaponItemSlotNotFound() {
+        Item item = mock(Item.class);
+
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
         when(meleeWeapon.getName()).thenReturn(NAME);
 
@@ -307,12 +314,13 @@ class MeleeWeaponActionExecutorTest {
         when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isFalse();
-        assertThat(result.removeItem()).isTrue();
 
         verify(existingMeleeWeapon, never()).update();
         verify(gamePlayer, never()).setItem(anyInt(), any(ItemStack.class));
+        verify(item).remove();
     }
 
     @ParameterizedTest
@@ -322,6 +330,7 @@ class MeleeWeaponActionExecutorTest {
         ItemStack existingItemStack = new ItemStack(Material.IRON_SWORD);
         ResourceContainer pickedUpResourceContainer = new ResourceContainer(1, 0, pickedUpReserveAmount, 2);
         ResourceContainer existingResourceContainer = new ResourceContainer(1, 1, 0, 3);
+        Item item = mock(Item.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
         when(meleeWeapon.getName()).thenReturn(NAME);
@@ -340,13 +349,14 @@ class MeleeWeaponActionExecutorTest {
         when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isFalse();
-        assertThat(result.removeItem()).isTrue();
         assertThat(existingResourceContainer.getReserveAmount()).isEqualTo(expectedReserveAmount);
 
         verify(existingMeleeWeapon).update();
         verify(gamePlayer).setItem(ITEM_SLOT, existingItemStack);
+        verify(item).remove();
     }
 
     @Test
@@ -354,18 +364,20 @@ class MeleeWeaponActionExecutorTest {
     void handlePickupAction_assignsExistingMeleeWeapon() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
+        Item item = mock(Item.class);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
         when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, ITEM_STACK);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isTrue();
-        assertThat(result.removeItem()).isFalse();
 
         verify(meleeWeapon).assign(gamePlayer);
         verify(meleeWeapon).onPickUp(gamePlayer);
+        verify(item).remove();
     }
 
     @Test
@@ -373,6 +385,7 @@ class MeleeWeaponActionExecutorTest {
     void handlePickupAction_addSingleResourceExistingMeleeWeaponItemSlotNotFound() {
         NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
         ResourceContainer resourceContainer = new ResourceContainer(1, 1, 2, 5);
+        Item item = mock(Item.class);
 
         MeleeWeapon existingMeleeWeapon = mock(MeleeWeapon.class);
         when(existingMeleeWeapon.getName()).thenReturn(NAME);
@@ -390,12 +403,13 @@ class MeleeWeaponActionExecutorTest {
         when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, itemStack);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isFalse();
-        assertThat(result.removeItem()).isTrue();
 
         verify(existingMeleeWeapon, never()).update();
         verify(gamePlayer, never()).setItem(anyInt(), any(ItemStack.class));
+        verify(item).remove();
     }
 
     @Test
@@ -404,6 +418,7 @@ class MeleeWeaponActionExecutorTest {
         ItemStack existingItemStack = new ItemStack(Material.IRON_SWORD);
         NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
         ResourceContainer resourceContainer = new ResourceContainer(1, 1, 2, 5);
+        Item item = mock(Item.class);
 
         MeleeWeapon existingMeleeWeapon = mock(MeleeWeapon.class);
         when(existingMeleeWeapon.getName()).thenReturn(NAME);
@@ -422,13 +437,14 @@ class MeleeWeaponActionExecutorTest {
         when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, itemStack);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isFalse();
-        assertThat(result.removeItem()).isTrue();
         assertThat(resourceContainer.getReserveAmount()).isEqualTo(3);
 
         verify(existingMeleeWeapon).update();
         verify(gamePlayer).setItem(ITEM_SLOT, existingItemStack);
+        verify(item).remove();
     }
 
     @Test
@@ -438,6 +454,7 @@ class MeleeWeaponActionExecutorTest {
         ItemStack newItemStack = new ItemStack(Material.IRON_SWORD);
         NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
         ResourceContainer resourceContainer = new ResourceContainer(1, 0, 2, 5);
+        Item item = mock(Item.class);
 
         ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
         when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
@@ -453,14 +470,15 @@ class MeleeWeaponActionExecutorTest {
         when(weaponCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, itemStack);
+        result.itemAction().accept(item);
 
         assertThat(result.performAction()).isFalse();
-        assertThat(result.removeItem()).isTrue();
         assertThat(resourceContainer.getLoadedAmount()).isOne();
         assertThat(resourceContainer.getReserveAmount()).isZero();
 
         verify(meleeWeapon).update();
         verify(gamePlayer).addItem(newItemStack);
+        verify(item).remove();
     }
 
     @Test
