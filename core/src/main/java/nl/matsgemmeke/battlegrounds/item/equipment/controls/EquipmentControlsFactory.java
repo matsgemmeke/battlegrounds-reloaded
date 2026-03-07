@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
@@ -26,7 +27,6 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFuncti
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import org.bukkit.Material;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
@@ -35,23 +35,22 @@ import java.util.stream.Collectors;
 
 public class EquipmentControlsFactory {
 
-    @NotNull
     private final ProjectileEffectFactory projectileEffectFactory;
-    @NotNull
+    private final Provider<DropDeployment> dropDeploymentProvider;
     private final Provider<PlaceDeployment> placeDeploymentProvider;
-    @NotNull
     private final Provider<PrimeDeployment> primeDeploymentProvider;
-    @NotNull
     private final Provider<ThrowDeployment> throwDeploymentProvider;
 
     @Inject
     public EquipmentControlsFactory(
-            @NotNull ProjectileEffectFactory projectileEffectFactory,
-            @NotNull Provider<PlaceDeployment> placeDeploymentProvider,
-            @NotNull Provider<PrimeDeployment> primeDeploymentProvider,
-            @NotNull Provider<ThrowDeployment> throwDeploymentProvider
+            ProjectileEffectFactory projectileEffectFactory,
+            Provider<DropDeployment> dropDeploymentProvider,
+            Provider<PlaceDeployment> placeDeploymentProvider,
+            Provider<PrimeDeployment> primeDeploymentProvider,
+            Provider<ThrowDeployment> throwDeploymentProvider
     ) {
         this.projectileEffectFactory = projectileEffectFactory;
+        this.dropDeploymentProvider = dropDeploymentProvider;
         this.placeDeploymentProvider = placeDeploymentProvider;
         this.primeDeploymentProvider = primeDeploymentProvider;
         this.throwDeploymentProvider = throwDeploymentProvider;
@@ -62,6 +61,7 @@ public class EquipmentControlsFactory {
 
         String throwActionValue = spec.controls.throwing;
         String cookActionValue = spec.controls.cook;
+        String dropActionValue = spec.controls.drop;
         String placeActionValue = spec.controls.place;
         String activateActionValue = spec.controls.activate;
 
@@ -70,19 +70,6 @@ public class EquipmentControlsFactory {
 
             if (throwProperties == null) {
                 throw new EquipmentControlsCreationException("Cannot create controls for 'throw', the equipment specification does not contain the required throw properties");
-            }
-
-            if (cookActionValue != null) {
-                Action cookAction = Action.valueOf(cookActionValue);
-
-                List<GameSound> cookSounds = DefaultGameSound.parseSounds(throwProperties.cookSounds);
-
-                PrimeDeployment deployment = primeDeploymentProvider.get();
-                deployment.configurePrimeSounds(cookSounds);
-
-                CookFunction cookFunction = new CookFunction(equipment, deployment);
-
-                controls.addControl(cookAction, cookFunction);
             }
 
             Action throwAction = Action.valueOf(throwActionValue);
@@ -113,6 +100,19 @@ public class EquipmentControlsFactory {
             ThrowFunction throwFunction = new ThrowFunction(equipment, deployment);
 
             controls.addControl(throwAction, throwFunction);
+        }
+
+        if (cookActionValue != null) {
+            Action cookAction = Action.valueOf(cookActionValue);
+
+            List<GameSound> cookSounds = DefaultGameSound.parseSounds(null);
+
+            PrimeDeployment deployment = primeDeploymentProvider.get();
+            deployment.configurePrimeSounds(cookSounds);
+
+            CookFunction cookFunction = new CookFunction(equipment, deployment);
+
+            controls.addControl(cookAction, cookFunction);
         }
 
         if (placeActionValue != null) {
@@ -149,15 +149,13 @@ public class EquipmentControlsFactory {
         return controls;
     }
 
-    @NotNull
-    private Map<DamageType, Double> getResistances(@NotNull Map<String, Double> resistancesValue) {
+    private Map<DamageType, Double> getResistances(Map<String, Double> resistancesValue) {
         return resistancesValue.entrySet().stream()
                 .map(this::convertResistanceValueToEntry)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (x, y) -> y, HashMap::new));
     }
 
-    @NotNull
-    private Entry<DamageType, Double> convertResistanceValueToEntry(@NotNull Entry<String, Double> entry) {
+    private Entry<DamageType, Double> convertResistanceValueToEntry(Entry<String, Double> entry) {
         String damageTypeValue = entry.getKey().replaceAll("-", "_").toUpperCase();
         DamageType damageType = DamageType.valueOf(damageTypeValue);
 
