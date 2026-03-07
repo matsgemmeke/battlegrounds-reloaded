@@ -4,6 +4,7 @@ description: Device that creates a smoke screen when detonated.
 controls:
   throwing: LEFT_CLICK
   cook: RIGHT_CLICK
+  drop: DROP_ITEM
 deploy:
   health: 50.0
   triggers:
@@ -17,10 +18,11 @@ deploy:
   on-cleanup:
     remove-deployment: false
   throwing:
-    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
+  cooking:
+    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
 effect:
   type: SMOKE_SCREEN
   activation-sounds: BLOCK_FIRE_EXTINGUISH-1-0-0
