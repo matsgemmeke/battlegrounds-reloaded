@@ -26,6 +26,9 @@ deploy:
     velocity: 1.2
   cooking:
     cook-sounds: ENTITY_TNT_PRIMED-1-2-0
+  dropping:
+    velocity: 1.0
+    cooldown: 30
 effect:
   type: EXPLOSION
   power: 2.0

@@ -1,14 +1,12 @@
-package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
+package nl.matsgemmeke.battlegrounds.configuration.item.equipment.deploy;
 
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 
-public class ThrowPropertiesSpec {
+public class DropPropertiesSpec {
 
     @Required
     public Double velocity;
 
     @Required
     public Long cooldown;
-
-    public String throwSounds;
 }

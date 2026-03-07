@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.deploy.DropPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
 
 import java.util.HashMap;
@@ -24,6 +25,10 @@ public class DeploymentSpec {
     public ThrowPropertiesSpec throwing;
 
     public PlacePropertiesSpec placing;
+
+    public CookingPropertiesSpec cooking;
+
+    public DropPropertiesSpec dropping;
 
     public ManualActivationPropertiesSpec manualActivation;
 }

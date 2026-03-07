@@ -4,12 +4,17 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.*;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +24,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -29,6 +34,8 @@ class EquipmentControlsFactoryTest {
 
     @Mock
     private Equipment equipment;
+    @Mock
+    private ItemControls<EquipmentHolder> controls;
     @Mock
     private ProjectileEffectFactory projectileEffectFactory;
     @Mock
@@ -39,28 +46,16 @@ class EquipmentControlsFactoryTest {
     private Provider<PrimeDeployment> primeDeploymentProvider;
     @Mock
     private Provider<ThrowDeployment> throwDeploymentProvider;
+    @Mock
+    private Supplier<ItemControls<EquipmentHolder>> controlsSupplier;
 
     private EquipmentControlsFactory controlsFactory;
 
     @BeforeEach
     void setUp() {
-        controlsFactory = new EquipmentControlsFactory(projectileEffectFactory, dropDeploymentProvider, placeDeploymentProvider, primeDeploymentProvider, throwDeploymentProvider);
-    }
+        when(controlsSupplier.get()).thenReturn(controls);
 
-    @Test
-    @DisplayName("create returns ItemControls with throw function")
-    void create_withThrowFunction() {
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
-        ThrowDeployment throwDeployment = mock(ThrowDeployment.class);
-
-        ItemTemplate itemTemplate = mock(ItemTemplate.class);
-        when(equipment.getThrowItemTemplate()).thenReturn(itemTemplate);
-
-        when(throwDeploymentProvider.get()).thenReturn(throwDeployment);
-
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
-
-        assertThat(controls).isNotNull();
+        controlsFactory = new EquipmentControlsFactory(projectileEffectFactory, dropDeploymentProvider, placeDeploymentProvider, primeDeploymentProvider, throwDeploymentProvider, controlsSupplier);
     }
 
     @Test
@@ -87,21 +82,32 @@ class EquipmentControlsFactoryTest {
     }
 
     @Test
-    @DisplayName("create returns ItemControls with cook function")
-    void create_withCookFunction() {
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
-        PrimeDeployment primeDeployment = mock(PrimeDeployment.class);
+    @DisplayName("create returns ItemControls with throw function")
+    void create_withThrowFunction() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
         ThrowDeployment throwDeployment = mock(ThrowDeployment.class);
 
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(equipment.getThrowItemTemplate()).thenReturn(itemTemplate);
 
-        when(primeDeploymentProvider.get()).thenReturn(primeDeployment);
         when(throwDeploymentProvider.get()).thenReturn(throwDeployment);
 
         ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
 
-        assertThat(controls).isNotNull();
+        verify(controls).addControl(eq(Action.LEFT_CLICK), any(ThrowFunction.class));
+    }
+
+    @Test
+    @DisplayName("create throws EquipmentControlsCreationException when place action has value but place properties is null")
+    void create_placePropertiesNull() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
+        equipmentSpec.controls.activate = null;
+        equipmentSpec.controls.throwing = null;
+        equipmentSpec.deploy.placing = null;
+
+        assertThatThrownBy(() -> controlsFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControlsCreationException.class)
+                .hasMessage("Cannot create controls for 'place', the equipment specification does not contain the required place properties");
     }
 
     @Test
@@ -117,7 +123,64 @@ class EquipmentControlsFactoryTest {
 
         ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
 
-        assertThat(controls).isNotNull();
+        verify(controls).addControl(eq(Action.RIGHT_CLICK), any(PlaceFunction.class));
+    }
+
+    @Test
+    @DisplayName("create throws EquipmentControlsCreationException when cook action has value but cook properties is null")
+    void create_cookPropertiesNull() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
+        equipmentSpec.controls.throwing = null;
+        equipmentSpec.deploy.cooking = null;
+
+        assertThatThrownBy(() -> controlsFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControlsCreationException.class)
+                .hasMessage("Cannot create controls for 'cook', the equipment specification does not contain the required cook properties");
+    }
+
+    @Test
+    @DisplayName("create returns ItemControls with cook function")
+    void create_withCookFunction() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
+        equipmentSpec.controls.throwing = null;
+        equipmentSpec.controls.drop = null;
+
+        PrimeDeployment primeDeployment = mock(PrimeDeployment.class);
+
+        when(primeDeploymentProvider.get()).thenReturn(primeDeployment);
+
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
+
+        verify(controls).addControl(eq(Action.RIGHT_CLICK), any(CookFunction.class));
+    }
+
+    @Test
+    @DisplayName("create throws EquipmentControlsCreationException when drop action has value but drop properties is null")
+    void create_dropPropertiesNull() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
+        equipmentSpec.controls.throwing = null;
+        equipmentSpec.controls.cook = null;
+        equipmentSpec.deploy.dropping = null;
+
+        assertThatThrownBy(() -> controlsFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControlsCreationException.class)
+                .hasMessage("Cannot create controls for 'drop', the equipment specification does not contain the required drop properties");
+    }
+
+    @Test
+    @DisplayName("create returns ItemControls with drop function")
+    void create_withDropFunction() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
+        equipmentSpec.controls.throwing = null;
+        equipmentSpec.controls.cook = null;
+
+        DropDeployment dropDeployment = mock(DropDeployment.class);
+
+        when(dropDeploymentProvider.get()).thenReturn(dropDeployment);
+
+        ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
+
+        verify(controls).addControl(eq(Action.DROP_ITEM), any(DropFunction.class));
     }
 
     @Test
@@ -129,7 +192,7 @@ class EquipmentControlsFactoryTest {
 
         ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
 
-        assertThat(controls).isNotNull();
+        verify(controls).addControl(eq(Action.RIGHT_CLICK), any(ActivateFunction.class));
     }
 
     private EquipmentSpec createEquipmentSpec(String filePath) {

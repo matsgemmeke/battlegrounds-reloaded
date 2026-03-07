@@ -2,9 +2,11 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.CookingPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.PlacePropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.ThrowPropertiesSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.deploy.DropPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
@@ -31,6 +33,7 @@ import org.bukkit.Material;
 import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class EquipmentControlsFactory {
@@ -40,6 +43,7 @@ public class EquipmentControlsFactory {
     private final Provider<PlaceDeployment> placeDeploymentProvider;
     private final Provider<PrimeDeployment> primeDeploymentProvider;
     private final Provider<ThrowDeployment> throwDeploymentProvider;
+    private final Supplier<ItemControls<EquipmentHolder>> controlsSupplier;
 
     @Inject
     public EquipmentControlsFactory(
@@ -47,22 +51,24 @@ public class EquipmentControlsFactory {
             Provider<DropDeployment> dropDeploymentProvider,
             Provider<PlaceDeployment> placeDeploymentProvider,
             Provider<PrimeDeployment> primeDeploymentProvider,
-            Provider<ThrowDeployment> throwDeploymentProvider
+            Provider<ThrowDeployment> throwDeploymentProvider,
+            Supplier<ItemControls<EquipmentHolder>> controlsSupplier
     ) {
         this.projectileEffectFactory = projectileEffectFactory;
         this.dropDeploymentProvider = dropDeploymentProvider;
         this.placeDeploymentProvider = placeDeploymentProvider;
         this.primeDeploymentProvider = primeDeploymentProvider;
         this.throwDeploymentProvider = throwDeploymentProvider;
+        this.controlsSupplier = controlsSupplier;
     }
 
     public ItemControls<EquipmentHolder> create(EquipmentSpec spec, Equipment equipment) {
-        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        ItemControls<EquipmentHolder> controls = controlsSupplier.get();
 
         String throwActionValue = spec.controls.throwing;
+        String placeActionValue = spec.controls.place;
         String cookActionValue = spec.controls.cook;
         String dropActionValue = spec.controls.drop;
-        String placeActionValue = spec.controls.place;
         String activateActionValue = spec.controls.activate;
 
         if (throwActionValue != null) {
@@ -102,19 +108,6 @@ public class EquipmentControlsFactory {
             controls.addControl(throwAction, throwFunction);
         }
 
-        if (cookActionValue != null) {
-            Action cookAction = Action.valueOf(cookActionValue);
-
-            List<GameSound> cookSounds = DefaultGameSound.parseSounds(null);
-
-            PrimeDeployment deployment = primeDeploymentProvider.get();
-            deployment.configurePrimeSounds(cookSounds);
-
-            CookFunction cookFunction = new CookFunction(equipment, deployment);
-
-            controls.addControl(cookAction, cookFunction);
-        }
-
         if (placeActionValue != null) {
             Action placeAction = Action.valueOf(placeActionValue);
             PlacePropertiesSpec placeProperties = spec.deploy.placing;
@@ -137,6 +130,39 @@ public class EquipmentControlsFactory {
             PlaceFunction placeFunction = new PlaceFunction(equipment, deployment);
 
             controls.addControl(placeAction, placeFunction);
+        }
+
+        if (cookActionValue != null) {
+            CookingPropertiesSpec cookProperties = spec.deploy.cooking;
+
+            if (cookProperties == null) {
+                throw new EquipmentControlsCreationException("Cannot create controls for 'cook', the equipment specification does not contain the required cook properties");
+            }
+
+            Action cookAction = Action.valueOf(cookActionValue);
+            List<GameSound> cookSounds = DefaultGameSound.parseSounds(cookProperties.cookSounds);
+
+            PrimeDeployment deployment = primeDeploymentProvider.get();
+            deployment.configurePrimeSounds(cookSounds);
+
+            CookFunction cookFunction = new CookFunction(equipment, deployment);
+
+            controls.addControl(cookAction, cookFunction);
+        }
+
+        if (dropActionValue != null) {
+            DropPropertiesSpec dropProperties = spec.deploy.dropping;
+
+            if (dropProperties == null) {
+                throw new EquipmentControlsCreationException("Cannot create controls for 'drop', the equipment specification does not contain the required drop properties");
+            }
+
+            Action dropAction = Action.valueOf(dropActionValue);
+
+            DropDeployment deployment = dropDeploymentProvider.get();
+            DropFunction dropFunction = new DropFunction(equipment, deployment);
+
+            controls.addControl(dropAction, dropFunction);
         }
 
         if (activateActionValue != null) {
