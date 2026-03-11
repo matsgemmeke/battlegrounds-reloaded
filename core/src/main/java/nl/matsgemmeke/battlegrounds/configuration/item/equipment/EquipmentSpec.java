@@ -11,16 +11,23 @@ public class EquipmentSpec {
 
     @Required
     public String name;
+
     public String description;
+
     @Required
     public String equipmentType;
+
     @Required
     public EquipmentItemsSpec items;
+
     @Required
     public ControlsSpec controls;
+
     @Required
     public DeploymentSpec deploy;
+
     @Required
     public ItemEffectSpec effect;
+
     public Map<String, ProjectileEffectSpec> projectileEffects = new HashMap<>();
 }

@@ -8,11 +8,11 @@ import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
-import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
-import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.GunFactory;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponFactory;
+import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
+import nl.matsgemmeke.battlegrounds.validation.ValidationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -28,6 +28,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
     private final EquipmentFactory equipmentFactory;
     private final GunFactory gunFactory;
     private final MeleeWeaponFactory meleeWeaponFactory;
+    private final ObjectValidator objectValidator;
     private final SpecDeserializer specDeserializer;
 
     @Inject
@@ -35,6 +36,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
             EquipmentFactory equipmentFactory,
             GunFactory gunFactory,
             MeleeWeaponFactory meleeWeaponFactory,
+            ObjectValidator objectValidator,
             SpecDeserializer specDeserializer,
             @Named("ItemsFolder") File itemsFolder,
             @Named("Battlegrounds") Logger logger
@@ -42,6 +44,7 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
         this.equipmentFactory = equipmentFactory;
         this.gunFactory = gunFactory;
         this.meleeWeaponFactory = meleeWeaponFactory;
+        this.objectValidator = objectValidator;
         this.specDeserializer = specDeserializer;
         this.itemsFolder = itemsFolder;
         this.logger = logger;
@@ -133,7 +136,8 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
         if (configuration.getString("equipment-type") != null) {
             EquipmentSpec equipmentSpec = specDeserializer.deserializeSpec(file, EquipmentSpec.class);
-            ObjectValidator.validate(equipmentSpec);
+
+            objectValidator.validate(equipmentSpec);
 
             creator.addEquipmentSpec(name, equipmentSpec);
             return;
@@ -141,7 +145,8 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
         if (configuration.getString("gun-type") != null) {
             GunSpec gunSpec = specDeserializer.deserializeSpec(file, GunSpec.class);
-            ObjectValidator.validate(gunSpec);
+
+            objectValidator.validate(gunSpec);
 
             creator.addGunSpec(name, gunSpec);
             return;
@@ -149,7 +154,8 @@ public class WeaponCreatorProvider implements Provider<WeaponCreator> {
 
         if (file.getParentFile().getName().endsWith("melee_weapons")) {
             MeleeWeaponSpec meleeWeaponSpec = specDeserializer.deserializeSpec(file, MeleeWeaponSpec.class);
-            ObjectValidator.validate(meleeWeaponSpec);
+
+            objectValidator.validate(meleeWeaponSpec);
 
             creator.addMeleeWeaponSpec(name, meleeWeaponSpec);
             return;

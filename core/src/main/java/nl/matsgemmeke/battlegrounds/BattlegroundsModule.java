@@ -5,6 +5,9 @@ import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
@@ -13,6 +16,7 @@ import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProvider;
+import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -109,6 +113,7 @@ import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
+import nl.matsgemmeke.battlegrounds.validation.GuiceConstraintValidatorFactory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -132,6 +137,7 @@ public class BattlegroundsModule implements Module {
         this.pluginManager = pluginManager;
     }
 
+    @Override
     public void configure(Binder binder) {
         // Instance bindings
         binder.bind(InternalsProvider.class).toInstance(internals);
@@ -148,6 +154,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(HitboxResolver.class).in(Singleton.class);
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
+        binder.bind(ObjectValidator.class).in(Singleton.class);
         binder.bind(ParticleEffectSpawner.class).in(Singleton.class);
         binder.bind(Scheduler.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
@@ -288,5 +295,21 @@ public class BattlegroundsModule implements Module {
         binder.bind(File.class).annotatedWith(Names.named("ItemsFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "items"));
         binder.bind(File.class).annotatedWith(Names.named("LangFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "lang"));
         binder.bind(File.class).annotatedWith(Names.named("SetupFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "setup"));
+    }
+
+    @Provides
+    @Singleton
+    public ConstraintValidatorFactory provideFactory(Injector injector) {
+        return new GuiceConstraintValidatorFactory(injector);
+    }
+
+    @Provides
+    @Singleton
+    public Validator provideValidator(ConstraintValidatorFactory factory) {
+        return Validation.byDefaultProvider()
+                .configure()
+                .constraintValidatorFactory(factory)
+                .buildValidatorFactory()
+                .getValidator();
     }
 }
