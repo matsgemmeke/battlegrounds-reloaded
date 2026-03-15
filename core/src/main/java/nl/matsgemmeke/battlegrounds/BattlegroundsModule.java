@@ -50,8 +50,6 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
-import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
-import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreatorProvider;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
@@ -219,7 +217,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
         binder.bind(StatePersistenceHandler.class).toProvider(StatePersistenceHandlerProvider.class).in(GameScoped.class);
         binder.bind(TargetFinder.class).toProvider(TargetFinderProvider.class).in(GameScoped.class);
-        binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(GameScoped.class);
 
         binder.bind(ActionExecutor.class)
                 .annotatedWith(Names.named("Equipment"))
