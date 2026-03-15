@@ -8,8 +8,9 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistry;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
@@ -22,24 +23,27 @@ public class GiveWeaponCommand extends CommandSource {
 
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
+    private final ItemSpecRegistry itemSpecRegistry;
+    private final Provider<ItemCreator> itemCreatorProvider;
     private final Provider<PlayerRegistry> playerRegistryProvider;
     private final Translator translator;
-    private final Provider<WeaponCreator> weaponCreatorProvider;
 
     @Inject
     public GiveWeaponCommand(
             GameContextProvider gameContextProvider,
             GameScope gameScope,
+            ItemSpecRegistry itemSpecRegistry,
             Translator translator,
-            Provider<PlayerRegistry> playerRegistryProvider,
-            Provider<WeaponCreator> weaponCreatorProvider
+            Provider<ItemCreator> itemCreatorProvider,
+            Provider<PlayerRegistry> playerRegistryProvider
     ) {
         super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText(), "bg giveweapon <weapon>");
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
+        this.itemSpecRegistry = itemSpecRegistry;
         this.translator = translator;
+        this.itemCreatorProvider = itemCreatorProvider;
         this.playerRegistryProvider = playerRegistryProvider;
-        this.weaponCreatorProvider = weaponCreatorProvider;
     }
 
     public void execute(Player player, String[] args) {
@@ -48,13 +52,7 @@ public class GiveWeaponCommand extends CommandSource {
 
         String weaponName = String.join(" ", args);
 
-        gameScope.runInScope(gameContext, () -> this.giveWeapon(player, weaponName));
-    }
-
-    private void giveWeapon(Player player, String weaponName) {
-        WeaponCreator weaponCreator = weaponCreatorProvider.get();
-
-        if (!weaponCreator.exists(weaponName)) {
+        if (!itemSpecRegistry.exists(weaponName)) {
             Map<String, Object> values = Map.of("bg_weapon", weaponName);
             String message = translator.translate(TranslationKey.WEAPON_NOT_EXISTS.getPath()).replace(values);
 
@@ -62,10 +60,16 @@ public class GiveWeaponCommand extends CommandSource {
             return;
         }
 
+        gameScope.runInScope(gameContext, () -> this.giveWeapon(player, weaponName));
+    }
+
+    private void giveWeapon(Player player, String weaponName) {
         PlayerRegistry playerRegistry = playerRegistryProvider.get();
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId())
                 .orElseThrow(() -> new IllegalStateException("Unable to find GamePlayer instance for player %s despite being registered".formatted(player.getName())));
-        Weapon weapon = weaponCreator.createWeapon(gamePlayer, weaponName);
+
+        ItemCreator itemCreator = itemCreatorProvider.get();
+        Weapon weapon = itemCreator.createWeapon(gamePlayer, weaponName);
 
         Map<String, Object> values = Map.of("bg_weapon", weapon.getName());
         String message = translator.translate(TranslationKey.WEAPON_GIVEN.getPath()).replace(values);

@@ -5,8 +5,9 @@ import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.item.*;
+import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistry;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -39,11 +40,13 @@ class GiveWeaponCommandTest {
     @Mock
     private GameScope gameScope;
     @Mock
+    private ItemSpecRegistry itemSpecRegistry;
+    @Mock
     private Player player;
     @Mock
     private Provider<PlayerRegistry> playerRegistryProvider;
     @Mock
-    private Provider<WeaponCreator> weaponCreatorProvider;
+    private Provider<ItemCreator> itemCreatorProvider;
     @Mock
     private Translator translator;
 
@@ -53,7 +56,7 @@ class GiveWeaponCommandTest {
     void setUp() {
         when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn(new TextTemplate("test"));
 
-        command = new GiveWeaponCommand(gameContextProvider, gameScope, translator, playerRegistryProvider, weaponCreatorProvider);
+        command = new GiveWeaponCommand(gameContextProvider, gameScope, itemSpecRegistry, translator, itemCreatorProvider, playerRegistryProvider);
     }
 
     @Test
@@ -72,14 +75,9 @@ class GiveWeaponCommandTest {
         GameContext gameContext = mock(GameContext.class);
         String message = "message";
 
-        WeaponCreator weaponCreator = mock(WeaponCreator.class);
-        when(weaponCreator.exists("test weapon")).thenReturn(false);
-
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(itemSpecRegistry.exists("test weapon")).thenReturn(false);
         when(translator.translate(TranslationKey.WEAPON_NOT_EXISTS.getPath())).thenReturn(new TextTemplate(message));
-        when(weaponCreatorProvider.get()).thenReturn(weaponCreator);
-
-        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
 
         command.execute(player, ARGS);
 
@@ -91,17 +89,14 @@ class GiveWeaponCommandTest {
     void execute_unknownPlayer() {
         GameContext gameContext = mock(GameContext.class);
 
-        WeaponCreator weaponCreator = mock(WeaponCreator.class);
-        when(weaponCreator.exists("test weapon")).thenReturn(true);
-
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(itemSpecRegistry.exists("test weapon")).thenReturn(true);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(player.getName()).thenReturn("TestPlayer");
         when(player.getUniqueId()).thenReturn(UNIQUE_ID);
-        when(weaponCreatorProvider.get()).thenReturn(weaponCreator);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
 
@@ -128,15 +123,15 @@ class GiveWeaponCommandTest {
         when(weapon.getItemStack()).thenReturn(itemStack);
         when(weapon.getName()).thenReturn("test");
 
-        WeaponCreator weaponCreator = mock(WeaponCreator.class);
-        when(weaponCreator.exists("test weapon")).thenReturn(true);
-        when(weaponCreator.createWeapon(gamePlayer, "test weapon")).thenReturn(weapon);
+        ItemCreator itemCreator = mock(ItemCreator.class);
+        when(itemCreator.createWeapon(gamePlayer, "test weapon")).thenReturn(weapon);
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(itemCreatorProvider.get()).thenReturn(itemCreator);
+        when(itemSpecRegistry.exists("test weapon")).thenReturn(true);
         when(player.getUniqueId()).thenReturn(UNIQUE_ID);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
-        when(weaponCreatorProvider.get()).thenReturn(weaponCreator);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
 
