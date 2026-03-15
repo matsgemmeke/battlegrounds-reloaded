@@ -87,6 +87,8 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistry;
+import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistryProvider;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
@@ -165,6 +167,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(EquipmentStateRepository.class).toProvider(SqliteEquipmentStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(HitboxConfiguration.class).toProvider(HitboxConfigurationProvider.class).in(Singleton.class);
+        binder.bind(ItemSpecRegistry.class).toProvider(ItemSpecRegistryProvider.class).in(Singleton.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(MeleeWeaponStateRepository.class).toProvider(SqliteMeleeWeaponStateRepositoryProvider.class).in(Singleton.class);
 
@@ -299,16 +302,16 @@ public class BattlegroundsModule implements Module {
 
     @Provides
     @Singleton
-    public ConstraintValidatorFactory provideFactory(Injector injector) {
+    public ConstraintValidatorFactory provideConstraintValidatorFactory(Injector injector) {
         return new GuiceConstraintValidatorFactory(injector);
     }
 
     @Provides
     @Singleton
-    public Validator provideValidator(ConstraintValidatorFactory factory) {
+    public Validator provideValidator(ConstraintValidatorFactory constraintValidatorFactory) {
         return Validation.byDefaultProvider()
                 .configure()
-                .constraintValidatorFactory(factory)
+                .constraintValidatorFactory(constraintValidatorFactory)
                 .buildValidatorFactory()
                 .getValidator();
     }
