@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.gun;
 
+import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
 
@@ -20,19 +21,25 @@ public class GunSpec {
     public Integer price;
 
     @Required
+    @Valid
     public AmmoSpec ammo;
 
     @Required
+    @Valid
     public ControlsSpec controls;
 
     @Required
+    @Valid
     public ItemSpec item;
 
     @Required
+    @Valid
     public ReloadingSpec reloading;
 
+    @Valid
     public ScopeSpec scope;
 
     @Required
+    @Valid
     public ShootingSpec shooting;
 }
