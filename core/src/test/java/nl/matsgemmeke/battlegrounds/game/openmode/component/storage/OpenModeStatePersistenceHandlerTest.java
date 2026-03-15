@@ -1,14 +1,18 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.storage;
 
+import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
+import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistry;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
@@ -58,6 +62,10 @@ class OpenModeStatePersistenceHandlerTest {
     @Mock
     private GunRegistry gunRegistry;
     @Mock
+    private ItemCreator itemCreator;
+    @Mock
+    private ItemSpecRegistry itemSpecRegistry;
+    @Mock
     private Logger logger;
     @Mock
     private MeleeWeaponRegistry meleeWeaponRegistry;
@@ -65,8 +73,6 @@ class OpenModeStatePersistenceHandlerTest {
     private PlayerRegistry playerRegistry;
     @Mock
     private PlayerStateStorage playerStateStorage;
-    @Mock
-    private WeaponCreator weaponCreator;
     @InjectMocks
     private OpenModeStatePersistenceHandler statePersistenceHandler;
 
@@ -99,13 +105,13 @@ class OpenModeStatePersistenceHandlerTest {
         when(meleeWeapon.getResourceContainer()).thenReturn(meleeWeaponResourceContainer);
         when(meleeWeapon.getItemStack()).thenReturn(meleeWeaponItemStack);
 
+        when(itemCreator.createGun(GUN_NAME, gamePlayer)).thenReturn(gun);
+        when(itemCreator.createEquipment(EQUIPMENT_NAME, gamePlayer)).thenReturn(equipment);
+        when(itemCreator.createMeleeWeapon(MELEE_WEAPON_NAME, gamePlayer)).thenReturn(meleeWeapon);
+        when(itemSpecRegistry.getEquipmentSpec(EQUIPMENT_NAME)).thenReturn(Optional.of(new EquipmentSpec()));
+        when(itemSpecRegistry.getGunSpec(GUN_NAME)).thenReturn(Optional.of(new GunSpec()));
+        when(itemSpecRegistry.getMeleeWeaponSpec(MELEE_WEAPON_NAME)).thenReturn(Optional.of(new MeleeWeaponSpec()));
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(gamePlayerState);
-        when(weaponCreator.createGun(GUN_NAME, gamePlayer)).thenReturn(gun);
-        when(weaponCreator.createEquipment(EQUIPMENT_NAME, gamePlayer)).thenReturn(equipment);
-        when(weaponCreator.createMeleeWeapon(MELEE_WEAPON_NAME, gamePlayer)).thenReturn(meleeWeapon);
-        when(weaponCreator.gunExists(GUN_NAME)).thenReturn(true);
-        when(weaponCreator.equipmentExists(EQUIPMENT_NAME)).thenReturn(true);
-        when(weaponCreator.meleeWeaponExists(MELEE_WEAPON_NAME)).thenReturn(true);
 
         statePersistenceHandler.loadPlayerState(gamePlayer);
 
@@ -117,9 +123,9 @@ class OpenModeStatePersistenceHandlerTest {
         verify(inventory).setItem(GUN_ITEM_SLOT, gunItemStack);
         verify(inventory).setItem(EQUIPMENT_ITEM_SLOT, equipmentItemStack);
         verify(inventory).setItem(MELEE_WEAPON_ITEM_SLOT, meleeWeaponItemStack);
-        verify(weaponCreator).createGun(GUN_NAME, gamePlayer);
-        verify(weaponCreator).createEquipment(EQUIPMENT_NAME, gamePlayer);
-        verify(weaponCreator).createMeleeWeapon(MELEE_WEAPON_NAME, gamePlayer);
+        verify(itemCreator).createGun(GUN_NAME, gamePlayer);
+        verify(itemCreator).createEquipment(EQUIPMENT_NAME, gamePlayer);
+        verify(itemCreator).createMeleeWeapon(MELEE_WEAPON_NAME, gamePlayer);
     }
 
     @Test
@@ -134,10 +140,10 @@ class OpenModeStatePersistenceHandlerTest {
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
         when(gamePlayer.getName()).thenReturn("TestPlayer");
 
+        when(itemSpecRegistry.getEquipmentSpec(EQUIPMENT_NAME)).thenReturn(Optional.empty());
+        when(itemSpecRegistry.getGunSpec(GUN_NAME)).thenReturn(Optional.empty());
+        when(itemSpecRegistry.getMeleeWeaponSpec(MELEE_WEAPON_NAME)).thenReturn(Optional.empty());
         when(playerStateStorage.getPlayerState(PLAYER_UUID)).thenReturn(playerState);
-        when(weaponCreator.gunExists(GUN_NAME)).thenReturn(false);
-        when(weaponCreator.equipmentExists(EQUIPMENT_NAME)).thenReturn(false);
-        when(weaponCreator.meleeWeaponExists(MELEE_WEAPON_NAME)).thenReturn(false);
 
         statePersistenceHandler.loadPlayerState(gamePlayer);
 

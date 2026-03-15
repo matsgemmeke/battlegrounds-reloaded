@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -41,6 +41,8 @@ class MeleeWeaponActionExecutorTest {
     private static final int ITEM_SLOT = 5;
 
     @Mock
+    private ItemCreator itemCreator;
+    @Mock
     private MeleeWeaponRegistry meleeWeaponRegistry;
     @Mock
     private NamespacedKeyCreator namespacedKeyCreator;
@@ -48,8 +50,6 @@ class MeleeWeaponActionExecutorTest {
     private Player player;
     @Mock
     private PlayerRegistry playerRegistry;
-    @Mock
-    private WeaponCreator weaponCreator;
     @InjectMocks
     private MeleeWeaponActionExecutor actionExecutor;
 
@@ -463,11 +463,11 @@ class MeleeWeaponActionExecutorTest {
         when(meleeWeapon.getResourceContainer()).thenReturn(resourceContainer);
         when(meleeWeapon.getItemStack()).thenReturn(newItemStack);
 
+        when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
         when(meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack)).thenReturn(Optional.empty());
         when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
-        when(weaponCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
 
         PickupActionResult result = actionExecutor.handlePickupAction(player, itemStack);
         result.itemAction().accept(item);

@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.weapon.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.action.PickupActionResult;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -20,22 +20,22 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
 
     private static final String WEAPON_NAME_KEY = "weapon-name";
 
+    private final ItemCreator itemCreator;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
     private final NamespacedKeyCreator namespacedKeyCreator;
     private final PlayerRegistry playerRegistry;
-    private final WeaponCreator weaponCreator;
 
     @Inject
     public MeleeWeaponActionExecutor(
+            ItemCreator itemCreator,
             MeleeWeaponRegistry meleeWeaponRegistry,
             NamespacedKeyCreator namespacedKeyCreator,
-            PlayerRegistry playerRegistry,
-            WeaponCreator weaponCreator
+            PlayerRegistry playerRegistry
     ) {
+        this.itemCreator = itemCreator;
         this.meleeWeaponRegistry = meleeWeaponRegistry;
         this.namespacedKeyCreator = namespacedKeyCreator;
         this.playerRegistry = playerRegistry;
-        this.weaponCreator = weaponCreator;
     }
 
     @Override
@@ -185,7 +185,7 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
     }
 
     private PickupActionResult createAndAssignNewMeleeWeapon(GamePlayer gamePlayer, String weaponName) {
-        MeleeWeapon meleeWeapon = weaponCreator.createMeleeWeapon(weaponName, gamePlayer);
+        MeleeWeapon meleeWeapon = itemCreator.createMeleeWeapon(weaponName, gamePlayer);
 
         ResourceContainer resourceContainer = meleeWeapon.getResourceContainer();
         resourceContainer.setLoadedAmount(1);
