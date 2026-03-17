@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.projectile;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ConditionalRequired;
 import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
 import nl.matsgemmeke.battlegrounds.configuration.validation.Required;

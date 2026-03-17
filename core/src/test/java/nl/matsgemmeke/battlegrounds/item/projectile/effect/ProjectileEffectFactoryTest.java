@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.FloorHitTriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceProperties;
@@ -171,7 +172,7 @@ public class ProjectileEffectFactoryTest {
     }
 
     private TriggerSpec createTriggerSpec() {
-        TriggerSpec triggerSpec = new TriggerSpec();
+        FloorHitTriggerSpec triggerSpec = new FloorHitTriggerSpec();
         triggerSpec.type = "FLOOR_HIT";
         triggerSpec.delay = 10L;
         triggerSpec.interval = 1L;

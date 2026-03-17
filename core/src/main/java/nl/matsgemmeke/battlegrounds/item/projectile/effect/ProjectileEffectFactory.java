@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -122,7 +122,7 @@ public class ProjectileEffectFactory {
         return value;
     }
 
-    private void addTriggers(@NotNull ProjectileEffect projectileEffect, @NotNull Collection<TriggerSpec> triggerSpecs) {
+    private void addTriggers(ProjectileEffect projectileEffect, Collection<TriggerSpec> triggerSpecs) {
         for (TriggerSpec triggerSpec : triggerSpecs) {
             TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 

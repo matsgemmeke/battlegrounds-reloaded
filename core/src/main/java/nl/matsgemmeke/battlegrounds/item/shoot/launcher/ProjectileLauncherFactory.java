@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
@@ -88,12 +88,10 @@ public class ProjectileLauncherFactory {
 
         ArrowLauncher arrowLauncher = arrowLauncherFactory.create(properties, itemEffect);
 
-        if (spec.triggers != null) {
-            for (TriggerSpec triggerSpec : spec.triggers.values()) {
-                TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
+        for (TriggerSpec triggerSpec : spec.triggers.values()) {
+            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 
-                arrowLauncher.addTriggerExecutor(triggerExecutor);
-            }
+            arrowLauncher.addTriggerExecutor(triggerExecutor);
         }
 
         return arrowLauncher;
@@ -136,12 +134,10 @@ public class ProjectileLauncherFactory {
 
         ItemLauncher itemLauncher = itemLauncherFactory.create(properties, itemEffect);
 
-        if (spec.triggers != null) {
-            for (TriggerSpec triggerSpec : spec.triggers.values()) {
-                TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
+        for (TriggerSpec triggerSpec : spec.triggers.values()) {
+            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 
-                itemLauncher.addTriggerExecutor(triggerExecutor);
-            }
+            itemLauncher.addTriggerExecutor(triggerExecutor);
         }
 
         return itemLauncher;

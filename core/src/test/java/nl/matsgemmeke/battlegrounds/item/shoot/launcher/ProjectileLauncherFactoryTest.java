@@ -2,9 +2,10 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.BlockImpactTriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
@@ -224,7 +225,7 @@ class ProjectileLauncherFactoryTest {
     }
 
     private TriggerSpec createTriggerSpec() {
-        TriggerSpec triggerSpec = new TriggerSpec();
+        BlockImpactTriggerSpec triggerSpec = new BlockImpactTriggerSpec();
         triggerSpec.type = "BLOCK_IMPACT";
         triggerSpec.delay = 5L;
         triggerSpec.interval = 1L;

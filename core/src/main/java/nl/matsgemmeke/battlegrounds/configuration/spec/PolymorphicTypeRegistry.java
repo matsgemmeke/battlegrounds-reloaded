@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.BurstModeS
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.SemiAutomaticSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +39,14 @@ public final class PolymorphicTypeRegistry {
                 "FIREBALL", FireballProjectileSpec.class,
                 "HITSCAN", HitscanProjectileSpec.class,
                 "ITEM", ItemProjectileSpec.class
+        ));
+
+        register(TriggerSpec.class, "type", Map.of(
+                "BLOCK_IMPACT", BlockImpactTriggerSpec.class,
+                "ENEMY_PROXIMITY", EnemyProximityTriggerSpec.class,
+                "ENTITY_IMPACT", EntityImpactTriggerSpec.class,
+                "FLOOR_HIT", FloorHitTriggerSpec.class,
+                "SCHEDULED", ScheduledTriggerSpec.class
         ));
     }
 
