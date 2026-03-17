@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -52,10 +53,10 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.reloading.duration).isEqualTo(48);
         assertThat(gunSpec.reloading.reloadSounds).isEqualTo("BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44");
 
-        assertThat(gunSpec.shooting.fireMode.type).isEqualTo("FULLY_AUTOMATIC");
-        assertThat(gunSpec.shooting.fireMode.amountOfShots).isNull();
-        assertThat(gunSpec.shooting.fireMode.rateOfFire).isEqualTo(600);
-        assertThat(gunSpec.shooting.fireMode.cycleCooldown).isNull();
+        assertThat(gunSpec.shooting.fireMode).isInstanceOfSatisfying(FullyAutomaticModeSpec.class, fireMode -> {
+            assertThat(fireMode.type).isEqualTo("FULLY_AUTOMATIC");
+            assertThat(fireMode.rateOfFire).isEqualTo(600);
+        });
 
         assertThat(gunSpec.shooting.projectile.type).isEqualTo("HITSCAN");
 

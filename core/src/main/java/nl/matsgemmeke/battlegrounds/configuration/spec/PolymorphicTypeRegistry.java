@@ -2,6 +2,10 @@ package nl.matsgemmeke.battlegrounds.configuration.spec;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.BurstModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FireModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.SemiAutomaticSpec;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +16,12 @@ public final class PolymorphicTypeRegistry {
     private static final Map<Class<?>, PolymorphicDefinition> definitions = new HashMap<>();
 
     static {
+        register(FireModeSpec.class, "type", Map.of(
+                "BURST_MODE", BurstModeSpec.class,
+                "FULLY_AUTOMATIC", FullyAutomaticModeSpec.class,
+                "SEMI_AUTOMATIC", SemiAutomaticSpec.class
+        ));
+
         register(ItemEffectSpec.class, "type", Map.of(
                 "COMBUSTION", CombustionEffectSpec.class,
                 "DAMAGE", DamageEffectSpec.class,

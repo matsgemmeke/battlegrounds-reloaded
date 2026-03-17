@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.item.gun;
 
 import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
 
 public class ShootingSpec {

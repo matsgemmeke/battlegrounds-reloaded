@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.HitscanProjectileSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ItemProjectileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -88,7 +88,7 @@ class ShootHandlerFactoryTest {
     }
 
     private ShootingSpec createShootingSpec() {
-        FireModeSpec fireModeSpec = new FireModeSpec();
+        FullyAutomaticModeSpec fireModeSpec = new FullyAutomaticModeSpec();
         fireModeSpec.type = "FULLY_AUTOMATIC";
         fireModeSpec.rateOfFire = 600;
 
