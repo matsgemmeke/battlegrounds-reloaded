@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.item;
 
-import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
-import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.EnumValues;
+import jakarta.validation.Valid;
+import nl.matsgemmeke.battlegrounds.validation.common.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 
@@ -21,10 +21,9 @@ public class ItemSpec {
 
     public Integer damage = 0;
 
-    @EnumValues(type = ItemFlag.class)
-    public List<String> itemFlags = new ArrayList<>();
+    public List<@EnumValue(type = ItemFlag.class) String> itemFlags = new ArrayList<>();
 
-    public Map<String, DataSpec> data = new HashMap<>();
+    public Map<String, @Valid DataSpec> data = new HashMap<>();
 
     public Boolean unbreakable = false;
 }
