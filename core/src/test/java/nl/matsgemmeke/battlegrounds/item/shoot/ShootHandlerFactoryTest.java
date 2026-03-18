@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.shoot;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.HitscanProjectileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.recoil.RecoilSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;

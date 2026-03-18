@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.shoot;
 
 import jakarta.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.RecoilSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ShootingSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.recoil.RecoilSpec;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
