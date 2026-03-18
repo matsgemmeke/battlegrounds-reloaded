@@ -6,6 +6,9 @@ import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.BurstModeS
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.SemiAutomaticSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.BuckshotSpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SingleProjectileSpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.*;
 
 import java.util.HashMap;
@@ -39,6 +42,11 @@ public final class PolymorphicTypeRegistry {
                 "FIREBALL", FireballProjectileSpec.class,
                 "HITSCAN", HitscanProjectileSpec.class,
                 "ITEM", ItemProjectileSpec.class
+        ));
+
+        register(SpreadPatternSpec.class, "type", Map.of(
+                "BUCKSHOT", BuckshotSpreadPatternSpec.class,
+                "SINGLE_PROJECTILE", SingleProjectileSpreadPatternSpec.class
         ));
 
         register(TriggerSpec.class, "type", Map.of(

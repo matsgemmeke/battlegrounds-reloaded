@@ -2,6 +2,8 @@ package nl.matsgemmeke.battlegrounds.configuration.spec;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SingleProjectileSpreadPatternSpec;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -9,10 +11,11 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class SpecDeserializerTest {
+class SpecDeserializerTest {
 
     @Test
-    public void deserializeSpecThrowsSpecDeserializationExceptionWhenGivenFileDoesNotExist() {
+    @DisplayName("deserializeSpec throws SpecDeserializationException when given file does not exist")
+    void deserializeSpec_fileDoesNotExist() {
         File file = new File("src/test/resources/does-not-exist.txt");
 
         SpecDeserializer specDeserializer = new SpecDeserializer();
@@ -23,7 +26,8 @@ public class SpecDeserializerTest {
     }
 
     @Test
-    public void deserializeSpecReturnsInstanceOfGivenTypeThatIsParsedFromFile() {
+    @DisplayName("deserializeSpec returns instance of given type based on file data")
+    void deserializeSpec_returnsFileDataAsInstance() {
         File file = new File("src/main/resources/items/submachine_guns/mp5.yml");
 
         SpecDeserializer specDeserializer = new SpecDeserializer();
@@ -77,9 +81,8 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.shooting.recoil.vertical).containsExactly(-1.5f, -2.0f, -2.5f);
         assertThat(gunSpec.shooting.recoil.kickbackDuration).isEqualTo(200L);
 
-        assertThat(gunSpec.shooting.spreadPattern.type).isEqualTo("SINGLE_PROJECTILE");
-        assertThat(gunSpec.shooting.spreadPattern.horizontalSpread).isNull();
-        assertThat(gunSpec.shooting.spreadPattern.verticalSpread).isNull();
-        assertThat(gunSpec.shooting.spreadPattern.projectileAmount).isNull();
+        assertThat(gunSpec.shooting.spreadPattern).isInstanceOfSatisfying(SingleProjectileSpreadPatternSpec.class, spreadPattern -> {
+            assertThat(spreadPattern.type).isEqualTo("SINGLE_PROJECTILE");
+        });
     }
 }

@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.projectile.HitscanProject
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.recoil.RecoilSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SingleProjectileSpreadPatternSpec;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.recoil.RecoilFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -96,7 +97,7 @@ class ShootHandlerFactoryTest {
         ProjectileSpec projectileSpec = new HitscanProjectileSpec();
         projectileSpec.type = "HITSCAN";
 
-        SpreadPatternSpec spreadPatternSpec = new SpreadPatternSpec();
+        SingleProjectileSpreadPatternSpec spreadPatternSpec = new SingleProjectileSpreadPatternSpec();
         spreadPatternSpec.type = "SINGLE_PROJECTILE";
 
         ShootingSpec shootingSpec = new ShootingSpec();

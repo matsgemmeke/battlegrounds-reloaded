@@ -1,45 +1,36 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.spread;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.SpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.BuckshotSpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SingleProjectileSpreadPatternSpec;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class SpreadPatternFactoryTest {
 
+    private final SpreadPatternFactory factory = new SpreadPatternFactory();
+
     @Test
-    public void createReturnsBuckshotSpreadPatternInstanceWhenTypeEqualsToBuckshot() {
-        SpreadPatternSpec spec = new SpreadPatternSpec();
+    @DisplayName("create returns BuckshotSpreadPattern instance")
+    void create_buckshotSpreadPattern() {
+        BuckshotSpreadPatternSpec spec = new BuckshotSpreadPatternSpec();
         spec.type = "BUCKSHOT";
         spec.projectileAmount = 1;
         spec.horizontalSpread = 0.5f;
         spec.verticalSpread = 0.5f;
 
-        SpreadPatternFactory factory = new SpreadPatternFactory();
         SpreadPattern spreadPattern = factory.create(spec);
 
         assertInstanceOf(BuckshotSpreadPattern.class, spreadPattern);
     }
 
     @Test
-    public void createThrowsSpreadPatternCreationExceptionWhenRequiredVariablesAreMissing() {
-        SpreadPatternSpec spec = new SpreadPatternSpec();
-        spec.type = "BUCKSHOT";
-
-        SpreadPatternFactory factory = new SpreadPatternFactory();
-
-        assertThatThrownBy(() -> factory.create(spec))
-                .isInstanceOf(SpreadPatternCreationException.class)
-                .hasMessage("Cannot create spread pattern with type BUCKSHOT because of invalid spec: Required 'projectileAmount' value is missing");
-    }
-
-    @Test
-    public void createReturnsSingleProjectileSpreadPatternInstanceWhenTypeEqualsToSingleProjectile() {
-        SpreadPatternSpec spec = new SpreadPatternSpec();
+    @DisplayName("create returns SingleProjectileSpreadPattern instance")
+    void create_singleProjectileSpreadPattern() {
+        SingleProjectileSpreadPatternSpec spec = new SingleProjectileSpreadPatternSpec();
         spec.type = "SINGLE_PROJECTILE";
 
-        SpreadPatternFactory factory = new SpreadPatternFactory();
         SpreadPattern spreadPattern = factory.create(spec);
 
         assertInstanceOf(SingleProjectileSpreadPattern.class, spreadPattern);
