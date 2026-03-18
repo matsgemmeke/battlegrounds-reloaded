@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.hitbox.definition;
 
-import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
-import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.Size;
+import jakarta.validation.constraints.Size;
+import nl.matsgemmeke.battlegrounds.validation.common.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
 
 public class HitboxComponentDefinition {
 
@@ -11,11 +11,11 @@ public class HitboxComponentDefinition {
     public String type;
 
     @Required
-    @Size(exact = 3)
+    @Size(min = 3, max = 3)
     public Double[] size;
 
     @Required
-    @Size(exact = 3)
+    @Size(min = 3, max = 3)
     public Double[] offset;
 
     private enum HitboxComponentType {

@@ -3,14 +3,13 @@ package nl.matsgemmeke.battlegrounds.configuration.hitbox;
 import nl.matsgemmeke.battlegrounds.configuration.BasePluginConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxComponentDefinition;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
-import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
+import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
-import java.util.function.Supplier;
 
 public class HitboxConfiguration extends BasePluginConfiguration {
 
@@ -18,8 +17,11 @@ public class HitboxConfiguration extends BasePluginConfiguration {
 
     private static final String HITBOX_COMPONENT_TYPE_FALLBACK = "TORSO";
 
-    public HitboxConfiguration(File file, InputStream resource) {
+    private final ObjectValidator objectValidator;
+
+    public HitboxConfiguration(ObjectValidator objectValidator, File file, InputStream resource) {
         super(file, resource, READ_ONLY);
+        this.objectValidator = objectValidator;
     }
 
     public Optional<HitboxDefinition> getHitboxDefinition(String entityType, String position) {
@@ -44,17 +46,17 @@ public class HitboxConfiguration extends BasePluginConfiguration {
             componentDefinition.size = size;
             componentDefinition.offset = offset;
 
-            try {
-                ObjectValidator.validate(componentDefinition);
-            } catch (ValidationException e) {
-                throw new InvalidHitboxDefinitionException("Validation failed for the hitbox definition for %s for the position %s: %s".formatted(entityType, position, e.getMessage()));
-            }
-
             componentDefinitions.add(componentDefinition);
         }
 
         HitboxDefinition hitboxDefinition = new HitboxDefinition();
         hitboxDefinition.components = componentDefinitions;
+
+        try {
+            objectValidator.validate(hitboxDefinition);
+        } catch (ValidationException e) {
+            throw new InvalidHitboxDefinitionException("Validation failed for the hitbox definition for %s for the position %s".formatted(entityType, position), e);
+        }
 
         return Optional.of(hitboxDefinition);
     }

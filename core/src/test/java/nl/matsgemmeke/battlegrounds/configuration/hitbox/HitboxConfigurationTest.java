@@ -1,9 +1,11 @@
 package nl.matsgemmeke.battlegrounds.configuration.hitbox;
 
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
+import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
 
 import java.io.*;
 import java.util.Optional;
@@ -17,6 +19,8 @@ class HitboxConfigurationTest {
 
     @TempDir
     private File tempDir;
+    @Mock
+    private ObjectValidator objectValidator;
 
     @BeforeEach
     void setUp() {
@@ -29,7 +33,7 @@ class HitboxConfigurationTest {
         File resourceFile = new File("src/test/resources/hitbox-configuration/empty-hitboxes-file/hitboxes.yml");
         InputStream resource = new FileInputStream(resourceFile);
 
-        HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(hitboxesFile, resource);
+        HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(objectValidator, hitboxesFile, resource);
         hitboxConfiguration.load();
         Optional<HitboxDefinition> hitboxDefinitionOptional = hitboxConfiguration.getHitboxDefinition("player", "standing");
 
@@ -41,7 +45,7 @@ class HitboxConfigurationTest {
         File resourceFile = new File("src/test/resources/hitbox-configuration/invalid-hitboxes-file/hitboxes.yml");
         InputStream resource = new FileInputStream(resourceFile);
 
-        HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(hitboxesFile, resource);
+        HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(objectValidator, hitboxesFile, resource);
         hitboxConfiguration.load();
 
         assertThatThrownBy(() -> hitboxConfiguration.getHitboxDefinition("player", "standing"))
@@ -54,7 +58,7 @@ class HitboxConfigurationTest {
         File resourceFile = new File("src/main/resources/hitboxes.yml");
         InputStream resource = new FileInputStream(resourceFile);
 
-        HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(hitboxesFile, resource);
+        HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(objectValidator, hitboxesFile, resource);
         hitboxConfiguration.load();
         Optional<HitboxDefinition> hitboxDefinitionOptional = hitboxConfiguration.getHitboxDefinition("player", "standing");
 
