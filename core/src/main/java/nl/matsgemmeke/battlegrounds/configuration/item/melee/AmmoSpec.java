@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.melee;
 
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class AmmoSpec {
 

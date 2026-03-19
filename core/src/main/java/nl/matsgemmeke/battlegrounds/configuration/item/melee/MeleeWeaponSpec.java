@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.item.melee;
 import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ReloadingSpec;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class MeleeWeaponSpec {
 

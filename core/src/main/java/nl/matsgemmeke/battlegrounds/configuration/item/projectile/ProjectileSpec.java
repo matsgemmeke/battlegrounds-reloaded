@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.EnumValue;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 import java.util.HashMap;
 import java.util.Map;

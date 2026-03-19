@@ -1,8 +1,8 @@
-package nl.matsgemmeke.battlegrounds.validation.common.constraint;
+package nl.matsgemmeke.battlegrounds.validation.constraint;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import nl.matsgemmeke.battlegrounds.validation.common.validator.RequiredValidator;
+import nl.matsgemmeke.battlegrounds.validation.validator.RequiredValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

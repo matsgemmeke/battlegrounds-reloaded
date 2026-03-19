@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
 import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.RangeProfileSpec;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class ExplosionEffectSpec extends ItemEffectSpec {
 

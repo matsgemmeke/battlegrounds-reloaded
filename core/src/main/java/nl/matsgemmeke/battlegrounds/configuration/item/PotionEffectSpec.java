@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.item;
 
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.EnumValue;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class PotionEffectSpec {
 

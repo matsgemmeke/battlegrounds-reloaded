@@ -1,8 +1,8 @@
-package nl.matsgemmeke.battlegrounds.validation.common.validator;
+package nl.matsgemmeke.battlegrounds.validation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class RequiredValidator implements ConstraintValidator<Required, Object> {
 

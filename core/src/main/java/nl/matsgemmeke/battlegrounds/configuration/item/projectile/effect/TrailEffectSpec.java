@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect;
 
 import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class TrailEffectSpec extends ProjectileEffectSpec {
 

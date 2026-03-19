@@ -1,8 +1,8 @@
-package nl.matsgemmeke.battlegrounds.validation.common.validator;
+package nl.matsgemmeke.battlegrounds.validation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
 
 import java.util.Arrays;
 

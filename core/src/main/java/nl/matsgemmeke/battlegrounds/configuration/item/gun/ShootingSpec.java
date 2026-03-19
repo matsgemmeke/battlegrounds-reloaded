@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileSpec
 import nl.matsgemmeke.battlegrounds.configuration.item.recoil.RecoilSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SpreadPatternSpec;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class ShootingSpec {
 

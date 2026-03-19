@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.validation.common.validator;
+package nl.matsgemmeke.battlegrounds.validation.validator;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

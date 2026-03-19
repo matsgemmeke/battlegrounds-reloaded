@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.deploy.DropPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 import java.util.HashMap;
 import java.util.Map;

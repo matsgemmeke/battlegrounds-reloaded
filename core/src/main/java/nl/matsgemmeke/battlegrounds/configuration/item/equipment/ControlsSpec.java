@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.type.Action;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
 
 public class ControlsSpec {
 

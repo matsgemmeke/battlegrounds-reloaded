@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.validation.common.constraint;
+package nl.matsgemmeke.battlegrounds.validation.constraint;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

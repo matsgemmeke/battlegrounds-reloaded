@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.hitbox.definition;
 
 import jakarta.validation.constraints.Size;
-import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 import java.util.List;
 
