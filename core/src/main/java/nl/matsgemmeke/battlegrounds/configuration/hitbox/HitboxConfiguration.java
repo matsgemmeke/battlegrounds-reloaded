@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.configuration.hitbox;
 import nl.matsgemmeke.battlegrounds.configuration.BasePluginConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxComponentDefinition;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
-import nl.matsgemmeke.battlegrounds.configuration.validation.ValidationException;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
+import nl.matsgemmeke.battlegrounds.validation.ValidationException;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;

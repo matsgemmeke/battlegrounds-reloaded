@@ -16,7 +16,6 @@ import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProvider;
-import nl.matsgemmeke.battlegrounds.configuration.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -154,7 +153,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(HitboxResolver.class).in(Singleton.class);
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
-        binder.bind(ObjectValidator.class).in(Singleton.class);
         binder.bind(ParticleEffectSpawner.class).in(Singleton.class);
         binder.bind(Scheduler.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
