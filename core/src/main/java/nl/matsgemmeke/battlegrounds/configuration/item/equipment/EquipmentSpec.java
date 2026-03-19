@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 
 import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
 
 import java.util.HashMap;

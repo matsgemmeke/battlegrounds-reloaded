@@ -1,7 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.BounceEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.SoundEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.StickEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.TrailEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.FloorHitTriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
@@ -17,42 +20,42 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import org.bukkit.Particle;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.MockedConstruction;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class ProjectileEffectFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class ProjectileEffectFactoryTest {
 
+    @Spy
     private ParticleEffectMapper particleEffectMapper;
+    @Mock
     private SoundEffectFactory soundEffectFactory;
+    @Mock
     private StickEffectFactory stickEffectFactory;
+    @Mock
     private TrailEffectFactory trailEffectFactory;
+    @Mock
     private TriggerExecutorFactory triggerExecutorFactory;
-
-    @BeforeEach
-    public void setUp() {
-        particleEffectMapper = new ParticleEffectMapper();
-        soundEffectFactory = mock(SoundEffectFactory.class);
-        stickEffectFactory = mock(StickEffectFactory.class);
-        trailEffectFactory = mock(TrailEffectFactory.class);
-        triggerExecutorFactory = mock(TriggerExecutorFactory.class);
-    }
+    @InjectMocks
+    private ProjectileEffectFactory projectileEffectFactory;
 
     @Test
-    public void createReturnsInstanceOfBounceEffect() {
+    @DisplayName("create returns BounceEffect instance")
+    void create_bounceEffect() {
         Double horizontalFriction = 2.0;
         Double verticalFriction = 3.0;
         Integer maxActivations = 3;
         TriggerSpec triggerSpec = this.createTriggerSpec();
 
-        ProjectileEffectSpec spec = new ProjectileEffectSpec();
+        BounceEffectSpec spec = new BounceEffectSpec();
         spec.type = "BOUNCE";
         spec.triggers = Map.of("floor-hit", triggerSpec);
         spec.horizontalFriction = 2.0;
@@ -70,8 +73,7 @@ public class ProjectileEffectFactoryTest {
             assertThat(properties.verticalFriction()).isEqualTo(verticalFriction);
         });
 
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerExecutorFactory);
-        ProjectileEffect projectileEffect = factory.create(spec);
+        ProjectileEffect projectileEffect = projectileEffectFactory.create(spec);
 
         assertThat(bounceEffectConstructor.constructed()).hasSize(1);
         assertThat(projectileEffect).isInstanceOf(BounceEffect.class);
@@ -80,11 +82,12 @@ public class ProjectileEffectFactoryTest {
     }
 
     @Test
-    public void createReturnsInstanceOfSoundEffect() {
+    @DisplayName("create returns SoundEffect instance")
+    void create_soundEffect() {
         SoundEffect soundEffect = mock(SoundEffect.class);
         TriggerSpec triggerSpec = this.createTriggerSpec();
 
-        ProjectileEffectSpec spec = new ProjectileEffectSpec();
+        SoundEffectSpec spec = new SoundEffectSpec();
         spec.type = "SOUND";
         spec.triggers = Map.of("floor-hit", triggerSpec);
         spec.sounds = "AMBIENT_CAVE-1-1-0";
@@ -94,18 +97,18 @@ public class ProjectileEffectFactoryTest {
 
         when(soundEffectFactory.create(anyList())).thenReturn(soundEffect);
 
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerExecutorFactory);
-        ProjectileEffect projectileEffect = factory.create(spec);
+        ProjectileEffect projectileEffect = projectileEffectFactory.create(spec);
 
         assertThat(projectileEffect).isEqualTo(soundEffect);
     }
 
     @Test
-    public void createReturnsInstanceOfStickEffect() {
+    @DisplayName("create returns StickEffect instance")
+    void create_stickEffect() {
         StickEffect stickEffect = mock(StickEffect.class);
         TriggerSpec triggerSpec = this.createTriggerSpec();
 
-        ProjectileEffectSpec spec = new ProjectileEffectSpec();
+        StickEffectSpec spec = new StickEffectSpec();
         spec.type = "STICK";
         spec.triggers = Map.of("floor-hit", triggerSpec);
         spec.sounds = "AMBIENT_CAVE-1-1-0";
@@ -122,12 +125,13 @@ public class ProjectileEffectFactoryTest {
     }
 
     @Test
-    public void createReturnsInstanceOfTrailEffect() {
+    @DisplayName("create returns TrailEffect instance")
+    void create_trailEffect() {
         TrailEffect trailEffect = mock(TrailEffect.class);
         TriggerSpec triggerSpec = this.createTriggerSpec();
         ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec();
 
-        ProjectileEffectSpec spec = new ProjectileEffectSpec();
+        TrailEffectSpec spec = new TrailEffectSpec();
         spec.type = "TRAIL";
         spec.triggers = Map.of("floor-hit", triggerSpec);
         spec.maxActivations = 2;
@@ -146,18 +150,6 @@ public class ProjectileEffectFactoryTest {
         assertThat(properties.particleEffect().particle()).isEqualTo(Particle.FLAME);
 
         assertThat(projectileEffect).isEqualTo(trailEffect);
-    }
-
-    @Test
-    public void createThrowsProjectileEffectCreationExceptionWhenRequiredSpecValueIsNull() {
-        ProjectileEffectSpec spec = new ProjectileEffectSpec();
-        spec.type = "BOUNCE";
-
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerExecutorFactory);
-
-        assertThatThrownBy(() -> factory.create(spec))
-                .isInstanceOf(ProjectileEffectCreationException.class)
-                .hasMessage("Cannot create BOUNCE because of invalid spec: Required 'maxActivations' value is missing");
     }
 
     private ParticleEffectSpec createParticleEffectSpec() {

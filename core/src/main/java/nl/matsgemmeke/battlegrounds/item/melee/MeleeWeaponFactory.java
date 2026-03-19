@@ -52,7 +52,7 @@ public class MeleeWeaponFactory {
         meleeWeapon.setDescription(spec.description);
         meleeWeapon.setAttackDamage(spec.damage.meleeDamage);
 
-        ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.items.displayItem);
+        ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.item);
         meleeWeapon.setDisplayItemTemplate(displayItemTemplate);
 
         ItemRepresentation itemRepresentation = new ItemRepresentation(displayItemTemplate);

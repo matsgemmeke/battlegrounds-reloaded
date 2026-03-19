@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.BurstModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FireModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
@@ -42,6 +43,13 @@ public final class PolymorphicTypeRegistry {
                 "FIREBALL", FireballProjectileSpec.class,
                 "HITSCAN", HitscanProjectileSpec.class,
                 "ITEM", ItemProjectileSpec.class
+        ));
+
+        register(ProjectileEffectSpec.class, "type", Map.of(
+                "BOUNCE", BounceEffectSpec.class,
+                "SOUND", SoundEffectSpec.class,
+                "STICK", StickEffectSpec.class,
+                "TRAIL", TrailEffectSpec.class
         ));
 
         register(SpreadPatternSpec.class, "type", Map.of(

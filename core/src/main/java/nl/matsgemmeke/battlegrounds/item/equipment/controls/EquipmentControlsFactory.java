@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.PlacePropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.ThrowPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.deploy.DropPropertiesSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;

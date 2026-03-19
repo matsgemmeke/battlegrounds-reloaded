@@ -54,7 +54,7 @@ class MeleeWeaponFactoryTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(ITEM_STACK);
 
-        when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(itemTemplate);
+        when(itemTemplateFactory.create(spec.item)).thenReturn(itemTemplate);
 
         MeleeWeapon result = meleeWeaponFactory.create(spec);
 
