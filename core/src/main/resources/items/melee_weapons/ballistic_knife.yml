@@ -13,24 +13,23 @@ ammo:
 damage:
   melee-damage: 60.0
   throwing-damage: 120.0
-items:
-  display-item:
-    material: IRON_SWORD
-    display-name: '&f%name% %loaded_amount%/%reserve_amount%'
-    damage: 2
-    item-flags:
-      - HIDE_ATTRIBUTES
-      - HIDE_UNBREAKABLE
-    data:
-      weapon-name:
-        key: weapon-name
-        type: STRING
-        value: Ballistic Knife
-      action-executor-id:
-        key: action-executor-id
-        type: STRING
-        value: melee-weapon
-    unbreakable: true
+item:
+  material: IRON_SWORD
+  display-name: '&f%name% %loaded_amount%/%reserve_amount%'
+  damage: 2
+  item-flags:
+    - HIDE_ATTRIBUTES
+    - HIDE_UNBREAKABLE
+  data:
+    weapon-name:
+      key: weapon-name
+      type: STRING
+      value: Ballistic Knife
+    action-executor-id:
+      key: action-executor-id
+      type: STRING
+      value: melee-weapon
+  unbreakable: true
 reloading:
   type: MAGAZINE
   duration: 20

@@ -12,24 +12,23 @@ ammo:
 damage:
   melee-damage: 50.0
   throwing-damage: 150.0
-items:
-  display-item:
-    material: IRON_SWORD
-    display-name: '&f%name%'
-    damage: 3
-    item-flags:
-      - HIDE_ATTRIBUTES
-      - HIDE_UNBREAKABLE
-    data:
-      weapon-name:
-        key: weapon-name
-        type: STRING
-        value: Tomahawk
-      action-executor-id:
-        key: action-executor-id
-        type: STRING
-        value: melee-weapon
-    unbreakable: true
+item:
+  material: IRON_SWORD
+  display-name: '&f%name%'
+  damage: 3
+  item-flags:
+    - HIDE_ATTRIBUTES
+    - HIDE_UNBREAKABLE
+  data:
+    weapon-name:
+      key: weapon-name
+      type: STRING
+      value: Tomahawk
+    action-executor-id:
+      key: action-executor-id
+      type: STRING
+      value: melee-weapon
+  unbreakable: true
 throwing:
   projectile:
     type: ITEM
