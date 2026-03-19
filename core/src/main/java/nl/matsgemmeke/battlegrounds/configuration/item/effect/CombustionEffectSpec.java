@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
+import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.RangeProfileSpec;
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import nl.matsgemmeke.battlegrounds.validation.common.constraint.Required;
 
 public class CombustionEffectSpec extends ItemEffectSpec {
 
@@ -11,6 +12,7 @@ public class CombustionEffectSpec extends ItemEffectSpec {
     public String activationSounds;
 
     @Required
+    @Valid
     public RangeProfileSpec range;
 
     @Required
