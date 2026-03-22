@@ -1,9 +1,5 @@
-package nl.matsgemmeke.battlegrounds.entity.hitbox.util;
+package nl.matsgemmeke.battlegrounds.entity.hitbox;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxUtil;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
