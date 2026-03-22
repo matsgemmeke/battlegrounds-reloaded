@@ -54,8 +54,8 @@ public class HitboxConfiguration extends BasePluginConfiguration {
 
         try {
             objectValidator.validate(hitboxDefinition);
-        } catch (ValidationException e) {
-            throw new InvalidHitboxDefinitionException("Validation failed for the hitbox definition for %s for the position %s".formatted(entityType, position), e);
+        } catch (ValidationException ex) {
+            return Optional.empty();
         }
 
         return Optional.of(hitboxDefinition);

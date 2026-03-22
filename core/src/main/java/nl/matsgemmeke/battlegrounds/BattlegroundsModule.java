@@ -150,7 +150,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);
         binder.bind(EventDispatcher.class).in(Singleton.class);
         binder.bind(GameContextProvider.class).in(Singleton.class);
-        binder.bind(HitboxResolver.class).in(Singleton.class);
+        binder.bind(HitboxResolver.class).asEagerSingleton();
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
         binder.bind(ParticleEffectSpawner.class).in(Singleton.class);

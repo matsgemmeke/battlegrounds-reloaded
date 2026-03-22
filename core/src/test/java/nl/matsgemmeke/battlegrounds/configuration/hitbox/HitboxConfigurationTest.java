@@ -3,16 +3,19 @@ package nl.matsgemmeke.battlegrounds.configuration.hitbox;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.definition.HitboxDefinition;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@ExtendWith(MockitoExtension.class)
 class HitboxConfigurationTest {
 
     private File hitboxesFile;
@@ -29,7 +32,8 @@ class HitboxConfigurationTest {
     }
 
     @Test
-    void getHitboxDefinitionReturnsEmptyOptionalWhenGivenSectionIsMissing() throws FileNotFoundException {
+    @DisplayName("getHitboxDefinition returns empty optional when given section is missing")
+    void getHitboxDefinition_sectionNotExists() throws FileNotFoundException {
         File resourceFile = new File("src/test/resources/hitbox-configuration/empty-hitboxes-file/hitboxes.yml");
         InputStream resource = new FileInputStream(resourceFile);
 
@@ -41,20 +45,8 @@ class HitboxConfigurationTest {
     }
 
     @Test
-    void getHitboxDefinitionThrowsInvalidHitboxDefinitionExceptionWhenHitboxDefinitionForGivenEntityTypeAndPositionFailsValidation() throws FileNotFoundException {
-        File resourceFile = new File("src/test/resources/hitbox-configuration/invalid-hitboxes-file/hitboxes.yml");
-        InputStream resource = new FileInputStream(resourceFile);
-
-        HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(objectValidator, hitboxesFile, resource);
-        hitboxConfiguration.load();
-
-        assertThatThrownBy(() -> hitboxConfiguration.getHitboxDefinition("player", "standing"))
-                .isInstanceOf(InvalidHitboxDefinitionException.class)
-                .hasMessage("Validation failed for the hitbox definition for player for the position standing: Invalid HitboxComponentType value 'fail' for field 'type'");
-    }
-
-    @Test
-    void getHitboxDefinitionReturnsOptionalWithHitboxDefinitionContaingValuesFromFile() throws FileNotFoundException {
+    @DisplayName("getHitboxDefinition returns optional with HitboxDefinition containing values from file")
+    void getHitboxDefinition_hitboxDefinitionFromFile() throws FileNotFoundException {
         File resourceFile = new File("src/main/resources/hitboxes.yml");
         InputStream resource = new FileInputStream(resourceFile);
 

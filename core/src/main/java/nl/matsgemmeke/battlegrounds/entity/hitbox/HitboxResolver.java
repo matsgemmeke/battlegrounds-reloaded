@@ -9,7 +9,7 @@ import org.bukkit.entity.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import static nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxDefaults.*;
 
@@ -20,32 +20,34 @@ public class HitboxResolver {
 
     private final HitboxConfiguration hitboxConfiguration;
     private final HitboxMapper hitboxMapper;
-    private final Map<EntityType, Supplier<HitboxProvider<? extends Entity>>> entityHitboxProviders;
+    private final Logger logger;
+    private final Map<EntityType, HitboxProvider<? extends Entity>> entityHitboxProviders;
 
     @Inject
-    public HitboxResolver(HitboxConfiguration hitboxConfiguration, HitboxMapper hitboxMapper) {
+    public HitboxResolver(HitboxConfiguration hitboxConfiguration, HitboxMapper hitboxMapper, Logger logger) {
         this.hitboxConfiguration = hitboxConfiguration;
         this.hitboxMapper = hitboxMapper;
+        this.logger = logger;
         this.entityHitboxProviders = new HashMap<>();
 
         this.registerEntityHitboxProviders();
     }
 
     private void registerEntityHitboxProviders() {
-        entityHitboxProviders.put(EntityType.CHICKEN, () -> this.createAgeableHitboxProvider("chicken", "adult-standing", "baby-standing", CHICKEN_ADULT_STANDING, CHICKEN_BABY_STANDING));
-        entityHitboxProviders.put(EntityType.COW, () -> this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", COW_ADULT_STANDING, COW_BABY_STANDING));
-        entityHitboxProviders.put(EntityType.CREEPER, () -> this.createSimpleEntityHitboxProvider("creeper", "standing", CREEPER_STANDING));
-        entityHitboxProviders.put(EntityType.ENDERMAN, this::createEndermanHitboxProvider);
-        entityHitboxProviders.put(EntityType.IRON_GOLEM, () -> this.createSimpleEntityHitboxProvider("iron-golem", "standing", IRON_GOLEM_STANDING));
-        entityHitboxProviders.put(EntityType.PIG, () -> this.createAgeableHitboxProvider("pig", "adult-standing", "baby-standing", PIG_ADULT_STANDING, PIG_BABY_STANDING));
-        entityHitboxProviders.put(EntityType.PLAYER, this::createPlayerHitboxProvider);
-        entityHitboxProviders.put(EntityType.SHEEP, () -> this.createAgeableHitboxProvider("sheep", "adult-standing", "baby-standing", SHEEP_ADULT_STANDING, SHEEP_BABY_STANDING));
-        entityHitboxProviders.put(EntityType.SKELETON, () -> this.createSimpleEntityHitboxProvider("skeleton", "standing", SKELETON_STANDING));
-        entityHitboxProviders.put(EntityType.SLIME, this::createSlimeHitboxProvider);
-        entityHitboxProviders.put(EntityType.SPIDER, () -> this.createSimpleEntityHitboxProvider("spider", "standing", SPIDER_STANDING));
-        entityHitboxProviders.put(EntityType.VILLAGER, this::createVillagerHitboxProvider);
-        entityHitboxProviders.put(EntityType.WOLF, this::createWolfHitboxProvider);
-        entityHitboxProviders.put(EntityType.ZOMBIE, () -> this.createAgeableHitboxProvider("zombie", "adult-standing", "baby-standing", ZOMBIE_ADULT_STANDING, ZOMBIE_BABY_STANDING));
+        entityHitboxProviders.put(EntityType.CHICKEN, this.createAgeableHitboxProvider("chicken", "adult-standing", "baby-standing", CHICKEN_ADULT_STANDING, CHICKEN_BABY_STANDING));
+        entityHitboxProviders.put(EntityType.COW, this.createAgeableHitboxProvider("cow", "adult-standing", "baby-standing", COW_ADULT_STANDING, COW_BABY_STANDING));
+        entityHitboxProviders.put(EntityType.CREEPER, this.createSimpleEntityHitboxProvider("creeper", "standing", CREEPER_STANDING));
+        entityHitboxProviders.put(EntityType.ENDERMAN, this.createEndermanHitboxProvider());
+        entityHitboxProviders.put(EntityType.IRON_GOLEM, this.createSimpleEntityHitboxProvider("iron-golem", "standing", IRON_GOLEM_STANDING));
+        entityHitboxProviders.put(EntityType.PIG, this.createAgeableHitboxProvider("pig", "adult-standing", "baby-standing", PIG_ADULT_STANDING, PIG_BABY_STANDING));
+        entityHitboxProviders.put(EntityType.PLAYER, this.createPlayerHitboxProvider());
+        entityHitboxProviders.put(EntityType.SHEEP, this.createAgeableHitboxProvider("sheep", "adult-standing", "baby-standing", SHEEP_ADULT_STANDING, SHEEP_BABY_STANDING));
+        entityHitboxProviders.put(EntityType.SKELETON, this.createSimpleEntityHitboxProvider("skeleton", "standing", SKELETON_STANDING));
+        entityHitboxProviders.put(EntityType.SLIME, this.createSlimeHitboxProvider());
+        entityHitboxProviders.put(EntityType.SPIDER, this.createSimpleEntityHitboxProvider("spider", "standing", SPIDER_STANDING));
+        entityHitboxProviders.put(EntityType.VILLAGER, this.createVillagerHitboxProvider());
+        entityHitboxProviders.put(EntityType.WOLF, this.createWolfHitboxProvider());
+        entityHitboxProviders.put(EntityType.ZOMBIE, this.createAgeableHitboxProvider("zombie", "adult-standing", "baby-standing", ZOMBIE_ADULT_STANDING, ZOMBIE_BABY_STANDING));
     }
 
     public HitboxProvider<StaticBoundingBox> resolveDeploymentObjectHitboxProvider() {
@@ -58,8 +60,7 @@ public class HitboxResolver {
             return (HitboxProvider<T>) FALLBACK_PROVIDER;
         }
 
-        var hitboxProviderSupplier = entityHitboxProviders.get(entity.getType());
-        return (HitboxProvider<T>) hitboxProviderSupplier.get();
+        return (HitboxProvider<T>) entityHitboxProviders.get(entity.getType());
     }
 
     private HitboxProvider<Ageable> createAgeableHitboxProvider(String entityType, String adultPose, String babyPose, RelativeHitbox adultDefaultHitbox, RelativeHitbox babyDefaultHitbox) {
@@ -117,6 +118,11 @@ public class HitboxResolver {
     private RelativeHitbox createRelativeHitbox(String entityType, String pose, RelativeHitbox defaultHitbox) {
         HitboxDefinition hitboxDefinition = hitboxConfiguration.getHitboxDefinition(entityType, pose).orElse(null);
 
-        return hitboxDefinition != null ? hitboxMapper.map(hitboxDefinition) : defaultHitbox;
+        if (hitboxDefinition != null) {
+            return hitboxMapper.map(hitboxDefinition);
+        } else {
+            logger.severe("Invalid or missing hitbox for " + entityType + ":" + pose + ", falling back to default");
+            return defaultHitbox;
+        }
     }
 }
