@@ -11,11 +11,11 @@ public class HitboxComponentDefinition {
     public String type;
 
     @Required
-    @Size(min = 3, max = 3)
+    @Size(min = 3, max = 3, message = "must contain exactly three values")
     public Double[] size;
 
     @Required
-    @Size(min = 3, max = 3)
+    @Size(min = 3, max = 3, message = "must contain exactly three values")
     public Double[] offset;
 
     private enum HitboxComponentType {

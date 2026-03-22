@@ -20,6 +20,7 @@ import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolverProvider;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
@@ -150,7 +151,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);
         binder.bind(EventDispatcher.class).in(Singleton.class);
         binder.bind(GameContextProvider.class).in(Singleton.class);
-        binder.bind(HitboxResolver.class).asEagerSingleton();
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
         binder.bind(ParticleEffectSpawner.class).in(Singleton.class);
@@ -163,6 +163,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(EquipmentStateRepository.class).toProvider(SqliteEquipmentStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(HitboxConfiguration.class).toProvider(HitboxConfigurationProvider.class).in(Singleton.class);
+        binder.bind(HitboxResolver.class).toProvider(HitboxResolverProvider.class).asEagerSingleton();
         binder.bind(ItemSpecRegistry.class).toProvider(ItemSpecRegistryProvider.class).in(Singleton.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(MeleeWeaponStateRepository.class).toProvider(SqliteMeleeWeaponStateRepositoryProvider.class).in(Singleton.class);

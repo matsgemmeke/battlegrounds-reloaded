@@ -24,11 +24,11 @@ public class HitboxConfiguration extends BasePluginConfiguration {
         this.objectValidator = objectValidator;
     }
 
-    public Optional<HitboxDefinition> getHitboxDefinition(String entityType, String position) {
+    public HitboxDefinitionResult getHitboxDefinition(String entityType, String position) {
         ConfigurationSection section = this.getOptionalSection(entityType + "." + position).orElse(null);
 
         if (section == null) {
-            return Optional.empty();
+            return HitboxDefinitionResult.notFound();
         }
 
         List<HitboxComponentDefinition> componentDefinitions = new ArrayList<>();
@@ -55,9 +55,9 @@ public class HitboxConfiguration extends BasePluginConfiguration {
         try {
             objectValidator.validate(hitboxDefinition);
         } catch (ValidationException ex) {
-            return Optional.empty();
+            return HitboxDefinitionResult.invalid(ex.getMessage());
         }
 
-        return Optional.of(hitboxDefinition);
+        return HitboxDefinitionResult.success(hitboxDefinition);
     }
 }
