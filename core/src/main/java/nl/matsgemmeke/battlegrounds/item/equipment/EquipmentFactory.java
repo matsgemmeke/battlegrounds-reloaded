@@ -70,7 +70,7 @@ public class EquipmentFactory {
 
     public Equipment create(EquipmentSpec spec, GamePlayer gamePlayer) {
         Equipment equipment = this.createInstance(spec);
-        equipment.setHolder(gamePlayer);
+        equipment.setUser(gamePlayer);
 
         equipmentRegistry.register(equipment, gamePlayer);
 
@@ -104,7 +104,7 @@ public class EquipmentFactory {
             equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(spec, equipment);
+        ItemControls<EquipmentUser> controls = controlsFactory.create(spec, equipment);
         equipment.setControls(controls);
 
         DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deploy, spec.effect, activator);

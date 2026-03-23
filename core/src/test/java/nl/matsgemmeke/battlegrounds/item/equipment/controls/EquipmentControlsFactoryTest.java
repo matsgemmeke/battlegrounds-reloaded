@@ -35,7 +35,7 @@ class EquipmentControlsFactoryTest {
     @Mock
     private Equipment equipment;
     @Mock
-    private ItemControls<EquipmentHolder> controls;
+    private ItemControls<EquipmentUser> controls;
     @Mock
     private ProjectileEffectFactory projectileEffectFactory;
     @Mock
@@ -47,7 +47,7 @@ class EquipmentControlsFactoryTest {
     @Mock
     private Provider<ThrowDeployment> throwDeploymentProvider;
     @Mock
-    private Supplier<ItemControls<EquipmentHolder>> controlsSupplier;
+    private Supplier<ItemControls<EquipmentUser>> controlsSupplier;
 
     private EquipmentControlsFactory controlsFactory;
 
@@ -92,7 +92,7 @@ class EquipmentControlsFactoryTest {
 
         when(throwDeploymentProvider.get()).thenReturn(throwDeployment);
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
         verify(controls).addControl(eq(Action.LEFT_CLICK), any(ThrowFunction.class));
     }
@@ -121,7 +121,7 @@ class EquipmentControlsFactoryTest {
 
         when(placeDeploymentProvider.get()).thenReturn(placeDeployment);
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
         verify(controls).addControl(eq(Action.RIGHT_CLICK), any(PlaceFunction.class));
     }
@@ -149,7 +149,7 @@ class EquipmentControlsFactoryTest {
 
         when(primeDeploymentProvider.get()).thenReturn(primeDeployment);
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
         verify(controls).addControl(eq(Action.RIGHT_CLICK), any(CookFunction.class));
     }
@@ -178,7 +178,7 @@ class EquipmentControlsFactoryTest {
 
         when(dropDeploymentProvider.get()).thenReturn(dropDeployment);
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
         verify(controls).addControl(eq(Action.DROP_ITEM), any(DropFunction.class));
     }
@@ -190,7 +190,7 @@ class EquipmentControlsFactoryTest {
         equipmentSpec.controls.place = null;
         equipmentSpec.controls.throwing = null;
 
-        ItemControls<EquipmentHolder> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
         verify(controls).addControl(eq(Action.RIGHT_CLICK), any(ActivateFunction.class));
     }

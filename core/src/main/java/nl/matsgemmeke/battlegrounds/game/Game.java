@@ -3,10 +3,6 @@ package nl.matsgemmeke.battlegrounds.game;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPointContainer;
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -22,22 +18,6 @@ public interface Game {
      * @param actionExecutor the action executor
      */
     void addActionExecutor(@NotNull ActionExecutor actionExecutor);
-
-    /**
-     * Gets the item container which keeps equipment items.
-     *
-     * @return the equipment container
-     */
-    @NotNull
-    ItemContainer<Equipment, EquipmentHolder> getEquipmentContainer();
-
-    /**
-     * Gets the item container which keeps gun items.
-     *
-     * @return the gun container
-     */
-    @NotNull
-    ItemContainer<Gun, GunHolder> getGunContainer();
 
     /**
      * Gets the item behaviors registered to the game.

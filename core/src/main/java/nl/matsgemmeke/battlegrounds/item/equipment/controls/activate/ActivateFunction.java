@@ -2,15 +2,13 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls.activate;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
-public class ActivateFunction implements ItemFunction<EquipmentHolder> {
+public class ActivateFunction implements ItemFunction<EquipmentUser> {
 
-    @NotNull
     private final Equipment equipment;
 
-    public ActivateFunction(@NotNull Equipment equipment) {
+    public ActivateFunction(Equipment equipment) {
         this.equipment = equipment;
     }
 
@@ -30,12 +28,12 @@ public class ActivateFunction implements ItemFunction<EquipmentHolder> {
         return false;
     }
 
-    public boolean perform(@NotNull EquipmentHolder holder) {
-        if (!holder.canDeploy()) {
+    public boolean perform(EquipmentUser user) {
+        if (!user.canDeploy()) {
             return false;
         }
 
-        equipment.activateDeployment(holder);
+        equipment.activateDeployment(user);
         return true;
     }
 }

@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.game.Game;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import org.bukkit.Location;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A player who participates in a {@link Game}.
  */
-public interface GamePlayer extends GameEntity, EquipmentHolder, GunHolder, MeleeWeaponUser, PotionEffectReceiver {
+public interface GamePlayer extends GameEntity, EquipmentUser, GunHolder, MeleeWeaponUser, PotionEffectReceiver {
 
     /**
      * Gets the {@link Player} entity of the object.

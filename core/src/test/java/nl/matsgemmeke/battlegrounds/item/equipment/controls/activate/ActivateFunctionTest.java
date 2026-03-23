@@ -1,49 +1,45 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.activate;
 
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ActivateFunctionTest {
+@ExtendWith(MockitoExtension.class)
+class ActivateFunctionTest {
 
+    @Mock
     private Equipment equipment;
+    @InjectMocks
+    private ActivateFunction function;
 
-    @BeforeEach
-    public void setUp() {
-        equipment = mock(Equipment.class);
-    }
+    @ParameterizedTest
+    @CsvSource({ "false,false", "true,true" })
+    @DisplayName("isAvailable returns whether equipment activator is ready")
+    void isAvailable_whetherActivatorIsReady(boolean activatorReady, boolean expectedAvailable) {
+        when(equipment.isActivatorReady()).thenReturn(activatorReady);
 
-    @Test
-    public void isAvailableReturnsFalseWhenEquipmentActivatorIsNotReady() {
-        when(equipment.isActivatorReady()).thenReturn(false);
-
-        ActivateFunction function = new ActivateFunction(equipment);
         boolean available = function.isAvailable();
 
-        assertThat(available).isFalse();
+        assertThat(available).isEqualTo(expectedAvailable);
     }
 
     @Test
-    public void isAvailableReturnsTrueWhenEquipmentActivatorIsReady() {
-        when(equipment.isActivatorReady()).thenReturn(true);
+    @DisplayName("perform returns false when user cannot deploy")
+    void perform_userCannotDeploy() {
+        EquipmentUser user = mock(EquipmentUser.class);
+        when(user.canDeploy()).thenReturn(false);
 
-        ActivateFunction function = new ActivateFunction(equipment);
-        boolean available = function.isAvailable();
-
-        assertThat(available).isTrue();
-    }
-
-    @Test
-    public void performReturnsFalseWhenHolderCannotDeploy() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(false);
-
-        ActivateFunction function = new ActivateFunction(equipment);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
         assertThat(performed).isFalse();
 
@@ -51,15 +47,15 @@ public class ActivateFunctionTest {
     }
 
     @Test
-    public void performReturnsTrueAndActivatesDeployment() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(true);
+    @DisplayName("perform returns true and activates deployment")
+    void perform_activatesDeployment() {
+        EquipmentUser user = mock(EquipmentUser.class);
+        when(user.canDeploy()).thenReturn(true);
 
-        ActivateFunction function = new ActivateFunction(equipment);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
         assertThat(performed).isTrue();
 
-        verify(equipment).activateDeployment(holder);
+        verify(equipment).activateDeployment(user);
     }
 }

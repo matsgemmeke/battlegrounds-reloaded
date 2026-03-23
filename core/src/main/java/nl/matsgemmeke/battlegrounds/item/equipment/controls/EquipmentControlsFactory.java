@@ -21,7 +21,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
@@ -43,7 +43,7 @@ public class EquipmentControlsFactory {
     private final Provider<PlaceDeployment> placeDeploymentProvider;
     private final Provider<PrimeDeployment> primeDeploymentProvider;
     private final Provider<ThrowDeployment> throwDeploymentProvider;
-    private final Supplier<ItemControls<EquipmentHolder>> controlsSupplier;
+    private final Supplier<ItemControls<EquipmentUser>> controlsSupplier;
 
     @Inject
     public EquipmentControlsFactory(
@@ -52,7 +52,7 @@ public class EquipmentControlsFactory {
             Provider<PlaceDeployment> placeDeploymentProvider,
             Provider<PrimeDeployment> primeDeploymentProvider,
             Provider<ThrowDeployment> throwDeploymentProvider,
-            Supplier<ItemControls<EquipmentHolder>> controlsSupplier
+            Supplier<ItemControls<EquipmentUser>> controlsSupplier
     ) {
         this.projectileEffectFactory = projectileEffectFactory;
         this.dropDeploymentProvider = dropDeploymentProvider;
@@ -62,8 +62,8 @@ public class EquipmentControlsFactory {
         this.controlsSupplier = controlsSupplier;
     }
 
-    public ItemControls<EquipmentHolder> create(EquipmentSpec spec, Equipment equipment) {
-        ItemControls<EquipmentHolder> controls = controlsSupplier.get();
+    public ItemControls<EquipmentUser> create(EquipmentSpec spec, Equipment equipment) {
+        ItemControls<EquipmentUser> controls = controlsSupplier.get();
 
         String throwActionValue = spec.controls.throwing;
         String placeActionValue = spec.controls.place;

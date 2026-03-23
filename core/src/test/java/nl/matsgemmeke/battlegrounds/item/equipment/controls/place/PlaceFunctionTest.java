@@ -2,51 +2,47 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls.place;
 
 import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class PlaceFunctionTest {
+@ExtendWith(MockitoExtension.class)
+class PlaceFunctionTest {
 
+    @Mock
     private Equipment equipment;
+    @Mock
     private PlaceDeployment deployment;
+    @InjectMocks
+    private PlaceFunction function;
 
-    @BeforeEach
-    public void setUp() {
-        equipment = mock(Equipment.class);
-        deployment = mock(PlaceDeployment.class);
-    }
+    @ParameterizedTest
+    @CsvSource({ "true,false", "false,true" })
+    @DisplayName("isAvailable returns whether equipment is not deployed")
+    void isAvailable_returnsWhetherEquipmentNotDeployed(boolean deployed, boolean expectedAvailable) {
+        when(equipment.isDeployed()).thenReturn(deployed);
 
-    @Test
-    public void isAvailableReturnsFalseWhenEquipmentIsAlreadyDeployed() {
-        when(equipment.isDeployed()).thenReturn(true);
-
-        PlaceFunction function = new PlaceFunction(equipment, deployment);
         boolean available = function.isAvailable();
 
-        assertThat(available).isFalse();
+        assertThat(available).isEqualTo(expectedAvailable);
     }
 
     @Test
-    public void isPerformingReturnsTrueWhenEquipmentIsNotDeployed() {
-        when(equipment.isDeployed()).thenReturn(false);
+    @DisplayName("perform returns false when user cannot deploy")
+    void perform_userCannotDeploy() {
+        EquipmentUser user = mock(EquipmentUser.class);
+        when(user.canDeploy()).thenReturn(false);
 
-        PlaceFunction function = new PlaceFunction(equipment, deployment);
-        boolean available = function.isAvailable();
-
-        assertThat(available).isTrue();
-    }
-
-    @Test
-    public void performReturnsFalseWhenHolderCannotDeploy() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(false);
-
-        PlaceFunction function = new PlaceFunction(equipment, deployment);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
         assertThat(performed).isFalse();
 
@@ -54,15 +50,15 @@ public class PlaceFunctionTest {
     }
 
     @Test
-    public void performReturnsTrueAndPerformsDeployment() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(true);
+    @DisplayName("perform returns true and performs place deployment")
+    void perform_performsDeployment() {
+        EquipmentUser user = mock(EquipmentUser.class);
+        when(user.canDeploy()).thenReturn(true);
 
-        PlaceFunction function = new PlaceFunction(equipment, deployment);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
         assertThat(performed).isTrue();
 
-        verify(equipment).performDeployment(deployment, holder);
+        verify(equipment).performDeployment(deployment, user);
     }
 }

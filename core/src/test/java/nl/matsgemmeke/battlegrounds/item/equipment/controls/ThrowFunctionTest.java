@@ -2,52 +2,48 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ThrowFunctionTest {
+@ExtendWith(MockitoExtension.class)
+class ThrowFunctionTest {
 
+    @Mock
     private Equipment equipment;
+    @Mock
     private ThrowDeployment deployment;
+    @InjectMocks
+    private ThrowFunction function;
 
-    @BeforeEach
-    public void setUp() {
-        equipment = mock(Equipment.class);
-        deployment = mock(ThrowDeployment.class);
-    }
+    @ParameterizedTest
+    @CsvSource({ "false,true", "true,false" })
+    @DisplayName("isAvailable returns whether equipment is not deployed")
+    void isAvailable_returnsWhetherNotDeployed(boolean deployed, boolean expectedAvailable) {
+        when(equipment.isDeployed()).thenReturn(deployed);
 
-    @Test
-    public void isAvailableReturnsTrueIfEquipmentIsNotDeployed() {
-        when(equipment.isDeployed()).thenReturn(false);
-
-        ThrowFunction function = new ThrowFunction(equipment, deployment);
         boolean available = function.isAvailable();
 
-        assertThat(available).isTrue();
+        assertThat(available).isEqualTo(expectedAvailable);
     }
 
     @Test
-    public void isAvailableReturnsTrueIfEquipmentIsAlreadyDeployed() {
-        when(equipment.isDeployed()).thenReturn(true);
+    @DisplayName("perform returns false when user cannot deploy")
+    void perform_userCannotDeploy() {
+        EquipmentUser user = mock(EquipmentUser.class);
+        when(user.canDeploy()).thenReturn(false);
 
-        ThrowFunction function = new ThrowFunction(equipment, deployment);
-        boolean available = function.isAvailable();
-
-        assertThat(available).isFalse();
-    }
-
-    @Test
-    public void performReturnsFalseWhenHolderCannotDeploy() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(false);
-
-        ThrowFunction function = new ThrowFunction(equipment, deployment);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
         assertThat(performed).isFalse();
 
@@ -55,15 +51,15 @@ public class ThrowFunctionTest {
     }
 
     @Test
-    public void performReturnsTrueAndCreatesThrowDeployment() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(true);
+    @DisplayName("perform returns true and performs throw deployment")
+    void perform_performsThrowDeployment() {
+        EquipmentUser user = mock(EquipmentUser.class);
+        when(user.canDeploy()).thenReturn(true);
 
-        ThrowFunction function = new ThrowFunction(equipment, deployment);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
         assertThat(performed).isTrue();
 
-        verify(equipment).performDeployment(deployment, holder);
+        verify(equipment).performDeployment(deployment, user);
     }
 }

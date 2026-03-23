@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,64 +27,64 @@ class DefaultEquipmentRegistryTest {
     @Test
     @DisplayName("assign does nothing when given equipment is not registered")
     void assign_equipmentNotRegistered() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(holder);
+        when(equipment.getUser()).thenReturn(user);
 
-        equipmentRegistry.assign(equipment, holder);
+        equipmentRegistry.assign(equipment, user);
 
-        assertThat(equipmentRegistry.getAssignedEquipmentList(holder)).isEmpty();
+        assertThat(equipmentRegistry.getAssignedEquipmentList(user)).isEmpty();
     }
 
     @Test
-    @DisplayName("assign adds given equipment to assigned list of given holder")
+    @DisplayName("assign adds given equipment to assigned list of given user")
     void assign_equipmentRegistered() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(holder);
+        when(equipment.getUser()).thenReturn(user);
 
         equipmentRegistry.register(equipment);
-        equipmentRegistry.assign(equipment, holder);
+        equipmentRegistry.assign(equipment, user);
 
-        assertThat(equipmentRegistry.getAssignedEquipmentList(holder)).containsExactly(equipment);
+        assertThat(equipmentRegistry.getAssignedEquipmentList(user)).containsExactly(equipment);
     }
 
     @Test
-    @DisplayName("unassign does nothing when given equipment has no holder")
-    void unassign_withoutHolder() {
+    @DisplayName("unassign does nothing when given equipment has no user")
+    void unassign_withoutUser() {
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(null);
+        when(equipment.getUser()).thenReturn(null);
 
         assertThatCode(() -> equipmentRegistry.unassign(equipment)).doesNotThrowAnyException();
     }
 
     @Test
-    @DisplayName("unassign does nothing when given equipment's holder is not registered")
-    void unassign_holderNotRegistered() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+    @DisplayName("unassign does nothing when given equipment's user is not registered")
+    void unassign_userNotRegistered() {
+        EquipmentUser user = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(holder);
+        when(equipment.getUser()).thenReturn(user);
 
         equipmentRegistry.unassign(equipment);
 
-        assertThat(equipmentRegistry.getAssignedEquipmentList(holder)).isEmpty();
+        assertThat(equipmentRegistry.getAssignedEquipmentList(user)).isEmpty();
     }
 
     @Test
-    @DisplayName("unassign removes given equipment from holder")
-    void unassign_registeredHolder() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+    @DisplayName("unassign removes given equipment from user")
+    void unassign_registeredUser() {
+        EquipmentUser user = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(holder);
+        when(equipment.getUser()).thenReturn(user);
 
-        equipmentRegistry.register(equipment, holder);
+        equipmentRegistry.register(equipment, user);
         equipmentRegistry.unassign(equipment);
 
-        assertThat(equipmentRegistry.getAssignedEquipmentList(holder)).isEmpty();
+        assertThat(equipmentRegistry.getAssignedEquipmentList(user)).isEmpty();
     }
 
     @Test
@@ -99,64 +99,64 @@ class DefaultEquipmentRegistryTest {
     }
 
     @Test
-    @DisplayName("getAssignedEquipment returns empty list when given holder is not registered")
-    void getAssignedEquipmentList_unregisteredHolder() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+    @DisplayName("getAssignedEquipment returns empty list when given user is not registered")
+    void getAssignedEquipmentList_unregisteredUser() {
+        EquipmentUser user = mock(EquipmentUser.class);
 
-        List<Equipment> assignedItems = equipmentRegistry.getAssignedEquipmentList(holder);
+        List<Equipment> assignedItems = equipmentRegistry.getAssignedEquipmentList(user);
 
         assertThat(assignedItems).isEmpty();
     }
 
     @Test
-    @DisplayName("getAssignedEquipmentList returns list of all assigned equipment to given holder")
-    void getAssignedEquipmentList_registeredHolder() {
+    @DisplayName("getAssignedEquipmentList returns list of all assigned equipment to given user")
+    void getAssignedEquipmentList_registeredUser() {
         Equipment equipment = mock(Equipment.class);
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
-        equipmentRegistry.register(equipment, holder);
-        List<Equipment> assignedItems = equipmentRegistry.getAssignedEquipmentList(holder);
+        equipmentRegistry.register(equipment, user);
+        List<Equipment> assignedItems = equipmentRegistry.getAssignedEquipmentList(user);
 
         assertThat(assignedItems).containsExactly(equipment);
     }
 
     @Test
-    @DisplayName("getAssignedEquipment returns empty optional when given holder is not registered")
-    void getAssignedEquipment_unregisteredHolder() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+    @DisplayName("getAssignedEquipment returns empty optional when given user is not registered")
+    void getAssignedEquipment_unregisteredUser() {
+        EquipmentUser user = mock(EquipmentUser.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
-        Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(holder, itemStack);
+        Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(user, itemStack);
 
         assertThat(equipmentOptional).isEmpty();
     }
 
     @Test
-    @DisplayName("getAssignedEquipment returns empty optional when no equipment match with given holder and item stack")
-    void getAssignedEquipment_noMatchForGivenHolderAndItemStack() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+    @DisplayName("getAssignedEquipment returns empty optional when no equipment match with given user and item stack")
+    void getAssignedEquipment_noMatchForGivenUserAndItemStack() {
+        EquipmentUser user = mock(EquipmentUser.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.isMatching(itemStack)).thenReturn(false);
 
-        equipmentRegistry.register(equipment, holder);
-        Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(holder, itemStack);
+        equipmentRegistry.register(equipment, user);
+        Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(user, itemStack);
 
         assertThat(equipmentOptional).isEmpty();
     }
 
     @Test
-    @DisplayName("getAssignedEquipment returns optional containing equipment that matches with given holder and item stack")
+    @DisplayName("getAssignedEquipment returns optional containing equipment that matches with given user and item stack")
     void getAssignedEquipment_matchingEquipment() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Equipment equipment = mock(Equipment.class);
         when(equipment.isMatching(itemStack)).thenReturn(true);
 
-        equipmentRegistry.register(equipment, holder);
-        Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(holder, itemStack);
+        equipmentRegistry.register(equipment, user);
+        Optional<Equipment> equipmentOptional = equipmentRegistry.getAssignedEquipment(user, itemStack);
 
         assertThat(equipmentOptional).hasValue(equipment);
     }

@@ -3,9 +3,9 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls.place;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
-public class PlaceFunction implements ItemFunction<EquipmentHolder> {
+public class PlaceFunction implements ItemFunction<EquipmentUser> {
 
     private final Equipment equipment;
     private final PlaceDeployment deployment;
@@ -36,12 +36,12 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     }
 
     @Override
-    public boolean perform(EquipmentHolder holder) {
-        if (!holder.canDeploy()) {
+    public boolean perform(EquipmentUser user) {
+        if (!user.canDeploy()) {
             return false;
         }
 
-        equipment.performDeployment(deployment, holder);
+        equipment.performDeployment(deployment, user);
         return true;
     }
 }

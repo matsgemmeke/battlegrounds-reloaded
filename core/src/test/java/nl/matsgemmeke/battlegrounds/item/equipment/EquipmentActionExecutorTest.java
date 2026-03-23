@@ -66,12 +66,12 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handleChangeFromAction does nothing and returns true when Equipment holder does not equal GamePlayer")
-    void handleChangeFromAction_differentHolder() {
-        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+    @DisplayName("handleChangeFromAction does nothing and returns true when Equipment user does not equal GamePlayer")
+    void handleChangeFromAction_differentUser() {
+        EquipmentUser otherUser = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(otherHolder);
+        when(equipment.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -87,7 +87,7 @@ class EquipmentActionExecutorTest {
     @DisplayName("handleChangeFromAction calls change from action on Equipment and returns true")
     void handleChangeFromAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(gamePlayer);
+        when(equipment.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -121,12 +121,12 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handleChangeToAction does nothing and returns true when Equipment holder does not equal GamePlayer")
-    void handleChangeToAction_differentHolder() {
-        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+    @DisplayName("handleChangeToAction does nothing and returns true when Equipment user does not equal GamePlayer")
+    void handleChangeToAction_differentUser() {
+        EquipmentUser otherUser = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(otherHolder);
+        when(equipment.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -142,7 +142,7 @@ class EquipmentActionExecutorTest {
     @DisplayName("handleChangeToAction calls change to action on Equipment and returns true")
     void handleChangeToAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(gamePlayer);
+        when(equipment.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -176,12 +176,12 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handleDropItemAction does nothing and returns true when Equipment holder does not equal GamePlayer")
-    void handleDropItemAction_differentHolder() {
-        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+    @DisplayName("handleDropItemAction does nothing and returns true when Equipment user does not equal GamePlayer")
+    void handleDropItemAction_differentUser() {
+        EquipmentUser otherUser = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(otherHolder);
+        when(equipment.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -198,7 +198,7 @@ class EquipmentActionExecutorTest {
     @DisplayName("handleDropItemAction calls drop action on Equipment and returns true")
     void handleDropItemAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(gamePlayer);
+        when(equipment.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -233,12 +233,12 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handleLeftClickAction does nothing and returns true when Equipment holder does not equal GamePlayer")
-    void handleLeftClickAction_differentHolder() {
-        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+    @DisplayName("handleLeftClickAction does nothing and returns true when Equipment user does not equal GamePlayer")
+    void handleLeftClickAction_differentUser() {
+        EquipmentUser otherUser = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(otherHolder);
+        when(equipment.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -254,7 +254,7 @@ class EquipmentActionExecutorTest {
     @DisplayName("handleLeftClickAction calls change to action on Equipment and returns true")
     void handleLeftClickAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(gamePlayer);
+        when(equipment.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -338,12 +338,12 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handleRightClickAction does nothing and returns true when Equipment holder does not equal GamePlayer")
-    void handleRightClickAction_differentHolder() {
-        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+    @DisplayName("handleRightClickAction does nothing and returns true when Equipment user does not equal GamePlayer")
+    void handleRightClickAction_differentUser() {
+        EquipmentUser otherUser = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(otherHolder);
+        when(equipment.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -359,7 +359,7 @@ class EquipmentActionExecutorTest {
     @DisplayName("handleRightClickAction calls change to action on Equipment and returns true")
     void handleRightClickAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(gamePlayer);
+        when(equipment.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -393,12 +393,12 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handleSwapFromAction does nothing and returns true when Equipment holder does not equal GamePlayer")
-    void handleSwapFromAction_differentHolder() {
-        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+    @DisplayName("handleSwapFromAction does nothing and returns true when Equipment user does not equal GamePlayer")
+    void handleSwapFromAction_differentUser() {
+        EquipmentUser otherUser = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(otherHolder);
+        when(equipment.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -414,7 +414,7 @@ class EquipmentActionExecutorTest {
     @DisplayName("handleSwapFromAction calls swap from action on Equipment and returns true")
     void handleSwapFromAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(gamePlayer);
+        when(equipment.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -448,12 +448,12 @@ class EquipmentActionExecutorTest {
     }
 
     @Test
-    @DisplayName("handleSwapToAction does nothing and returns true when Equipment holder does not equal GamePlayer")
-    void handleSwapToAction_differentHolder() {
-        EquipmentHolder otherHolder = mock(EquipmentHolder.class);
+    @DisplayName("handleSwapToAction does nothing and returns true when Equipment user does not equal GamePlayer")
+    void handleSwapToAction_differentUser() {
+        EquipmentUser otherUser = mock(EquipmentUser.class);
 
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(otherHolder);
+        when(equipment.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
@@ -469,7 +469,7 @@ class EquipmentActionExecutorTest {
     @DisplayName("handleSwapToAction calls swap to action on Equipment and returns true")
     void handleSwapToAction_matchingEquipment() {
         Equipment equipment = mock(Equipment.class);
-        when(equipment.getHolder()).thenReturn(gamePlayer);
+        when(equipment.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));

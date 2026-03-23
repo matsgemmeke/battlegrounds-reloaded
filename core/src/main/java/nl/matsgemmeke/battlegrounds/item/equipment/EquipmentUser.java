@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import org.bukkit.entity.Entity;
 
-public interface EquipmentHolder extends ItemHolder, Deployer {
+public interface EquipmentUser extends ItemHolder, Deployer {
 
     @Deprecated
     Entity getEntity();

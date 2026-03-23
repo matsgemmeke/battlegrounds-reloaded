@@ -31,13 +31,13 @@ class DefaultEquipmentTest {
     @Test
     void activateDeploymentActivatesDeploymentHandler() {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDeploymentHandler(deploymentHandler);
-        equipment.activateDeployment(holder);
+        equipment.activateDeployment(user);
 
-        verify(deploymentHandler).activateDeployment(holder);
+        verify(deploymentHandler).activateDeployment(user);
     }
 
     @Test
@@ -197,47 +197,47 @@ class DefaultEquipmentTest {
 
     @Test
     void shouldPerformFunctionWhenLeftClicked() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
-        ItemFunction<EquipmentHolder> function = mock();
+        ItemFunction<EquipmentUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.getControls().addControl(Action.LEFT_CLICK, function);
-        equipment.setHolder(holder);
+        equipment.setUser(user);
         equipment.onLeftClick();
 
-        verify(function).perform(holder);
+        verify(function).perform(user);
     }
 
     @Test
     void shouldPerformFunctionWhenRightClicked() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
-        ItemFunction<EquipmentHolder> function = mock();
+        ItemFunction<EquipmentUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.getControls().addControl(Action.RIGHT_CLICK, function);
-        equipment.setHolder(holder);
+        equipment.setUser(user);
         equipment.onRightClick();
 
-        verify(function).perform(holder);
+        verify(function).perform(user);
     }
 
     @Test
     void performDeploymentDoesNothingWhenDeploymentProducesNoDeploymentContext() {
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
         Player player = mock(Player.class);
-        when(holder.getEntity()).thenReturn(player);
+        when(user.getEntity()).thenReturn(player);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
+        when(deployment.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
 
         equipment.setDeploymentHandler(deploymentHandler);
-        equipment.performDeployment(deployment, holder);
+        equipment.performDeployment(deployment, user);
 
         verifyNoInteractions(deploymentHandler);
     }
@@ -246,16 +246,16 @@ class DefaultEquipmentTest {
     void performDeploymentCallsDeploymentHandlerWhenDeploymentProducesDeploymentContext() {
         DeploymentResult deploymentResult = new DeploymentResult(null, null, null, 0L);
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
         Player player = mock(Player.class);
-        when(holder.getEntity()).thenReturn(player);
+        when(user.getEntity()).thenReturn(player);
 
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
+        when(deployment.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
 
         equipment.setDeploymentHandler(deploymentHandler);
-        equipment.performDeployment(deployment, holder);
+        equipment.performDeployment(deployment, user);
 
         verify(deploymentHandler).processDeploymentResult(deploymentResult);
     }
@@ -271,14 +271,14 @@ class DefaultEquipmentTest {
 
     @Test
     void createNewItemStackFromTemplateWhenUpdatingAndSetHeldItemOfHolder() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(itemStack);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setHolder(holder);
+        equipment.setUser(user);
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.setName("test");
         equipment.setItemStack(itemStack);

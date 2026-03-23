@@ -138,7 +138,7 @@ public class EquipmentActionExecutor implements ActionExecutor {
 
         Equipment equipment = equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack).orElse(null);
 
-        if (equipment == null || equipment.getHolder() != gamePlayer) {
+        if (equipment == null || equipment.getUser() != gamePlayer) {
             return null;
         }
 

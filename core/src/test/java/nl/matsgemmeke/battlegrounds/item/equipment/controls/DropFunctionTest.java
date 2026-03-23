@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,12 +37,12 @@ class DropFunctionTest {
     }
 
     @Test
-    @DisplayName("perform returns false when holder cannot deploy")
-    void perform_holderCannotDeploy() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(false);
+    @DisplayName("perform returns false when user cannot deploy")
+    void perform_userCannotDeploy() {
+        EquipmentUser user = mock(EquipmentUser.class);
+        when(user.canDeploy()).thenReturn(false);
 
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
         assertThat(performed).isFalse();
 
@@ -52,13 +52,13 @@ class DropFunctionTest {
     @Test
     @DisplayName("perform returns true and performs deployment on equipment")
     void perform_performsDeployment() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(true);
+        EquipmentUser user = mock(EquipmentUser.class);
+        when(user.canDeploy()).thenReturn(true);
 
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
         assertThat(performed).isTrue();
 
-        verify(equipment).performDeployment(deployment, holder);
+        verify(equipment).performDeployment(deployment, user);
     }
 }

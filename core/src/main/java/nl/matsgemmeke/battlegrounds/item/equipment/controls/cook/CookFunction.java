@@ -3,17 +3,14 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls.cook;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
-public class CookFunction implements ItemFunction<EquipmentHolder> {
+public class CookFunction implements ItemFunction<EquipmentUser> {
 
-    @NotNull
     private final Equipment equipment;
-    @NotNull
     private final PrimeDeployment deployment;
 
-    public CookFunction(@NotNull Equipment equipment, @NotNull PrimeDeployment deployment) {
+    public CookFunction(Equipment equipment, PrimeDeployment deployment) {
         this.equipment = equipment;
         this.deployment = deployment;
     }
@@ -34,12 +31,12 @@ public class CookFunction implements ItemFunction<EquipmentHolder> {
         return false;
     }
 
-    public boolean perform(@NotNull EquipmentHolder holder) {
-        if (!holder.canDeploy()) {
+    public boolean perform(EquipmentUser user) {
+        if (!user.canDeploy()) {
             return false;
         }
 
-        equipment.performDeployment(deployment, holder);
+        equipment.performDeployment(deployment, user);
         return true;
     }
 }

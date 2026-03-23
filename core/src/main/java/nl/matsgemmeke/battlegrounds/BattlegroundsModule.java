@@ -74,7 +74,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectPerforman
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPerformanceFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
@@ -144,7 +144,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
-        binder.bind(new TypeLiteral<Supplier<ItemControls<EquipmentHolder>>>() {}).toInstance(ItemControls::new);
+        binder.bind(new TypeLiteral<Supplier<ItemControls<EquipmentUser>>>() {}).toInstance(ItemControls::new);
         binder.bind(new TypeLiteral<Supplier<ItemControls<MeleeWeaponUser>>>() {}).toInstance(ItemControls::new);
 
         // Singleton bindings

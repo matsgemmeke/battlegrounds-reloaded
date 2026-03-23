@@ -22,9 +22,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private Activator activator;
     private DeploymentHandler deploymentHandler;
     @Nullable
-    private EquipmentHolder holder;
-    @NotNull
-    private ItemControls<EquipmentHolder> controls;
+    private EquipmentUser user;
+    private ItemControls<EquipmentUser> controls;
     @Nullable
     private ItemTemplate displayItemTemplate;
     @Nullable
@@ -48,12 +47,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.activator = activator;
     }
 
-    @NotNull
-    public ItemControls<EquipmentHolder> getControls() {
+    public ItemControls<EquipmentUser> getControls() {
         return controls;
     }
 
-    public void setControls(@NotNull ItemControls<EquipmentHolder> controls) {
+    public void setControls(ItemControls<EquipmentUser> controls) {
         this.controls = controls;
     }
 
@@ -68,15 +66,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @NotNull
     public List<DeploymentObject> getDeploymentObjects() {
         return deploymentObjects;
-    }
-
-    @Nullable
-    public EquipmentHolder getHolder() {
-        return holder;
-    }
-
-    public void setHolder(@Nullable EquipmentHolder holder) {
-        this.holder = holder;
     }
 
     @Nullable
@@ -106,8 +95,17 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.throwItemTemplate = throwItemTemplate;
     }
 
-    public void activateDeployment(EquipmentHolder holder) {
-        deploymentHandler.activateDeployment(holder);
+    @Nullable
+    public EquipmentUser getUser() {
+        return user;
+    }
+
+    public void setUser(@Nullable EquipmentUser user) {
+        this.user = user;
+    }
+
+    public void activateDeployment(EquipmentUser user) {
+        deploymentHandler.activateDeployment(user);
     }
 
     public void cleanup() {
@@ -151,22 +149,22 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onLeftClick() {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
-        controls.performAction(Action.LEFT_CLICK, holder);
+        controls.performAction(Action.LEFT_CLICK, user);
     }
 
-    public void onPickUp(@NotNull EquipmentHolder holder) {
+    public void onPickUp(EquipmentUser user) {
     }
 
     public void onRightClick() {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
-        controls.performAction(Action.RIGHT_CLICK, holder);
+        controls.performAction(Action.RIGHT_CLICK, user);
     }
 
     public void onSwapFrom() {
@@ -175,9 +173,9 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public void onSwapTo() {
     }
 
-    public void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder) {
+    public void performDeployment(Deployment deployment, EquipmentUser user) {
         DestructionListener destructionListener = () -> deploymentHandler.destroyDeployment();
-        DeploymentResult deploymentResult = deployment.perform(holder, holder.getEntity(), destructionListener).orElse(null);
+        DeploymentResult deploymentResult = deployment.perform(user, user.getEntity(), destructionListener).orElse(null);
 
         if (deploymentResult == null) {
             return;
@@ -196,7 +194,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         return true;
     }
 
-    @NotNull
     private Map<String, Object> getTemplateValues() {
         Map<String, Object> values = new HashMap<>();
 

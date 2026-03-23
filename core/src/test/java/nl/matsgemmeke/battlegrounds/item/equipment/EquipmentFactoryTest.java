@@ -58,7 +58,7 @@ class EquipmentFactoryTest {
     void create_withPlayerHolder() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        ItemControls<EquipmentUser> controls = new ItemControls<>();
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
@@ -86,7 +86,7 @@ class EquipmentFactoryTest {
     @DisplayName("create returns Equipment instance with activator")
     void create_withActivator() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
-        ItemControls<EquipmentHolder> controls = new ItemControls<>();
+        ItemControls<EquipmentUser> controls = new ItemControls<>();
         DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         ItemTemplate activatorItemTemplate = mock(ItemTemplate.class);
