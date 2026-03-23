@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 class DefaultMeleeWeaponRegistryTest {
 
     @Mock
-    private MeleeWeaponHolder holder;
+    private MeleeWeaponUser user;
 
     private DefaultMeleeWeaponRegistry meleeWeaponRegistry;
 
@@ -32,24 +32,26 @@ class DefaultMeleeWeaponRegistryTest {
     }
 
     @Test
-    void getAssignedMeleeWeaponReturnsEmptyOptionalWhenGivenHolderIsNotRegistered() {
+    @DisplayName("getAssignedMeleeWeapon returns empty optional when given user is not registered")
+    void getAssignedMeleeWeapon_userNotRegistered() {
         ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
 
-        Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getAssignedMeleeWeapon(holder, itemStack);
+        Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getAssignedMeleeWeapon(user, itemStack);
 
         assertThat(meleeWeaponOptional).isEmpty();
     }
 
     @Test
-    void getAssignedMeleeWeaponReturnsEmptyOptionalWhenGivenItemStackIsNotRegisteredToGivenHolder() {
+    @DisplayName("getAssignedMeleeWeapon returns empty optional when melee weapon given item stack is not registered to given user")
+    void getAssignedMeleeWeapon_meleeWeaponNotRegisteredToUser() {
         ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.of(holder));
+        when(meleeWeapon.getUser()).thenReturn(Optional.of(user));
         when(meleeWeapon.isMatching(itemStack)).thenReturn(false);
 
         meleeWeaponRegistry.register(meleeWeapon);
-        Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getAssignedMeleeWeapon(holder, itemStack);
+        Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getAssignedMeleeWeapon(user, itemStack);
 
         assertThat(meleeWeaponOptional).isEmpty();
     }
@@ -59,33 +61,33 @@ class DefaultMeleeWeaponRegistryTest {
         ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.of(holder));
+        when(meleeWeapon.getUser()).thenReturn(Optional.of(user));
         when(meleeWeapon.isMatching(itemStack)).thenReturn(true);
 
         meleeWeaponRegistry.register(meleeWeapon);
-        Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getAssignedMeleeWeapon(holder, itemStack);
+        Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getAssignedMeleeWeapon(user, itemStack);
 
         assertThat(meleeWeaponOptional).hasValue(meleeWeapon);
     }
 
     @Test
-    @DisplayName("getAssignedMeleeWeapons returns list of melee weapons that are assigned the given holder and exist in their inventory")
+    @DisplayName("getAssignedMeleeWeapons returns list of melee weapons that are assigned to the given user and exist in their inventory")
     void getAssignedMeleeWeapons_returnsMatchingMeleeWeapons() {
-        MeleeWeapon meleeWeaponDifferentHolder = mock(MeleeWeapon.class);
+        MeleeWeapon meleeWeaponDifferentUser = mock(MeleeWeapon.class);
 
         MeleeWeapon meleeWeaponNotInInventory = mock(MeleeWeapon.class);
-        when(meleeWeaponNotInInventory.getHolder()).thenReturn(Optional.of(holder));
+        when(meleeWeaponNotInInventory.getUser()).thenReturn(Optional.of(user));
 
         MeleeWeapon meleeWeaponMatching = mock(MeleeWeapon.class);
-        when(meleeWeaponMatching.getHolder()).thenReturn(Optional.of(holder));
+        when(meleeWeaponMatching.getUser()).thenReturn(Optional.of(user));
 
-        when(holder.hasItem(meleeWeaponNotInInventory)).thenReturn(false);
-        when(holder.hasItem(meleeWeaponMatching)).thenReturn(true);
+        when(user.hasItem(meleeWeaponNotInInventory)).thenReturn(false);
+        when(user.hasItem(meleeWeaponMatching)).thenReturn(true);
 
-        meleeWeaponRegistry.register(meleeWeaponDifferentHolder);
+        meleeWeaponRegistry.register(meleeWeaponDifferentUser);
         meleeWeaponRegistry.register(meleeWeaponNotInInventory);
         meleeWeaponRegistry.register(meleeWeaponMatching);
-        List<MeleeWeapon> meleeWeapons = meleeWeaponRegistry.getAssignedMeleeWeapons(holder);
+        List<MeleeWeapon> meleeWeapons = meleeWeaponRegistry.getAssignedMeleeWeapons(user);
 
         assertThat(meleeWeapons).containsExactly(meleeWeaponMatching);
     }

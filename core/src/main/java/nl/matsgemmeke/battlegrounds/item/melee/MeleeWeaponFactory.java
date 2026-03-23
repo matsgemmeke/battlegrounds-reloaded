@@ -66,7 +66,7 @@ public class MeleeWeaponFactory {
         ResourceContainer resourceContainer = new ResourceContainer(maxLoadedAmount, loadedAmount, defaultReserveAmount, maxReserveAmount);
         meleeWeapon.setResourceContainer(resourceContainer);
 
-        ItemControls<MeleeWeaponHolder> controls;
+        ItemControls<MeleeWeaponUser> controls;
 
         if (spec.controls != null) {
             controls = controlsFactory.create(spec.controls, meleeWeapon);

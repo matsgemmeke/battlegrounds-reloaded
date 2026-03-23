@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.melee.controls.reload;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 
-public class ReloadFunction implements ItemFunction<MeleeWeaponHolder> {
+public class ReloadFunction implements ItemFunction<MeleeWeaponUser> {
 
     private final MeleeWeapon meleeWeapon;
 
@@ -33,12 +33,12 @@ public class ReloadFunction implements ItemFunction<MeleeWeaponHolder> {
     }
 
     @Override
-    public boolean perform(MeleeWeaponHolder holder) {
+    public boolean perform(MeleeWeaponUser user) {
         if (!this.isAvailable()) {
             return false;
         }
 
-        meleeWeapon.reload(holder);
+        meleeWeapon.reload(user);
         return true;
     }
 }

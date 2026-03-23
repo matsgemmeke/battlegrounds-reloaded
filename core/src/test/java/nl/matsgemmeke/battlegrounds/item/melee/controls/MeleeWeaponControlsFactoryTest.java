@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.melee.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.reload.ReloadFunction;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.throwing.ThrowFunction;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,11 +24,11 @@ import static org.mockito.Mockito.*;
 class MeleeWeaponControlsFactoryTest {
 
     @Mock
-    private ItemControls<MeleeWeaponHolder> controls;
+    private ItemControls<MeleeWeaponUser> controls;
     @Mock
     private MeleeWeapon meleeWeapon;
     @Mock
-    private Supplier<ItemControls<MeleeWeaponHolder>> controlsSupplier;
+    private Supplier<ItemControls<MeleeWeaponUser>> controlsSupplier;
     @InjectMocks
     private MeleeWeaponControlsFactory controlsFactory;
 
@@ -43,7 +43,7 @@ class MeleeWeaponControlsFactoryTest {
         ControlsSpec spec = new ControlsSpec();
         spec.reload = "LEFT_CLICK";
 
-        ItemControls<MeleeWeaponHolder> result = controlsFactory.create(spec, meleeWeapon);
+        ItemControls<MeleeWeaponUser> result = controlsFactory.create(spec, meleeWeapon);
 
         assertThat(result).isEqualTo(controls);
 
@@ -56,7 +56,7 @@ class MeleeWeaponControlsFactoryTest {
         ControlsSpec spec = new ControlsSpec();
         spec.throwing = "RIGHT_CLICK";
 
-        ItemControls<MeleeWeaponHolder> result = controlsFactory.create(spec, meleeWeapon);
+        ItemControls<MeleeWeaponUser> result = controlsFactory.create(spec, meleeWeapon);
 
         assertThat(result).isEqualTo(controls);
 

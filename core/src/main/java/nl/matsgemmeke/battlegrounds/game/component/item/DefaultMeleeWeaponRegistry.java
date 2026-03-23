@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -17,24 +17,24 @@ public class DefaultMeleeWeaponRegistry implements MeleeWeaponRegistry {
     }
 
     @Override
-    public Optional<MeleeWeapon> getAssignedMeleeWeapon(MeleeWeaponHolder holder, ItemStack itemStack) {
+    public Optional<MeleeWeapon> getAssignedMeleeWeapon(MeleeWeaponUser user, ItemStack itemStack) {
         return meleeWeapons.stream()
-                .filter(meleeWeapon -> meleeWeapon.getHolder().map(h -> h.equals(holder)).orElse(false))
+                .filter(meleeWeapon -> meleeWeapon.getUser().map(h -> h.equals(user)).orElse(false))
                 .filter(meleeWeapon -> meleeWeapon.isMatching(itemStack))
                 .findFirst();
     }
 
     @Override
-    public List<MeleeWeapon> getAssignedMeleeWeapons(MeleeWeaponHolder holder) {
+    public List<MeleeWeapon> getAssignedMeleeWeapons(MeleeWeaponUser user) {
         return meleeWeapons.stream()
-                .filter(meleeWeapon -> meleeWeapon.getHolder().stream().anyMatch(h -> h.equals(holder) && h.hasItem(meleeWeapon)))
+                .filter(meleeWeapon -> meleeWeapon.getUser().stream().anyMatch(h -> h.equals(user) && h.hasItem(meleeWeapon)))
                 .toList();
     }
 
     @Override
     public Optional<MeleeWeapon> getUnassignedMeleeWeapon(ItemStack itemStack) {
         return meleeWeapons.stream()
-                .filter(meleeWeapon -> meleeWeapon.getHolder().isEmpty())
+                .filter(meleeWeapon -> meleeWeapon.getUser().isEmpty())
                 .filter(meleeWeapon -> meleeWeapon.isMatching(itemStack))
                 .findFirst();
     }

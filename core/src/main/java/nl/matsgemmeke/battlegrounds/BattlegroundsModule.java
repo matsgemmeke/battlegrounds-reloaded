@@ -77,7 +77,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
 import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
@@ -145,7 +145,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
         binder.bind(new TypeLiteral<Supplier<ItemControls<EquipmentHolder>>>() {}).toInstance(ItemControls::new);
-        binder.bind(new TypeLiteral<Supplier<ItemControls<MeleeWeaponHolder>>>() {}).toInstance(ItemControls::new);
+        binder.bind(new TypeLiteral<Supplier<ItemControls<MeleeWeaponUser>>>() {}).toInstance(ItemControls::new);
 
         // Singleton bindings
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);

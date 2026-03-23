@@ -244,7 +244,7 @@ public class MeleeWeaponActionExecutor implements ActionExecutor {
 
         MeleeWeapon meleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, itemStack).orElse(null);
 
-        if (meleeWeapon == null || meleeWeapon.getHolder().orElse(null) != gamePlayer) {
+        if (meleeWeapon == null || meleeWeapon.getUser().orElse(null) != gamePlayer) {
             return null;
         }
 

@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.melee.controls.throwing;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 
-public class ThrowFunction implements ItemFunction<MeleeWeaponHolder> {
+public class ThrowFunction implements ItemFunction<MeleeWeaponUser> {
 
     private final MeleeWeapon meleeWeapon;
 
@@ -33,8 +33,8 @@ public class ThrowFunction implements ItemFunction<MeleeWeaponHolder> {
     }
 
     @Override
-    public boolean perform(MeleeWeaponHolder holder) {
-        meleeWeapon.performThrow(holder);
+    public boolean perform(MeleeWeaponUser user) {
+        meleeWeapon.performThrow(user);
         return true;
     }
 }

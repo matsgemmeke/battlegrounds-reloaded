@@ -20,13 +20,13 @@ import java.util.Optional;
 public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     private double attackDamage;
-    private ItemControls<MeleeWeaponHolder> controls;
+    private ItemControls<MeleeWeaponUser> controls;
     @Nullable
     private ItemTemplate displayItemTemplate;
     @Nullable
     private ItemTemplate throwItemTemplate;
     @Nullable
-    private MeleeWeaponHolder holder;
+    private MeleeWeaponUser user;
     private ReloadSystem reloadSystem;
     private ResourceContainer resourceContainer;
     @Nullable
@@ -45,11 +45,11 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         this.attackDamage = attackDamage;
     }
 
-    public ItemControls<MeleeWeaponHolder> getControls() {
+    public ItemControls<MeleeWeaponUser> getControls() {
         return controls;
     }
 
-    public void setControls(ItemControls<MeleeWeaponHolder> controls) {
+    public void setControls(ItemControls<MeleeWeaponUser> controls) {
         this.controls = controls;
     }
 
@@ -59,11 +59,6 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     public void setDisplayItemTemplate(@Nullable ItemTemplate displayItemTemplate) {
         this.displayItemTemplate = displayItemTemplate;
-    }
-
-    @Override
-    public Optional<MeleeWeaponHolder> getHolder() {
-        return Optional.ofNullable(holder);
     }
 
     public ReloadSystem getReloadSystem() {
@@ -84,18 +79,23 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         this.resourceContainer = resourceContainer;
     }
 
+    @Override
+    public Optional<MeleeWeaponUser> getUser() {
+        return Optional.ofNullable(user);
+    }
+
     public void configureThrowHandler(ThrowHandler throwHandler) {
         this.throwHandler = throwHandler;
     }
 
     @Override
-    public void assign(MeleeWeaponHolder holder) {
-        this.holder = holder;
+    public void assign(MeleeWeaponUser user) {
+        this.user = user;
     }
 
     @Override
     public void unassign() {
-        holder = null;
+        user = null;
     }
 
     @Override
@@ -115,12 +115,12 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     @Override
     public void onDrop() {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
         controls.cancelAllFunctions();
-        controls.performAction(Action.DROP_ITEM, holder);
+        controls.performAction(Action.DROP_ITEM, user);
     }
 
     @Override
@@ -129,8 +129,8 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     }
 
     @Override
-    public void onPickUp(@NotNull MeleeWeaponHolder holder) {
-        controls.performAction(Action.PICKUP_ITEM, holder);
+    public void onPickUp(@NotNull MeleeWeaponUser user) {
+        controls.performAction(Action.PICKUP_ITEM, user);
     }
 
     @Override
@@ -149,11 +149,11 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     }
 
     private void performControlAction(Action action) {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
-        controls.performAction(action, holder);
+        controls.performAction(action, user);
     }
 
     @Override
@@ -190,8 +190,8 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         throwHandler.performThrow(performer);
 
         if (resourceContainer.getLoadedAmount() + resourceContainer.getReserveAmount() <= 0) {
-            // The melee weapon is out of resources, so we unassign the holder
-            holder = null;
+            // The melee weapon is out of resources, so we unassign the user
+            user = null;
         }
     }
 

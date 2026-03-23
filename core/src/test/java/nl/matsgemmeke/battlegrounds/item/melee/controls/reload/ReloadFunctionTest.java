@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.melee.controls.reload;
 
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,11 +58,11 @@ class ReloadFunctionTest {
     @Test
     @DisplayName("perform does not perform reload when melee weapon cannot reload")
     void perform_reloadNotAvailable() {
-        MeleeWeaponHolder holder = mock(MeleeWeaponHolder.class);
+        MeleeWeaponUser user = mock(MeleeWeaponUser.class);
 
         when(meleeWeapon.isReloadAvailable()).thenReturn(false);
 
-        function.perform(holder);
+        function.perform(user);
 
         verify(meleeWeapon, never()).reload(any(ReloadPerformer.class));
     }
@@ -70,12 +70,12 @@ class ReloadFunctionTest {
     @Test
     @DisplayName("perform performs reload when melee weapon can reload")
     void perform_reloadAvailable() {
-        MeleeWeaponHolder holder = mock(MeleeWeaponHolder.class);
+        MeleeWeaponUser user = mock(MeleeWeaponUser.class);
 
         when(meleeWeapon.isReloadAvailable()).thenReturn(true);
 
-        function.perform(holder);
+        function.perform(user);
 
-        verify(meleeWeapon).reload(holder);
+        verify(meleeWeapon).reload(user);
     }
 }

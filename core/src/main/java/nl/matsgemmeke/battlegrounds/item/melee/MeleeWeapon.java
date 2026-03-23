@@ -7,27 +7,27 @@ import nl.matsgemmeke.battlegrounds.item.throwing.ThrowableItem;
 
 import java.util.Optional;
 
-public interface MeleeWeapon extends Weapon, Reloadable, ThrowableItem, Interactable<MeleeWeaponHolder> {
+public interface MeleeWeapon extends Weapon, Reloadable, ThrowableItem, Interactable<MeleeWeaponUser> {
 
     double getAttackDamage();
 
     /**
-     * Assigns a holder to the melee weapon.
+     * Assigns a user to the melee weapon.
      *
-     * @param holder the holder to assign
+     * @param user the user to assign
      */
-    void assign(MeleeWeaponHolder holder);
+    void assign(MeleeWeaponUser user);
 
     /**
-     * Unassigns the current holder from the melee weapon. This method will have no effect when the melee weapon has no
-     * holder assigned.
+     * Unassigns the current user from the melee weapon. This method will have no effect when the melee weapon has no
+     * user assigned.
      */
     void unassign();
 
     /**
-     * Gets the holder of the melee weapon. Returns an empty optional if the melee weapon does not have a holder.
+     * Gets the user of the melee weapon. Returns an empty optional if the melee weapon does not have a user.
      *
-     * @return the optional with the melee weapon holder or empty when there is none
+     * @return the optional with the melee weapon user or empty when there is none
      */
-    Optional<MeleeWeaponHolder> getHolder();
+    Optional<MeleeWeaponUser> getUser();
 }

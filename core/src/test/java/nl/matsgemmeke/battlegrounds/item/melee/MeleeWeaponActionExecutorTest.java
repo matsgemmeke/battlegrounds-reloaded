@@ -80,11 +80,12 @@ class MeleeWeaponActionExecutorTest {
     }
 
     @Test
-    void handleChangeFromActionReturnsTrueAndDoesNotPerformActionWhenMeleeWeaponHolderDoesNotMatchWithGamePlayer() {
+    @DisplayName("handleChangeFromAction returns true and does not perform action when melee weapon user does not match with player")
+    void handleChangeFromAction_differentUser() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.empty());
+        when(meleeWeapon.getUser()).thenReturn(Optional.empty());
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -101,7 +102,7 @@ class MeleeWeaponActionExecutorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.of(gamePlayer));
+        when(meleeWeapon.getUser()).thenReturn(Optional.of(gamePlayer));
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -135,11 +136,12 @@ class MeleeWeaponActionExecutorTest {
     }
 
     @Test
-    void handleChangeToActionReturnsTrueAndDoesNotPerformActionWhenMeleeWeaponHolderDoesNotMatchWithGamePlayer() {
+    @DisplayName("handleChangeToAction returns true and does not perform action when melee weapon user does not match with player")
+    void handleChangeToAction_differentUser() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.empty());
+        when(meleeWeapon.getUser()).thenReturn(Optional.empty());
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -156,7 +158,7 @@ class MeleeWeaponActionExecutorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.of(gamePlayer));
+        when(meleeWeapon.getUser()).thenReturn(Optional.of(gamePlayer));
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -190,11 +192,12 @@ class MeleeWeaponActionExecutorTest {
     }
 
     @Test
-    void handleDropItemActionReturnsTrueAndDoesNotPerformActionWhenMeleeWeaponHolderDoesNotMatchWithGamePlayer() {
+    @DisplayName("handleDropItemAction returns true and does not perform action when melee weapon user does not match with player")
+    void handleDropItemAction_differentUser() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.empty());
+        when(meleeWeapon.getUser()).thenReturn(Optional.empty());
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -212,7 +215,7 @@ class MeleeWeaponActionExecutorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.of(gamePlayer));
+        when(meleeWeapon.getUser()).thenReturn(Optional.of(gamePlayer));
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -247,11 +250,12 @@ class MeleeWeaponActionExecutorTest {
     }
 
     @Test
-    void handleLeftClickActionReturnsTrueAndDoesNotPerformActionWhenMeleeWeaponHolderDoesNotMatchWithGamePlayer() {
+    @DisplayName("handleLeftClickAction returns true and does not perform action when melee weapon user does not match with player")
+    void handleLeftClickAction_differentUser() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.empty());
+        when(meleeWeapon.getUser()).thenReturn(Optional.empty());
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -268,7 +272,7 @@ class MeleeWeaponActionExecutorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.of(gamePlayer));
+        when(meleeWeapon.getUser()).thenReturn(Optional.of(gamePlayer));
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -503,11 +507,12 @@ class MeleeWeaponActionExecutorTest {
     }
 
     @Test
-    void handleRightClickActionReturnsTrueAndDoesNotPerformActionWhenMeleeWeaponHolderDoesNotMatchWithGamePlayer() {
+    @DisplayName("handleRightClickAction returns true and does not perform action when melee weapon user does not match with player")
+    void handleRightClickAction_differentUser() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.empty());
+        when(meleeWeapon.getUser()).thenReturn(Optional.empty());
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -524,7 +529,7 @@ class MeleeWeaponActionExecutorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.of(gamePlayer));
+        when(meleeWeapon.getUser()).thenReturn(Optional.of(gamePlayer));
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -558,11 +563,12 @@ class MeleeWeaponActionExecutorTest {
     }
 
     @Test
-    void handleSwapFromActionReturnsTrueAndDoesNotPerformActionWhenMeleeWeaponHolderDoesNotMatchWithGamePlayer() {
+    @DisplayName("handleSwapFromAction returns true and does not perform action when melee weapon user does not match with player")
+    void handleSwapFromAction_differentUser() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.empty());
+        when(meleeWeapon.getUser()).thenReturn(Optional.empty());
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -579,7 +585,7 @@ class MeleeWeaponActionExecutorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.of(gamePlayer));
+        when(meleeWeapon.getUser()).thenReturn(Optional.of(gamePlayer));
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -613,11 +619,12 @@ class MeleeWeaponActionExecutorTest {
     }
 
     @Test
-    void handleSwapToActionReturnsTrueAndDoesNotPerformActionWhenMeleeWeaponHolderDoesNotMatchWithGamePlayer() {
+    @DisplayName("handleSwapToAction returns true and does not perform action when melee weapon user does not match with player")
+    void handleSwapToAction_differentUser() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.empty());
+        when(meleeWeapon.getUser()).thenReturn(Optional.empty());
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
@@ -634,7 +641,7 @@ class MeleeWeaponActionExecutorTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
-        when(meleeWeapon.getHolder()).thenReturn(Optional.of(gamePlayer));
+        when(meleeWeapon.getUser()).thenReturn(Optional.of(gamePlayer));
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));

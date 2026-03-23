@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.melee.controls.throwing;
 
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,11 +50,12 @@ class ThrowFunctionTest {
     }
 
     @Test
-    void performDoesSomething() {
-        MeleeWeaponHolder holder = mock(MeleeWeaponHolder.class);
+    @DisplayName("perform performs throw on melee weapon")
+    void perform_performsThrow() {
+        MeleeWeaponUser user = mock(MeleeWeaponUser.class);
 
-        function.perform(holder);
+        function.perform(user);
 
-        verify(meleeWeapon).performThrow(holder);
+        verify(meleeWeapon).performThrow(user);
     }
 }
