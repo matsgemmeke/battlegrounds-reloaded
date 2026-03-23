@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public class EnumValueValidator implements ConstraintValidator<EnumValue, Object> {
 
-    private static final String MESSAGE_TEMPLATE = "invalid value '%s' for enum %s";
+    private static final String MESSAGE_TEMPLATE = "invalid value \"%s\" for enum %s";
 
     private Class<? extends Enum<?>> type;
 

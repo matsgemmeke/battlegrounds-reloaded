@@ -3,11 +3,13 @@ package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.ProjectileEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.validation.constraint.ValidDropping;
 import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ValidDropping
 public class EquipmentSpec {
 
     @Required

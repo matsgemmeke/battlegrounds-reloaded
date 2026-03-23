@@ -15,4 +15,7 @@ public class EquipmentItemsSpec {
 
     @Valid
     public ItemSpec throwItem;
+
+    @Valid
+    public ItemSpec dropItem;
 }

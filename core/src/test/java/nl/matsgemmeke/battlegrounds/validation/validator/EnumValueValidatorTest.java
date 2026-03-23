@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.validation.validator;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import nl.matsgemmeke.battlegrounds.validation.TestValidationObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ class EnumValueValidatorTest {
         Set<ConstraintViolation<TestValidationObject>> violations = validator.validate(object);
 
         assertThat(violations).satisfiesExactly(violation -> {
-            assertThat(violation.getMessage()).isEqualTo("invalid value 'fail' for enum Particle");
+            assertThat(violation.getMessage()).isEqualTo("invalid value \"fail\" for enum Particle");
         });
     }
 }

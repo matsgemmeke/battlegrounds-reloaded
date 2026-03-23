@@ -63,7 +63,9 @@ items:
     unbreakable: true
   throw-item:
     material: SHEARS
-    display-name: '&f%name%'
+    damage: 6
+  drop-item:
+    material: SHEARS
     damage: 6
 projectile-effects:
   bounce:

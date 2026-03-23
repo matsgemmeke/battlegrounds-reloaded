@@ -133,10 +133,10 @@ class ItemSpecRegistryProviderTest {
 
         verify(logger).severe("""
                 An error occurred while loading item 'Olympia': Validation failed for GunSpec (1 constraint violations):
-                 - levelUnlocked: value is required""");
+                 - level-unlocked: value is required""");
         verify(logger).severe("""
                 An error occurred while loading item 'MP5': Validation failed for GunSpec (1 constraint violations):
-                 - levelUnlocked: value is required""");
+                 - level-unlocked: value is required""");
     }
 
     @Test

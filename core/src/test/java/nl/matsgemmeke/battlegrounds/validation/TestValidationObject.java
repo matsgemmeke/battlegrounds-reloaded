@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.validation.validator;
+package nl.matsgemmeke.battlegrounds.validation;
 
 import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
 import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
