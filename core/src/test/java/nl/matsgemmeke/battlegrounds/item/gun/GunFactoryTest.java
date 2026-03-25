@@ -66,7 +66,7 @@ class GunFactoryTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
@@ -109,7 +109,7 @@ class GunFactoryTest {
         GunSpec spec = this.createGunSpec();
         spec.scope = scopeSpec;
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
@@ -135,7 +135,7 @@ class GunFactoryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         GunSpec spec = this.createGunSpec();
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
@@ -156,7 +156,7 @@ class GunFactoryTest {
         assertThat(gunFireSimulationInfo.shotSounds()).hasSize(3);
 
         assertThat(gun).isInstanceOf(DefaultGun.class);
-        assertThat(gun.getHolder()).isEqualTo(gamePlayer);
+        assertThat(gun.getUser()).isEqualTo(gamePlayer);
 
         verify(gunRegistry).register(gun, gamePlayer);
     }

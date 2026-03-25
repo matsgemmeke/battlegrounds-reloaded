@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.reload.ReloadFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.ChangeScopeMagnificationFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.StopScopeFunction;
@@ -13,8 +13,8 @@ import nl.matsgemmeke.battlegrounds.item.gun.controls.shoot.ShootFunction;
 
 public class GunControlsFactory {
 
-    public ItemControls<GunHolder> create(ControlsSpec spec, Gun gun) {
-        ItemControls<GunHolder> controls = new ItemControls<>();
+    public ItemControls<GunUser> create(ControlsSpec spec, Gun gun) {
+        ItemControls<GunUser> controls = new ItemControls<>();
 
         String useScopeActionValue = spec.scopeUse;
         String stopScopeActionValue = spec.scopeStop;

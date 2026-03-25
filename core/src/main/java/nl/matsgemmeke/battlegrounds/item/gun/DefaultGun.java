@@ -22,8 +22,8 @@ import java.util.Map;
 public class DefaultGun extends BaseWeapon implements Gun {
 
     @Nullable
-    private GunHolder holder;
-    private ItemControls<GunHolder> controls;
+    private GunUser user;
+    private ItemControls<GunUser> controls;
     @Nullable
     private ItemTemplate itemTemplate;
     private RangeProfile rangeProfile;
@@ -50,21 +50,12 @@ public class DefaultGun extends BaseWeapon implements Gun {
     }
 
     @NotNull
-    public ItemControls<GunHolder> getControls() {
+    public ItemControls<GunUser> getControls() {
         return controls;
     }
 
-    public void setControls(@NotNull ItemControls<GunHolder> controls) {
+    public void setControls(@NotNull ItemControls<GunUser> controls) {
         this.controls = controls;
-    }
-
-    @Nullable
-    public GunHolder getHolder() {
-        return holder;
-    }
-
-    public void setHolder(@Nullable GunHolder holder) {
-        this.holder = holder;
     }
 
     @Nullable
@@ -120,6 +111,15 @@ public class DefaultGun extends BaseWeapon implements Gun {
         this.shootHandler = shootHandler;
     }
 
+    @Nullable
+    public GunUser getUser() {
+        return user;
+    }
+
+    public void setUser(@Nullable GunUser user) {
+        this.user = user;
+    }
+
     public boolean applyScope(@NotNull ScopeUser scopeUser) {
         return scopeAttachment != null && scopeAttachment.applyEffect(scopeUser);
     }
@@ -173,67 +173,67 @@ public class DefaultGun extends BaseWeapon implements Gun {
     public void onChangeFrom() {
         controls.cancelAllFunctions();
 
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
-        controls.performAction(Action.CHANGE_FROM, holder);
+        controls.performAction(Action.CHANGE_FROM, user);
     }
 
     public void onChangeTo() {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
-        controls.performAction(Action.CHANGE_TO, holder);
+        controls.performAction(Action.CHANGE_TO, user);
     }
 
     public void onDrop() {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
         controls.cancelAllFunctions();
-        controls.performAction(Action.DROP_ITEM, holder);
-        holder = null;
+        controls.performAction(Action.DROP_ITEM, user);
+        user = null;
     }
 
     public void onLeftClick() {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
-        controls.performAction(Action.LEFT_CLICK, holder);
+        controls.performAction(Action.LEFT_CLICK, user);
     }
 
     public void onRightClick() {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
-        controls.performAction(Action.RIGHT_CLICK, holder);
+        controls.performAction(Action.RIGHT_CLICK, user);
     }
 
-    public void onPickUp(@NotNull GunHolder holder) {
-        this.holder = holder;
+    public void onPickUp(@NotNull GunUser user) {
+        this.user = user;
 
-        controls.performAction(Action.PICKUP_ITEM, holder);
+        controls.performAction(Action.PICKUP_ITEM, user);
     }
 
     public void onSwapFrom() {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
-        controls.performAction(Action.SWAP_FROM, holder);
+        controls.performAction(Action.SWAP_FROM, user);
     }
 
     public void onSwapTo() {
-        if (holder == null) {
+        if (user == null) {
             return;
         }
 
-        controls.performAction(Action.SWAP_TO, holder);
+        controls.performAction(Action.SWAP_TO, user);
     }
 
     public void reload(@NotNull ReloadPerformer performer) {

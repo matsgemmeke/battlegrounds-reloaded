@@ -1,67 +1,62 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ChangeScopeMagnificationFunctionTest {
+@ExtendWith(MockitoExtension.class)
+class ChangeScopeMagnificationFunctionTest {
 
+    @Mock
     private Gun gun;
+    @InjectMocks
+    private ChangeScopeMagnificationFunction function;
 
-    @BeforeEach
-    public void setUp() {
-        gun = mock(Gun.class);
-    }
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isAvailable returns whether gun is scoped")
+    void isAvailable_returnsWhetherGunScoped(boolean scoped, boolean expectedAvailable) {
+        when(gun.isUsingScope()).thenReturn(scoped);
 
-    @Test
-    public void isAvailableReturnsTrueWhenGunIsScoped() {
-        when(gun.isUsingScope()).thenReturn(true);
-
-        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(gun);
         boolean available = function.isAvailable();
 
-        assertTrue(available);
+        assertThat(available).isEqualTo(expectedAvailable);
     }
 
     @Test
-    public void isAvailableReturnsFalseWhenGunIsNotScoped() {
-        when(gun.isUsingScope()).thenReturn(false);
-
-        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(gun);
-        boolean available = function.isAvailable();
-
-        assertFalse(available);
-    }
-
-    @Test
-    public void performReturnsFalseWhenGunIsNotScoped() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("perform returns false when gun is not scoped")
+    void perform_gunNotScoped() {
+        GunUser user = mock(GunUser.class);
 
         when(gun.isUsingScope()).thenReturn(false);
 
-        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(gun);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
-        assertFalse(performed);
+        assertThat(performed).isFalse();
 
         verify(gun, never()).changeScopeMagnification();
     }
 
     @Test
-    public void performReturnsTrueAndChangesMagnificationWhenGunIsScoped() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("perform returns true and changes scope magnification when gun is scoped")
+    void perform_gunScoped() {
+        GunUser user = mock(GunUser.class);
 
         when(gun.isUsingScope()).thenReturn(true);
 
-        ChangeScopeMagnificationFunction function = new ChangeScopeMagnificationFunction(gun);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
-        assertTrue(performed);
+        assertThat(performed).isTrue();
 
         verify(gun).changeScopeMagnification();
     }

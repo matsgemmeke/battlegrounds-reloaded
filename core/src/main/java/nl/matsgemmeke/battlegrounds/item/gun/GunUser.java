@@ -8,5 +8,5 @@ import nl.matsgemmeke.battlegrounds.item.shoot.ShotPerformer;
 /**
  * An entity that is capable of owning and operating a {@link Gun}.
  */
-public interface GunHolder extends ItemHolder, ReloadPerformer, ScopeUser, ShotPerformer {
+public interface GunUser extends ItemHolder, ReloadPerformer, ScopeUser, ShotPerformer {
 }

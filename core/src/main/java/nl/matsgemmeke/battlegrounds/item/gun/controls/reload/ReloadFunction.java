@@ -2,15 +2,13 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls.reload;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
-public class ReloadFunction implements ItemFunction<GunHolder> {
+public class ReloadFunction implements ItemFunction<GunUser> {
 
-    @NotNull
     private final Gun gun;
 
-    public ReloadFunction(@NotNull Gun gun) {
+    public ReloadFunction(Gun gun) {
         this.gun = gun;
     }
 
@@ -30,12 +28,12 @@ public class ReloadFunction implements ItemFunction<GunHolder> {
         return gun.cancelReload();
     }
 
-    public boolean perform(@NotNull GunHolder holder) {
+    public boolean perform(GunUser user) {
         if (!this.isAvailable()) {
             return false;
         }
 
-        gun.reload(holder);
+        gun.reload(user);
         return true;
     }
 }

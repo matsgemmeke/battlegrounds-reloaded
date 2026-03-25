@@ -2,15 +2,13 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
-public class UseScopeFunction implements ItemFunction<GunHolder> {
+public class UseScopeFunction implements ItemFunction<GunUser> {
 
-    @NotNull
     private final Gun gun;
 
-    public UseScopeFunction(@NotNull Gun gun) {
+    public UseScopeFunction(Gun gun) {
         this.gun = gun;
     }
 
@@ -30,12 +28,12 @@ public class UseScopeFunction implements ItemFunction<GunHolder> {
         return gun.cancelScope();
     }
 
-    public boolean perform(@NotNull GunHolder holder) {
+    public boolean perform(GunUser user) {
         if (!this.isAvailable()) {
             return false;
         }
 
-        gun.applyScope(holder);
+        gun.applyScope(user);
         return true;
     }
 }

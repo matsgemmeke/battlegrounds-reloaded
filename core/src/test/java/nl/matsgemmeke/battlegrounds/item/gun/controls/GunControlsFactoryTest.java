@@ -25,7 +25,7 @@ class GunControlsFactoryTest {
         spec.reload = "LEFT_CLICK";
         spec.shoot = "RIGHT_CLICK";
 
-        ItemControls<GunHolder> controls = controlsFactory.create(spec, gun);
+        ItemControls<GunUser> controls = controlsFactory.create(spec, gun);
 
         assertThat(controls).isNotNull();
     }
@@ -39,7 +39,7 @@ class GunControlsFactoryTest {
         spec.scopeStop = "LEFT_CLICK";
 
         GunControlsFactory controlsFactory = new GunControlsFactory();
-        ItemControls<GunHolder> controls = controlsFactory.create(spec, gun);
+        ItemControls<GunUser> controls = controlsFactory.create(spec, gun);
 
         assertThat(controls).isNotNull();
     }
@@ -54,7 +54,7 @@ class GunControlsFactoryTest {
         spec.scopeChangeMagnification = "SWAP_FROM";
 
         GunControlsFactory controlsFactory = new GunControlsFactory();
-        ItemControls<GunHolder> controls = controlsFactory.create(spec, gun);
+        ItemControls<GunUser> controls = controlsFactory.create(spec, gun);
 
         assertThat(controls).isNotNull();
     }

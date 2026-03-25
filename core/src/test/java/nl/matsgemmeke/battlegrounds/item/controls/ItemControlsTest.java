@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.controls;
 
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
@@ -9,12 +9,12 @@ public class ItemControlsTest {
 
     @Test
     public void shouldCancelPerformingFunctionsWhenCancelling() {
-        ItemFunction<GunHolder> function1 = mock();
+        ItemFunction<GunUser> function1 = mock();
         when(function1.isPerforming()).thenReturn(true);
 
-        ItemFunction<GunHolder> function2 = mock();
+        ItemFunction<GunUser> function2 = mock();
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function1);
         controls.addControl(Action.LEFT_CLICK, function2);
         controls.cancelAllFunctions();
@@ -25,104 +25,104 @@ public class ItemControlsTest {
 
     @Test
     public void shouldTriggerCorrespondingFunctionWhenPerformingAction() {
-        GunHolder holder = mock(GunHolder.class);
+        GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunHolder> function = mock();
+        ItemFunction<GunUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function);
-        controls.performAction(Action.LEFT_CLICK, holder);
+        controls.performAction(Action.LEFT_CLICK, user);
 
-        verify(function).perform(holder);
+        verify(function).perform(user);
     }
 
     @Test
     public void shouldOnlyTriggerTheFirstFunctionWhenPerformingAction() {
-        GunHolder holder = mock(GunHolder.class);
+        GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunHolder> function1 = mock();
+        ItemFunction<GunUser> function1 = mock();
         when(function1.isAvailable()).thenReturn(true);
-        when(function1.perform(holder)).thenReturn(true);
+        when(function1.perform(user)).thenReturn(true);
 
-        ItemFunction<GunHolder> function2 = mock();
+        ItemFunction<GunUser> function2 = mock();
         when(function2.isAvailable()).thenReturn(true);
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function1);
         controls.addControl(Action.LEFT_CLICK, function2);
-        controls.performAction(Action.LEFT_CLICK, holder);
+        controls.performAction(Action.LEFT_CLICK, user);
 
-        verify(function1).perform(holder);
-        verify(function2, never()).perform(holder);
+        verify(function1).perform(user);
+        verify(function2, never()).perform(user);
     }
 
     @Test
     public void shouldNotTriggerFunctionIfActionDoesNotCorrespond() {
-        GunHolder holder = mock(GunHolder.class);
-        ItemFunction<GunHolder> function = mock();
+        GunUser user = mock(GunUser.class);
+        ItemFunction<GunUser> function = mock();
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function);
-        controls.performAction(Action.RIGHT_CLICK, holder);
+        controls.performAction(Action.RIGHT_CLICK, user);
 
-        verify(function, never()).perform(holder);
+        verify(function, never()).perform(user);
     }
 
     @Test
     public void shouldNotTriggerFunctionIsIfNotAvailable() {
-        GunHolder holder = mock(GunHolder.class);
-        ItemFunction<GunHolder> function = mock();
+        GunUser user = mock(GunUser.class);
+        ItemFunction<GunUser> function = mock();
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function);
-        controls.performAction(Action.LEFT_CLICK, holder);
+        controls.performAction(Action.LEFT_CLICK, user);
 
-        verify(function, never()).perform(holder);
+        verify(function, never()).perform(user);
     }
 
     @Test
     public void shouldNotTriggerFunctionIfAnotherBlockingFunctionIsPerforming() {
-        GunHolder holder = mock(GunHolder.class);
+        GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunHolder> function1 = mock();
+        ItemFunction<GunUser> function1 = mock();
         when(function1.isAvailable()).thenReturn(true).thenReturn(false);
         when(function1.isBlocking()).thenReturn(true);
         when(function1.isPerforming()).thenReturn(false).thenReturn(true);
-        when(function1.perform(holder)).thenReturn(true);
+        when(function1.perform(user)).thenReturn(true);
 
-        ItemFunction<GunHolder> function2 = mock();
+        ItemFunction<GunUser> function2 = mock();
         when(function2.isAvailable()).thenReturn(true);
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function1);
         controls.addControl(Action.LEFT_CLICK, function2);
-        controls.performAction(Action.LEFT_CLICK, holder);
-        controls.performAction(Action.LEFT_CLICK, holder);
+        controls.performAction(Action.LEFT_CLICK, user);
+        controls.performAction(Action.LEFT_CLICK, user);
 
-        verify(function1).perform(holder);
-        verify(function2, never()).perform(holder);
+        verify(function1).perform(user);
+        verify(function2, never()).perform(user);
     }
 
     @Test
     public void shouldTriggerFunctionIfAnotherFunctionIsPerformingButNotBlocking() {
-        GunHolder holder = mock(GunHolder.class);
+        GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunHolder> function1 = mock();
+        ItemFunction<GunUser> function1 = mock();
         when(function1.isAvailable()).thenReturn(true).thenReturn(false);
         when(function1.isPerforming()).thenReturn(false).thenReturn(true);
-        when(function1.perform(holder)).thenReturn(true);
+        when(function1.perform(user)).thenReturn(true);
 
-        ItemFunction<GunHolder> function2 = mock();
+        ItemFunction<GunUser> function2 = mock();
         when(function2.isAvailable()).thenReturn(true);
 
-        ItemControls<GunHolder> controls = new ItemControls<>();
+        ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function1);
         controls.addControl(Action.LEFT_CLICK, function2);
-        controls.performAction(Action.LEFT_CLICK, holder);
-        controls.performAction(Action.LEFT_CLICK, holder);
+        controls.performAction(Action.LEFT_CLICK, user);
+        controls.performAction(Action.LEFT_CLICK, user);
 
-        verify(function1).perform(holder);
-        verify(function2).perform(holder);
+        verify(function1).perform(user);
+        verify(function2).perform(user);
     }
 }

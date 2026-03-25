@@ -2,15 +2,13 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
-public class StopScopeFunction implements ItemFunction<GunHolder> {
+public class StopScopeFunction implements ItemFunction<GunUser> {
 
-    @NotNull
     private final Gun gun;
 
-    public StopScopeFunction(@NotNull Gun gun) {
+    public StopScopeFunction(Gun gun) {
         this.gun = gun;
     }
 
@@ -30,7 +28,7 @@ public class StopScopeFunction implements ItemFunction<GunHolder> {
         return false;
     }
 
-    public boolean perform(@NotNull GunHolder holder) {
+    public boolean perform(GunUser user) {
         if (!this.isAvailable()) {
             return false;
         }

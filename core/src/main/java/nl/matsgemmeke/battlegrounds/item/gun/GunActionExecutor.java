@@ -32,7 +32,7 @@ public class GunActionExecutor implements ActionExecutor {
 
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, changedItem).orElse(null);
 
-        if (gun == null || gun.getHolder() != gamePlayer) {
+        if (gun == null || gun.getUser() != gamePlayer) {
             return true;
         }
 
@@ -50,7 +50,7 @@ public class GunActionExecutor implements ActionExecutor {
 
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, changedItem).orElse(null);
 
-        if (gun == null || gun.getHolder() != gamePlayer) {
+        if (gun == null || gun.getUser() != gamePlayer) {
             return true;
         }
 
@@ -68,7 +68,7 @@ public class GunActionExecutor implements ActionExecutor {
 
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, droppedItem).orElse(null);
 
-        if (gun == null || gun.getHolder() != gamePlayer) {
+        if (gun == null || gun.getUser() != gamePlayer) {
             return true;
         }
 
@@ -87,7 +87,7 @@ public class GunActionExecutor implements ActionExecutor {
 
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, clickedItem).orElse(null);
 
-        if (gun == null || gun.getHolder() != gamePlayer) {
+        if (gun == null || gun.getUser() != gamePlayer) {
             return true;
         }
 
@@ -125,7 +125,7 @@ public class GunActionExecutor implements ActionExecutor {
 
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, clickedItem).orElse(null);
 
-        if (gun == null || gun.getHolder() != gamePlayer) {
+        if (gun == null || gun.getUser() != gamePlayer) {
             return true;
         }
 
@@ -143,7 +143,7 @@ public class GunActionExecutor implements ActionExecutor {
 
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, swappedItem).orElse(null);
 
-        if (gun == null || gun.getHolder() != gamePlayer) {
+        if (gun == null || gun.getUser() != gamePlayer) {
             return true;
         }
 
@@ -161,7 +161,7 @@ public class GunActionExecutor implements ActionExecutor {
 
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, swappedItem).orElse(null);
 
-        if (gun == null || gun.getHolder() != gamePlayer) {
+        if (gun == null || gun.getUser() != gamePlayer) {
             return true;
         }
 

@@ -1,99 +1,85 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.shoot;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShotPerformer;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ShootFunctionTest {
+@ExtendWith(MockitoExtension.class)
+class ShootFunctionTest {
 
+    @Mock
     private Gun gun;
+    @InjectMocks
+    private ShootFunction function;
 
-    @BeforeEach
-    public void setUp() {
-        gun = mock(Gun.class);
-    }
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isAvailable returns whether gun can shoot")
+    void isAvailable_returnsGunCanShoot(boolean canShoot, boolean expectedAvailable) {
+        when(gun.canShoot()).thenReturn(canShoot);
 
-    @Test
-    public void isAvailableReturnsTrueIfGunCanShoot() {
-        when(gun.canShoot()).thenReturn(true);
-
-        ShootFunction function = new ShootFunction(gun);
         boolean available = function.isAvailable();
 
-        assertTrue(available);
+        assertThat(available).isEqualTo(expectedAvailable);
     }
 
-    @Test
-    public void isAvailableReturnsFalseIfGunCannotShoot() {
-        when(gun.canShoot()).thenReturn(false);
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isPerforming returns whether gun is shooting")
+    void isPerforming_returnsGunIsShooting(boolean shooting, boolean expectedPerforming) {
+        when(gun.isShooting()).thenReturn(shooting);
 
-        ShootFunction function = new ShootFunction(gun);
-        boolean available = function.isAvailable();
-
-        assertFalse(available);
-    }
-
-    @Test
-    public void isPerformingReturnsTrueIfGunIsShooting() {
-        when(gun.isShooting()).thenReturn(true);
-
-        ShootFunction function = new ShootFunction(gun);
         boolean performing = function.isPerforming();
 
-        assertTrue(performing);
+        assertThat(performing).isEqualTo(expectedPerforming);
     }
 
     @Test
-    public void isPerformingReturnsFalseIfGunIsNotShooting() {
-        when(gun.isShooting()).thenReturn(false);
-
-        ShootFunction function = new ShootFunction(gun);
-        boolean performing = function.isPerforming();
-
-        assertFalse(performing);
-    }
-
-    @Test
-    public void cancelCancelsGunShooting() {
-        ShootFunction function = new ShootFunction(gun);
+    @DisplayName("cancel cancels gun shooting")
+    void cancel_cancelsShooting() {
         boolean cancelled = function.cancel();
 
-        assertTrue(cancelled);
+        assertThat(cancelled).isTrue();
 
         verify(gun).cancelShooting();
     }
 
     @Test
-    public void performReturnsFalseIfGunCannotShoot() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("perform returns false when gun cannot shoot")
+    void perform_gunCannotShoot() {
+        GunUser user = mock(GunUser.class);
 
         when(gun.canShoot()).thenReturn(false);
 
-        ShootFunction function = new ShootFunction(gun);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
-        assertFalse(performed);
+        assertThat(performed).isFalse();
 
         verify(gun, never()).shoot(any(ShotPerformer.class));
     }
 
     @Test
-    public void performReturnsTrueAndShootsIfGunCanShoot() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("perform returns true and shoots when gun can shoot")
+    void perform_shootsGun() {
+        GunUser user = mock(GunUser.class);
 
         when(gun.canShoot()).thenReturn(true);
 
-        ShootFunction function = new ShootFunction(gun);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
-        assertTrue(performed);
+        assertThat(performed).isTrue();
 
-        verify(gun).shoot(holder);
+        verify(gun).shoot(user);
     }
 }

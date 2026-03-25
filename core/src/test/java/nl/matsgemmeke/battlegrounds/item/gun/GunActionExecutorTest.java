@@ -45,7 +45,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleChangeFromActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+    @DisplayName("handleChangeFromAction does nothing when given player is not registered")
+    void handleChangeFromAction_playerNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
         boolean performAction = actionExecutor.handleChangeFromAction(player, ITEM_STACK);
@@ -54,7 +55,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleChangeFromActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+    @DisplayName("handleChangeFromAction does nothing when no gun matches with given user and item stack")
+    void handleChangeFromAction_noMatchFound() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
@@ -64,11 +66,12 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleChangeFromActionDoesNothingWhenGunHolderDoesNotMatch() {
-        GunHolder otherHolder = mock(GunHolder.class);
+    @DisplayName("handleChangeFromAction does nothing when gun user does not match")
+    void handleChangeFromAction_differentUser() {
+        GunUser otherUser = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(otherHolder);
+        when(gun.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -81,9 +84,10 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleChangeFromActionCallsGunFunctionWhenMatchingGunIsFound() {
+    @DisplayName("handleChangeFromAction calls gun function when match is found")
+    void handleChangeFromAction_matchingGun() {
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(gamePlayer);
+        when(gun.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -96,7 +100,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleChangeToActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+    @DisplayName("handleChangeToAction does nothing when given player is not registered")
+    void handleChangeToAction_playerNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
         boolean performAction = actionExecutor.handleChangeToAction(player, ITEM_STACK);
@@ -105,7 +110,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleChangeToActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+    @DisplayName("handleChangeToAction does nothing when no gun matches with given user and item stack")
+    void handleChangeToAction_noMatchFound() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
@@ -115,11 +121,12 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleChangeToActionDoesNothingWhenGunHolderDoesNotMatch() {
-        GunHolder otherHolder = mock(GunHolder.class);
+    @DisplayName("handleChangeToAction does nothing when gun user does not match")
+    void handleChangeToAction_differentUser() {
+        GunUser otherUser = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(otherHolder);
+        when(gun.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -132,9 +139,10 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleChangeToActionCallsGunFunctionWhenMatchingGunIsFound() {
+    @DisplayName("handleChangeToAction calls gun function when matching gun is found")
+    void handleChangeToAction_matchingGun() {
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(gamePlayer);
+        when(gun.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -147,7 +155,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleDropItemActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+    @DisplayName("handleDropItemAction does nothing when given player is not registered")
+    void handleDropItemAction_playerNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
         boolean performAction = actionExecutor.handleDropItemAction(player, ITEM_STACK);
@@ -156,7 +165,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleDropItemActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+    @DisplayName("handleDropItemAction does nothing when no gun matches with given user and item stack")
+    void handleDropItemAction_noMatchFound() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
@@ -168,11 +178,12 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleDropItemActionDoesNothingWhenGunHolderDoesNotMatch() {
-        GunHolder otherHolder = mock(GunHolder.class);
+    @DisplayName("handleDropItemAction does nothing when gun user does not match")
+    void handleDropItemAction_differentUser() {
+        GunUser otherUser = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(otherHolder);
+        when(gun.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -186,9 +197,10 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleDropItemActionCallsGunFunctionAndUnassignsGunWhenMatchingGunIsFound() {
+    @DisplayName("handleDropItemAction calls gun function and unassigns gun when match is found")
+    void handleDropItemAction_matchingGun() {
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(gamePlayer);
+        when(gun.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -253,7 +265,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleLeftClickActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+    @DisplayName("handleLeftClickAction does nothing when given player is not registered")
+    void handleLeftClickAction_playerNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
         GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
@@ -263,7 +276,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleLeftClickActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+    @DisplayName("handleLeftClickAction does nothing when no gun matches with given user and item stack")
+    void handleLeftClickAction_noMatchFound() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
@@ -274,11 +288,12 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleLeftClickActionDoesNothingWhenGunHolderDoesNotMatch() {
-        GunHolder otherHolder = mock(GunHolder.class);
+    @DisplayName("handleLeftClickAction does nothing when gun user does not match")
+    void handleLeftClickAction_differentUser() {
+        GunUser otherUser = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(otherHolder);
+        when(gun.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -292,9 +307,10 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleLeftClickActionCallsGunFunctionWhenMatchingGunIsFound() {
+    @DisplayName("handleLeftClickAction calls gun function when matching gun is found")
+    void handleLeftClickAction_matchingGun() {
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(gamePlayer);
+        when(gun.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -308,7 +324,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleRightClickActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+    @DisplayName("handleRightClickAction does nothing when given player is not registered")
+    void handleRightClickAction_playerNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
         GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
@@ -318,7 +335,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleRightClickActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+    @DisplayName("handleRightClickAction does nothing when no gun matches with given user and item stack")
+    void handleRightClickAction_noMatchFound() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
@@ -329,11 +347,12 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleRightClickActionDoesNothingWhenGunHolderDoesNotMatch() {
-        GunHolder otherHolder = mock(GunHolder.class);
+    @DisplayName("handleRightClickAction does nothing when gun user does not match")
+    void handleRightClickAction_differentUser() {
+        GunUser otherUser = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(otherHolder);
+        when(gun.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -347,9 +366,10 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleRightClickActionCallsGunFunctionWhenMatchingGunIsFound() {
+    @DisplayName("handleRightClickAction calls gun function when matching gun is found")
+    void handleRightClickAction_matchingGun() {
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(gamePlayer);
+        when(gun.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -363,7 +383,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleSwapFromActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+    @DisplayName("handleSwapFromAction does nothing when given player is not registered")
+    void handleSwapFromAction_playerNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
         GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
@@ -373,7 +394,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleSwapFromActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+    @DisplayName("handleSwapFromAction does nothing when no gun matches with given user and item stack")
+    void handleSwapFromAction_noMatchFound() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
@@ -384,11 +406,12 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleSwapFromActionDoesNothingWhenGunHolderDoesNotMatch() {
-        GunHolder otherHolder = mock(GunHolder.class);
+    @DisplayName("handleSwapFromAction does nothing when gun user does not match")
+    void handleSwapFromAction_differentUser() {
+        GunUser otherUser = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(otherHolder);
+        when(gun.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -402,9 +425,10 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleSwapFromActionCallsGunFunctionWhenMatchingGunIsFound() {
+    @DisplayName("handleSwapFromAction calls gun function when matching gun is found")
+    void handleSwapFromAction_matchingGun() {
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(gamePlayer);
+        when(gun.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -418,7 +442,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleSwapToActionDoesNothingWhenGivenPlayerIsNotRegistered() {
+    @DisplayName("handleSwapToAction does nothing when given player is not registered")
+    void handleSwapToAction_playerNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
         GunActionExecutor actionExecutor = new GunActionExecutor(gunRegistry, playerRegistry);
@@ -428,7 +453,8 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleSwapToActionDoesNothingWhenNoGunMatchesWithGivenHolderAndItemStack() {
+    @DisplayName("handleSwapToAction does nothing when no gun matches with given user and item stack")
+    void handleSwapToAction_noMatchFound() {
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
@@ -439,11 +465,12 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleSwapToActionDoesNothingWhenGunHolderDoesNotMatch() {
-        GunHolder otherHolder = mock(GunHolder.class);
+    @DisplayName("handleSwapToAction does nothing when gun user does not match")
+    void handleSwapToAction_differentUser() {
+        GunUser otherUser = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(otherHolder);
+        when(gun.getUser()).thenReturn(otherUser);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
@@ -457,9 +484,10 @@ class GunActionExecutorTest {
     }
 
     @Test
-    void handleSwapToActionCallsGunFunctionWhenMatchingGunIsFound() {
+    @DisplayName("handleSwapToAction calls gun function when matching gun is found")
+    void handleSwapToAction_matchingGun() {
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(gamePlayer);
+        when(gun.getUser()).thenReturn(gamePlayer);
 
         when(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));

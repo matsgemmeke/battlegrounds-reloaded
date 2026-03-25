@@ -1,84 +1,77 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import nl.matsgemmeke.battlegrounds.item.scope.ScopeUser;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class UseScopeFunctionTest {
+@ExtendWith(MockitoExtension.class)
+class UseScopeFunctionTest {
 
-    @NotNull
+    @Mock
     private Gun gun;
+    @InjectMocks
+    private UseScopeFunction function;
 
-    @BeforeEach
-    public void setUp() {
-        gun = mock(Gun.class);
-    }
+    @ParameterizedTest
+    @CsvSource({ "true,false", "false,true" })
+    @DisplayName("isAvailable returns whether gun is not using its scope")
+    void isAvailable_returnsWhetherGunDoesNotUseScope(boolean gunScoped, boolean expectedAvailable) {
+        when(gun.isUsingScope()).thenReturn(gunScoped);
 
-    @Test
-    public void isAvailableReturnsTrueIfGunIsNotUsingScope() {
-        when(gun.isUsingScope()).thenReturn(false);
-
-        UseScopeFunction function = new UseScopeFunction(gun);
         boolean available = function.isAvailable();
 
-        assertTrue(available);
+        assertThat(available).isEqualTo(expectedAvailable);
     }
 
     @Test
-    public void isAvailableReturnsFalseIfGunIsUsingScope() {
-        when(gun.isUsingScope()).thenReturn(true);
-
-        UseScopeFunction function = new UseScopeFunction(gun);
-        boolean available = function.isAvailable();
-
-        assertFalse(available);
-    }
-
-    @Test
-    public void cancelCancelsGunScope() {
+    @DisplayName("cancel cancels gun scope")
+    void cancel_cancelsScope() {
         when(gun.cancelScope()).thenReturn(true);
 
-        UseScopeFunction function = new UseScopeFunction(gun);
         boolean cancelled = function.cancel();
 
-        assertTrue(cancelled);
+        assertThat(cancelled).isTrue();
 
         verify(gun).cancelScope();
     }
 
     @Test
-    public void performReturnsFalseIfGunIsUsingScope() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("perform returns false when gun is using scope")
+    void perform_gunUsesScope() {
+        GunUser user = mock(GunUser.class);
 
         when(gun.isUsingScope()).thenReturn(true);
 
-        UseScopeFunction function = new UseScopeFunction(gun);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
-        assertFalse(performed);
+        assertThat(performed).isFalse();
 
         verify(gun, never()).applyScope(any(ScopeUser.class));
     }
 
     @Test
-    public void performReturnsTrueAndAppliesScope() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("perform returns true and applies scope")
+    void perform_appliesScope() {
+        GunUser user = mock(GunUser.class);
 
-        when(gun.applyScope(holder)).thenReturn(true);
+        when(gun.applyScope(user)).thenReturn(true);
         when(gun.isUsingScope()).thenReturn(false);
 
-        UseScopeFunction function = new UseScopeFunction(gun);
-        boolean performed = function.perform(holder);
+        boolean performed = function.perform(user);
 
-        assertTrue(performed);
+        assertThat(performed).isTrue();
 
-        verify(gun).applyScope(holder);
+        verify(gun).applyScope(user);
     }
 }

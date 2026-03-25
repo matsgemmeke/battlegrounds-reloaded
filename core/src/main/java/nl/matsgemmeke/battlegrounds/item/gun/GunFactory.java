@@ -68,7 +68,7 @@ public class GunFactory {
 
     public Gun create(GunSpec spec, GamePlayer gamePlayer) {
         Gun gun = this.createInstance(spec);
-        gun.setHolder(gamePlayer);
+        gun.setUser(gamePlayer);
 
         gunRegistry.register(gun, gamePlayer);
 
@@ -98,7 +98,7 @@ public class GunFactory {
         ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
         gun.setReloadSystem(reloadSystem);
 
-        ItemControls<GunHolder> controls = controlsFactory.create(spec.controls, gun);
+        ItemControls<GunUser> controls = controlsFactory.create(spec.controls, gun);
         gun.setControls(controls);
 
         ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, resourceContainer, itemRepresentation);

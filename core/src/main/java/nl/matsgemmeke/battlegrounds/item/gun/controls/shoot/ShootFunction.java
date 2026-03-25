@@ -1,16 +1,14 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.shoot;
 
-import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
-public class ShootFunction implements ItemFunction<GunHolder> {
+public class ShootFunction implements ItemFunction<GunUser> {
 
-    @NotNull
     private final Gun gun;
 
-    public ShootFunction(@NotNull Gun gun) {
+    public ShootFunction(Gun gun) {
         this.gun = gun;
     }
 
@@ -31,12 +29,12 @@ public class ShootFunction implements ItemFunction<GunHolder> {
         return true;
     }
 
-    public boolean perform(@NotNull GunHolder holder) {
+    public boolean perform(GunUser user) {
         if (!this.isAvailable()) {
             return false;
         }
 
-        gun.shoot(holder);
+        gun.shoot(user);
         return true;
     }
 }
