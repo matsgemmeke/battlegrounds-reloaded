@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -270,7 +271,8 @@ class DefaultEquipmentTest {
     }
 
     @Test
-    void createNewItemStackFromTemplateWhenUpdatingAndSetHeldItemOfHolder() {
+    @DisplayName("update creates new ItemStack from display item template and sets held item of user")
+    void update_success() {
         EquipmentUser user = mock(EquipmentUser.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
@@ -284,6 +286,6 @@ class DefaultEquipmentTest {
         equipment.setItemStack(itemStack);
         boolean updated = equipment.update();
 
-        assertTrue(updated);
+        assertThat(updated).isTrue();
     }
 }

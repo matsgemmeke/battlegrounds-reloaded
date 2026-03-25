@@ -7,24 +7,24 @@ import java.util.Optional;
 /**
  * Represents an entity that is capable of holding and operating a {@link Item}.
  */
-public interface ItemHolder {
+public interface ItemUser {
 
     /**
-     * Adds an item stack to the holder's inventory at the first available slot.
+     * Adds an item stack to the user's inventory at the first available slot.
      *
      * @param itemStack the item stack to add
      */
     void addItem(ItemStack itemStack);
 
     /**
-     * Gets the {@link ItemStack} that the item holder is holding.
+     * Gets the {@link ItemStack} that the item user is holding.
      *
      * @return the held item stack
      */
     ItemStack getHeldItem();
 
     /**
-     * Sets the {@link ItemStack} that the item holder is holding.
+     * Sets the {@link ItemStack} that the item user is holding.
      *
      * @param itemStack the item stack
      */
@@ -39,15 +39,15 @@ public interface ItemHolder {
     Optional<Integer> getItemSlot(Matchable item);
 
     /**
-     * Gets whether the holder carries a given item.
+     * Gets whether the item user carries a given item.
      *
      * @param item the item
-     * @return     whether the holder carries the item
+     * @return     whether the user carries the item
      */
     boolean hasItem(Matchable item);
 
     /**
-     * Sets a given item into the holder's inventory with the given item slot.
+     * Sets a given item into the item user's inventory with the given item slot.
      *
      * @param slot      the item slot number
      * @param itemStack the item stack

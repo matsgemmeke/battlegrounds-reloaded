@@ -33,7 +33,7 @@ class ItemRepresentationTest {
 
     @Test
     @DisplayName("update returns new ItemStack instance from item template with placeholder values")
-    void updateReturnsNewItemStackInstanceFromItemTemplateWithPlaceholderValues() {
+    void update_createsNewItemStack() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         when(itemTemplate.createItemStack(anyMap())).thenReturn(itemStack);

@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.controls;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.ItemUser;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,10 +9,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class ItemControls<T extends ItemHolder> {
+public class ItemControls<T extends ItemUser> {
 
-    private ConcurrentMap<Action, List<ItemFunction<T>>> controls;
-    private Set<ItemFunction<T>> performingFunctions;
+    private final ConcurrentMap<Action, List<ItemFunction<T>>> controls;
+    private final Set<ItemFunction<T>> performingFunctions;
 
     public ItemControls() {
         this.controls = new ConcurrentHashMap<>();
@@ -34,7 +34,7 @@ public class ItemControls<T extends ItemHolder> {
         }
     }
 
-    public void performAction(Action action, T holder) {
+    public void performAction(Action action, T user) {
         if (this.isPerformingBlockingFunction()) {
             return;
         }
@@ -46,7 +46,7 @@ public class ItemControls<T extends ItemHolder> {
         }
 
         for (ItemFunction<T> function : functions) {
-            if (function.isAvailable() && function.perform(holder)) {
+            if (function.isAvailable() && function.perform(user)) {
                 break;
             }
         }

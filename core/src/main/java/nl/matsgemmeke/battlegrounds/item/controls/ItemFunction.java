@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.controls;
 
-import nl.matsgemmeke.battlegrounds.item.ItemHolder;
+import nl.matsgemmeke.battlegrounds.item.ItemUser;
 
 /**
  * Represents a functional link between a performed action on an item and a specific feature of that item.
@@ -10,9 +10,9 @@ import nl.matsgemmeke.battlegrounds.item.ItemHolder;
  * corresponding effects.
  * </p>
  *
- * @param <T> the required item holder for executing the function
+ * @param <T> the required item user for executing the function
  */
-public interface ItemFunction<T extends ItemHolder> {
+public interface ItemFunction<T extends ItemUser> {
 
     /**
      * Gets whether the function is available to be performed.
@@ -45,8 +45,8 @@ public interface ItemFunction<T extends ItemHolder> {
     /**
      * Executes the function.
      *
-     * @param holder the required item holder
-     * @return whether the function performance has started
+     * @param user the required item user
+     * @return     whether the function performance has started
      */
-    boolean perform(T holder);
+    boolean perform(T user);
 }

@@ -24,7 +24,7 @@ public interface Activator extends Matchable {
     void prepare(@NotNull Deployer deployer);
 
     /**
-     * Removes the activator item from the current holder.
+     * Removes the activator item from the current user.
      *
      * @return whether the activator was removed
      */

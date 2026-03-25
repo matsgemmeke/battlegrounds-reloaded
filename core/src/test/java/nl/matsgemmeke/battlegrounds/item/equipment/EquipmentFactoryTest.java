@@ -54,8 +54,8 @@ class EquipmentFactoryTest {
     private EquipmentFactory equipmentFactory;
 
     @Test
-    @DisplayName("create returns Equipment instance with player holder")
-    void create_withPlayerHolder() {
+    @DisplayName("create returns Equipment instance with player user")
+    void create_withPlayerUser() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemControls<EquipmentUser> controls = new ItemControls<>();

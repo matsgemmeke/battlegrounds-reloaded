@@ -90,7 +90,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onChangeFromDoesNotPerformActionWhenHolderIsNull() {
+    @DisplayName("onChangeFrom does not perform action when no user is assigned")
+    void onChangeFrom_nullUser() {
         meleeWeapon.setControls(controls);
         meleeWeapon.onChangeFrom();
 
@@ -98,7 +99,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onChangeFromPerformsChangeFromActionOnControls() {
+    @DisplayName("onChangeFrom performs CHANGE_FROM action on controls when user is assigned")
+    void onChangeFrom_success() {
         meleeWeapon.setControls(controls);
         meleeWeapon.assign(user);
         meleeWeapon.onChangeFrom();
@@ -107,7 +109,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onChangeToDoesNotPerformActionWhenHolderIsNull() {
+    @DisplayName("onChangeTo does not perform action when no user is assigned")
+    void onChangeTo_nullUser() {
         meleeWeapon.setControls(controls);
         meleeWeapon.onChangeTo();
 
@@ -115,7 +118,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onChangeToPerformsChangeToActionOnControls() {
+    @DisplayName("onChangeTo performs CHANGE_TO action on controls when user is assigned")
+    void onChangeTo_success() {
         meleeWeapon.setControls(controls);
         meleeWeapon.assign(user);
         meleeWeapon.onChangeTo();
@@ -124,7 +128,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onDropDoesNotPerformActionWhenHolderIsNull() {
+    @DisplayName("onDrop does not perform action when no user is assigned")
+    void onDrop_nullUser() {
         meleeWeapon.setControls(controls);
         meleeWeapon.onDrop();
 
@@ -132,7 +137,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onDropPerformsDropActionOnControlsAndCancelsOtherFunctions() {
+    @DisplayName("onDrop performs DROP_ITEM action on controls and cancels other functions when user is assigned")
+    void onDrop_success() {
         meleeWeapon.setControls(controls);
         meleeWeapon.assign(user);
         meleeWeapon.onDrop();
@@ -142,7 +148,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onLeftClickDoesNotPerformActionWhenHolderIsNull() {
+    @DisplayName("onLeftClick does not perform action when no user is assigned")
+    void onLeftClick_nullUser() {
         meleeWeapon.setControls(controls);
         meleeWeapon.onLeftClick();
 
@@ -150,7 +157,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onLeftClickPerformsLeftClickActionOnControls() {
+    @DisplayName("onLeftClick performs LEFT_CLICK action on controls when user is assigned")
+    void onLeftClick_success() {
         meleeWeapon.setControls(controls);
         meleeWeapon.assign(user);
         meleeWeapon.onLeftClick();
@@ -159,7 +167,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onPickupPerformsPickupActionOnControlsAndSetsHolder() {
+    @DisplayName("onPickUp performs PICKUP_ITEM action on controls and assigns user")
+    void onPickup_success() {
         meleeWeapon.setControls(controls);
         meleeWeapon.onPickUp(user);
 
@@ -167,7 +176,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onRightClickDoesNotPerformActionWhenHolderIsNull() {
+    @DisplayName("onRightClick does not perform action when no user is assigned")
+    void onRightClick_nullUser() {
         meleeWeapon.setControls(controls);
         meleeWeapon.onRightClick();
 
@@ -175,7 +185,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onRightClickPerformsRightClickActionOnControls() {
+    @DisplayName("onRightClick performs RIGHT_CLICK action on controls when user is assigned")
+    void onRightClick_success() {
         meleeWeapon.setControls(controls);
         meleeWeapon.assign(user);
         meleeWeapon.onRightClick();
@@ -184,7 +195,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onSwapFromDoesNotPerformActionWhenHolderIsNull() {
+    @DisplayName("onSwapFrom does not perform action when no user is assigned")
+    void onSwapFrom_nullUser() {
         meleeWeapon.setControls(controls);
         meleeWeapon.onSwapFrom();
 
@@ -192,7 +204,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onSwapFromPerformsSwapFromActionOnControls() {
+    @DisplayName("onSwapFrom performs SWAP_FROM action on controls when user is assigned")
+    void onSwapFrom_success() {
         meleeWeapon.setControls(controls);
         meleeWeapon.assign(user);
         meleeWeapon.onSwapFrom();
@@ -201,7 +214,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onSwapToDoesNotPerformActionWhenHolderIsNull() {
+    @DisplayName("onSwapTo does not perform action when no user is assigned")
+    void onSwapTo_nullUser() {
         meleeWeapon.setControls(controls);
         meleeWeapon.onSwapTo();
 
@@ -209,7 +223,8 @@ class DefaultMeleeWeaponTest {
     }
 
     @Test
-    void onSwapToPerformsSwapToActionOnControls() {
+    @DisplayName("onSwapTo performs SWAP_TO action on controls when user is assigned")
+    void onSwapTo_success() {
         meleeWeapon.setControls(controls);
         meleeWeapon.assign(user);
         meleeWeapon.onSwapTo();

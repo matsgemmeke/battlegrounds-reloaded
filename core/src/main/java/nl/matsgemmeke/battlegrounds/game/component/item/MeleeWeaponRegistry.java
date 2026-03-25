@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface MeleeWeaponRegistry {
 
     /**
-     * Gets the melee weapon that is assigned to a given holder and corresponds with a given item stack. The returned
+     * Gets the melee weapon that is assigned to a given user and corresponds with a given item stack. The returned
      * optional will be empty when no matching melee weapon was found.
      *
      * @param user      the user to which the melee weapon should be assigned to

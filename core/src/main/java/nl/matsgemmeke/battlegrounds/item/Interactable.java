@@ -1,13 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * An item that performs actions when being interacted with.
  *
- * @param <T> the type of holder that utilizes the item
+ * @param <T> the type of user that utilizes the item
  */
-public interface Interactable<T extends ItemHolder> {
+public interface Interactable<T extends ItemUser> {
 
     /**
      * Handles a performed item change from this item to another item.
@@ -32,9 +30,9 @@ public interface Interactable<T extends ItemHolder> {
     /**
      * Handles an item pickup.
      *
-     * @param holder the entity who picked up the item
+     * @param user the user who picked up the item
      */
-    void onPickUp(@NotNull T holder);
+    void onPickUp(T user);
 
     /**
      * Handles a performed right click on the item.
