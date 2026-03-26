@@ -3,13 +3,12 @@ package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
+import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
@@ -18,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -80,9 +80,8 @@ class ExplosionEffectPerformanceTest {
     @DisplayName("perform creates explosion at actor location and damage all entities inside the long range")
     void perform_createsExplosionAndDamagesEntities() {
         World world = mock(World.class);
-        Location objectLocation = new Location(world, 2, 1, 1);
         Location actorLocation = new Location(world, 1, 1, 1);
-        Location targetLocation = new Location(world, 8, 1, 1);
+        Location damageTargetLocation = new Location(world, 8, 1, 1);
 
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
@@ -93,24 +92,37 @@ class ExplosionEffectPerformanceTest {
 
         ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
 
-        GameEntity deployerEntity = mock(GameEntity.class);
-        when(deployerEntity.getLocation()).thenReturn(actorLocation);
+        DamageTarget damageTarget = mock(GameEntity.class);
+        when(damageTarget.getLocation()).thenReturn(damageTargetLocation);
 
-        GameEntity target = mock(GameEntity.class);
-        when(target.getLocation()).thenReturn(targetLocation);
-
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
-        when(deploymentObject.getLocation()).thenReturn(objectLocation);
-
-        when(targetFinder.findDeploymentObjects(DAMAGE_SOURCE_ID, actorLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deploymentObject));
-        when(targetFinder.findTargets(DAMAGE_SOURCE_ID, actorLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(deployerEntity, target));
+        when(targetFinder.findTargets(any(TargetQuery.class))).thenReturn(List.of(damageTarget));
 
         performance.setContext(context);
         performance.start();
 
-        verify(damageProcessor).processDeploymentObjectDamage(deploymentObject, new Damage(SHORT_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
-        verify(deployerEntity).damage(new Damage(SHORT_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
-        verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.EXPLOSIVE_DAMAGE));
+        ArgumentCaptor<TargetQuery> targetQueryCaptor = ArgumentCaptor.forClass(TargetQuery.class);
+        verify(targetFinder).findTargets(targetQueryCaptor.capture());
+
+        ArgumentCaptor<DamageContext> damageContextCaptor = ArgumentCaptor.forClass(DamageContext.class);
+        verify(damageProcessor).processDamage(damageContextCaptor.capture());
+
+        assertThat(targetQueryCaptor.getValue()).satisfies(targetQuery -> {
+           assertThat(targetQuery.getUniqueId()).hasValue(DAMAGE_SOURCE_ID);
+           assertThat(targetQuery.getLocation()).hasValue(actorLocation);
+           assertThat(targetQuery.getConditions())
+                   .hasSize(1)
+                   .hasOnlyElementsOfType(HitboxTargetCondition.class);
+        });
+
+        assertThat(damageContextCaptor.getValue()).satisfies(damageContext -> {
+            assertThat(damageContext.source()).isEqualTo(damageSource);
+            assertThat(damageContext.target()).isEqualTo(damageTarget);
+            assertThat(damageContext.damage()).satisfies(damage -> {
+                assertThat(damage.type()).isEqualTo(DamageType.EXPLOSIVE_DAMAGE);
+                assertThat(damage.amount()).isEqualTo(LONG_RANGE_DAMAGE);
+            });
+        });
+
         verify(world).createExplosion(actorLocation, POWER, SET_FIRE, BREAK_BLOCKS);
         verify((Removable) actor).remove();
     }
