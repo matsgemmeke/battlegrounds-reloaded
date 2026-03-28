@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.deploy.prime;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
@@ -11,8 +10,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -44,10 +43,9 @@ public class PrimeDeploymentObject implements DeploymentObject {
 
     }
 
-    @Nullable
     @Override
-    public Damage getLastDamage() {
-        return null;
+    public Optional<Damage> getLastDamage() {
+        return Optional.empty();
     }
 
     @NotNull
@@ -81,11 +79,6 @@ public class PrimeDeploymentObject implements DeploymentObject {
     @Override
     public Hitbox getHitbox() {
         return null;
-    }
-
-    @Override
-    public boolean isImmuneTo(@NotNull DamageType damageType) {
-        return true;
     }
 
     @Override

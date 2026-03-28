@@ -157,7 +157,7 @@ class DeploymentHandlerTest {
         DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
-        when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
+        when(deploymentObject.getLastDamage()).thenReturn(Optional.of(lastDamage));
         when(deploymentObject.isPhysical()).thenReturn(true);
         when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(delaySchedule);
 
@@ -173,7 +173,7 @@ class DeploymentHandlerTest {
         DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
-        when(deploymentObject.getLastDamage()).thenReturn(null);
+        when(deploymentObject.getLastDamage()).thenReturn(Optional.empty());
         when(deploymentObject.isPhysical()).thenReturn(true);
         when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(delaySchedule);
 
@@ -190,7 +190,7 @@ class DeploymentHandlerTest {
         DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
-        when(deploymentObject.getLastDamage()).thenReturn(lastDamage);
+        when(deploymentObject.getLastDamage()).thenReturn(Optional.of(lastDamage));
         when(deploymentObject.isPhysical()).thenReturn(true);
         when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(delaySchedule);
 

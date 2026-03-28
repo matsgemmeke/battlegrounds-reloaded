@@ -38,23 +38,25 @@ class OpenModeEntityTest {
     private OpenModeEntity openModeEntity;
 
     @Test
-    void getLastDamageReturnsNullIfEntityHasNotTakenDamage() {
-        Damage lastDamage = openModeEntity.getLastDamage();
+    @DisplayName("getLastDamage returns null when entity has not taken damage")
+    void getLastDamage_noDamageYet() {
+        Optional<Damage> lastDamageOptional = openModeEntity.getLastDamage();
 
-        assertThat(lastDamage).isNull();
+        assertThat(lastDamageOptional).isEmpty();
     }
 
     @Test
-    void getLastDamageReturnsLastDamageDealtToPlayer() {
+    @DisplayName("getLastDamage returns optional with last damage dealt to entity")
+    void getLastDamage_returnsLastDamage() {
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
         when(entity.getHealth()).thenReturn(20.0);
         when(entity.isDead()).thenReturn(false);
 
         openModeEntity.damage(damage);
-        Damage lastDamage = openModeEntity.getLastDamage();
+        Optional<Damage> lastDamageOptional = openModeEntity.getLastDamage();
 
-        assertThat(lastDamage).isEqualTo(damage);
+        assertThat(lastDamageOptional).hasValue(damage);
     }
 
     @Test

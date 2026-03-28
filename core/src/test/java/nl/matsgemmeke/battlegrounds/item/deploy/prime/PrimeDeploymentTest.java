@@ -4,7 +4,6 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
@@ -72,10 +71,7 @@ class PrimeDeploymentTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
-                assertThat(deploymentObject.getHealth()).isZero();
-                assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
-            });
+            assertThat(deploymentResult.deploymentObject().getHealth()).isZero();
         });
 
         verifyNoInteractions(audioEmitter);
@@ -103,10 +99,7 @@ class PrimeDeploymentTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
-                assertThat(deploymentObject.getHealth()).isZero();
-                assertThat(deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE)).isTrue();
-            });
+            assertThat(deploymentResult.deploymentObject().getHealth()).isZero();
             assertThat(deploymentResult.actor()).isInstanceOf(HeldItemActor.class);
         });
 

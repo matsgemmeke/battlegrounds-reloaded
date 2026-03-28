@@ -13,6 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,20 +62,22 @@ class PlaceDeploymentObjectTest {
     }
 
     @Test
-    void getLastDamageReturnsNullWhenBlockHasNotTakenDamage() {
-        Damage lastDamage = deploymentObject.getLastDamage();
+    @DisplayName("getLastDamage returns empty optional when block has not taken damage")
+    void getLastDamage_noDamageYet() {
+        Optional<Damage> lastDamageOptional = deploymentObject.getLastDamage();
 
-        assertThat(lastDamage).isNull();
+        assertThat(lastDamageOptional).isEmpty();
     }
 
     @Test
-    void getLastDamageReturnsLastDamageDealtToBlock() {
+    @DisplayName("getLastDamage returns optional with last damage dealt to block")
+    void getLastDamage_returnsLastDamage() {
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
         deploymentObject.damage(damage);
-        Damage lastDamage = deploymentObject.getLastDamage();
+        Optional<Damage> lastDamageOptional = deploymentObject.getLastDamage();
 
-        assertThat(lastDamage).isEqualTo(damage);
+        assertThat(lastDamageOptional).hasValue(damage);
     }
 
     @Test
@@ -169,43 +173,6 @@ class PlaceDeploymentObjectTest {
         });
 
         assertThat(result).isEqualTo(hitbox);
-    }
-
-    @Test
-    void isImmuneReturnsFalseWhenResistancesIsNull() {
-        boolean immune = deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE);
-
-        assertThat(immune).isFalse();
-    }
-
-    @Test
-    void isImmuneReturnsFalseWhenResistancesDoesNotContainEntryForDamageType() {
-        Map<DamageType, Double> resistances = Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.0);
-
-        deploymentObject.setResistances(resistances);
-        boolean immune = deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE);
-
-        assertThat(immune).isFalse();
-    }
-
-    @Test
-    void isImmuneReturnsFalseWhenResistanceToDamageTypeIsLargerThanZero() {
-        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.5);
-
-        deploymentObject.setResistances(resistances);
-        boolean immune = deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE);
-
-        assertThat(immune).isFalse();
-    }
-
-    @Test
-    void isImmuneReturnsTrueWhenResistanceToDamageTypeEqualsOrIsLowerThanZero() {
-        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.0);
-
-        deploymentObject.setResistances(resistances);
-        boolean immune = deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE);
-
-        assertThat(immune).isTrue();
     }
 
     @Test

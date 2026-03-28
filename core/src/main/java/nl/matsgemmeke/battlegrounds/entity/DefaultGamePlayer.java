@@ -75,9 +75,9 @@ public class DefaultGamePlayer implements GamePlayer {
         player.setHealth(health);
     }
 
-    @Nullable
-    public Damage getLastDamage() {
-        return lastDamage;
+    @Override
+    public Optional<Damage> getLastDamage() {
+        return Optional.ofNullable(lastDamage);
     }
 
     @NotNull
@@ -263,10 +263,6 @@ public class DefaultGamePlayer implements GamePlayer {
     @Override
     public Location getThrowDirection() {
         return player.getEyeLocation();
-    }
-
-    public boolean isImmuneTo(@NotNull DamageType damageType) {
-        return false;
     }
 
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectileClass, Vector velocity) {

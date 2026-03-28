@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
@@ -109,9 +110,9 @@ public class DeploymentHandler {
         }
 
         performing = false;
+        boolean lastDamagedByEnvironmentalDamage = currentDeploymentObject.getLastDamage().map(damage -> damage.type() == DamageType.ENVIRONMENTAL_DAMAGE).orElse(false);
 
-        if (deploymentProperties.activateEffectOnDestruction()
-                && (currentDeploymentObject.getLastDamage() == null || currentDeploymentObject.getLastDamage().type() != DamageType.ENVIRONMENTAL_DAMAGE)) {
+        if (deploymentProperties.activateEffectOnDestruction() && !lastDamagedByEnvironmentalDamage) {
             itemEffect.activatePerformances();
         }
 

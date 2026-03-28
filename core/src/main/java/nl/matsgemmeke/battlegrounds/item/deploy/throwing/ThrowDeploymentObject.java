@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -55,9 +56,9 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         this.health = health;
     }
 
-    @Nullable
-    public Damage getLastDamage() {
-        return lastDamage;
+    @Override
+    public Optional<Damage> getLastDamage() {
+        return Optional.ofNullable(lastDamage);
     }
 
     @NotNull
@@ -150,10 +151,6 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         StaticBoundingBox staticBoundingBox = new StaticBoundingBox(baseLocation, boundingBox.getWidthX(), boundingBox.getHeight(), boundingBox.getWidthZ());
 
         return hitboxProvider.provideHitbox(staticBoundingBox);
-    }
-
-    public boolean isImmuneTo(@NotNull DamageType damageType) {
-        return resistances != null && resistances.containsKey(damageType) && resistances.get(damageType) <= 0;
     }
 
     public boolean matchesEntity(@NotNull Entity entity) {

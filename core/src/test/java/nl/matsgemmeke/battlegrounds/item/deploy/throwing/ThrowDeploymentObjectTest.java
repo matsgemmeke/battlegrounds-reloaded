@@ -13,20 +13,20 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,14 +56,16 @@ class ThrowDeploymentObjectTest {
     }
 
     @Test
-    void getLastDamageReturnsNullWhenItemHasNotTakenDamage() {
-        Damage lastDamage = deploymentObject.getLastDamage();
+    @DisplayName("getLastDamage returns empty optional when item has not taken damage")
+    void getLastDamage_noDamageYet() {
+        Optional<Damage> lastDamageOptional = deploymentObject.getLastDamage();
 
-        assertThat(lastDamage).isNull();
+        assertThat(lastDamageOptional).isEmpty();
     }
 
     @Test
-    void getLastDamageReturnsLastDamageDealtToItem() {
+    @DisplayName("getLastDamage returns optional with last damage dealt to item")
+    void getLastDamage_returnsLastDamage() {
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
         when(item.isDead()).thenReturn(false);
@@ -71,9 +73,9 @@ class ThrowDeploymentObjectTest {
 
         deploymentObject.setHealth(20.0);
         deploymentObject.damage(damage);
-        Damage lastDamage = deploymentObject.getLastDamage();
+        Optional<Damage> lastDamageOptional = deploymentObject.getLastDamage();
 
-        assertThat(lastDamage).isEqualTo(damage);
+        assertThat(lastDamageOptional).hasValue(damage);
     }
 
     @Test
@@ -241,33 +243,6 @@ class ThrowDeploymentObjectTest {
         });
 
         assertThat(result).isEqualTo(hitbox);
-    }
-
-    static List<Arguments> resistances() {
-        return List.of(
-                arguments(Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.0)),
-                arguments(Map.of(DamageType.BULLET_DAMAGE, 0.5))
-        );
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @MethodSource("resistances")
-    void isImmuneReturnsFalseWhenResistancesDoesNotContainEntryForGivenDamageTypeWhichEqualsZero(Map<DamageType, Double> resistances) {
-        deploymentObject.setResistances(resistances);
-        boolean immune = deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE);
-
-        assertThat(immune).isFalse();
-    }
-
-    @Test
-    void isImmuneReturnsTrueWhenResistanceToGivenDamageTypeEqualsOrIsLowerThanZero() {
-        Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.0);
-
-        deploymentObject.setResistances(resistances);
-        boolean immune = deploymentObject.isImmuneTo(DamageType.BULLET_DAMAGE);
-
-        assertThat(immune).isTrue();
     }
 
     @Test
