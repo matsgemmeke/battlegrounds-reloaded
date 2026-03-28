@@ -7,14 +7,13 @@ import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.TargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -28,36 +27,17 @@ public class OpenModeTargetFinder implements TargetFinder {
 
     private static final double ENTITY_FINDING_RANGE = 10.0;
 
-    private final DeploymentInfoProvider deploymentInfoProvider;
+    private final DeploymentObjectRegistry deploymentObjectRegistry;
     private final HitboxResolver hitboxResolver;
     private final MobRegistry mobRegistry;
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public OpenModeTargetFinder(DeploymentInfoProvider deploymentInfoProvider, HitboxResolver hitboxResolver, MobRegistry mobRegistry, PlayerRegistry playerRegistry) {
-        this.deploymentInfoProvider = deploymentInfoProvider;
+    public OpenModeTargetFinder(DeploymentObjectRegistry deploymentObjectRegistry, HitboxResolver hitboxResolver, MobRegistry mobRegistry, PlayerRegistry playerRegistry) {
+        this.deploymentObjectRegistry = deploymentObjectRegistry;
         this.hitboxResolver = hitboxResolver;
         this.mobRegistry = mobRegistry;
         this.playerRegistry = playerRegistry;
-    }
-
-    public boolean containsTargets(TargetQuery query) {
-        return !this.findTargets(query).isEmpty();
-    }
-
-    @NotNull
-    public List<DeploymentObject> findDeploymentObjects(@NotNull UUID entityId, @NotNull Location location, double range) {
-        List<DeploymentObject> deploymentObjects = new ArrayList<>();
-
-        for (DeploymentObject deploymentObject : deploymentInfoProvider.getAllDeploymentObjects()) {
-            double distance = location.distanceSquared(deploymentObject.getLocation());
-
-            if (distance <= range) {
-                deploymentObjects.add(deploymentObject);
-            }
-        }
-
-        return deploymentObjects;
     }
 
     @NotNull
@@ -109,6 +89,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         return targets;
     }
 
+    @Override
     public List<DamageTarget> findTargets(TargetQuery query) {
         List<DamageTarget> targets = new ArrayList<>();
         Location location = query.getLocation().orElseThrow(() -> new IllegalArgumentException("No location provided"));
@@ -130,7 +111,7 @@ public class OpenModeTargetFinder implements TargetFinder {
                 .filter(gameMob -> conditions.stream().allMatch(condition -> condition.test(gameMob, location)))
                 .forEach(targets::add);
 
-        deploymentInfoProvider.getAllDeploymentObjects().stream()
+        deploymentObjectRegistry.getDamageableDeploymentObjects().stream()
                 .filter(deploymentObject -> !enemiesOnly || uniqueId.map(id -> !id.equals(deploymentObject.getUniqueId())).orElse(true))
                 .filter(deploymentObject -> conditions.stream().allMatch(condition -> condition.test(deploymentObject, location)))
                 .forEach(targets::add);

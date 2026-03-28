@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface DeploymentInfoProvider {
 
-    @NotNull
     List<DeploymentObject> getAllDeploymentObjects();
 
     @Nullable

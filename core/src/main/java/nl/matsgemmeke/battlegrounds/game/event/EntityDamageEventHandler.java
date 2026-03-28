@@ -3,32 +3,31 @@ package nl.matsgemmeke.battlegrounds.game.event;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.jetbrains.annotations.NotNull;
 
 public class EntityDamageEventHandler implements EventHandler<EntityDamageEvent> {
 
-    @NotNull
     private final DamageProcessor damageProcessor;
-    @NotNull
-    private final DeploymentInfoProvider deploymentInfoProvider;
+    private final DeploymentObjectRegistry deploymentObjectRegistry;
 
     @Inject
-    public EntityDamageEventHandler(@NotNull DamageProcessor damageProcessor, @NotNull DeploymentInfoProvider deploymentInfoProvider) {
+    public EntityDamageEventHandler(DamageProcessor damageProcessor, DeploymentObjectRegistry deploymentObjectRegistry) {
         this.damageProcessor = damageProcessor;
-        this.deploymentInfoProvider = deploymentInfoProvider;
+        this.deploymentObjectRegistry = deploymentObjectRegistry;
     }
 
-    public void handle(@NotNull EntityDamageEvent event) {
-        for (DeploymentObject deploymentObject : deploymentInfoProvider.getAllDeploymentObjects()) {
-            if (deploymentObject.matchesEntity(event.getEntity())) {
+    public void handle(EntityDamageEvent event) {
+        for (DamageTarget damageTarget : deploymentObjectRegistry.getDamageableDeploymentObjects()) {
+            if (damageTarget.getUniqueId().equals(event.getEntity().getUniqueId())) {
                 Damage damage = new Damage(event.getDamage(), DamageType.ENVIRONMENTAL_DAMAGE);
+                DamageContext damageContext = new DamageContext(null, damageTarget, damage);
 
-                damageProcessor.processDeploymentObjectDamage(deploymentObject, damage);
+                damageProcessor.processDamage(damageContext);
             }
         }
     }

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
@@ -28,6 +29,7 @@ public class DeploymentHandler {
 
     private final AudioEmitter audioEmitter;
     private final CollisionResultAdapter collisionResultAdapter;
+    private final DeploymentObjectRegistry deploymentObjectRegistry;
     private final DeploymentProperties deploymentProperties;
     private final ItemEffect itemEffect;
     private final ParticleEffectSpawner particleEffectSpawner;
@@ -41,12 +43,13 @@ public class DeploymentHandler {
     private boolean pending;
     private boolean performing;
     @Nullable
-    private DeploymentObject deploymentObject;
+    private DeploymentObject currentDeploymentObject;
 
     @Inject
     public DeploymentHandler(
             AudioEmitter audioEmitter,
             CollisionResultAdapter collisionResultAdapter,
+            DeploymentObjectRegistry deploymentObjectRegistry,
             ParticleEffectSpawner particleEffectSpawner,
             Scheduler scheduler,
             @Assisted DeploymentProperties deploymentProperties,
@@ -54,6 +57,7 @@ public class DeploymentHandler {
     ) {
         this.audioEmitter = audioEmitter;
         this.collisionResultAdapter = collisionResultAdapter;
+        this.deploymentObjectRegistry = deploymentObjectRegistry;
         this.particleEffectSpawner = particleEffectSpawner;
         this.scheduler = scheduler;
         this.deploymentProperties = deploymentProperties;
@@ -73,7 +77,7 @@ public class DeploymentHandler {
     }
 
     public DeploymentObject getDeploymentObject() {
-        return deploymentObject;
+        return currentDeploymentObject;
     }
 
     public void activateDeployment(Deployer deployer) {
@@ -91,28 +95,28 @@ public class DeploymentHandler {
     }
 
     public void cleanupDeployment() {
-        if (deploymentObject == null || !deploymentProperties.removeDeploymentOnCleanup()) {
+        if (currentDeploymentObject == null || !deploymentProperties.removeDeploymentOnCleanup()) {
             return;
         }
 
         performing = false;
-        deploymentObject.remove();
+        currentDeploymentObject.remove();
     }
 
     public void destroyDeployment() {
-        if (deploymentObject == null) {
+        if (currentDeploymentObject == null) {
             return;
         }
 
         performing = false;
 
         if (deploymentProperties.activateEffectOnDestruction()
-                && (deploymentObject.getLastDamage() == null || deploymentObject.getLastDamage().type() != DamageType.ENVIRONMENTAL_DAMAGE)) {
+                && (currentDeploymentObject.getLastDamage() == null || currentDeploymentObject.getLastDamage().type() != DamageType.ENVIRONMENTAL_DAMAGE)) {
             itemEffect.activatePerformances();
         }
 
         if (deploymentProperties.removeDeploymentOnDestruction()) {
-            deploymentObject.remove();
+            currentDeploymentObject.remove();
         }
 
         if (deploymentProperties.undoEffectOnDestruction()) {
@@ -122,16 +126,16 @@ public class DeploymentHandler {
         ParticleEffect particleEffect = deploymentProperties.destructionParticleEffect();
 
         if (particleEffect != null) {
-            particleEffectSpawner.spawnParticleEffect(particleEffect, deploymentObject.getLocation());
+            particleEffectSpawner.spawnParticleEffect(particleEffect, currentDeploymentObject.getLocation());
         }
     }
 
     public boolean isAwaitingDeployment() {
-        return performing && deploymentObject != null && !deploymentObject.isPhysical();
+        return performing && currentDeploymentObject != null && !currentDeploymentObject.isPhysical();
     }
 
     public boolean isDeployed() {
-        return performing && deploymentObject != null && deploymentObject.isPhysical();
+        return performing && currentDeploymentObject != null && currentDeploymentObject.isPhysical();
     }
 
     public boolean isPerforming() {
@@ -140,10 +144,13 @@ public class DeploymentHandler {
 
     public void processDeploymentResult(DeploymentResult deploymentResult) {
         performing = true;
-        deploymentObject = deploymentResult.deploymentObject();
 
         if (pending) {
+            deploymentObjectRegistry.unregister(currentDeploymentObject);
+            deploymentObjectRegistry.register(deploymentResult.deploymentObject());
+
             currentActor = deploymentResult.actor();
+            currentDeploymentObject = deploymentResult.deploymentObject();
 
             itemEffect.getLatestPerformance().ifPresent(latestPerformance -> latestPerformance.changeActor(currentActor));
             triggerRuns.forEach(triggerRun -> triggerRun.replaceActor(currentActor));
@@ -151,6 +158,9 @@ public class DeploymentHandler {
         }
 
         currentActor = deploymentResult.actor();
+        currentDeploymentObject = deploymentResult.deploymentObject();
+
+        deploymentObjectRegistry.register(currentDeploymentObject);
 
         DamageSource damageSource = deploymentResult.deployer();
         UUID sourceId = damageSource.getUniqueId();
@@ -165,7 +175,7 @@ public class DeploymentHandler {
             triggerRuns.add(triggerRun);
         }
 
-        if (deploymentObject.isPhysical()) {
+        if (currentDeploymentObject.isPhysical()) {
             pending = false;
 
             Deployer deployer = deploymentResult.deployer();

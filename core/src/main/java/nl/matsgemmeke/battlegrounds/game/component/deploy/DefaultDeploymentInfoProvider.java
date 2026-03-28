@@ -13,15 +13,13 @@ import java.util.List;
 
 public class DefaultDeploymentInfoProvider implements DeploymentInfoProvider {
 
-    @NotNull
-    private EquipmentRegistry equipmentRegistry;
+    private final EquipmentRegistry equipmentRegistry;
 
     @Inject
-    public DefaultDeploymentInfoProvider(@NotNull EquipmentRegistry equipmentRegistry) {
+    public DefaultDeploymentInfoProvider(EquipmentRegistry equipmentRegistry) {
         this.equipmentRegistry = equipmentRegistry;
     }
 
-    @NotNull
     public List<DeploymentObject> getAllDeploymentObjects() {
         List<DeploymentObject> deploymentObjects = new ArrayList<>();
 

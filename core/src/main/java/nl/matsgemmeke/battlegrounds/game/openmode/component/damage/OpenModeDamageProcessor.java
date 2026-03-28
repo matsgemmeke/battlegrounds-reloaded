@@ -3,26 +3,20 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OpenModeDamageProcessor implements DamageProcessor {
 
-    private final DeploymentInfoProvider deploymentInfoProvider;
     private final GameKey gameKey;
     private final List<DamageModifier> damageModifiers;
 
     @Inject
-    public OpenModeDamageProcessor(GameKey gameKey, DeploymentInfoProvider deploymentInfoProvider) {
+    public OpenModeDamageProcessor(GameKey gameKey) {
         this.gameKey = gameKey;
-        this.deploymentInfoProvider = deploymentInfoProvider;
         this.damageModifiers = new ArrayList<>();
     }
 
@@ -52,21 +46,5 @@ public class OpenModeDamageProcessor implements DamageProcessor {
         Damage damage = damageContext.damage();
 
         target.damage(damage);
-    }
-
-    public void processDeploymentObjectDamage(@NotNull DeploymentObject deploymentObject, @NotNull Damage damage) {
-        if (deploymentObject.isImmuneTo(damage.type())) {
-            return;
-        }
-
-        deploymentObject.damage(damage);
-
-        if (deploymentObject.getHealth() <= 0.0) {
-            DeployableItem deployableItem = deploymentInfoProvider.getDeployableItem(deploymentObject);
-
-            if (deployableItem != null) {
-                deployableItem.destroyDeployment();
-            }
-        }
     }
 }
