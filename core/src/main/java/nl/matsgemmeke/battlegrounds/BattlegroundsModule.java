@@ -31,8 +31,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessorProvider;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapterProvider;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.openmode.OpenModeGameEntityFinder;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
@@ -197,7 +196,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);
         binder.bind(DamageProcessor.class).toProvider(DamageProcessorProvider.class).in(GameScoped.class);
-        binder.bind(DeploymentInfoProvider.class).to(DefaultDeploymentInfoProvider.class).in(GameScoped.class);
+        binder.bind(DeploymentObjectRegistry.class).in(GameScoped.class);
         binder.bind(EquipmentRegistry.class).to(DefaultEquipmentRegistry.class).in(GameScoped.class);
         binder.bind(EventDamageAdapter.class).toProvider(EventDamageAdapterProvider.class).in(GameScoped.class);
         binder.bind(GameEntityFinder.class).toProvider(GameEntityFinderProvider.class).in(GameScoped.class);

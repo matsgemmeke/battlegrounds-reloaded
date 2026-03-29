@@ -4,14 +4,13 @@ import nl.matsgemmeke.battlegrounds.item.Cleanable;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.Nullable;
 
-public interface Equipment extends Weapon, Cleanable, DeployableItem, Interactable<EquipmentUser> {
+public interface Equipment extends Weapon, Cleanable, Interactable<EquipmentUser> {
 
     /**
      * Gets the activator item used to activate the equipment. Returns null if the equipment does not utilize an

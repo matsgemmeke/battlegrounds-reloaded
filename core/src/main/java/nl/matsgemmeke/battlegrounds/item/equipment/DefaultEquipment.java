@@ -11,9 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DefaultEquipment extends BaseWeapon implements Equipment {
@@ -28,14 +26,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private ItemTemplate displayItemTemplate;
     @Nullable
     private ItemTemplate throwItemTemplate;
-    @NotNull
-    private List<DeploymentObject> deploymentObjects;
     @Nullable
     private ProjectileProperties projectileProperties;
 
     public DefaultEquipment() {
         this.controls = new ItemControls<>();
-        this.deploymentObjects = new ArrayList<>();
     }
 
     @Nullable
@@ -61,11 +56,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void setDeploymentHandler(DeploymentHandler deploymentHandler) {
         this.deploymentHandler = deploymentHandler;
-    }
-
-    @NotNull
-    public List<DeploymentObject> getDeploymentObjects() {
-        return deploymentObjects;
     }
 
     @Nullable
@@ -110,10 +100,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void cleanup() {
         deploymentHandler.cleanupDeployment();
-    }
-
-    // TODO: remove
-    public void destroyDeployment() {
     }
 
     @Nullable
