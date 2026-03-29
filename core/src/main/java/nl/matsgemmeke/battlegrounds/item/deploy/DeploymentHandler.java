@@ -104,15 +104,14 @@ public class DeploymentHandler {
         currentDeploymentObject.remove();
     }
 
-    public void destroyDeployment() {
-        if (currentDeploymentObject == null) {
+    public void destroyDeployment(Damage damage) {
+        if (currentDeploymentObject == null || currentActor == null) {
             return;
         }
 
         performing = false;
-        boolean lastDamagedByEnvironmentalDamage = currentDeploymentObject.getLastDamage().map(damage -> damage.type() == DamageType.ENVIRONMENTAL_DAMAGE).orElse(false);
 
-        if (deploymentProperties.activateEffectOnDestruction() && !lastDamagedByEnvironmentalDamage) {
+        if (deploymentProperties.activateEffectOnDestruction() && damage.type() != DamageType.ENVIRONMENTAL_DAMAGE) {
             itemEffect.activatePerformances();
         }
 
@@ -127,7 +126,7 @@ public class DeploymentHandler {
         ParticleEffect particleEffect = deploymentProperties.destructionParticleEffect();
 
         if (particleEffect != null) {
-            particleEffectSpawner.spawnParticleEffect(particleEffect, currentDeploymentObject.getLocation());
+            particleEffectSpawner.spawnParticleEffect(particleEffect, currentActor.getLocation());
         }
     }
 

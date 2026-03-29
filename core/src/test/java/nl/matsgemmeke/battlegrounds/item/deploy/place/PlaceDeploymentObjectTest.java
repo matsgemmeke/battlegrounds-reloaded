@@ -149,7 +149,7 @@ class PlaceDeploymentObjectTest {
         assertThat(damageDealt).isEqualTo(20.0);
         assertThat(deploymentObject.getHealth()).isZero();
 
-        verify(destructionListener).onDestroyed();
+        verify(destructionListener).onDestroyed(damage);
     }
 
     @Test

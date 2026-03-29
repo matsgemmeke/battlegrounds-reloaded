@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.*;
@@ -154,7 +153,7 @@ class OpenModeTargetFinderTest {
         Location findingLocation = new Location(world, 1.0, 1.0, 1.0);
         UUID deploymentObjectUniqueId = UUID.randomUUID();
 
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        DamageTarget deploymentObject = mock(DamageTarget.class);
         when(deploymentObject.getUniqueId()).thenReturn(deploymentObjectUniqueId);
 
         when(deploymentObjectRegistry.getDamageableDeploymentObjects()).thenReturn(Set.of(deploymentObject));

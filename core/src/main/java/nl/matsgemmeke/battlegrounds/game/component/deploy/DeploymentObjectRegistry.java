@@ -5,15 +5,16 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DeploymentObjectRegistry {
 
     private final Set<DeploymentObject> deploymentObjects;
-    private final Set<DamageTarget> damageTargets;
+    private final Set<DeploymentObject> damageableDeploymentObjects;
 
     public DeploymentObjectRegistry() {
         this.deploymentObjects = new HashSet<>();
-        this.damageTargets = new HashSet<>();
+        this.damageableDeploymentObjects = new HashSet<>();
     }
 
     public Set<DeploymentObject> getAllDeploymentObjects() {
@@ -21,12 +22,17 @@ public class DeploymentObjectRegistry {
     }
 
     public Set<DamageTarget> getDamageableDeploymentObjects() {
-        return Set.copyOf(damageTargets);
+        return damageableDeploymentObjects.stream()
+                .map(DamageTarget.class::cast)
+                .collect(Collectors.toSet());
     }
 
     public void register(DeploymentObject deploymentObject) {
         deploymentObjects.add(deploymentObject);
-        damageTargets.add(deploymentObject);
+
+        if (deploymentObject instanceof DamageTarget) {
+            damageableDeploymentObjects.add(deploymentObject);
+        }
     }
 
     public void unregister(DeploymentObject deploymentObject) {
@@ -35,6 +41,6 @@ public class DeploymentObjectRegistry {
         }
 
         deploymentObjects.remove(deploymentObject);
-        damageTargets.remove(deploymentObject);
+        damageableDeploymentObjects.remove(deploymentObject);
     }
 }

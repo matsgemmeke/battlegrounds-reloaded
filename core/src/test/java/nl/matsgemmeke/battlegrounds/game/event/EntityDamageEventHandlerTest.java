@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.game.event;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -41,7 +41,7 @@ class EntityDamageEventHandlerTest {
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(UUID.randomUUID());
 
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        DamageTarget deploymentObject = mock(DamageTarget.class);
         when(deploymentObject.getUniqueId()).thenReturn(DEPLOYMENT_OBJECT_UNIQUE_ID);
 
         EntityDamageEvent event = new EntityDamageEvent(entity, DamageCause.CUSTOM, 0);
@@ -59,7 +59,7 @@ class EntityDamageEventHandlerTest {
         Entity entity = mock(Entity.class);
         when(entity.getUniqueId()).thenReturn(DEPLOYMENT_OBJECT_UNIQUE_ID);
 
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        DamageTarget deploymentObject = mock(DamageTarget.class);
         when(deploymentObject.getUniqueId()).thenReturn(DEPLOYMENT_OBJECT_UNIQUE_ID);
 
         EntityDamageEvent event = new EntityDamageEvent(entity, DamageCause.CUSTOM, DAMAGE_AMOUNT);

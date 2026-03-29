@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
@@ -23,7 +24,7 @@ import java.util.UUID;
 /**
  * A deployed object in the form as a placed {@link Block}.
  */
-public class PlaceDeploymentObject implements DeploymentObject {
+public class PlaceDeploymentObject implements DeploymentObject, DamageTarget {
 
     private static final double BLOCK_CENTER_OFFSET = 0.5;
     private static final double BOUNDING_BOX_SIZE = 0.2;
@@ -89,7 +90,7 @@ public class PlaceDeploymentObject implements DeploymentObject {
     }
 
     @Override
-    public double damage(@NotNull Damage damage) {
+    public double damage(Damage damage) {
         lastDamage = damage;
 
         double damageAmount = damage.amount();
@@ -101,7 +102,7 @@ public class PlaceDeploymentObject implements DeploymentObject {
         health = Math.max(health - damageAmount, 0);
 
         if (health <= 0.0) {
-            destructionListener.onDestroyed();
+            destructionListener.onDestroyed(damage);
         }
 
         return damageAmount;

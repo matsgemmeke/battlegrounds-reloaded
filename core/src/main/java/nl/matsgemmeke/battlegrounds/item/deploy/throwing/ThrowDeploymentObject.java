@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
@@ -24,7 +25,7 @@ import java.util.UUID;
 /**
  * Represents an item that is deployed in the form of an {@link Item} entity.
  */
-public class ThrowDeploymentObject implements DeploymentObject, Projectile {
+public class ThrowDeploymentObject implements DeploymentObject, DamageTarget, Projectile {
 
     // An item entity is no living entity, but it has 4 health before getting destroyed
     private static final double ENTITY_HEALTH = 4.0;
@@ -106,7 +107,8 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         item.setGravity(gravity);
     }
 
-    public double damage(@NotNull Damage damage) {
+    @Override
+    public double damage(Damage damage) {
         if (item.isDead() || !item.isValid()) {
             return 0.0;
         }
@@ -125,7 +127,7 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
 
             if (entityHealth <= 0) {
                 health = 0;
-                destructionListener.onDestroyed();
+                destructionListener.onDestroyed(damage);
             }
 
             return damageAmount;
@@ -134,7 +136,7 @@ public class ThrowDeploymentObject implements DeploymentObject, Projectile {
         health = Math.max(health - damageAmount, 0.0);
 
         if (health <= 0.0) {
-            destructionListener.onDestroyed();
+            destructionListener.onDestroyed(damage);
         }
 
         return damageAmount;

@@ -1,12 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import org.bukkit.entity.Entity;
 
 /**
  * Represents an object that is produced as a result of a deployment action.
  */
-public interface DeploymentObject extends DamageTarget {
+public interface DeploymentObject {
 
     /**
      * Returns whether the deployment object has a physical embodiment.

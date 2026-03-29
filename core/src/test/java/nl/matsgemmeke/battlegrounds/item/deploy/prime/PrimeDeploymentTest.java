@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class PrimeDeploymentTest {
 
     private static final UUID DEPLOYER_UNIQUE_ID = UUID.randomUUID();
-    private static final DestructionListener LISTENER = () -> {};
+    private static final DestructionListener LISTENER = damage -> {};
 
     @Mock
     private AudioEmitter audioEmitter;
@@ -71,7 +71,7 @@ class PrimeDeploymentTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject().getHealth()).isZero();
+            assertThat(deploymentResult.deploymentObject()).isInstanceOf(PrimeDeploymentObject.class);
         });
 
         verifyNoInteractions(audioEmitter);
@@ -99,7 +99,7 @@ class PrimeDeploymentTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject().getHealth()).isZero();
+            assertThat(deploymentResult.deploymentObject()).isInstanceOf(PrimeDeploymentObject.class);
             assertThat(deploymentResult.actor()).isInstanceOf(HeldItemActor.class);
         });
 

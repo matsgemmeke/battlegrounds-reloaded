@@ -142,7 +142,7 @@ class PlaceDeploymentTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
+            assertThat(deploymentResult.deploymentObject()).isInstanceOfSatisfying(PlaceDeploymentObject.class, deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
             });
@@ -178,7 +178,7 @@ class PlaceDeploymentTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject()).satisfies(deploymentObject -> {
+            assertThat(deploymentResult.deploymentObject()).isInstanceOfSatisfying(PlaceDeploymentObject.class, deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
             });

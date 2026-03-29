@@ -217,7 +217,7 @@ class ThrowDeploymentObjectTest {
         assertThat(expectedDamageDealt).isEqualTo(damageDealt);
         assertThat(expectedHealth).isEqualTo(deploymentObject.getHealth());
 
-        verify(destructionListener).onDestroyed();
+        verify(destructionListener).onDestroyed(damage);
     }
 
     @Test

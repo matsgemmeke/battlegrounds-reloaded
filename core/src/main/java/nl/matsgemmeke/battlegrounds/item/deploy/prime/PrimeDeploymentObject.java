@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.prime;
 
-import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import org.bukkit.Location;
@@ -10,9 +8,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Represents an item that is primed but held by the deployer and not yet deployed.
@@ -24,38 +19,16 @@ public class PrimeDeploymentObject implements DeploymentObject {
     private final Deployer deployer;
     private final Entity deployerEntity;
     private final ItemStack itemStack;
-    private final UUID uniqueId;
 
     public PrimeDeploymentObject(Deployer deployer, Entity deployerEntity, ItemStack itemStack) {
         this.deployer = deployer;
         this.deployerEntity = deployerEntity;
         this.itemStack = itemStack;
-        this.uniqueId = UUID.randomUUID();
-    }
-
-    @Override
-    public double getHealth() {
-        return 0;
-    }
-
-    @Override
-    public void setHealth(double health) {
-
-    }
-
-    @Override
-    public Optional<Damage> getLastDamage() {
-        return Optional.empty();
     }
 
     @NotNull
     public Location getLocation() {
         return deployerEntity.getLocation().add(0, HAND_HEIGHT_OFFSET, 0);
-    }
-
-    @Override
-    public UUID getUniqueId() {
-        return uniqueId;
     }
 
     public Vector getVelocity() {
@@ -67,18 +40,8 @@ public class PrimeDeploymentObject implements DeploymentObject {
         return deployerEntity.getWorld();
     }
 
-    @Override
-    public double damage(Damage damage) {
-        return 0;
-    }
-
     public boolean exists() {
         return !deployerEntity.isDead();
-    }
-
-    @Override
-    public Hitbox getHitbox() {
-        return null;
     }
 
     @Override

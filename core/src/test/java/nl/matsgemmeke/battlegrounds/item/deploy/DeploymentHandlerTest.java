@@ -54,6 +54,9 @@ class DeploymentHandlerTest {
     private static final ParticleEffect DESTRUCTION_PARTICLE_EFFECT = new ParticleEffect(Particle.ASH, 1, 0, 0, 0, 0, null, null);
     private static final DeploymentProperties PROPERTIES = new DeploymentProperties(ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, ACTIVATE_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_DESTRUCTION, UNDO_EFFECT_ON_DESTRUCTION, REMOVE_DEPLOYMENT_ON_CLEANUP, MANUAL_ACTIVATION_DELAY);
 
+    private static final Damage BULLET_DAMAGE = new Damage(10, DamageType.BULLET_DAMAGE);
+    private static final Damage ENVIRONMENTAL_DAMAGE = new Damage(10, DamageType.ENVIRONMENTAL_DAMAGE);
+
     @Mock
     private Actor actor;
     @Mock
@@ -130,7 +133,7 @@ class DeploymentHandlerTest {
     @Test
     void destroyDeploymentDoesNotCancelEffectWhenNoDeploymentsHaveBeenPerformed() {
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(BULLET_DAMAGE);
 
         verifyNoInteractions(itemEffect);
     }
@@ -146,57 +149,37 @@ class DeploymentHandlerTest {
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, properties, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(BULLET_DAMAGE);
 
         verify(itemEffect, never()).activatePerformances();
     }
 
     @Test
     void destroyDeploymentDoesNotActivateEffectWhenDeploymentObjectLastDamageTypeIsEnvironmentalDamage() {
-        Damage lastDamage = new Damage(10, DamageType.ENVIRONMENTAL_DAMAGE);
         DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
-        when(deploymentObject.getLastDamage()).thenReturn(Optional.of(lastDamage));
         when(deploymentObject.isPhysical()).thenReturn(true);
         when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(ENVIRONMENTAL_DAMAGE);
 
         verify(itemEffect, never()).activatePerformances();
     }
 
     @Test
-    void destroyDeploymentActivatesEffectWhenDeploymentObjectLastDamageIsNull() {
-        DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
-        Schedule delaySchedule = mock(Schedule.class);
-
-        when(deploymentObject.getLastDamage()).thenReturn(Optional.empty());
-        when(deploymentObject.isPhysical()).thenReturn(true);
-        when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(delaySchedule);
-
-        DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
-        deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
-
-        verify(itemEffect).activatePerformances();
-    }
-
-    @Test
     void destroyDeploymentActivatesEffectWhenDeploymentObjectLastDamageTypeIsNotEnvironmentalDamage() {
-        Damage lastDamage = new Damage(10, DamageType.BULLET_DAMAGE);
         DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
         Schedule delaySchedule = mock(Schedule.class);
 
-        when(deploymentObject.getLastDamage()).thenReturn(Optional.of(lastDamage));
         when(deploymentObject.isPhysical()).thenReturn(true);
         when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(BULLET_DAMAGE);
 
         verify(itemEffect).activatePerformances();
     }
@@ -212,7 +195,7 @@ class DeploymentHandlerTest {
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, properties, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(BULLET_DAMAGE);
 
         verify(deploymentObject, never()).remove();
     }
@@ -227,7 +210,7 @@ class DeploymentHandlerTest {
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(BULLET_DAMAGE);
 
         verify(deploymentObject).remove();
     }
@@ -243,7 +226,7 @@ class DeploymentHandlerTest {
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, properties, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(BULLET_DAMAGE);
 
         verify(itemEffect, never()).rollbackPerformances();
     }
@@ -258,7 +241,7 @@ class DeploymentHandlerTest {
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(BULLET_DAMAGE);
 
         verify(itemEffect).rollbackPerformances();
     }
@@ -274,7 +257,7 @@ class DeploymentHandlerTest {
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, properties, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(BULLET_DAMAGE);
 
         verifyNoInteractions(particleEffectSpawner);
     }
@@ -282,18 +265,18 @@ class DeploymentHandlerTest {
     @Test
     void destroyDeploymentDisplaysParticleEffectWhenDestructionParticleEffectPropertyIsNotNull() {
         DeploymentResult deploymentResult = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
-        Location objectLocation = new Location(null, 1, 1, 1);
+        Location actorLocation = new Location(null, 1, 1, 1);
         Schedule delaySchedule = mock(Schedule.class);
 
-        when(deploymentObject.getLocation()).thenReturn(objectLocation);
+        when(actor.getLocation()).thenReturn(actorLocation);
         when(deploymentObject.isPhysical()).thenReturn(true);
         when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(delaySchedule);
 
         DeploymentHandler deploymentHandler = new DeploymentHandler(audioEmitter, collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, PROPERTIES, itemEffect);
         deploymentHandler.processDeploymentResult(deploymentResult);
-        deploymentHandler.destroyDeployment();
+        deploymentHandler.destroyDeployment(BULLET_DAMAGE);
 
-        verify(particleEffectSpawner).spawnParticleEffect(DESTRUCTION_PARTICLE_EFFECT, objectLocation);
+        verify(particleEffectSpawner).spawnParticleEffect(DESTRUCTION_PARTICLE_EFFECT, actorLocation);
     }
 
     @Test

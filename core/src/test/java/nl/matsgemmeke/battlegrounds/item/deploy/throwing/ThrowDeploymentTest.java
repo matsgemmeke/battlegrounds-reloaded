@@ -88,7 +88,9 @@ class ThrowDeploymentTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject().getHealth()).isEqualTo(HEALTH);
+            assertThat(deploymentResult.deploymentObject()).isInstanceOfSatisfying(ThrowDeploymentObject.class, deploymentObject -> {
+                assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
+            });
             assertThat(deploymentResult.actor()).isInstanceOf(ItemActor.class);
             assertThat(deploymentResult.cooldown()).isEqualTo(COOLDOWN);
         });

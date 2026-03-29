@@ -112,8 +112,8 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         deploymentHandler.cleanupDeployment();
     }
 
+    // TODO: remove
     public void destroyDeployment() {
-        deploymentHandler.destroyDeployment();
     }
 
     @Nullable
@@ -174,7 +174,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void performDeployment(Deployment deployment, EquipmentUser user) {
-        DestructionListener destructionListener = () -> deploymentHandler.destroyDeployment();
+        DestructionListener destructionListener = deploymentHandler::destroyDeployment;
         DeploymentResult deploymentResult = deployment.perform(user, user.getEntity(), destructionListener).orElse(null);
 
         if (deploymentResult == null) {

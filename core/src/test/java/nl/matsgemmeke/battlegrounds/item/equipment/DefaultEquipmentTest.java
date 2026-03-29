@@ -186,17 +186,6 @@ class DefaultEquipmentTest {
     }
 
     @Test
-    void destroyDeploymentDelegatesToDeploymentHandler() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDeploymentHandler(deploymentHandler);
-        equipment.destroyDeployment();
-
-        verify(deploymentHandler).destroyDeployment();
-    }
-
-    @Test
     void shouldPerformFunctionWhenLeftClicked() {
         EquipmentUser user = mock(EquipmentUser.class);
 
