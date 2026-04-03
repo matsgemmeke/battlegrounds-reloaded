@@ -4,7 +4,6 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -34,7 +33,6 @@ public interface Deployer extends DamageSource {
      *
      * @return the entity's deployment direction
      */
-    @NotNull
     Location getDeployLocation();
 
     /**
@@ -42,7 +40,6 @@ public interface Deployer extends DamageSource {
      *
      * @return the held item stack
      */
-    @NotNull
     ItemStack getHeldItem();
 
     /**
@@ -51,7 +48,6 @@ public interface Deployer extends DamageSource {
      * @param maxDistance the distance to scan
      * @return the last two target blocks of the deployer
      */
-    @NotNull
     List<Block> getLastTwoTargetBlocks(int maxDistance);
 
     /**
@@ -59,7 +55,7 @@ public interface Deployer extends DamageSource {
      *
      * @param itemStack the item stack to remove
      */
-    void removeItem(@NotNull ItemStack itemStack);
+    void removeItem(ItemStack itemStack);
 
     /**
      * Sets the {@link ItemStack} that the entity is holding.
