@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
@@ -156,9 +157,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public void onSwapTo() {
     }
 
-    public void performDeployment(nl.matsgemmeke.battlegrounds.item.deploy.Deployment action, EquipmentUser user) {
+    @Override
+    public void performDeploymentAction(DeploymentAction deploymentAction, EquipmentUser user) {
         DestructionListener destructionListener = damage -> {};
-        DeploymentResult result = action.perform(user, user.getEntity(), destructionListener).orElse(null);
+        DeploymentResult result = deploymentAction.perform(user, user.getEntity(), destructionListener).orElse(null);
 
         if (result == null) {
             return;

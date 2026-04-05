@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.cook;
 
-import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ class CookFunctionTest {
     @Mock
     private Equipment equipment;
     @Mock
-    private PrimeDeployment deployment;
+    private PrimeDeploymentAction deploymentAction;
     @InjectMocks
     private CookFunction function;
 
@@ -59,6 +59,6 @@ class CookFunctionTest {
 
         assertThat(performed).isTrue();
 
-        verify(equipment).performDeployment(deployment, user);
+        verify(equipment).performDeploymentAction(deploymentAction, user);
     }
 }

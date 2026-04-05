@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class PlaceDeployment implements Deployment {
+public class PlaceDeploymentAction implements DeploymentAction {
 
     private static final int TARGET_BLOCK_SCAN_DISTANCE = 4;
 
@@ -29,7 +29,7 @@ public class PlaceDeployment implements Deployment {
     private PlaceDeploymentProperties properties;
 
     @Inject
-    public PlaceDeployment(AudioEmitter audioEmitter, HitboxResolver hitboxResolver) {
+    public PlaceDeploymentAction(AudioEmitter audioEmitter, HitboxResolver hitboxResolver) {
         this.audioEmitter = audioEmitter;
         this.hitboxResolver = hitboxResolver;
     }

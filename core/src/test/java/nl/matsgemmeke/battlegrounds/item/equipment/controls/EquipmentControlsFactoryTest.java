@@ -6,10 +6,10 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
@@ -39,13 +39,13 @@ class EquipmentControlsFactoryTest {
     @Mock
     private ProjectileEffectFactory projectileEffectFactory;
     @Mock
-    private Provider<DropDeployment> dropDeploymentProvider;
+    private Provider<DropDeploymentAction> dropDeploymentActionProvider;
     @Mock
-    private Provider<PlaceDeployment> placeDeploymentProvider;
+    private Provider<PlaceDeploymentAction> placeDeploymentActionProvider;
     @Mock
-    private Provider<PrimeDeployment> primeDeploymentProvider;
+    private Provider<PrimeDeploymentAction> primeDeploymentActionProvider;
     @Mock
-    private Provider<ThrowDeployment> throwDeploymentProvider;
+    private Provider<ThrowDeploymentAction> throwDeploymentActionProvider;
     @Mock
     private Supplier<ItemControls<EquipmentUser>> controlsSupplier;
 
@@ -55,7 +55,7 @@ class EquipmentControlsFactoryTest {
     void setUp() {
         when(controlsSupplier.get()).thenReturn(controls);
 
-        controlsFactory = new EquipmentControlsFactory(projectileEffectFactory, dropDeploymentProvider, placeDeploymentProvider, primeDeploymentProvider, throwDeploymentProvider, controlsSupplier);
+        controlsFactory = new EquipmentControlsFactory(projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controlsSupplier);
     }
 
     @Test
@@ -85,12 +85,12 @@ class EquipmentControlsFactoryTest {
     @DisplayName("create returns ItemControls with throw function")
     void create_withThrowFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
-        ThrowDeployment throwDeployment = mock(ThrowDeployment.class);
+        ThrowDeploymentAction deploymentAction = mock(ThrowDeploymentAction.class);
 
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(equipment.getThrowItemTemplate()).thenReturn(itemTemplate);
 
-        when(throwDeploymentProvider.get()).thenReturn(throwDeployment);
+        when(throwDeploymentActionProvider.get()).thenReturn(deploymentAction);
 
         ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
@@ -113,13 +113,13 @@ class EquipmentControlsFactoryTest {
     @Test
     @DisplayName("create returns ItemControls with place function")
     void create_withPlaceFunction() {
-        PlaceDeployment placeDeployment = mock(PlaceDeployment.class);
+        PlaceDeploymentAction deploymentAction = mock(PlaceDeploymentAction.class);
 
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
         equipmentSpec.controls.activate = null;
         equipmentSpec.controls.throwing = null;
 
-        when(placeDeploymentProvider.get()).thenReturn(placeDeployment);
+        when(placeDeploymentActionProvider.get()).thenReturn(deploymentAction);
 
         ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
@@ -145,9 +145,9 @@ class EquipmentControlsFactoryTest {
         equipmentSpec.controls.throwing = null;
         equipmentSpec.controls.drop = null;
 
-        PrimeDeployment primeDeployment = mock(PrimeDeployment.class);
+        PrimeDeploymentAction deploymentAction = mock(PrimeDeploymentAction.class);
 
-        when(primeDeploymentProvider.get()).thenReturn(primeDeployment);
+        when(primeDeploymentActionProvider.get()).thenReturn(deploymentAction);
 
         ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
@@ -174,9 +174,9 @@ class EquipmentControlsFactoryTest {
         equipmentSpec.controls.throwing = null;
         equipmentSpec.controls.cook = null;
 
-        DropDeployment dropDeployment = mock(DropDeployment.class);
+        DropDeploymentAction deploymentAction = mock(DropDeploymentAction.class);
 
-        when(dropDeploymentProvider.get()).thenReturn(dropDeployment);
+        when(dropDeploymentActionProvider.get()).thenReturn(deploymentAction);
 
         ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 

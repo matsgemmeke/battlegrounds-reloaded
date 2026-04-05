@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * A deployment system that produces a {@link DeploymentObject} using an {@link Item}.
  */
-public class ThrowDeployment implements Deployment {
+public class ThrowDeploymentAction implements DeploymentAction {
 
     // Take a high number to make sure the item cannot be picked up before the deployment is complete
     private static final int DEFAULT_PICKUP_DELAY = 100000;
@@ -31,7 +31,7 @@ public class ThrowDeployment implements Deployment {
     private ThrowDeploymentProperties properties;
 
     @Inject
-    public ThrowDeployment(AudioEmitter audioEmitter, HitboxResolver hitboxResolver) {
+    public ThrowDeploymentAction(AudioEmitter audioEmitter, HitboxResolver hitboxResolver) {
         this.audioEmitter = audioEmitter;
         this.hitboxResolver = hitboxResolver;
     }

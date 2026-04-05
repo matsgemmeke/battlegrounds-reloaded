@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ThrowDeploymentTest {
+class ThrowDeploymentActionTest {
 
     private static final double HEALTH = 20.0;
     private static final double VELOCITY = 1.5;
@@ -46,14 +46,14 @@ class ThrowDeploymentTest {
     @Mock
     private HitboxResolver hitboxResolver;
     @InjectMocks
-    private ThrowDeployment deployment;
+    private ThrowDeploymentAction deploymentAction;
 
     @Test
     void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
         Deployer deployer = mock(Deployer.class);
         Entity deployerEntity = mock(Entity.class);
 
-        assertThatThrownBy(() -> deployment.perform(deployer, deployerEntity, destructionListener))
+        assertThatThrownBy(() -> deploymentAction.perform(deployer, deployerEntity, destructionListener))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
@@ -83,8 +83,8 @@ class ThrowDeploymentTest {
         Item item = mock(Item.class);
         when(world.dropItem(deployLocation, itemStack)).thenReturn(item);
 
-        deployment.configureProperties(properties);
-        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, entity, destructionListener);
+        deploymentAction.configureProperties(properties);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, entity, destructionListener);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);

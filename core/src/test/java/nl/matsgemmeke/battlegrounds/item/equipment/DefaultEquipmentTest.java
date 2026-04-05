@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
@@ -206,11 +207,11 @@ class DefaultEquipmentTest {
         Player player = mock(Player.class);
         when(user.getEntity()).thenReturn(player);
 
-        nl.matsgemmeke.battlegrounds.item.deploy.Deployment deploymentAction = mock(nl.matsgemmeke.battlegrounds.item.deploy.Deployment.class);
+        DeploymentAction deploymentAction = mock(DeploymentAction.class);
         when(deploymentAction.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
 
         equipment.setDeployment(deployment);
-        equipment.performDeployment(deploymentAction, user);
+        equipment.performDeploymentAction(deploymentAction, user);
 
         verifyNoInteractions(deployment);
     }
@@ -225,11 +226,11 @@ class DefaultEquipmentTest {
         Player player = mock(Player.class);
         when(user.getEntity()).thenReturn(player);
 
-        nl.matsgemmeke.battlegrounds.item.deploy.Deployment deploymentAction = mock(nl.matsgemmeke.battlegrounds.item.deploy.Deployment.class);
+        DeploymentAction deploymentAction = mock(DeploymentAction.class);
         when(deploymentAction.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
 
         equipment.setDeployment(deployment);
-        equipment.performDeployment(deploymentAction, user);
+        equipment.performDeploymentAction(deploymentAction, user);
 
         verify(deployment).processDeploymentResult(deploymentResult);
     }

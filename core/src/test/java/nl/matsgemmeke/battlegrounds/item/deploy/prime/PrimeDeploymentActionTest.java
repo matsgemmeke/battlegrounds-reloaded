@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class PrimeDeploymentTest {
+class PrimeDeploymentActionTest {
 
     private static final UUID DEPLOYER_UNIQUE_ID = UUID.randomUUID();
     private static final DestructionListener LISTENER = damage -> {};
@@ -37,7 +37,7 @@ class PrimeDeploymentTest {
     @Mock
     private GameEntityFinder gameEntityFinder;
     @InjectMocks
-    private PrimeDeployment deployment;
+    private PrimeDeploymentAction deploymentAction;
 
     @Test
     @DisplayName("perform returns empty optional when no game entity exists for deployer unique id")
@@ -49,7 +49,7 @@ class PrimeDeploymentTest {
 
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, LISTENER);
 
         assertThat(deploymentResultOptional).isEmpty();
     }
@@ -67,7 +67,7 @@ class PrimeDeploymentTest {
 
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
 
-        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, LISTENER);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
@@ -94,8 +94,8 @@ class PrimeDeploymentTest {
 
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
 
-        deployment.configurePrimeSounds(primeSounds);
-        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, LISTENER);
+        deploymentAction.configurePrimeSounds(primeSounds);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, LISTENER);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);

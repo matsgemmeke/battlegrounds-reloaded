@@ -19,14 +19,14 @@ import java.util.UUID;
  * A deployment system that creates a {@link DeploymentObject}, representing the deployable item in a primed state
  * while still being held by the deployer.
  */
-public class PrimeDeployment implements Deployment {
+public class PrimeDeploymentAction implements DeploymentAction {
 
     private final AudioEmitter audioEmitter;
     private final GameEntityFinder gameEntityFinder;
     private List<GameSound> primeSounds;
 
     @Inject
-    public PrimeDeployment(AudioEmitter audioEmitter, GameEntityFinder gameEntityFinder) {
+    public PrimeDeploymentAction(AudioEmitter audioEmitter, GameEntityFinder gameEntityFinder) {
         this.audioEmitter = audioEmitter;
         this.gameEntityFinder = gameEntityFinder;
         this.primeSounds = Collections.emptyList();

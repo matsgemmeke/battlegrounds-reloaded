@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.place;
 
-import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ class PlaceFunctionTest {
     @Mock
     private Equipment equipment;
     @Mock
-    private PlaceDeployment deployment;
+    private PlaceDeploymentAction deploymentAction;
     @InjectMocks
     private PlaceFunction function;
 
@@ -59,6 +59,6 @@ class PlaceFunctionTest {
 
         assertThat(performed).isTrue();
 
-        verify(equipment).performDeployment(deployment, user);
+        verify(equipment).performDeploymentAction(deploymentAction, user);
     }
 }

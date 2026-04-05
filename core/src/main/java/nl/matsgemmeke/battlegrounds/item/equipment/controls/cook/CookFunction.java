@@ -1,18 +1,18 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.cook;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
 public class CookFunction implements ItemFunction<EquipmentUser> {
 
     private final Equipment equipment;
-    private final PrimeDeployment deployment;
+    private final PrimeDeploymentAction deploymentAction;
 
-    public CookFunction(Equipment equipment, PrimeDeployment deployment) {
+    public CookFunction(Equipment equipment, PrimeDeploymentAction deploymentAction) {
         this.equipment = equipment;
-        this.deployment = deployment;
+        this.deploymentAction = deploymentAction;
     }
 
     public boolean isAvailable() {
@@ -36,7 +36,7 @@ public class CookFunction implements ItemFunction<EquipmentUser> {
             return false;
         }
 
-        equipment.performDeployment(deployment, user);
+        equipment.performDeploymentAction(deploymentAction, user);
         return true;
     }
 }

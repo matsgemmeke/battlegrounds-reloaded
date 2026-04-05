@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
-import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
@@ -22,7 +22,7 @@ class ThrowFunctionTest {
     @Mock
     private Equipment equipment;
     @Mock
-    private ThrowDeployment deployment;
+    private ThrowDeploymentAction deploymentAction;
     @InjectMocks
     private ThrowFunction function;
 
@@ -60,6 +60,6 @@ class ThrowFunctionTest {
 
         assertThat(performed).isTrue();
 
-        verify(equipment).performDeployment(deployment, user);
+        verify(equipment).performDeploymentAction(deploymentAction, user);
     }
 }

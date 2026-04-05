@@ -1,18 +1,18 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
 public class ThrowFunction implements ItemFunction<EquipmentUser> {
 
     private final Equipment equipment;
-    private final ThrowDeployment deployment;
+    private final ThrowDeploymentAction deploymentAction;
 
-    public ThrowFunction(Equipment equipment, ThrowDeployment deployment) {
+    public ThrowFunction(Equipment equipment, ThrowDeploymentAction deploymentAction) {
         this.equipment = equipment;
-        this.deployment = deployment;
+        this.deploymentAction = deploymentAction;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ThrowFunction implements ItemFunction<EquipmentUser> {
             return false;
         }
 
-        equipment.performDeployment(deployment, user);
+        equipment.performDeploymentAction(deploymentAction, user);
         return true;
     }
 }

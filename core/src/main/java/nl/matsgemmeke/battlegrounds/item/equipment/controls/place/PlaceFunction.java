@@ -1,18 +1,18 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.place;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
 public class PlaceFunction implements ItemFunction<EquipmentUser> {
 
     private final Equipment equipment;
-    private final PlaceDeployment deployment;
+    private final PlaceDeploymentAction deploymentAction;
 
-    public PlaceFunction(Equipment equipment, PlaceDeployment deployment) {
+    public PlaceFunction(Equipment equipment, PlaceDeploymentAction deploymentAction) {
         this.equipment = equipment;
-        this.deployment = deployment;
+        this.deploymentAction = deploymentAction;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PlaceFunction implements ItemFunction<EquipmentUser> {
             return false;
         }
 
-        equipment.performDeployment(deployment, user);
+        equipment.performDeploymentAction(deploymentAction, user);
         return true;
     }
 }

@@ -14,11 +14,11 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
@@ -39,26 +39,26 @@ import java.util.stream.Collectors;
 public class EquipmentControlsFactory {
 
     private final ProjectileEffectFactory projectileEffectFactory;
-    private final Provider<DropDeployment> dropDeploymentProvider;
-    private final Provider<PlaceDeployment> placeDeploymentProvider;
-    private final Provider<PrimeDeployment> primeDeploymentProvider;
-    private final Provider<ThrowDeployment> throwDeploymentProvider;
+    private final Provider<DropDeploymentAction> dropDeploymentActionProvider;
+    private final Provider<PlaceDeploymentAction> placeDeploymentActionProvider;
+    private final Provider<PrimeDeploymentAction> primeDeploymentActionProvider;
+    private final Provider<ThrowDeploymentAction> throwDeploymentActionProvider;
     private final Supplier<ItemControls<EquipmentUser>> controlsSupplier;
 
     @Inject
     public EquipmentControlsFactory(
             ProjectileEffectFactory projectileEffectFactory,
-            Provider<DropDeployment> dropDeploymentProvider,
-            Provider<PlaceDeployment> placeDeploymentProvider,
-            Provider<PrimeDeployment> primeDeploymentProvider,
-            Provider<ThrowDeployment> throwDeploymentProvider,
+            Provider<DropDeploymentAction> dropDeploymentActionProvider,
+            Provider<PlaceDeploymentAction> placeDeploymentActionProvider,
+            Provider<PrimeDeploymentAction> primeDeploymentActionProvider,
+            Provider<ThrowDeploymentAction> throwDeploymentActionProvider,
             Supplier<ItemControls<EquipmentUser>> controlsSupplier
     ) {
         this.projectileEffectFactory = projectileEffectFactory;
-        this.dropDeploymentProvider = dropDeploymentProvider;
-        this.placeDeploymentProvider = placeDeploymentProvider;
-        this.primeDeploymentProvider = primeDeploymentProvider;
-        this.throwDeploymentProvider = throwDeploymentProvider;
+        this.dropDeploymentActionProvider = dropDeploymentActionProvider;
+        this.placeDeploymentActionProvider = placeDeploymentActionProvider;
+        this.primeDeploymentActionProvider = primeDeploymentActionProvider;
+        this.throwDeploymentActionProvider = throwDeploymentActionProvider;
         this.controlsSupplier = controlsSupplier;
     }
 
@@ -100,10 +100,10 @@ public class EquipmentControlsFactory {
 
             ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
 
-            ThrowDeployment deployment = throwDeploymentProvider.get();
-            deployment.configureProperties(properties);
+            ThrowDeploymentAction deploymentAction = throwDeploymentActionProvider.get();
+            deploymentAction.configureProperties(properties);
 
-            ThrowFunction throwFunction = new ThrowFunction(equipment, deployment);
+            ThrowFunction throwFunction = new ThrowFunction(equipment, deploymentAction);
 
             controls.addControl(throwAction, throwFunction);
         }
@@ -124,10 +124,10 @@ public class EquipmentControlsFactory {
 
             PlaceDeploymentProperties properties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);
 
-            PlaceDeployment deployment = placeDeploymentProvider.get();
-            deployment.configureProperties(properties);
+            PlaceDeploymentAction deploymentAction = placeDeploymentActionProvider.get();
+            deploymentAction.configureProperties(properties);
 
-            PlaceFunction placeFunction = new PlaceFunction(equipment, deployment);
+            PlaceFunction placeFunction = new PlaceFunction(equipment, deploymentAction);
 
             controls.addControl(placeAction, placeFunction);
         }
@@ -142,7 +142,7 @@ public class EquipmentControlsFactory {
             Action cookAction = Action.valueOf(cookActionValue);
             List<GameSound> cookSounds = DefaultGameSound.parseSounds(cookProperties.cookSounds);
 
-            PrimeDeployment deployment = primeDeploymentProvider.get();
+            PrimeDeploymentAction deployment = primeDeploymentActionProvider.get();
             deployment.configurePrimeSounds(cookSounds);
 
             CookFunction cookFunction = new CookFunction(equipment, deployment);
@@ -159,8 +159,8 @@ public class EquipmentControlsFactory {
 
             Action dropAction = Action.valueOf(dropActionValue);
 
-            DropDeployment deployment = dropDeploymentProvider.get();
-            DropFunction dropFunction = new DropFunction(equipment, deployment);
+            DropDeploymentAction deploymentAction = dropDeploymentActionProvider.get();
+            DropFunction dropFunction = new DropFunction(equipment, deploymentAction);
 
             controls.addControl(dropAction, dropFunction);
         }

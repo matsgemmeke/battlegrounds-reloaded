@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.Cleanable;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.Nullable;
@@ -93,10 +93,10 @@ public interface Equipment extends Weapon, Cleanable, Interactable<EquipmentUser
     boolean isDeployed();
 
     /**
-     * Performs a deployment on the equipment item.
+     * Performs a deployment action on the equipment item.
      *
-     * @param deployment the deployment instance
-     * @param user       the user that performs the deployment
+     * @param deploymentAction the deployment action
+     * @param user             the user that performs the deployment action
      */
-    void performDeployment(Deployment deployment, EquipmentUser user);
+    void performDeploymentAction(DeploymentAction deploymentAction, EquipmentUser user);
 }

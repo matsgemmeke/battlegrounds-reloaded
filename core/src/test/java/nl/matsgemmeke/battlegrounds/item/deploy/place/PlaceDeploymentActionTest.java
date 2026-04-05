@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class PlaceDeploymentTest {
+class PlaceDeploymentActionTest {
 
     private static final double HEALTH = 20.0;
     private static final List<GameSound> PLACE_SOUNDS = Collections.emptyList();
@@ -58,11 +58,11 @@ class PlaceDeploymentTest {
     @Mock
     private HitboxResolver hitboxResolver;
     @InjectMocks
-    private PlaceDeployment deployment;
+    private PlaceDeploymentAction deploymentAction;
 
     @Test
     void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
-        assertThatThrownBy(() -> deployment.perform(deployer, deployerEntity, destructionListener))
+        assertThatThrownBy(() -> deploymentAction.perform(deployer, deployerEntity, destructionListener))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
@@ -71,8 +71,8 @@ class PlaceDeploymentTest {
     void performReturnsEmptyOptionalWhenDeployerDoesNotReturnTwoTargetBlocks() {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
-        deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
+        deploymentAction.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentResultOptional).isEmpty();
 
@@ -86,8 +86,8 @@ class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
-        deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
+        deploymentAction.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentResultOptional).isEmpty();
 
@@ -104,8 +104,8 @@ class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
+        deploymentAction.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentResultOptional).isEmpty();
 
@@ -137,8 +137,8 @@ class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
+        deploymentAction.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
@@ -173,8 +173,8 @@ class PlaceDeploymentTest {
 
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
-        deployment.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deployment.perform(deployer, deployerEntity, destructionListener);
+        deploymentAction.configureProperties(PROPERTIES);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);

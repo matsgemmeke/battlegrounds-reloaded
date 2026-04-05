@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
-import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ class DropFunctionTest {
     @Mock
     private Equipment equipment;
     @Mock
-    private DropDeployment deployment;
+    private DropDeploymentAction deploymentAction;
     @InjectMocks
     private DropFunction function;
 
@@ -59,6 +59,6 @@ class DropFunctionTest {
 
         assertThat(performed).isTrue();
 
-        verify(equipment).performDeployment(deployment, user);
+        verify(equipment).performDeploymentAction(deploymentAction, user);
     }
 }
