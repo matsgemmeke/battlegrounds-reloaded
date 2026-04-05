@@ -56,7 +56,7 @@ import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRe
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deploynew.DeploymentFactory;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformanceFactory;

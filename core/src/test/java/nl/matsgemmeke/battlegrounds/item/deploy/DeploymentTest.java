@@ -1,10 +1,8 @@
-package nl.matsgemmeke.battlegrounds.item.deploynew;
+package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
-import nl.matsgemmeke.battlegrounds.item.deploynew.state.DeploymentState;
+import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;

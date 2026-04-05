@@ -1,10 +1,10 @@
-package nl.matsgemmeke.battlegrounds.item.deploynew.state;
+package nl.matsgemmeke.battlegrounds.item.deploy.state;
 
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
-import nl.matsgemmeke.battlegrounds.item.deploynew.Deployment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

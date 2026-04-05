@@ -1,9 +1,9 @@
-package nl.matsgemmeke.battlegrounds.item.deploynew.state;
+package nl.matsgemmeke.battlegrounds.item.deploy.state;
 
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
-import nl.matsgemmeke.battlegrounds.item.deploynew.Deployment;
 
 /**
  * A deployment state in which the deployable item is idle and not deployed.
