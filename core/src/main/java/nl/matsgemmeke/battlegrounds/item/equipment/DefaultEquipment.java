@@ -4,8 +4,10 @@ import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deploy.*;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
+import nl.matsgemmeke.battlegrounds.item.deploynew.Deployment;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +20,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @Nullable
     private Activator activator;
-    private DeploymentHandler deploymentHandler;
+    private Deployment deployment;
     @Nullable
     private EquipmentUser user;
     private ItemControls<EquipmentUser> controls;
@@ -50,12 +52,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.controls = controls;
     }
 
-    public DeploymentHandler getDeploymentHandler() {
-        return deploymentHandler;
+    public Deployment getDeployment() {
+        return deployment;
     }
 
-    public void setDeploymentHandler(DeploymentHandler deploymentHandler) {
-        this.deploymentHandler = deploymentHandler;
+    public void setDeployment(Deployment deployment) {
+        this.deployment = deployment;
     }
 
     @Nullable
@@ -95,16 +97,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void activateDeployment(EquipmentUser user) {
-        deploymentHandler.activateDeployment(user);
+        throw new UnsupportedOperationException();
     }
 
     public void cleanup() {
-        deploymentHandler.cleanupDeployment();
-    }
-
-    @Nullable
-    public DeploymentObject getDeploymentObject() {
-        return deploymentHandler.getDeploymentObject();
+        throw new UnsupportedOperationException();
     }
 
     public boolean isActivatorReady() {
@@ -112,11 +109,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public boolean isAwaitingDeployment() {
-        return deploymentHandler.isAwaitingDeployment();
+        return deployment.isPending();
     }
 
     public boolean isDeployed() {
-        return deploymentHandler.isDeployed();
+        return deployment.isPerforming();
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {
@@ -159,15 +156,15 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public void onSwapTo() {
     }
 
-    public void performDeployment(Deployment deployment, EquipmentUser user) {
-        DestructionListener destructionListener = deploymentHandler::destroyDeployment;
-        DeploymentResult deploymentResult = deployment.perform(user, user.getEntity(), destructionListener).orElse(null);
+    public void performDeployment(nl.matsgemmeke.battlegrounds.item.deploy.Deployment action, EquipmentUser user) {
+        DestructionListener destructionListener = damage -> {};
+        DeploymentResult result = action.perform(user, user.getEntity(), destructionListener).orElse(null);
 
-        if (deploymentResult == null) {
+        if (result == null) {
             return;
         }
 
-        deploymentHandler.processDeploymentResult(deploymentResult);
+        deployment.processDeploymentResult(result);
     }
 
     public boolean update() {

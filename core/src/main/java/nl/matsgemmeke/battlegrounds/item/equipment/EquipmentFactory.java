@@ -19,6 +19,10 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.DefaultActivator;
+import nl.matsgemmeke.battlegrounds.item.deploynew.Deployment;
+import nl.matsgemmeke.battlegrounds.item.deploynew.DeploymentFactory;
+import nl.matsgemmeke.battlegrounds.item.deploynew.state.DeploymentState;
+import nl.matsgemmeke.battlegrounds.item.deploynew.state.IdleState;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
@@ -33,6 +37,7 @@ import java.util.List;
 
 public class EquipmentFactory {
 
+    private final DeploymentFactory deploymentFactory;
     private final DeploymentHandlerFactory deploymentHandlerFactory;
     private final EquipmentControlsFactory controlsFactory;
     private final EquipmentRegistry equipmentRegistry;
@@ -43,6 +48,7 @@ public class EquipmentFactory {
 
     @Inject
     public EquipmentFactory(
+            DeploymentFactory deploymentFactory,
             DeploymentHandlerFactory deploymentHandlerFactory,
             EquipmentControlsFactory controlsFactory,
             EquipmentRegistry equipmentRegistry,
@@ -51,6 +57,7 @@ public class EquipmentFactory {
             ParticleEffectMapper particleEffectMapper,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
+        this.deploymentFactory = deploymentFactory;
         this.deploymentHandlerFactory = deploymentHandlerFactory;
         this.controlsFactory = controlsFactory;
         this.equipmentRegistry = equipmentRegistry;
@@ -107,10 +114,25 @@ public class EquipmentFactory {
         ItemControls<EquipmentUser> controls = controlsFactory.create(spec, equipment);
         equipment.setControls(controls);
 
-        DeploymentHandler deploymentHandler = this.setUpDeploymentHandler(spec.deploy, spec.effect, activator);
-        equipment.setDeploymentHandler(deploymentHandler);
+        Deployment deployment = this.createDeployment(spec.deploy, spec.effect);
+        equipment.setDeployment(deployment);
 
         return equipment;
+    }
+
+    private Deployment createDeployment(DeploymentSpec deploymentSpec, ItemEffectSpec effectSpec) {
+        DeploymentState state = new IdleState();
+        ItemEffect itemEffect = itemEffectFactory.create(effectSpec);
+
+        Deployment deployment = deploymentFactory.create(state, itemEffect);
+
+        for (TriggerSpec triggerSpec : deploymentSpec.triggers.values()) {
+            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
+
+            deployment.addTriggerExecutor(triggerExecutor);
+        }
+
+        return deployment;
     }
 
     private DeploymentHandler setUpDeploymentHandler(DeploymentSpec deploymentSpec, ItemEffectSpec effectSpec, @Nullable Activator activator) {

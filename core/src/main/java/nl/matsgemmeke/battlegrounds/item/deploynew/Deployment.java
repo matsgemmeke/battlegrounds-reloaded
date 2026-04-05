@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegist
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploynew.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -34,6 +35,7 @@ public class Deployment {
     private final Scheduler scheduler;
     private final Set<TriggerExecutor> triggerExecutors;
     private final Set<TriggerRun> triggerRuns;
+    private boolean pending;
     private boolean performing;
     private DeploymentState state;
 
@@ -62,12 +64,20 @@ public class Deployment {
         this.performing = performing;
     }
 
+    public boolean isPending() {
+        return pending;
+    }
+
+    public void setPending(boolean pending) {
+        this.pending = pending;
+    }
+
     public void addTriggerExecutor(TriggerExecutor triggerExecutor) {
         triggerExecutors.add(triggerExecutor);
     }
 
-    public void processAction(DeploymentAction action) {
-        state = state.processAction(this, action);
+    public void processDeploymentResult(DeploymentResult result) {
+        state = state.processAction(this, result);
     }
 
     public void scheduleDeploymentCooldown(Deployer deployer, long cooldown) {

@@ -57,6 +57,7 @@ import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStat
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
+import nl.matsgemmeke.battlegrounds.item.deploynew.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformanceFactory;
@@ -232,6 +233,8 @@ public class BattlegroundsModule implements Module {
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
                 .build(DeploymentHandlerFactory.class));
+        binder.install(new FactoryModuleBuilder()
+                .build(DeploymentFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)

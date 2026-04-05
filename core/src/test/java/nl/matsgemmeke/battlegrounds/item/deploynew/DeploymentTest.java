@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.deploynew;
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploynew.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -49,13 +50,13 @@ class DeploymentTest {
     private Deployment deployment;
 
     @Test
-    @DisplayName("processAction delegates logic to state")
-    void processAction() {
-        DeploymentAction action = new DeploymentAction(null, null, null, 0L);
+    @DisplayName("processDeploymentResult delegates logic to state")
+    void processDeploymentResult() {
+        DeploymentResult result = new DeploymentResult(null, null, null, 0L);
 
-        deployment.processAction(action);
+        deployment.processDeploymentResult(result);
 
-        verify(state).processAction(deployment, action);
+        verify(state).processAction(deployment, result);
     }
 
     @Test

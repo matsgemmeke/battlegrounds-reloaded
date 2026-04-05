@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.deploynew.state;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploynew.Deployment;
-import nl.matsgemmeke.battlegrounds.item.deploynew.DeploymentAction;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,11 +33,11 @@ class IdleStateTest {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         when(deploymentObject.isPhysical()).thenReturn(true);
 
-        DeploymentAction action = new DeploymentAction(deployer, deploymentObject, actor, COOLDOWN);
+        DeploymentResult result = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
 
-        DeploymentState result = state.processAction(deployment, action);
+        DeploymentState nextState = state.processAction(deployment, result);
 
-        assertThat(result).isInstanceOf(DeploymentState.class);
+        assertThat(nextState).isInstanceOf(DeploymentState.class);
 
         verify(deployment).setPerforming(true);
         verify(deployment).startTriggerExecutors(deployer, actor);
@@ -53,11 +53,11 @@ class IdleStateTest {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         when(deploymentObject.isPhysical()).thenReturn(false);
 
-        DeploymentAction action = new DeploymentAction(deployer, deploymentObject, actor, COOLDOWN);
+        DeploymentResult result = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
 
-        DeploymentState result = state.processAction(deployment, action);
+        DeploymentState nextState = state.processAction(deployment, result);
 
-        assertThat(result).isInstanceOf(PrimedState.class);
+        assertThat(nextState).isInstanceOf(PrimedState.class);
 
         verify(deployment).setPerforming(true);
         verify(deployment).startTriggerExecutors(deployer, actor);

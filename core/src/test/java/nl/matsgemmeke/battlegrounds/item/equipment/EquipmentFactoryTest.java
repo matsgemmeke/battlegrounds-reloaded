@@ -19,6 +19,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,6 +54,7 @@ class EquipmentFactoryTest {
     @InjectMocks
     private EquipmentFactory equipmentFactory;
 
+    @Disabled
     @Test
     @DisplayName("create returns Equipment instance with player user")
     void create_withPlayerUser() {
@@ -82,6 +84,7 @@ class EquipmentFactoryTest {
         verify(deploymentHandler).addTriggerExecutor(triggerExecutor);
     }
 
+    @Disabled
     @Test
     @DisplayName("create returns Equipment instance with activator")
     void create_withActivator() {

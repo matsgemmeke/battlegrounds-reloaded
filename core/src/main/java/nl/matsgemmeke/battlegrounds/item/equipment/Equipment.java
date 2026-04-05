@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.item.Interactable;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.Nullable;
@@ -80,14 +79,6 @@ public interface Equipment extends Weapon, Cleanable, Interactable<EquipmentUser
      * @param user the user that activates the deployment
      */
     void activateDeployment(EquipmentUser user);
-
-    /**
-     * Retrieves the deployment object associated with the equipment item if it has been deployed.
-     *
-     * @return the deployment object if deployed, or {@code null} if not deployed
-     */
-    @Nullable
-    DeploymentObject getDeploymentObject();
 
     /**
      * Gets whether the equipment's activator is ready for use. Returns {@code true} if the equipment has an activator
