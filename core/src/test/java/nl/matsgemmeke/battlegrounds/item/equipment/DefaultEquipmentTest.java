@@ -3,8 +3,10 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deploy.*;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
+import nl.matsgemmeke.battlegrounds.item.deploynew.Deployment;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,26 +35,26 @@ class DefaultEquipmentTest {
     @Disabled
     @Test
     void activateDeploymentActivatesDeploymentHandler() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+//        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         EquipmentUser user = mock(EquipmentUser.class);
 
         DefaultEquipment equipment = new DefaultEquipment();
 //        equipment.setDeploymentHandler(deploymentHandler);
         equipment.activateDeployment(user);
 
-        verify(deploymentHandler).activateDeployment(user);
+//        verify(deploymentHandler).activateDeployment(user);
     }
 
     @Disabled
     @Test
     void cleanupDelegatesToDeploymentHandler() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+//        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
 
         DefaultEquipment equipment = new DefaultEquipment();
 //        equipment.setDeploymentHandler(deploymentHandler);
         equipment.cleanup();
 
-        verify(deploymentHandler).cleanupDeployment();
+//        verify(deploymentHandler).cleanupDeployment();
     }
 
     @Test
@@ -88,41 +90,29 @@ class DefaultEquipmentTest {
         assertThat(activatorReady).isTrue();
     }
 
-    @Disabled
-    @Test
-    void isAwaitingDeploymentReturnsTrueWhenDeploymentHandlerIsAwaitingDeployment() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isAwaitingDeployment()).thenReturn(true);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-//        equipment.setDeploymentHandler(deploymentHandler);
-        boolean awaitingDeployment = equipment.isAwaitingDeployment();
-
-        assertThat(awaitingDeployment).isTrue();
-    }
-
-    @Disabled
-    @Test
-    void isAwaitingDeploymentReturnsFalseWhenDeploymentHandlerIsNotAwaitingDeployment() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isAwaitingDeployment()).thenReturn(false);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-//        equipment.setDeploymentHandler(deploymentHandler);
-        boolean awaitingDeployment = equipment.isAwaitingDeployment();
-
-        assertThat(awaitingDeployment).isFalse();
-    }
-
-    @Disabled
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
-    void isDeployedReturnsWhetherDeploymentHandlerHasDeployedState(boolean deployed, boolean expectedDeployed) {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isDeployed()).thenReturn(deployed);
+    @DisplayName("isAwaitingDeployment returns whether deployment is pending")
+    void isAwaitingDeployment(boolean pending, boolean expectedAwaitingDeployment) {
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.isPending()).thenReturn(pending);
 
         DefaultEquipment equipment = new DefaultEquipment();
-//        equipment.setDeploymentHandler(deploymentHandler);
+        equipment.setDeployment(deployment);
+        boolean awaitingDeployment = equipment.isAwaitingDeployment();
+
+        assertThat(awaitingDeployment).isEqualTo(expectedAwaitingDeployment);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isDeployed returns whether deployment is performing")
+    void isDeployedReturnsWhetherDeploymentHandlerHasDeployedState(boolean performing, boolean expectedDeployed) {
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.isPerforming()).thenReturn(performing);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeployment(deployment);
         boolean result = equipment.isDeployed();
 
         assertThat(result).isEqualTo(expectedDeployed);
@@ -208,39 +198,40 @@ class DefaultEquipmentTest {
     }
 
     @Test
-    void performDeploymentDoesNothingWhenDeploymentProducesNoDeploymentContext() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+    @DisplayName("performDeployment does nothing when deployment action does not produce a deployment result")
+    void performDeployment_deploymentActionWithoutResult() {
+        Deployment deployment = mock(Deployment.class);
         EquipmentUser user = mock(EquipmentUser.class);
 
         Player player = mock(Player.class);
         when(user.getEntity()).thenReturn(player);
 
-        Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
+        nl.matsgemmeke.battlegrounds.item.deploy.Deployment deploymentAction = mock(nl.matsgemmeke.battlegrounds.item.deploy.Deployment.class);
+        when(deploymentAction.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
 
-//        equipment.setDeploymentHandler(deploymentHandler);
-        equipment.performDeployment(deployment, user);
+        equipment.setDeployment(deployment);
+        equipment.performDeployment(deploymentAction, user);
 
-        verifyNoInteractions(deploymentHandler);
+        verifyNoInteractions(deployment);
     }
 
-    @Disabled
     @Test
-    void performDeploymentCallsDeploymentHandlerWhenDeploymentProducesDeploymentContext() {
+    @DisplayName("performDeployment calls deployment when deployment action produces result")
+    void performDeployment_deploymentActionWithResult() {
+        Deployment deployment = mock(Deployment.class);
         DeploymentResult deploymentResult = new DeploymentResult(null, null, null, 0L);
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
         EquipmentUser user = mock(EquipmentUser.class);
 
         Player player = mock(Player.class);
         when(user.getEntity()).thenReturn(player);
 
-        Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
+        nl.matsgemmeke.battlegrounds.item.deploy.Deployment deploymentAction = mock(nl.matsgemmeke.battlegrounds.item.deploy.Deployment.class);
+        when(deploymentAction.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
 
-//        equipment.setDeploymentHandler(deploymentHandler);
-        equipment.performDeployment(deployment, user);
+        equipment.setDeployment(deployment);
+        equipment.performDeployment(deploymentAction, user);
 
-        verify(deploymentHandler).processDeploymentResult(deploymentResult);
+        verify(deployment).processDeploymentResult(deploymentResult);
     }
 
     @Test

@@ -6,10 +6,10 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.DefaultActivator;
+import nl.matsgemmeke.battlegrounds.item.deploynew.Deployment;
+import nl.matsgemmeke.battlegrounds.item.deploynew.DeploymentFactory;
+import nl.matsgemmeke.battlegrounds.item.deploynew.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
@@ -38,7 +38,7 @@ class EquipmentFactoryTest {
     private static final ItemStack ITEM_STACK_ACTIVATOR = new ItemStack(Material.FEATHER);
 
     @Mock
-    private DeploymentHandlerFactory deploymentHandlerFactory;
+    private DeploymentFactory deploymentFactory;
     @Mock
     private EquipmentControlsFactory controlsFactory;
     @Mock
@@ -54,14 +54,13 @@ class EquipmentFactoryTest {
     @InjectMocks
     private EquipmentFactory equipmentFactory;
 
-    @Disabled
     @Test
     @DisplayName("create returns Equipment instance with player user")
     void create_withPlayerUser() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemControls<EquipmentUser> controls = new ItemControls<>();
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        Deployment deployment = mock(Deployment.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
 
@@ -69,7 +68,7 @@ class EquipmentFactoryTest {
         when(displayItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_DISPLAY);
 
         when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
-        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
+        when(deploymentFactory.create(any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
         when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
         when(triggerExecutorFactory.create(spec.deploy.triggers.get("scheduled"))).thenReturn(triggerExecutor);
@@ -81,16 +80,15 @@ class EquipmentFactoryTest {
         assertThat(equipment.getItemStack()).isEqualTo(ITEM_STACK_DISPLAY);
 
         verify(equipmentRegistry).register(equipment, gamePlayer);
-        verify(deploymentHandler).addTriggerExecutor(triggerExecutor);
+        verify(deployment).addTriggerExecutor(triggerExecutor);
     }
 
-    @Disabled
     @Test
     @DisplayName("create returns Equipment instance with activator")
     void create_withActivator() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
         ItemControls<EquipmentUser> controls = new ItemControls<>();
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        Deployment deployment = mock(Deployment.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         ItemTemplate activatorItemTemplate = mock(ItemTemplate.class);
 
@@ -98,7 +96,7 @@ class EquipmentFactoryTest {
         when(displayItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_DISPLAY);
 
         when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
-        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
+        when(deploymentFactory.create(any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
         when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
         when(itemTemplateFactory.create(spec.items.activatorItem)).thenReturn(activatorItemTemplate);
