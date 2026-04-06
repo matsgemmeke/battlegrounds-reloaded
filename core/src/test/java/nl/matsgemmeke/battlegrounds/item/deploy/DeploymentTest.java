@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegist
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -21,6 +22,8 @@ import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +47,8 @@ class DeploymentTest {
     private static final Location ACTOR_LOCATION = new Location(null, 1, 1, 1);
     private static final long COOLDOWN = 10L;
 
-    private static final DeploymentProperties DEFAULT_PROPERTIES = new DeploymentProperties(List.of(), null, true, true, true, true, 10L);
+    private static final ParticleEffect DESTRUCTION_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 0, 0, 0, 0, 0, null, null);
+    private static final DeploymentProperties DEFAULT_PROPERTIES = new DeploymentProperties(List.of(), DESTRUCTION_PARTICLE_EFFECT, true, true, true, true, 10L);
 
     private static final Damage BULLET_DAMAGE = new Damage(10.0, DamageType.BULLET_DAMAGE);
     private static final Damage ENVIRONMENTAL_DAMAGE = new Damage(10.0, DamageType.ENVIRONMENTAL_DAMAGE);
@@ -73,10 +77,53 @@ class DeploymentTest {
     }
 
     @Test
-    @DisplayName("destroy activates item effect performances when activateEffectOnDestruction property is true and last damage is not environmental damage")
-    void destroy_activateItemEffectPerformances() {
+    @DisplayName("destroy does not activate item effect performances when latest damage is environmental")
+    void destroy_latestDamageIsEnvironmental() {
+        World actorWorld = mock(World.class);
+        Location actorLocation = new Location(actorWorld, 1, 1, 1);
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+
+        Actor actor = mock(Actor.class);
+        when(actor.getLocation()).thenReturn(actorLocation);
+
+        DeploymentResult result = new DeploymentResult(null, deploymentObject, actor, 0L);
+
+        Deployment deployment = new Deployment(collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, DEFAULT_PROPERTIES, state, itemEffect);
+        deployment.processDeploymentResult(result);
+        deployment.destroy(ENVIRONMENTAL_DAMAGE);
+
+        verify(itemEffect, never()).activatePerformances();
+    }
+
+    @Test
+    @DisplayName("destroy does not perform any extra actions when properties are false")
+    void destroy_performsNoExtraActions() {
         DeploymentObject deploymentObject = mock(DeploymentObject.class);
         Actor actor = mock(Actor.class);
+        DeploymentResult result = new DeploymentResult(null, deploymentObject, actor, 0L);
+
+        DeploymentProperties properties = new DeploymentProperties(List.of(), null, false, false, false, false, 0L);
+
+        Deployment deployment = new Deployment(collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, properties, state, itemEffect);
+        deployment.processDeploymentResult(result);
+        deployment.destroy(BULLET_DAMAGE);
+
+        verify(itemEffect, never()).activatePerformances();
+        verify(itemEffect, never()).rollbackPerformances();
+        verify(deploymentObject, never()).remove();
+        verify(particleEffectSpawner, never()).spawnParticleEffect(any(ParticleEffect.class), any(Location.class));
+    }
+
+    @Test
+    @DisplayName("destroy activates item effect performances when activateEffectOnDestruction property is true and last damage is not environmental damage")
+    void destroy_performsAllExtraActions() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        World actorWorld = mock(World.class);
+        Location actorLocation = new Location(actorWorld, 1, 1, 1);
+
+        Actor actor = mock(Actor.class);
+        when(actor.getLocation()).thenReturn(actorLocation);
+
         DeploymentResult result = new DeploymentResult(null, deploymentObject, actor, 0L);
 
         Deployment deployment = new Deployment(collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, DEFAULT_PROPERTIES, state, itemEffect);
@@ -84,6 +131,9 @@ class DeploymentTest {
         deployment.destroy(BULLET_DAMAGE);
 
         verify(itemEffect).activatePerformances();
+        verify(itemEffect).rollbackPerformances();
+        verify(deploymentObject).remove();
+        verify(particleEffectSpawner).spawnParticleEffect(DESTRUCTION_PARTICLE_EFFECT, actorLocation);
     }
 
     @Test
