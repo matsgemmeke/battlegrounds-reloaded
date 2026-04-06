@@ -107,10 +107,10 @@ class DefaultEquipmentTest {
 
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
-    @DisplayName("isDeployed returns whether deployment is performing")
-    void isDeployedReturnsWhetherDeploymentHandlerHasDeployedState(boolean performing, boolean expectedDeployed) {
+    @DisplayName("isDeployed returns whether deployment is deployed")
+    void isDeployedReturnsWhetherDeploymentHandlerHasDeployedState(boolean deployed, boolean expectedDeployed) {
         Deployment deployment = mock(Deployment.class);
-        when(deployment.isPerforming()).thenReturn(performing);
+        when(deployment.isDeployed()).thenReturn(deployed);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDeployment(deployment);

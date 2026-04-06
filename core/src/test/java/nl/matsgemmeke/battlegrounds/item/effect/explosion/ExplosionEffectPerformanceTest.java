@@ -112,6 +112,7 @@ class ExplosionEffectPerformanceTest {
            assertThat(targetQuery.getConditions())
                    .hasSize(1)
                    .hasOnlyElementsOfType(HitboxTargetCondition.class);
+           assertThat(targetQuery.isEnemiesOnly()).isFalse();
         });
 
         assertThat(damageContextCaptor.getValue()).satisfies(damageContext -> {

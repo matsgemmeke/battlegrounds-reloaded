@@ -114,7 +114,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public boolean isDeployed() {
-        return deployment.isPerforming();
+        return deployment.isDeployed();
     }
 
     public boolean isMatching(@NotNull ItemStack itemStack) {

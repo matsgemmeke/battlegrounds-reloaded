@@ -15,10 +15,10 @@ public class IdleState implements DeploymentState {
         Deployer deployer = result.deployer();
         Actor actor = result.actor();
 
-        deployment.setPerforming(true);
         deployment.startTriggerExecutors(deployer, actor);
 
         if (result.deploymentObject().isPhysical()) {
+            deployment.setDeployed(true);
             deployment.scheduleDeploymentCooldown(deployer, result.cooldown());
 
             return new DeployedState();

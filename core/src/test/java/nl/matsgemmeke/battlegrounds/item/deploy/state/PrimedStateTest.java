@@ -15,17 +15,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class IdleStateTest {
+class PrimedStateTest {
 
     private static final long COOLDOWN = 10L;
 
     @Mock
     private Deployment deployment;
 
-    private final IdleState state = new IdleState();
+    private final PrimedState state = new PrimedState();
 
     @Test
-    @DisplayName("processAction starts triggers and returns DeployedState when deployment object is physical")
+    @DisplayName("processAction returns same state when given result's deployment object is not physical")
+    void processAction_nonPhysicalDeploymentObject() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        when(deploymentObject.isPhysical()).thenReturn(false);
+
+        DeploymentResult result = new DeploymentResult(null, deploymentObject, null, 0L);
+
+        DeploymentState nextState = state.processAction(deployment, result);
+
+        assertThat(nextState).isSameAs(state);
+
+        verifyNoInteractions(deployment);
+    }
+
+    @Test
+    @DisplayName("processAction returns DeployedState when given result's deployment object is physical")
     void processAction_physicalDeploymentObject() {
         Deployer deployer = mock(Deployer.class);
         Actor actor = mock(Actor.class);
@@ -37,28 +52,10 @@ class IdleStateTest {
 
         DeploymentState nextState = state.processAction(deployment, result);
 
-        assertThat(nextState).isInstanceOf(DeploymentState.class);
+        assertThat(nextState).isInstanceOf(DeployedState.class);
 
         verify(deployment).setDeployed(true);
-        verify(deployment).startTriggerExecutors(deployer, actor);
+        verify(deployment).replaceActor(actor);
         verify(deployment).scheduleDeploymentCooldown(deployer, COOLDOWN);
-    }
-
-    @Test
-    @DisplayName("processAction returns PrimedState when deployment object is not physical")
-    void processAction_nonPhysicalDeploymentObject() {
-        Deployer deployer = mock(Deployer.class);
-        Actor actor = mock(Actor.class);
-
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
-        when(deploymentObject.isPhysical()).thenReturn(false);
-
-        DeploymentResult result = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
-
-        DeploymentState nextState = state.processAction(deployment, result);
-
-        assertThat(nextState).isInstanceOf(PrimedState.class);
-
-        verify(deployment).startTriggerExecutors(deployer, actor);
     }
 }

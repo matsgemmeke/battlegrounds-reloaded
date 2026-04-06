@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.CollisionResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
@@ -24,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,6 +57,32 @@ class DeploymentTest {
         deployment.processDeploymentResult(result);
 
         verify(state).processAction(deployment, result);
+    }
+
+    @Test
+    @DisplayName("replaceActor replaces actor in current trigger runs and item performances")
+    void replaceActor() {
+        TriggerRun triggerRun = mock(TriggerRun.class);
+        Actor newActor = mock(Actor.class);
+        ItemEffectPerformance effectPerformance = mock(ItemEffectPerformance.class);
+
+        Actor actor = mock(Actor.class);
+        when(actor.getLocation()).thenReturn(ACTOR_LOCATION);
+
+        Deployer deployer = mock(Deployer.class);
+        when(deployer.getUniqueId()).thenReturn(DEPLOYER_UNIQUE_ID);
+
+        TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
+        when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
+
+        when(itemEffect.getLatestPerformance()).thenReturn(Optional.of(effectPerformance));
+
+        deployment.addTriggerExecutor(triggerExecutor);
+        deployment.startTriggerExecutors(deployer, actor);
+        deployment.replaceActor(newActor);
+
+        verify(triggerRun).replaceActor(newActor);
+        verify(effectPerformance).changeActor(newActor);
     }
 
     @Test

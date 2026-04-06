@@ -17,6 +17,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,8 +34,10 @@ public class Deployment {
     private final Scheduler scheduler;
     private final Set<TriggerExecutor> triggerExecutors;
     private final Set<TriggerRun> triggerRuns;
+    @Nullable
+    private Actor currentActor;
+    private boolean deployed;
     private boolean pending;
-    private boolean performing;
     private DeploymentState state;
 
     @Inject
@@ -52,14 +55,16 @@ public class Deployment {
         this.itemEffect = itemEffect;
         this.triggerExecutors = new HashSet<>();
         this.triggerRuns = new HashSet<>();
+        this.deployed = false;
+        this.pending = false;
     }
 
-    public boolean isPerforming() {
-        return performing;
+    public boolean isDeployed() {
+        return deployed;
     }
 
-    public void setPerforming(boolean performing) {
-        this.performing = performing;
+    public void setDeployed(boolean deployed) {
+        this.deployed = deployed;
     }
 
     public boolean isPending() {
@@ -78,6 +83,13 @@ public class Deployment {
         state = state.processAction(this, result);
     }
 
+    public void replaceActor(Actor actor) {
+        currentActor = actor;
+
+        triggerRuns.forEach(triggerRun -> triggerRun.replaceActor(actor));
+        itemEffect.getLatestPerformance().ifPresent(latestPerformance -> latestPerformance.changeActor(actor));
+    }
+
     public void scheduleDeploymentCooldown(Deployer deployer, long cooldown) {
         deployer.setCanDeploy(false);
 
@@ -91,9 +103,11 @@ public class Deployment {
         Location startingLocation = actor.getLocation();
         TriggerContext triggerContext = new TriggerContext(sourceId, actor);
 
+        currentActor = actor;
+
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-            triggerRun.addObserver(triggerResult -> this.activateEffect(triggerResult, deployer, actor, startingLocation));
+            triggerRun.addObserver(triggerResult -> this.activateEffect(triggerResult, deployer, currentActor, startingLocation));
             triggerRun.start();
 
             triggerRuns.add(triggerRun);

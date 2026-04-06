@@ -13,8 +13,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.util.UUID;
-
 public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
 
     private final DamageProcessor damageProcessor;
@@ -41,7 +39,10 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         Location actorLocation = actor.getLocation();
         World world = actor.getWorld();
 
-        TargetQuery query = this.createTargetQuery(damageSource.getUniqueId(), actorLocation);
+        TargetQuery query = new TargetQuery()
+                .uniqueId(damageSource.getUniqueId())
+                .location(actorLocation)
+                .conditions(new HitboxTargetCondition());
 
         for (DamageTarget damageTarget : targetFinder.findTargets(query)) {
             Location damageTargetLocation = damageTarget.getLocation();
@@ -57,14 +58,6 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         }
 
         world.createExplosion(actorLocation, properties.power(), properties.setFire(), properties.breakBlocks());
-    }
-
-    private TargetQuery createTargetQuery(UUID uniqueId, Location location) {
-        return new TargetQuery()
-                .uniqueId(uniqueId)
-                .location(location)
-                .conditions(new HitboxTargetCondition())
-                .enemiesOnly(true);
     }
 
     private Damage getDamageForTargetLocation(Location sourceLocation, Location targetLocation) {
