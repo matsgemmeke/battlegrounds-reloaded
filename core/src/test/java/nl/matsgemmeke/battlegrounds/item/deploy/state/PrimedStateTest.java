@@ -55,6 +55,7 @@ class PrimedStateTest {
         assertThat(nextState).isInstanceOf(DeployedState.class);
 
         verify(deployment).setDeployed(true);
+        verify(deployment).setPending(false);
         verify(deployment).replaceActor(actor);
         verify(deployment).scheduleDeploymentCooldown(deployer, COOLDOWN);
     }

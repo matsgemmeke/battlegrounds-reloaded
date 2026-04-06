@@ -23,6 +23,8 @@ public class IdleState implements DeploymentState {
 
             return new DeployedState();
         } else {
+            deployment.setPending(true);
+
             return new PrimedState();
         }
     }

@@ -18,6 +18,7 @@ public class PrimedState implements DeploymentState {
         }
 
         deployment.setDeployed(true);
+        deployment.setPending(false);
         deployment.replaceActor(result.actor());
         deployment.scheduleDeploymentCooldown(result.deployer(), result.cooldown());
 

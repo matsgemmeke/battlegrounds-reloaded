@@ -59,6 +59,7 @@ class IdleStateTest {
 
         assertThat(nextState).isInstanceOf(PrimedState.class);
 
+        verify(deployment).setPending(true);
         verify(deployment).startTriggerExecutors(deployer, actor);
     }
 }
