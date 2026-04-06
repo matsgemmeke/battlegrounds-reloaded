@@ -10,6 +10,7 @@ public class DeployedState implements DeploymentState {
 
     @Override
     public DeployedState processAction(Deployment deployment, DeploymentResult result) {
+        // Deployment is already complete, no further actions required or expected
         return this;
     }
 }
