@@ -159,7 +159,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @Override
     public void performDeploymentAction(DeploymentAction deploymentAction, EquipmentUser user) {
-        DestructionListener destructionListener = damage -> {};
+        DestructionListener destructionListener = deployment::destroy;
         DeploymentResult result = deploymentAction.perform(user, user.getEntity(), destructionListener).orElse(null);
 
         if (result == null) {

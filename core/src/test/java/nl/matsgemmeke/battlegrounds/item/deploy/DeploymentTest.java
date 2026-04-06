@@ -1,6 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
@@ -16,19 +19,22 @@ import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,22 +44,54 @@ class DeploymentTest {
     private static final Location ACTOR_LOCATION = new Location(null, 1, 1, 1);
     private static final long COOLDOWN = 10L;
 
+    private static final DeploymentProperties DEFAULT_PROPERTIES = new DeploymentProperties(List.of(), null, true, true, true, true, 10L);
+
+    private static final Damage BULLET_DAMAGE = new Damage(10.0, DamageType.BULLET_DAMAGE);
+    private static final Damage ENVIRONMENTAL_DAMAGE = new Damage(10.0, DamageType.ENVIRONMENTAL_DAMAGE);
+
     @Mock
     private CollisionResultAdapter collisionResultAdapter;
+    @Mock
+    private DeploymentObjectRegistry deploymentObjectRegistry;
     @Mock
     private DeploymentState state;
     @Mock
     private ItemEffect itemEffect;
+    @Spy
+    private ParticleEffectSpawner particleEffectSpawner;
     @Mock
     private Scheduler scheduler;
-    @InjectMocks
-    private Deployment deployment;
+
+    @Test
+    @DisplayName("destroy throws IllegalStateException when deployment is not deployed yet")
+    void destroy_notDeployedYet() {
+        Deployment deployment = new Deployment(collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, DEFAULT_PROPERTIES, state, itemEffect);
+
+        assertThatThrownBy(() -> deployment.destroy(BULLET_DAMAGE))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Illegal call to destroy deployment that is not deployed yet");
+    }
+
+    @Test
+    @DisplayName("destroy activates item effect performances when activateEffectOnDestruction property is true and last damage is not environmental damage")
+    void destroy_activateItemEffectPerformances() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
+        Actor actor = mock(Actor.class);
+        DeploymentResult result = new DeploymentResult(null, deploymentObject, actor, 0L);
+
+        Deployment deployment = new Deployment(collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, DEFAULT_PROPERTIES, state, itemEffect);
+        deployment.processDeploymentResult(result);
+        deployment.destroy(BULLET_DAMAGE);
+
+        verify(itemEffect).activatePerformances();
+    }
 
     @Test
     @DisplayName("processDeploymentResult delegates logic to state")
     void processDeploymentResult() {
         DeploymentResult result = new DeploymentResult(null, null, null, 0L);
 
+        Deployment deployment = new Deployment(collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.processDeploymentResult(result);
 
         verify(state).processAction(deployment, result);
@@ -77,6 +115,7 @@ class DeploymentTest {
 
         when(itemEffect.getLatestPerformance()).thenReturn(Optional.of(effectPerformance));
 
+        Deployment deployment = new Deployment(collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.addTriggerExecutor(triggerExecutor);
         deployment.startTriggerExecutors(deployer, actor);
         deployment.replaceActor(newActor);
@@ -95,6 +134,7 @@ class DeploymentTest {
 
         when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(schedule);
 
+        Deployment deployment = new Deployment(collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.scheduleDeploymentCooldown(deployer, COOLDOWN);
 
         verify(deployer).setCanDeploy(false);
@@ -104,6 +144,7 @@ class DeploymentTest {
     @Test
     @DisplayName("startTriggerExecutors starts trigger executors that activate item effect")
     void startTriggerExecutors() {
+        DeploymentObject deploymentObject = mock(DeploymentObject.class);
         TriggerResult triggerResult = mock(TriggerResult.class);
         CollisionResult collisionResult = new CollisionResult(null, null, null);
 
@@ -119,9 +160,13 @@ class DeploymentTest {
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
+        DeploymentResult result = new DeploymentResult(deployer, deploymentObject, actor, COOLDOWN);
+
         when(collisionResultAdapter.adapt(triggerResult)).thenReturn(collisionResult);
 
+        Deployment deployment = new Deployment(collisionResultAdapter, deploymentObjectRegistry, particleEffectSpawner, scheduler, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.addTriggerExecutor(triggerExecutor);
+        deployment.processDeploymentResult(result);
         deployment.startTriggerExecutors(deployer, actor);
 
         ArgumentCaptor<TriggerContext> triggerContextCaptor = ArgumentCaptor.forClass(TriggerContext.class);

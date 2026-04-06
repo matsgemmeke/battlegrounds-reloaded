@@ -3,8 +3,11 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -16,6 +19,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +34,9 @@ public class Deployment {
 
     private final CollisionResultAdapter collisionResultAdapter;
     private final DeploymentObjectRegistry deploymentObjectRegistry;
+    private final DeploymentProperties properties;
     private final ItemEffect itemEffect;
+    private final ParticleEffectSpawner particleEffectSpawner;
     private final Scheduler scheduler;
     private final Set<TriggerExecutor> triggerExecutors;
     private final Set<TriggerRun> triggerRuns;
@@ -38,19 +44,25 @@ public class Deployment {
     private Actor currentActor;
     private boolean deployed;
     private boolean pending;
+    @Nullable
+    private DeploymentObject currentDeploymentObject;
     private DeploymentState state;
 
     @Inject
     public Deployment(
             CollisionResultAdapter collisionResultAdapter,
             DeploymentObjectRegistry deploymentObjectRegistry,
+            ParticleEffectSpawner particleEffectSpawner,
             Scheduler scheduler,
+            @Assisted DeploymentProperties properties,
             @Assisted DeploymentState state,
             @Assisted ItemEffect itemEffect
     ) {
         this.collisionResultAdapter = collisionResultAdapter;
         this.deploymentObjectRegistry = deploymentObjectRegistry;
+        this.particleEffectSpawner = particleEffectSpawner;
         this.scheduler = scheduler;
+        this.properties = properties;
         this.state = state;
         this.itemEffect = itemEffect;
         this.triggerExecutors = new HashSet<>();
@@ -79,7 +91,36 @@ public class Deployment {
         triggerExecutors.add(triggerExecutor);
     }
 
+    public void destroy(Damage damage) {
+        if (currentActor == null || currentDeploymentObject == null) {
+            throw new IllegalStateException("Illegal call to destroy deployment that is not deployed yet");
+        }
+
+        deployed = false;
+
+        if (properties.activateEffectOnDestruction() && damage.type() != DamageType.ENVIRONMENTAL_DAMAGE) {
+            itemEffect.activatePerformances();
+        }
+
+        if (properties.removeDeploymentOnDestruction()) {
+            currentDeploymentObject.remove();
+        }
+
+        if (properties.undoEffectOnDestruction()) {
+            itemEffect.rollbackPerformances();
+        }
+
+        ParticleEffect particleEffect = properties.destructionParticleEffect();
+
+        if (particleEffect != null) {
+            particleEffectSpawner.spawnParticleEffect(particleEffect, currentActor.getLocation());
+        }
+    }
+
     public void processDeploymentResult(DeploymentResult result) {
+        currentActor = result.actor();
+        currentDeploymentObject = result.deploymentObject();
+
         state = state.processAction(this, result);
     }
 
@@ -102,8 +143,6 @@ public class Deployment {
         UUID sourceId = deployer.getUniqueId();
         Location startingLocation = actor.getLocation();
         TriggerContext triggerContext = new TriggerContext(sourceId, actor);
-
-        currentActor = actor;
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
