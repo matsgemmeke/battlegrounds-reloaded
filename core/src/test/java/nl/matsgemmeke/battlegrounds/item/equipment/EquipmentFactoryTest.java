@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -67,12 +68,25 @@ class EquipmentFactoryTest {
         when(displayItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_DISPLAY);
 
         when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
-        when(deploymentFactory.create(any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
+        when(deploymentFactory.create(any(DeploymentProperties.class), any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
         when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
         when(triggerExecutorFactory.create(spec.deploy.triggers.get("scheduled"))).thenReturn(triggerExecutor);
 
         Equipment equipment = equipmentFactory.create(spec, gamePlayer);
+
+        ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
+        verify(deploymentFactory).create(deploymentPropertiesCaptor.capture(), any(DeploymentState.class), any(ItemEffect.class));
+
+        assertThat(deploymentPropertiesCaptor.getValue()).satisfies(properties -> {
+           assertThat(properties.activateEffectOnDestruction()).isTrue();
+           assertThat(properties.destructionParticleEffect()).isNull();
+           assertThat(properties.manualActivationDelay()).isZero();
+           assertThat(properties.manualActivationSounds()).isEmpty();
+           assertThat(properties.removeDeploymentOnCleanup()).isFalse();
+           assertThat(properties.removeDeploymentOnDestruction()).isTrue();
+           assertThat(properties.undoEffectOnDestruction()).isFalse();
+        });
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getName()).isEqualTo("Frag Grenade");
@@ -95,12 +109,25 @@ class EquipmentFactoryTest {
         when(displayItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_DISPLAY);
 
         when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
-        when(deploymentFactory.create(any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
+        when(deploymentFactory.create(any(DeploymentProperties.class), any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
         when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
         when(itemTemplateFactory.create(spec.items.activatorItem)).thenReturn(activatorItemTemplate);
 
         Equipment equipment = equipmentFactory.create(spec);
+
+        ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
+        verify(deploymentFactory).create(deploymentPropertiesCaptor.capture(), any(DeploymentState.class), any(ItemEffect.class));
+
+        assertThat(deploymentPropertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.activateEffectOnDestruction()).isFalse();
+            assertThat(properties.destructionParticleEffect()).isNull();
+            assertThat(properties.manualActivationDelay()).isEqualTo(5);
+            assertThat(properties.manualActivationSounds()).isNotEmpty();
+            assertThat(properties.removeDeploymentOnCleanup()).isTrue();
+            assertThat(properties.removeDeploymentOnDestruction()).isTrue();
+            assertThat(properties.undoEffectOnDestruction()).isFalse();
+        });
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getActivator()).isNotNull();

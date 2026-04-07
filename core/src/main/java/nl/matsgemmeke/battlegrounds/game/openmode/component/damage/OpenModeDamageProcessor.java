@@ -40,7 +40,7 @@ public class OpenModeDamageProcessor implements DamageProcessor {
             damageContext = damageModifier.apply(damageContext);
         }
 
-        System.out.println("processing damage " + damageContext.damage());
+        System.out.println("processing damage " + damageContext);
 
         DamageTarget target = damageContext.target();
         Damage damage = damageContext.damage();
