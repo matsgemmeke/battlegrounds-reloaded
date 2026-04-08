@@ -5,7 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
-import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.ProximityTargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
@@ -39,10 +39,12 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         Location actorLocation = actor.getLocation();
         World world = actor.getWorld();
 
+        double maxDistance = properties.rangeProfile().longRangeDistance();
+
         TargetQuery query = new TargetQuery()
                 .uniqueId(damageSource.getUniqueId())
                 .location(actorLocation)
-                .conditions(new HitboxTargetCondition());
+                .conditions(new ProximityTargetCondition(maxDistance));
 
         for (DamageTarget damageTarget : targetFinder.findTargets(query)) {
             Location damageTargetLocation = damageTarget.getLocation();

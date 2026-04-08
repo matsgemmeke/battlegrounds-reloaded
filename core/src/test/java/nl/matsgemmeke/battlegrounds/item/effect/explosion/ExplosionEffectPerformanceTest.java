@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.ProximityTargetCondition;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
@@ -111,7 +112,7 @@ class ExplosionEffectPerformanceTest {
            assertThat(targetQuery.getLocation()).hasValue(actorLocation);
            assertThat(targetQuery.getConditions())
                    .hasSize(1)
-                   .hasOnlyElementsOfType(HitboxTargetCondition.class);
+                   .hasOnlyElementsOfType(ProximityTargetCondition.class);
            assertThat(targetQuery.isEnemiesOnly()).isFalse();
         });
 
