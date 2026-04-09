@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing;
 
 import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.ThrowDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
