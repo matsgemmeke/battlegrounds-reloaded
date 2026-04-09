@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.deploy.prime;
+package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;

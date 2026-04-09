@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.deploy.prime;
+package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
