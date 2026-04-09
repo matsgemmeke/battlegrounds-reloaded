@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.deploy.place;
+package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
@@ -8,17 +8,14 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -33,7 +30,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class PlaceDeploymentObjectTest {
+class BlockDeploymentObjectTest {
 
     private static final Material MATERIAL = Material.WARPED_BUTTON;
 
@@ -44,21 +41,11 @@ class PlaceDeploymentObjectTest {
     @Mock
     private HitboxProvider<StaticBoundingBox> hitboxProvider;
 
-    private PlaceDeploymentObject deploymentObject;
+    private BlockDeploymentObject deploymentObject;
 
     @BeforeEach
     void setUp() {
-        deploymentObject = new PlaceDeploymentObject(block, MATERIAL, hitboxProvider, destructionListener);
-    }
-
-    @ParameterizedTest
-    @CsvSource({ "WARPED_BUTTON,true", "STONE,false" })
-    public void existsReturnsWhetherBlockTypeEqualsOriginalMaterial(Material material, boolean expectedResult) {
-        when(block.getType()).thenReturn(material);
-
-        boolean exists = deploymentObject.exists();
-
-        assertThat(exists).isEqualTo(expectedResult);
+        deploymentObject = new BlockDeploymentObject(block, MATERIAL, hitboxProvider, destructionListener);
     }
 
     @Test
@@ -92,28 +79,9 @@ class PlaceDeploymentObjectTest {
         assertThat(objectLocation.getZ()).isEqualTo(3.5);
     }
 
-    @Test
-    void getVelocityAlwaysReturnZeroVector() {
-        Vector velocity = deploymentObject.getVelocity();
-
-        assertThat(velocity.getX()).isZero();
-        assertThat(velocity.getY()).isZero();
-        assertThat(velocity.getZ()).isZero();
-    }
-
-    @Test
-    void getWorldReturnsSameWorldAsBlock() {
-        World world = mock(World.class);
-        when(block.getWorld()).thenReturn(world);
-
-        World objectWorld = deploymentObject.getWorld();
-
-        assertThat(objectWorld).isEqualTo(world);
-    }
-
     static Stream<Arguments> damageScenarios() {
         return Stream.of(
-                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, null),
+                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of()),
                 arguments(10.0, 5.0, 100.0, 95.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.BULLET_DAMAGE, 0.5)),
                 arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.5))
         );
@@ -132,7 +100,7 @@ class PlaceDeploymentObjectTest {
         Damage damage = new Damage(damageAmount, damageType);
 
         deploymentObject.setHealth(health);
-        deploymentObject.setResistances(resistances);
+        resistances.forEach(deploymentObject::addResistance);
         double damageDealt = deploymentObject.damage(damage);
 
         assertThat(damageDealt).isEqualTo(expectedDamageDealt);

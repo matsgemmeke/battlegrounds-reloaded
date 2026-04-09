@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.actor.BlockActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.BlockDeploymentObject;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -62,9 +63,10 @@ public class PlaceDeploymentAction implements DeploymentAction {
 
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
 
-        PlaceDeploymentObject deploymentObject = new PlaceDeploymentObject(adjacentBlock, properties.material(), hitboxProvider, destructionListener);
+        BlockDeploymentObject deploymentObject = new BlockDeploymentObject(adjacentBlock, properties.material(), hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());
-        deploymentObject.setResistances(properties.resistances());
+
+        properties.resistances().forEach(deploymentObject::addResistance);
 
         BlockActor actor = new BlockActor(adjacentBlock, properties.material());
         long cooldown = properties.cooldown();

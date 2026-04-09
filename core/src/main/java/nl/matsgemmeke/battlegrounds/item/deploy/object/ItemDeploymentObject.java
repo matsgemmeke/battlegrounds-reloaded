@@ -103,8 +103,8 @@ public class ItemDeploymentObject implements DeploymentObject, DamageTarget, Pro
         return true;
     }
 
-    public void addResistance(DamageType type, double resistance) {
-        resistances.put(type, resistance);
+    public void addResistance(DamageType type, double factor) {
+        resistances.put(type, factor);
     }
 
     @Override

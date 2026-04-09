@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.actor.BlockActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.BlockDeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -142,7 +143,7 @@ class PlaceDeploymentActionTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject()).isInstanceOfSatisfying(PlaceDeploymentObject.class, deploymentObject -> {
+            assertThat(deploymentResult.deploymentObject()).isInstanceOfSatisfying(BlockDeploymentObject.class, deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
             });
@@ -178,7 +179,7 @@ class PlaceDeploymentActionTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject()).isInstanceOfSatisfying(PlaceDeploymentObject.class, deploymentObject -> {
+            assertThat(deploymentResult.deploymentObject()).isInstanceOfSatisfying(BlockDeploymentObject.class, deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
                 assertThat(deploymentObject.getLocation()).isEqualTo(adjacentBlockLocation);
             });
