@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.deploy.place;
+package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
