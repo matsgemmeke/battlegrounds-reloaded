@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
-import nl.matsgemmeke.battlegrounds.item.deploy.drop.DropDeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.DropDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import org.junit.jupiter.api.DisplayName;

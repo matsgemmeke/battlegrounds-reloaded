@@ -16,7 +16,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.FaceAttachable.AttachedFace;
 import org.bukkit.block.data.type.Switch;
-import org.bukkit.entity.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -55,15 +54,13 @@ class PlaceDeploymentActionTest {
     @Mock
     private DestructionListener destructionListener;
     @Mock
-    private Entity deployerEntity;
-    @Mock
     private HitboxResolver hitboxResolver;
     @InjectMocks
     private PlaceDeploymentAction deploymentAction;
 
     @Test
     void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
-        assertThatThrownBy(() -> deploymentAction.perform(deployer, deployerEntity, destructionListener))
+        assertThatThrownBy(() -> deploymentAction.perform(deployer, destructionListener))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
@@ -73,7 +70,7 @@ class PlaceDeploymentActionTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(Collections.emptyList());
 
         deploymentAction.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, destructionListener);
 
         assertThat(deploymentResultOptional).isEmpty();
 
@@ -88,7 +85,7 @@ class PlaceDeploymentActionTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(targetBlock, targetBlock));
 
         deploymentAction.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, destructionListener);
 
         assertThat(deploymentResultOptional).isEmpty();
 
@@ -106,7 +103,7 @@ class PlaceDeploymentActionTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         deploymentAction.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, destructionListener);
 
         assertThat(deploymentResultOptional).isEmpty();
 
@@ -139,7 +136,7 @@ class PlaceDeploymentActionTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         deploymentAction.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, destructionListener);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
@@ -175,7 +172,7 @@ class PlaceDeploymentActionTest {
         when(deployer.getLastTwoTargetBlocks(4)).thenReturn(List.of(adjacentBlock, targetBlock));
 
         deploymentAction.configureProperties(PROPERTIES);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, destructionListener);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);

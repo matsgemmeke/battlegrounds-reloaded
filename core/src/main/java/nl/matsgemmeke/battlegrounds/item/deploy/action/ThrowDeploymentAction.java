@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.ItemDeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -43,7 +42,7 @@ public class ThrowDeploymentAction implements DeploymentAction {
     }
 
     @Override
-    public Optional<DeploymentResult> perform(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
+    public Optional<DeploymentResult> perform(Deployer deployer, DestructionListener destructionListener) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
@@ -51,7 +50,7 @@ public class ThrowDeploymentAction implements DeploymentAction {
         Location deployLocation = deployer.getDeployLocation();
         Vector velocity = deployer.getDeployLocation().getDirection().multiply(properties.velocity());
         ItemStack itemStack = properties.itemTemplate().createItemStack();
-        World world = deployerEntity.getWorld();
+        World world = deployer.getWorld();
 
         Item item = world.dropItem(deployLocation, itemStack);
         item.setPickupDelay(DEFAULT_PICKUP_DELAY);

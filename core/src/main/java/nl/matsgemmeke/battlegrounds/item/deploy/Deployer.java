@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +42,13 @@ public interface Deployer extends DamageSource {
      * @return the held item stack
      */
     ItemStack getHeldItem();
+
+    /**
+     * Gets the world the deployer is located in.
+     *
+     * @return the deployer's world
+     */
+    World getWorld();
 
     /**
      * Gets the last two blocks in deployer's line of sight.

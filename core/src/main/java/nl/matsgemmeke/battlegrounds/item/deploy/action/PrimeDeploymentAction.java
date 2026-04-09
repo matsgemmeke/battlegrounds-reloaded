@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
@@ -39,7 +38,7 @@ public class PrimeDeploymentAction implements DeploymentAction {
     }
 
     @Override
-    public Optional<DeploymentResult> perform(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
+    public Optional<DeploymentResult> perform(Deployer deployer, DestructionListener destructionListener) {
         UUID deployerUniqueId = deployer.getUniqueId();
         GameEntity gameEntity = gameEntityFinder.findGameEntityByUniqueId(deployerUniqueId).orElse(null);
 
@@ -48,7 +47,7 @@ public class PrimeDeploymentAction implements DeploymentAction {
         }
 
         if (!primeSounds.isEmpty()) {
-            audioEmitter.playSounds(primeSounds, deployerEntity.getLocation());
+            audioEmitter.playSounds(primeSounds, deployer.getDeployLocation());
         }
 
         ItemStack heldItemStack = deployer.getHeldItem();

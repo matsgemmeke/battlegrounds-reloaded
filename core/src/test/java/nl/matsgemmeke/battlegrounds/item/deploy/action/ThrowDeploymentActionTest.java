@@ -14,7 +14,6 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -52,9 +51,8 @@ class ThrowDeploymentActionTest {
     @Test
     void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
         Deployer deployer = mock(Deployer.class);
-        Entity deployerEntity = mock(Entity.class);
 
-        assertThatThrownBy(() -> deploymentAction.perform(deployer, deployerEntity, destructionListener))
+        assertThatThrownBy(() -> deploymentAction.perform(deployer, destructionListener))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
@@ -77,15 +75,13 @@ class ThrowDeploymentActionTest {
 
         Deployer deployer = mock(Deployer.class);
         when(deployer.getDeployLocation()).thenReturn(deployLocation);
-
-        Entity entity = mock(Entity.class);
-        when(entity.getWorld()).thenReturn(world);
+        when(deployer.getWorld()).thenReturn(world);
 
         Item item = mock(Item.class);
         when(world.dropItem(deployLocation, itemStack)).thenReturn(item);
 
         deploymentAction.configureProperties(properties);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, entity, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, destructionListener);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);

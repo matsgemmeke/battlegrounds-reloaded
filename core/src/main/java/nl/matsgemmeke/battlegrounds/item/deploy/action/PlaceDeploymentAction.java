@@ -14,7 +14,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.FaceAttachable;
-import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class PlaceDeploymentAction implements DeploymentAction {
     }
 
     @Override
-    public Optional<DeploymentResult> perform(Deployer deployer, Entity deployerEntity, DestructionListener destructionListener) {
+    public Optional<DeploymentResult> perform(Deployer deployer, DestructionListener destructionListener) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }

@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -204,11 +203,8 @@ class DefaultEquipmentTest {
         Deployment deployment = mock(Deployment.class);
         EquipmentUser user = mock(EquipmentUser.class);
 
-        Player player = mock(Player.class);
-        when(user.getEntity()).thenReturn(player);
-
         DeploymentAction deploymentAction = mock(DeploymentAction.class);
-        when(deploymentAction.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
+        when(deploymentAction.perform(eq(user), any(DestructionListener.class))).thenReturn(Optional.empty());
 
         equipment.setDeployment(deployment);
         equipment.performDeploymentAction(deploymentAction, user);
@@ -223,11 +219,8 @@ class DefaultEquipmentTest {
         DeploymentResult deploymentResult = new DeploymentResult(null, null, null, 0L);
         EquipmentUser user = mock(EquipmentUser.class);
 
-        Player player = mock(Player.class);
-        when(user.getEntity()).thenReturn(player);
-
         DeploymentAction deploymentAction = mock(DeploymentAction.class);
-        when(deploymentAction.perform(eq(user), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
+        when(deploymentAction.perform(eq(user), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
 
         equipment.setDeployment(deployment);
         equipment.performDeploymentAction(deploymentAction, user);

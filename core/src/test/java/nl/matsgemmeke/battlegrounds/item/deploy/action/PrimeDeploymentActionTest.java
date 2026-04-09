@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,14 +42,12 @@ class PrimeDeploymentActionTest {
     @Test
     @DisplayName("perform returns empty optional when no game entity exists for deployer unique id")
     void perform_deployerNotRegistered() {
-        Entity deployerEntity = mock(Entity.class);
-
         Deployer deployer = mock(Deployer.class);
         when(deployer.getUniqueId()).thenReturn(DEPLOYER_UNIQUE_ID);
 
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, LISTENER);
 
         assertThat(deploymentResultOptional).isEmpty();
     }
@@ -60,7 +57,6 @@ class PrimeDeploymentActionTest {
     void perform_withoutPlayingSounds() {
         ItemStack itemStack = new ItemStack(Material.STICK);
         GameEntity gameEntity = mock(GameEntity.class);
-        Entity deployerEntity = mock(Entity.class);
 
         Deployer deployer = mock(Deployer.class);
         when(deployer.getHeldItem()).thenReturn(itemStack);
@@ -68,7 +64,7 @@ class PrimeDeploymentActionTest {
 
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
 
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, LISTENER);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
@@ -87,16 +83,14 @@ class PrimeDeploymentActionTest {
         GameEntity gameEntity = mock(GameEntity.class);
 
         Deployer deployer = mock(Deployer.class);
+        when(deployer.getDeployLocation()).thenReturn(deployerLocation);
         when(deployer.getHeldItem()).thenReturn(itemStack);
         when(deployer.getUniqueId()).thenReturn(DEPLOYER_UNIQUE_ID);
-
-        Entity deployerEntity = mock(Entity.class);
-        when(deployerEntity.getLocation()).thenReturn(deployerLocation);
 
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
 
         deploymentAction.configurePrimeSounds(primeSounds);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, deployerEntity, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, LISTENER);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
