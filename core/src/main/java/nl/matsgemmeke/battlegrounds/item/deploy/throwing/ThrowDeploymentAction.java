@@ -7,6 +7,8 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.ItemDeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -57,9 +59,10 @@ public class ThrowDeploymentAction implements DeploymentAction {
 
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
 
-        ThrowDeploymentObject deploymentObject = new ThrowDeploymentObject(item, hitboxProvider, destructionListener);
+        ItemDeploymentObject deploymentObject = new ItemDeploymentObject(item, hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());
-        deploymentObject.setResistances(properties.resistances());
+
+        properties.resistances().forEach(deploymentObject::addResistance);
 
         ItemActor actor = new ItemActor(item);
         long cooldown = properties.cooldown();

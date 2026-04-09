@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.deploy.throwing;
+package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ThrowDeploymentObjectTest {
+class ItemDeploymentObjectTest {
 
     @Mock
     private DestructionListener destructionListener;
@@ -43,7 +43,7 @@ class ThrowDeploymentObjectTest {
     @Mock
     private Item item;
     @InjectMocks
-    private ThrowDeploymentObject deploymentObject;
+    private ItemDeploymentObject deploymentObject;
 
     @ParameterizedTest
     @CsvSource({ "false,true", "true,false" })
@@ -158,10 +158,10 @@ class ThrowDeploymentObjectTest {
 
     static Stream<Arguments> nonLethalDamageScenarios() {
         return Stream.of(
-                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, null),
+                arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of()),
                 arguments(10.0, 5.0, 100.0, 95.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.BULLET_DAMAGE, 0.5)),
                 arguments(10.0, 10.0, 100.0, 90.0, DamageType.BULLET_DAMAGE, Map.of(DamageType.EXPLOSIVE_DAMAGE, 0.5)),
-                arguments(1.0, 1.0, 100.0, 100.0, DamageType.ENVIRONMENTAL_DAMAGE, null)
+                arguments(1.0, 1.0, 100.0, 100.0, DamageType.ENVIRONMENTAL_DAMAGE, Map.of())
         );
     }
 
@@ -181,7 +181,7 @@ class ThrowDeploymentObjectTest {
         when(item.isValid()).thenReturn(true);
 
         deploymentObject.setHealth(health);
-        deploymentObject.setResistances(resistances);
+        resistances.forEach((key, value) -> deploymentObject.addResistance(key, value));
         double damageDealt = deploymentObject.damage(damage);
 
         assertThat(expectedDamageDealt).isEqualTo(damageDealt);
@@ -190,8 +190,8 @@ class ThrowDeploymentObjectTest {
 
     static Stream<Arguments> lethalDamageScenarios() {
         return Stream.of(
-                arguments(1000.0, 1000.0, 100.0, 0.0, DamageType.BULLET_DAMAGE, null),
-                arguments(4.0, 4.0, 100.0, 0.0, DamageType.ENVIRONMENTAL_DAMAGE, null)
+                arguments(1000.0, 1000.0, 100.0, 0.0, DamageType.BULLET_DAMAGE),
+                arguments(4.0, 4.0, 100.0, 0.0, DamageType.ENVIRONMENTAL_DAMAGE)
         );
     }
 
@@ -202,8 +202,7 @@ class ThrowDeploymentObjectTest {
             double expectedDamageDealt,
             double health,
             double expectedHealth,
-            DamageType damageType,
-            Map<DamageType, Double> resistances
+            DamageType damageType
     ) {
         Damage damage = new Damage(damageAmount, damageType);
 
@@ -211,7 +210,6 @@ class ThrowDeploymentObjectTest {
         when(item.isValid()).thenReturn(true);
 
         deploymentObject.setHealth(health);
-        deploymentObject.setResistances(resistances);
         double damageDealt = deploymentObject.damage(damage);
 
         assertThat(expectedDamageDealt).isEqualTo(damageDealt);

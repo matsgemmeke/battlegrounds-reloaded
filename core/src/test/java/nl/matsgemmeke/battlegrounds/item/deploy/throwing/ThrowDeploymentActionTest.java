@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.ItemDeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -88,7 +89,7 @@ class ThrowDeploymentActionTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject()).isInstanceOfSatisfying(ThrowDeploymentObject.class, deploymentObject -> {
+            assertThat(deploymentResult.deploymentObject()).isInstanceOfSatisfying(ItemDeploymentObject.class, deploymentObject -> {
                 assertThat(deploymentObject.getHealth()).isEqualTo(HEALTH);
             });
             assertThat(deploymentResult.actor()).isInstanceOf(ItemActor.class);

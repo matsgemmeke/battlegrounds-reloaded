@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.prime;
 
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;

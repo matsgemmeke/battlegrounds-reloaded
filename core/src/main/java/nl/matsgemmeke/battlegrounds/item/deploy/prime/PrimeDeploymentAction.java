@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
 import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.deploy;
+package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
 import org.bukkit.entity.Entity;
 

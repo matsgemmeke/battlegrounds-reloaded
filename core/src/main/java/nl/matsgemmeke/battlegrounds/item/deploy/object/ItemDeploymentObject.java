@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.item.deploy.throwing;
+package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import org.bukkit.Location;
@@ -15,17 +14,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Represents an item that is deployed in the form of an {@link Item} entity.
+ * A deployment object represented by an {@link Item} entity.
  */
-public class ThrowDeploymentObject implements DeploymentObject, DamageTarget, Projectile {
+public class ItemDeploymentObject implements DeploymentObject, DamageTarget, Projectile {
 
     // An item entity is no living entity, but it has 4 health before getting destroyed
     private static final double ENTITY_HEALTH = 4.0;
@@ -33,26 +32,28 @@ public class ThrowDeploymentObject implements DeploymentObject, DamageTarget, Pr
     private final DestructionListener destructionListener;
     private final HitboxProvider<StaticBoundingBox> hitboxProvider;
     private final Item item;
+    private final Map<DamageType, Double> resistances;
     private final UUID uniqueId;
     @Nullable
     private Damage lastDamage;
     private double entityHealth;
     private double health;
-    @Nullable
-    private Map<DamageType, Double> resistances;
 
-    public ThrowDeploymentObject(Item item, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
+    public ItemDeploymentObject(Item item, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
         this.item = item;
         this.hitboxProvider = hitboxProvider;
         this.destructionListener = destructionListener;
         this.entityHealth = ENTITY_HEALTH;
+        this.resistances = new HashMap<>();
         this.uniqueId = UUID.randomUUID();
     }
 
+    @Override
     public double getHealth() {
         return health;
     }
 
+    @Override
     public void setHealth(double health) {
         this.health = health;
     }
@@ -62,40 +63,39 @@ public class ThrowDeploymentObject implements DeploymentObject, DamageTarget, Pr
         return Optional.ofNullable(lastDamage);
     }
 
-    @NotNull
+    @Override
     public Location getLocation() {
         return item.getLocation();
     }
 
-    @Nullable
-    public Map<DamageType, Double> getResistances() {
-        return resistances;
-    }
-
-    public void setResistances(@Nullable Map<DamageType, Double> resistances) {
-        this.resistances = resistances;
-    }
-
+    @Override
     public UUID getUniqueId() {
         return uniqueId;
     }
 
-    @NotNull
+    @Override
     public Vector getVelocity() {
         return item.getVelocity();
     }
 
-    public void setVelocity(@NotNull Vector velocity) {
+    @Override
+    public void setVelocity(Vector velocity) {
         item.setVelocity(velocity);
     }
 
-    @NotNull
+    @Override
     public World getWorld() {
         return item.getWorld();
     }
 
+    @Override
     public boolean hasGravity() {
         return item.hasGravity();
+    }
+
+    @Override
+    public void setGravity(boolean gravity) {
+        item.setGravity(gravity);
     }
 
     @Override
@@ -103,8 +103,8 @@ public class ThrowDeploymentObject implements DeploymentObject, DamageTarget, Pr
         return true;
     }
 
-    public void setGravity(boolean gravity) {
-        item.setGravity(gravity);
+    public void addResistance(DamageType type, double resistance) {
+        resistances.put(type, resistance);
     }
 
     @Override
@@ -142,6 +142,7 @@ public class ThrowDeploymentObject implements DeploymentObject, DamageTarget, Pr
         return damageAmount;
     }
 
+    @Override
     public boolean exists() {
         return !item.isDead();
     }
@@ -155,10 +156,12 @@ public class ThrowDeploymentObject implements DeploymentObject, DamageTarget, Pr
         return hitboxProvider.provideHitbox(staticBoundingBox);
     }
 
-    public boolean matchesEntity(@NotNull Entity entity) {
+    @Override
+    public boolean matchesEntity(Entity entity) {
         return item == entity;
     }
 
+    @Override
     public void remove() {
         item.remove();
     }

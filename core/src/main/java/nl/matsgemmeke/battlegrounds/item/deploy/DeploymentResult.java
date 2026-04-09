@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 
 /**
  * Describes the result of a deployment action.

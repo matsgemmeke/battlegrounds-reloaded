@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.deploy;
 
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

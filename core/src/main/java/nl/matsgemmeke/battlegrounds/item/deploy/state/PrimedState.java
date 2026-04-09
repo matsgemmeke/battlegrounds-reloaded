@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.state;
 
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 
 /**
  * A deployment state in which the deployable item is primed to activate, but not deployed yet.
