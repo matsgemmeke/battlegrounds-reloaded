@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
 import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
@@ -51,7 +52,7 @@ public class PrimeDeploymentAction implements DeploymentAction {
         }
 
         ItemStack heldItemStack = deployer.getHeldItem();
-        PrimeDeploymentObject deploymentObject = new PrimeDeploymentObject(deployer, deployerEntity, deployer.getHeldItem());
+        HeldDeploymentObject deploymentObject = new HeldDeploymentObject(deployer, deployer.getHeldItem());
         HeldItemActor actor = new HeldItemActor(deployer, gameEntity, heldItemStack);
 
         return Optional.of(new DeploymentResult(deployer, deploymentObject, actor, 0L));

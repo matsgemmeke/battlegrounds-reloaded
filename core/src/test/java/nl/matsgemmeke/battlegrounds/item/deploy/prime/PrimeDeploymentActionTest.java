@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -71,7 +72,7 @@ class PrimeDeploymentActionTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject()).isInstanceOf(PrimeDeploymentObject.class);
+            assertThat(deploymentResult.deploymentObject()).isInstanceOf(HeldDeploymentObject.class);
         });
 
         verifyNoInteractions(audioEmitter);
@@ -99,7 +100,7 @@ class PrimeDeploymentActionTest {
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
-            assertThat(deploymentResult.deploymentObject()).isInstanceOf(PrimeDeploymentObject.class);
+            assertThat(deploymentResult.deploymentObject()).isInstanceOf(HeldDeploymentObject.class);
             assertThat(deploymentResult.actor()).isInstanceOf(HeldItemActor.class);
         });
 
