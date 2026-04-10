@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.Cleanable;
 import nl.matsgemmeke.battlegrounds.item.Interactable;
-import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
@@ -41,21 +40,6 @@ public interface Equipment extends Weapon, Cleanable, Interactable<EquipmentUser
      * @param projectileProperties the projectile properties of the equipment item
      */
     void setProjectileProperties(@Nullable ProjectileProperties projectileProperties);
-
-    /**
-     * Gets the item template to be used for throwing the equipment. Returns null if no template is set for throwing.
-     *
-     * @return the item template for throwing the equipment or null if not set
-     */
-    @Nullable
-    ItemTemplate getThrowItemTemplate();
-
-    /**
-     * Sets the item template to be used for throwing the equipment.
-     *
-     * @param itemTemplate the item template for throwing the equipment
-     */
-    void setThrowItemTemplate(@Nullable ItemTemplate itemTemplate);
 
     /**
      * Gets the user of the equipmemt item. Returns null if the equipment does not have a user.

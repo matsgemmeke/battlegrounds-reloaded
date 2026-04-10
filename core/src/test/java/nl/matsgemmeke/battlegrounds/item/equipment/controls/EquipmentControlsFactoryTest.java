@@ -3,13 +3,11 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.DropDeploymentAction;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.PlaceDeploymentAction;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.PrimeDeploymentAction;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.ThrowDeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
@@ -21,13 +19,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,18 +61,6 @@ class EquipmentControlsFactoryTest {
     }
 
     @Test
-    @DisplayName("create throws EquipmentControlsCreationException when throw action has value but throw item template is null")
-    void create_throwItemTemplateNull() {
-        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
-
-        when(equipment.getThrowItemTemplate()).thenReturn(null);
-
-        assertThatThrownBy(() -> controlsFactory.create(equipmentSpec, equipment))
-                .isInstanceOf(EquipmentControlsCreationException.class)
-                .hasMessage("Cannot create controls for 'throw', the equipment specification does not contain the required throw item template");
-    }
-
-    @Test
     @DisplayName("create throws EquipmentControlsCreationException when throw action has value but throw properties is null")
     void create_throwPropertiesNull() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
@@ -89,13 +76,28 @@ class EquipmentControlsFactoryTest {
     void create_withThrowFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
         ThrowDeploymentAction deploymentAction = mock(ThrowDeploymentAction.class);
-
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
-        when(equipment.getThrowItemTemplate()).thenReturn(itemTemplate);
 
+        when(itemTemplateFactory.create(equipmentSpec.items.throwItem)).thenReturn(itemTemplate);
         when(throwDeploymentActionProvider.get()).thenReturn(deploymentAction);
 
         ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
+
+        ArgumentCaptor<ThrowDeploymentProperties> propertiesCaptor = ArgumentCaptor.forClass(ThrowDeploymentProperties.class);
+        verify(deploymentAction).configureProperties(propertiesCaptor.capture());
+
+        assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.itemTemplate()).isEqualTo(itemTemplate);
+            assertThat(properties.throwSounds()).isNotEmpty();
+            assertThat(properties.resistances()).containsOnly(
+                    entry(DamageType.BULLET_DAMAGE, 0.0),
+                    entry(DamageType.EXPLOSIVE_DAMAGE, 0.0),
+                    entry(DamageType.FIRE_DAMAGE, 0.0)
+            );
+            assertThat(properties.health()).isEqualTo(50.0);
+            assertThat(properties.velocity()).isEqualTo(1.2);
+            assertThat(properties.cooldown()).isEqualTo(30L);
+        });
 
         verify(controls).addControl(eq(Action.LEFT_CLICK), any(ThrowFunction.class));
     }
@@ -178,10 +180,26 @@ class EquipmentControlsFactoryTest {
         equipmentSpec.controls.cook = null;
 
         DropDeploymentAction deploymentAction = mock(DropDeploymentAction.class);
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
 
         when(dropDeploymentActionProvider.get()).thenReturn(deploymentAction);
+        when(itemTemplateFactory.create(equipmentSpec.items.dropItem)).thenReturn(itemTemplate);
 
         ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
+
+        ArgumentCaptor<DropDeploymentProperties> propertiesCaptor = ArgumentCaptor.forClass(DropDeploymentProperties.class);
+        verify(deploymentAction).configureProperties(propertiesCaptor.capture());
+
+        assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.itemTemplate()).isEqualTo(itemTemplate);
+            assertThat(properties.resistances()).containsOnly(
+                    entry(DamageType.BULLET_DAMAGE, 0.0),
+                    entry(DamageType.FIRE_DAMAGE, 0.0)
+            );
+            assertThat(properties.health()).isEqualTo(50.0);
+            assertThat(properties.velocity()).isEqualTo(1.0);
+            assertThat(properties.cooldown()).isEqualTo(30L);
+        });
 
         verify(controls).addControl(eq(Action.DROP_ITEM), any(DropFunction.class));
     }

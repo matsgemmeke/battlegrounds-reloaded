@@ -78,12 +78,7 @@ public class EquipmentControlsFactory {
             }
 
             Action throwAction = Action.valueOf(throwActionValue);
-            ItemTemplate itemTemplate = equipment.getThrowItemTemplate();
-
-            // The specification files should already be validated, so this acts as a double check
-            if (itemTemplate == null) {
-                throw new EquipmentControlsCreationException("Cannot create controls for 'throw', the equipment specification does not contain the required throw item template");
-            }
+            ItemTemplate itemTemplate = itemTemplateFactory.create(spec.items.throwItem);
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(throwProperties.throwSounds);
             Map<DamageType, Double> resistances = this.getResistances(spec.deploy.resistances);
