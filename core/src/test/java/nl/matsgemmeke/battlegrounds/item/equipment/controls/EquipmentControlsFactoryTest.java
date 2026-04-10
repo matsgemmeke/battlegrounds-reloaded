@@ -16,6 +16,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.cook.CookFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,8 @@ class EquipmentControlsFactoryTest {
     @Mock
     private ItemControls<EquipmentUser> controls;
     @Mock
+    private ItemTemplateFactory itemTemplateFactory;
+    @Mock
     private ProjectileEffectFactory projectileEffectFactory;
     @Mock
     private Provider<DropDeploymentAction> dropDeploymentActionProvider;
@@ -55,7 +58,7 @@ class EquipmentControlsFactoryTest {
     void setUp() {
         when(controlsSupplier.get()).thenReturn(controls);
 
-        controlsFactory = new EquipmentControlsFactory(projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controlsSupplier);
+        controlsFactory = new EquipmentControlsFactory(itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controlsSupplier);
     }
 
     @Test

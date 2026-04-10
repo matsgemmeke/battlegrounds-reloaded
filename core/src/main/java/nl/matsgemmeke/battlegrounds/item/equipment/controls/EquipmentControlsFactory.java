@@ -14,12 +14,7 @@ import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.DropDeploymentAction;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.PlaceDeploymentAction;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.PlaceDeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.PrimeDeploymentAction;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.ThrowDeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.deploy.action.ThrowDeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
@@ -28,6 +23,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import org.bukkit.Material;
 
 import java.util.*;
@@ -38,6 +34,7 @@ import java.util.stream.Collectors;
 
 public class EquipmentControlsFactory {
 
+    private final ItemTemplateFactory itemTemplateFactory;
     private final ProjectileEffectFactory projectileEffectFactory;
     private final Provider<DropDeploymentAction> dropDeploymentActionProvider;
     private final Provider<PlaceDeploymentAction> placeDeploymentActionProvider;
@@ -47,6 +44,7 @@ public class EquipmentControlsFactory {
 
     @Inject
     public EquipmentControlsFactory(
+            ItemTemplateFactory itemTemplateFactory,
             ProjectileEffectFactory projectileEffectFactory,
             Provider<DropDeploymentAction> dropDeploymentActionProvider,
             Provider<PlaceDeploymentAction> placeDeploymentActionProvider,
@@ -54,6 +52,7 @@ public class EquipmentControlsFactory {
             Provider<ThrowDeploymentAction> throwDeploymentActionProvider,
             Supplier<ItemControls<EquipmentUser>> controlsSupplier
     ) {
+        this.itemTemplateFactory = itemTemplateFactory;
         this.projectileEffectFactory = projectileEffectFactory;
         this.dropDeploymentActionProvider = dropDeploymentActionProvider;
         this.placeDeploymentActionProvider = placeDeploymentActionProvider;
@@ -159,7 +158,17 @@ public class EquipmentControlsFactory {
 
             Action dropAction = Action.valueOf(dropActionValue);
 
+            ItemTemplate itemTemplate = itemTemplateFactory.create(spec.items.dropItem);
+            Map<DamageType, Double> resistances = this.getResistances(spec.deploy.resistances);
+            double health = spec.deploy.health;
+            double velocity = spec.deploy.dropping.velocity;
+            long cooldown = spec.deploy.dropping.cooldown;
+
+            DropDeploymentProperties properties = new DropDeploymentProperties(itemTemplate, resistances, health, velocity, cooldown);
+
             DropDeploymentAction deploymentAction = dropDeploymentActionProvider.get();
+            deploymentAction.configureProperties(properties);
+
             DropFunction dropFunction = new DropFunction(equipment, deploymentAction);
 
             controls.addControl(dropAction, dropFunction);
