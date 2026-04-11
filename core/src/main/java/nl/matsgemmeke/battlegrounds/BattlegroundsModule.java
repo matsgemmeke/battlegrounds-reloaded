@@ -32,6 +32,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessorProvide
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapterProvider;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.openmode.OpenModeGameEntityFinder;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
@@ -199,6 +200,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(DeploymentObjectRegistry.class).in(GameScoped.class);
         binder.bind(EquipmentRegistry.class).to(DefaultEquipmentRegistry.class).in(GameScoped.class);
         binder.bind(EventDamageAdapter.class).toProvider(EventDamageAdapterProvider.class).in(GameScoped.class);
+        binder.bind(ExplosionAttributorRegistry.class).in(GameScoped.class);
         binder.bind(GameEntityFinder.class).toProvider(GameEntityFinderProvider.class).in(GameScoped.class);
         binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
         binder.bind(GunInfoProvider.class).to(DefaultGunInfoProvider.class).in(GameScoped.class);

@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributor;
+import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.ProximityTargetCondition;
@@ -12,16 +14,24 @@ import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.ArmorStand;
 
 public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
 
     private final DamageProcessor damageProcessor;
+    private final ExplosionAttributorRegistry explosionAttributorRegistry;
     private final ExplosionProperties properties;
     private final TargetFinder targetFinder;
 
     @Inject
-    public ExplosionEffectPerformance(DamageProcessor damageProcessor, TargetFinder targetFinder, @Assisted ExplosionProperties properties) {
+    public ExplosionEffectPerformance(
+            DamageProcessor damageProcessor,
+            ExplosionAttributorRegistry explosionAttributorRegistry,
+            TargetFinder targetFinder,
+            @Assisted ExplosionProperties properties
+    ) {
         this.damageProcessor = damageProcessor;
+        this.explosionAttributorRegistry = explosionAttributorRegistry;
         this.targetFinder = targetFinder;
         this.properties = properties;
     }
@@ -59,7 +69,18 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
             removableActor.remove();
         }
 
-        world.createExplosion(actorLocation, properties.power(), properties.setFire(), properties.breakBlocks());
+        ArmorStand armorStand = world.spawn(actorLocation, ArmorStand.class);
+        armorStand.setInvisible(true);
+        armorStand.setInvulnerable(true);
+        armorStand.setMarker(true);
+
+        ExplosionAttributor attributor = new ExplosionAttributor(armorStand.getUniqueId());
+        explosionAttributorRegistry.addAttributor(attributor);
+
+        world.createExplosion(actorLocation, properties.power(), properties.setFire(), properties.breakBlocks(), armorStand);
+
+        explosionAttributorRegistry.removeAttributor(attributor);
+        armorStand.remove();
     }
 
     private Damage getDamageForTargetLocation(Location sourceLocation, Location targetLocation) {

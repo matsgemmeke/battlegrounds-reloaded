@@ -115,6 +115,10 @@ public class GameContextProvider {
         entityGameKeyMap.put(uniqueId, gameKey);
     }
 
+    public void unregisterEntity(UUID uniqueId) {
+        entityGameKeyMap.remove(uniqueId);
+    }
+
     /**
      * Removes a session instance from the provider.
      *

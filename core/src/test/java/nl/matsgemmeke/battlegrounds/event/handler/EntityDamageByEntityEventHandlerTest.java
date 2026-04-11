@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageResult;
+import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
@@ -15,6 +16,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.projectiles.ProjectileSource;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -42,11 +44,15 @@ class EntityDamageByEntityEventHandlerTest {
     @Mock
     private Entity entity;
     @Mock
+    private GameContext gameContext;
+    @Mock
     private GameContextProvider gameContextProvider;
     @Mock
     private GameScope gameScope;
     @Mock
     private Provider<EventDamageAdapter> eventDamageAdapterProvider;
+    @Mock
+    private Provider<ExplosionAttributorRegistry> explosionAttributorRegistryProvider;
     @Mock
     private Provider<ProjectileRegistry> projectileRegistryProvider;
 
@@ -56,7 +62,7 @@ class EntityDamageByEntityEventHandlerTest {
     void setUp() {
         when(damager.getUniqueId()).thenReturn(DAMAGER_UNIQUE_ID);
 
-        eventHandler = new EntityDamageByEntityEventHandler(gameContextProvider, gameScope, eventDamageAdapterProvider, projectileRegistryProvider);
+        eventHandler = new EntityDamageByEntityEventHandler(gameContextProvider, gameScope, eventDamageAdapterProvider, explosionAttributorRegistryProvider, projectileRegistryProvider);
     }
 
     @Test
@@ -89,7 +95,6 @@ class EntityDamageByEntityEventHandlerTest {
 
     @Test
     void handleSetsEventDamageBasedOnResultFromEventDamageAdapterWhenDamageCauseEqualsEntityAttack() {
-        GameContext gameContext = mock(GameContext.class);
         EventDamageResult eventDamageResult = new EventDamageResult(ADAPTER_DAMAGE);
 
         EventDamageAdapter eventDamageAdapter = mock(EventDamageAdapter.class);
@@ -113,9 +118,51 @@ class EntityDamageByEntityEventHandlerTest {
     }
 
     @Test
-    void handleDoesNothingWhenEventDamageCauseIsProjectileAndProjectileEntityIsNotRegistered() {
-        GameContext gameContext = mock(GameContext.class);
+    @DisplayName("handle does nothing when damage cause is ENTITY_EXPLOSION but damager is not an explosion attributor")
+    void handle_explosionDamageFromAnotherSource() {
+        ExplosionAttributorRegistry explosionAttributorRegistry = mock(ExplosionAttributorRegistry.class);
+        when(explosionAttributorRegistry.isAttributor(DAMAGER_UNIQUE_ID)).thenReturn(false);
 
+        when(explosionAttributorRegistryProvider.get()).thenReturn(explosionAttributorRegistry);
+        when(gameContextProvider.getGameKeyByEntityId(DAMAGER_UNIQUE_ID)).thenReturn(Optional.of(DAMAGER_GAME_KEY));
+        when(gameContextProvider.getGameContext(DAMAGER_GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ExplosionAttributorRegistry> explosionAttributorRegistrySupplier = invocation.getArgument(1);
+            return explosionAttributorRegistrySupplier.get();
+        });
+
+        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, DamageCause.ENTITY_EXPLOSION, EVENT_DAMAGE);
+
+        eventHandler.handle(event);
+
+        assertThat(event.isCancelled()).isFalse();
+        assertThat(event.getDamage()).isEqualTo(EVENT_DAMAGE);
+    }
+
+    @Test
+    @DisplayName("handle sets event damage to zero when damage cause is ENTITY_EXPLOSION and damager is an explosion attributor")
+    void handle_explosionDamageFromAttributor() {
+        ExplosionAttributorRegistry explosionAttributorRegistry = mock(ExplosionAttributorRegistry.class);
+        when(explosionAttributorRegistry.isAttributor(DAMAGER_UNIQUE_ID)).thenReturn(true);
+
+        when(explosionAttributorRegistryProvider.get()).thenReturn(explosionAttributorRegistry);
+        when(gameContextProvider.getGameKeyByEntityId(DAMAGER_UNIQUE_ID)).thenReturn(Optional.of(DAMAGER_GAME_KEY));
+        when(gameContextProvider.getGameContext(DAMAGER_GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameScope.supplyInScope(eq(gameContext), any())).thenAnswer(invocation -> {
+            Supplier<ExplosionAttributorRegistry> explosionAttributorRegistrySupplier = invocation.getArgument(1);
+            return explosionAttributorRegistrySupplier.get();
+        });
+
+        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, entity, DamageCause.ENTITY_EXPLOSION, EVENT_DAMAGE);
+
+        eventHandler.handle(event);
+
+        assertThat(event.isCancelled()).isFalse();
+        assertThat(event.getDamage()).isZero();
+    }
+
+    @Test
+    void handleDoesNothingWhenEventDamageCauseIsProjectileAndProjectileEntityIsNotRegistered() {
         Projectile projectile = mock(Projectile.class);
         when(projectile.getShooter()).thenReturn((ProjectileSource) damager);
         when(projectile.getUniqueId()).thenReturn(PROJECTILE_UNIQUE_ID);
@@ -142,8 +189,6 @@ class EntityDamageByEntityEventHandlerTest {
 
     @Test
     void handleSetsDamageToZeroAndRemovesProjectileFromRegistry() {
-        GameContext gameContext = mock(GameContext.class);
-
         Projectile projectile = mock(Projectile.class);
         when(projectile.getShooter()).thenReturn((ProjectileSource) damager);
         when(projectile.getUniqueId()).thenReturn(PROJECTILE_UNIQUE_ID);

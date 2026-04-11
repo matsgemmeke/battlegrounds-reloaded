@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageResult;
+import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
@@ -23,6 +24,7 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
     private final Provider<EventDamageAdapter> eventDamageAdapterProvider;
+    private final Provider<ExplosionAttributorRegistry> explosionAttributorRegistryProvider;
     private final Provider<ProjectileRegistry> projectileRegistryProvider;
 
     @Inject
@@ -30,11 +32,13 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
             GameContextProvider gameContextProvider,
             GameScope gameScope,
             Provider<EventDamageAdapter> eventDamageAdapterProvider,
+            Provider<ExplosionAttributorRegistry> explosionAttributorRegistryProvider,
             Provider<ProjectileRegistry> projectileRegistryProvider
     ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.eventDamageAdapterProvider = eventDamageAdapterProvider;
+        this.explosionAttributorRegistryProvider = explosionAttributorRegistryProvider;
         this.projectileRegistryProvider = projectileRegistryProvider;
     }
 
@@ -53,6 +57,8 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
 
         if (cause == DamageCause.ENTITY_ATTACK) {
             this.handleMeleeDamage(gameContext, event);
+        } else if (cause == DamageCause.ENTITY_EXPLOSION) {
+            this.handleExplosionDamage(gameContext, event);
         } else if (cause == DamageCause.PROJECTILE) {
             this.handleProjectileDamage(gameContext, event);
         }
@@ -75,6 +81,16 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
         EventDamageResult eventDamageResult = eventDamageAdapter.processMeleeDamage(damager, entity, damageAmount);
 
         event.setDamage(eventDamageResult.damageAmount());
+    }
+
+    private void handleExplosionDamage(GameContext gameContext, EntityDamageByEntityEvent event) {
+        ExplosionAttributorRegistry explosionAttributorRegistry = gameScope.supplyInScope(gameContext, explosionAttributorRegistryProvider::get);
+
+        if (!explosionAttributorRegistry.isAttributor(event.getDamager().getUniqueId())) {
+            return;
+        }
+
+        event.setDamage(0.0);
     }
 
     private void handleProjectileDamage(GameContext gameContext, EntityDamageByEntityEvent event) {
