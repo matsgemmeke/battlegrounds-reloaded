@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -282,10 +282,10 @@ class DefaultGunTest {
 
     @Test
     void onChangeFromCancelsOngoingFunctions() {
-        ItemFunction<GunUser> function1 = mock();
+        Function<GunUser> function1 = mock();
         when(function1.isPerforming()).thenReturn(true);
 
-        ItemFunction<GunUser> function2 = mock();
+        Function<GunUser> function2 = mock();
 
         gun.getControls().addControl(Action.LEFT_CLICK, function1);
         gun.getControls().addControl(Action.CHANGE_FROM, function2);
@@ -300,7 +300,7 @@ class DefaultGunTest {
     void onChangeFrom_performsChangeFromAction() {
         GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         gun.getControls().addControl(Action.CHANGE_FROM, function);
@@ -313,7 +313,7 @@ class DefaultGunTest {
     @Test
     @DisplayName("onLeftClick does not interact with controls when user is null")
     void onLeftClick_nullUser() {
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
 
         gun.getControls().addControl(Action.LEFT_CLICK, function);
         gun.onLeftClick();
@@ -326,7 +326,7 @@ class DefaultGunTest {
     void onLeftClick_performsLeftClickAction() {
         GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         gun.getControls().addControl(Action.LEFT_CLICK, function);
@@ -339,7 +339,7 @@ class DefaultGunTest {
     @Test
     @DisplayName("onRightClick does not interact with controls when user is null")
     void onRightClick_nullUser() {
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
 
         gun.getControls().addControl(Action.RIGHT_CLICK, function);
         gun.onRightClick();
@@ -352,7 +352,7 @@ class DefaultGunTest {
     void onRightClick_performsRightClickAction() {
         GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         gun.getControls().addControl(Action.RIGHT_CLICK, function);
@@ -365,7 +365,7 @@ class DefaultGunTest {
     @Test
     @DisplayName("onSwapFrom does not interact with controls when user is null")
     void onSwapFrom_nullUser() {
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
 
         gun.getControls().addControl(Action.SWAP_FROM, function);
         gun.onSwapFrom();
@@ -378,7 +378,7 @@ class DefaultGunTest {
     void onSwapFrom_performsSwapFromAction() {
         GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         gun.getControls().addControl(Action.SWAP_FROM, function);
@@ -452,7 +452,7 @@ class DefaultGunTest {
     void onDrop_cancelsFunctionAndUnassignsUser() {
         GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
         when(function.isPerforming()).thenReturn(true);
 
         gun.getControls().addControl(Action.LEFT_CLICK, function);

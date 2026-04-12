@@ -11,15 +11,15 @@ import java.util.concurrent.ConcurrentMap;
 
 public class ItemControls<T extends ItemUser> {
 
-    private final ConcurrentMap<Action, List<ItemFunction<T>>> controls;
-    private final Set<ItemFunction<T>> performingFunctions;
+    private final ConcurrentMap<Action, List<Function<T>>> controls;
+    private final Set<Function<T>> performingFunctions;
 
     public ItemControls() {
         this.controls = new ConcurrentHashMap<>();
         this.performingFunctions = new HashSet<>();
     }
 
-    public void addControl(Action action, ItemFunction<T> function) {
+    public void addControl(Action action, Function<T> function) {
         controls.putIfAbsent(action, new ArrayList<>());
         controls.get(action).add(function);
 
@@ -27,7 +27,7 @@ public class ItemControls<T extends ItemUser> {
     }
 
     public void cancelAllFunctions() {
-        for (ItemFunction<T> function : performingFunctions) {
+        for (Function<T> function : performingFunctions) {
             if (function.isPerforming()) {
                 function.cancel();
             }
@@ -39,13 +39,13 @@ public class ItemControls<T extends ItemUser> {
             return;
         }
 
-        List<ItemFunction<T>> functions = controls.get(action);
+        List<Function<T>> functions = controls.get(action);
 
         if (functions == null || functions.isEmpty()) {
             return;
         }
 
-        for (ItemFunction<T> function : functions) {
+        for (Function<T> function : functions) {
             if (function.isAvailable() && function.perform(user)) {
                 break;
             }
@@ -53,7 +53,7 @@ public class ItemControls<T extends ItemUser> {
     }
 
     private boolean isPerformingBlockingFunction() {
-        for (ItemFunction<T> function : performingFunctions) {
+        for (Function<T> function : performingFunctions) {
             if (function.isPerforming() && function.isBlocking()) {
                 return true;
             }

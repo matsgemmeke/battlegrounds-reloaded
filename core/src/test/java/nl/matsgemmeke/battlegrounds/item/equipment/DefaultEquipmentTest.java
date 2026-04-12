@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
@@ -171,7 +171,7 @@ class DefaultEquipmentTest {
     void shouldPerformFunctionWhenLeftClicked() {
         EquipmentUser user = mock(EquipmentUser.class);
 
-        ItemFunction<EquipmentUser> function = mock();
+        Function<EquipmentUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
@@ -186,7 +186,7 @@ class DefaultEquipmentTest {
     void shouldPerformFunctionWhenRightClicked() {
         EquipmentUser user = mock(EquipmentUser.class);
 
-        ItemFunction<EquipmentUser> function = mock();
+        Function<EquipmentUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();

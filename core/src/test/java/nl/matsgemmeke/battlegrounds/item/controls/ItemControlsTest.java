@@ -9,10 +9,10 @@ public class ItemControlsTest {
 
     @Test
     public void shouldCancelPerformingFunctionsWhenCancelling() {
-        ItemFunction<GunUser> function1 = mock();
+        Function<GunUser> function1 = mock();
         when(function1.isPerforming()).thenReturn(true);
 
-        ItemFunction<GunUser> function2 = mock();
+        Function<GunUser> function2 = mock();
 
         ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function1);
@@ -27,7 +27,7 @@ public class ItemControlsTest {
     public void shouldTriggerCorrespondingFunctionWhenPerformingAction() {
         GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
         when(function.isAvailable()).thenReturn(true);
 
         ItemControls<GunUser> controls = new ItemControls<>();
@@ -41,11 +41,11 @@ public class ItemControlsTest {
     public void shouldOnlyTriggerTheFirstFunctionWhenPerformingAction() {
         GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunUser> function1 = mock();
+        Function<GunUser> function1 = mock();
         when(function1.isAvailable()).thenReturn(true);
         when(function1.perform(user)).thenReturn(true);
 
-        ItemFunction<GunUser> function2 = mock();
+        Function<GunUser> function2 = mock();
         when(function2.isAvailable()).thenReturn(true);
 
         ItemControls<GunUser> controls = new ItemControls<>();
@@ -60,7 +60,7 @@ public class ItemControlsTest {
     @Test
     public void shouldNotTriggerFunctionIfActionDoesNotCorrespond() {
         GunUser user = mock(GunUser.class);
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
 
         ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function);
@@ -72,7 +72,7 @@ public class ItemControlsTest {
     @Test
     public void shouldNotTriggerFunctionIsIfNotAvailable() {
         GunUser user = mock(GunUser.class);
-        ItemFunction<GunUser> function = mock();
+        Function<GunUser> function = mock();
 
         ItemControls<GunUser> controls = new ItemControls<>();
         controls.addControl(Action.LEFT_CLICK, function);
@@ -85,13 +85,13 @@ public class ItemControlsTest {
     public void shouldNotTriggerFunctionIfAnotherBlockingFunctionIsPerforming() {
         GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunUser> function1 = mock();
+        Function<GunUser> function1 = mock();
         when(function1.isAvailable()).thenReturn(true).thenReturn(false);
         when(function1.isBlocking()).thenReturn(true);
         when(function1.isPerforming()).thenReturn(false).thenReturn(true);
         when(function1.perform(user)).thenReturn(true);
 
-        ItemFunction<GunUser> function2 = mock();
+        Function<GunUser> function2 = mock();
         when(function2.isAvailable()).thenReturn(true);
 
         ItemControls<GunUser> controls = new ItemControls<>();
@@ -108,12 +108,12 @@ public class ItemControlsTest {
     public void shouldTriggerFunctionIfAnotherFunctionIsPerformingButNotBlocking() {
         GunUser user = mock(GunUser.class);
 
-        ItemFunction<GunUser> function1 = mock();
+        Function<GunUser> function1 = mock();
         when(function1.isAvailable()).thenReturn(true).thenReturn(false);
         when(function1.isPerforming()).thenReturn(false).thenReturn(true);
         when(function1.perform(user)).thenReturn(true);
 
-        ItemFunction<GunUser> function2 = mock();
+        Function<GunUser> function2 = mock();
         when(function2.isAvailable()).thenReturn(true);
 
         ItemControls<GunUser> controls = new ItemControls<>();

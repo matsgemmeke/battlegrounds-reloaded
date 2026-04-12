@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.reload;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
-public class ReloadFunction implements ItemFunction<GunUser> {
+public class ReloadFunction implements Function<GunUser> {
 
     private final Gun gun;
 

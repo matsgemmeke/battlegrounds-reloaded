@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
-public class UseScopeFunction implements ItemFunction<GunUser> {
+public class UseScopeFunction implements Function<GunUser> {
 
     private final Gun gun;
 

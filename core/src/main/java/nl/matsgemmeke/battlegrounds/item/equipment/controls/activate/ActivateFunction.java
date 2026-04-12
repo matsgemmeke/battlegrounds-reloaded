@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.activate;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
-public class ActivateFunction implements ItemFunction<EquipmentUser> {
+public class ActivateFunction implements Function<EquipmentUser> {
 
     private final Equipment equipment;
 

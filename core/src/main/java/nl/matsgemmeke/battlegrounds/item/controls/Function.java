@@ -3,16 +3,15 @@ package nl.matsgemmeke.battlegrounds.item.controls;
 import nl.matsgemmeke.battlegrounds.item.ItemUser;
 
 /**
- * Represents a functional link between a performed action on an item and a specific feature of that item.
- * <p>
- * Implementations of this interface should be concise and designed to activate only the intended feature without
+ * Represents discrete behaviour that can be performed on an item by an {@link ItemUser}.
+ *
+ * <p>Implementations of this interface should be concise and designed to activate only the intended feature without
  * triggering unrelated behaviors. This ensures a clear and modular interaction between item actions and their
  * corresponding effects.
- * </p>
  *
- * @param <T> the required item user for executing the function
+ * @param <T> the type of user that can interact with this function
  */
-public interface ItemFunction<T extends ItemUser> {
+public interface Function<T extends ItemUser> {
 
     /**
      * Gets whether the function is available to be performed.

@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
 import nl.matsgemmeke.battlegrounds.item.deploy.action.ThrowDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
-public class ThrowFunction implements ItemFunction<EquipmentUser> {
+public class ThrowFunction implements Function<EquipmentUser> {
 
     private final Equipment equipment;
     private final ThrowDeploymentAction deploymentAction;

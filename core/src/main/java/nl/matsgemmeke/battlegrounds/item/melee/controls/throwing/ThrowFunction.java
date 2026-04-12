@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.melee.controls.throwing;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 
-public class ThrowFunction implements ItemFunction<MeleeWeaponUser> {
+public class ThrowFunction implements Function<MeleeWeaponUser> {
 
     private final MeleeWeapon meleeWeapon;
 
