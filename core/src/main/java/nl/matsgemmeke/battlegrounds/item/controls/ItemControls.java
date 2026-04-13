@@ -48,7 +48,7 @@ public class ItemControls<T extends ItemUser> {
         for (Function<T> function : functions) {
             FunctionResult result = function.perform(user);
 
-            if (result != FunctionResult.DENIED) {
+            if (result == FunctionResult.SUCCESS) {
                 break;
             }
         }

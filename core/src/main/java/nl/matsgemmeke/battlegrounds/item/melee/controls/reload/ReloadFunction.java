@@ -31,7 +31,7 @@ public class ReloadFunction implements Function<MeleeWeaponUser> {
     @Override
     public FunctionResult perform(MeleeWeaponUser user) {
         if (!meleeWeapon.isReloadAvailable()) {
-            return FunctionResult.DENIED;
+            return FunctionResult.FAILED;
         }
 
         meleeWeapon.reload(user);

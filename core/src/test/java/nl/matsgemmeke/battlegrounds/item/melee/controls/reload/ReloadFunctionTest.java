@@ -48,13 +48,13 @@ class ReloadFunctionTest {
     }
 
     @Test
-    @DisplayName("perform returns DENIED when melee weapon cannot reload")
+    @DisplayName("perform returns FAILED when melee weapon cannot reload")
     void perform_reloadNotAvailable() {
         when(meleeWeapon.isReloadAvailable()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
 
         verify(meleeWeapon, never()).reload(any(ReloadPerformer.class));
     }

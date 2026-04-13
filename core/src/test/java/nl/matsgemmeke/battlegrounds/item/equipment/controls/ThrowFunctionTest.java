@@ -28,24 +28,24 @@ class ThrowFunctionTest {
     private ThrowFunction function;
 
     @Test
-    @DisplayName("perform returns DENIED when equipment is already deployed")
+    @DisplayName("perform returns FAILED when equipment is already deployed")
     void perform_equipmentNotDeployed() {
         when(equipment.isDeployed()).thenReturn(true);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test
-    @DisplayName("perform returns DENIED when user cannot deploy")
+    @DisplayName("perform returns FAILED when user cannot deploy")
     void perform_userCannotDeploy() {
         when(equipment.isDeployed()).thenReturn(false);
         when(user.canDeploy()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test

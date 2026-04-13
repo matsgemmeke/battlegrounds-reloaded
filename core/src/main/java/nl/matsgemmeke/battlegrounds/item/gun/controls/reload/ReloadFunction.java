@@ -31,7 +31,7 @@ public class ReloadFunction implements Function<GunUser> {
     @Override
     public FunctionResult perform(GunUser user) {
         if (!gun.isReloadAvailable()) {
-            return FunctionResult.DENIED;
+            return FunctionResult.FAILED;
         }
 
         gun.reload(user);

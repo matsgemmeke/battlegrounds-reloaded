@@ -34,7 +34,7 @@ public class ThrowFunction implements Function<EquipmentUser> {
     @Override
     public FunctionResult perform(EquipmentUser user) {
         if (equipment.isDeployed() || !user.canDeploy()) {
-            return FunctionResult.DENIED;
+            return FunctionResult.FAILED;
         }
 
         equipment.performDeploymentAction(deploymentAction, user);

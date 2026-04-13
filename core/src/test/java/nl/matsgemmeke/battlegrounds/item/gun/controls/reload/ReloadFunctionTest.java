@@ -49,13 +49,13 @@ class ReloadFunctionTest {
     }
 
     @Test
-    @DisplayName("performs returns DENIED when gun reload is not available")
+    @DisplayName("performs returns FAILED when gun reload is not available")
     void perform_gunNotAvailable() {
         when(gun.isReloadAvailable()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
 
         verify(gun, never()).reload(any(GunUser.class));
     }

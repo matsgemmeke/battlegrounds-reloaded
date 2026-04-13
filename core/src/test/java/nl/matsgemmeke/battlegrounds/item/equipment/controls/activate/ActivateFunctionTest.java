@@ -24,24 +24,24 @@ class ActivateFunctionTest {
     private ActivateFunction function;
 
     @Test
-    @DisplayName("perform returns DENIED when equipment activator is not ready")
+    @DisplayName("perform returns FAILED when equipment activator is not ready")
     void perform_equipmentNotReady() {
         when(equipment.isActivatorReady()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test
-    @DisplayName("perform returns DENIED when user cannot deploy")
+    @DisplayName("perform returns FAILED when user cannot deploy")
     void perform_userCannotDeploy() {
         when(equipment.isActivatorReady()).thenReturn(true);
         when(user.canDeploy()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test

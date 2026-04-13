@@ -24,13 +24,13 @@ class ChangeScopeMagnificationFunctionTest {
     private ChangeScopeMagnificationFunction function;
 
     @Test
-    @DisplayName("perform returns DENIED when gun is not scoped")
+    @DisplayName("perform returns FAILED when gun is not scoped")
     void perform_gunNotScoped() {
         when(gun.isUsingScope()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
 
         verify(gun, never()).changeScopeMagnification();
     }

@@ -31,7 +31,7 @@ public class ActivateFunction implements Function<EquipmentUser> {
     @Override
     public FunctionResult perform(EquipmentUser user) {
         if (!equipment.isActivatorReady() || !user.canDeploy()) {
-            return FunctionResult.DENIED;
+            return FunctionResult.FAILED;
         }
 
         equipment.activateDeployment(user);

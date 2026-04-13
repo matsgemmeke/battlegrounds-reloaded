@@ -27,24 +27,24 @@ class CookFunctionTest {
     private CookFunction function;
 
     @Test
-    @DisplayName("perform returns DENIED when equipment is not awaiting deployment")
+    @DisplayName("perform returns FAILED when equipment is not awaiting deployment")
     void perform_equipmentIsNotAwaitingDeployment() {
         when(equipment.isAwaitingDeployment()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test
-    @DisplayName("perform returns DENIED when user cannot deploy")
+    @DisplayName("perform returns FAILED when user cannot deploy")
     void perform_userCannotDeploy() {
         when(equipment.isAwaitingDeployment()).thenReturn(true);
         when(user.canDeploy()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test

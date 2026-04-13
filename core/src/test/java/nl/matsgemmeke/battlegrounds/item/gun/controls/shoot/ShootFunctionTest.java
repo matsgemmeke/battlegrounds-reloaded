@@ -48,13 +48,13 @@ class ShootFunctionTest {
     }
 
     @Test
-    @DisplayName("perform returns DENIED when gun cannot shoot")
+    @DisplayName("perform returns FAILED when gun cannot shoot")
     void perform_gunCannotShoot() {
         when(gun.canShoot()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
 
         verify(gun, never()).shoot(any(ShotPerformer.class));
     }

@@ -27,35 +27,35 @@ class DropFunctionTest {
     private DropFunction function;
 
     @Test
-    @DisplayName("perform returns DENIED when equipment is not deployed")
+    @DisplayName("perform returns FAILED when equipment is not deployed")
     void perform_equipmentNotDeployed() {
         when(equipment.isDeployed()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test
-    @DisplayName("perform returns DENIED when user cannot deploy")
+    @DisplayName("perform returns FAILED when user cannot deploy")
     void perform_userCannotDeploy() {
         when(equipment.isDeployed()).thenReturn(true);
         when(user.canDeploy()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test
-    @DisplayName("perform returns CANCELLED and performs deployment on equipment")
+    @DisplayName("perform returns SUCCESS and performs deployment on equipment")
     void perform_performsDeployment() {
         when(equipment.isDeployed()).thenReturn(true);
         when(user.canDeploy()).thenReturn(true);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.CANCELLED);
+        assertThat(result).isEqualTo(FunctionResult.SUCCESS);
 
         verify(equipment).performDeploymentAction(deploymentAction, user);
     }

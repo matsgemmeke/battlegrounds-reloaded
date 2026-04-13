@@ -36,13 +36,13 @@ class StopScopeFunctionTest {
     }
 
     @Test
-    @DisplayName("perform returns DENIED when gun is not using scope")
+    @DisplayName("perform returns FAILED when gun is not using scope")
     void perform_gunNotUsingScope() {
         when(gun.isUsingScope()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
 
         verify(gun, never()).cancelScope();
     }

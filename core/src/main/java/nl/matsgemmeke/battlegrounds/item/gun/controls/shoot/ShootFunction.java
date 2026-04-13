@@ -32,7 +32,7 @@ public class ShootFunction implements Function<GunUser> {
     @Override
     public FunctionResult perform(GunUser user) {
         if (!gun.canShoot()) {
-            return FunctionResult.DENIED;
+            return FunctionResult.FAILED;
         }
 
         gun.shoot(user);

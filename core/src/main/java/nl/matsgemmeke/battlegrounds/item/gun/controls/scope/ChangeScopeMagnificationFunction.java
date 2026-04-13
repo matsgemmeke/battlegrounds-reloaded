@@ -31,7 +31,7 @@ public class ChangeScopeMagnificationFunction implements Function<GunUser> {
     @Override
     public FunctionResult perform(GunUser user) {
         if (!gun.isUsingScope()) {
-            return FunctionResult.DENIED;
+            return FunctionResult.FAILED;
         }
 
         gun.changeScopeMagnification();

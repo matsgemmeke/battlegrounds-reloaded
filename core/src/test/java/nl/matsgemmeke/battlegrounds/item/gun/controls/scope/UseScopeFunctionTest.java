@@ -37,13 +37,13 @@ class UseScopeFunctionTest {
     }
 
     @Test
-    @DisplayName("perform returns DENIED when gun is using scope")
+    @DisplayName("perform returns FAILED when gun is using scope")
     void perform_gunUsesScope() {
         when(gun.isUsingScope()).thenReturn(true);
 
         FunctionResult result = function.perform(user);
 
-        assertThat(result).isEqualTo(FunctionResult.DENIED);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
 
         verify(gun, never()).applyScope(any(ScopeUser.class));
     }
