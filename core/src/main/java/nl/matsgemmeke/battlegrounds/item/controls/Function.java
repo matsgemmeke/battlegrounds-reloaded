@@ -14,13 +14,6 @@ import nl.matsgemmeke.battlegrounds.item.ItemUser;
 public interface Function<T extends ItemUser> {
 
     /**
-     * Gets whether the function is available to be performed.
-     *
-     * @return whether the function is available
-     */
-    boolean isAvailable();
-
-    /**
      * Gets whether the function blocks other functions from being performed.
      *
      * @return whether the function is blocking other functions
@@ -47,5 +40,5 @@ public interface Function<T extends ItemUser> {
      * @param user the required item user
      * @return     whether the function performance has started
      */
-    boolean perform(T user);
+    FunctionResult perform(T user);
 }

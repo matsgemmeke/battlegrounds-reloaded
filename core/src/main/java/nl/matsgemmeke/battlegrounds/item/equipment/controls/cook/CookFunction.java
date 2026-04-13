@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.cook;
 
 import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.action.PrimeDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
@@ -15,28 +16,29 @@ public class CookFunction implements Function<EquipmentUser> {
         this.deploymentAction = deploymentAction;
     }
 
-    public boolean isAvailable() {
-        return !equipment.isAwaitingDeployment();
-    }
-
+    @Override
     public boolean isBlocking() {
         return false;
     }
 
+    @Override
     public boolean isPerforming() {
         return false;
     }
 
+    @Override
     public boolean cancel() {
         return false;
     }
 
-    public boolean perform(EquipmentUser user) {
-        if (!user.canDeploy()) {
-            return false;
+    @Override
+    public FunctionResult perform(EquipmentUser user) {
+        if (!equipment.isAwaitingDeployment() || !user.canDeploy()) {
+            return FunctionResult.DENIED;
         }
 
         equipment.performDeploymentAction(deploymentAction, user);
-        return true;
+
+        return FunctionResult.SUCCESS;
     }
 }

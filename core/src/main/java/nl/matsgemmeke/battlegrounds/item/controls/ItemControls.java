@@ -46,7 +46,9 @@ public class ItemControls<T extends ItemUser> {
         }
 
         for (Function<T> function : functions) {
-            if (function.isAvailable() && function.perform(user)) {
+            FunctionResult result = function.perform(user);
+
+            if (result != FunctionResult.DENIED) {
                 break;
             }
         }

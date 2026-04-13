@@ -170,9 +170,7 @@ class DefaultEquipmentTest {
     @Test
     void shouldPerformFunctionWhenLeftClicked() {
         EquipmentUser user = mock(EquipmentUser.class);
-
         Function<EquipmentUser> function = mock();
-        when(function.isAvailable()).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.getControls().addControl(Action.LEFT_CLICK, function);
@@ -185,9 +183,7 @@ class DefaultEquipmentTest {
     @Test
     void shouldPerformFunctionWhenRightClicked() {
         EquipmentUser user = mock(EquipmentUser.class);
-
         Function<EquipmentUser> function = mock();
-        when(function.isAvailable()).thenReturn(true);
 
         DefaultEquipment equipment = new DefaultEquipment();
         equipment.getControls().addControl(Action.RIGHT_CLICK, function);

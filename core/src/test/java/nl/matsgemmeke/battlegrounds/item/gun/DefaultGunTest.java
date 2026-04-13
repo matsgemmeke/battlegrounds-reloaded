@@ -299,9 +299,7 @@ class DefaultGunTest {
     @DisplayName("onChangeFrom performs action on controls when user is not null")
     void onChangeFrom_performsChangeFromAction() {
         GunUser user = mock(GunUser.class);
-
         Function<GunUser> function = mock();
-        when(function.isAvailable()).thenReturn(true);
 
         gun.getControls().addControl(Action.CHANGE_FROM, function);
         gun.setUser(user);
@@ -325,9 +323,7 @@ class DefaultGunTest {
     @DisplayName("onLeftClick performs action on controls when user is not null")
     void onLeftClick_performsLeftClickAction() {
         GunUser user = mock(GunUser.class);
-
         Function<GunUser> function = mock();
-        when(function.isAvailable()).thenReturn(true);
 
         gun.getControls().addControl(Action.LEFT_CLICK, function);
         gun.setUser(user);
@@ -351,9 +347,7 @@ class DefaultGunTest {
     @DisplayName("onRightClick performs action on controls when user is not null")
     void onRightClick_performsRightClickAction() {
         GunUser user = mock(GunUser.class);
-
         Function<GunUser> function = mock();
-        when(function.isAvailable()).thenReturn(true);
 
         gun.getControls().addControl(Action.RIGHT_CLICK, function);
         gun.setUser(user);
@@ -377,9 +371,7 @@ class DefaultGunTest {
     @DisplayName("onSwapFrom performs action on controls when user is not null")
     void onSwapFrom_performsSwapFromAction() {
         GunUser user = mock(GunUser.class);
-
         Function<GunUser> function = mock();
-        when(function.isAvailable()).thenReturn(true);
 
         gun.getControls().addControl(Action.SWAP_FROM, function);
         gun.setUser(user);

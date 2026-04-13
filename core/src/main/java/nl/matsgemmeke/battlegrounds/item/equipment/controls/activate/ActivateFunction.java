@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.activate;
 
 import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
@@ -12,28 +13,29 @@ public class ActivateFunction implements Function<EquipmentUser> {
         this.equipment = equipment;
     }
 
-    public boolean isAvailable() {
-        return equipment.isActivatorReady();
-    }
-
+    @Override
     public boolean isBlocking() {
         return false;
     }
 
+    @Override
     public boolean isPerforming() {
         return false;
     }
 
+    @Override
     public boolean cancel() {
         return false;
     }
 
-    public boolean perform(EquipmentUser user) {
-        if (!user.canDeploy()) {
-            return false;
+    @Override
+    public FunctionResult perform(EquipmentUser user) {
+        if (!equipment.isActivatorReady() || !user.canDeploy()) {
+            return FunctionResult.DENIED;
         }
 
         equipment.activateDeployment(user);
-        return true;
+
+        return FunctionResult.SUCCESS;
     }
 }

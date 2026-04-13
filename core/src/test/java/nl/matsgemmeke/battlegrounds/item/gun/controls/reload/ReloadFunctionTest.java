@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.reload;
 
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import org.junit.jupiter.api.DisplayName;
@@ -19,19 +20,10 @@ class ReloadFunctionTest {
 
     @Mock
     private Gun gun;
+    @Mock
+    private GunUser user;
     @InjectMocks
     private ReloadFunction function;
-
-    @ParameterizedTest
-    @CsvSource({ "true,true", "false,false" })
-    @DisplayName("isAvailable returns whether gun can perform reload")
-    void isAvailable_returnsWhetherGunCanReload(boolean reloadAvailable, boolean expectedAvailable) {
-        when(gun.isReloadAvailable()).thenReturn(reloadAvailable);
-
-        boolean available = function.isAvailable();
-
-        assertThat(available).isEqualTo(expectedAvailable);
-    }
 
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
@@ -57,29 +49,25 @@ class ReloadFunctionTest {
     }
 
     @Test
-    @DisplayName("performs returns false when gun reload is not available")
+    @DisplayName("performs returns DENIED when gun reload is not available")
     void perform_gunNotAvailable() {
         when(gun.isReloadAvailable()).thenReturn(false);
 
-        GunUser user = mock(GunUser.class);
+        FunctionResult result = function.perform(user);
 
-        boolean performed = function.perform(user);
-
-        assertThat(performed).isFalse();
+        assertThat(result).isEqualTo(FunctionResult.DENIED);
 
         verify(gun, never()).reload(any(GunUser.class));
     }
 
     @Test
-    @DisplayName("performs returns true and performs reload")
+    @DisplayName("performs returns SUCCESS and performs reload")
     void perform_performsReload() {
-        GunUser user = mock(GunUser.class);
-
         when(gun.isReloadAvailable()).thenReturn(true);
 
-        boolean performed = function.perform(user);
+        FunctionResult result = function.perform(user);
 
-        assertThat(performed).isTrue();
+        assertThat(result).isEqualTo(FunctionResult.SUCCESS);
 
         verify(gun).reload(user);
     }

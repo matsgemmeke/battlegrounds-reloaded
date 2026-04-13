@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.melee.controls.reload;
 
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
@@ -20,19 +21,10 @@ class ReloadFunctionTest {
 
     @Mock
     private MeleeWeapon meleeWeapon;
+    @Mock
+    private MeleeWeaponUser user;
     @InjectMocks
     private ReloadFunction function;
-
-    @ParameterizedTest
-    @CsvSource({ "true,true", "false,false" })
-    @DisplayName("isAvailable returns whether melee weapon is able to reload")
-    void isAvailable_returnsWhetherMeleeWeaponCanReload(boolean reloadSystemAvailable, boolean expected) {
-        when(meleeWeapon.isReloadAvailable()).thenReturn(reloadSystemAvailable);
-
-        boolean available = function.isAvailable();
-
-        assertThat(available).isEqualTo(expected);
-    }
 
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
@@ -56,25 +48,25 @@ class ReloadFunctionTest {
     }
 
     @Test
-    @DisplayName("perform does not perform reload when melee weapon cannot reload")
+    @DisplayName("perform returns DENIED when melee weapon cannot reload")
     void perform_reloadNotAvailable() {
-        MeleeWeaponUser user = mock(MeleeWeaponUser.class);
-
         when(meleeWeapon.isReloadAvailable()).thenReturn(false);
 
-        function.perform(user);
+        FunctionResult result = function.perform(user);
+
+        assertThat(result).isEqualTo(FunctionResult.DENIED);
 
         verify(meleeWeapon, never()).reload(any(ReloadPerformer.class));
     }
 
     @Test
-    @DisplayName("perform performs reload when melee weapon can reload")
+    @DisplayName("perform returns SUCCESS and performs reload")
     void perform_reloadAvailable() {
-        MeleeWeaponUser user = mock(MeleeWeaponUser.class);
-
         when(meleeWeapon.isReloadAvailable()).thenReturn(true);
 
-        function.perform(user);
+        FunctionResult result = function.perform(user);
+
+        assertThat(result).isEqualTo(FunctionResult.SUCCESS);
 
         verify(meleeWeapon).reload(user);
     }

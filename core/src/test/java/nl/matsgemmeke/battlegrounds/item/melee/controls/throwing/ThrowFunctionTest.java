@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.melee.controls.throwing;
 
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -18,15 +18,10 @@ class ThrowFunctionTest {
 
     @Mock
     private MeleeWeapon meleeWeapon;
+    @Mock
+    private MeleeWeaponUser user;
     @InjectMocks
     private ThrowFunction function;
-
-    @Test
-    void isAvailableAlwaysReturnsTrue() {
-        boolean available = function.isAvailable();
-
-        assertThat(available).isTrue();
-    }
 
     @Test
     void isBlockingAlwaysReturnsTrue() {
@@ -50,11 +45,11 @@ class ThrowFunctionTest {
     }
 
     @Test
-    @DisplayName("perform performs throw on melee weapon")
+    @DisplayName("perform returns SUCCESS and performs throw on melee weapon")
     void perform_performsThrow() {
-        MeleeWeaponUser user = mock(MeleeWeaponUser.class);
+        FunctionResult result = function.perform(user);
 
-        function.perform(user);
+        assertThat(result).isEqualTo(FunctionResult.SUCCESS);
 
         verify(meleeWeapon).performThrow(user);
     }

@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.shoot;
 
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShotPerformer;
@@ -20,19 +21,10 @@ class ShootFunctionTest {
 
     @Mock
     private Gun gun;
+    @Mock
+    private GunUser user;
     @InjectMocks
     private ShootFunction function;
-
-    @ParameterizedTest
-    @CsvSource({ "true,true", "false,false" })
-    @DisplayName("isAvailable returns whether gun can shoot")
-    void isAvailable_returnsGunCanShoot(boolean canShoot, boolean expectedAvailable) {
-        when(gun.canShoot()).thenReturn(canShoot);
-
-        boolean available = function.isAvailable();
-
-        assertThat(available).isEqualTo(expectedAvailable);
-    }
 
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
@@ -56,29 +48,25 @@ class ShootFunctionTest {
     }
 
     @Test
-    @DisplayName("perform returns false when gun cannot shoot")
+    @DisplayName("perform returns DENIED when gun cannot shoot")
     void perform_gunCannotShoot() {
-        GunUser user = mock(GunUser.class);
-
         when(gun.canShoot()).thenReturn(false);
 
-        boolean performed = function.perform(user);
+        FunctionResult result = function.perform(user);
 
-        assertThat(performed).isFalse();
+        assertThat(result).isEqualTo(FunctionResult.DENIED);
 
         verify(gun, never()).shoot(any(ShotPerformer.class));
     }
 
     @Test
-    @DisplayName("perform returns true and shoots when gun can shoot")
+    @DisplayName("perform returns SUCCESS and shoots gun")
     void perform_shootsGun() {
-        GunUser user = mock(GunUser.class);
-
         when(gun.canShoot()).thenReturn(true);
 
-        boolean performed = function.perform(user);
+        FunctionResult result = function.perform(user);
 
-        assertThat(performed).isTrue();
+        assertThat(result).isEqualTo(FunctionResult.SUCCESS);
 
         verify(gun).shoot(user);
     }

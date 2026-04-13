@@ -1,13 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.cook;
 
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.action.PrimeDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,43 +20,42 @@ class CookFunctionTest {
     @Mock
     private Equipment equipment;
     @Mock
+    private EquipmentUser user;
+    @Mock
     private PrimeDeploymentAction deploymentAction;
     @InjectMocks
     private CookFunction function;
 
-    @ParameterizedTest
-    @CsvSource({ "true,false", "false,true" })
-    @DisplayName("isAvailable returns whether equipment is not awaiting deployment")
-    void isAvailable_returnsEquipmentNotAwaitsDeployment(boolean awaitingDeployment, boolean expectedAvailable) {
-        when(equipment.isAwaitingDeployment()).thenReturn(awaitingDeployment);
+    @Test
+    @DisplayName("perform returns DENIED when equipment is not awaiting deployment")
+    void perform_equipmentIsNotAwaitingDeployment() {
+        when(equipment.isAwaitingDeployment()).thenReturn(false);
 
-        boolean available = function.isAvailable();
+        FunctionResult result = function.perform(user);
 
-        assertThat(available).isEqualTo(expectedAvailable);
+        assertThat(result).isEqualTo(FunctionResult.DENIED);
     }
 
     @Test
-    @DisplayName("perform returns false when user cannot deploy")
+    @DisplayName("perform returns DENIED when user cannot deploy")
     void perform_userCannotDeploy() {
-        EquipmentUser user = mock(EquipmentUser.class);
+        when(equipment.isAwaitingDeployment()).thenReturn(true);
         when(user.canDeploy()).thenReturn(false);
 
-        boolean performed = function.perform(user);
+        FunctionResult result = function.perform(user);
 
-        assertThat(performed).isFalse();
-
-        verifyNoInteractions(equipment);
+        assertThat(result).isEqualTo(FunctionResult.DENIED);
     }
 
     @Test
-    @DisplayName("perform returns true and starts deployment process")
+    @DisplayName("perform returns SUCCESS and starts deployment process")
     void perform_startsDeploymentProcess() {
-        EquipmentUser user = mock(EquipmentUser.class);
+        when(equipment.isAwaitingDeployment()).thenReturn(true);
         when(user.canDeploy()).thenReturn(true);
 
-        boolean performed = function.perform(user);
+        FunctionResult result = function.perform(user);
 
-        assertThat(performed).isTrue();
+        assertThat(result).isEqualTo(FunctionResult.SUCCESS);
 
         verify(equipment).performDeploymentAction(deploymentAction, user);
     }

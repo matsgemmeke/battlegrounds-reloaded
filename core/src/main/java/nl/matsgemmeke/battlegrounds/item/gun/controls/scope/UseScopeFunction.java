@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
 import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
@@ -12,28 +13,29 @@ public class UseScopeFunction implements Function<GunUser> {
         this.gun = gun;
     }
 
-    public boolean isAvailable() {
-        return !gun.isUsingScope();
-    }
-
+    @Override
     public boolean isBlocking() {
         return false;
     }
 
+    @Override
     public boolean isPerforming() {
         return false;
     }
 
+    @Override
     public boolean cancel() {
         return gun.cancelScope();
     }
 
-    public boolean perform(GunUser user) {
-        if (!this.isAvailable()) {
-            return false;
+    @Override
+    public FunctionResult perform(GunUser user) {
+        if (gun.isUsingScope()) {
+            return FunctionResult.DENIED;
         }
 
         gun.applyScope(user);
-        return true;
+
+        return FunctionResult.SUCCESS;
     }
 }

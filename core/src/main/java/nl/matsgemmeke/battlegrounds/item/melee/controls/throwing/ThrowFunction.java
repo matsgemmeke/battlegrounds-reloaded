@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.melee.controls.throwing;
 
 import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 
@@ -10,11 +11,6 @@ public class ThrowFunction implements Function<MeleeWeaponUser> {
 
     public ThrowFunction(MeleeWeapon meleeWeapon) {
         this.meleeWeapon = meleeWeapon;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return true;
     }
 
     @Override
@@ -33,8 +29,9 @@ public class ThrowFunction implements Function<MeleeWeaponUser> {
     }
 
     @Override
-    public boolean perform(MeleeWeaponUser user) {
+    public FunctionResult perform(MeleeWeaponUser user) {
         meleeWeapon.performThrow(user);
-        return true;
+
+        return FunctionResult.SUCCESS;
     }
 }

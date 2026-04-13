@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.shoot;
 
 import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
@@ -12,29 +13,30 @@ public class ShootFunction implements Function<GunUser> {
         this.gun = gun;
     }
 
-    public boolean isAvailable() {
-        return gun.canShoot();
-    }
-
+    @Override
     public boolean isBlocking() {
         return true;
     }
 
+    @Override
     public boolean isPerforming() {
         return gun.isShooting();
     }
 
+    @Override
     public boolean cancel() {
         gun.cancelShooting();
         return true;
     }
 
-    public boolean perform(GunUser user) {
-        if (!this.isAvailable()) {
-            return false;
+    @Override
+    public FunctionResult perform(GunUser user) {
+        if (!gun.canShoot()) {
+            return FunctionResult.DENIED;
         }
 
         gun.shoot(user);
-        return true;
+
+        return FunctionResult.SUCCESS;
     }
 }
