@@ -6,6 +6,8 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
+import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
+import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.action.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.*;
@@ -20,7 +22,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
@@ -32,6 +36,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EquipmentControlsFactoryTest {
 
+    @Spy
+    private ActionBindingMapper actionBindingMapper;
     @Mock
     private Equipment equipment;
     @Mock
@@ -50,6 +56,8 @@ class EquipmentControlsFactoryTest {
     private Provider<ThrowDeploymentAction> throwDeploymentActionProvider;
     @Mock
     private Supplier<ItemControls<EquipmentUser>> controlsSupplier;
+    @Captor
+    private ArgumentCaptor<ActionBinding<EquipmentUser>> bindingCaptor;
 
     private EquipmentControlsFactory controlsFactory;
 
@@ -57,7 +65,7 @@ class EquipmentControlsFactoryTest {
     void setUp() {
         when(controlsSupplier.get()).thenReturn(controls);
 
-        controlsFactory = new EquipmentControlsFactory(itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controlsSupplier);
+        controlsFactory = new EquipmentControlsFactory(actionBindingMapper, itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controlsSupplier);
     }
 
     @Test
@@ -99,7 +107,13 @@ class EquipmentControlsFactoryTest {
             assertThat(properties.cooldown()).isEqualTo(30L);
         });
 
-        verify(controls).addControl(eq(Action.LEFT_CLICK), any(ThrowFunction.class));
+        verify(controls).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
+
+        assertThat(bindingCaptor.getValue()).satisfies(binding -> {
+            assertThat(binding.function()).isInstanceOf(ThrowFunction.class);
+            assertThat(binding.blocking()).isTrue();
+            assertThat(binding.cancelsEvent()).isTrue();
+        });
     }
 
     @Test
@@ -128,7 +142,13 @@ class EquipmentControlsFactoryTest {
 
         ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
-        verify(controls).addControl(eq(Action.RIGHT_CLICK), any(PlaceFunction.class));
+        verify(controls).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+
+        assertThat(bindingCaptor.getValue()).satisfies(binding -> {
+            assertThat(binding.function()).isInstanceOf(PlaceFunction.class);
+            assertThat(binding.blocking()).isTrue();
+            assertThat(binding.cancelsEvent()).isTrue();
+        });
     }
 
     @Test
@@ -156,7 +176,13 @@ class EquipmentControlsFactoryTest {
 
         ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
-        verify(controls).addControl(eq(Action.RIGHT_CLICK), any(CookFunction.class));
+        verify(controls).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+
+        assertThat(bindingCaptor.getValue()).satisfies(binding -> {
+            assertThat(binding.function()).isInstanceOf(CookFunction.class);
+            assertThat(binding.blocking()).isFalse();
+            assertThat(binding.cancelsEvent()).isTrue();
+        });
     }
 
     @Test
@@ -201,7 +227,13 @@ class EquipmentControlsFactoryTest {
             assertThat(properties.cooldown()).isEqualTo(30L);
         });
 
-        verify(controls).addControl(eq(Action.DROP_ITEM), any(DropFunction.class));
+        verify(controls).bind(eq(Action.DROP_ITEM), bindingCaptor.capture());
+
+        assertThat(bindingCaptor.getValue()).satisfies(binding -> {
+            assertThat(binding.function()).isInstanceOf(DropFunction.class);
+            assertThat(binding.blocking()).isTrue();
+            assertThat(binding.cancelsEvent()).isTrue();
+        });
     }
 
     @Test
@@ -213,7 +245,13 @@ class EquipmentControlsFactoryTest {
 
         ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
 
-        verify(controls).addControl(eq(Action.RIGHT_CLICK), any(ActivateFunction.class));
+        verify(controls).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+
+        assertThat(bindingCaptor.getValue()).satisfies(binding -> {
+            assertThat(binding.function()).isInstanceOf(ActivateFunction.class);
+            assertThat(binding.blocking()).isTrue();
+            assertThat(binding.cancelsEvent()).isTrue();
+        });
     }
 
     private EquipmentSpec createEquipmentSpec(String filePath) {

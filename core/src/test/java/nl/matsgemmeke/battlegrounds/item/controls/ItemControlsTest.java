@@ -31,8 +31,11 @@ class ItemControlsTest {
 
         Function<GunUser> function2 = mock();
 
-        controls.addControl(Action.LEFT_CLICK, function1);
-        controls.addControl(Action.LEFT_CLICK, function2);
+        ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, false, true, false);
+        ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
+
+        controls.bind(Action.LEFT_CLICK, binding1);
+        controls.bind(Action.LEFT_CLICK, binding2);
         controls.cancelAllFunctions();
 
         verify(function1).cancel();
@@ -40,15 +43,18 @@ class ItemControlsTest {
     }
 
     @Test
-    @DisplayName("performAction triggers only the first function when its result is successful")
+    @DisplayName("performAction triggers only the first function when its action binding stops the chain")
     void performAction_firstFunctionIsSuccessful() {
         Function<GunUser> function1 = mock();
         when(function1.perform(user)).thenReturn(FunctionResult.SUCCESS);
 
         Function<GunUser> function2 = mock();
 
-        controls.addControl(Action.LEFT_CLICK, function1);
-        controls.addControl(Action.LEFT_CLICK, function2);
+        ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, false, true, false);
+        ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
+
+        controls.bind(Action.LEFT_CLICK, binding1);
+        controls.bind(Action.LEFT_CLICK, binding2);
         controls.performAction(Action.LEFT_CLICK, user);
 
         verify(function1).perform(user);
@@ -59,8 +65,9 @@ class ItemControlsTest {
     @DisplayName("performAction does not perform any function when given action has no configured functions")
     void performAction_actionWithoutFunctions() {
         Function<GunUser> function = mock();
+        ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, true, false);
 
-        controls.addControl(Action.LEFT_CLICK, function);
+        controls.bind(Action.LEFT_CLICK, binding);
         controls.performAction(Action.RIGHT_CLICK, user);
 
         verify(function, never()).perform(user);
@@ -70,18 +77,20 @@ class ItemControlsTest {
     @DisplayName("performAction does not perform any function when another blocking function is performing")
     void performAction_blockingFunctionIsPerforming() {
         Function<GunUser> function1 = mock();
-        when(function1.isBlocking()).thenReturn(true);
-        when(function1.isPerforming()).thenReturn(false).thenReturn(true);
+        when(function1.isPerforming()).thenReturn(false).thenReturn(false).thenReturn(true);
         when(function1.perform(user)).thenReturn(FunctionResult.SUCCESS);
 
         Function<GunUser> function2 = mock();
 
-        controls.addControl(Action.LEFT_CLICK, function1);
-        controls.addControl(Action.LEFT_CLICK, function2);
+        ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, true, true, false);
+        ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
+
+        controls.bind(Action.LEFT_CLICK, binding1);
+        controls.bind(Action.LEFT_CLICK, binding2);
         controls.performAction(Action.LEFT_CLICK, user);
         controls.performAction(Action.LEFT_CLICK, user);
 
-        verify(function1).perform(user);
+        verify(function1, atMost(1)).perform(user);
         verify(function2, never()).perform(user);
     }
 
@@ -89,15 +98,17 @@ class ItemControlsTest {
     @DisplayName("performAction performs function when another function is performing but is not blocking")
     void performAction_nonBlockingFunctionIsPerforming() {
         Function<GunUser> function1 = mock();
-        when(function1.isBlocking()).thenReturn(false);
-        when(function1.isPerforming()).thenReturn(false).thenReturn(true);
+        when(function1.isPerforming()).thenReturn(false).thenReturn(false).thenReturn(true);
         when(function1.perform(user)).thenReturn(FunctionResult.SUCCESS);
 
         Function<GunUser> function2 = mock();
         when(function2.perform(user)).thenReturn(FunctionResult.SUCCESS);
 
-        controls.addControl(Action.LEFT_CLICK, function1);
-        controls.addControl(Action.LEFT_CLICK, function2);
+        ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, false, true, false);
+        ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
+
+        controls.bind(Action.LEFT_CLICK, binding1);
+        controls.bind(Action.LEFT_CLICK, binding2);
         controls.performAction(Action.LEFT_CLICK, user);
         controls.performAction(Action.LEFT_CLICK, user);
 

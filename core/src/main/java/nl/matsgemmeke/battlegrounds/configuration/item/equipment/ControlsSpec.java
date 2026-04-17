@@ -1,22 +1,22 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.type.Action;
-import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
+import jakarta.validation.Valid;
+import nl.matsgemmeke.battlegrounds.configuration.item.controls.ControlSpec;
 
 public class ControlsSpec {
 
-    @EnumValue(type = Action.class)
-    public String throwing;
+    @Valid
+    public ControlSpec throwing;
 
-    @EnumValue(type = Action.class)
-    public String cook;
+    @Valid
+    public ControlSpec cook;
 
-    @EnumValue(type = Action.class)
-    public String drop;
+    @Valid
+    public ControlSpec drop;
 
-    @EnumValue(type = Action.class)
-    public String place;
+    @Valid
+    public ControlSpec place;
 
-    @EnumValue(type = Action.class)
-    public String activate;
+    @Valid
+    public ControlSpec activate;
 }

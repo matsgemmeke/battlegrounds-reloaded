@@ -76,6 +76,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPer
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
@@ -145,6 +146,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
         binder.bind(new TypeLiteral<Supplier<ItemControls<EquipmentUser>>>() {}).toInstance(ItemControls::new);
+        binder.bind(new TypeLiteral<Supplier<ItemControls<GunUser>>>() {}).toInstance(ItemControls::new);
         binder.bind(new TypeLiteral<Supplier<ItemControls<MeleeWeaponUser>>>() {}).toInstance(ItemControls::new);
 
         // Singleton bindings

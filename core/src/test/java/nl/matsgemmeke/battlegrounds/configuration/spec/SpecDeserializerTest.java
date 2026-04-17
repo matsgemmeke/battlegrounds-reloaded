@@ -43,8 +43,16 @@ class SpecDeserializerTest {
         assertThat(gunSpec.ammo.defaultMagazineAmount).isEqualTo(3);
         assertThat(gunSpec.ammo.maxMagazineAmount).isEqualTo(8);
 
-        assertThat(gunSpec.controls.reload).isEqualTo("LEFT_CLICK");
-        assertThat(gunSpec.controls.shoot).isEqualTo("RIGHT_CLICK");
+        assertThat(gunSpec.controls.reload.action).isEqualTo("LEFT_CLICK");
+        assertThat(gunSpec.controls.reload.priority).isEqualTo(1);
+        assertThat(gunSpec.controls.reload.stopsChain).isFalse();
+        assertThat(gunSpec.controls.reload.blocking).isTrue();
+        assertThat(gunSpec.controls.reload.cancelsEvent).isTrue();
+        assertThat(gunSpec.controls.shoot.action).isEqualTo("RIGHT_CLICK");
+        assertThat(gunSpec.controls.shoot.priority).isEqualTo(1);
+        assertThat(gunSpec.controls.shoot.stopsChain).isFalse();
+        assertThat(gunSpec.controls.shoot.blocking).isTrue();
+        assertThat(gunSpec.controls.shoot.cancelsEvent).isTrue();
         assertThat(gunSpec.controls.scopeUse).isNull();
         assertThat(gunSpec.controls.scopeStop).isNull();
         assertThat(gunSpec.controls.scopeChangeMagnification).isNull();

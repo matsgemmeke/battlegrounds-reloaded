@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.melee;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.type.Action;
-import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
+import jakarta.validation.Valid;
+import nl.matsgemmeke.battlegrounds.configuration.item.controls.ControlSpec;
 
 public class ControlsSpec {
 
-    @EnumValue(type = Action.class)
-    public String reload;
+    @Valid
+    public ControlSpec reload;
 
-    @EnumValue(type = Action.class)
-    public String throwing;
+    @Valid
+    public ControlSpec throwing;
 }

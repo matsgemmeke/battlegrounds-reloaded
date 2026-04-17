@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.configuration.item.controls.ControlSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.CookingPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.PlacePropertiesSpec;
@@ -13,6 +14,8 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
+import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
+import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.deploy.action.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
@@ -34,6 +37,7 @@ import java.util.stream.Collectors;
 
 public class EquipmentControlsFactory {
 
+    private final ActionBindingMapper actionBindingMapper;
     private final ItemTemplateFactory itemTemplateFactory;
     private final ProjectileEffectFactory projectileEffectFactory;
     private final Provider<DropDeploymentAction> dropDeploymentActionProvider;
@@ -44,6 +48,7 @@ public class EquipmentControlsFactory {
 
     @Inject
     public EquipmentControlsFactory(
+            ActionBindingMapper actionBindingMapper,
             ItemTemplateFactory itemTemplateFactory,
             ProjectileEffectFactory projectileEffectFactory,
             Provider<DropDeploymentAction> dropDeploymentActionProvider,
@@ -52,6 +57,7 @@ public class EquipmentControlsFactory {
             Provider<ThrowDeploymentAction> throwDeploymentActionProvider,
             Supplier<ItemControls<EquipmentUser>> controlsSupplier
     ) {
+        this.actionBindingMapper = actionBindingMapper;
         this.itemTemplateFactory = itemTemplateFactory;
         this.projectileEffectFactory = projectileEffectFactory;
         this.dropDeploymentActionProvider = dropDeploymentActionProvider;
@@ -64,20 +70,20 @@ public class EquipmentControlsFactory {
     public ItemControls<EquipmentUser> create(EquipmentSpec spec, Equipment equipment) {
         ItemControls<EquipmentUser> controls = controlsSupplier.get();
 
-        String throwActionValue = spec.controls.throwing;
-        String placeActionValue = spec.controls.place;
-        String cookActionValue = spec.controls.cook;
-        String dropActionValue = spec.controls.drop;
-        String activateActionValue = spec.controls.activate;
+        ControlSpec throwSpec = spec.controls.throwing;
+        ControlSpec placeSpec = spec.controls.place;
+        ControlSpec cookSpec = spec.controls.cook;
+        ControlSpec dropSpec = spec.controls.drop;
+        ControlSpec activateSpec = spec.controls.activate;
 
-        if (throwActionValue != null) {
+        if (throwSpec != null) {
             ThrowPropertiesSpec throwProperties = spec.deploy.throwing;
 
             if (throwProperties == null) {
                 throw new EquipmentControlsCreationException("Cannot create controls for 'throw', the equipment specification does not contain the required throw properties");
             }
 
-            Action throwAction = Action.valueOf(throwActionValue);
+            Action throwAction = Action.valueOf(throwSpec.action);
             ItemTemplate itemTemplate = itemTemplateFactory.create(spec.items.throwItem);
 
             List<GameSound> throwSounds = DefaultGameSound.parseSounds(throwProperties.throwSounds);
@@ -98,12 +104,13 @@ public class EquipmentControlsFactory {
             deploymentAction.configureProperties(properties);
 
             ThrowFunction throwFunction = new ThrowFunction(equipment, deploymentAction);
+            ActionBinding<EquipmentUser> throwBinding = actionBindingMapper.toBinding(throwSpec, throwFunction);
 
-            controls.addControl(throwAction, throwFunction);
+            controls.bind(throwAction, throwBinding);
         }
 
-        if (placeActionValue != null) {
-            Action placeAction = Action.valueOf(placeActionValue);
+        if (placeSpec != null) {
+            Action placeAction = Action.valueOf(placeSpec.action);
             PlacePropertiesSpec placeProperties = spec.deploy.placing;
 
             if (placeProperties == null) {
@@ -122,36 +129,38 @@ public class EquipmentControlsFactory {
             deploymentAction.configureProperties(properties);
 
             PlaceFunction placeFunction = new PlaceFunction(equipment, deploymentAction);
+            ActionBinding<EquipmentUser> placeBinding = actionBindingMapper.toBinding(placeSpec, placeFunction);
 
-            controls.addControl(placeAction, placeFunction);
+            controls.bind(placeAction, placeBinding);
         }
 
-        if (cookActionValue != null) {
+        if (cookSpec != null) {
             CookingPropertiesSpec cookProperties = spec.deploy.cooking;
 
             if (cookProperties == null) {
                 throw new EquipmentControlsCreationException("Cannot create controls for 'cook', the equipment specification does not contain the required cook properties");
             }
 
-            Action cookAction = Action.valueOf(cookActionValue);
+            Action cookAction = Action.valueOf(cookSpec.action);
             List<GameSound> cookSounds = DefaultGameSound.parseSounds(cookProperties.cookSounds);
 
             PrimeDeploymentAction deployment = primeDeploymentActionProvider.get();
             deployment.configurePrimeSounds(cookSounds);
 
             CookFunction cookFunction = new CookFunction(equipment, deployment);
+            ActionBinding<EquipmentUser> cookBinding = actionBindingMapper.toBinding(cookSpec, cookFunction);
 
-            controls.addControl(cookAction, cookFunction);
+            controls.bind(cookAction, cookBinding);
         }
 
-        if (dropActionValue != null) {
+        if (dropSpec != null) {
             DropPropertiesSpec dropProperties = spec.deploy.dropping;
 
             if (dropProperties == null) {
                 throw new EquipmentControlsCreationException("Cannot create controls for 'drop', the equipment specification does not contain the required drop properties");
             }
 
-            Action dropAction = Action.valueOf(dropActionValue);
+            Action dropAction = Action.valueOf(dropSpec.action);
 
             ItemTemplate itemTemplate = itemTemplateFactory.create(spec.items.dropItem);
             Map<DamageType, Double> resistances = this.getResistances(spec.deploy.resistances);
@@ -165,15 +174,17 @@ public class EquipmentControlsFactory {
             deploymentAction.configureProperties(properties);
 
             DropFunction dropFunction = new DropFunction(equipment, deploymentAction);
+            ActionBinding<EquipmentUser> dropBinding = actionBindingMapper.toBinding(dropSpec, dropFunction);
 
-            controls.addControl(dropAction, dropFunction);
+            controls.bind(dropAction, dropBinding);
         }
 
-        if (activateActionValue != null) {
-            Action activateAction = Action.valueOf(activateActionValue);
+        if (activateSpec != null) {
+            Action activateAction = Action.valueOf(activateSpec.action);
             ActivateFunction activateFunction = new ActivateFunction(equipment);
+            ActionBinding<EquipmentUser> activateBinding = actionBindingMapper.toBinding(activateSpec, activateFunction);
 
-            controls.addControl(activateAction, activateFunction);
+            controls.bind(activateAction, activateBinding);
         }
 
         return controls;

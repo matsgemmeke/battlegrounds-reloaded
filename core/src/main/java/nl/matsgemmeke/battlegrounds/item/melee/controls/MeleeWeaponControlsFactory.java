@@ -1,8 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.melee.controls;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.configuration.item.controls.ControlSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
+import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
+import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
@@ -13,31 +16,35 @@ import java.util.function.Supplier;
 
 public class MeleeWeaponControlsFactory {
 
+    private final ActionBindingMapper actionBindingMapper;
     private final Supplier<ItemControls<MeleeWeaponUser>> controlsSupplier;
 
     @Inject
-    public MeleeWeaponControlsFactory(Supplier<ItemControls<MeleeWeaponUser>> controlsSupplier) {
+    public MeleeWeaponControlsFactory(ActionBindingMapper actionBindingMapper, Supplier<ItemControls<MeleeWeaponUser>> controlsSupplier) {
+        this.actionBindingMapper = actionBindingMapper;
         this.controlsSupplier = controlsSupplier;
     }
 
     public ItemControls<MeleeWeaponUser> create(ControlsSpec spec, MeleeWeapon meleeWeapon) {
         ItemControls<MeleeWeaponUser> controls = controlsSupplier.get();
 
-        String reloadActionValue = spec.reload;
-        String throwingActionValue = spec.throwing;
+        ControlSpec reloadControlSpec = spec.reload;
+        ControlSpec throwingControlSpec = spec.throwing;
 
-        if (reloadActionValue != null) {
-            Action reloadAction = Action.valueOf(reloadActionValue);
+        if (reloadControlSpec != null) {
+            Action reloadAction = Action.valueOf(reloadControlSpec.action);
             ReloadFunction reloadFunction = new ReloadFunction(meleeWeapon);
+            ActionBinding<MeleeWeaponUser> reloadBinding = actionBindingMapper.toBinding(reloadControlSpec, reloadFunction);
 
-            controls.addControl(reloadAction, reloadFunction);
+            controls.bind(reloadAction, reloadBinding);
         }
 
-        if (throwingActionValue != null) {
-            Action throwingAction = Action.valueOf(throwingActionValue);
+        if (throwingControlSpec != null) {
+            Action throwAction = Action.valueOf(throwingControlSpec.action);
             ThrowFunction throwFunction = new ThrowFunction(meleeWeapon);
+            ActionBinding<MeleeWeaponUser> throwBinding = actionBindingMapper.toBinding(throwingControlSpec, throwFunction);
 
-            controls.addControl(throwingAction, throwFunction);
+            controls.bind(throwAction, throwBinding);
         }
 
         return controls;

@@ -2,36 +2,32 @@ package nl.matsgemmeke.battlegrounds.item.controls;
 
 import nl.matsgemmeke.battlegrounds.item.ItemUser;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class ItemControls<T extends ItemUser> {
 
-    private final ConcurrentMap<Action, List<Function<T>>> controls;
-    private final Set<Function<T>> performingFunctions;
+    private final ConcurrentMap<Action, Set<ActionBinding<T>>> bindings;
 
     public ItemControls() {
-        this.controls = new ConcurrentHashMap<>();
-        this.performingFunctions = new HashSet<>();
+        this.bindings = new ConcurrentHashMap<>();
     }
 
-    public void addControl(Action action, Function<T> function) {
-        controls.putIfAbsent(action, new ArrayList<>());
-        controls.get(action).add(function);
-
-        performingFunctions.add(function);
+    public void bind(Action action, ActionBinding<T> functionEntry) {
+        bindings.computeIfAbsent(action, k -> new TreeSet<>(
+                Comparator.comparingInt(ActionBinding<T>::priority)
+                        .thenComparing(e -> e.function().hashCode())
+        )).add(functionEntry);
     }
 
     public void cancelAllFunctions() {
-        for (Function<T> function : performingFunctions) {
-            if (function.isPerforming()) {
-                function.cancel();
-            }
-        }
+        bindings.values().stream()
+                .flatMap(Set::stream)
+                .filter(entry -> entry.function().isPerforming())
+                .forEach(entry -> entry.function().cancel());
     }
 
     public void performAction(Action action, T user) {
@@ -39,27 +35,28 @@ public class ItemControls<T extends ItemUser> {
             return;
         }
 
-        List<Function<T>> functions = controls.get(action);
+        Set<ActionBinding<T>> bindings = this.bindings.get(action);
 
-        if (functions == null || functions.isEmpty()) {
+        if (bindings == null || bindings.isEmpty()) {
             return;
         }
 
-        for (Function<T> function : functions) {
-            FunctionResult result = function.perform(user);
+        for (ActionBinding<T> binding : bindings) {
+            Function<T> function = binding.function();
 
-            if (result == FunctionResult.SUCCESS) {
-                break;
+            if (!function.isPerforming()) {
+                FunctionResult result = function.perform(user);
+
+                if (result == FunctionResult.SUCCESS && binding.stopsChain()) {
+                    break;
+                }
             }
         }
     }
 
     private boolean isPerformingBlockingFunction() {
-        for (Function<T> function : performingFunctions) {
-            if (function.isPerforming() && function.isBlocking()) {
-                return true;
-            }
-        }
-        return false;
+        return bindings.values().stream()
+                .flatMap(Set::stream)
+                .anyMatch(entry -> entry.function().isPerforming() && entry.blocking());
     }
 }

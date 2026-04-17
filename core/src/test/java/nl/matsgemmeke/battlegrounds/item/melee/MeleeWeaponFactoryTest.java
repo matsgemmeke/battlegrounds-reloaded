@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.melee;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.melee.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
@@ -80,22 +79,17 @@ class MeleeWeaponFactoryTest {
     @DisplayName("create returns MeleeWeapon with controls")
     void create_withControls() {
         ItemControls<MeleeWeaponUser> controls = new ItemControls<>();
+        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("ballistic_knife");
 
-        ControlsSpec controlsSpec = new ControlsSpec();
-        controlsSpec.throwing = "RIGHT_CLICK";
-
-        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("combat_knife");
-        spec.controls = controlsSpec;
-
-        when(controlsFactory.create(eq(controlsSpec), any(MeleeWeapon.class))).thenReturn(controls);
+        when(controlsFactory.create(eq(spec.controls), any(MeleeWeapon.class))).thenReturn(controls);
 
         MeleeWeapon result = meleeWeaponFactory.create(spec);
 
         assertThat(result).isInstanceOfSatisfying(DefaultMeleeWeapon.class, meleeWeapon -> {
-            assertThat(meleeWeapon.getName()).isEqualTo("Combat Knife");
-            assertThat(meleeWeapon.getDescription()).isEqualTo("Standard issue military knife. Fast, quiet and deadly.");
+            assertThat(meleeWeapon.getName()).isEqualTo("Ballistic Knife");
+            assertThat(meleeWeapon.getDescription()).isEqualTo("Spring-action knife launcher. Can fire the blade as a projectile.");
             assertThat(meleeWeapon.getUser()).isEmpty();
-            assertThat(meleeWeapon.getAttackDamage()).isEqualTo(75.0);
+            assertThat(meleeWeapon.getAttackDamage()).isEqualTo(60.0);
             assertThat(meleeWeapon.getReloadSystem()).isNull();
         });
 
