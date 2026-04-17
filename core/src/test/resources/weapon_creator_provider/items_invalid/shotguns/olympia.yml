@@ -3,8 +3,14 @@ gun-type: SHOTGUN
 description: Double-barrel over/under shotgun. Effective at medium to close range.
 price: 1100
 controls:
-  shoot: RIGHT_CLICK
-  reload: LEFT_CLICK
+  shoot:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
+  reload:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 ammo:
   magazine-size: 2
   default-magazine-amount: 9

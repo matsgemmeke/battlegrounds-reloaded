@@ -2,7 +2,10 @@ name: Tactical Insertion
 equipment-type: TACTICAL
 description: Marks a location as your next spawn point.
 controls:
-  throwing: LEFT_CLICK
+  throwing:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 deploy:
   health: 50.0
   triggers:

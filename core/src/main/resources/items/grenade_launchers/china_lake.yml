@@ -4,8 +4,14 @@ description: Pump action grenade launcher. Delivers great direct impact damage.
 level-unlocked: 25
 price: 3000
 controls:
-  shoot: RIGHT_CLICK
-  reload: LEFT_CLICK
+  shoot:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
+  reload:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 ammo:
   magazine-size: 3
   default-magazine-amount: 1

@@ -4,11 +4,32 @@ description: Bolt-action sniper rifle. Effective at long range.
 level-unlocked: 27
 price: 4750
 controls:
-  shoot: RIGHT_CLICK
-  reload: LEFT_CLICK
-  scope-use: RIGHT_CLICK
-  scope-stop: LEFT_CLICK
-  scope-change-magnification: SWAP_FROM
+  shoot:
+    action: RIGHT_CLICK
+    priority: 2
+    blocking: true
+    cancels-event: true
+  reload:
+    action: LEFT_CLICK
+    priority: 2
+    blocking: true
+    cancels-event: true
+  scope-use:
+    action: RIGHT_CLICK
+    priority: 1
+    stops-chain: true
+    blocking: true
+    cancels-event: true
+  scope-stop:
+    action: LEFT_CLICK
+    priority: 1
+    stops-chain: true
+    blocking: true
+    cancels-event: true
+  scope-change-magnification:
+    action: SWAP_FROM
+    blocking: true
+    cancels-event: true
 ammo:
   magazine-size: 10
   default-magazine-amount: 3

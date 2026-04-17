@@ -2,7 +2,10 @@ name: Molotov Cocktail
 equipment-type: LETHAL
 description: Improvised incendiary weapon made from a glass bottle containing flammable liquid. Ignites on impact when thrown.
 controls:
-  throwing: LEFT_CLICK
+  throwing:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 deploy:
   health: 10.0
   triggers:

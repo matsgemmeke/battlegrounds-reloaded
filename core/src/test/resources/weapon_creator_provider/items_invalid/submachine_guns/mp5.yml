@@ -3,8 +3,14 @@ gun-type: SUBMACHINE_GUN
 description: Fully automatic with good accuracy. Effective at close to medium range.
 price: 1200
 controls:
-  shoot: RIGHT_CLICK
-  reload: LEFT_CLICK
+  shoot:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
+  reload:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 ammo:
   magazine-size: 30
   default-magazine-amount: 3

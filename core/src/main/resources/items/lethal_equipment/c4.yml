@@ -2,9 +2,21 @@ name: C4
 equipment-type: LETHAL
 description: A plastic explosive device that is detonated remotely with the clacker.
 controls:
-  throwing: LEFT_CLICK
-  place: RIGHT_CLICK
-  activate: RIGHT_CLICK
+  throwing:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
+  place:
+    action: RIGHT_CLICK
+    priority: 1
+    blocking: true
+    stops-chain: true
+    cancels-event: true
+  activate:
+    action: RIGHT_CLICK
+    priority: 2
+    blocking: true
+    cancels-event: true
 deploy:
   health: 50.0
   triggers:

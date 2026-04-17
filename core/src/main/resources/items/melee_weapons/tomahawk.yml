@@ -3,7 +3,10 @@ description: Retrievable throwing hatchet that causes instant death on impact.
 level-unlocked: 39
 price: 1000
 controls:
-  throwing: RIGHT_CLICK
+  throwing:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
 ammo:
   loaded-amount: 1
   max-loaded-amount: 2

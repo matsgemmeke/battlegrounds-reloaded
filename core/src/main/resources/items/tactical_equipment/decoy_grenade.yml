@@ -2,9 +2,18 @@ name: Decoy Grenade
 equipment-type: TACTICAL
 description: Distraction device that simulates enemy gunfire.
 controls:
-  throwing: LEFT_CLICK
-  cook: RIGHT_CLICK
-  drop: DROP_ITEM
+  throwing:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
+  cook:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
+  drop:
+    action: DROP_ITEM
+    blocking: true
+    cancels-event: true
 deploy:
   health: 50.0
   triggers:

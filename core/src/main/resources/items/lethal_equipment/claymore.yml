@@ -2,7 +2,10 @@ name: Claymore
 equipment-type: LETHAL
 description: Anti-personnel mine that triggers a proximity-based explosion.
 controls:
-  throwing: LEFT_CLICK
+  throwing:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 deploy:
   health: 50.0
   triggers:
