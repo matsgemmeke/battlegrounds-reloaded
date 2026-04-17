@@ -9,8 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.gun.controls.GunControlsFactory;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
+import nl.matsgemmeke.battlegrounds.item.gun.controls.GunControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.*;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
@@ -41,7 +41,7 @@ class GunFactoryTest {
     private static final int RATE_OF_FIRE = 600;
 
     @Mock
-    private GunControlsFactory controlsFactory;
+    private GunControllerFactory controllerFactory;
     @Mock
     private GunInfoProvider gunInfoProvider;
     @Mock
@@ -66,8 +66,8 @@ class GunFactoryTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
-        ItemControls<GunUser> controls = new ItemControls<>();
-        when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
+        ItemController<GunUser> controller = new ItemController<>();
+        when(controllerFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controller);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
@@ -109,8 +109,8 @@ class GunFactoryTest {
         GunSpec spec = this.createGunSpec();
         spec.scope = scopeSpec;
 
-        ItemControls<GunUser> controls = new ItemControls<>();
-        when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
+        ItemController<GunUser> controller = new ItemController<>();
+        when(controllerFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controller);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
@@ -135,8 +135,8 @@ class GunFactoryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         GunSpec spec = this.createGunSpec();
 
-        ItemControls<GunUser> controls = new ItemControls<>();
-        when(controlsFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controls);
+        ItemController<GunUser> controller = new ItemController<>();
+        when(controllerFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controller);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);

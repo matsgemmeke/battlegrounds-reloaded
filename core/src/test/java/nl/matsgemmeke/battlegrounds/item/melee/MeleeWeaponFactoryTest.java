@@ -4,8 +4,8 @@ import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControlsFactory;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
+import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -35,7 +35,7 @@ class MeleeWeaponFactoryTest {
     @Mock
     private ItemTemplateFactory itemTemplateFactory;
     @Mock
-    private MeleeWeaponControlsFactory controlsFactory;
+    private MeleeWeaponControllerFactory controllerFactory;
     @Mock
     private MeleeWeaponRegistry meleeWeaponRegistry;
     @Mock
@@ -78,10 +78,10 @@ class MeleeWeaponFactoryTest {
     @Test
     @DisplayName("create returns MeleeWeapon with controls")
     void create_withControls() {
-        ItemControls<MeleeWeaponUser> controls = new ItemControls<>();
+        ItemController<MeleeWeaponUser> controller = new ItemController<>();
         MeleeWeaponSpec spec = this.createMeleeWeaponSpec("ballistic_knife");
 
-        when(controlsFactory.create(eq(spec.controls), any(MeleeWeapon.class))).thenReturn(controls);
+        when(controllerFactory.create(eq(spec.controls), any(MeleeWeapon.class))).thenReturn(controller);
 
         MeleeWeapon result = meleeWeaponFactory.create(spec);
 

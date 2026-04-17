@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.melee.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.reload.ReloadFunction;
@@ -14,19 +14,19 @@ import nl.matsgemmeke.battlegrounds.item.melee.controls.throwing.ThrowFunction;
 
 import java.util.function.Supplier;
 
-public class MeleeWeaponControlsFactory {
+public class MeleeWeaponControllerFactory {
 
     private final ActionBindingMapper actionBindingMapper;
-    private final Supplier<ItemControls<MeleeWeaponUser>> controlsSupplier;
+    private final Supplier<ItemController<MeleeWeaponUser>> controllerSupplier;
 
     @Inject
-    public MeleeWeaponControlsFactory(ActionBindingMapper actionBindingMapper, Supplier<ItemControls<MeleeWeaponUser>> controlsSupplier) {
+    public MeleeWeaponControllerFactory(ActionBindingMapper actionBindingMapper, Supplier<ItemController<MeleeWeaponUser>> controllerSupplier) {
         this.actionBindingMapper = actionBindingMapper;
-        this.controlsSupplier = controlsSupplier;
+        this.controllerSupplier = controllerSupplier;
     }
 
-    public ItemControls<MeleeWeaponUser> create(ControlsSpec spec, MeleeWeapon meleeWeapon) {
-        ItemControls<MeleeWeaponUser> controls = controlsSupplier.get();
+    public ItemController<MeleeWeaponUser> create(ControlsSpec spec, MeleeWeapon meleeWeapon) {
+        ItemController<MeleeWeaponUser> controller = controllerSupplier.get();
 
         ControlSpec reloadControlSpec = spec.reload;
         ControlSpec throwingControlSpec = spec.throwing;
@@ -36,7 +36,7 @@ public class MeleeWeaponControlsFactory {
             ReloadFunction reloadFunction = new ReloadFunction(meleeWeapon);
             ActionBinding<MeleeWeaponUser> reloadBinding = actionBindingMapper.toBinding(reloadControlSpec, reloadFunction);
 
-            controls.bind(reloadAction, reloadBinding);
+            controller.bind(reloadAction, reloadBinding);
         }
 
         if (throwingControlSpec != null) {
@@ -44,9 +44,9 @@ public class MeleeWeaponControlsFactory {
             ThrowFunction throwFunction = new ThrowFunction(meleeWeapon);
             ActionBinding<MeleeWeaponUser> throwBinding = actionBindingMapper.toBinding(throwingControlSpec, throwFunction);
 
-            controls.bind(throwAction, throwBinding);
+            controller.bind(throwAction, throwBinding);
         }
 
-        return controls;
+        return controller;
     }
 }

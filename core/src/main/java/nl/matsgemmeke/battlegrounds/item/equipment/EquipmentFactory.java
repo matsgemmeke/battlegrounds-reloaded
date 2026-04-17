@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
@@ -23,7 +23,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.deploy.state.IdleState;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
@@ -35,7 +35,7 @@ import java.util.List;
 public class EquipmentFactory {
 
     private final DeploymentFactory deploymentFactory;
-    private final EquipmentControlsFactory controlsFactory;
+    private final EquipmentControllerFactory controllerFactory;
     private final EquipmentRegistry equipmentRegistry;
     private final ItemEffectFactory itemEffectFactory;
     private final ItemTemplateFactory itemTemplateFactory;
@@ -45,7 +45,7 @@ public class EquipmentFactory {
     @Inject
     public EquipmentFactory(
             DeploymentFactory deploymentFactory,
-            EquipmentControlsFactory controlsFactory,
+            EquipmentControllerFactory controllerFactory,
             EquipmentRegistry equipmentRegistry,
             ItemEffectFactory itemEffectFactory,
             ItemTemplateFactory itemTemplateFactory,
@@ -53,7 +53,7 @@ public class EquipmentFactory {
             TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.deploymentFactory = deploymentFactory;
-        this.controlsFactory = controlsFactory;
+        this.controllerFactory = controllerFactory;
         this.equipmentRegistry = equipmentRegistry;
         this.itemEffectFactory = itemEffectFactory;
         this.itemTemplateFactory = itemTemplateFactory;
@@ -105,8 +105,8 @@ public class EquipmentFactory {
             equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
-        ItemControls<EquipmentUser> controls = controlsFactory.create(spec, equipment);
-        equipment.setControls(controls);
+        ItemController<EquipmentUser> controller = controllerFactory.create(spec, equipment);
+        equipment.setController(controller);
 
         Deployment deployment = this.createDeployment(spec.deploy, spec.effect);
         equipment.setDeployment(deployment);

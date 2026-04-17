@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -23,7 +23,7 @@ public class DefaultGun extends BaseWeapon implements Gun {
 
     @Nullable
     private GunUser user;
-    private ItemControls<GunUser> controls;
+    private ItemController<GunUser> controller;
     @Nullable
     private ItemTemplate itemTemplate;
     private RangeProfile rangeProfile;
@@ -36,7 +36,7 @@ public class DefaultGun extends BaseWeapon implements Gun {
     private ShootHandler shootHandler;
 
     public DefaultGun() {
-        this.controls = new ItemControls<>();
+        this.controller = new ItemController<>();
     }
 
     @Override
@@ -49,13 +49,12 @@ public class DefaultGun extends BaseWeapon implements Gun {
         this.resourceContainer = resourceContainer;
     }
 
-    @NotNull
-    public ItemControls<GunUser> getControls() {
-        return controls;
+    public ItemController<GunUser> getController() {
+        return controller;
     }
 
-    public void setControls(@NotNull ItemControls<GunUser> controls) {
-        this.controls = controls;
+    public void setController(ItemController<GunUser> controller) {
+        this.controller = controller;
     }
 
     @Nullable
@@ -171,13 +170,13 @@ public class DefaultGun extends BaseWeapon implements Gun {
     }
 
     public void onChangeFrom() {
-        controls.cancelAllFunctions();
+        controller.cancelAllFunctions();
 
         if (user == null) {
             return;
         }
 
-        controls.performAction(Action.CHANGE_FROM, user);
+        controller.performAction(Action.CHANGE_FROM, user);
     }
 
     public void onChangeTo() {
@@ -185,7 +184,7 @@ public class DefaultGun extends BaseWeapon implements Gun {
             return;
         }
 
-        controls.performAction(Action.CHANGE_TO, user);
+        controller.performAction(Action.CHANGE_TO, user);
     }
 
     public void onDrop() {
@@ -193,8 +192,8 @@ public class DefaultGun extends BaseWeapon implements Gun {
             return;
         }
 
-        controls.cancelAllFunctions();
-        controls.performAction(Action.DROP_ITEM, user);
+        controller.cancelAllFunctions();
+        controller.performAction(Action.DROP_ITEM, user);
         user = null;
     }
 
@@ -203,7 +202,7 @@ public class DefaultGun extends BaseWeapon implements Gun {
             return;
         }
 
-        controls.performAction(Action.LEFT_CLICK, user);
+        controller.performAction(Action.LEFT_CLICK, user);
     }
 
     public void onRightClick() {
@@ -211,13 +210,13 @@ public class DefaultGun extends BaseWeapon implements Gun {
             return;
         }
 
-        controls.performAction(Action.RIGHT_CLICK, user);
+        controller.performAction(Action.RIGHT_CLICK, user);
     }
 
-    public void onPickUp(@NotNull GunUser user) {
+    public void onPickUp(GunUser user) {
         this.user = user;
 
-        controls.performAction(Action.PICKUP_ITEM, user);
+        controller.performAction(Action.PICKUP_ITEM, user);
     }
 
     public void onSwapFrom() {
@@ -225,7 +224,7 @@ public class DefaultGun extends BaseWeapon implements Gun {
             return;
         }
 
-        controls.performAction(Action.SWAP_FROM, user);
+        controller.performAction(Action.SWAP_FROM, user);
     }
 
     public void onSwapTo() {
@@ -233,17 +232,19 @@ public class DefaultGun extends BaseWeapon implements Gun {
             return;
         }
 
-        controls.performAction(Action.SWAP_TO, user);
+        controller.performAction(Action.SWAP_TO, user);
     }
 
-    public void reload(@NotNull ReloadPerformer performer) {
+    @Override
+    public void reload(ReloadPerformer performer) {
         reloadSystem.performReload(performer, () -> {
             this.update();
             performer.setHeldItem(itemStack);
         });
     }
 
-    public void shoot(@NotNull ShotPerformer performer) {
+    @Override
+    public void shoot(ShotPerformer performer) {
         shootHandler.shoot(performer);
     }
 

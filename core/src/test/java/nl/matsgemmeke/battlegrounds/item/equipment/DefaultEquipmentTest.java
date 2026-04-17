@@ -175,7 +175,7 @@ class DefaultEquipmentTest {
         ActionBinding<EquipmentUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.getControls().bind(Action.LEFT_CLICK, binding);
+        equipment.getController().bind(Action.LEFT_CLICK, binding);
         equipment.setUser(user);
         equipment.onLeftClick();
 
@@ -189,7 +189,7 @@ class DefaultEquipmentTest {
         ActionBinding<EquipmentUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.getControls().bind(Action.RIGHT_CLICK, binding);
+        equipment.getController().bind(Action.RIGHT_CLICK, binding);
         equipment.setUser(user);
         equipment.onRightClick();
 

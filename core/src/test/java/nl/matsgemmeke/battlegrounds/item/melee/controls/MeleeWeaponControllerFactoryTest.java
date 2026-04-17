@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.reload.ReloadFunction;
@@ -24,35 +24,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MeleeWeaponControlsFactoryTest {
+class MeleeWeaponControllerFactoryTest {
 
     @Spy
     private ActionBindingMapper actionBindingMapper;
     @Mock
-    private ItemControls<MeleeWeaponUser> controls;
+    private ItemController<MeleeWeaponUser> controller;
     @Mock
     private MeleeWeapon meleeWeapon;
     @Mock
-    private Supplier<ItemControls<MeleeWeaponUser>> controlsSupplier;
+    private Supplier<ItemController<MeleeWeaponUser>> controllerSupplier;
     @Captor
     private ArgumentCaptor<ActionBinding<MeleeWeaponUser>> bindingCaptor;
     @InjectMocks
-    private MeleeWeaponControlsFactory controlsFactory;
+    private MeleeWeaponControllerFactory controllerFactory;
 
     @BeforeEach
     void setUp() {
-        when(controlsSupplier.get()).thenReturn(controls);
+        when(controllerSupplier.get()).thenReturn(controller);
     }
 
     @Test
-    @DisplayName("creates returns item controls with reload control")
+    @DisplayName("creates returns ItemController with reload control")
     void create_withReloadControl() {
         MeleeWeaponSpec spec = this.createMeleeWeaponSpec("src/main/resources/items/melee_weapons/ballistic_knife.yml");
         spec.controls.throwing = null;
 
-        ItemControls<MeleeWeaponUser> controls = controlsFactory.create(spec.controls, meleeWeapon);
+        ItemController<MeleeWeaponUser> controller = controllerFactory.create(spec.controls, meleeWeapon);
 
-        verify(controls).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getValue()).satisfies(binding -> {
             assertThat(binding.function()).isInstanceOf(ReloadFunction.class);
@@ -60,14 +60,14 @@ class MeleeWeaponControlsFactoryTest {
     }
 
     @Test
-    @DisplayName("creates returns item controls with throwing control")
+    @DisplayName("creates returns ItemController with throwing control")
     void create_withThrowingControl() {
         MeleeWeaponSpec spec = this.createMeleeWeaponSpec("src/main/resources/items/melee_weapons/ballistic_knife.yml");
         spec.controls.reload = null;
 
-        ItemControls<MeleeWeaponUser> controls = controlsFactory.create(spec.controls, meleeWeapon);
+        ItemController<MeleeWeaponUser> controller = controllerFactory.create(spec.controls, meleeWeapon);
 
-        verify(controls).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getValue()).satisfies(binding -> {
             assertThat(binding.function()).isInstanceOf(ThrowFunction.class);

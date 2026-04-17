@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
@@ -24,7 +24,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private Deployment deployment;
     @Nullable
     private EquipmentUser user;
-    private ItemControls<EquipmentUser> controls;
+    private ItemController<EquipmentUser> controller;
     @Nullable
     private ItemTemplate displayItemTemplate;
     @Nullable
@@ -33,7 +33,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private ProjectileProperties projectileProperties;
 
     public DefaultEquipment() {
-        this.controls = new ItemControls<>();
+        this.controller = new ItemController<>();
     }
 
     @Nullable
@@ -45,12 +45,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.activator = activator;
     }
 
-    public ItemControls<EquipmentUser> getControls() {
-        return controls;
+    public ItemController<EquipmentUser> getController() {
+        return controller;
     }
 
-    public void setControls(ItemControls<EquipmentUser> controls) {
-        this.controls = controls;
+    public void setController(ItemController<EquipmentUser> controller) {
+        this.controller = controller;
     }
 
     public Deployment getDeployment() {
@@ -123,7 +123,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void onChangeFrom() {
-        controls.cancelAllFunctions();
+        controller.cancelAllFunctions();
     }
 
     public void onChangeTo() {
@@ -137,7 +137,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
             return;
         }
 
-        controls.performAction(Action.LEFT_CLICK, user);
+        controller.performAction(Action.LEFT_CLICK, user);
     }
 
     public void onPickUp(EquipmentUser user) {
@@ -148,7 +148,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
             return;
         }
 
-        controls.performAction(Action.RIGHT_CLICK, user);
+        controller.performAction(Action.RIGHT_CLICK, user);
     }
 
     public void onSwapFrom() {

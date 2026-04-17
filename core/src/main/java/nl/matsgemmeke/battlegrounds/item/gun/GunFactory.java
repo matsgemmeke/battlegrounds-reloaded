@@ -11,7 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
@@ -29,7 +29,7 @@ import java.util.UUID;
 
 public class GunFactory {
 
-    private final GunControlsFactory controlsFactory;
+    private final GunControllerFactory controllerFactory;
     private final GunInfoProvider gunInfoProvider;
     private final GunRegistry gunRegistry;
     private final ItemTemplateFactory itemTemplateFactory;
@@ -39,7 +39,7 @@ public class GunFactory {
 
     @Inject
     public GunFactory(
-            GunControlsFactory controlsFactory,
+            GunControllerFactory controllerFactory,
             GunInfoProvider gunInfoProvider,
             GunRegistry gunRegistry,
             ItemTemplateFactory itemTemplateFactory,
@@ -47,7 +47,7 @@ public class GunFactory {
             ReloadSystemFactory reloadSystemFactory,
             ShootHandlerFactory shootHandlerFactory
     ) {
-        this.controlsFactory = controlsFactory;
+        this.controllerFactory = controllerFactory;
         this.gunInfoProvider = gunInfoProvider;
         this.gunRegistry = gunRegistry;
         this.itemTemplateFactory = itemTemplateFactory;
@@ -98,8 +98,8 @@ public class GunFactory {
         ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
         gun.setReloadSystem(reloadSystem);
 
-        ItemControls<GunUser> controls = controlsFactory.create(spec.controls, gun);
-        gun.setControls(controls);
+        ItemController<GunUser> controller = controllerFactory.create(spec.controls, gun);
+        gun.setController(controller);
 
         ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, resourceContainer, itemRepresentation);
         gun.setShootHandler(shootHandler);

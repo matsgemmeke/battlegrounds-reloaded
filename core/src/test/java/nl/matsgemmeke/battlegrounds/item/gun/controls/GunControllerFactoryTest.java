@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.gun.*;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.reload.ReloadFunction;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.scope.ChangeScopeMagnificationFunction;
@@ -26,35 +26,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GunControlsFactoryTest {
+class GunControllerFactoryTest {
 
     @Spy
     private ActionBindingMapper actionBindingMapper;
     @Mock
     private Gun gun;
     @Mock
-    private ItemControls<GunUser> controls;
+    private ItemController<GunUser> controller;
     @Mock
-    private Supplier<ItemControls<GunUser>> controlsSupplier;
+    private Supplier<ItemController<GunUser>> controllerSupplier;
     @Captor
     private ArgumentCaptor<ActionBinding<GunUser>> bindingCaptor;
     @InjectMocks
-    private GunControlsFactory controlsFactory;
+    private GunControllerFactory controllerFactory;
 
     @BeforeEach
     void setUp() {
-        when(controlsSupplier.get()).thenReturn(controls);
+        when(controllerSupplier.get()).thenReturn(controller);
     }
 
     @Test
-    @DisplayName("create returns ItemControls with only required controls")
+    @DisplayName("create returns ItemController with only required controls")
     void create_requiredControls() {
         GunSpec spec = this.createGunSpec("src/main/resources/items/assault_rifles/ak-47.yml");
 
-        ItemControls<GunUser> controls = controlsFactory.create(spec.controls, gun);
+        ItemController<GunUser> controller = controllerFactory.create(spec.controls, gun);
 
-        verify(controls).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
-        verify(controls).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getAllValues()).satisfiesExactlyInAnyOrder(
                 binding -> assertThat(binding.function()).isInstanceOf(ReloadFunction.class),
@@ -63,15 +63,15 @@ class GunControlsFactoryTest {
     }
 
     @Test
-    @DisplayName("create returns ItemControls with use scope and stop scope controls")
+    @DisplayName("create returns ItemController with use scope and stop scope controls")
     void create_useScopeAndStopScopeControls() {
         GunSpec spec = this.createGunSpec("src/main/resources/items/sniper_rifles/sv-98.yml");
         spec.controls.scopeChangeMagnification = null;
 
-        ItemControls<GunUser> controls = controlsFactory.create(spec.controls, gun);
+        ItemController<GunUser> controller = controllerFactory.create(spec.controls, gun);
 
-        verify(controls, times(2)).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
-        verify(controls, times(2)).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+        verify(controller, times(2)).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
+        verify(controller, times(2)).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getAllValues()).satisfiesExactlyInAnyOrder(
                 binding -> assertThat(binding.function()).isInstanceOf(UseScopeFunction.class),
@@ -82,15 +82,15 @@ class GunControlsFactoryTest {
     }
 
     @Test
-    @DisplayName("create returns ItemControls wth change scope magnification controls")
+    @DisplayName("create returns ItemController wth change scope magnification controls")
     void create_changeMagnificationControls() {
         GunSpec spec = this.createGunSpec("src/main/resources/items/sniper_rifles/sv-98.yml");
 
-        ItemControls<GunUser> controls = controlsFactory.create(spec.controls, gun);
+        ItemController<GunUser> controller = controllerFactory.create(spec.controls, gun);
 
-        verify(controls, times(2)).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
-        verify(controls, times(2)).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
-        verify(controls).bind(eq(Action.SWAP_FROM), bindingCaptor.capture());
+        verify(controller, times(2)).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
+        verify(controller, times(2)).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.SWAP_FROM), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getAllValues()).satisfiesExactlyInAnyOrder(
                 binding -> assertThat(binding.function()).isInstanceOf(ChangeScopeMagnificationFunction.class),

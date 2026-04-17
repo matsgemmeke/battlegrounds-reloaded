@@ -56,7 +56,7 @@ import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEvent
 import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformance;
@@ -145,9 +145,9 @@ public class BattlegroundsModule implements Module {
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
-        binder.bind(new TypeLiteral<Supplier<ItemControls<EquipmentUser>>>() {}).toInstance(ItemControls::new);
-        binder.bind(new TypeLiteral<Supplier<ItemControls<GunUser>>>() {}).toInstance(ItemControls::new);
-        binder.bind(new TypeLiteral<Supplier<ItemControls<MeleeWeaponUser>>>() {}).toInstance(ItemControls::new);
+        binder.bind(new TypeLiteral<Supplier<ItemController<EquipmentUser>>>() {}).toInstance(ItemController::new);
+        binder.bind(new TypeLiteral<Supplier<ItemController<GunUser>>>() {}).toInstance(ItemController::new);
+        binder.bind(new TypeLiteral<Supplier<ItemController<MeleeWeaponUser>>>() {}).toInstance(ItemController::new);
 
         // Singleton bindings
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);

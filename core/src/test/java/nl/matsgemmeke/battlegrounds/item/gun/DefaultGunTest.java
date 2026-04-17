@@ -290,8 +290,8 @@ class DefaultGunTest {
         ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, false, false, false);
         ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 1, false, false, false);
 
-        gun.getControls().bind(Action.LEFT_CLICK, binding1);
-        gun.getControls().bind(Action.CHANGE_FROM, binding2);
+        gun.getController().bind(Action.LEFT_CLICK, binding1);
+        gun.getController().bind(Action.CHANGE_FROM, binding2);
         gun.onChangeFrom();
 
         verify(function1).cancel();
@@ -299,13 +299,13 @@ class DefaultGunTest {
     }
 
     @Test
-    @DisplayName("onChangeFrom performs action on controls when user is not null")
+    @DisplayName("onChangeFrom performs action on controller when user is not null")
     void onChangeFrom_performsChangeFromAction() {
         GunUser user = mock(GunUser.class);
         Function<GunUser> function = mock();
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
-        gun.getControls().bind(Action.CHANGE_FROM, binding);
+        gun.getController().bind(Action.CHANGE_FROM, binding);
         gun.setUser(user);
         gun.onChangeFrom();
 
@@ -313,25 +313,25 @@ class DefaultGunTest {
     }
 
     @Test
-    @DisplayName("onLeftClick does not interact with controls when user is null")
+    @DisplayName("onLeftClick does not interact with controller when user is null")
     void onLeftClick_nullUser() {
         Function<GunUser> function = mock();
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
-        gun.getControls().bind(Action.LEFT_CLICK, binding);
+        gun.getController().bind(Action.LEFT_CLICK, binding);
         gun.onLeftClick();
 
         verifyNoInteractions(function);
     }
 
     @Test
-    @DisplayName("onLeftClick performs action on controls when user is not null")
+    @DisplayName("onLeftClick performs action on controller when user is not null")
     void onLeftClick_performsLeftClickAction() {
         GunUser user = mock(GunUser.class);
         Function<GunUser> function = mock();
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
-        gun.getControls().bind(Action.LEFT_CLICK, binding);
+        gun.getController().bind(Action.LEFT_CLICK, binding);
         gun.setUser(user);
         gun.onLeftClick();
 
@@ -339,25 +339,25 @@ class DefaultGunTest {
     }
 
     @Test
-    @DisplayName("onRightClick does not interact with controls when user is null")
+    @DisplayName("onRightClick does not interact with controller when user is null")
     void onRightClick_nullUser() {
         Function<GunUser> function = mock();
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
-        gun.getControls().bind(Action.RIGHT_CLICK, binding);
+        gun.getController().bind(Action.RIGHT_CLICK, binding);
         gun.onRightClick();
 
         verifyNoInteractions(function);
     }
 
     @Test
-    @DisplayName("onRightClick performs action on controls when user is not null")
+    @DisplayName("onRightClick performs action on controller when user is not null")
     void onRightClick_performsRightClickAction() {
         GunUser user = mock(GunUser.class);
         Function<GunUser> function = mock();
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
-        gun.getControls().bind(Action.RIGHT_CLICK, binding);
+        gun.getController().bind(Action.RIGHT_CLICK, binding);
         gun.setUser(user);
         gun.onRightClick();
 
@@ -365,25 +365,25 @@ class DefaultGunTest {
     }
 
     @Test
-    @DisplayName("onSwapFrom does not interact with controls when user is null")
+    @DisplayName("onSwapFrom does not interact with controller when user is null")
     void onSwapFrom_nullUser() {
         Function<GunUser> function = mock();
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
-        gun.getControls().bind(Action.SWAP_FROM, binding);
+        gun.getController().bind(Action.SWAP_FROM, binding);
         gun.onSwapFrom();
 
         verifyNoInteractions(function);
     }
 
     @Test
-    @DisplayName("onSwapFrom performs action on controls when user is not null")
+    @DisplayName("onSwapFrom performs action on controller when user is not null")
     void onSwapFrom_performsSwapFromAction() {
         GunUser user = mock(GunUser.class);
         Function<GunUser> function = mock();
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
-        gun.getControls().bind(Action.SWAP_FROM, binding);
+        gun.getController().bind(Action.SWAP_FROM, binding);
         gun.setUser(user);
         gun.onSwapFrom();
 
@@ -450,7 +450,7 @@ class DefaultGunTest {
     }
 
     @Test
-    @DisplayName("onDrop cancels controls functions and unassigns user")
+    @DisplayName("onDrop cancels controller functions and unassigns user")
     void onDrop_cancelsFunctionAndUnassignsUser() {
         GunUser user = mock(GunUser.class);
 
@@ -459,7 +459,7 @@ class DefaultGunTest {
 
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
 
-        gun.getControls().bind(Action.LEFT_CLICK, binding);
+        gun.getController().bind(Action.LEFT_CLICK, binding);
         gun.setUser(user);
         gun.onDrop();
 

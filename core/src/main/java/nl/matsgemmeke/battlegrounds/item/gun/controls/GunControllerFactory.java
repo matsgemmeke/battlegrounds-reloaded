@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.gun.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.reload.ReloadFunction;
@@ -17,19 +17,19 @@ import nl.matsgemmeke.battlegrounds.item.gun.controls.shoot.ShootFunction;
 
 import java.util.function.Supplier;
 
-public class GunControlsFactory {
+public class GunControllerFactory {
 
     private final ActionBindingMapper actionBindingMapper;
-    private final Supplier<ItemControls<GunUser>> controlsSupplier;
+    private final Supplier<ItemController<GunUser>> controllerSupplier;
 
     @Inject
-    public GunControlsFactory(ActionBindingMapper actionBindingMapper, Supplier<ItemControls<GunUser>> controlsSupplier) {
+    public GunControllerFactory(ActionBindingMapper actionBindingMapper, Supplier<ItemController<GunUser>> controllerSupplier) {
         this.actionBindingMapper = actionBindingMapper;
-        this.controlsSupplier = controlsSupplier;
+        this.controllerSupplier = controllerSupplier;
     }
 
-    public ItemControls<GunUser> create(ControlsSpec spec, Gun gun) {
-        ItemControls<GunUser> controls = controlsSupplier.get();
+    public ItemController<GunUser> create(ControlsSpec spec, Gun gun) {
+        ItemController<GunUser> controller = controllerSupplier.get();
 
         ControlSpec useScopeSpec = spec.scopeUse;
         ControlSpec stopScopeSpec = spec.scopeStop;
@@ -41,7 +41,7 @@ public class GunControlsFactory {
                 ChangeScopeMagnificationFunction changeScopeMagnificationFunction = new ChangeScopeMagnificationFunction(gun);
                 ActionBinding<GunUser> changeScopeMagnificationBinding = actionBindingMapper.toBinding(changeScopeMagnificationSpec, changeScopeMagnificationFunction);
 
-                controls.bind(changeScopeMagnificationAction, changeScopeMagnificationBinding);
+                controller.bind(changeScopeMagnificationAction, changeScopeMagnificationBinding);
             }
 
             Action useScopeAction = Action.valueOf(useScopeSpec.action);
@@ -53,8 +53,8 @@ public class GunControlsFactory {
             ActionBinding<GunUser> useScopeBinding = actionBindingMapper.toBinding(useScopeSpec, useScopeFunction);
             ActionBinding<GunUser> stopScopeBinding = actionBindingMapper.toBinding(stopScopeSpec, stopScopeFunction);
 
-            controls.bind(useScopeAction, useScopeBinding);
-            controls.bind(stopScopeAction, stopScopeBinding);
+            controller.bind(useScopeAction, useScopeBinding);
+            controller.bind(stopScopeAction, stopScopeBinding);
         }
 
         // Should be safe to directly get an enum since the specification is already validated
@@ -67,9 +67,9 @@ public class GunControlsFactory {
         ActionBinding<GunUser> reloadBinding = actionBindingMapper.toBinding(spec.reload, reloadFunction);
         ActionBinding<GunUser> shootBinding = actionBindingMapper.toBinding(spec.shoot, shootFunction);
 
-        controls.bind(reloadAction, reloadBinding);
-        controls.bind(shootAction, shootBinding);
+        controller.bind(reloadAction, reloadBinding);
+        controller.bind(shootAction, shootBinding);
 
-        return controls;
+        return controller;
     }
 }

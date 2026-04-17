@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     private double attackDamage;
-    private ItemControls<MeleeWeaponUser> controls;
+    private ItemController<MeleeWeaponUser> controller;
     @Nullable
     private ItemTemplate displayItemTemplate;
     @Nullable
@@ -33,7 +33,7 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     private ThrowHandler throwHandler;
 
     public DefaultMeleeWeapon() {
-        this.controls = new ItemControls<>();
+        this.controller = new ItemController<>();
     }
 
     @Override
@@ -45,12 +45,12 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         this.attackDamage = attackDamage;
     }
 
-    public ItemControls<MeleeWeaponUser> getControls() {
-        return controls;
+    public ItemController<MeleeWeaponUser> getController() {
+        return controller;
     }
 
-    public void setControls(ItemControls<MeleeWeaponUser> controls) {
-        this.controls = controls;
+    public void setController(ItemController<MeleeWeaponUser> controller) {
+        this.controller = controller;
     }
 
     public Optional<ItemTemplate> getDisplayItemTemplate() {
@@ -119,8 +119,8 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
             return;
         }
 
-        controls.cancelAllFunctions();
-        controls.performAction(Action.DROP_ITEM, user);
+        controller.cancelAllFunctions();
+        controller.performAction(Action.DROP_ITEM, user);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     @Override
     public void onPickUp(@NotNull MeleeWeaponUser user) {
-        controls.performAction(Action.PICKUP_ITEM, user);
+        controller.performAction(Action.PICKUP_ITEM, user);
     }
 
     @Override
@@ -153,7 +153,7 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
             return;
         }
 
-        controls.performAction(action, user);
+        controller.performAction(action, user);
     }
 
     @Override

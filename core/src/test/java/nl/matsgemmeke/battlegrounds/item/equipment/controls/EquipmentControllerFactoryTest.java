@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.action.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.*;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.activate.ActivateFunction;
@@ -34,14 +34,14 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class EquipmentControlsFactoryTest {
+class EquipmentControllerFactoryTest {
 
     @Spy
     private ActionBindingMapper actionBindingMapper;
     @Mock
     private Equipment equipment;
     @Mock
-    private ItemControls<EquipmentUser> controls;
+    private ItemController<EquipmentUser> controller;
     @Mock
     private ItemTemplateFactory itemTemplateFactory;
     @Mock
@@ -55,32 +55,32 @@ class EquipmentControlsFactoryTest {
     @Mock
     private Provider<ThrowDeploymentAction> throwDeploymentActionProvider;
     @Mock
-    private Supplier<ItemControls<EquipmentUser>> controlsSupplier;
+    private Supplier<ItemController<EquipmentUser>> controllerSupplier;
     @Captor
     private ArgumentCaptor<ActionBinding<EquipmentUser>> bindingCaptor;
 
-    private EquipmentControlsFactory controlsFactory;
+    private EquipmentControllerFactory controllerFactory;
 
     @BeforeEach
     void setUp() {
-        when(controlsSupplier.get()).thenReturn(controls);
+        when(controllerSupplier.get()).thenReturn(controller);
 
-        controlsFactory = new EquipmentControlsFactory(actionBindingMapper, itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controlsSupplier);
+        controllerFactory = new EquipmentControllerFactory(actionBindingMapper, itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controllerSupplier);
     }
 
     @Test
-    @DisplayName("create throws EquipmentControlsCreationException when throw action has value but throw properties is null")
+    @DisplayName("create throws EquipmentControllerCreationException when throw action has value but throw properties is null")
     void create_throwPropertiesNull() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
         equipmentSpec.deploy.throwing = null;
 
-        assertThatThrownBy(() -> controlsFactory.create(equipmentSpec, equipment))
-                .isInstanceOf(EquipmentControlsCreationException.class)
-                .hasMessage("Cannot create controls for 'throw', the equipment specification does not contain the required throw properties");
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Cannot create controller for 'throw', the equipment specification does not contain the required throw properties");
     }
 
     @Test
-    @DisplayName("create returns ItemControls with throw function")
+    @DisplayName("create returns ItemController with throw function")
     void create_withThrowFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
         ThrowDeploymentAction deploymentAction = mock(ThrowDeploymentAction.class);
@@ -89,7 +89,7 @@ class EquipmentControlsFactoryTest {
         when(itemTemplateFactory.create(equipmentSpec.items.throwItem)).thenReturn(itemTemplate);
         when(throwDeploymentActionProvider.get()).thenReturn(deploymentAction);
 
-        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
         ArgumentCaptor<ThrowDeploymentProperties> propertiesCaptor = ArgumentCaptor.forClass(ThrowDeploymentProperties.class);
         verify(deploymentAction).configureProperties(propertiesCaptor.capture());
@@ -107,7 +107,7 @@ class EquipmentControlsFactoryTest {
             assertThat(properties.cooldown()).isEqualTo(30L);
         });
 
-        verify(controls).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.LEFT_CLICK), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getValue()).satisfies(binding -> {
             assertThat(binding.function()).isInstanceOf(ThrowFunction.class);
@@ -117,20 +117,20 @@ class EquipmentControlsFactoryTest {
     }
 
     @Test
-    @DisplayName("create throws EquipmentControlsCreationException when place action has value but place properties is null")
+    @DisplayName("create throws EquipmentControllerCreationException when place action has value but place properties is null")
     void create_placePropertiesNull() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
         equipmentSpec.controls.activate = null;
         equipmentSpec.controls.throwing = null;
         equipmentSpec.deploy.placing = null;
 
-        assertThatThrownBy(() -> controlsFactory.create(equipmentSpec, equipment))
-                .isInstanceOf(EquipmentControlsCreationException.class)
-                .hasMessage("Cannot create controls for 'place', the equipment specification does not contain the required place properties");
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Cannot create controller for 'place', the equipment specification does not contain the required place properties");
     }
 
     @Test
-    @DisplayName("create returns ItemControls with place function")
+    @DisplayName("create returns ItemController with place function")
     void create_withPlaceFunction() {
         PlaceDeploymentAction deploymentAction = mock(PlaceDeploymentAction.class);
 
@@ -140,9 +140,9 @@ class EquipmentControlsFactoryTest {
 
         when(placeDeploymentActionProvider.get()).thenReturn(deploymentAction);
 
-        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
-        verify(controls).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getValue()).satisfies(binding -> {
             assertThat(binding.function()).isInstanceOf(PlaceFunction.class);
@@ -152,19 +152,19 @@ class EquipmentControlsFactoryTest {
     }
 
     @Test
-    @DisplayName("create throws EquipmentControlsCreationException when cook action has value but cook properties is null")
+    @DisplayName("create throws EquipmentControllerCreationException when cook action has value but cook properties is null")
     void create_cookPropertiesNull() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         equipmentSpec.controls.throwing = null;
         equipmentSpec.deploy.cooking = null;
 
-        assertThatThrownBy(() -> controlsFactory.create(equipmentSpec, equipment))
-                .isInstanceOf(EquipmentControlsCreationException.class)
-                .hasMessage("Cannot create controls for 'cook', the equipment specification does not contain the required cook properties");
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Cannot create controller for 'cook', the equipment specification does not contain the required cook properties");
     }
 
     @Test
-    @DisplayName("create returns ItemControls with cook function")
+    @DisplayName("create returns ItemController with cook function")
     void create_withCookFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         equipmentSpec.controls.throwing = null;
@@ -174,9 +174,9 @@ class EquipmentControlsFactoryTest {
 
         when(primeDeploymentActionProvider.get()).thenReturn(deploymentAction);
 
-        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
-        verify(controls).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getValue()).satisfies(binding -> {
             assertThat(binding.function()).isInstanceOf(CookFunction.class);
@@ -186,20 +186,20 @@ class EquipmentControlsFactoryTest {
     }
 
     @Test
-    @DisplayName("create throws EquipmentControlsCreationException when drop action has value but drop properties is null")
+    @DisplayName("create throws EquipmentControllerCreationException when drop action has value but drop properties is null")
     void create_dropPropertiesNull() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         equipmentSpec.controls.throwing = null;
         equipmentSpec.controls.cook = null;
         equipmentSpec.deploy.dropping = null;
 
-        assertThatThrownBy(() -> controlsFactory.create(equipmentSpec, equipment))
-                .isInstanceOf(EquipmentControlsCreationException.class)
-                .hasMessage("Cannot create controls for 'drop', the equipment specification does not contain the required drop properties");
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Cannot create controller for 'drop', the equipment specification does not contain the required drop properties");
     }
 
     @Test
-    @DisplayName("create returns ItemControls with drop function")
+    @DisplayName("create returns ItemController with drop function")
     void create_withDropFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         equipmentSpec.controls.throwing = null;
@@ -211,7 +211,7 @@ class EquipmentControlsFactoryTest {
         when(dropDeploymentActionProvider.get()).thenReturn(deploymentAction);
         when(itemTemplateFactory.create(equipmentSpec.items.dropItem)).thenReturn(itemTemplate);
 
-        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
         ArgumentCaptor<DropDeploymentProperties> propertiesCaptor = ArgumentCaptor.forClass(DropDeploymentProperties.class);
         verify(deploymentAction).configureProperties(propertiesCaptor.capture());
@@ -227,7 +227,7 @@ class EquipmentControlsFactoryTest {
             assertThat(properties.cooldown()).isEqualTo(30L);
         });
 
-        verify(controls).bind(eq(Action.DROP_ITEM), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.DROP_ITEM), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getValue()).satisfies(binding -> {
             assertThat(binding.function()).isInstanceOf(DropFunction.class);
@@ -237,15 +237,15 @@ class EquipmentControlsFactoryTest {
     }
 
     @Test
-    @DisplayName("create returns ItemControls with activate function")
+    @DisplayName("create returns ItemController with activate function")
     void create_withActivateFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
         equipmentSpec.controls.place = null;
         equipmentSpec.controls.throwing = null;
 
-        ItemControls<EquipmentUser> controls = controlsFactory.create(equipmentSpec, equipment);
+        ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
-        verify(controls).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
+        verify(controller).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
 
         assertThat(bindingCaptor.getValue()).satisfies(binding -> {
             assertThat(binding.function()).isInstanceOf(ActivateFunction.class);

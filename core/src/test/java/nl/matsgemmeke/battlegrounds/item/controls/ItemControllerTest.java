@@ -11,16 +11,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ItemControlsTest {
+class ItemControllerTest {
 
     @Mock
     private GunUser user;
 
-    private ItemControls<GunUser> controls;
+    private ItemController<GunUser> controller;
 
     @BeforeEach
     void setUp() {
-        controls = new ItemControls<>();
+        controller = new ItemController<>();
     }
 
     @Test
@@ -34,9 +34,9 @@ class ItemControlsTest {
         ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, false, true, false);
         ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
 
-        controls.bind(Action.LEFT_CLICK, binding1);
-        controls.bind(Action.LEFT_CLICK, binding2);
-        controls.cancelAllFunctions();
+        controller.bind(Action.LEFT_CLICK, binding1);
+        controller.bind(Action.LEFT_CLICK, binding2);
+        controller.cancelAllFunctions();
 
         verify(function1).cancel();
         verify(function2, never()).cancel();
@@ -53,9 +53,9 @@ class ItemControlsTest {
         ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, false, true, false);
         ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
 
-        controls.bind(Action.LEFT_CLICK, binding1);
-        controls.bind(Action.LEFT_CLICK, binding2);
-        controls.performAction(Action.LEFT_CLICK, user);
+        controller.bind(Action.LEFT_CLICK, binding1);
+        controller.bind(Action.LEFT_CLICK, binding2);
+        controller.performAction(Action.LEFT_CLICK, user);
 
         verify(function1).perform(user);
         verify(function2, never()).perform(user);
@@ -67,8 +67,8 @@ class ItemControlsTest {
         Function<GunUser> function = mock();
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, true, false);
 
-        controls.bind(Action.LEFT_CLICK, binding);
-        controls.performAction(Action.RIGHT_CLICK, user);
+        controller.bind(Action.LEFT_CLICK, binding);
+        controller.performAction(Action.RIGHT_CLICK, user);
 
         verify(function, never()).perform(user);
     }
@@ -85,10 +85,10 @@ class ItemControlsTest {
         ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, true, true, false);
         ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
 
-        controls.bind(Action.LEFT_CLICK, binding1);
-        controls.bind(Action.LEFT_CLICK, binding2);
-        controls.performAction(Action.LEFT_CLICK, user);
-        controls.performAction(Action.LEFT_CLICK, user);
+        controller.bind(Action.LEFT_CLICK, binding1);
+        controller.bind(Action.LEFT_CLICK, binding2);
+        controller.performAction(Action.LEFT_CLICK, user);
+        controller.performAction(Action.LEFT_CLICK, user);
 
         verify(function1, atMost(1)).perform(user);
         verify(function2, never()).perform(user);
@@ -107,10 +107,10 @@ class ItemControlsTest {
         ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, false, true, false);
         ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
 
-        controls.bind(Action.LEFT_CLICK, binding1);
-        controls.bind(Action.LEFT_CLICK, binding2);
-        controls.performAction(Action.LEFT_CLICK, user);
-        controls.performAction(Action.LEFT_CLICK, user);
+        controller.bind(Action.LEFT_CLICK, binding1);
+        controller.bind(Action.LEFT_CLICK, binding2);
+        controller.performAction(Action.LEFT_CLICK, user);
+        controller.performAction(Action.LEFT_CLICK, user);
 
         verify(function1, atMost(1)).perform(user);
         verify(function2, atMost(1)).perform(user);

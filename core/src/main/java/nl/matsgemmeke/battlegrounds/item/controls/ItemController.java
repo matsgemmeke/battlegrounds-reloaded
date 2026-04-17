@@ -8,11 +8,11 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class ItemControls<T extends ItemUser> {
+public class ItemController<T extends ItemUser> {
 
     private final ConcurrentMap<Action, Set<ActionBinding<T>>> bindings;
 
-    public ItemControls() {
+    public ItemController() {
         this.bindings = new ConcurrentHashMap<>();
     }
 

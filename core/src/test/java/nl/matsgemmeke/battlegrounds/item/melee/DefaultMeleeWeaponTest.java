@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -34,7 +34,7 @@ class DefaultMeleeWeaponTest {
     private static final String NAME = "Combat Knife";
 
     @Mock
-    private ItemControls<MeleeWeaponUser> controls;
+    private ItemController<MeleeWeaponUser> controller;
     @Mock
     private MeleeWeaponUser user;
     @Mock
@@ -92,144 +92,144 @@ class DefaultMeleeWeaponTest {
     @Test
     @DisplayName("onChangeFrom does not perform action when no user is assigned")
     void onChangeFrom_nullUser() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.onChangeFrom();
 
-        verifyNoInteractions(controls);
+        verifyNoInteractions(controller);
     }
 
     @Test
-    @DisplayName("onChangeFrom performs CHANGE_FROM action on controls when user is assigned")
+    @DisplayName("onChangeFrom performs CHANGE_FROM action on controller when user is assigned")
     void onChangeFrom_success() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.assign(user);
         meleeWeapon.onChangeFrom();
 
-        verify(controls).performAction(Action.CHANGE_FROM, user);
+        verify(controller).performAction(Action.CHANGE_FROM, user);
     }
 
     @Test
     @DisplayName("onChangeTo does not perform action when no user is assigned")
     void onChangeTo_nullUser() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.onChangeTo();
 
-        verifyNoInteractions(controls);
+        verifyNoInteractions(controller);
     }
 
     @Test
-    @DisplayName("onChangeTo performs CHANGE_TO action on controls when user is assigned")
+    @DisplayName("onChangeTo performs CHANGE_TO action on controller when user is assigned")
     void onChangeTo_success() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.assign(user);
         meleeWeapon.onChangeTo();
 
-        verify(controls).performAction(Action.CHANGE_TO, user);
+        verify(controller).performAction(Action.CHANGE_TO, user);
     }
 
     @Test
     @DisplayName("onDrop does not perform action when no user is assigned")
     void onDrop_nullUser() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.onDrop();
 
-        verifyNoInteractions(controls);
+        verifyNoInteractions(controller);
     }
 
     @Test
-    @DisplayName("onDrop performs DROP_ITEM action on controls and cancels other functions when user is assigned")
+    @DisplayName("onDrop performs DROP_ITEM action on controller and cancels other functions when user is assigned")
     void onDrop_success() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.assign(user);
         meleeWeapon.onDrop();
 
-        verify(controls).cancelAllFunctions();
-        verify(controls).performAction(Action.DROP_ITEM, user);
+        verify(controller).cancelAllFunctions();
+        verify(controller).performAction(Action.DROP_ITEM, user);
     }
 
     @Test
     @DisplayName("onLeftClick does not perform action when no user is assigned")
     void onLeftClick_nullUser() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.onLeftClick();
 
-        verifyNoInteractions(controls);
+        verifyNoInteractions(controller);
     }
 
     @Test
-    @DisplayName("onLeftClick performs LEFT_CLICK action on controls when user is assigned")
+    @DisplayName("onLeftClick performs LEFT_CLICK action on controller when user is assigned")
     void onLeftClick_success() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.assign(user);
         meleeWeapon.onLeftClick();
 
-        verify(controls).performAction(Action.LEFT_CLICK, user);
+        verify(controller).performAction(Action.LEFT_CLICK, user);
     }
 
     @Test
-    @DisplayName("onPickUp performs PICKUP_ITEM action on controls and assigns user")
+    @DisplayName("onPickUp performs PICKUP_ITEM action on controller and assigns user")
     void onPickup_success() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.onPickUp(user);
 
-        verify(controls).performAction(Action.PICKUP_ITEM, user);
+        verify(controller).performAction(Action.PICKUP_ITEM, user);
     }
 
     @Test
     @DisplayName("onRightClick does not perform action when no user is assigned")
     void onRightClick_nullUser() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.onRightClick();
 
-        verifyNoInteractions(controls);
+        verifyNoInteractions(controller);
     }
 
     @Test
-    @DisplayName("onRightClick performs RIGHT_CLICK action on controls when user is assigned")
+    @DisplayName("onRightClick performs RIGHT_CLICK action on controller when user is assigned")
     void onRightClick_success() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.assign(user);
         meleeWeapon.onRightClick();
 
-        verify(controls).performAction(Action.RIGHT_CLICK, user);
+        verify(controller).performAction(Action.RIGHT_CLICK, user);
     }
 
     @Test
     @DisplayName("onSwapFrom does not perform action when no user is assigned")
     void onSwapFrom_nullUser() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.onSwapFrom();
 
-        verifyNoInteractions(controls);
+        verifyNoInteractions(controller);
     }
 
     @Test
-    @DisplayName("onSwapFrom performs SWAP_FROM action on controls when user is assigned")
+    @DisplayName("onSwapFrom performs SWAP_FROM action on controller when user is assigned")
     void onSwapFrom_success() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.assign(user);
         meleeWeapon.onSwapFrom();
 
-        verify(controls).performAction(Action.SWAP_FROM, user);
+        verify(controller).performAction(Action.SWAP_FROM, user);
     }
 
     @Test
     @DisplayName("onSwapTo does not perform action when no user is assigned")
     void onSwapTo_nullUser() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.onSwapTo();
 
-        verifyNoInteractions(controls);
+        verifyNoInteractions(controller);
     }
 
     @Test
-    @DisplayName("onSwapTo performs SWAP_TO action on controls when user is assigned")
+    @DisplayName("onSwapTo performs SWAP_TO action on controller when user is assigned")
     void onSwapTo_success() {
-        meleeWeapon.setControls(controls);
+        meleeWeapon.setController(controller);
         meleeWeapon.assign(user);
         meleeWeapon.onSwapTo();
 
-        verify(controls).performAction(Action.SWAP_TO, user);
+        verify(controller).performAction(Action.SWAP_TO, user);
     }
 
     @Test
