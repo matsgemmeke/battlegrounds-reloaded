@@ -15,31 +15,23 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEvent> {
 
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
     private final Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
 
     @Inject
-    public PlayerInteractEventHandler(
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameScope gameScope,
-            @NotNull Provider<ActionExecutorRegistry> actionExecutorRegistryProvider
-    ) {
+    public PlayerInteractEventHandler(GameContextProvider gameContextProvider, GameScope gameScope, Provider<ActionExecutorRegistry> actionExecutorRegistryProvider) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.actionExecutorRegistryProvider = actionExecutorRegistryProvider;
     }
 
-    public void handle(@NotNull PlayerInteractEvent event) {
+    public void handle(PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
 
         if (itemStack == null) {

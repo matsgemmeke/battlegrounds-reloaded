@@ -1,22 +1,17 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import org.jetbrains.annotations.NotNull;
-
 public class GameKey {
 
-    @NotNull
     private final String value;
 
-    private GameKey(@NotNull String value) {
+    private GameKey(String value) {
         this.value = value;
     }
 
-    @NotNull
     public static GameKey ofOpenMode() {
         return new GameKey("OPEN-MODE");
     }
 
-    @NotNull
     public static GameKey ofSession(int id) {
         return new GameKey("SESSION-" + id);
     }

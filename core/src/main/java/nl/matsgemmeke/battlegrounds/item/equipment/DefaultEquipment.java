@@ -80,15 +80,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     @Nullable
-    public ItemTemplate getThrowItemTemplate() {
-        return throwItemTemplate;
-    }
-
-    public void setThrowItemTemplate(@Nullable ItemTemplate throwItemTemplate) {
-        this.throwItemTemplate = throwItemTemplate;
-    }
-
-    @Nullable
     public EquipmentUser getUser() {
         return user;
     }

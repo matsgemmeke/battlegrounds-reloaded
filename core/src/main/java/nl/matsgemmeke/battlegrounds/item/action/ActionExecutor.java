@@ -4,7 +4,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Object that handles interactions performed on items and initiates behavior.
+ * Central entry point for handling player-driven item actions.
+ *
+ * <p>This dispatcher acts as an orchestration layer between low-level input events (such as events) and high-level
+ * item behavior.
  */
 public interface ActionExecutor {
 

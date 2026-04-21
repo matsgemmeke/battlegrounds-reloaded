@@ -90,19 +90,12 @@ public class EquipmentFactory {
 
         Activator activator = null;
         ItemSpec activatorItemSpec = spec.items.activatorItem;
-        ItemSpec throwItemSpec = spec.items.throwItem;
 
         if (activatorItemSpec != null) {
             ItemTemplate activatorItemTemplate = itemTemplateFactory.create(activatorItemSpec);
 
             activator = new DefaultActivator(activatorItemTemplate);
             equipment.setActivator(activator);
-        }
-
-        if (throwItemSpec != null) {
-            ItemTemplate throwItemTemplate = itemTemplateFactory.create(throwItemSpec);
-
-            equipment.setThrowItemTemplate(throwItemTemplate);
         }
 
         ItemController<EquipmentUser> controller = controllerFactory.create(spec, equipment);
