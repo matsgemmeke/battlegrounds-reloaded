@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
+import nl.matsgemmeke.battlegrounds.game.component.controls.ActionExecutorRegistry;
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

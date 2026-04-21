@@ -27,6 +27,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.DefaultAudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ActionExecutorRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ActionExecutorRegistryProvider;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessorProvider;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;

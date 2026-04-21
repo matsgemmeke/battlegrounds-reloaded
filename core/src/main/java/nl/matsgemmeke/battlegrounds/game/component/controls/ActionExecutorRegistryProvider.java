@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component.item;
+package nl.matsgemmeke.battlegrounds.game.component.controls;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

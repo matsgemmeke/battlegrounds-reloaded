@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component.item;
+package nl.matsgemmeke.battlegrounds.game.component.controls;
 
 import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
