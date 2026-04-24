@@ -26,8 +26,9 @@ public class ItemController<T extends ItemUser> {
     public void cancelAllFunctions() {
         bindings.values().stream()
                 .flatMap(Set::stream)
-                .filter(entry -> entry.function().isPerforming())
-                .forEach(entry -> entry.function().cancel());
+                .map(ActionBinding::function)
+                .filter(Function::isPerforming)
+                .forEach(Function::cancel);
     }
 
     public void performAction(Action action, T user) {
