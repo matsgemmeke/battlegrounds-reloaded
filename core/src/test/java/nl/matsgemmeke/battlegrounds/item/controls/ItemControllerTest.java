@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,7 +56,10 @@ class ItemControllerTest {
 
         controller.bind(Action.LEFT_CLICK, binding1);
         controller.bind(Action.LEFT_CLICK, binding2);
-        controller.performAction(Action.LEFT_CLICK, user);
+        ActionResult result = controller.performActionNew(Action.LEFT_CLICK, user);
+
+        assertThat(result.performed()).isTrue();
+        assertThat(result.cancelEvent()).isFalse();
 
         verify(function1).perform(user);
         verify(function2, never()).perform(user);
@@ -68,7 +72,10 @@ class ItemControllerTest {
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, true, false);
 
         controller.bind(Action.LEFT_CLICK, binding);
-        controller.performAction(Action.RIGHT_CLICK, user);
+        ActionResult result = controller.performActionNew(Action.RIGHT_CLICK, user);
+
+        assertThat(result.performed()).isFalse();
+        assertThat(result.cancelEvent()).isFalse();
 
         verify(function, never()).perform(user);
     }
@@ -82,13 +89,18 @@ class ItemControllerTest {
 
         Function<GunUser> function2 = mock();
 
-        ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, true, true, false);
+        ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, true, true, true);
         ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
 
         controller.bind(Action.LEFT_CLICK, binding1);
         controller.bind(Action.LEFT_CLICK, binding2);
-        controller.performAction(Action.LEFT_CLICK, user);
-        controller.performAction(Action.LEFT_CLICK, user);
+        ActionResult result1 = controller.performActionNew(Action.LEFT_CLICK, user);
+        ActionResult result2 = controller.performActionNew(Action.LEFT_CLICK, user);
+
+        assertThat(result1.performed()).isTrue();
+        assertThat(result1.cancelEvent()).isTrue();
+        assertThat(result2.performed()).isFalse();
+        assertThat(result2.cancelEvent()).isFalse();
 
         verify(function1, atMost(1)).perform(user);
         verify(function2, never()).perform(user);
@@ -105,12 +117,17 @@ class ItemControllerTest {
         when(function2.perform(user)).thenReturn(FunctionResult.SUCCESS);
 
         ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, false, true, false);
-        ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, false);
+        ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 2, false, true, true);
 
         controller.bind(Action.LEFT_CLICK, binding1);
         controller.bind(Action.LEFT_CLICK, binding2);
-        controller.performAction(Action.LEFT_CLICK, user);
-        controller.performAction(Action.LEFT_CLICK, user);
+        ActionResult result1 = controller.performActionNew(Action.LEFT_CLICK, user);
+        ActionResult result2 = controller.performActionNew(Action.LEFT_CLICK, user);
+
+        assertThat(result1.performed()).isTrue();
+        assertThat(result1.cancelEvent()).isFalse();
+        assertThat(result2.performed()).isTrue();
+        assertThat(result2.cancelEvent()).isTrue();
 
         verify(function1, atMost(1)).perform(user);
         verify(function2, atMost(1)).perform(user);

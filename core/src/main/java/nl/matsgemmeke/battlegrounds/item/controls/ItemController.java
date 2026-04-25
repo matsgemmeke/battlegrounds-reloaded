@@ -31,6 +31,7 @@ public class ItemController<T extends ItemUser> {
                 .forEach(Function::cancel);
     }
 
+    @Deprecated
     public void performAction(Action action, T user) {
         if (this.isPerformingBlockingFunction()) {
             return;
@@ -53,6 +54,38 @@ public class ItemController<T extends ItemUser> {
                 }
             }
         }
+    }
+
+    public ActionResult performActionNew(Action action, T user) {
+        if (this.isPerformingBlockingFunction()) {
+            return ActionResult.ignore();
+        }
+
+        Set<ActionBinding<T>> bindings = this.bindings.get(action);
+
+        if (bindings == null || bindings.isEmpty()) {
+            return ActionResult.ignore();
+        }
+
+        boolean performed = false;
+        boolean cancelEvent = false;
+
+        for (ActionBinding<T> binding : bindings) {
+            Function<T> function = binding.function();
+
+            if (!function.isPerforming()) {
+                FunctionResult result = function.perform(user);
+
+                performed = performed || result == FunctionResult.SUCCESS;
+                cancelEvent = cancelEvent || result == FunctionResult.SUCCESS && binding.cancelsEvent();
+
+                if (result == FunctionResult.SUCCESS && binding.stopsChain()) {
+                    break;
+                }
+            }
+        }
+
+        return new ActionResult(performed, cancelEvent);
     }
 
     private boolean isPerformingBlockingFunction() {

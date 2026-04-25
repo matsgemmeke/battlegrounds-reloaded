@@ -11,5 +11,5 @@ public interface ItemActionHandler<T> {
 
     Optional<T> resolve(GamePlayer gamePlayer, ItemStack itemStack);
 
-    DispatchResult dispatch(T item, Action action);
+    DispatchResult dispatch(T item, GamePlayer gamePlayer, Action action);
 }
