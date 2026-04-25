@@ -46,42 +46,54 @@ class ActionDispatcherTest {
     void setUp() {
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
-        actionDispatcher.registerActionHandler(gunActionHandler);
+        actionDispatcher.registerActionHandler(Action.LEFT_CLICK, gunActionHandler);
     }
 
     @Test
-    @DisplayName("dispatch returns UNHANDLED when given player is not registered")
+    @DisplayName("dispatch returns unhandled dispatch result when given player is not registered")
     void dispatch_playerNotRegistered() {
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.empty());
 
         DispatchResult result = actionDispatcher.dispatch(player, ITEM_STACK, Action.LEFT_CLICK);
 
-        assertThat(result).isEqualTo(DispatchResult.UNHANDLED);
+        assertThat(result.handled()).isFalse();
+        assertThat(result.cancelEvent()).isFalse();
     }
 
     @ParameterizedTest
-    @CsvSource({ "HANDLED,HANDLED", "CANCELLED,CANCELLED" })
+    @CsvSource({
+            "true,true,true,true",
+            "false,false,false,false"
+    })
     @DisplayName("dispatch returns dispatch result from underlying action handler when one resolves the given player and item stack")
-    void dispatch_actionHandlerResolvesGivenPlayerAndItemStack(DispatchResult actionHandlerResult, DispatchResult expectedResult) {
+    void dispatch_actionHandlerResolvesGivenPlayerAndItemStack(
+            boolean actionHandlerHandled,
+            boolean actionHandlerCancelEvent,
+            boolean expectedHandled,
+            boolean expectedCancelEvent
+    ) {
         Gun gun = mock(Gun.class);
+        DispatchResult actionHandlerResult = new DispatchResult(actionHandlerHandled, actionHandlerCancelEvent);
 
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunActionHandler.resolve(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
-        when(gunActionHandler.dispatch(gun, Action.LEFT_CLICK)).thenReturn(actionHandlerResult);
+        when(gunActionHandler.dispatch(gun, gamePlayer, Action.LEFT_CLICK)).thenReturn(actionHandlerResult);
 
         DispatchResult result = actionDispatcher.dispatch(player, ITEM_STACK, Action.LEFT_CLICK);
 
-        assertThat(result).isEqualTo(expectedResult);
+        assertThat(result.handled()).isEqualTo(expectedHandled);
+        assertThat(result.cancelEvent()).isEqualTo(expectedCancelEvent);
     }
 
     @Test
-    @DisplayName("dispatch returns UNHANDLED when none of the action handlers resolves the given player and item stack")
+    @DisplayName("dispatch returns unhandled dispatch result when none of the action handlers resolves the given player and item stack")
     void dispatch_noActionHandlerResolvesGivenPlayerAndItemStack() {
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(gunActionHandler.resolve(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
         DispatchResult result = actionDispatcher.dispatch(player, ITEM_STACK, Action.LEFT_CLICK);
 
-        assertThat(result).isEqualTo(DispatchResult.UNHANDLED);
+        assertThat(result.handled()).isFalse();
+        assertThat(result.cancelEvent()).isFalse();
     }
 }
