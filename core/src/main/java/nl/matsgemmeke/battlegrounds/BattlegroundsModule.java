@@ -27,6 +27,8 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.DefaultAudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ActionDispatcher;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ActionDispatcherProvider;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ActionExecutorRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ActionExecutorRegistryProvider;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
@@ -196,6 +198,7 @@ public class BattlegroundsModule implements Module {
         MapBinder<GameContextType, TargetFinder> targetFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, TargetFinder.class);
         targetFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeTargetFinder.class);
 
+        binder.bind(ActionDispatcher.class).toProvider(ActionDispatcherProvider.class).in(GameScoped.class);
         binder.bind(ActionExecutorRegistry.class).toProvider(ActionExecutorRegistryProvider.class).in(GameScoped.class);
         binder.bind(ActionInvoker.class).in(GameScoped.class);
         binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
