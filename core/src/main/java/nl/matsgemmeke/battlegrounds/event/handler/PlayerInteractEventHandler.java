@@ -8,13 +8,14 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.component.controls.ActionExecutorRegistry;
-import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ActionDispatcher;
+import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -22,19 +23,21 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
 
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
-    private final Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
+    private final Provider<ActionDispatcher> actionDispatcherProvider;
 
     @Inject
-    public PlayerInteractEventHandler(GameContextProvider gameContextProvider, GameScope gameScope, Provider<ActionExecutorRegistry> actionExecutorRegistryProvider) {
+    public PlayerInteractEventHandler(GameContextProvider gameContextProvider, GameScope gameScope, Provider<ActionDispatcher> actionDispatcherProvider) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.actionExecutorRegistryProvider = actionExecutorRegistryProvider;
+        this.actionDispatcherProvider = actionDispatcherProvider;
     }
 
+    @Override
     public void handle(PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
+        var action = this.convertEventActionToItemAction(event.getAction());
 
-        if (itemStack == null) {
+        if (itemStack == null || action == null) {
             return;
         }
 
@@ -49,27 +52,25 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
                 .orElseThrow(() -> new EventHandlingException("Unable to process PlayerInteractEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
-        gameScope.runInScope(gameContext, () -> this.performAction(event, player, itemStack));
+        gameScope.runInScope(gameContext, () -> this.performAction(event, player, itemStack, action));
     }
 
-    private void performAction(PlayerInteractEvent event, Player player, ItemStack itemStack) {
-        ActionExecutorRegistry actionExecutorRegistry = actionExecutorRegistryProvider.get();
-        ActionExecutor actionExecutor = actionExecutorRegistry.getActionExecutor(itemStack).orElse(null);
-
-        if (actionExecutor == null) {
-            return;
-        }
-
-        Action action = event.getAction();
-        boolean actionPerformed = true;
-
+    @Nullable
+    private nl.matsgemmeke.battlegrounds.item.controls.Action convertEventActionToItemAction(Action action) {
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            actionPerformed = actionExecutor.handleLeftClickAction(player, itemStack);
+            return nl.matsgemmeke.battlegrounds.item.controls.Action.LEFT_CLICK;
         } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            actionPerformed = actionExecutor.handleRightClickAction(player, itemStack);
+            return nl.matsgemmeke.battlegrounds.item.controls.Action.RIGHT_CLICK;
+        } else {
+            return null;
         }
+    }
 
-        if (!actionPerformed) {
+    private void performAction(PlayerInteractEvent event, Player player, ItemStack itemStack, nl.matsgemmeke.battlegrounds.item.controls.Action action) {
+        ActionDispatcher actionDispatcher = actionDispatcherProvider.get();
+        DispatchResult result = actionDispatcher.dispatch(player, itemStack, action);
+
+        if (result.cancelEvent()) {
             event.setUseItemInHand(Result.DENY);
         }
     }

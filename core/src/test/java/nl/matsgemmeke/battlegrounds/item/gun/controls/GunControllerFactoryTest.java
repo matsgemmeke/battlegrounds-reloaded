@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
@@ -20,6 +21,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,12 +30,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GunControllerFactoryTest {
 
+    private static final UUID GUN_ID = UUID.randomUUID();
+
     @Spy
     private ActionBindingMapper actionBindingMapper;
     @Mock
     private Gun gun;
     @Mock
     private ItemController<GunUser> controller;
+    @Mock
+    private ItemControllerRegistry itemControllerRegistry;
     @Mock
     private Supplier<ItemController<GunUser>> controllerSupplier;
     @Captor
@@ -44,6 +50,7 @@ class GunControllerFactoryTest {
     @BeforeEach
     void setUp() {
         when(controllerSupplier.get()).thenReturn(controller);
+        when(gun.getId()).thenReturn(GUN_ID);
     }
 
     @Test
@@ -60,6 +67,8 @@ class GunControllerFactoryTest {
                 binding -> assertThat(binding.function()).isInstanceOf(ReloadFunction.class),
                 binding -> assertThat(binding.function()).isInstanceOf(ShootFunction.class)
         );
+
+        verify(itemControllerRegistry).registerGunController(GUN_ID, controller);
     }
 
     @Test
@@ -79,6 +88,8 @@ class GunControllerFactoryTest {
                 binding -> assertThat(binding.function()).isInstanceOf(ReloadFunction.class),
                 binding -> assertThat(binding.function()).isInstanceOf(ShootFunction.class)
         );
+
+        verify(itemControllerRegistry).registerGunController(GUN_ID, controller);
     }
 
     @Test
@@ -99,6 +110,8 @@ class GunControllerFactoryTest {
                 binding -> assertThat(binding.function()).isInstanceOf(ReloadFunction.class),
                 binding -> assertThat(binding.function()).isInstanceOf(ShootFunction.class)
         );
+
+        verify(itemControllerRegistry).registerGunController(GUN_ID, controller);
     }
 
     private GunSpec createGunSpec(String filePath) {

@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.gun.controls;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.controls.ControlSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ControlsSpec;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
@@ -20,11 +21,13 @@ import java.util.function.Supplier;
 public class GunControllerFactory {
 
     private final ActionBindingMapper actionBindingMapper;
+    private final ItemControllerRegistry itemControllerRegistry;
     private final Supplier<ItemController<GunUser>> controllerSupplier;
 
     @Inject
-    public GunControllerFactory(ActionBindingMapper actionBindingMapper, Supplier<ItemController<GunUser>> controllerSupplier) {
+    public GunControllerFactory(ActionBindingMapper actionBindingMapper, ItemControllerRegistry itemControllerRegistry, Supplier<ItemController<GunUser>> controllerSupplier) {
         this.actionBindingMapper = actionBindingMapper;
+        this.itemControllerRegistry = itemControllerRegistry;
         this.controllerSupplier = controllerSupplier;
     }
 
@@ -69,6 +72,8 @@ public class GunControllerFactory {
 
         controller.bind(reloadAction, reloadBinding);
         controller.bind(shootAction, shootBinding);
+
+        itemControllerRegistry.registerGunController(gun.getId(), controller);
 
         return controller;
     }
