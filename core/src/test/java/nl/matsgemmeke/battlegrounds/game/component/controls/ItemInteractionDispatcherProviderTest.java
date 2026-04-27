@@ -12,20 +12,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class ActionDispatcherProviderTest {
+class ItemInteractionDispatcherProviderTest {
 
     @Mock
     private GunActionHandler gunActionHandler;
     @Mock
     private PlayerRegistry playerRegistry;
     @InjectMocks
-    private ActionDispatcherProvider provider;
+    private ItemInteractionDispatcherProvider provider;
 
     @Test
-    @DisplayName("get returns ActionDispatcher instance with registered action handlers")
+    @DisplayName("get returns ItemInteractionDispatcher instance with registered action handlers")
     void get() {
-        ActionDispatcher actionDispatcher = provider.get();
+        ItemInteractionDispatcher itemInteractionDispatcher = provider.get();
 
-        assertThat(actionDispatcher).isNotNull();
+        assertThat(itemInteractionDispatcher).isNotNull();
     }
 }

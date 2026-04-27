@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.game.component.controls.ActionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -37,19 +37,19 @@ class PlayerInteractEventHandlerTest {
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock
-    private ActionDispatcher actionDispatcher;
-    @Mock
     private GameContextProvider gameContextProvider;
     @Mock
     private GamePlayer gamePlayer;
     @Mock
     private GameScope gameScope;
     @Mock
+    private ItemInteractionDispatcher itemInteractionDispatcher;
+    @Mock
     private Player player;
     @Mock
     private PlayerRegistry playerRegistry;
     @Mock
-    private Provider<ActionDispatcher> actionDispatcherProvider;
+    private Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider;
     @Mock
     private Provider<PlayerRegistry> playerRegistryProvider;
 
@@ -57,7 +57,7 @@ class PlayerInteractEventHandlerTest {
 
     @BeforeEach
     void setUp() {
-        eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionDispatcherProvider, playerRegistryProvider);
+        eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, itemInteractionDispatcherProvider, playerRegistryProvider);
     }
 
     @Test
@@ -130,7 +130,7 @@ class PlayerInteractEventHandlerTest {
 
         assertThat(event.useItemInHand()).isEqualTo(Result.DEFAULT);
 
-        verifyNoInteractions(actionDispatcher);
+        verifyNoInteractions(itemInteractionDispatcher);
     }
 
     @Test
@@ -144,8 +144,8 @@ class PlayerInteractEventHandlerTest {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
-        when(actionDispatcher.dispatch(gamePlayer, ITEM_STACK, nl.matsgemmeke.battlegrounds.item.controls.Action.LEFT_CLICK)).thenReturn(result);
-        when(actionDispatcherProvider.get()).thenReturn(actionDispatcher);
+        when(itemInteractionDispatcher.dispatch(gamePlayer, ITEM_STACK, nl.matsgemmeke.battlegrounds.item.controls.Action.LEFT_CLICK)).thenReturn(result);
+        when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
@@ -165,8 +165,8 @@ class PlayerInteractEventHandlerTest {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
-        when(actionDispatcher.dispatch(gamePlayer, ITEM_STACK, nl.matsgemmeke.battlegrounds.item.controls.Action.RIGHT_CLICK)).thenReturn(result);
-        when(actionDispatcherProvider.get()).thenReturn(actionDispatcher);
+        when(itemInteractionDispatcher.dispatch(gamePlayer, ITEM_STACK, nl.matsgemmeke.battlegrounds.item.controls.Action.RIGHT_CLICK)).thenReturn(result);
+        when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 

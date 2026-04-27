@@ -8,11 +8,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ActionDispatcher {
+public class ItemInteractionDispatcher {
 
     private final Map<Action, List<ItemActionHandler<?>>> actionHandlers;
 
-    public ActionDispatcher() {
+    public ItemInteractionDispatcher() {
         this.actionHandlers = new ConcurrentHashMap<>();
     }
 

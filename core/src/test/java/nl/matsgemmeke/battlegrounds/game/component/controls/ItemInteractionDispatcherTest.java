@@ -23,7 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ActionDispatcherTest {
+class ItemInteractionDispatcherTest {
 
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
 
@@ -32,11 +32,11 @@ class ActionDispatcherTest {
     @Mock
     private GamePlayer gamePlayer;
     @InjectMocks
-    private ActionDispatcher actionDispatcher;
+    private ItemInteractionDispatcher itemInteractionDispatcher;
 
     @BeforeEach
     void setUp() {
-        actionDispatcher.registerActionHandler(Action.LEFT_CLICK, gunActionHandler);
+        itemInteractionDispatcher.registerActionHandler(Action.LEFT_CLICK, gunActionHandler);
     }
 
     @ParameterizedTest
@@ -57,7 +57,7 @@ class ActionDispatcherTest {
         when(gunActionHandler.resolve(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
         when(gunActionHandler.dispatch(gun, gamePlayer, Action.LEFT_CLICK)).thenReturn(actionHandlerResult);
 
-        DispatchResult result = actionDispatcher.dispatch(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
+        DispatchResult result = itemInteractionDispatcher.dispatch(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
 
         assertThat(result.handled()).isEqualTo(expectedHandled);
         assertThat(result.cancelEvent()).isEqualTo(expectedCancelEvent);
@@ -68,7 +68,7 @@ class ActionDispatcherTest {
     void dispatch_noActionHandlerResolvesGivenPlayerAndItemStack() {
         when(gunActionHandler.resolve(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        DispatchResult result = actionDispatcher.dispatch(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
+        DispatchResult result = itemInteractionDispatcher.dispatch(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();

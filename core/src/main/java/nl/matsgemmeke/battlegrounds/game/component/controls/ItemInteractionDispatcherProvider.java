@@ -7,21 +7,21 @@ import nl.matsgemmeke.battlegrounds.item.controls.Action;
 
 import java.util.Arrays;
 
-public class ActionDispatcherProvider implements Provider<ActionDispatcher> {
+public class ItemInteractionDispatcherProvider implements Provider<ItemInteractionDispatcher> {
 
     private final GunActionHandler gunActionHandler;
 
     @Inject
-    public ActionDispatcherProvider(GunActionHandler gunActionHandler) {
+    public ItemInteractionDispatcherProvider(GunActionHandler gunActionHandler) {
         this.gunActionHandler = gunActionHandler;
     }
 
     @Override
-    public ActionDispatcher get() {
-        ActionDispatcher actionDispatcher = new ActionDispatcher();
+    public ItemInteractionDispatcher get() {
+        ItemInteractionDispatcher dispatcher = new ItemInteractionDispatcher();
 
-        Arrays.stream(Action.values()).forEach(action -> actionDispatcher.registerActionHandler(action, gunActionHandler));
+        Arrays.stream(Action.values()).forEach(action -> dispatcher.registerActionHandler(action, gunActionHandler));
 
-        return actionDispatcher;
+        return dispatcher;
     }
 }

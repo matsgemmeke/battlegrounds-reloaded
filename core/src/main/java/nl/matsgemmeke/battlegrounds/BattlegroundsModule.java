@@ -195,7 +195,6 @@ public class BattlegroundsModule implements Module {
         MapBinder<GameContextType, TargetFinder> targetFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, TargetFinder.class);
         targetFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeTargetFinder.class);
 
-        binder.bind(ActionDispatcher.class).toProvider(ActionDispatcherProvider.class).in(GameScoped.class);
         binder.bind(ActionExecutorRegistry.class).toProvider(ActionExecutorRegistryProvider.class).in(GameScoped.class);
         binder.bind(ActionInvoker.class).in(GameScoped.class);
         binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
@@ -211,6 +210,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(GunRegistry.class).to(DefaultGunRegistry.class).in(GameScoped.class);
         binder.bind(ItemControllerRegistry.class).in(GameScoped.class);
         binder.bind(ItemCreator.class).in(GameScoped.class);
+        binder.bind(ItemInteractionDispatcher.class).toProvider(ItemInteractionDispatcherProvider.class).in(GameScoped.class);
         binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class).in(GameScoped.class);
         binder.bind(MeleeWeaponRegistry.class).to(DefaultMeleeWeaponRegistry.class).in(GameScoped.class);
         binder.bind(MobRegistry.class).toProvider(MobRegistryProvider.class).in(GameScoped.class);

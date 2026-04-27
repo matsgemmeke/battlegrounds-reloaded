@@ -9,8 +9,8 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.component.controls.ActionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -25,19 +25,19 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
 
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
-    private final Provider<ActionDispatcher> actionDispatcherProvider;
+    private final Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider;
     private final Provider<PlayerRegistry> playerRegistryProvider;
 
     @Inject
     public PlayerInteractEventHandler(
             GameContextProvider gameContextProvider,
             GameScope gameScope,
-            Provider<ActionDispatcher> actionDispatcherProvider,
+            Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider,
             Provider<PlayerRegistry> playerRegistryProvider
     ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.actionDispatcherProvider = actionDispatcherProvider;
+        this.itemInteractionDispatcherProvider = itemInteractionDispatcherProvider;
         this.playerRegistryProvider = playerRegistryProvider;
     }
 
@@ -83,8 +83,8 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
             return;
         }
 
-        ActionDispatcher actionDispatcher = actionDispatcherProvider.get();
-        DispatchResult result = actionDispatcher.dispatch(gamePlayer, itemStack, action);
+        ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
+        DispatchResult result = dispatcher.dispatch(gamePlayer, itemStack, action);
 
         if (result.cancelEvent()) {
             event.setUseItemInHand(Result.DENY);
