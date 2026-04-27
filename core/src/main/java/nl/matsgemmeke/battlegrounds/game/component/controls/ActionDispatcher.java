@@ -1,27 +1,18 @@
 package nl.matsgemmeke.battlegrounds.game.component.controls;
 
-import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.handler.ItemActionHandler;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ActionDispatcher {
 
     private final Map<Action, List<ItemActionHandler<?>>> actionHandlers;
-    private final PlayerRegistry playerRegistry;
 
-    @Inject
-    public ActionDispatcher(PlayerRegistry playerRegistry) {
-        this.playerRegistry = playerRegistry;
+    public ActionDispatcher() {
         this.actionHandlers = new ConcurrentHashMap<>();
     }
 
@@ -29,15 +20,10 @@ public class ActionDispatcher {
         actionHandlers.computeIfAbsent(action, k -> new ArrayList<>()).add(actionHandler);
     }
 
-    public DispatchResult dispatch(Player player, ItemStack itemStack, Action action) {
-        UUID playerId = player.getUniqueId();
-        GamePlayer gamePlayer = playerRegistry.findByUniqueId(playerId).orElse(null);
+    public DispatchResult dispatch(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
+        List<ItemActionHandler<?>> actionHandlers = this.actionHandlers.getOrDefault(action, Collections.emptyList());
 
-        if (gamePlayer == null) {
-            return DispatchResult.unhandled();
-        }
-
-        for (ItemActionHandler<?> actionHandler : actionHandlers.get(action)) {
+        for (ItemActionHandler<?> actionHandler : actionHandlers) {
             DispatchResult result = this.dispatchTyped(actionHandler, gamePlayer, itemStack, action);
 
             if (result.handled()) {

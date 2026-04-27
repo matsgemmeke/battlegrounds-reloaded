@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
@@ -10,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ActionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
@@ -24,12 +26,19 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
     private final Provider<ActionDispatcher> actionDispatcherProvider;
+    private final Provider<PlayerRegistry> playerRegistryProvider;
 
     @Inject
-    public PlayerInteractEventHandler(GameContextProvider gameContextProvider, GameScope gameScope, Provider<ActionDispatcher> actionDispatcherProvider) {
+    public PlayerInteractEventHandler(
+            GameContextProvider gameContextProvider,
+            GameScope gameScope,
+            Provider<ActionDispatcher> actionDispatcherProvider,
+            Provider<PlayerRegistry> playerRegistryProvider
+    ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.actionDispatcherProvider = actionDispatcherProvider;
+        this.playerRegistryProvider = playerRegistryProvider;
     }
 
     @Override
@@ -52,7 +61,7 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
                 .orElseThrow(() -> new EventHandlingException("Unable to process PlayerInteractEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
-        gameScope.runInScope(gameContext, () -> this.performAction(event, player, itemStack, action));
+        gameScope.runInScope(gameContext, () -> this.performAction(event, playerId, itemStack, action));
     }
 
     @Nullable
@@ -66,9 +75,16 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
         }
     }
 
-    private void performAction(PlayerInteractEvent event, Player player, ItemStack itemStack, nl.matsgemmeke.battlegrounds.item.controls.Action action) {
+    private void performAction(PlayerInteractEvent event, UUID playerId, ItemStack itemStack, nl.matsgemmeke.battlegrounds.item.controls.Action action) {
+        PlayerRegistry playerRegistry = playerRegistryProvider.get();
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(playerId).orElse(null);
+
+        if (gamePlayer == null) {
+            return;
+        }
+
         ActionDispatcher actionDispatcher = actionDispatcherProvider.get();
-        DispatchResult result = actionDispatcher.dispatch(player, itemStack, action);
+        DispatchResult result = actionDispatcher.dispatch(gamePlayer, itemStack, action);
 
         if (result.cancelEvent()) {
             event.setUseItemInHand(Result.DENY);

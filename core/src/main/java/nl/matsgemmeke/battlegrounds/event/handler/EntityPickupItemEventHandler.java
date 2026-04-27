@@ -30,6 +30,7 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
         this.actionExecutorRegistryProvider = actionExecutorRegistryProvider;
     }
 
+    @Override
     public void handle(EntityPickupItemEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
             return;

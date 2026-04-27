@@ -2,20 +2,22 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ActionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -35,15 +37,28 @@ class PlayerInteractEventHandlerTest {
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock
+    private ActionDispatcher actionDispatcher;
+    @Mock
     private GameContextProvider gameContextProvider;
+    @Mock
+    private GamePlayer gamePlayer;
     @Mock
     private GameScope gameScope;
     @Mock
     private Player player;
     @Mock
+    private PlayerRegistry playerRegistry;
+    @Mock
     private Provider<ActionDispatcher> actionDispatcherProvider;
-    @InjectMocks
+    @Mock
+    private Provider<PlayerRegistry> playerRegistryProvider;
+
     private PlayerInteractEventHandler eventHandler;
+
+    @BeforeEach
+    void setUp() {
+        eventHandler = new PlayerInteractEventHandler(gameContextProvider, gameScope, actionDispatcherProvider, playerRegistryProvider);
+    }
 
     @Test
     @DisplayName("handle does nothing when clicked item is null")
@@ -99,18 +114,39 @@ class PlayerInteractEventHandlerTest {
     }
 
     @Test
+    @DisplayName("handle does nothing when player is not registered in game context")
+    void handle_playerNotRegistered() {
+        PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, ITEM_STACK, null, null);
+
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
+        when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.empty());
+
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
+
+        eventHandler.handle(event);
+
+        assertThat(event.useItemInHand()).isEqualTo(Result.DEFAULT);
+
+        verifyNoInteractions(actionDispatcher);
+    }
+
+    @Test
     @DisplayName("handle calls left click on action dispatcher and cancels event based on result")
     void handle_leftClickAction() {
         DispatchResult result = new DispatchResult(true, true);
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, ITEM_STACK, null, null);
 
-        ActionDispatcher actionDispatcher = mock(ActionDispatcher.class);
-        when(actionDispatcher.dispatch(player, ITEM_STACK, nl.matsgemmeke.battlegrounds.item.controls.Action.LEFT_CLICK)).thenReturn(result);
-
-        when(actionDispatcherProvider.get()).thenReturn(actionDispatcher);
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
+        when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
+        when(actionDispatcher.dispatch(gamePlayer, ITEM_STACK, nl.matsgemmeke.battlegrounds.item.controls.Action.LEFT_CLICK)).thenReturn(result);
+        when(actionDispatcherProvider.get()).thenReturn(actionDispatcher);
+
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
         eventHandler.handle(event);
@@ -124,13 +160,14 @@ class PlayerInteractEventHandlerTest {
         DispatchResult result = new DispatchResult(true, true);
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, ITEM_STACK, null, null);
 
-        ActionDispatcher actionDispatcher = mock(ActionDispatcher.class);
-        when(actionDispatcher.dispatch(player, ITEM_STACK, nl.matsgemmeke.battlegrounds.item.controls.Action.RIGHT_CLICK)).thenReturn(result);
-
-        when(actionDispatcherProvider.get()).thenReturn(actionDispatcher);
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
+        when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
+        when(actionDispatcher.dispatch(gamePlayer, ITEM_STACK, nl.matsgemmeke.battlegrounds.item.controls.Action.RIGHT_CLICK)).thenReturn(result);
+        when(actionDispatcherProvider.get()).thenReturn(actionDispatcher);
+
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
         eventHandler.handle(event);
