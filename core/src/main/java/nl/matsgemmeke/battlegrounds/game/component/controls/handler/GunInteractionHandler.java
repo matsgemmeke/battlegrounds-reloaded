@@ -14,13 +14,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
-public class GunActionHandler implements ItemActionHandler<Gun> {
+public class GunInteractionHandler implements ItemInteractionHandler<Gun> {
 
     private final GunRegistry gunRegistry;
     private final ItemControllerRegistry itemControllerRegistry;
 
     @Inject
-    public GunActionHandler(GunRegistry gunRegistry, ItemControllerRegistry itemControllerRegistry) {
+    public GunInteractionHandler(GunRegistry gunRegistry, ItemControllerRegistry itemControllerRegistry) {
         this.gunRegistry = gunRegistry;
         this.itemControllerRegistry = itemControllerRegistry;
     }

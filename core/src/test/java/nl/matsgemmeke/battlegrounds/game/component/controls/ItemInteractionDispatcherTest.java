@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.controls;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.component.controls.handler.ItemActionHandler;
+import nl.matsgemmeke.battlegrounds.game.component.controls.handler.ItemInteractionHandler;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import org.bukkit.Material;
@@ -28,7 +28,7 @@ class ItemInteractionDispatcherTest {
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
 
     @Mock
-    private ItemActionHandler<Gun> gunActionHandler;
+    private ItemInteractionHandler<Gun> gunInteractionHandler;
     @Mock
     private GamePlayer gamePlayer;
     @InjectMocks
@@ -36,7 +36,7 @@ class ItemInteractionDispatcherTest {
 
     @BeforeEach
     void setUp() {
-        itemInteractionDispatcher.registerActionHandler(Action.LEFT_CLICK, gunActionHandler);
+        itemInteractionDispatcher.registerActionHandler(Action.LEFT_CLICK, gunInteractionHandler);
     }
 
     @ParameterizedTest
@@ -54,8 +54,8 @@ class ItemInteractionDispatcherTest {
         Gun gun = mock(Gun.class);
         DispatchResult actionHandlerResult = new DispatchResult(actionHandlerHandled, actionHandlerCancelEvent);
 
-        when(gunActionHandler.resolve(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
-        when(gunActionHandler.dispatch(gun, gamePlayer, Action.LEFT_CLICK)).thenReturn(actionHandlerResult);
+        when(gunInteractionHandler.resolve(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
+        when(gunInteractionHandler.dispatch(gun, gamePlayer, Action.LEFT_CLICK)).thenReturn(actionHandlerResult);
 
         DispatchResult result = itemInteractionDispatcher.dispatch(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
 
@@ -66,7 +66,7 @@ class ItemInteractionDispatcherTest {
     @Test
     @DisplayName("dispatch returns unhandled dispatch result when none of the action handlers resolves the given player and item stack")
     void dispatch_noActionHandlerResolvesGivenPlayerAndItemStack() {
-        when(gunActionHandler.resolve(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
+        when(gunInteractionHandler.resolve(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
         DispatchResult result = itemInteractionDispatcher.dispatch(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
 

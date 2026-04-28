@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
-public interface ItemActionHandler<T> {
+public interface ItemInteractionHandler<T> {
 
     Optional<T> resolve(GamePlayer gamePlayer, ItemStack itemStack);
 

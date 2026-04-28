@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GunActionHandlerTest {
+class GunInteractionHandlerTest {
 
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID GUN_ID = UUID.randomUUID();
@@ -40,14 +40,14 @@ class GunActionHandlerTest {
     @Mock
     private ItemControllerRegistry itemControllerRegistry;
     @InjectMocks
-    private GunActionHandler actionHandler;
+    private GunInteractionHandler interactionHandler;
 
     @Test
     @DisplayName("resolve returns optional with corresponding gun when given combination of player and item stack is registered")
     void resolve_playerAndItemStackRegistered() {
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        Optional<Gun> gunOptional = actionHandler.resolve(gamePlayer, ITEM_STACK);
+        Optional<Gun> gunOptional = interactionHandler.resolve(gamePlayer, ITEM_STACK);
 
         assertThat(gunOptional).isEmpty();
     }
@@ -57,7 +57,7 @@ class GunActionHandlerTest {
     void resolve_playerAndItemStackNotRegistered() {
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
 
-        Optional<Gun> gunOptional = actionHandler.resolve(gamePlayer, ITEM_STACK);
+        Optional<Gun> gunOptional = interactionHandler.resolve(gamePlayer, ITEM_STACK);
 
         assertThat(gunOptional).hasValue(gun);
     }
@@ -68,7 +68,7 @@ class GunActionHandlerTest {
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.empty());
 
-        DispatchResult result = actionHandler.dispatch(gun, gamePlayer, Action.LEFT_CLICK);
+        DispatchResult result = interactionHandler.dispatch(gun, gamePlayer, Action.LEFT_CLICK);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
@@ -85,7 +85,7 @@ class GunActionHandlerTest {
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
 
-        DispatchResult result = actionHandler.dispatch(gun, gamePlayer, Action.LEFT_CLICK);
+        DispatchResult result = interactionHandler.dispatch(gun, gamePlayer, Action.LEFT_CLICK);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();

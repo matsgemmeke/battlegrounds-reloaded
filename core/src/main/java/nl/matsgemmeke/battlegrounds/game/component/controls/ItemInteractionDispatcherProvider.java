@@ -2,25 +2,25 @@ package nl.matsgemmeke.battlegrounds.game.component.controls;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.game.component.controls.handler.GunActionHandler;
+import nl.matsgemmeke.battlegrounds.game.component.controls.handler.GunInteractionHandler;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 
 import java.util.Arrays;
 
 public class ItemInteractionDispatcherProvider implements Provider<ItemInteractionDispatcher> {
 
-    private final GunActionHandler gunActionHandler;
+    private final GunInteractionHandler gunInteractionHandler;
 
     @Inject
-    public ItemInteractionDispatcherProvider(GunActionHandler gunActionHandler) {
-        this.gunActionHandler = gunActionHandler;
+    public ItemInteractionDispatcherProvider(GunInteractionHandler gunInteractionHandler) {
+        this.gunInteractionHandler = gunInteractionHandler;
     }
 
     @Override
     public ItemInteractionDispatcher get() {
         ItemInteractionDispatcher dispatcher = new ItemInteractionDispatcher();
 
-        Arrays.stream(Action.values()).forEach(action -> dispatcher.registerActionHandler(action, gunActionHandler));
+        Arrays.stream(Action.values()).forEach(action -> dispatcher.registerActionHandler(action, gunInteractionHandler));
 
         return dispatcher;
     }

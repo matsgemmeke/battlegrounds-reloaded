@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.controls;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.component.controls.handler.ItemActionHandler;
+import nl.matsgemmeke.battlegrounds.game.component.controls.handler.ItemInteractionHandler;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,21 +10,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ItemInteractionDispatcher {
 
-    private final Map<Action, List<ItemActionHandler<?>>> actionHandlers;
+    private final Map<Action, List<ItemInteractionHandler<?>>> interactionHandlers;
 
     public ItemInteractionDispatcher() {
-        this.actionHandlers = new ConcurrentHashMap<>();
+        this.interactionHandlers = new ConcurrentHashMap<>();
     }
 
-    public <T> void registerActionHandler(Action action, ItemActionHandler<T> actionHandler) {
-        actionHandlers.computeIfAbsent(action, k -> new ArrayList<>()).add(actionHandler);
+    public <T> void registerActionHandler(Action action, ItemInteractionHandler<T> interactionHandler) {
+        interactionHandlers.computeIfAbsent(action, k -> new ArrayList<>()).add(interactionHandler);
     }
 
     public DispatchResult dispatch(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
-        List<ItemActionHandler<?>> actionHandlers = this.actionHandlers.getOrDefault(action, Collections.emptyList());
+        List<ItemInteractionHandler<?>> interactionHandlers = this.interactionHandlers.getOrDefault(action, Collections.emptyList());
 
-        for (ItemActionHandler<?> actionHandler : actionHandlers) {
-            DispatchResult result = this.dispatchTyped(actionHandler, gamePlayer, itemStack, action);
+        for (ItemInteractionHandler<?> interactionHandler : interactionHandlers) {
+            DispatchResult result = this.dispatchTyped(interactionHandler, gamePlayer, itemStack, action);
 
             if (result.handled()) {
                 return result;
@@ -34,9 +34,9 @@ public class ItemInteractionDispatcher {
         return DispatchResult.unhandled();
     }
 
-    private <T> DispatchResult dispatchTyped(ItemActionHandler<T> handler, GamePlayer gamePlayer, ItemStack itemStack, Action action) {
-        return handler.resolve(gamePlayer, itemStack)
-                .map(item -> handler.dispatch(item, gamePlayer, action))
+    private <T> DispatchResult dispatchTyped(ItemInteractionHandler<T> interactionHandler, GamePlayer gamePlayer, ItemStack itemStack, Action action) {
+        return interactionHandler.resolve(gamePlayer, itemStack)
+                .map(item -> interactionHandler.dispatch(item, gamePlayer, action))
                 .orElse(DispatchResult.unhandled());
     }
 }

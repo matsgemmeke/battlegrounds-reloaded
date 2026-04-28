@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.controls;
 
-import nl.matsgemmeke.battlegrounds.game.component.controls.handler.GunActionHandler;
+import nl.matsgemmeke.battlegrounds.game.component.controls.handler.GunInteractionHandler;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ItemInteractionDispatcherProviderTest {
 
     @Mock
-    private GunActionHandler gunActionHandler;
+    private GunInteractionHandler gunInteractionHandler;
     @Mock
     private PlayerRegistry playerRegistry;
     @InjectMocks
