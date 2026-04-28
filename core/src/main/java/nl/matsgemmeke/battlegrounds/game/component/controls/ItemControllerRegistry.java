@@ -34,7 +34,15 @@ public class ItemControllerRegistry {
         meleeWeaponControllers.put(meleeWeaponId, meleeWeaponController);
     }
 
+    public Optional<ItemController<EquipmentUser>> getEquipmentController(UUID equipmentId) {
+        return Optional.ofNullable(equipmentControllers.get(equipmentId));
+    }
+
     public Optional<ItemController<GunUser>> getGunController(UUID gunId) {
         return Optional.ofNullable(gunControllers.get(gunId));
+    }
+
+    public Optional<ItemController<MeleeWeaponUser>> getMeleeWeaponController(UUID meleeWeaponId) {
+        return Optional.ofNullable(meleeWeaponControllers.get(meleeWeaponId));
     }
 }
