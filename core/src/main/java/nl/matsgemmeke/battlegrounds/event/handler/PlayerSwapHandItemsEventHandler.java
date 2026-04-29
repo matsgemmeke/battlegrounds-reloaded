@@ -2,18 +2,21 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
-import nl.matsgemmeke.battlegrounds.game.component.item.ActionInvoker;
+import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
+import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,21 +25,26 @@ public class PlayerSwapHandItemsEventHandler implements EventHandler<PlayerSwapH
 
     private static final ItemStack EMPTY_ITEM_STACK = new ItemStack(Material.AIR);
 
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
-    private final Provider<ActionInvoker> actionInvokerProvider;
+    private final Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider;
+    private final Provider<PlayerRegistry> playerRegistryProvider;
 
     @Inject
-    public PlayerSwapHandItemsEventHandler(@NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope, @NotNull Provider<ActionInvoker> actionInvokerProvider) {
+    public PlayerSwapHandItemsEventHandler(
+            GameContextProvider gameContextProvider,
+            GameScope gameScope,
+            Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider,
+            Provider<PlayerRegistry> playerRegistryProvider
+    ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.actionInvokerProvider = actionInvokerProvider;
+        this.itemInteractionDispatcherProvider = itemInteractionDispatcherProvider;
+        this.playerRegistryProvider = playerRegistryProvider;
     }
 
-    public void handle(@NotNull PlayerSwapHandItemsEvent event) {
+    @Override
+    public void handle(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
         GameKey gameKey = gameContextProvider.getGameKeyByEntityId(playerId).orElse(null);
@@ -48,17 +56,24 @@ public class PlayerSwapHandItemsEventHandler implements EventHandler<PlayerSwapH
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
                 .orElseThrow(() -> new EventHandlingException("Unable to process PlayerSwapHandItemsEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
-        gameScope.runInScope(gameContext, () -> this.performActions(event, player));
+        gameScope.runInScope(gameContext, () -> this.performActions(event, playerId));
     }
 
-    private void performActions(PlayerSwapHandItemsEvent event, Player player) {
-        ActionInvoker actionInvoker = actionInvokerProvider.get();
-        ItemStack swapFrom = Optional.ofNullable(event.getOffHandItem()).orElse(EMPTY_ITEM_STACK);
-        ItemStack swapTo = Optional.ofNullable(event.getMainHandItem()).orElse(EMPTY_ITEM_STACK);
+    private void performActions(PlayerSwapHandItemsEvent event, UUID playerId) {
+        PlayerRegistry playerRegistry = playerRegistryProvider.get();
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(playerId).orElse(null);
 
-        boolean performSwapFromAction = actionInvoker.performAction(swapFrom, actionExecutor -> actionExecutor.handleSwapFromAction(player, swapFrom));
-        boolean performSwapToAction = actionInvoker.performAction(swapTo, actionExecutor -> actionExecutor.handleSwapToAction(player, swapTo));
+        if (gamePlayer == null) {
+            return;
+        }
 
-        event.setCancelled(event.isCancelled() || !performSwapFromAction || !performSwapToAction);
+        ItemStack swapFromItemStack = Optional.ofNullable(event.getMainHandItem()).orElse(EMPTY_ITEM_STACK);
+        ItemStack swapToItemStack = Optional.ofNullable(event.getOffHandItem()).orElse(EMPTY_ITEM_STACK);
+        ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
+
+        DispatchResult swapFromResult = dispatcher.dispatch(gamePlayer, swapFromItemStack, Action.SWAP_FROM);
+        DispatchResult swapToResult = dispatcher.dispatch(gamePlayer, swapToItemStack, Action.SWAP_TO);
+
+        event.setCancelled(event.isCancelled() || swapFromResult.cancelEvent() || swapToResult.cancelEvent());
     }
 }
