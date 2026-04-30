@@ -68,14 +68,14 @@ items:
       - HIDE_ATTRIBUTES
       - HIDE_UNBREAKABLE
     data:
+      weapon-type:
+        key: weapon-type
+        type: STRING
+        value: EQUIPMENT
       weapon-name:
         key: weapon-name
         type: STRING
         value: C4
-      action-executor-id:
-        key: action-executor-id
-        type: STRING
-        value: equipment
     unbreakable: true
   activator-item:
     material: SHEARS

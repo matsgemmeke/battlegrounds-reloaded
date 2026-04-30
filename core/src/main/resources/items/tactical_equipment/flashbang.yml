@@ -61,14 +61,14 @@ items:
       - HIDE_ATTRIBUTES
       - HIDE_UNBREAKABLE
     data:
+      weapon-type:
+        key: weapon-type
+        type: STRING
+        value: EQUIPMENT
       weapon-name:
         key: weapon-name
         type: STRING
         value: Flashbang
-      action-executor-id:
-        key: action-executor-id
-        type: STRING
-        value: equipment
     unbreakable: true
   throw-item:
     material: SHEARS

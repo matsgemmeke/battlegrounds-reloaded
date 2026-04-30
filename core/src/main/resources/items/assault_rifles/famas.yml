@@ -24,14 +24,14 @@ item:
     - HIDE_ATTRIBUTES
     - HIDE_UNBREAKABLE
   data:
+    weapon-type:
+      key: weapon-type
+      type: STRING
+      value: GUN
     weapon-name:
       key: weapon-name
       type: STRING
       value: FAMAS
-    action-executor-id:
-      key: action-executor-id
-      type: STRING
-      value: gun
   unbreakable: true
 reloading:
   type: MAGAZINE
