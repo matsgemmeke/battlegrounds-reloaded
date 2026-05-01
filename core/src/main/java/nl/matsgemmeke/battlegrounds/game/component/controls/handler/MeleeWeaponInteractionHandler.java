@@ -12,9 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Optional;
-
-public class MeleeWeaponInteractionHandler implements ItemInteractionHandler<MeleeWeapon> {
+public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
     private final ItemControllerRegistry itemControllerRegistry;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
@@ -26,12 +24,13 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler<Mel
     }
 
     @Override
-    public Optional<MeleeWeapon> resolve(GamePlayer gamePlayer, ItemStack itemStack) {
-        return meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, itemStack);
-    }
+    public DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
+        MeleeWeapon meleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, itemStack).orElse(null);
 
-    @Override
-    public DispatchResult dispatch(MeleeWeapon meleeWeapon, GamePlayer gamePlayer, Action action) {
+        if (meleeWeapon == null) {
+            return DispatchResult.unhandled();
+        }
+
         ItemController<MeleeWeaponUser> controller = itemControllerRegistry.getMeleeWeaponController(meleeWeapon.getId()).orElse(null);
 
         if (controller == null) {

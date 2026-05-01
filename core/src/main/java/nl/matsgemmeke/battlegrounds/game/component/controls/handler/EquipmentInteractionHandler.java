@@ -12,9 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Optional;
-
-public class EquipmentInteractionHandler implements ItemInteractionHandler<Equipment> {
+public class EquipmentInteractionHandler implements ItemInteractionHandler {
 
     private final EquipmentRegistry equipmentRegistry;
     private final ItemControllerRegistry itemControllerRegistry;
@@ -26,12 +24,13 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler<Equip
     }
 
     @Override
-    public Optional<Equipment> resolve(GamePlayer gamePlayer, ItemStack itemStack) {
-        return equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack);
-    }
+    public DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
+        Equipment equipment = equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack).orElse(null);
 
-    @Override
-    public DispatchResult dispatch(Equipment equipment, GamePlayer gamePlayer, Action action) {
+        if (equipment == null) {
+            return DispatchResult.unhandled();
+        }
+
         ItemController<EquipmentUser> controller = itemControllerRegistry.getEquipmentController(equipment.getId()).orElse(null);
 
         if (controller == null) {

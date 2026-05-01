@@ -5,11 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Optional;
+public interface ItemInteractionHandler {
 
-public interface ItemInteractionHandler<T> {
-
-    Optional<T> resolve(GamePlayer gamePlayer, ItemStack itemStack);
-
-    DispatchResult dispatch(T item, GamePlayer gamePlayer, Action action);
+    DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action);
 }

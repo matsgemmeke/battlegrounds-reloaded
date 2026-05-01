@@ -12,9 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Optional;
-
-public class GunInteractionHandler implements ItemInteractionHandler<Gun> {
+public class GunInteractionHandler implements ItemInteractionHandler {
 
     private final GunRegistry gunRegistry;
     private final ItemControllerRegistry itemControllerRegistry;
@@ -26,12 +24,13 @@ public class GunInteractionHandler implements ItemInteractionHandler<Gun> {
     }
 
     @Override
-    public Optional<Gun> resolve(GamePlayer gamePlayer, ItemStack itemStack) {
-        return gunRegistry.getAssignedGun(gamePlayer, itemStack);
-    }
+    public DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
+        Gun gun = gunRegistry.getAssignedGun(gamePlayer, itemStack).orElse(null);
 
-    @Override
-    public DispatchResult dispatch(Gun gun, GamePlayer gamePlayer, Action action) {
+        if (gun == null) {
+            return DispatchResult.unhandled();
+        }
+
         ItemController<GunUser> controller = itemControllerRegistry.getGunController(gun.getId()).orElse(null);
 
         if (controller == null) {
