@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.melee.controls;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
@@ -18,6 +19,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,10 +28,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MeleeWeaponControllerFactoryTest {
 
+    private static final UUID MELEE_WEAPON_ID = UUID.randomUUID();
+
     @Spy
     private ActionBindingMapper actionBindingMapper;
     @Mock
     private ItemController<MeleeWeaponUser> controller;
+    @Mock
+    private ItemControllerRegistry itemControllerRegistry;
     @Mock
     private MeleeWeapon meleeWeapon;
     @Mock
@@ -42,6 +48,7 @@ class MeleeWeaponControllerFactoryTest {
     @BeforeEach
     void setUp() {
         when(controllerSupplier.get()).thenReturn(controller);
+        when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
     }
 
     @Test
@@ -57,6 +64,8 @@ class MeleeWeaponControllerFactoryTest {
         assertThat(bindingCaptor.getValue()).satisfies(binding -> {
             assertThat(binding.function()).isInstanceOf(ReloadFunction.class);
         });
+
+        verify(itemControllerRegistry).registerMeleeWeaponController(MELEE_WEAPON_ID, controller);
     }
 
     @Test
@@ -72,6 +81,8 @@ class MeleeWeaponControllerFactoryTest {
         assertThat(bindingCaptor.getValue()).satisfies(binding -> {
             assertThat(binding.function()).isInstanceOf(ThrowFunction.class);
         });
+
+        verify(itemControllerRegistry).registerMeleeWeaponController(MELEE_WEAPON_ID, controller);
     }
 
     private MeleeWeaponSpec createMeleeWeaponSpec(String filePath) {

@@ -67,8 +67,8 @@ public class PlayerSwapHandItemsEventHandler implements EventHandler<PlayerSwapH
             return;
         }
 
-        ItemStack swapFromItemStack = Optional.ofNullable(event.getMainHandItem()).orElse(EMPTY_ITEM_STACK);
-        ItemStack swapToItemStack = Optional.ofNullable(event.getOffHandItem()).orElse(EMPTY_ITEM_STACK);
+        ItemStack swapFromItemStack = Optional.ofNullable(event.getOffHandItem()).orElse(EMPTY_ITEM_STACK);
+        ItemStack swapToItemStack = Optional.ofNullable(event.getMainHandItem()).orElse(EMPTY_ITEM_STACK);
         ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
 
         DispatchResult swapFromResult = dispatcher.dispatch(gamePlayer, swapFromItemStack, Action.SWAP_FROM);

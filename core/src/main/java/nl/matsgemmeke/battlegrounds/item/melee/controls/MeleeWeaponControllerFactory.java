@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.melee.controls;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.controls.ControlSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.ControlsSpec;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;
@@ -17,11 +18,13 @@ import java.util.function.Supplier;
 public class MeleeWeaponControllerFactory {
 
     private final ActionBindingMapper actionBindingMapper;
+    private final ItemControllerRegistry itemControllerRegistry;
     private final Supplier<ItemController<MeleeWeaponUser>> controllerSupplier;
 
     @Inject
-    public MeleeWeaponControllerFactory(ActionBindingMapper actionBindingMapper, Supplier<ItemController<MeleeWeaponUser>> controllerSupplier) {
+    public MeleeWeaponControllerFactory(ActionBindingMapper actionBindingMapper, ItemControllerRegistry itemControllerRegistry, Supplier<ItemController<MeleeWeaponUser>> controllerSupplier) {
         this.actionBindingMapper = actionBindingMapper;
+        this.itemControllerRegistry = itemControllerRegistry;
         this.controllerSupplier = controllerSupplier;
     }
 
@@ -46,6 +49,8 @@ public class MeleeWeaponControllerFactory {
 
             controller.bind(throwAction, throwBinding);
         }
+
+        itemControllerRegistry.registerMeleeWeaponController(meleeWeapon.getId(), controller);
 
         return controller;
     }
