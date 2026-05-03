@@ -121,8 +121,8 @@ class PlayerSwapHandItemsEventHandlerTest {
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
-        when(itemInteractionDispatcher.dispatch(gamePlayer, MAIN_HAND_ITEM, Action.SWAP_FROM)).thenReturn(swapFromResult);
-        when(itemInteractionDispatcher.dispatch(gamePlayer, OFF_HAND_ITEM, Action.SWAP_TO)).thenReturn(swapToResult);
+        when(itemInteractionDispatcher.dispatch(gamePlayer, OFF_HAND_ITEM, Action.SWAP_FROM)).thenReturn(swapFromResult);
+        when(itemInteractionDispatcher.dispatch(gamePlayer, MAIN_HAND_ITEM, Action.SWAP_TO)).thenReturn(swapToResult);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 

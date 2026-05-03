@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment.controls;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -28,6 +29,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.*;
@@ -36,12 +38,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EquipmentControllerFactoryTest {
 
+    private static final UUID EQUIPMENT_ID = UUID.randomUUID();
+
     @Spy
     private ActionBindingMapper actionBindingMapper;
     @Mock
     private Equipment equipment;
     @Mock
     private ItemController<EquipmentUser> controller;
+    @Mock
+    private ItemControllerRegistry itemControllerRegistry;
     @Mock
     private ItemTemplateFactory itemTemplateFactory;
     @Mock
@@ -65,7 +71,7 @@ class EquipmentControllerFactoryTest {
     void setUp() {
         when(controllerSupplier.get()).thenReturn(controller);
 
-        controllerFactory = new EquipmentControllerFactory(actionBindingMapper, itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controllerSupplier);
+        controllerFactory = new EquipmentControllerFactory(actionBindingMapper, itemControllerRegistry, itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controllerSupplier);
     }
 
     @Test
@@ -88,6 +94,7 @@ class EquipmentControllerFactoryTest {
 
         when(itemTemplateFactory.create(equipmentSpec.items.throwItem)).thenReturn(itemTemplate);
         when(throwDeploymentActionProvider.get()).thenReturn(deploymentAction);
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
         ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
@@ -114,6 +121,8 @@ class EquipmentControllerFactoryTest {
             assertThat(binding.blocking()).isTrue();
             assertThat(binding.cancelsEvent()).isTrue();
         });
+
+        verify(itemControllerRegistry).registerEquipmentController(EQUIPMENT_ID, controller);
     }
 
     @Test
@@ -139,6 +148,7 @@ class EquipmentControllerFactoryTest {
         equipmentSpec.controls.throwing = null;
 
         when(placeDeploymentActionProvider.get()).thenReturn(deploymentAction);
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
         ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
@@ -149,6 +159,8 @@ class EquipmentControllerFactoryTest {
             assertThat(binding.blocking()).isTrue();
             assertThat(binding.cancelsEvent()).isTrue();
         });
+
+        verify(itemControllerRegistry).registerEquipmentController(EQUIPMENT_ID, controller);
     }
 
     @Test
@@ -173,6 +185,7 @@ class EquipmentControllerFactoryTest {
         PrimeDeploymentAction deploymentAction = mock(PrimeDeploymentAction.class);
 
         when(primeDeploymentActionProvider.get()).thenReturn(deploymentAction);
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
         ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
@@ -183,6 +196,8 @@ class EquipmentControllerFactoryTest {
             assertThat(binding.blocking()).isFalse();
             assertThat(binding.cancelsEvent()).isTrue();
         });
+
+        verify(itemControllerRegistry).registerEquipmentController(EQUIPMENT_ID, controller);
     }
 
     @Test
@@ -210,6 +225,7 @@ class EquipmentControllerFactoryTest {
 
         when(dropDeploymentActionProvider.get()).thenReturn(deploymentAction);
         when(itemTemplateFactory.create(equipmentSpec.items.dropItem)).thenReturn(itemTemplate);
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
         ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
@@ -234,6 +250,8 @@ class EquipmentControllerFactoryTest {
             assertThat(binding.blocking()).isTrue();
             assertThat(binding.cancelsEvent()).isTrue();
         });
+
+        verify(itemControllerRegistry).registerEquipmentController(EQUIPMENT_ID, controller);
     }
 
     @Test
@@ -242,6 +260,8 @@ class EquipmentControllerFactoryTest {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
         equipmentSpec.controls.place = null;
         equipmentSpec.controls.throwing = null;
+
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
         ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
 
@@ -252,6 +272,8 @@ class EquipmentControllerFactoryTest {
             assertThat(binding.blocking()).isTrue();
             assertThat(binding.cancelsEvent()).isTrue();
         });
+
+        verify(itemControllerRegistry).registerEquipmentController(EQUIPMENT_ID, controller);
     }
 
     private EquipmentSpec createEquipmentSpec(String filePath) {

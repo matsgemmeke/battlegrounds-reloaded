@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.configuration.item.equipment.deploy.DropProp
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 public class EquipmentControllerFactory {
 
     private final ActionBindingMapper actionBindingMapper;
+    private final ItemControllerRegistry itemControllerRegistry;
     private final ItemTemplateFactory itemTemplateFactory;
     private final ProjectileEffectFactory projectileEffectFactory;
     private final Provider<DropDeploymentAction> dropDeploymentActionProvider;
@@ -49,6 +51,7 @@ public class EquipmentControllerFactory {
     @Inject
     public EquipmentControllerFactory(
             ActionBindingMapper actionBindingMapper,
+            ItemControllerRegistry itemControllerRegistry,
             ItemTemplateFactory itemTemplateFactory,
             ProjectileEffectFactory projectileEffectFactory,
             Provider<DropDeploymentAction> dropDeploymentActionProvider,
@@ -58,6 +61,7 @@ public class EquipmentControllerFactory {
             Supplier<ItemController<EquipmentUser>> controllerSupplier
     ) {
         this.actionBindingMapper = actionBindingMapper;
+        this.itemControllerRegistry = itemControllerRegistry;
         this.itemTemplateFactory = itemTemplateFactory;
         this.projectileEffectFactory = projectileEffectFactory;
         this.dropDeploymentActionProvider = dropDeploymentActionProvider;
@@ -186,6 +190,8 @@ public class EquipmentControllerFactory {
 
             controller.bind(activateAction, activateBinding);
         }
+
+        itemControllerRegistry.registerEquipmentController(equipment.getId(), controller);
 
         return controller;
     }
