@@ -14,13 +14,6 @@ import nl.matsgemmeke.battlegrounds.item.ItemUser;
 public interface Function<T extends ItemUser> {
 
     /**
-     * Gets whether the function blocks other functions from being performed.
-     *
-     * @return whether the function is blocking other functions
-     */
-    boolean isBlocking();
-
-    /**
      * Gets whether the function is currently performing.
      *
      * @return whether the function is performing

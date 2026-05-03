@@ -19,7 +19,7 @@ public class DefaultMeleeWeaponRegistry implements MeleeWeaponRegistry {
     @Override
     public Optional<MeleeWeapon> getAssignedMeleeWeapon(MeleeWeaponUser user, ItemStack itemStack) {
         return meleeWeapons.stream()
-                .filter(meleeWeapon -> meleeWeapon.getUser().map(h -> h.equals(user)).orElse(false))
+                .filter(meleeWeapon -> meleeWeapon.getUser().map(u -> u == user).orElse(false))
                 .filter(meleeWeapon -> meleeWeapon.isMatching(itemStack))
                 .findFirst();
     }

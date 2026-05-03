@@ -17,11 +17,6 @@ public class CookFunction implements Function<EquipmentUser> {
     }
 
     @Override
-    public boolean isBlocking() {
-        return false;
-    }
-
-    @Override
     public boolean isPerforming() {
         return false;
     }

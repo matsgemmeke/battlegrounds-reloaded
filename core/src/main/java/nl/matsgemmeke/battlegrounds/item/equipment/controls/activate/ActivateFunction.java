@@ -14,11 +14,6 @@ public class ActivateFunction implements Function<EquipmentUser> {
     }
 
     @Override
-    public boolean isBlocking() {
-        return false;
-    }
-
-    @Override
     public boolean isPerforming() {
         return false;
     }

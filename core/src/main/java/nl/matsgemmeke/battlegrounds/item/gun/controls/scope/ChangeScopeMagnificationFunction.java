@@ -14,11 +14,6 @@ public class ChangeScopeMagnificationFunction implements Function<GunUser> {
     }
 
     @Override
-    public boolean isBlocking() {
-        return false;
-    }
-
-    @Override
     public boolean isPerforming() {
         return false;
     }

@@ -14,11 +14,6 @@ public class ReloadFunction implements Function<MeleeWeaponUser> {
     }
 
     @Override
-    public boolean isBlocking() {
-        return false;
-    }
-
-    @Override
     public boolean isPerforming() {
         return meleeWeapon.isReloading();
     }

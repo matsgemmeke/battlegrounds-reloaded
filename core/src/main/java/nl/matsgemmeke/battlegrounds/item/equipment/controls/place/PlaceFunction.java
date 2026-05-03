@@ -17,11 +17,6 @@ public class PlaceFunction implements Function<EquipmentUser> {
     }
 
     @Override
-    public boolean isBlocking() {
-        return true;
-    }
-
-    @Override
     public boolean isPerforming() {
         return false;
     }

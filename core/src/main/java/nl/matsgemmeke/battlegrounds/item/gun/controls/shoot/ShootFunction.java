@@ -14,11 +14,6 @@ public class ShootFunction implements Function<GunUser> {
     }
 
     @Override
-    public boolean isBlocking() {
-        return true;
-    }
-
-    @Override
     public boolean isPerforming() {
         return gun.isShooting();
     }

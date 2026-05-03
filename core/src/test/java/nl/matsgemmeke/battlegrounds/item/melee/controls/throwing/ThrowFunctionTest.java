@@ -24,13 +24,6 @@ class ThrowFunctionTest {
     private ThrowFunction function;
 
     @Test
-    void isBlockingAlwaysReturnsTrue() {
-        boolean blocking = function.isBlocking();
-
-        assertThat(blocking).isTrue();
-    }
-
-    @Test
     void isPerformingAlwaysReturnsFalse() {
         boolean performing = function.isPerforming();
 
