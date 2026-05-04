@@ -4,27 +4,204 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionResult;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
+import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
+import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
+
+import java.util.function.Consumer;
 
 public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
+    private static final String WEAPON_NAME_KEY = "weapon-name";
+
     private final ItemControllerRegistry itemControllerRegistry;
+    private final ItemCreator itemCreator;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
+    private final NamespacedKeyCreator namespacedKeyCreator;
 
     @Inject
-    public MeleeWeaponInteractionHandler(ItemControllerRegistry itemControllerRegistry, MeleeWeaponRegistry meleeWeaponRegistry) {
+    public MeleeWeaponInteractionHandler(
+            ItemControllerRegistry itemControllerRegistry,
+            ItemCreator itemCreator,
+            MeleeWeaponRegistry meleeWeaponRegistry,
+            NamespacedKeyCreator namespacedKeyCreator
+    ) {
         this.itemControllerRegistry = itemControllerRegistry;
+        this.itemCreator = itemCreator;
         this.meleeWeaponRegistry = meleeWeaponRegistry;
+        this.namespacedKeyCreator = namespacedKeyCreator;
     }
 
     @Override
-    public DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
+    public DispatchResult handleChangeFrom(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_FROM);
+    }
+
+    @Override
+    public DispatchResult handleChangeTo(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_TO);
+    }
+
+    @Override
+    public DispatchResult handleDropItem(GamePlayer gamePlayer, ItemStack itemStack) {
+        Consumer<MeleeWeapon> consumer = MeleeWeapon::unassign;
+
+        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_TO, consumer);
+    }
+
+    @Override
+    public DispatchResult handleLeftClick(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.LEFT_CLICK);
+    }
+
+    @Override
+    public DispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
+        MeleeWeapon meleeWeapon = meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack).orElse(null);
+
+        // Check if the picked up item is a complete melee weapon, or a single projectile
+        if (meleeWeapon != null) {
+            return this.handlePickupItemCompleteMeleeWeapon(gamePlayer, meleeWeapon);
+        } else {
+            return this.handlePickupItemSingleProjectile(gamePlayer, itemStack);
+        }
+    }
+
+    private DispatchResult handlePickupItemCompleteMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
+        MeleeWeapon existingMeleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer).stream()
+                .filter(m -> m.getName().equals(meleeWeapon.getName()))
+                .findFirst()
+                .orElse(null);
+
+        if (existingMeleeWeapon != null) {
+            return this.resupplyExistingMeleeWeapon(gamePlayer, meleeWeapon, existingMeleeWeapon);
+        } else {
+            return this.assignMeleeWeapon(gamePlayer, meleeWeapon);
+        }
+    }
+
+    private DispatchResult resupplyExistingMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon pickedUpMeleeWeapon, MeleeWeapon existingMeleeWeapon) {
+        Integer slot = gamePlayer.getItemSlot(existingMeleeWeapon).orElse(null);
+
+        if (slot == null) {
+            // We have already found an assigned melee weapon to the player's name, so we don't expect this scenario
+            // to happen. If it somehow does, just treat the existing melee weapon as picked up, and do perform any
+            // logic.
+            return DispatchResult.unhandled();
+        }
+
+        int pickedUpResourceAmount = pickedUpMeleeWeapon.getResourceContainer().getLoadedAmount() + pickedUpMeleeWeapon.getResourceContainer().getReserveAmount();
+        int existingWeaponReserveAmount = existingMeleeWeapon.getResourceContainer().getReserveAmount();
+        int updatedReserveAmount = Math.min(existingWeaponReserveAmount + pickedUpResourceAmount, existingMeleeWeapon.getResourceContainer().getMaxReserveAmount());
+
+        existingMeleeWeapon.getResourceContainer().setReserveAmount(updatedReserveAmount);
+        existingMeleeWeapon.update();
+
+        gamePlayer.setItem(slot, existingMeleeWeapon.getItemStack());
+
+        return new DispatchResult(true, true);
+    }
+
+    private DispatchResult assignMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
+        ItemController<MeleeWeaponUser> controller = itemControllerRegistry.getMeleeWeaponController(meleeWeapon.getId()).orElse(null);
+
+        if (controller == null) {
+            return DispatchResult.unhandled();
+        }
+
+        meleeWeapon.assign(gamePlayer);
+        meleeWeapon.onPickUp(gamePlayer);
+
+        controller.performActionNew(Action.PICKUP_ITEM, gamePlayer);
+
+        return new DispatchResult(true, true);
+    }
+
+    private DispatchResult handlePickupItemSingleProjectile(GamePlayer gamePlayer, ItemStack itemStack) {
+        NamespacedKey weaponNameKey = namespacedKeyCreator.create(WEAPON_NAME_KEY);
+        String weaponName = itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING);
+
+        MeleeWeapon existingMeleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer).stream()
+                .filter(m -> m.getName().equals(weaponName))
+                .filter(m -> m.getResourceContainer().getReserveAmount() < m.getResourceContainer().getMaxReserveAmount())
+                .findFirst()
+                .orElse(null);
+
+        if (existingMeleeWeapon != null) {
+            return this.addSingleResourceExistingMeleeWeapon(gamePlayer, existingMeleeWeapon);
+        } else {
+            return this.createAndAssignNewMeleeWeapon(gamePlayer, weaponName);
+        }
+    }
+
+    private DispatchResult addSingleResourceExistingMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon existingMeleeWeapon) {
+        Integer slot = gamePlayer.getItemSlot(existingMeleeWeapon).orElse(null);
+
+        if (slot == null) {
+            // We have already found an assigned melee weapon to the player's name, so we don't expect this scenario
+            // to happen. If it somehow does, just treat the existing melee weapon as picked up, and do perform any
+            // logic.
+            return new DispatchResult(true, false);
+        }
+
+        ResourceContainer resourceContainer = existingMeleeWeapon.getResourceContainer();
+        resourceContainer.setReserveAmount(resourceContainer.getReserveAmount() + 1);
+
+        existingMeleeWeapon.update();
+
+        gamePlayer.setItem(slot, existingMeleeWeapon.getItemStack());
+
+        return new DispatchResult(true, true);
+    }
+
+    private DispatchResult createAndAssignNewMeleeWeapon(GamePlayer gamePlayer, String weaponName) {
+        MeleeWeapon meleeWeapon = itemCreator.createMeleeWeapon(weaponName, gamePlayer);
+        ItemController<MeleeWeaponUser> controller = itemControllerRegistry.getMeleeWeaponController(meleeWeapon.getId()).orElse(null);
+
+        if (controller == null) {
+            // Should not be possible, but return unhandled just in case
+            return DispatchResult.unhandled();
+        }
+
+        ResourceContainer resourceContainer = meleeWeapon.getResourceContainer();
+        resourceContainer.setLoadedAmount(1);
+        resourceContainer.setReserveAmount(0);
+
+        meleeWeapon.update();
+
+        gamePlayer.addItem(meleeWeapon.getItemStack());
+
+        return new DispatchResult(true, true);
+    }
+
+    @Override
+    public DispatchResult handleRightClick(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.RIGHT_CLICK);
+    }
+
+    @Override
+    public DispatchResult handleSwapFrom(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.SWAP_FROM);
+    }
+
+    @Override
+    public DispatchResult handleSwapTo(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.SWAP_TO);
+    }
+
+    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
+        return this.handleInteraction(gamePlayer, itemStack, action, meleeWeapon -> {});
+    }
+
+    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, Consumer<MeleeWeapon> consumer) {
         MeleeWeapon meleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, itemStack).orElse(null);
 
         if (meleeWeapon == null) {
@@ -38,6 +215,9 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
         }
 
         ActionResult actionResult = controller.performActionNew(action, gamePlayer);
+
+        consumer.accept(meleeWeapon);
+
         return new DispatchResult(actionResult.performed(), actionResult.cancelEvent());
     }
 }

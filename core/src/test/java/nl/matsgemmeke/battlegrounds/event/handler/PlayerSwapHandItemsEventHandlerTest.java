@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -121,8 +120,8 @@ class PlayerSwapHandItemsEventHandlerTest {
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
-        when(itemInteractionDispatcher.dispatch(gamePlayer, OFF_HAND_ITEM, Action.SWAP_FROM)).thenReturn(swapFromResult);
-        when(itemInteractionDispatcher.dispatch(gamePlayer, MAIN_HAND_ITEM, Action.SWAP_TO)).thenReturn(swapToResult);
+        when(itemInteractionDispatcher.dispatchSwapFrom(gamePlayer, OFF_HAND_ITEM)).thenReturn(swapFromResult);
+        when(itemInteractionDispatcher.dispatchSwapTo(gamePlayer, MAIN_HAND_ITEM)).thenReturn(swapToResult);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 

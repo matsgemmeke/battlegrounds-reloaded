@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -71,8 +70,8 @@ public class PlayerSwapHandItemsEventHandler implements EventHandler<PlayerSwapH
         ItemStack swapToItemStack = Optional.ofNullable(event.getMainHandItem()).orElse(EMPTY_ITEM_STACK);
         ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
 
-        DispatchResult swapFromResult = dispatcher.dispatch(gamePlayer, swapFromItemStack, Action.SWAP_FROM);
-        DispatchResult swapToResult = dispatcher.dispatch(gamePlayer, swapToItemStack, Action.SWAP_TO);
+        DispatchResult swapFromResult = dispatcher.dispatchSwapFrom(gamePlayer, swapFromItemStack);
+        DispatchResult swapToResult = dispatcher.dispatchSwapTo(gamePlayer, swapToItemStack);
 
         event.setCancelled(event.isCancelled() || swapFromResult.cancelEvent() || swapToResult.cancelEvent());
     }

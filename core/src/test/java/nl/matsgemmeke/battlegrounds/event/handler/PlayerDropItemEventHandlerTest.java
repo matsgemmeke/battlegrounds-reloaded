@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -120,7 +119,7 @@ class PlayerDropItemEventHandlerTest {
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
-        when(itemInteractionDispatcher.dispatch(gamePlayer, ITEM_STACK, Action.DROP_ITEM)).thenReturn(result);
+        when(itemInteractionDispatcher.dispatchDropItem(gamePlayer, ITEM_STACK)).thenReturn(result);
         when(item.getItemStack()).thenReturn(ITEM_STACK);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));

@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -68,7 +67,7 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
         }
 
         ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
-        DispatchResult result = dispatcher.dispatch(gamePlayer, itemStack, Action.PICKUP_ITEM);
+        DispatchResult result = dispatcher.dispatchPickupItem(gamePlayer, itemStack);
 
         if (result.handled()) {
             event.getItem().remove();

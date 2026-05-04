@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.game.component.controls;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.handler.ItemInteractionHandler;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -37,23 +36,23 @@ class ItemInteractionDispatcherTest {
 
     @BeforeEach
     void setUp() {
-        itemInteractionDispatcher.registerInteractionHandler(Action.LEFT_CLICK, WeaponType.GUN, itemInteractionHandler);
+        itemInteractionDispatcher.registerInteractionHandler(WeaponType.GUN, itemInteractionHandler);
     }
 
     @Test
-    @DisplayName("dispatch returns unhandled result when given item stack has no item meta")
-    void dispatch_itemStackWithoutItemMeta() {
+    @DisplayName("dispatchChangeFrom returns unhandled result when given item stack has no item meta")
+    void dispatchChangeFrom_itemStackWithoutItemMeta() {
         when(itemStack.getItemMeta()).thenReturn(null);
 
-        DispatchResult result = itemInteractionDispatcher.dispatch(gamePlayer, itemStack, Action.LEFT_CLICK);
+        DispatchResult result = itemInteractionDispatcher.dispatchChangeFrom(gamePlayer, itemStack);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
     }
 
     @Test
-    @DisplayName("dispatch returns unhandled result when given item stack has no weapon type data value")
-    void dispatch_itemStackWithoutWeaponTypeData() {
+    @DisplayName("dispatchChangeFrom returns unhandled result when given item stack has no weapon type data value")
+    void dispatchChangeFrom_itemStackWithoutWeaponTypeData() {
         NamespacedKey key = NamespacedKey.fromString("weapon-type");
 
         PersistentDataContainer data = mock(PersistentDataContainer.class);
@@ -62,15 +61,15 @@ class ItemInteractionDispatcherTest {
         when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
         when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
 
-        DispatchResult result = itemInteractionDispatcher.dispatch(gamePlayer, itemStack, Action.LEFT_CLICK);
+        DispatchResult result = itemInteractionDispatcher.dispatchChangeFrom(gamePlayer, itemStack);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
     }
 
     @Test
-    @DisplayName("dispatch returns unhandled result when given item stack has no interaction handler for the weapon type")
-    void dispatch_itemStackWithoutInteractionHandler() {
+    @DisplayName("dispatchChangeFrom returns unhandled result when given item stack has no interaction handler for the weapon type")
+    void dispatchChangeFrom_itemStackWithoutInteractionHandler() {
         NamespacedKey key = NamespacedKey.fromString("weapon-type");
 
         PersistentDataContainer data = mock(PersistentDataContainer.class);
@@ -79,15 +78,33 @@ class ItemInteractionDispatcherTest {
         when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
         when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
 
-        DispatchResult result = itemInteractionDispatcher.dispatch(gamePlayer, itemStack, Action.LEFT_CLICK);
+        DispatchResult result = itemInteractionDispatcher.dispatchChangeFrom(gamePlayer, itemStack);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
     }
 
     @Test
-    @DisplayName("dispatch returns handled result from interaction handler")
-    void dispatch_interactionHandlerHandled() {
+    @DisplayName("dispatchChangeFrom returns unhandled result when selected interaction handler did not handle the interaction")
+    void dispatchChangeFrom_interactionHandlerUnhandled() {
+        NamespacedKey key = NamespacedKey.fromString("weapon-type");
+
+        PersistentDataContainer data = mock(PersistentDataContainer.class);
+        when(data.get(key, PersistentDataType.STRING)).thenReturn("GUN");
+
+        when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
+        when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
+        when(itemInteractionHandler.handleChangeFrom(gamePlayer, itemStack)).thenReturn(DispatchResult.unhandled());
+
+        DispatchResult result = itemInteractionDispatcher.dispatchChangeFrom(gamePlayer, itemStack);
+
+        assertThat(result.handled()).isFalse();
+        assertThat(result.cancelEvent()).isFalse();
+    }
+
+    @Test
+    @DisplayName("dispatchChangeFrom returns handled result from interaction handler")
+    void dispatchChangeFrom_interactionHandlerHandled() {
         NamespacedKey key = NamespacedKey.fromString("weapon-type");
         DispatchResult handlerResult = new DispatchResult(true, true);
 
@@ -96,29 +113,144 @@ class ItemInteractionDispatcherTest {
 
         when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
         when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
-        when(itemInteractionHandler.handleInteraction(gamePlayer, itemStack, Action.LEFT_CLICK)).thenReturn(handlerResult);
+        when(itemInteractionHandler.handleChangeFrom(gamePlayer, itemStack)).thenReturn(handlerResult);
 
-        DispatchResult result = itemInteractionDispatcher.dispatch(gamePlayer, itemStack, Action.LEFT_CLICK);
+        DispatchResult result = itemInteractionDispatcher.dispatchChangeFrom(gamePlayer, itemStack);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
     }
 
     @Test
-    @DisplayName("dispatch returns unhandled result when selected interaction handler did not handle the interaction")
-    void dispatch_interactionHandlerUnhandled() {
+    @DisplayName("dispatchChangeTo returns handled result from interaction handler")
+    void dispatchChangeTo_interactionHandlerHandled() {
         NamespacedKey key = NamespacedKey.fromString("weapon-type");
+        DispatchResult handlerResult = new DispatchResult(true, true);
 
         PersistentDataContainer data = mock(PersistentDataContainer.class);
         when(data.get(key, PersistentDataType.STRING)).thenReturn("GUN");
 
         when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
         when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
-        when(itemInteractionHandler.handleInteraction(gamePlayer, itemStack, Action.LEFT_CLICK)).thenReturn(DispatchResult.unhandled());
+        when(itemInteractionHandler.handleChangeTo(gamePlayer, itemStack)).thenReturn(handlerResult);
 
-        DispatchResult result = itemInteractionDispatcher.dispatch(gamePlayer, itemStack, Action.LEFT_CLICK);
+        DispatchResult result = itemInteractionDispatcher.dispatchChangeTo(gamePlayer, itemStack);
 
-        assertThat(result.handled()).isFalse();
-        assertThat(result.cancelEvent()).isFalse();
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("dispatchDropItem returns handled result from interaction handler")
+    void dispatchDropItem_interactionHandlerHandled() {
+        NamespacedKey key = NamespacedKey.fromString("weapon-type");
+        DispatchResult handlerResult = new DispatchResult(true, true);
+
+        PersistentDataContainer data = mock(PersistentDataContainer.class);
+        when(data.get(key, PersistentDataType.STRING)).thenReturn("GUN");
+
+        when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
+        when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
+        when(itemInteractionHandler.handleDropItem(gamePlayer, itemStack)).thenReturn(handlerResult);
+
+        DispatchResult result = itemInteractionDispatcher.dispatchDropItem(gamePlayer, itemStack);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("dispatchLeftClick returns handled result from interaction handler")
+    void dispatchLeftClick_interactionHandlerHandled() {
+        NamespacedKey key = NamespacedKey.fromString("weapon-type");
+        DispatchResult handlerResult = new DispatchResult(true, true);
+
+        PersistentDataContainer data = mock(PersistentDataContainer.class);
+        when(data.get(key, PersistentDataType.STRING)).thenReturn("GUN");
+
+        when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
+        when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
+        when(itemInteractionHandler.handleLeftClick(gamePlayer, itemStack)).thenReturn(handlerResult);
+
+        DispatchResult result = itemInteractionDispatcher.dispatchLeftClick(gamePlayer, itemStack);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("dispatchPickupItem returns handled result from interaction handler")
+    void dispatchPickupItem_interactionHandlerHandled() {
+        NamespacedKey key = NamespacedKey.fromString("weapon-type");
+        DispatchResult handlerResult = new DispatchResult(true, true);
+
+        PersistentDataContainer data = mock(PersistentDataContainer.class);
+        when(data.get(key, PersistentDataType.STRING)).thenReturn("GUN");
+
+        when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
+        when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
+        when(itemInteractionHandler.handlePickupItem(gamePlayer, itemStack)).thenReturn(handlerResult);
+
+        DispatchResult result = itemInteractionDispatcher.dispatchPickupItem(gamePlayer, itemStack);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("dispatchRightClick returns handled result from interaction handler")
+    void dispatchRightClick_interactionHandlerHandled() {
+        NamespacedKey key = NamespacedKey.fromString("weapon-type");
+        DispatchResult handlerResult = new DispatchResult(true, true);
+
+        PersistentDataContainer data = mock(PersistentDataContainer.class);
+        when(data.get(key, PersistentDataType.STRING)).thenReturn("GUN");
+
+        when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
+        when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
+        when(itemInteractionHandler.handleRightClick(gamePlayer, itemStack)).thenReturn(handlerResult);
+
+        DispatchResult result = itemInteractionDispatcher.dispatchRightClick(gamePlayer, itemStack);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("dispatchSwapFrom returns handled result from interaction handler")
+    void dispatchSwapFrom_interactionHandlerHandled() {
+        NamespacedKey key = NamespacedKey.fromString("weapon-type");
+        DispatchResult handlerResult = new DispatchResult(true, true);
+
+        PersistentDataContainer data = mock(PersistentDataContainer.class);
+        when(data.get(key, PersistentDataType.STRING)).thenReturn("GUN");
+
+        when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
+        when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
+        when(itemInteractionHandler.handleSwapFrom(gamePlayer, itemStack)).thenReturn(handlerResult);
+
+        DispatchResult result = itemInteractionDispatcher.dispatchSwapFrom(gamePlayer, itemStack);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("dispatchSwapTo returns handled result from interaction handler")
+    void dispatchSwapTo_interactionHandlerHandled() {
+        NamespacedKey key = NamespacedKey.fromString("weapon-type");
+        DispatchResult handlerResult = new DispatchResult(true, true);
+
+        PersistentDataContainer data = mock(PersistentDataContainer.class);
+        when(data.get(key, PersistentDataType.STRING)).thenReturn("GUN");
+
+        when(itemStack.getItemMeta().getPersistentDataContainer()).thenReturn(data);
+        when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
+        when(itemInteractionHandler.handleSwapTo(gamePlayer, itemStack)).thenReturn(handlerResult);
+
+        DispatchResult result = itemInteractionDispatcher.dispatchSwapTo(gamePlayer, itemStack);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
     }
 }

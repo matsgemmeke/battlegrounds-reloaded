@@ -12,6 +12,8 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.function.Consumer;
+
 public class GunInteractionHandler implements ItemInteractionHandler {
 
     private final GunRegistry gunRegistry;
@@ -24,7 +26,54 @@ public class GunInteractionHandler implements ItemInteractionHandler {
     }
 
     @Override
-    public DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
+    public DispatchResult handleChangeFrom(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_FROM);
+    }
+
+    @Override
+    public DispatchResult handleChangeTo(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_TO);
+    }
+
+    @Override
+    public DispatchResult handleDropItem(GamePlayer gamePlayer, ItemStack itemStack) {
+        Consumer<Gun> consumer = gun -> gun.setUser(null);
+
+        return this.handleInteraction(gamePlayer, itemStack, Action.DROP_ITEM, consumer);
+    }
+
+    @Override
+    public DispatchResult handleLeftClick(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.LEFT_CLICK);
+    }
+
+    @Override
+    public DispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
+        Consumer<Gun> consumer = gun -> gun.setUser(gamePlayer);
+
+        return this.handleInteraction(gamePlayer, itemStack, Action.PICKUP_ITEM, consumer);
+    }
+
+    @Override
+    public DispatchResult handleRightClick(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.RIGHT_CLICK);
+    }
+
+    @Override
+    public DispatchResult handleSwapFrom(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.SWAP_FROM);
+    }
+
+    @Override
+    public DispatchResult handleSwapTo(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.handleInteraction(gamePlayer, itemStack, Action.SWAP_TO);
+    }
+
+    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
+        return this.handleInteraction(gamePlayer, itemStack, action, gun -> {});
+    }
+
+    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, Consumer<Gun> consumer) {
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, itemStack).orElse(null);
 
         if (gun == null) {
@@ -38,6 +87,9 @@ public class GunInteractionHandler implements ItemInteractionHandler {
         }
 
         ActionResult actionResult = controller.performActionNew(action, gamePlayer);
+
+        consumer.accept(gun);
+
         return new DispatchResult(actionResult.performed(), actionResult.cancelEvent());
     }
 }

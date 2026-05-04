@@ -22,8 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EquipmentInteractionHandlerTest {
@@ -43,32 +42,88 @@ class EquipmentInteractionHandlerTest {
     private EquipmentInteractionHandler interactionHandler;
 
     @Test
-    @DisplayName("handleInteraction returns unhandled dispatch result when given combination of player and item stack is not registered")
-    void handleInteraction_playerAndItemStackNotRegistered() {
+    @DisplayName("handleChangeFrom returns unhandled dispatch result when given combination of player and item stack is not registered")
+    void handleChangeFrom_playerAndItemStackNotRegistered() {
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        DispatchResult result = interactionHandler.handleInteraction(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
+        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
     }
 
     @Test
-    @DisplayName("handleInteraction returns unhandled dispatch result when item controller cannot be found")
-    void handleInteraction_itemControllerNotFound() {
+    @DisplayName("handleChangeFrom returns unhandled dispatch result when item controller cannot be found")
+    void handleChangeFrom_itemControllerNotFound() {
         when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.empty());
 
-        DispatchResult result = interactionHandler.handleInteraction(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
+        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
     }
 
     @Test
-    @DisplayName("handleInteraction returns display result with values from the item controller's action result")
-    void handleInteraction_successful() {
+    @DisplayName("handleChangeFrom returns display result with values from the item controller's action result")
+    void handleChangeFrom_successful() {
+        ActionResult actionResult = new ActionResult(true, true);
+
+        ItemController<EquipmentUser> controller = mock();
+        when(controller.performActionNew(Action.CHANGE_FROM, gamePlayer)).thenReturn(actionResult);
+
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
+
+        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("handleChangeTo returns display result with values from the item controller's action result")
+    void handleChangeTo_successful() {
+        ActionResult actionResult = new ActionResult(true, true);
+
+        ItemController<EquipmentUser> controller = mock();
+        when(controller.performActionNew(Action.CHANGE_TO, gamePlayer)).thenReturn(actionResult);
+
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
+
+        DispatchResult result = interactionHandler.handleChangeTo(gamePlayer, ITEM_STACK);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("handleDropItem returns display result with values from the item controller's action result")
+    void handleDropItem_successful() {
+        ActionResult actionResult = new ActionResult(true, true);
+
+        ItemController<EquipmentUser> controller = mock();
+        when(controller.performActionNew(Action.DROP_ITEM, gamePlayer)).thenReturn(actionResult);
+
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
+
+        DispatchResult result = interactionHandler.handleDropItem(gamePlayer, ITEM_STACK);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+
+        verify(equipment).setUser(null);
+    }
+
+    @Test
+    @DisplayName("handleLeftClick returns display result with values from the item controller's action result")
+    void handleLeftClick_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
         ItemController<EquipmentUser> controller = mock();
@@ -78,7 +133,81 @@ class EquipmentInteractionHandlerTest {
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
 
-        DispatchResult result = interactionHandler.handleInteraction(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
+        DispatchResult result = interactionHandler.handleLeftClick(gamePlayer, ITEM_STACK);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("handlePickupItem returns display result with values from the item controller's action result")
+    void handlePickupItem_successful() {
+        ActionResult actionResult = new ActionResult(true, true);
+
+        ItemController<EquipmentUser> controller = mock();
+        when(controller.performActionNew(Action.PICKUP_ITEM, gamePlayer)).thenReturn(actionResult);
+
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
+
+        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+
+        verify(equipment).setUser(gamePlayer);
+    }
+
+    @Test
+    @DisplayName("handleRightClick returns display result with values from the item controller's action result")
+    void handleRightClick_successful() {
+        ActionResult actionResult = new ActionResult(true, true);
+
+        ItemController<EquipmentUser> controller = mock();
+        when(controller.performActionNew(Action.RIGHT_CLICK, gamePlayer)).thenReturn(actionResult);
+
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
+
+        DispatchResult result = interactionHandler.handleRightClick(gamePlayer, ITEM_STACK);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("handleSwapFrom returns display result with values from the item controller's action result")
+    void handleSwapFrom_successful() {
+        ActionResult actionResult = new ActionResult(true, true);
+
+        ItemController<EquipmentUser> controller = mock();
+        when(controller.performActionNew(Action.SWAP_FROM, gamePlayer)).thenReturn(actionResult);
+
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
+
+        DispatchResult result = interactionHandler.handleSwapFrom(gamePlayer, ITEM_STACK);
+
+        assertThat(result.handled()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("handleSwapTo returns display result with values from the item controller's action result")
+    void handleSwapTo_successful() {
+        ActionResult actionResult = new ActionResult(true, true);
+
+        ItemController<EquipmentUser> controller = mock();
+        when(controller.performActionNew(Action.SWAP_TO, gamePlayer)).thenReturn(actionResult);
+
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipment.getId()).thenReturn(EQUIPMENT_ID);
+        when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
+
+        DispatchResult result = interactionHandler.handleSwapTo(gamePlayer, ITEM_STACK);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();

@@ -17,7 +17,6 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -44,9 +43,9 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
     @Override
     public void handle(PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
-        var action = this.convertEventActionToItemAction(event.getAction());
+        Action action = event.getAction();
 
-        if (itemStack == null || action == null) {
+        if (itemStack == null || action == Action.PHYSICAL) {
             return;
         }
 
@@ -64,18 +63,7 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
         gameScope.runInScope(gameContext, () -> this.performAction(event, playerId, itemStack, action));
     }
 
-    @Nullable
-    private nl.matsgemmeke.battlegrounds.item.controls.Action convertEventActionToItemAction(Action action) {
-        if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            return nl.matsgemmeke.battlegrounds.item.controls.Action.LEFT_CLICK;
-        } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            return nl.matsgemmeke.battlegrounds.item.controls.Action.RIGHT_CLICK;
-        } else {
-            return null;
-        }
-    }
-
-    private void performAction(PlayerInteractEvent event, UUID playerId, ItemStack itemStack, nl.matsgemmeke.battlegrounds.item.controls.Action action) {
+    private void performAction(PlayerInteractEvent event, UUID playerId, ItemStack itemStack, Action action) {
         PlayerRegistry playerRegistry = playerRegistryProvider.get();
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(playerId).orElse(null);
 
@@ -84,7 +72,13 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
         }
 
         ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
-        DispatchResult result = dispatcher.dispatch(gamePlayer, itemStack, action);
+        DispatchResult result;
+
+        if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+            result = dispatcher.dispatchLeftClick(gamePlayer, itemStack);
+        } else {
+            result = dispatcher.dispatchRightClick(gamePlayer, itemStack);
+        }
 
         if (result.cancelEvent()) {
             event.setUseItemInHand(Result.DENY);

@@ -43,42 +43,42 @@ class MeleeWeaponInteractionHandlerTest {
     private MeleeWeaponInteractionHandler interactionHandler;
 
     @Test
-    @DisplayName("handleInteraction returns unhandled dispatch result when given combination of player and item stack is not registered")
-    void handleInteraction_playerAndItemStackNotRegistered() {
+    @DisplayName("handleChangeFrom returns unhandled dispatch result when given combination of player and item stack is not registered")
+    void handleChangeFrom_playerAndItemStackNotRegistered() {
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
 
-        DispatchResult result = interactionHandler.handleInteraction(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
+        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
     }
 
     @Test
-    @DisplayName("handleInteraction returns unhandled dispatch result when item controller cannot be found")
-    void handleInteraction_itemControllerNotFound() {
+    @DisplayName("handleChangeFrom returns unhandled dispatch result when item controller cannot be found")
+    void handleChangeFrom_itemControllerNotFound() {
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
         when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
         when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.empty());
 
-        DispatchResult result = interactionHandler.handleInteraction(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
+        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
     }
 
     @Test
-    @DisplayName("handleInteraction returns display result with values from the item controller's action result")
-    void handleInteraction_successful() {
+    @DisplayName("handleChangeFrom returns display result with values from the item controller's action result")
+    void handleChangeFrom_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
         ItemController<MeleeWeaponUser> controller = mock();
-        when(controller.performActionNew(Action.LEFT_CLICK, gamePlayer)).thenReturn(actionResult);
+        when(controller.performActionNew(Action.CHANGE_FROM, gamePlayer)).thenReturn(actionResult);
 
         when(meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
         when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
         when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.of(controller));
 
-        DispatchResult result = interactionHandler.handleInteraction(gamePlayer, ITEM_STACK, Action.LEFT_CLICK);
+        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();

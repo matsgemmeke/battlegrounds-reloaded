@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -65,7 +64,7 @@ public class PlayerDropItemEventHandler implements EventHandler<PlayerDropItemEv
 
         ItemStack itemStack = event.getItemDrop().getItemStack();
         ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
-        DispatchResult result = dispatcher.dispatch(gamePlayer, itemStack, Action.DROP_ITEM);
+        DispatchResult result = dispatcher.dispatchDropItem(gamePlayer, itemStack);
 
         event.setCancelled(event.isCancelled() || result.cancelEvent());
     }
