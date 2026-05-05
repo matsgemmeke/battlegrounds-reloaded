@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class EquipmentInteractionHandler implements ItemInteractionHandler {
 
@@ -27,7 +27,9 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
 
     @Override
     public DispatchResult handleChangeFrom(GamePlayer gamePlayer, ItemStack itemStack) {
-        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_FROM);
+        BiConsumer<Equipment, ItemController<EquipmentUser>> consumer = (equipment, controller) -> controller.cancelAllFunctions();
+
+        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_FROM, consumer);
     }
 
     @Override
@@ -37,7 +39,10 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
 
     @Override
     public DispatchResult handleDropItem(GamePlayer gamePlayer, ItemStack itemStack) {
-        Consumer<Equipment> consumer = equipment -> equipment.setUser(null);
+        BiConsumer<Equipment, ItemController<EquipmentUser>> consumer = (equipment, controller) -> {
+            controller.cancelAllFunctions();
+            equipment.setUser(null);
+        };
 
         return this.handleInteraction(gamePlayer, itemStack, Action.DROP_ITEM, consumer);
     }
@@ -49,7 +54,7 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
 
     @Override
     public DispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
-        Consumer<Equipment> consumer = equipment -> equipment.setUser(gamePlayer);
+        BiConsumer<Equipment, ItemController<EquipmentUser>> consumer = (equipment, controller) -> equipment.setUser(gamePlayer);
 
         return this.handleInteraction(gamePlayer, itemStack, Action.PICKUP_ITEM, consumer);
     }
@@ -70,10 +75,10 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
     }
 
     private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
-        return this.handleInteraction(gamePlayer, itemStack, action, equipment -> {});
+        return this.handleInteraction(gamePlayer, itemStack, action, (equipment, controller) -> {});
     }
 
-    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, Consumer<Equipment> consumer) {
+    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, BiConsumer<Equipment, ItemController<EquipmentUser>> consumer) {
         Equipment equipment = equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack).orElse(null);
 
         if (equipment == null) {
@@ -88,7 +93,7 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
 
         ActionResult actionResult = controller.performActionNew(action, gamePlayer);
 
-        consumer.accept(equipment);
+        consumer.accept(equipment, controller);
 
         return new DispatchResult(actionResult.performed(), actionResult.cancelEvent());
     }

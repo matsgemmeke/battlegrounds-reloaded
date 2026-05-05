@@ -40,8 +40,8 @@ public class GunInteractionHandler implements ItemInteractionHandler {
     @Override
     public DispatchResult handleDropItem(GamePlayer gamePlayer, ItemStack itemStack) {
         BiConsumer<Gun, ItemController<GunUser>> consumer = (gun, controller) -> {
-            gun.setUser(null);
             controller.cancelAllFunctions();
+            gun.setUser(null);
         };
 
         return this.handleInteraction(gamePlayer, itemStack, Action.DROP_ITEM, consumer);
